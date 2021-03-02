@@ -171,7 +171,9 @@ Try to classify the sounds with some fiew criteria
 (maybe see: "Traite des objets musicaux" for criteria)
 - TODO: zoom on cloud with mouse wheel or zoom gesture
 - TODO: drag'n drop from the app, to anywhere in the filesystem, (to copy), or to a DAW track, to import. (transform the drag in file drag for each system).
+- Check in Fouloscopie youtube channel, video about twitter networks relations (to display elements by proximity, try to find a github)
 
+----
 emacs multi-occur-in-matching-buffers "then type '.' for all buffers"
 
 #### valgrind with gdb:
