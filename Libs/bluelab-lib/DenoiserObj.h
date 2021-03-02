@@ -73,6 +73,8 @@ public:
                          const WDL_TypedBuf<BL_FLOAT> &noiseBufPhases);
     
     static void ApplyThresholdToNoiseCurve(WDL_TypedBuf<BL_FLOAT> *ioNoiseCurve, BL_FLOAT threshold);
+
+    int GetLatency();
     
 protected:
     //
@@ -129,6 +131,9 @@ protected:
 #if USE_VARIABLE_BUFFER_SIZE
     void ResampleNoisePattern();
 #endif
+
+    int mBufferSize;
+    int mOverlapping;
     
     WDL_TypedBuf<BL_FLOAT> mSignalBuf;
     WDL_TypedBuf<BL_FLOAT> mNoiseBuf;

@@ -922,7 +922,7 @@ PartialTracker5::CutPartialsMinEnv(WDL_TypedBuf<BL_FLOAT> *magns)
 
 void
 PartialTracker5::FilterPartials()
-{
+{    
 #if !FILTER_PARTIALS
     mResult = mPartials[0];
 #else // Filtered

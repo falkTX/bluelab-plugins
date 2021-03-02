@@ -2751,7 +2751,7 @@ BLUtils::PlugCopyOutputs(const vector<WDL_TypedBuf<BL_FLOAT> > &outp,
 int
 BLUtils::PlugComputeBufferSize(int bufferSize, BL_FLOAT sampleRate)
 {
-    double ratio = sampleRate/44100.0;
+    BL_FLOAT ratio = sampleRate/44100.0;
     ratio = bl_round(ratio);
     
     // FIX: Logic Auval checks for 11025 sample rate
