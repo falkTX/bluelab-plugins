@@ -109,11 +109,24 @@ SoftMaskingComp4::IsProcessingEnabled()
 int
 SoftMaskingComp4::GetLatency()
 {
+#if 0 // Version with hack
     int latency = (mHistorySize/2)*(mBufferSize/mOverlapping);
-    
-    // Hack
+    // Hack (for Air)
     latency *= 0.75;
+#endif
 
+    // Correct version
+    //
+    // In history, we push_back() and pop_front()
+    // and we take the index historySize/2
+    //
+
+    // The index where we get the data (from the end)
+    // (this covers the case of odd and even history size)
+    // Index 0 has 0 latency, since we have just added the current data to it.
+    int revIndex = (mHistorySize - 1) - mHistorySize/2;
+    int latency = revIndex*(mBufferSize/mOverlapping);
+    
     return latency;
 }
 
