@@ -721,7 +721,8 @@ public:
     // Curves
     template <typename FLOAT_TYPE>
     static FLOAT_TYPE ComputeCurveMatchCoeff(const FLOAT_TYPE *curve0, const FLOAT_TYPE *curve1, int nFrames);
-    
+    template <typename FLOAT_TYPE>
+    static FLOAT_TYPE ComputeCurveMatchCoeff2(const FLOAT_TYPE *curve0, const FLOAT_TYPE *curve1, int nFrames);
     
     // Fft
     template <typename FLOAT_TYPE>

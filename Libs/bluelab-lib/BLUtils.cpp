@@ -1962,6 +1962,71 @@ BLUtils::ComputeCurveMatchCoeff(const FLOAT_TYPE *curve0,
 template float BLUtils::ComputeCurveMatchCoeff(const float *curve0, const float *curve1, int nFrames);
 template double BLUtils::ComputeCurveMatchCoeff(const double *curve0, const double *curve1, int nFrames);
 
+// Compute the similarity between two normalized curves
+template <typename FLOAT_TYPE>
+FLOAT_TYPE
+BLUtils::ComputeCurveMatchCoeff2(const FLOAT_TYPE *curve0,
+                                 const FLOAT_TYPE *curve1,
+                                 int nFrames)
+{
+    // Use POW_COEFF, to make more difference between matching and out of matching
+    // (added for EQHack)
+#define POW_COEFF 4.0
+    
+    FLOAT_TYPE area = 0.0;
+    for (int i = 0; i < nFrames; i++)
+    {
+        FLOAT_TYPE val0 = curve0[i];
+        FLOAT_TYPE val1 = curve1[i];
+        
+        FLOAT_TYPE a = std::fabs(val0 - val1);
+        
+        //a = std::pow(a, (FLOAT_TYPE)POW_COEFF);
+        
+        area += a;
+    }
+    
+    FLOAT_TYPE coeff = area / nFrames;
+    
+    //
+    //coeff = std::pow(coeff, (FLOAT_TYPE)(1.0/POW_COEFF));
+    
+    // Should be Normalized
+    
+    // Clip, just in case.
+    if (coeff < 0.0)
+        coeff = 0.0;
+    if (coeff > 1.0)
+        coeff = 1.0;
+    
+    // If coeff is 1, this is a perfect match
+    // so reverse
+    coeff = 1.0 - coeff;
+
+    // "rescale"
+
+    // Measured some points empirically => they are aligned!
+    // 
+    // Find equation: y = ax + b
+    BL_FLOAT p0[2] = { 0.9874, 0.0 };
+    BL_FLOAT p1[2] = { 0.999997, 1.0 };
+    BL_FLOAT a = (p1[1] - p0[1])/(p1[0] - p0[0]);
+    BL_FLOAT b = p0[1] - a*p0[0];
+
+    // Apply to coeff, to have coeff in [0, 1]
+    coeff = a*coeff + b;
+    
+    // Clip again, just in case.
+    if (coeff < 0.0)
+        coeff = 0.0;
+    if (coeff > 1.0)
+        coeff = 1.0;
+    
+    return coeff;
+}
+template float BLUtils::ComputeCurveMatchCoeff2(const float *curve0, const float *curve1, int nFrames);
+template double BLUtils::ComputeCurveMatchCoeff2(const double *curve0, const double *curve1, int nFrames);
+
 template <typename FLOAT_TYPE>
 void
 BLUtils::AntiClipping(WDL_TypedBuf<FLOAT_TYPE> *values, FLOAT_TYPE maxValue)
