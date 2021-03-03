@@ -45,7 +45,8 @@ GraphCurve5::GraphCurve5(int numValues)
     
     mPointSize = 1.0;
     
-    mBevelFlag = false;
+    //mBevelFlag = false;
+    mBevelFlag = true;
     
     mPointOverlay = false;
     

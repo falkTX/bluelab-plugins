@@ -15,8 +15,6 @@ BUG: when quitting a Cario plug, into the XCode debugger, it crashes
 - TODO: disable auto CPU anti-denormalization !
 (and check denormalization by hand)
 
-- TODO: set bevel for all curves
-
 - TODO: the plugin needs to even process the sound when UI is closed (make test with reaper, [UI] button). e.g Rebalance
 
 - TODO: Cairo, fix correctly the crash when quitting 
@@ -42,10 +40,6 @@ Undefined behavior sanitizer on old XCode:
 add -fsanitize=undefined on cflags an linker flags
 “other linker flags” + “apple llvm 8 custom compiler flags”
 
-TODO for all plugs at the end: pass thread sanitizer & undefined behavior sanitizer & address sanitizer
-
-TODO: for all plugins, check that the display is not redisplayed every time (with debug blinking rectangles). check that is only displayed whn there is new data.
-
 Website: Emrah => add a category menu (for the moment this is not practical)
 Website: click -> do not open in new windows (except if linking to another website)
 
@@ -70,8 +64,6 @@ NOTE: Windows / Reboot
 ntfsfix (on ntfs) partition and dosfsck (on dos partition)
 - windows safe mode: hard reboot several times => then choose “startup option”, 
 reboot again, press “4” for safe mode boot
-
-TODO: for all plugins, set output data to zero at the beginning, for all plugins
 
 (mT = 0.457364351, mText = "-60dB")
 164.651169
@@ -117,7 +109,6 @@ https://github.com/xkbcommon/libxkbcommon/blob/master/xkbcommon/xkbcommon.h
 (TODO => set default color to black, not white)
 
 - TODO: think of compiling Linux LV2 format too
-- TODO: for all plugs: INF => BL_INF
 - TODO: check denormal class in WDL
 - TODO: iPlug/Extra/Smoothers => for param smoother !!!
 (not sure it will work like this, maybe need some modification)
@@ -211,8 +202,6 @@ captain blood uses real black
 
 Website: for categories "menu", add a submenu to "PLUGINS" on the bar, and add the most used category pages as submenu entries (should be feasible as it is!)
 
-- TODO: check memory of all plugins, but when manipulating all knobs/options
-
 Triadic color calculator:
 https://www.sessions.edu/color-calculator/
 https://material.io/resources/color/#!/?view.left=1&view.right=1&primary.color=5252ff
@@ -227,18 +216,6 @@ Google font browser: https://fonts.google.com/?preview.text_type=custom&category
 WIP: the bright white color is too bright?
 (compare with other plugins...) maybe set it just a bit darker (except for the plugin title)
 to test it: push the screen at the maximum => it should not be too bright
-
-------------------
-For all plugins (=> new Design): 
-- TODO: remame knob.png => big-knob.png in bl_config.h and CMakeList.txt
-
-- TODO: arguments to frequency scale
-- TODO: CreateVersion(), now we have suppressed the position argument
-- NOTE: must export knobs with odd number of frames (so the middle frames is exactly the zero position of the knob)
-- Don't forget to remove the version from the background
-- use new SoftMasking comp
-- DONE: add fonts to bl_config, CMakeList.txt, and to resources folder, and load them in main()
-------------------
 
 ---links design
 https://www.sessions.edu/color-calculator/
@@ -293,8 +270,21 @@ perf report -g -i perf.data
 
 See: https://indico.cern.ch/event/814979/contributions/3401196/attachments/1831466/3109819/PerformanceTools.pdf
 
--------
-TODO(?): set FastMath(fast) for all the plugins that doesn't output sound
+------------------
+For all plugins (=> new Design): 
+- TODO: remame knob.png => big-knob.png in bl_config.h and CMakeList.txt
+
+- TODO: arguments to frequency scale
+- TODO: CreateVersion(), now we have suppressed the position argument
+- NOTE: must export knobs with odd number of frames (so the middle frames is exactly the zero position of the knob)
+- Don't forget to remove the version from the background
+- use new SoftMasking comp
+- DONE: add fonts to bl_config, CMakeList.txt, and to resources folder, and load them in main()
+- TODO: for all plugs: INF => BL_INF
+- TODO: check memory of all plugins, but when manipulating all knobs/options
+------------------
+------------------
+- TODO(?): set FastMath(fast) for all the plugins that doesn't output sound
 
 - TODO(all): everywhere use Curve::SetValues5() instead of SetValues4() everywhere
 - TODO(all): everywhere, Scale::ApplyScale -> check if we can use the ForEach versions
@@ -303,6 +293,12 @@ TODO(?): set FastMath(fast) for all the plugins that doesn't output sound
 - TODO(all): use FilterBank instead of MelScale (no stairs effect)
 - TODO(all): check that we use the latest TimeAxis and FreqAxis
 SmoothCurveDb => additional arg: sampleRate
+- TODO: for all plugins, set output data to zero at the beginning, for all plugins
+- TODO: set bevel for all curves
+
+- TODO for all plugs at the end: pass thread sanitizer & undefined behavior sanitizer & address sanitizer
+
+- TODO: for all plugins, check that the display is not redisplayed every time (with debug blinking rectangles). check that is only displayed whn there is new data.
 
 ------- Design:
 GUI kits
