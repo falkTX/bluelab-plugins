@@ -286,6 +286,8 @@ For all plugins (=> new Design):
 ------------------
 - TODO(?): set FastMath(fast) for all the plugins that doesn't output sound
 
+- LOG_FACTOR -> LOG + GrahpAxis2
+
 - TODO(all): everywhere use Curve::SetValues5() instead of SetValues4() everywhere
 - TODO(all): everywhere, Scale::ApplyScale -> check if we can use the ForEach versions
 - TODO(all): everywhere: use SoftMaskComp4 (warning, input and outputs have changed)
@@ -294,8 +296,10 @@ For all plugins (=> new Design):
 - TODO(all): check that we use the latest TimeAxis and FreqAxis
 SmoothCurveDb => additional arg: sampleRate
 - TODO: for all plugins, set output data to zero at the beginning, for all plugins
-- TODO: set bevel for all curves
 
+- TODO: check log scale (with many lines, w/ gamma = 1)
+
+- TODO: set bevel for all curves
 - TODO for all plugs at the end: pass thread sanitizer & undefined behavior sanitizer & address sanitizer
 
 - TODO: for all plugins, check that the display is not redisplayed every time (with debug blinking rectangles). check that is only displayed whn there is new data.

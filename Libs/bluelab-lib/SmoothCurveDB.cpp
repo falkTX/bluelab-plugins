@@ -77,17 +77,21 @@ SmoothCurveDB::SetValues(const WDL_TypedBuf<BL_FLOAT> &values, bool reset)
         values0 = decimValues;
     }
 #endif
+
 #if 1 // Filter banks
     useFilterBank = true;
-    
-    WDL_TypedBuf<BL_FLOAT> &decimValues = mTmpBuf1;
 
-    Scale::FilterBankType type =
-    mCurve->mScale->TypeToFilterBankType(mCurve->mXScale);
-    mCurve->mScale->ApplyScaleFilterBank(type, &decimValues, values0,
-                                         mSampleRate, histoNumValues);
-    
-    values0 = decimValues;
+    if (!reset)
+    {
+        WDL_TypedBuf<BL_FLOAT> &decimValues = mTmpBuf1;
+
+        Scale::FilterBankType type =
+        mCurve->mScale->TypeToFilterBankType(mCurve->mXScale);
+        mCurve->mScale->ApplyScaleFilterBank(type, &decimValues, values0,
+                                             mSampleRate, histoNumValues);
+        
+        values0 = decimValues;
+    }
 #endif
     
     WDL_TypedBuf<BL_FLOAT> &avgValues = mTmpBuf2;
@@ -116,7 +120,8 @@ SmoothCurveDB::SetValues(const WDL_TypedBuf<BL_FLOAT> &values, bool reset)
     }
     else
     {
-        mHistogram->SetValues(&values0);
+        //mHistogram->SetValues(&values0);
+        mHistogram->SetValues(&values0, false);
     }
     
     mCurve->ClearValues();
@@ -131,17 +136,23 @@ SmoothCurveDB::SetValues(const WDL_TypedBuf<BL_FLOAT> &values, bool reset)
 #endif
     
 #if 0 // New version: avoid the risk to have undefined values
-    mCurve->SetValues4(avgValues, !sameScale);    
+    mCurve->SetValues4(avgValues, !sameScale);
 #endif
 
 #if 1 // New version: optimized in GraphCurve5 and Scale
-    mCurve->SetValues5(avgValues, !useFilterBank, !sameScale);    
+    mCurve->SetValues5(avgValues, !useFilterBank, !sameScale);
 #endif
 }
 
 void
-SmoothCurveDB::GetValues(WDL_TypedBuf<BL_FLOAT> *values)
+SmoothCurveDB::GetHistogramValues(WDL_TypedBuf<BL_FLOAT> *values)
 {
-  mHistogram->GetValues(values);
+    mHistogram->GetValues(values);
+}
+
+void
+SmoothCurveDB::GetHistogramValuesDB(WDL_TypedBuf<BL_FLOAT> *values)
+{
+    mHistogram->GetValuesDB(values);
 }
 #endif

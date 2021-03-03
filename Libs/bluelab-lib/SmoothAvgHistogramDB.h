@@ -38,7 +38,8 @@ public:
     
     // Force the internal values to be the new values,
     // (withtout smoothing)
-    void SetValues(const WDL_TypedBuf<BL_FLOAT> *values);
+    void SetValues(const WDL_TypedBuf<BL_FLOAT> *values,
+                   bool convertToDB = false);
     
     void Reset();
     

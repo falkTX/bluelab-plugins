@@ -31,8 +31,10 @@ public:
     void ClearValues();
     
     void SetValues(const WDL_TypedBuf<BL_FLOAT> &values, bool reset = false);
-    void GetValues(WDL_TypedBuf<BL_FLOAT> *values);
     
+    void GetHistogramValues(WDL_TypedBuf<BL_FLOAT> *values);
+    void GetHistogramValuesDB(WDL_TypedBuf<BL_FLOAT> *values);
+        
 protected:
     SmoothAvgHistogramDB *mHistogram;
     
@@ -48,6 +50,7 @@ private:
     WDL_TypedBuf<BL_FLOAT> mTmpBuf0;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf1;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf2;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf3;
 };
 
 #endif

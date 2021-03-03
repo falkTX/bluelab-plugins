@@ -115,9 +115,13 @@ SmoothAvgHistogramDB::GetValuesDB(WDL_TypedBuf<BL_FLOAT> *values)
 }
 
 void
-SmoothAvgHistogramDB::SetValues(const WDL_TypedBuf<BL_FLOAT> *values)
+SmoothAvgHistogramDB::SetValues(const WDL_TypedBuf<BL_FLOAT> *values,
+                                bool convertToDB)
 {
-    mData = *values;
+    if (!convertToDB)
+        mData = *values;
+    else
+        BLUtils::NormalizedYTodB(*values, mMindB, mMaxdB, &mData);
 }
 
 void
