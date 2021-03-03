@@ -192,6 +192,8 @@ set(_bluelab-lib_src
   EnvelopeGenerator.h
   EQHackFftObj.cpp
   EQHackFftObj.h
+  EQHackFftObj2.cpp
+  EQHackFftObj2.h
   EQHackPluginInterface.h
   FastMath.cpp
   FastMath.h

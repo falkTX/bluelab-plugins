@@ -888,7 +888,6 @@ GraphCurve5::SetValuesDecimateSimple(const WDL_TypedBuf<BL_GUI_FLOAT> *values)
     NotifyGraph();
 }
 
-
 void
 GraphCurve5::SetValuesDecimate(const WDL_TypedBuf<BL_GUI_FLOAT> *values,
                                bool isWaveSignal)

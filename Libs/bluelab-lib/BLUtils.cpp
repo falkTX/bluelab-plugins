@@ -1918,7 +1918,9 @@ BLUtils::StereoToMono(WDL_TypedBuf<WDL_FFT_COMPLEX> *monoResult,
 // Compute the similarity between two normalized curves
 template <typename FLOAT_TYPE>
 FLOAT_TYPE
-BLUtils::ComputeCurveMatchCoeff(const FLOAT_TYPE *curve0, const FLOAT_TYPE *curve1, int nFrames)
+BLUtils::ComputeCurveMatchCoeff(const FLOAT_TYPE *curve0,
+                                const FLOAT_TYPE *curve1,
+                                int nFrames)
 {
     // Use POW_COEFF, to make more difference between matching and out of matching
     // (added for EQHack)
