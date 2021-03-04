@@ -12308,7 +12308,15 @@ BLUtils::SetBufResize(WDL_TypedBuf<FLOAT_TYPE> *dstBuffer,
     // FIX: fixed here
     if (numToCopy + srcOffset > srcBuffer.GetSize())
         numToCopy = srcBuffer.GetSize() - srcOffset;
+
+    // FIX: fix crash Ghost (SA, load file, zoom -> crash)
+    if (numToCopy < 0)
+    {
+        numToCopy = 0;
         
+        return;
+    }
+    
     dstBuffer->Resize(numToCopy);
     memcpy(dstBuffer->Get(),
            &srcBuffer.Get()[srcOffset],

@@ -295,7 +295,7 @@ For all plugins (=> new Design):
 - TODO(all): use FilterBank instead of MelScale (no stairs effect)
 - TODO(all): check that we use the latest TimeAxis and FreqAxis
 SmoothCurveDb => additional arg: sampleRate
-- TODO: for all plugins, set output data to zero at the beginning, for all plugins
+- TODO(all): set output data to zero at the beginning, for all plugins
 
 - TODO: check log scale (with many lines, w/ gamma = 1)
 
