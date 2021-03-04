@@ -100,7 +100,8 @@ SamplesPyramid2::SetValues(const WDL_TypedBuf<BL_FLOAT> &samples)
         if (pyrLevelSize < 2)
             break;
 
-        if (pyrLevel >= MAX_PYRAMID_LEVEL)
+        //if (pyrLevel >= MAX_PYRAMID_LEVEL)
+        if (pyrLevel > MAX_PYRAMID_LEVEL)
             break;
         
         pyrLevelSize /= 2;
@@ -127,7 +128,8 @@ SamplesPyramid2::SetValues(const WDL_TypedBuf<BL_FLOAT> &samples)
             break;
 
         // TEST
-        if (pyramidLevel >= MAX_PYRAMID_LEVEL)
+        //if (pyramidLevel >= MAX_PYRAMID_LEVEL)
+        if (pyramidLevel > MAX_PYRAMID_LEVEL)
             break;
         
         //WDL_TypedBuf<BL_FLOAT> newLevel;
@@ -136,8 +138,8 @@ SamplesPyramid2::SetValues(const WDL_TypedBuf<BL_FLOAT> &samples)
         
         BLUtils::BufToFastQueue(newLevel, &mSamplesPyramid[pyramidLevel]);
         
-        //if (pyramidLevel >= MAX_PYRAMID_LEVEL)
-        //    break;
+        if (pyramidLevel >= MAX_PYRAMID_LEVEL)
+            break;
 
         pyramidLevel++;
     }
@@ -267,7 +269,8 @@ SamplesPyramid2::PushValues(const WDL_TypedBuf<BL_FLOAT> &samples)
                                           
         numSamplesAdd /= 2;
         
-        if (pyramidLevel >= MAX_PYRAMID_LEVEL)
+        //if (pyramidLevel >= MAX_PYRAMID_LEVEL)
+        if (pyramidLevel > MAX_PYRAMID_LEVEL)
             break;
     }
 }
