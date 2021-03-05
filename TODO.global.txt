@@ -358,3 +358,11 @@ WIP: continue fixing/ updating plugins
 
 TODO: FftProcessObj16, avoid .Get() and .GetSize() everywhere
 
+xcb: https://github.com/enn/xcb-examples
+
+apt-file (find file in non-installed rpackages)
+https://askubuntu.com/questions/481/how-do-i-find-the-package-that-provides-a-file
+
+xdnd(LGPL): https://github.com/gnustep/libs-back/blob/master/Source/x11/xdnd.c
+
+http://www.smegware.com/engineering/software/library/library_xdnd.php
