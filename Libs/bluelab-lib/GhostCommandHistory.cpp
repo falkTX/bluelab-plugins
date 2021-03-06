@@ -43,7 +43,7 @@ GhostCommandHistory::AddCommand(GhostCommand *command)
 // For the moment, no "redo" !
 void
 GhostCommandHistory::UndoLastCommand(vector<WDL_TypedBuf<BL_FLOAT> > *magns,
-                                vector<WDL_TypedBuf<BL_FLOAT> > *phases)
+                                     vector<WDL_TypedBuf<BL_FLOAT> > *phases)
 {
     if (mCommands.empty())
         return;
