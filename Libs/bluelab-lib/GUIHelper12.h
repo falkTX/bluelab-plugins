@@ -150,7 +150,9 @@ public:
                           const char *bmpFname,
                           const char *manualFileName,
                           Position pos);
-
+    void ShowHelp(Plugin *plug, IGraphics *graphics,
+                  const char *manualFileName);
+    
     void CreateDemoMessage(IGraphics *graphics);
     
     void CreateWatermarkMessage(IGraphics *graphics, const char *message,
@@ -229,6 +231,10 @@ public:
     void GetCircleGDOffsetY(int *y);
     
 protected:
+    void GetManualFullPath(Plugin *plug, IGraphics *graphics,
+                           const char *manualFileName,
+                           char fullFileName[1024]);
+        
     ITextControl *CreateText(IGraphics *graphics, float x, float y,
                              const char *textStr, const IText &text,
                              float offsetX, float offsetY,

@@ -27,6 +27,8 @@ public:
     virtual ~IHelpButtonControl() {}
     
     void OnMouseDown(float x, float y, const IMouseMod &mod) override;
+
+    static void ShowManual(const char *fileName);
     
 protected:
     char mFileName[1024];

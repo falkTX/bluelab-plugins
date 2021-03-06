@@ -366,3 +366,4 @@ https://askubuntu.com/questions/481/how-do-i-find-the-package-that-provides-a-fi
 xdnd(LGPL): https://github.com/gnustep/libs-back/blob/master/Source/x11/xdnd.c
 
 http://www.smegware.com/engineering/software/library/library_xdnd.php
+

@@ -705,30 +705,10 @@ GUIHelper12::CreateLogoAnim(Plugin *plug, IGraphics *graphics,
 }
 
 void
-GUIHelper12::CreateHelpButton(Plugin *plug, IGraphics *graphics,
-                              const char *bmpFname,
-                              const char *manualFileName,
-                              Position pos)
+GUIHelper12::GetManualFullPath(Plugin *plug, IGraphics *graphics,
+                               const char *manualFileName,
+                               char fullFileName[1024])
 {
-    if (!mCreateHelpButton)
-        return;
-    
-    IBitmap bitmap = graphics->LoadBitmap(bmpFname, 1);
-    
-    float x = 0.0;
-    float y = 0.0;
-    
-    //if (pos == TOP) // TODO
-    
-    if (pos == BOTTOM)
-    {
-        // Lower right corner
-        x = graphics->Width() - bitmap.W() + mHelpButtonOffsetX;
-        y = graphics->Height() - bitmap.H() + mHelpButtonOffsetY;
-    }
-    
-    char fullFileName[1024];
-    
 #ifndef WIN32 // Mac
     WDL_String wdlResDir;
     BLUtils::GetFullPlugResourcesPath(*plug, &wdlResDir);
@@ -752,6 +732,33 @@ GUIHelper12::CreateHelpButton(Plugin *plug, IGraphics *graphics,
     fwrite(resBuf.Get(), 1, resSize, file);
     fclose(file);
 #endif
+}
+
+void
+GUIHelper12::CreateHelpButton(Plugin *plug, IGraphics *graphics,
+                              const char *bmpFname,
+                              const char *manualFileName,
+                              Position pos)
+{
+    if (!mCreateHelpButton)
+        return;
+    
+    IBitmap bitmap = graphics->LoadBitmap(bmpFname, 1);
+    
+    float x = 0.0;
+    float y = 0.0;
+    
+    //if (pos == TOP) // TODO
+    
+    if (pos == BOTTOM)
+    {
+        // Lower right corner
+        x = graphics->Width() - bitmap.W() + mHelpButtonOffsetX;
+        y = graphics->Height() - bitmap.H() + mHelpButtonOffsetY;
+    }
+    
+    char fullFileName[1024];
+    GetManualFullPath(plug, graphics, manualFileName, fullFileName);
     
     IBitmapControl *control = new IHelpButtonControl(x, y, bitmap,
                                                      kNoValIdx,
@@ -762,6 +769,17 @@ GUIHelper12::CreateHelpButton(Plugin *plug, IGraphics *graphics,
 #else
     graphics->AttachControl(control);
 #endif
+}
+
+void
+GUIHelper12::ShowHelp(Plugin *plug, IGraphics *graphics,
+                      const char *manualFileName)
+{
+    char fullFileName[1024];
+    GetManualFullPath(plug, graphics,
+                      manualFileName, fullFileName);
+    
+    IHelpButtonControl::ShowManual(fullFileName);
 }
 
 void
