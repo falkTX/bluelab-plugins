@@ -978,7 +978,8 @@ GUIHelper12::ResetParameter(Plugin *plug, int paramIdx)
 }
 
 IControl *
-GUIHelper12::CreateGUIResizeButton(ResizeGUIPluginInterface *plug, IGraphics *graphics,
+GUIHelper12::CreateGUIResizeButton(ResizeGUIPluginInterface *plug,
+                                   IGraphics *graphics,
                                    float x, float y,
                                    const char *bitmapFname,
                                    int paramIdx,
@@ -1001,12 +1002,16 @@ GUIHelper12::CreateGUIResizeButton(ResizeGUIPluginInterface *plug, IGraphics *gr
                                     paramIdx, guiSizeIdx);
     
     graphics->AttachControl(control);
-    
-    // Add the label
-    CreateTitle(graphics,
-                x + mButtonLabelTextOffsetX,
-                y + bitmap.H()*1.5/((BL_FLOAT)bmpFrames) + mButtonLabelTextOffsetY,
-                label, Size::SIZE_DEFAULT);
+
+    if ((label != NULL) && (strlen(label) != 0))
+    {
+        // Add the label
+        CreateTitle(graphics,
+                    x + mButtonLabelTextOffsetX,
+                    y + bitmap.H()*1.5/((BL_FLOAT)bmpFrames) +
+                    mButtonLabelTextOffsetY,
+                    label, Size::SIZE_DEFAULT);
+    }
     
     return control;
 }
