@@ -24,12 +24,20 @@ using namespace std;
 // => BETTER: gritches less
 #define FIX_GLITCH 1
 
+// WORKAROUND: limit the maximum pyramid depth
+//
+// (Tested on long file, and long capture: perfs still ok)
+//
+// If the level is too high, the waveform gets messy
+// (we don't detect well minima and maxima)
+#define DEFAULT_MAX_PYRAMID_LEVEL 8
+
 // Make "MipMaps" with samples
 // (to optimize when displaying waveform of long sound)
 class SamplesPyramid2
 {
 public:
-    SamplesPyramid2();
+    SamplesPyramid2(int maxLevel = DEFAULT_MAX_PYRAMID_LEVEL);
     
     virtual ~SamplesPyramid2();
     
@@ -65,6 +73,8 @@ protected:
     
     long mRemainToPop;
 
+    int mMaxPyramidLevel;
+    
 private:
     // Tmp buffers
     vector<WDL_TypedBuf<BL_FLOAT> > mTmpBuf0;

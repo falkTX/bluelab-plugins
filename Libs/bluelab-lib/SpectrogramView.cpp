@@ -15,7 +15,11 @@
 #include "SpectrogramView.h"
 
 #define MIN_ZOOM 1.0
-#define MAX_ZOOM 20.0
+//#define MAX_ZOOM 20.0 // ORIGIN
+//#define MAX_ZOOM 45.0
+//#define MAX_ZOOM 200.0
+//#define MAX_ZOOM 400.0
+#define MAX_ZOOM 800.0
 
 // Works quite well with 1
 // (make some light diffrence, but really better
@@ -31,6 +35,13 @@
 // If set to 0, we have vertical lines on some files
 // (FIXED => overlapping=1)
 #define FULL_STEP_PROCESS 0
+
+// Fix when zooming a lot, the dsplay disappeared and the time axis has bugs
+// (this is because the time duration was negative)
+#define FIX_BIG_ZOOM 1
+
+// Experimental, not tested
+#define FIX_BIG_ZOOM2 0 //1
 
 SpectrogramView::SpectrogramView(BLSpectrogram4 *spectrogram,
                                  FftProcessObj16 *fftObj,
@@ -210,7 +221,12 @@ SpectrogramView::GetViewDataBounds2(BL_FLOAT *startDataPos, BL_FLOAT *endDataPos
     int bufferSize = mFftObj->GetBufferSize();
     
     *startDataPos = minNormX*((BL_FLOAT)channelSize)/bufferSize;
+    // NOTE: with -1, makes negative time interval if we zoom a lot
+#if !FIX_BIG_ZOOM
     *endDataPos = maxNormX*((BL_FLOAT)channelSize)/bufferSize - 1;
+#else
+    *endDataPos = maxNormX*((BL_FLOAT)channelSize)/bufferSize;;
+#endif
 }
 
 bool
@@ -256,7 +272,12 @@ SpectrogramView::GetDataSelection2(BL_FLOAT *x0, BL_FLOAT *y0, BL_FLOAT *x1, BL_
     int overlapping = mFftObj->GetOverlapping();
     
     /*long*/ BL_FLOAT startDataPos = minNormX*((BL_FLOAT)channelSize)/bufferSize;
+
+#if !FIX_BIG_ZOOM2
     /*long*/ BL_FLOAT endDataPos = maxNormX*((BL_FLOAT)channelSize)/bufferSize - 1;
+#else
+    /*long*/ BL_FLOAT endDataPos = maxNormX*((BL_FLOAT)channelSize)/bufferSize;
+#endif
     
     *x0 = startDataPos + mSelection[0]*(endDataPos - startDataPos + 1);
     
@@ -290,7 +311,12 @@ SpectrogramView::SetDataSelection2(BL_FLOAT x0, BL_FLOAT y0, BL_FLOAT x1, BL_FLO
     int overlapping = mFftObj->GetOverlapping();
     
     BL_FLOAT /*long*/ startDataPos = minNormX*((BL_FLOAT)channelSize)/bufferSize;
+
+#if !FIX_BIG_ZOOM2
     BL_FLOAT /*long*/ endDataPos = maxNormX*((BL_FLOAT)channelSize)/bufferSize - 1;
+#else
+    BL_FLOAT /*long*/ endDataPos = maxNormX*((BL_FLOAT)channelSize)/bufferSize;
+#endif
     
     mSelection[0] = (x0 - startDataPos)/(endDataPos - startDataPos + 1);
     

@@ -196,7 +196,8 @@ GhostCustomControl::OnMouseUp(float x, float y, const IMouseMod &pMod)
 }
 
 void
-GhostCustomControl::OnMouseDrag(float x, float y, float dX, float dY, const IMouseMod &pMod)
+GhostCustomControl::OnMouseDrag(float x, float y, float dX, float dY,
+                                const IMouseMod &pMod)
 {
     if (mPlug->GetMode() != GhostPluginInterface::EDIT)
         return;

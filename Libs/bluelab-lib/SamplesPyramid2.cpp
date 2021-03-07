@@ -10,14 +10,6 @@
 
 #include "SamplesPyramid2.h"
 
-// WORKAROUND: limit the maximum pyramid depth
-//
-// (Tested on long file, and long capture: perfs still ok)
-//
-// If the level is too high, the waveform gets messy
-// (we don't detect well minima and maxima)
-#define MAX_PYRAMID_LEVEL 8
-
 // FIX: Reaper, buffer size 447: when in capture mode,
 // the right part of the waveform becomes glitchy
 // To void this, bufferize input and output, to push
@@ -49,10 +41,16 @@
 // WDL_TypedFastQueue doesn't like to be in a vector and resized
 #define FIX_VEC_FAST_QUEUE_RESIZE 1
 
-SamplesPyramid2::SamplesPyramid2()
+// FIX: Ghost, big zoom on the right part of the waveform
+// => after a given zoom level, the waveform stops zooming
+#define FIX_BIG_ZOOM 1
+
+SamplesPyramid2::SamplesPyramid2(int maxLevel)
 {
+    mMaxPyramidLevel = maxLevel;
+    
 #if FIX_VEC_FAST_QUEUE_RESIZE
-    mSamplesPyramid.resize(MAX_PYRAMID_LEVEL + 1);
+    mSamplesPyramid.resize(mMaxPyramidLevel + 1);
 #endif
 
     ResetTmpBuffers();
@@ -73,7 +71,7 @@ SamplesPyramid2::Reset()
     mSamplesPyramid.clear();
 
 #if FIX_VEC_FAST_QUEUE_RESIZE
-    mSamplesPyramid.resize(MAX_PYRAMID_LEVEL + 1);
+    mSamplesPyramid.resize(mMaxPyramidLevel + 1);
 #endif
 
     ResetTmpBuffers();
@@ -100,8 +98,8 @@ SamplesPyramid2::SetValues(const WDL_TypedBuf<BL_FLOAT> &samples)
         if (pyrLevelSize < 2)
             break;
 
-        //if (pyrLevel >= MAX_PYRAMID_LEVEL)
-        if (pyrLevel > MAX_PYRAMID_LEVEL)
+        //if (pyrLevel >= mMaxPyramidLevel)
+        if (pyrLevel > mMaxPyramidLevel)
             break;
         
         pyrLevelSize /= 2;
@@ -128,8 +126,8 @@ SamplesPyramid2::SetValues(const WDL_TypedBuf<BL_FLOAT> &samples)
             break;
 
         // TEST
-        //if (pyramidLevel >= MAX_PYRAMID_LEVEL)
-        if (pyramidLevel > MAX_PYRAMID_LEVEL)
+        //if (pyramidLevel >= mMaxPyramidLevel)
+        if (pyramidLevel > mMaxPyramidLevel)
             break;
         
         //WDL_TypedBuf<BL_FLOAT> newLevel;
@@ -138,7 +136,7 @@ SamplesPyramid2::SetValues(const WDL_TypedBuf<BL_FLOAT> &samples)
         
         BLUtils::BufToFastQueue(newLevel, &mSamplesPyramid[pyramidLevel]);
         
-        if (pyramidLevel >= MAX_PYRAMID_LEVEL)
+        if (pyramidLevel >= mMaxPyramidLevel)
             break;
 
         pyramidLevel++;
@@ -211,7 +209,7 @@ SamplesPyramid2::PushValues(const WDL_TypedBuf<BL_FLOAT> &samples)
         pyramidLevel++;
 
         // TEST
-        if (pyramidLevel + 1 > MAX_PYRAMID_LEVEL)
+        if (pyramidLevel + 1 > mMaxPyramidLevel)
             break;
 
 #if !FIX_VEC_FAST_QUEUE_RESIZE
@@ -269,8 +267,8 @@ SamplesPyramid2::PushValues(const WDL_TypedBuf<BL_FLOAT> &samples)
                                           
         numSamplesAdd /= 2;
         
-        //if (pyramidLevel >= MAX_PYRAMID_LEVEL)
-        if (pyramidLevel > MAX_PYRAMID_LEVEL)
+        //if (pyramidLevel >= mMaxPyramidLevel)
+        if (pyramidLevel > mMaxPyramidLevel)
             break;
     }
 }
@@ -405,6 +403,7 @@ SamplesPyramid2::GetValues(BL_FLOAT start, BL_FLOAT end, long numValues,
         // We must start at the first bigger interval
         if ((pyramidLevel >= mSamplesPyramid.size()) || (size < numValues))
         {
+#if !FIX_BIG_ZOOM
             pyramidLevel--;
             if (pyramidLevel < 0)
                 pyramidLevel = 0;
@@ -414,7 +413,7 @@ SamplesPyramid2::GetValues(BL_FLOAT start, BL_FLOAT end, long numValues,
             
             numZerosBegin *= 2;
             numZerosEnd *= 2;
-            
+#endif       
             break;
         }
         
@@ -427,14 +426,14 @@ SamplesPyramid2::GetValues(BL_FLOAT start, BL_FLOAT end, long numValues,
         pyramidLevel++;
     }
 
-    mTmpBuf0.resize(MAX_PYRAMID_LEVEL + 1);
+    mTmpBuf0.resize(mMaxPyramidLevel + 1);
 
     //WDL_TypedBuf<BL_FLOAT> currentPyramidLevel;
     WDL_TypedBuf<BL_FLOAT> &currentPyramidLevel = mTmpBuf0[pyramidLevel /*- 1*/];
         
     BLUtils::FastQueueToBuf(mSamplesPyramid[pyramidLevel], &currentPyramidLevel);
 
-    mTmpBuf1.resize(MAX_PYRAMID_LEVEL + 1);
+    mTmpBuf1.resize(mMaxPyramidLevel + 1);
 
     //WDL_TypedBuf<BL_FLOAT> level;
     WDL_TypedBuf<BL_FLOAT> &level = mTmpBuf1[pyramidLevel/* - 1*/];
@@ -473,20 +472,20 @@ void
 SamplesPyramid2::ResetTmpBuffers()
 {
     mTmpBuf2.resize(0);
-    mTmpBuf2.resize(MAX_PYRAMID_LEVEL + 1);
+    mTmpBuf2.resize(mMaxPyramidLevel + 1);
     
     mTmpBuf3.resize(0);
-    mTmpBuf3.resize(MAX_PYRAMID_LEVEL + 1);
+    mTmpBuf3.resize(mMaxPyramidLevel + 1);
 
     mTmpBuf4.resize(0);
-    mTmpBuf4.resize(MAX_PYRAMID_LEVEL + 1);
+    mTmpBuf4.resize(mMaxPyramidLevel + 1);
 
     mTmpBuf5.resize(0);
-    mTmpBuf5.resize(MAX_PYRAMID_LEVEL + 1);
+    mTmpBuf5.resize(mMaxPyramidLevel + 1);
 
     mTmpBuf7.resize(0);
-    mTmpBuf7.resize(MAX_PYRAMID_LEVEL + 1);
+    mTmpBuf7.resize(mMaxPyramidLevel + 1);
     
     mTmpBuf8.resize(0);
-    mTmpBuf8.resize(MAX_PYRAMID_LEVEL + 1);
+    mTmpBuf8.resize(mMaxPyramidLevel + 1);
 }

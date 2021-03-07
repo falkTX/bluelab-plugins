@@ -351,11 +351,6 @@ GraphTimeAxis6::Update(BL_FLOAT currentTime)
     
     mCurrentTime = currentTime;
     
-    // Make a cool axis, with values sliding as we zoom
-    // and units changing when necessary
-    // (the border values have decimals, the middle values are rounded and slide)
-#define EPS 1e-15
-    
     BL_FLOAT startTime = currentTime - mTimeDuration;
     BL_FLOAT endTime = currentTime;
     
@@ -401,8 +396,16 @@ GraphTimeAxis6::Update(BL_FLOAT currentTime)
         mod = 10;
     else if (timeDuration > 50)
         mod = 5;
+    else if (timeDuration > 10) // For big zoom
+        mod = 1;
+    else if (timeDuration > 1) // For big zoom
+        mod = 0;
     
-    step = ((int)(step/mod))*mod;
+    if (mod > 0) // Test for big zoom
+        step = ((int)(step/mod))*mod;
+    else
+        // Step: 0.1
+        step = ((int)(step*10.0))*0.1;
     
     // HACK
     // Without this, mMaxNumLabels is in fact min num labels,
@@ -411,9 +414,17 @@ GraphTimeAxis6::Update(BL_FLOAT currentTime)
     
     // Start label
     //tm = 0.0;
-    if (step > BL_EPS)
-        tm = ((int)(tm/step))*step;
-
+    if (mod > 0) // Test for big zoom ????
+    {
+        if (step > BL_EPS)
+            tm = ((int)(tm/step))*step;
+    }
+    else
+    {
+        if (step > BL_EPS)
+            tm = ((int)(tm/step))*step;
+    }
+    
     BL_FLOAT timeDurationInv = 1.0/timeDuration;
     for (int i = 0; i < MAX_NUM_LABELS; i++)
     {
@@ -437,10 +448,14 @@ GraphTimeAxis6::Update(BL_FLOAT currentTime)
         {
             int seconds = (int)tm/1000;
             int millis = tm - seconds*1000;
+            int decMillis = tm*10 - millis*10 - seconds*10000; // For big zooms
+            
             bool negMillis = false;
             if (millis < 0)
             {
                 millis = -millis;
+                //decMillis = -decMillis;
+                
                 negMillis = true;
             }
             
@@ -482,30 +497,74 @@ GraphTimeAxis6::Update(BL_FLOAT currentTime)
                 else if (oneLabelSeconds >= 0.01)
                     div = 10;
                 else
+                {
                     // HACK: limit the precision to 10ms (it is sufficient!)
                     div = 10;
+
+                    if (mod <= 1)
+                        div = 1; // For Ghost and big zoom
+                }
+
+                if (step >= 1)
+                {
+                    if (millis == 0)
+                        sprintf(mHAxisData[i][1], "%ds", seconds);
                 
-                if (millis == 0)
-                    sprintf(mHAxisData[i][1], "%ds", seconds);
+                    if ((millis > 0) && (millis < 10))
+                        sprintf(mHAxisData[i][1], "%d.00%ds", seconds, millis/div);
                 
-                if ((millis > 0) && (millis < 10))
-                    sprintf(mHAxisData[i][1], "%d.00%ds", seconds, millis/div);
+                    //if ((millis > 0) && (millis < 100))
+                    if ((millis >= 10) && (millis < 100))
+                        sprintf(mHAxisData[i][1], "%d.0%ds", seconds, millis/div);
+                    
+                    //if ((millis > 0) && (millis >= 100))
+                    if (millis >= 100)
+                        sprintf(mHAxisData[i][1], "%d.%ds", seconds, millis/div);
+                }
+                else
+                {
+                    // Display tenth of millis
+                    int decMillis0 = millis*10 + decMillis;
+                    
+                    if (decMillis0 == 0)
+                        sprintf(mHAxisData[i][1], "%ds", seconds);
                 
-                if ((millis > 0) && (millis < 100))
-                    sprintf(mHAxisData[i][1], "%d.0%ds", seconds, millis/div);
+                    if ((decMillis0 > 0) && (decMillis0 < 10))
+                        sprintf(mHAxisData[i][1], "%d.000%ds", seconds, decMillis0);
                 
-                if ((millis > 0) && (millis >= 100))
-                    sprintf(mHAxisData[i][1], "%d.%ds", seconds, millis/div);
+                    if ((decMillis0 >= 10) && (decMillis0 < 100))
+                        sprintf(mHAxisData[i][1], "%d.00%ds", seconds, decMillis0);
+                    
+                    if ((decMillis0 >= 100) && (decMillis0 < 1000))
+                        sprintf(mHAxisData[i][1], "%d.0%ds", seconds, decMillis0);
+
+                    if (decMillis0 >= 1000)
+                        sprintf(mHAxisData[i][1], "%d.%ds", seconds, decMillis0);
+                }
             }
 #if FIX_DISPLAY_MS
             else if (millis != 0)
             {
                 if (negMillis)
+                {
                     millis = -millis;
-                
-                sprintf(mHAxisData[i][1], "%dms", millis);
+                    decMillis = -decMillis;
+                }
+
+                if (timeDuration >= 5.0)
+                    // Origin
+                    sprintf(mHAxisData[i][1], "%dms", millis);
+                else
+                    sprintf(mHAxisData[i][1], "%d.%dms", millis, decMillis);
             }
 #endif
+            else if (decMillis != 0)
+            {
+                if (decMillis >= 0)
+                    sprintf(mHAxisData[i][1], "0.%dms", decMillis);
+                else
+                    sprintf(mHAxisData[i][1], "-0.%dms", -decMillis);
+            }
         }
         
 #if SQUEEZE_LAST_CROPPED_LABEL
