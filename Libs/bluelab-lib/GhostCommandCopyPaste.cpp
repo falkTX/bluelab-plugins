@@ -7,7 +7,6 @@ GhostCommandCopyPaste::GhostCommandCopyPaste(BL_FLOAT sampleRate,
 : GhostCommand(sampleRate)
 {
     mIsPasteDone = false;
-    //mOffsetXLines = 0;
     mKeepBorderSize = keepBorderSize;
 }
 
@@ -18,10 +17,7 @@ GhostCommandCopyPaste::GhostCommandCopyPaste(const GhostCommandCopyPaste &other)
     mCopiedPhases = other.mCopiedPhases;
     
     for (int i = 0; i < 4; i++)
-    {
         mCopiedSelection[i] = other.mCopiedSelection[i];
-        //mOffsetXLines = other.mOffsetXLines;
-    }
 
     mKeepBorderSize = other.mKeepBorderSize;
     
@@ -32,30 +28,20 @@ GhostCommandCopyPaste::~GhostCommandCopyPaste() {}
 
 void
 GhostCommandCopyPaste::Copy(const vector<WDL_TypedBuf<BL_FLOAT> > &magns,
-                            const vector<WDL_TypedBuf<BL_FLOAT> > &phases) //,
-//int keepBorderSize)
-//int offsetXLines)
+                            const vector<WDL_TypedBuf<BL_FLOAT> > &phases)
 {
     // Save the selection when copied
     for (int i = 0; i < 4; i++)
         mCopiedSelection[i] = mSelection[i];
     
     vector<WDL_TypedBuf<BL_FLOAT> > magnsSel;
-    ExtractAux(&magnsSel, magns,
-               //offsetXLines);
-               //keepBorderSize);
-               mKeepBorderSize);
+    ExtractAux(&magnsSel, magns, mKeepBorderSize);
     
     vector<WDL_TypedBuf<BL_FLOAT> > phasesSel;
-    ExtractAux(&phasesSel, phases,
-               //offsetXLines);
-               mKeepBorderSize);
+    ExtractAux(&phasesSel, phases, mKeepBorderSize);
     
     GetSelectedDataY(magnsSel, &mCopiedMagns);
     GetSelectedDataY(phasesSel, &mCopiedPhases);
-    
-    //mOffsetXLines = offsetXLines;
-    //mKeepBorderSize = keepBorderSize;
 }
 
 void
@@ -119,7 +105,6 @@ GhostCommandCopyPaste::ComputePastedSelection()
 void
 GhostCommandCopyPaste::GetPastedSelection(BL_FLOAT pastedSelection[4],
                                           Scale::Type yScale)
-                                          //bool yLogScale)
 {
     for (int i = 0; i < 4; i++)
         pastedSelection[i] = mPastedSelection[i];
@@ -134,18 +119,8 @@ GhostCommandCopyPaste::GetPastedSelection(BL_FLOAT pastedSelection[4],
     
     pastedSelection[1] = mScale->ApplyScale(yScale, pastedSelection[1],
                                             (BL_FLOAT)0.0, (BL_FLOAT)(mSampleRate*0.5));
-    pastedSelection[3] = mScale->ApplyScale(yScale, pastedSelection[3],
-                                            (BL_FLOAT)0.0, (BL_FLOAT)(mSampleRate*0.5));
+    pastedSelection[3] = mScale->ApplyScale(yScale,
+                                            pastedSelection[3],
+                                            (BL_FLOAT)0.0,
+                                            (BL_FLOAT)(mSampleRate*0.5));
 }
-
-/*int
-  GhostCommandCopyPaste::GetOffsetXLines()
-  {
-  return mOffsetXLines;
-  }*/
-
-/*int
-  GhostCommandCopyPaste::GetKeepBorderSize()
-  {
-  return mKeepBorderSize;
-  }*/

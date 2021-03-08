@@ -16,9 +16,7 @@ public:
     virtual ~GhostCommandCopyPaste();
     
     void Copy(const vector<WDL_TypedBuf<BL_FLOAT> > &magns,
-              const vector<WDL_TypedBuf<BL_FLOAT> > &phases); //,
-    //int keepBorderSize);
-    //int offsetXLines);
+              const vector<WDL_TypedBuf<BL_FLOAT> > &phases);
     
     // Apply is paste
     void Apply(vector<WDL_TypedBuf<BL_FLOAT> > *magns,
@@ -33,16 +31,11 @@ public:
     
     void GetPastedSelection(BL_FLOAT pastedSelection[4],
                             Scale::Type yScale);
-                            //bool yLogScale);
-    
-    //int GetOffsetXLines();
-    //int GetKeepBorderSize();
     
 protected:
     WDL_TypedBuf<BL_FLOAT> mCopiedMagns;
     WDL_TypedBuf<BL_FLOAT> mCopiedPhases;
     
-    //int mOffsetXLines;
     int mKeepBorderSize;
     
     BL_FLOAT mCopiedSelection[4];

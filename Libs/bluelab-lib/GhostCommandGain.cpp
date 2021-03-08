@@ -20,13 +20,11 @@ GhostCommandGain::Apply(vector<WDL_TypedBuf<BL_FLOAT> > *magns,
     WDL_TypedBuf<BL_FLOAT> selectedMagns;
     
     // Get the selected data, just for convenience
-    //GetSelectedData(*data, &selectedData);
     GetSelectedDataY(*magns, &selectedMagns);
     
     // For the moment, do not use fade, just fill all with zeros
     BLUtils::MultValues(&selectedMagns, mFactor);
     
     // And replace in the result
-    //ReplaceSelectedData(data, selectedData);
     ReplaceSelectedDataY(magns, selectedMagns);
 }

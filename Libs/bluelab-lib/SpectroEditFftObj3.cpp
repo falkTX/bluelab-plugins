@@ -70,7 +70,6 @@ void
 SpectroEditFftObj3::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer0,
                                      const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer)
 {
-    //BLUtils::TakeHalf(ioBuffer);
     WDL_TypedBuf<WDL_FFT_COMPLEX> &ioBuffer = mTmpBuf0;
     BLUtils::TakeHalf(*ioBuffer0, &ioBuffer);
     

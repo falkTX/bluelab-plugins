@@ -24,18 +24,12 @@ GhostCommandReplace::Apply(vector<WDL_TypedBuf<BL_FLOAT> > *magns,
     WDL_TypedBuf<BL_FLOAT> selectedMagns;
     
     // Get the selected data, just for convenience
-    //GetSelectedData(*data, &selectedData);
     GetSelectedDataY(*magns, &selectedMagns);
     
-    //int x0;
     int y0;
-    //int x1;
     int y1;
-    
-    //GetDataBounds(*data, &x0, &y0, &x1, &y1);
     GetDataBoundsSlice(*magns, &y0, &y1);
     
-    //int width = x1 - x0;
     int width = (int)magns->size();
     int height = y1 - y0;
     
@@ -51,6 +45,5 @@ GhostCommandReplace::Apply(vector<WDL_TypedBuf<BL_FLOAT> > *magns,
                            mProcessVertical);
     
     // And replace in the result
-    //ReplaceSelectedData(data, selectedData);
     ReplaceSelectedDataY(magns, selectedMagns);
 }

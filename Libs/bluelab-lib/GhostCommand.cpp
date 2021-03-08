@@ -15,30 +15,12 @@ GhostCommand::~GhostCommand()
 void
 GhostCommand::SetSelection(BL_FLOAT x0, BL_FLOAT y0, BL_FLOAT x1, BL_FLOAT y1,
                            Scale::Type yScale)
-{
-#if 0 // TODO iPlug2
-    if (yLogScale)
-    {
-        y0 = Utils::LogScaleNorm(y0, 1.0/*BUFFER_SIZE/2*/, Y_LOG_SCALE_FACTOR);
-        y1 = Utils::LogScaleNorm(y1, 1.0/*BUFFER_SIZE/2*/, Y_LOG_SCALE_FACTOR);
-    }
-#endif
-    
+{    
     y0 = mScale->ApplyScaleInv(yScale, y0,
                                (BL_FLOAT)0.0, (BL_FLOAT)(mSampleRate*0.5));
     y1 = mScale->ApplyScaleInv(yScale, y1,
                                (BL_FLOAT)0.0, (BL_FLOAT)(mSampleRate*0.5));
     
-    // Allows partially out of bounds selection
-#if 0
-    // Bound the selection
-    // Otherwise, when translating too much the view,
-    // and making a cut, this would crash
-    if (x0 < 0.0)
-        x0 = 0.0;
-    if (x1 > 1.0)
-        x1 = 1.0;
-#endif
     
     if (y0 < 0.0)
         y0 = 0.0;
@@ -62,14 +44,10 @@ GhostCommand::ApplySlice(vector<WDL_TypedBuf<BL_FLOAT> > *magns,
     DataToBuf(*phases, &mSavedPhasesSlice);
     
     vector<WDL_TypedBuf<BL_FLOAT> > magnsSel;
-    ExtractAux(&magnsSel, *magns,
-               //offsetXLines);
-               keepBorderSize);
+    ExtractAux(&magnsSel, *magns, keepBorderSize);
     
     vector<WDL_TypedBuf<BL_FLOAT> > phasesSel;
-    ExtractAux(&phasesSel, *phases,
-               //offsetXLines);
-               keepBorderSize);
+    ExtractAux(&phasesSel, *phases, keepBorderSize);
     
     Apply(&magnsSel, &phasesSel);
     
@@ -78,7 +56,6 @@ GhostCommand::ApplySlice(vector<WDL_TypedBuf<BL_FLOAT> > *magns,
     {
         WDL_TypedBuf<BL_FLOAT> &magns0 = magnsSel[i];
         
-        //(*magns)[i + offsetXLines] = magns0;
         (*magns)[i + keepBorderSize] = magns0;
     }
     
@@ -87,7 +64,6 @@ GhostCommand::ApplySlice(vector<WDL_TypedBuf<BL_FLOAT> > *magns,
     {
         WDL_TypedBuf<BL_FLOAT> &phases0 = phasesSel[i];
         
-        //(*phases)[i + offsetXLines] = phases0;
         (*phases)[i + keepBorderSize] = phases0;
     }
 }
@@ -105,22 +81,12 @@ GhostCommand::GetSelection(BL_FLOAT *x0, BL_FLOAT *y0, BL_FLOAT *x1, BL_FLOAT *y
                              (BL_FLOAT)0.0, (BL_FLOAT)(mSampleRate*0.5));
     *y1 = mScale->ApplyScale(yScale, *y1,
                              (BL_FLOAT)0.0, (BL_FLOAT)(mSampleRate*0.5));
-
-    
-#if 0 // TODO iPlug2
-    if (yLogScale)
-    {
-        *y0 = Utils::LogScaleNormInv(*y0, 1.0, Y_LOG_SCALE_FACTOR);
-        *y1 = Utils::LogScaleNormInv(*y1, 1.0, Y_LOG_SCALE_FACTOR);
-    }
-#endif
 }
 
 void
 GhostCommand::Undo(vector<WDL_TypedBuf<BL_FLOAT> > *magns,
                    vector<WDL_TypedBuf<BL_FLOAT> > *phases)
 {    
-    //ReplaceSelectedDataY(data, mSavedDataSlice);
     BufToData(magns, mSavedMagnsSlice);
     BufToData(phases, mSavedPhasesSlice);
 }
@@ -312,7 +278,7 @@ GhostCommand::BufToData(vector<WDL_TypedBuf<BL_FLOAT> > *data,
     
     for (int i = 0; i < w; i++)
     {
-        /*const*/ WDL_TypedBuf<BL_FLOAT> &col = (*data)[i];
+        WDL_TypedBuf<BL_FLOAT> &col = (*data)[i];
         for (int j = 0; j < h; j++)
         {
             BL_FLOAT val = buf.Get()[i + j*w];
@@ -381,7 +347,6 @@ GhostCommand::ExtractAux(vector<WDL_TypedBuf<BL_FLOAT> > *dataSel,
                          //int offsetXLines)
                          int keepBorderSize)
 {
-    //for (int i = offsetXLines; i < data.size() - offsetXLines; i++)
     for (int i = keepBorderSize; i < (int)data.size() - keepBorderSize; i++)
     {
         const WDL_TypedBuf<BL_FLOAT> &data0 = data[i];
