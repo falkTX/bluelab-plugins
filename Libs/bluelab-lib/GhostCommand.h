@@ -29,7 +29,8 @@ public:
     // for good reconstruction
     virtual void ApplySlice(vector<WDL_TypedBuf<BL_FLOAT> > *magns,
                             vector<WDL_TypedBuf<BL_FLOAT> > *phases,
-                            int offsetXLines);
+                            //int offsetXLines);
+                            int keepBorderSize);
     
     virtual void Apply(vector<WDL_TypedBuf<BL_FLOAT> > *magns,
                        vector<WDL_TypedBuf<BL_FLOAT> > *phases) = 0;
@@ -65,7 +66,8 @@ protected:
 
     void ExtractAux(vector<WDL_TypedBuf<BL_FLOAT> > *dataSel,
                     const vector<WDL_TypedBuf<BL_FLOAT> > &data,
-                    int offsetXLines);
+                    //int offsetXLines);
+                    int keepBorderSize);
 
     void DataToBuf(const vector<WDL_TypedBuf<BL_FLOAT> > &data,
                    WDL_TypedBuf<BL_FLOAT> *buf);

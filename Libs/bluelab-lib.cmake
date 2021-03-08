@@ -704,6 +704,8 @@ set(_bluelab-lib_src
   SpectroEditFftObj2.h
   SpectroEditFftObj.cpp
   SpectroEditFftObj.h
+  SpectroEditFftObj3.h
+  SpectroEditFftObj3.cpp
   SpectroExpeFftObj.cpp
   SpectroExpeFftObj.h
   SpectrogramDisplay2.cpp

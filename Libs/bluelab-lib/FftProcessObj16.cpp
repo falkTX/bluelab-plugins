@@ -13,8 +13,8 @@
 #include "FftProcessObj16.h"
 
 
-#define INF 1e15
-#define EPS 1e-15
+//#define INF 1e15
+//#define EPS 1e-15
 
 
 #define NORMALIZE_FFT 1
@@ -2034,7 +2034,7 @@ FftProcessObj16::MagnsToCepstrum(const WDL_TypedBuf<BL_FLOAT> &halfMagns,
         BL_FLOAT val = magns.Get()[i];
         
         BL_FLOAT logVal = 0.0;
-        if (val > EPS)
+        if (val > BL_EPS)
             logVal = std::log(val);
         magns.Get()[i] = logVal;
     }

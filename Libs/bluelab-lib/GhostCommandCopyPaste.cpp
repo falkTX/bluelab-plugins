@@ -2,11 +2,13 @@
 
 #include "GhostCommandCopyPaste.h"
 
-GhostCommandCopyPaste::GhostCommandCopyPaste(BL_FLOAT sampleRate)
+GhostCommandCopyPaste::GhostCommandCopyPaste(BL_FLOAT sampleRate,
+                                             int keepBorderSize)
 : GhostCommand(sampleRate)
 {
     mIsPasteDone = false;
-    mOffsetXLines = 0;
+    //mOffsetXLines = 0;
+    mKeepBorderSize = keepBorderSize;
 }
 
 GhostCommandCopyPaste::GhostCommandCopyPaste(const GhostCommandCopyPaste &other)
@@ -18,8 +20,10 @@ GhostCommandCopyPaste::GhostCommandCopyPaste(const GhostCommandCopyPaste &other)
     for (int i = 0; i < 4; i++)
     {
         mCopiedSelection[i] = other.mCopiedSelection[i];
-        mOffsetXLines = other.mOffsetXLines;
+        //mOffsetXLines = other.mOffsetXLines;
     }
+
+    mKeepBorderSize = other.mKeepBorderSize;
     
     mIsPasteDone = false;
 }
@@ -28,28 +32,35 @@ GhostCommandCopyPaste::~GhostCommandCopyPaste() {}
 
 void
 GhostCommandCopyPaste::Copy(const vector<WDL_TypedBuf<BL_FLOAT> > &magns,
-                            const vector<WDL_TypedBuf<BL_FLOAT> > &phases,
-                            int offsetXLines)
+                            const vector<WDL_TypedBuf<BL_FLOAT> > &phases) //,
+//int keepBorderSize)
+//int offsetXLines)
 {
     // Save the selection when copied
     for (int i = 0; i < 4; i++)
         mCopiedSelection[i] = mSelection[i];
     
     vector<WDL_TypedBuf<BL_FLOAT> > magnsSel;
-    ExtractAux(&magnsSel, magns, offsetXLines);
+    ExtractAux(&magnsSel, magns,
+               //offsetXLines);
+               //keepBorderSize);
+               mKeepBorderSize);
     
     vector<WDL_TypedBuf<BL_FLOAT> > phasesSel;
-    ExtractAux(&phasesSel, phases, offsetXLines);
+    ExtractAux(&phasesSel, phases,
+               //offsetXLines);
+               mKeepBorderSize);
     
     GetSelectedDataY(magnsSel, &mCopiedMagns);
     GetSelectedDataY(phasesSel, &mCopiedPhases);
     
-    mOffsetXLines = offsetXLines;
+    //mOffsetXLines = offsetXLines;
+    //mKeepBorderSize = keepBorderSize;
 }
 
 void
 GhostCommandCopyPaste::Apply(vector<WDL_TypedBuf<BL_FLOAT> > *magns,
-                        vector<WDL_TypedBuf<BL_FLOAT> > *phases)
+                             vector<WDL_TypedBuf<BL_FLOAT> > *phases)
 {
     // Set the selection to the pasted selection
     // in order to process only the selected area
@@ -127,8 +138,14 @@ GhostCommandCopyPaste::GetPastedSelection(BL_FLOAT pastedSelection[4],
                                             (BL_FLOAT)0.0, (BL_FLOAT)(mSampleRate*0.5));
 }
 
-int
-GhostCommandCopyPaste::GetOffsetXLines()
-{
-    return mOffsetXLines;
-}
+/*int
+  GhostCommandCopyPaste::GetOffsetXLines()
+  {
+  return mOffsetXLines;
+  }*/
+
+/*int
+  GhostCommandCopyPaste::GetKeepBorderSize()
+  {
+  return mKeepBorderSize;
+  }*/

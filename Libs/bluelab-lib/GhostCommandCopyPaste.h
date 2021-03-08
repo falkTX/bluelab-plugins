@@ -8,7 +8,7 @@
 class GhostCommandCopyPaste : public GhostCommand
 {
 public:
-    GhostCommandCopyPaste(BL_FLOAT sampleRate);
+    GhostCommandCopyPaste(BL_FLOAT sampleRate, int keepBorderSize);
    
     // To manage on copy then multiple pastes
     GhostCommandCopyPaste(const GhostCommandCopyPaste &other);
@@ -16,8 +16,9 @@ public:
     virtual ~GhostCommandCopyPaste();
     
     void Copy(const vector<WDL_TypedBuf<BL_FLOAT> > &magns,
-              const vector<WDL_TypedBuf<BL_FLOAT> > &phases,
-              int offsetXLines);
+              const vector<WDL_TypedBuf<BL_FLOAT> > &phases); //,
+    //int keepBorderSize);
+    //int offsetXLines);
     
     // Apply is paste
     void Apply(vector<WDL_TypedBuf<BL_FLOAT> > *magns,
@@ -34,13 +35,15 @@ public:
                             Scale::Type yScale);
                             //bool yLogScale);
     
-    int GetOffsetXLines();
+    //int GetOffsetXLines();
+    //int GetKeepBorderSize();
     
 protected:
     WDL_TypedBuf<BL_FLOAT> mCopiedMagns;
     WDL_TypedBuf<BL_FLOAT> mCopiedPhases;
     
-    int mOffsetXLines;
+    //int mOffsetXLines;
+    int mKeepBorderSize;
     
     BL_FLOAT mCopiedSelection[4];
     BL_FLOAT mPastedSelection[4];

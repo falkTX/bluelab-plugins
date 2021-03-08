@@ -255,7 +255,8 @@ SpectrogramView::GetDataSelection(BL_FLOAT *x0, BL_FLOAT *y0, BL_FLOAT *x1, BL_F
 }
 
 bool
-SpectrogramView::GetDataSelection2(BL_FLOAT *x0, BL_FLOAT *y0, BL_FLOAT *x1, BL_FLOAT *y1,
+SpectrogramView::GetDataSelection2(BL_FLOAT *x0, BL_FLOAT *y0,
+                                   BL_FLOAT *x1, BL_FLOAT *y1,
                                    BL_FLOAT minNormX, BL_FLOAT maxNormX)
 {
     if (!mSelectionActive)

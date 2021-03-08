@@ -54,15 +54,15 @@ using namespace iplug;
 
 // TODO: must check if it is used
 /* BL_FLOAT
-BLUtils::ampToDB(BL_FLOAT amp, BL_FLOAT minDB)
-{
-    if (amp <= 0.0)
-        return minDB;
+   BLUtils::ampToDB(BL_FLOAT amp, BL_FLOAT minDB)
+   {
+   if (amp <= 0.0)
+   return minDB;
     
-    BL_FLOAT db = 20. * std::log10(amp);
+   BL_FLOAT db = 20. * std::log10(amp);
     
-    return db;
-} */
+   return db;
+   } */
 
 #define FIND_VALUE_INDEX_EXPE 0
 
@@ -1043,8 +1043,8 @@ template double BLUtils::ComputeClipSum(const WDL_TypedBuf<double> &buf);
 template <typename FLOAT_TYPE>
 void
 BLUtils::ComputeSum(const WDL_TypedBuf<FLOAT_TYPE> &buf0,
-                  const WDL_TypedBuf<FLOAT_TYPE> &buf1,
-                  WDL_TypedBuf<FLOAT_TYPE> *result)
+                    const WDL_TypedBuf<FLOAT_TYPE> &buf1,
+                    WDL_TypedBuf<FLOAT_TYPE> *result)
 {
     if (buf0.GetSize() != buf1.GetSize())
         return;
@@ -1091,17 +1091,17 @@ BLUtils::ComputeSum(const WDL_TypedBuf<FLOAT_TYPE> &buf0,
     }
 }
 template void BLUtils::ComputeSum(const WDL_TypedBuf<float> &buf0,
-                                const WDL_TypedBuf<float> &buf1,
-                                WDL_TypedBuf<float> *result);
+                                  const WDL_TypedBuf<float> &buf1,
+                                  WDL_TypedBuf<float> *result);
 template void BLUtils::ComputeSum(const WDL_TypedBuf<double> &buf0,
-                                const WDL_TypedBuf<double> &buf1,
-                                WDL_TypedBuf<double> *result);
+                                  const WDL_TypedBuf<double> &buf1,
+                                  WDL_TypedBuf<double> *result);
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::ComputeProduct(const WDL_TypedBuf<FLOAT_TYPE> &buf0,
-                      const WDL_TypedBuf<FLOAT_TYPE> &buf1,
-                      WDL_TypedBuf<FLOAT_TYPE> *result)
+                        const WDL_TypedBuf<FLOAT_TYPE> &buf1,
+                        WDL_TypedBuf<FLOAT_TYPE> *result)
 {
     if (buf0.GetSize() != buf1.GetSize())
         return;
@@ -1153,11 +1153,11 @@ BLUtils::ComputeProduct(const WDL_TypedBuf<FLOAT_TYPE> &buf0,
     }
 }
 template void BLUtils::ComputeProduct(const WDL_TypedBuf<float> &buf0,
-                           const WDL_TypedBuf<float> &buf1,
-                           WDL_TypedBuf<float> *result);
+                                      const WDL_TypedBuf<float> &buf1,
+                                      WDL_TypedBuf<float> *result);
 template void BLUtils::ComputeProduct(const WDL_TypedBuf<double> &buf0,
-                           const WDL_TypedBuf<double> &buf1,
-                           WDL_TypedBuf<double> *result);
+                                      const WDL_TypedBuf<double> &buf1,
+                                      WDL_TypedBuf<double> *result);
 
 
 template <typename FLOAT_TYPE>
@@ -1315,8 +1315,8 @@ template double BLUtils::AverageYDB(double y0, double y1, double mindB, double m
 template <typename FLOAT_TYPE>
 void
 BLUtils::ComputeAvg(WDL_TypedBuf<FLOAT_TYPE> *avg,
-                  const WDL_TypedBuf<FLOAT_TYPE> &values0,
-                  const WDL_TypedBuf<FLOAT_TYPE> &values1)
+                    const WDL_TypedBuf<FLOAT_TYPE> &values0,
+                    const WDL_TypedBuf<FLOAT_TYPE> &values1)
 {
     avg->Resize(values0.GetSize());
     
@@ -1363,17 +1363,17 @@ BLUtils::ComputeAvg(WDL_TypedBuf<FLOAT_TYPE> *avg,
     }
 }
 template void BLUtils::ComputeAvg(WDL_TypedBuf<float> *avg,
-                                const WDL_TypedBuf<float> &values0,
-                                const WDL_TypedBuf<float> &values1);
+                                  const WDL_TypedBuf<float> &values0,
+                                  const WDL_TypedBuf<float> &values1);
 template void BLUtils::ComputeAvg(WDL_TypedBuf<double> *avg,
-                                const WDL_TypedBuf<double> &values0,
-                                const WDL_TypedBuf<double> &values1);
+                                  const WDL_TypedBuf<double> &values0,
+                                  const WDL_TypedBuf<double> &values1);
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::ComputeAvg(FLOAT_TYPE *avg,
-                  const FLOAT_TYPE *values0, const FLOAT_TYPE *values1,
-                  int nFrames)
+                    const FLOAT_TYPE *values0, const FLOAT_TYPE *values1,
+                    int nFrames)
 {
 #if USE_SIMD
     if (_useSimd && (nFrames % SIMD_PACK_SIZE == 0))
@@ -1413,18 +1413,18 @@ BLUtils::ComputeAvg(FLOAT_TYPE *avg,
     }
 }
 template void BLUtils::ComputeAvg(float *avg,
-                                const float *values0, const float *values1,
-                                int nFrames);
+                                  const float *values0, const float *values1,
+                                  int nFrames);
 template void BLUtils::ComputeAvg(double *avg,
-                                const double *values0, const double *values1,
-                                int nFrames);
+                                  const double *values0, const double *values1,
+                                  int nFrames);
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::ComplexSum(WDL_TypedBuf<FLOAT_TYPE> *ioMagns,
-                  WDL_TypedBuf<FLOAT_TYPE> *ioPhases,
-                  const WDL_TypedBuf<FLOAT_TYPE> &magns,
-                  WDL_TypedBuf<FLOAT_TYPE> &phases)
+                    WDL_TypedBuf<FLOAT_TYPE> *ioPhases,
+                    const WDL_TypedBuf<FLOAT_TYPE> &magns,
+                    WDL_TypedBuf<FLOAT_TYPE> &phases)
 {
     FLOAT_TYPE ioMagnsSize = ioMagns->GetSize();
     FLOAT_TYPE *ioMagnsData = ioMagns->Get();
@@ -1456,13 +1456,13 @@ BLUtils::ComplexSum(WDL_TypedBuf<FLOAT_TYPE> *ioMagns,
     }
 }
 template void BLUtils::ComplexSum(WDL_TypedBuf<float> *ioMagns,
-                       WDL_TypedBuf<float> *ioPhases,
-                       const WDL_TypedBuf<float> &magns,
-                       WDL_TypedBuf<float> &phases);
+                                  WDL_TypedBuf<float> *ioPhases,
+                                  const WDL_TypedBuf<float> &magns,
+                                  WDL_TypedBuf<float> &phases);
 template void BLUtils::ComplexSum(WDL_TypedBuf<double> *ioMagns,
-                       WDL_TypedBuf<double> *ioPhases,
-                       const WDL_TypedBuf<double> &magns,
-                       WDL_TypedBuf<double> &phases);
+                                  WDL_TypedBuf<double> *ioPhases,
+                                  const WDL_TypedBuf<double> &magns,
+                                  WDL_TypedBuf<double> &phases);
 
 
 template <typename FLOAT_TYPE>
@@ -1831,11 +1831,11 @@ BLUtils::StereoToMono(WDL_TypedBuf<FLOAT_TYPE> *monoResult,
     }
 }
 template void BLUtils::StereoToMono(WDL_TypedBuf<float> *monoResult,
-                                  const WDL_TypedBuf<float> &in0,
-                                  const WDL_TypedBuf<float> &in1);
+                                    const WDL_TypedBuf<float> &in0,
+                                    const WDL_TypedBuf<float> &in1);
 template void BLUtils::StereoToMono(WDL_TypedBuf<double> *monoResult,
-                                  const WDL_TypedBuf<double> &in0,
-                                  const WDL_TypedBuf<double> &in1);
+                                    const WDL_TypedBuf<double> &in0,
+                                    const WDL_TypedBuf<double> &in1);
 
 
 template <typename FLOAT_TYPE>
@@ -2165,16 +2165,16 @@ BLUtils::GetPlugIOBuffers(Plugin *plug, double **inputs, double **outputs,
     
     // in
     in[0] = ((numInChannels - numInScChannels > 0) &&
-	     isInConnected[0]) ? inputs[0] : NULL;
+             isInConnected[0]) ? inputs[0] : NULL;
     in[1] = ((numInChannels - numInScChannels >  1) &&
-	     isInConnected[1]) ? inputs[1] : NULL;
+             isInConnected[1]) ? inputs[1] : NULL;
     
 #ifndef APP_API
     // scin
     scIn[0] = ((numInScChannels > 0) && isInConnected[numInChannels - numInScChannels]) ?
-                inputs[numInChannels - numInScChannels] : NULL;
+    inputs[numInChannels - numInScChannels] : NULL;
     scIn[1] = ((numInScChannels > 1) && isInConnected[numInChannels - numInScChannels + 1]) ?
-                inputs[numInChannels - numInScChannels + 1] : NULL;
+    inputs[numInChannels - numInScChannels + 1] : NULL;
 #else
     // When in application mode, must deactivate sidechains
     // BUG: otherwise it crashes if we try to get sidechains
@@ -2203,7 +2203,7 @@ BLUtils::GetPlugIOBuffers(Plugin *plug, double **inputs, double **outputs,
     {
         in[i] = NULL;
         if (plug->IsChannelConnected(kInput, i) &&
-             (inputs[i] != NULL))
+            (inputs[i] != NULL))
         {
             in[i] = inputs[i];
         }
@@ -2298,12 +2298,12 @@ BLUtils::GetPlugIOBuffers(Plugin *plug,
     
     /*
      
-     Logic/Garageband have an long-standing bug where if no sidechain is selected, the same buffers that are sent to the first bus, are sent to the sidechain bus
-     https://forum.juce.com/t/sidechain-is-not-silent-as-expected-au-logic-x-10-2-2/17068/8
-     https://lists.apple.com/archives/coreaudio-api/2012/Feb/msg00127.html
+      Logic/Garageband have an long-standing bug where if no sidechain is selected, the same buffers that are sent to the first bus, are sent to the sidechain bus
+      https://forum.juce.com/t/sidechain-is-not-silent-as-expected-au-logic-x-10-2-2/17068/8
+      https://lists.apple.com/archives/coreaudio-api/2012/Feb/msg00127.html
      
-     Imperfect hack around it here. Probably a better solution is to have an enable sidechain button in the plug-in UI, in addition to the host sidechain routing.
-     */
+      Imperfect hack around it here. Probably a better solution is to have an enable sidechain button in the plug-in UI, in addition to the host sidechain routing.
+    */
     
 #if defined OS_MAC && defined AU_API
     if(plug->GetHost() == kHostLogic || plug->GetHost() == kHostGarageBand)
@@ -2360,7 +2360,7 @@ BLUtils::GetPlugIOBuffers(Plugin *plug,
         if(connected && (inputs[i] != NULL))
         {
             if (i < 2)
-            // input
+                // input
             {                
                 WDL_TypedBuf<BL_FLOAT> &buf = (*inp)[i];
 #if !BL_TYPE_FLOAT
@@ -2411,10 +2411,10 @@ BLUtils::GetPlugIOBuffers(Plugin *plug,
 #if 0
 void
 BLUtils::GetPlugIOBuffers(Plugin *plug,
-                        double **inputs, double **outputs, int nFrames,
-                        vector<WDL_TypedBuf<BL_FLOAT> > *inp,
-                        vector<WDL_TypedBuf<BL_FLOAT> > *scIn,
-                        vector<WDL_TypedBuf<BL_FLOAT> > *outp)
+                          double **inputs, double **outputs, int nFrames,
+                          vector<WDL_TypedBuf<BL_FLOAT> > *inp,
+                          vector<WDL_TypedBuf<BL_FLOAT> > *scIn,
+                          vector<WDL_TypedBuf<BL_FLOAT> > *outp)
 {
 #define FIX_NUMEROUS_SC_CHANNELS 1
 #define MAX_IN_CHANNELS 256
@@ -2648,7 +2648,7 @@ BLUtils::GetPlugIOBuffers(Plugin *plug,
 
 bool
 BLUtils::GetIOBuffers(int index, double *in[2], double *out[2],
-                    double **inBuf, double **outBuf)
+                      double **inBuf, double **outBuf)
 {
     *inBuf = NULL;
     *outBuf = NULL;
@@ -2677,9 +2677,9 @@ BLUtils::GetIOBuffers(int index, double *in[2], double *out[2],
 
 bool
 BLUtils::GetIOBuffers(int index,
-                    vector<WDL_TypedBuf<double> > &in,
-                    vector<WDL_TypedBuf<double> > &out,
-                    double **inBuf, double **outBuf)
+                      vector<WDL_TypedBuf<double> > &in,
+                      vector<WDL_TypedBuf<double> > &out,
+                      double **inBuf, double **outBuf)
 {
     *inBuf = NULL;
     *outBuf = NULL;
@@ -2706,10 +2706,10 @@ BLUtils::GetIOBuffers(int index,
 
 bool
 BLUtils::GetIOBuffers(int index,
-                    vector<WDL_TypedBuf<double> > &in,
-                    vector<WDL_TypedBuf<double> > &out,
-                    WDL_TypedBuf<double> **inBuf,
-                    WDL_TypedBuf<double> **outBuf)
+                      vector<WDL_TypedBuf<double> > &in,
+                      vector<WDL_TypedBuf<double> > &out,
+                      WDL_TypedBuf<double> **inBuf,
+                      WDL_TypedBuf<double> **outBuf)
 {
     *inBuf = NULL;
     *outBuf = NULL;
@@ -2764,7 +2764,7 @@ BLUtils::PlugIOAllZero(double *inputs[2], double *outputs[2], int nFrames)
 
 bool
 BLUtils::PlugIOAllZero(const vector<WDL_TypedBuf<BL_FLOAT> > &inputs,
-                     const vector<WDL_TypedBuf<BL_FLOAT> > &outputs)
+                       const vector<WDL_TypedBuf<BL_FLOAT> > &outputs)
 {
     bool allZero0 = false;
     bool channelDefined0 = ((inputs.size() > 0) && (outputs.size() > 0));
@@ -2834,8 +2834,8 @@ BLUtils::PlugComputeBufferSize(int bufferSize, BL_FLOAT sampleRate)
 // Fails sometimes...
 int
 BLUtils::PlugComputeLatency(Plugin *plug,
-                          int nativeBufferSize, int nativeLatency,
-                          BL_FLOAT sampleRate)
+                            int nativeBufferSize, int nativeLatency,
+                            BL_FLOAT sampleRate)
 {
 #define NATIVE_SAMPLE_RATE 44100.0
     
@@ -2863,8 +2863,8 @@ BLUtils::PlugComputeLatency(Plugin *plug,
 // Fails sometimes...
 void
 BLUtils::PlugUpdateLatency(Plugin *plug,
-                         int nativeBufferSize, int nativeLatency,
-                         BL_FLOAT sampleRate)
+                           int nativeBufferSize, int nativeLatency,
+                           BL_FLOAT sampleRate)
 {
     if (std::fabs((BL_FLOAT)(sampleRate - NATIVE_SAMPLE_RATE)) < BL_EPS)
         // We are in the native state, no need to tweek latency
@@ -2876,8 +2876,8 @@ BLUtils::PlugUpdateLatency(Plugin *plug,
 
     // Fails sometimes...
     int newLatency = BLUtils::PlugComputeLatency(plug,
-                                               nativeBufferSize, nativeLatency,
-                                               sampleRate);
+                                                 nativeBufferSize, nativeLatency,
+                                                 sampleRate);
 
     // Set latency dynamically
     // (not sure it works for all hosts)
@@ -3036,7 +3036,7 @@ template void BLUtils::ComplexToMagn(WDL_TypedBuf<double> *result, const WDL_Typ
 template <typename FLOAT_TYPE>
 void
 BLUtils::ComplexToPhase(WDL_TypedBuf<FLOAT_TYPE> *result,
-                      const WDL_TypedBuf<WDL_FFT_COMPLEX> &complexBuf)
+                        const WDL_TypedBuf<WDL_FFT_COMPLEX> &complexBuf)
 {
     result->Resize(complexBuf.GetSize());
     
@@ -3051,9 +3051,9 @@ BLUtils::ComplexToPhase(WDL_TypedBuf<FLOAT_TYPE> *result,
     }
 }
 template void BLUtils::ComplexToPhase(WDL_TypedBuf<float> *result,
-                           const WDL_TypedBuf<WDL_FFT_COMPLEX> &complexBuf);
+                                      const WDL_TypedBuf<WDL_FFT_COMPLEX> &complexBuf);
 template void BLUtils::ComplexToPhase(WDL_TypedBuf<double> *result,
-                           const WDL_TypedBuf<WDL_FFT_COMPLEX> &complexBuf);
+                                      const WDL_TypedBuf<WDL_FFT_COMPLEX> &complexBuf);
 
 template <typename FLOAT_TYPE>
 void
@@ -3085,18 +3085,18 @@ BLUtils::ComplexToMagnPhase(WDL_TypedBuf<FLOAT_TYPE> *resultMagn,
     }
 }
 template void BLUtils::ComplexToMagnPhase(WDL_TypedBuf<float> *resultMagn,
-                               WDL_TypedBuf<float> *resultPhase,
-                               const WDL_TypedBuf<WDL_FFT_COMPLEX> &complexBuf);
+                                          WDL_TypedBuf<float> *resultPhase,
+                                          const WDL_TypedBuf<WDL_FFT_COMPLEX> &complexBuf);
 template void BLUtils::ComplexToMagnPhase(WDL_TypedBuf<double> *resultMagn,
-                               WDL_TypedBuf<double> *resultPhase,
-                               const WDL_TypedBuf<WDL_FFT_COMPLEX> &complexBuf);
+                                          WDL_TypedBuf<double> *resultPhase,
+                                          const WDL_TypedBuf<WDL_FFT_COMPLEX> &complexBuf);
 
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::MagnPhaseToComplex(WDL_TypedBuf<WDL_FFT_COMPLEX> *complexBuf,
-                          const WDL_TypedBuf<FLOAT_TYPE> &magns,
-                          const WDL_TypedBuf<FLOAT_TYPE> &phases)
+                            const WDL_TypedBuf<FLOAT_TYPE> &magns,
+                            const WDL_TypedBuf<FLOAT_TYPE> &phases)
 {
     //complexBuf->Resize(0);
     
@@ -3582,15 +3582,15 @@ template void BLUtils::InsertZeros(WDL_TypedBuf<double> *buf, int index, int num
 template <typename FLOAT_TYPE>
 void
 BLUtils::InsertValues(WDL_TypedBuf<FLOAT_TYPE> *buf, int index,
-                    int numValues, FLOAT_TYPE value)
+                      int numValues, FLOAT_TYPE value)
 {
     for (int i = 0; i < numValues; i++)
         buf->Insert(value, index);
 }
 template void BLUtils::InsertValues(WDL_TypedBuf<float> *buf, int index,
-                         int numValues, float value);
+                                    int numValues, float value);
 template void BLUtils::InsertValues(WDL_TypedBuf<double> *buf, int index,
-                         int numValues, double value);
+                                    int numValues, double value);
 
 // BUGGY
 template <typename FLOAT_TYPE>
@@ -3719,8 +3719,8 @@ template void BLUtils::AddValues(WDL_TypedBuf<double> *buf, double value);
 template <typename FLOAT_TYPE>
 void
 BLUtils::AddValues(WDL_TypedBuf<FLOAT_TYPE> *result,
-                 const WDL_TypedBuf<FLOAT_TYPE> &buf0,
-                 const WDL_TypedBuf<FLOAT_TYPE> &buf1)
+                   const WDL_TypedBuf<FLOAT_TYPE> &buf0,
+                   const WDL_TypedBuf<FLOAT_TYPE> &buf1)
 {
     result->Resize(buf0.GetSize());
     
@@ -3762,11 +3762,11 @@ BLUtils::AddValues(WDL_TypedBuf<FLOAT_TYPE> *result,
     }
 }
 template void BLUtils::AddValues(WDL_TypedBuf<float> *result,
-                               const WDL_TypedBuf<float> &buf0,
-                               const WDL_TypedBuf<float> &buf1);
+                                 const WDL_TypedBuf<float> &buf0,
+                                 const WDL_TypedBuf<float> &buf1);
 template void BLUtils::AddValues(WDL_TypedBuf<double> *result,
-                               const WDL_TypedBuf<double> &buf0,
-                               const WDL_TypedBuf<double> &buf1);
+                                 const WDL_TypedBuf<double> &buf0,
+                                 const WDL_TypedBuf<double> &buf1);
 
 template <typename FLOAT_TYPE>
 void
@@ -4024,7 +4024,7 @@ template void BLUtils::MultValues(WDL_TypedBuf<WDL_FFT_COMPLEX> *buf, double val
 template <typename FLOAT_TYPE>
 void
 BLUtils::MultValues(WDL_TypedBuf<WDL_FFT_COMPLEX> *buf,
-                  const WDL_TypedBuf<FLOAT_TYPE> &values)
+                    const WDL_TypedBuf<FLOAT_TYPE> &values)
 {
     if (buf->GetSize() != values.GetSize())
         return;
@@ -4042,13 +4042,13 @@ BLUtils::MultValues(WDL_TypedBuf<WDL_FFT_COMPLEX> *buf,
     }
 }
 template void BLUtils::MultValues(WDL_TypedBuf<WDL_FFT_COMPLEX> *buf,
-                       const WDL_TypedBuf<float> &values);
+                                  const WDL_TypedBuf<float> &values);
 template void BLUtils::MultValues(WDL_TypedBuf<WDL_FFT_COMPLEX> *buf,
-                       const WDL_TypedBuf<double> &values);
+                                  const WDL_TypedBuf<double> &values);
 
 void
 BLUtils::MultValues(WDL_TypedBuf<WDL_FFT_COMPLEX> *buf,
-                  const WDL_TypedBuf<WDL_FFT_COMPLEX> &values)
+                    const WDL_TypedBuf<WDL_FFT_COMPLEX> &values)
 {
     if (buf->GetSize() != values.GetSize())
         return;
@@ -4193,9 +4193,9 @@ template double BLUtils::Interp(double val0, double val1, double t);
 template <typename FLOAT_TYPE>
 void
 BLUtils::Interp(WDL_TypedBuf<FLOAT_TYPE> *result,
-              const WDL_TypedBuf<FLOAT_TYPE> *buf0,
-              const WDL_TypedBuf<FLOAT_TYPE> *buf1,
-              FLOAT_TYPE t)
+                const WDL_TypedBuf<FLOAT_TYPE> *buf0,
+                const WDL_TypedBuf<FLOAT_TYPE> *buf1,
+                FLOAT_TYPE t)
 {
     result->Resize(buf0->GetSize());
     
@@ -4215,21 +4215,21 @@ BLUtils::Interp(WDL_TypedBuf<FLOAT_TYPE> *result,
     }
 }
 template void BLUtils::Interp(WDL_TypedBuf<float> *result,
-                   const WDL_TypedBuf<float> *buf0,
-                   const WDL_TypedBuf<float> *buf1,
-                   float t);
+                              const WDL_TypedBuf<float> *buf0,
+                              const WDL_TypedBuf<float> *buf1,
+                              float t);
 template void BLUtils::Interp(WDL_TypedBuf<double> *result,
-                   const WDL_TypedBuf<double> *buf0,
-                   const WDL_TypedBuf<double> *buf1,
-                   double t);
+                              const WDL_TypedBuf<double> *buf0,
+                              const WDL_TypedBuf<double> *buf1,
+                              double t);
 
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::Interp(WDL_TypedBuf<WDL_FFT_COMPLEX> *result,
-              const WDL_TypedBuf<WDL_FFT_COMPLEX> *buf0,
-              const WDL_TypedBuf<WDL_FFT_COMPLEX> *buf1,
-              FLOAT_TYPE t)
+                const WDL_TypedBuf<WDL_FFT_COMPLEX> *buf0,
+                const WDL_TypedBuf<WDL_FFT_COMPLEX> *buf1,
+                FLOAT_TYPE t)
 {
     result->Resize(buf0->GetSize());
     
@@ -4252,18 +4252,18 @@ BLUtils::Interp(WDL_TypedBuf<WDL_FFT_COMPLEX> *result,
     }
 }
 template void BLUtils::Interp(WDL_TypedBuf<WDL_FFT_COMPLEX> *result,
-                   const WDL_TypedBuf<WDL_FFT_COMPLEX> *buf0,
-                   const WDL_TypedBuf<WDL_FFT_COMPLEX> *buf1,
-                   float t);
+                              const WDL_TypedBuf<WDL_FFT_COMPLEX> *buf0,
+                              const WDL_TypedBuf<WDL_FFT_COMPLEX> *buf1,
+                              float t);
 template void BLUtils::Interp(WDL_TypedBuf<WDL_FFT_COMPLEX> *result,
-                   const WDL_TypedBuf<WDL_FFT_COMPLEX> *buf0,
-                   const WDL_TypedBuf<WDL_FFT_COMPLEX> *buf1,
-                   double t);
+                              const WDL_TypedBuf<WDL_FFT_COMPLEX> *buf0,
+                              const WDL_TypedBuf<WDL_FFT_COMPLEX> *buf1,
+                              double t);
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::Interp2D(WDL_TypedBuf<FLOAT_TYPE> *result,
-                const WDL_TypedBuf<FLOAT_TYPE> bufs[2][2], FLOAT_TYPE u, FLOAT_TYPE v)
+                  const WDL_TypedBuf<FLOAT_TYPE> bufs[2][2], FLOAT_TYPE u, FLOAT_TYPE v)
 {
     WDL_TypedBuf<FLOAT_TYPE> bufv0;
     Interp(&bufv0, &bufs[0][0], &bufs[1][0], u);
@@ -4274,9 +4274,9 @@ BLUtils::Interp2D(WDL_TypedBuf<FLOAT_TYPE> *result,
     Interp(result, &bufv0, &bufv1, v);
 }
 template void BLUtils::Interp2D(WDL_TypedBuf<float> *result,
-                     const WDL_TypedBuf<float> bufs[2][2], float u, float v);
+                                const WDL_TypedBuf<float> bufs[2][2], float u, float v);
 template void BLUtils::Interp2D(WDL_TypedBuf<double> *result,
-                     const WDL_TypedBuf<double> bufs[2][2], double u, double v);
+                                const WDL_TypedBuf<double> bufs[2][2], double u, double v);
 
 template <typename FLOAT_TYPE>
 void
@@ -4362,8 +4362,8 @@ template void BLUtils::Mix(double *output, double *buf0, double *buf1, int nFram
 template <typename FLOAT_TYPE>
 void
 BLUtils::Fade(const WDL_TypedBuf<FLOAT_TYPE> &buf0,
-            const WDL_TypedBuf<FLOAT_TYPE> &buf1,
-            FLOAT_TYPE *resultBuf, FLOAT_TYPE fadeStart, FLOAT_TYPE fadeEnd)
+              const WDL_TypedBuf<FLOAT_TYPE> &buf1,
+              FLOAT_TYPE *resultBuf, FLOAT_TYPE fadeStart, FLOAT_TYPE fadeEnd)
 {
     int buf0Size = buf0.GetSize() - 1;
     FLOAT_TYPE *buf0Data = buf0.Get();
@@ -4391,11 +4391,11 @@ BLUtils::Fade(const WDL_TypedBuf<FLOAT_TYPE> &buf0,
     }
 }
 template void BLUtils::Fade(const WDL_TypedBuf<float> &buf0,
-                 const WDL_TypedBuf<float> &buf1,
-                 float *resultBuf, float fadeStart, float fadeEnd);
+                            const WDL_TypedBuf<float> &buf1,
+                            float *resultBuf, float fadeStart, float fadeEnd);
 template void BLUtils::Fade(const WDL_TypedBuf<double> &buf0,
-                 const WDL_TypedBuf<double> &buf1,
-                 double *resultBuf, double fadeStart, double fadeEnd);
+                            const WDL_TypedBuf<double> &buf1,
+                            double *resultBuf, double fadeStart, double fadeEnd);
 
 template <typename FLOAT_TYPE>
 void
@@ -4443,12 +4443,13 @@ template void BLUtils::Fade(double *buf, int origBufSize, double fadeStart, doub
 // BUG: regression Spatializer5.0.8 => Spatialize 5.0.9 (clicks)
 #define FIX_REGRESSION_SPATIALIZER 1
 #if !FIX_REGRESSION_SPATIALIZER
+template <typename FLOAT_TYPE>
 void
 BLUtils::Fade(const WDL_TypedBuf<FLOAT_TYPE> &buf0,
-            const WDL_TypedBuf<FLOAT_TYPE> &buf1,
-            FLOAT_TYPE *resultBuf,
-            FLOAT_TYPE fadeStart, FLOAT_TYPE fadeEnd,
-            FLOAT_TYPE startT, FLOAT_TYPE endT)
+              const WDL_TypedBuf<FLOAT_TYPE> &buf1,
+              FLOAT_TYPE *resultBuf,
+              FLOAT_TYPE fadeStart, FLOAT_TYPE fadeEnd,
+              FLOAT_TYPE startT, FLOAT_TYPE endT)
 {
     int buf0Size = buf0.GetSize() - 1;
     FLOAT_TYPE *buf0Data = buf0.Get();
@@ -4477,14 +4478,24 @@ BLUtils::Fade(const WDL_TypedBuf<FLOAT_TYPE> &buf0,
         resultBuf[i] = result;
     }
 }
+template void BLUtils::Fade(const WDL_TypedBuf<float> &buf0,
+                            const WDL_TypedBuf<float> &buf1,
+                            float *resultBuf,
+                            float fadeStart, float fadeEnd,
+                            float startT, float endT);
+template void BLUtils::Fade(const WDL_TypedBuf<double> &buf0,
+                            const WDL_TypedBuf<double> &buf1,
+                            double *resultBuf,
+                            double fadeStart, double fadeEnd,
+                            double startT, double endT);
 #else // Fixed version
 template <typename FLOAT_TYPE>
 void
 BLUtils::Fade(const WDL_TypedBuf<FLOAT_TYPE> &buf0,
-            const WDL_TypedBuf<FLOAT_TYPE> &buf1,
-            FLOAT_TYPE *resultBuf,
-            FLOAT_TYPE fadeStart, FLOAT_TYPE fadeEnd,
-            FLOAT_TYPE startT, FLOAT_TYPE endT)
+              const WDL_TypedBuf<FLOAT_TYPE> &buf1,
+              FLOAT_TYPE *resultBuf,
+              FLOAT_TYPE fadeStart, FLOAT_TYPE fadeEnd,
+              FLOAT_TYPE startT, FLOAT_TYPE endT)
 {
     int bufSize = buf0.GetSize() - 1;
     
@@ -4516,24 +4527,24 @@ BLUtils::Fade(const WDL_TypedBuf<FLOAT_TYPE> &buf0,
     }
 }
 template void BLUtils::Fade(const WDL_TypedBuf<float> &buf0,
-                 const WDL_TypedBuf<float> &buf1,
-                 float *resultBuf,
-                 float fadeStart, float fadeEnd,
-                 float startT, float endT);
+                            const WDL_TypedBuf<float> &buf1,
+                            float *resultBuf,
+                            float fadeStart, float fadeEnd,
+                            float startT, float endT);
 template void BLUtils::Fade(const WDL_TypedBuf<double> &buf0,
-                 const WDL_TypedBuf<double> &buf1,
-                 double *resultBuf,
-                 double fadeStart, double fadeEnd,
-                 double startT, double endT);
+                            const WDL_TypedBuf<double> &buf1,
+                            double *resultBuf,
+                            double fadeStart, double fadeEnd,
+                            double startT, double endT);
 #endif
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::Fade(WDL_TypedBuf<FLOAT_TYPE> *ioBuf0,
-            const WDL_TypedBuf<FLOAT_TYPE> &buf1,
-            FLOAT_TYPE fadeStart, FLOAT_TYPE fadeEnd,
-            bool fadeIn,
-            FLOAT_TYPE startPos, FLOAT_TYPE endPos)
+              const WDL_TypedBuf<FLOAT_TYPE> &buf1,
+              FLOAT_TYPE fadeStart, FLOAT_TYPE fadeEnd,
+              bool fadeIn,
+              FLOAT_TYPE startPos, FLOAT_TYPE endPos)
 {
     // NEW: check for bounds !
     // Added for Ghost-X and FftProcessObj15 (latency fix)
@@ -4580,21 +4591,21 @@ BLUtils::Fade(WDL_TypedBuf<FLOAT_TYPE> *ioBuf0,
     }
 }
 template void BLUtils::Fade(WDL_TypedBuf<float> *ioBuf0,
-                 const WDL_TypedBuf<float> &buf1,
-                 float fadeStart, float fadeEnd,
-                 bool fadeIn,
-                 float startPos, float endPos);
+                            const WDL_TypedBuf<float> &buf1,
+                            float fadeStart, float fadeEnd,
+                            bool fadeIn,
+                            float startPos, float endPos);
 template void BLUtils::Fade(WDL_TypedBuf<double> *ioBuf0,
-                 const WDL_TypedBuf<double> &buf1,
-                 double fadeStart, double fadeEnd,
-                 bool fadeIn,
-                 double startPos, double endPos);
+                            const WDL_TypedBuf<double> &buf1,
+                            double fadeStart, double fadeEnd,
+                            bool fadeIn,
+                            double startPos, double endPos);
 
 //
 template <typename FLOAT_TYPE>
 void
 BLUtils::FadeOut(WDL_TypedBuf<FLOAT_TYPE> *ioBuf,
-              int startSampleId, int endSampleId)
+                 int startSampleId, int endSampleId)
 {
     if (ioBuf->GetSize() == 0)
         return;
@@ -4619,34 +4630,34 @@ BLUtils::FadeOut(WDL_TypedBuf<FLOAT_TYPE> *ioBuf,
     }
 }
 template void BLUtils::FadeOut(WDL_TypedBuf<float> *ioBuf,
-                    int startSampleId, int endSampleId);
+                               int startSampleId, int endSampleId);
 template void BLUtils::FadeOut(WDL_TypedBuf<double> *ioBuf,
-                    int startSampleId, int endSampleId);
+                               int startSampleId, int endSampleId);
 
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::Fade(WDL_TypedBuf<FLOAT_TYPE> *ioBuf0,
-            const WDL_TypedBuf<FLOAT_TYPE> &buf1,
-            FLOAT_TYPE fadeStart, FLOAT_TYPE fadeEnd)
+              const WDL_TypedBuf<FLOAT_TYPE> &buf1,
+              FLOAT_TYPE fadeStart, FLOAT_TYPE fadeEnd)
 {
     Fade(ioBuf0, buf1, fadeStart, fadeEnd, true, (FLOAT_TYPE)0.0, (FLOAT_TYPE)0.5);
     Fade(ioBuf0, buf1, (FLOAT_TYPE)1.0 - fadeEnd, (FLOAT_TYPE)1.0 - fadeStart,
          false, (FLOAT_TYPE)0.5, (FLOAT_TYPE)1.0);
 }
 template void BLUtils::Fade(WDL_TypedBuf<float> *ioBuf0,
-                 const WDL_TypedBuf<float> &buf1,
-                 float fadeStart, float fadeEnd);
+                            const WDL_TypedBuf<float> &buf1,
+                            float fadeStart, float fadeEnd);
 template void BLUtils::Fade(WDL_TypedBuf<double> *ioBuf0,
-                 const WDL_TypedBuf<double> &buf1,
-                 double fadeStart, double fadeEnd);
+                            const WDL_TypedBuf<double> &buf1,
+                            double fadeStart, double fadeEnd);
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::Fade(FLOAT_TYPE *ioBuf0Data,
-            const FLOAT_TYPE *buf1Data,
-            int bufSize,
-            FLOAT_TYPE fadeStart, FLOAT_TYPE fadeEnd)
+              const FLOAT_TYPE *buf1Data,
+              int bufSize,
+              FLOAT_TYPE fadeStart, FLOAT_TYPE fadeEnd)
 {
     WDL_TypedBuf<FLOAT_TYPE> buf0;
     buf0.Resize(bufSize);
@@ -4663,13 +4674,13 @@ BLUtils::Fade(FLOAT_TYPE *ioBuf0Data,
     memcpy(ioBuf0Data, buf0.Get(), bufSize*sizeof(FLOAT_TYPE));
 }
 template void BLUtils::Fade(float *ioBuf0Data,
-                 const float *buf1Data,
-                 int bufSize,
-                 float fadeStart, float fadeEnd);
+                            const float *buf1Data,
+                            int bufSize,
+                            float fadeStart, float fadeEnd);
 template void BLUtils::Fade(double *ioBuf0Data,
-                 const double *buf1Data,
-                 int bufSize,
-                 double fadeStart, double fadeEnd);
+                            const double *buf1Data,
+                            int bufSize,
+                            double fadeStart, double fadeEnd);
 
 template <typename FLOAT_TYPE>
 FLOAT_TYPE
@@ -4708,11 +4719,11 @@ BLUtils::AmpToDB(WDL_TypedBuf<FLOAT_TYPE> *dBBuf,
     }
 }
 template void BLUtils::AmpToDB(WDL_TypedBuf<float> *dBBuf,
-                    const WDL_TypedBuf<float> &ampBuf,
-                    float eps, float minDB);
+                               const WDL_TypedBuf<float> &ampBuf,
+                               float eps, float minDB);
 template void BLUtils::AmpToDB(WDL_TypedBuf<double> *dBBuf,
-                    const WDL_TypedBuf<double> &ampBuf,
-                    double eps, double minDB);
+                               const WDL_TypedBuf<double> &ampBuf,
+                               double eps, double minDB);
 
 template <typename FLOAT_TYPE>
 void
@@ -4735,7 +4746,7 @@ template void BLUtils::AmpToDB(double *dBBuf, const double *ampBuf, int bufSize,
 template <typename FLOAT_TYPE>
 void
 BLUtils::AmpToDB(WDL_TypedBuf<FLOAT_TYPE> *dBBuf,
-               const WDL_TypedBuf<FLOAT_TYPE> &ampBuf)
+                 const WDL_TypedBuf<FLOAT_TYPE> &ampBuf)
 {
     *dBBuf = ampBuf;
     
@@ -4751,16 +4762,16 @@ BLUtils::AmpToDB(WDL_TypedBuf<FLOAT_TYPE> *dBBuf,
     }
 }
 template void BLUtils::AmpToDB(WDL_TypedBuf<float> *dBBuf,
-                    const WDL_TypedBuf<float> &ampBuf);
+                               const WDL_TypedBuf<float> &ampBuf);
 template void BLUtils::AmpToDB(WDL_TypedBuf<double> *dBBuf,
-                    const WDL_TypedBuf<double> &ampBuf);
+                               const WDL_TypedBuf<double> &ampBuf);
 
 // OPTIM PROF Infra
 // (compute in place)
 template <typename FLOAT_TYPE>
 void
 BLUtils::AmpToDB(WDL_TypedBuf<FLOAT_TYPE> *ioBuf,
-               FLOAT_TYPE eps, FLOAT_TYPE minDB)
+                 FLOAT_TYPE eps, FLOAT_TYPE minDB)
 {
     int ioBufSize = ioBuf->GetSize();
     FLOAT_TYPE *ioBufData = ioBuf->Get();
@@ -4774,9 +4785,9 @@ BLUtils::AmpToDB(WDL_TypedBuf<FLOAT_TYPE> *ioBuf,
     }
 }
 template void BLUtils::AmpToDB(WDL_TypedBuf<float> *ioBuf,
-                    float eps, float minDB);
+                               float eps, float minDB);
 template void BLUtils::AmpToDB(WDL_TypedBuf<double> *ioBuf,
-                    double eps, double minDB);
+                               double eps, double minDB);
 
 template <typename FLOAT_TYPE>
 FLOAT_TYPE
@@ -4827,8 +4838,8 @@ template double BLUtils::AmpToDBNorm(double sampleVal, double eps, double minDB)
 #if !USE_SIMD_OPTIM
 void
 BLUtils::AmpToDBNorm(WDL_TypedBuf<FLOAT_TYPE> *dBBufNorm,
-                   const WDL_TypedBuf<FLOAT_TYPE> &ampBuf,
-                   FLOAT_TYPE eps, FLOAT_TYPE minDB)
+                     const WDL_TypedBuf<FLOAT_TYPE> &ampBuf,
+                     FLOAT_TYPE eps, FLOAT_TYPE minDB)
 {
     dBBufNorm->Resize(ampBuf.GetSize());
     
@@ -4848,8 +4859,8 @@ BLUtils::AmpToDBNorm(WDL_TypedBuf<FLOAT_TYPE> *dBBufNorm,
 template <typename FLOAT_TYPE>
 void
 BLUtils::AmpToDBNorm(WDL_TypedBuf<FLOAT_TYPE> *dBBufNorm,
-                   const WDL_TypedBuf<FLOAT_TYPE> &ampBuf,
-                   FLOAT_TYPE eps, FLOAT_TYPE minDB)
+                     const WDL_TypedBuf<FLOAT_TYPE> &ampBuf,
+                     FLOAT_TYPE eps, FLOAT_TYPE minDB)
 {
     dBBufNorm->Resize(ampBuf.GetSize());
     
@@ -4886,11 +4897,11 @@ BLUtils::AmpToDBNorm(WDL_TypedBuf<FLOAT_TYPE> *dBBufNorm,
     }
 }
 template void BLUtils::AmpToDBNorm(WDL_TypedBuf<float> *dBBufNorm,
-                        const WDL_TypedBuf<float> &ampBuf,
-                        float eps, float minDB);
+                                   const WDL_TypedBuf<float> &ampBuf,
+                                   float eps, float minDB);
 template void BLUtils::AmpToDBNorm(WDL_TypedBuf<double> *dBBufNorm,
-                        const WDL_TypedBuf<double> &ampBuf,
-                        double eps, double minDB);
+                                   const WDL_TypedBuf<double> &ampBuf,
+                                   double eps, double minDB);
 #endif
 
 static const double BL_AMP_DB = 8.685889638065036553;
@@ -4921,16 +4932,16 @@ template double BLUtils::AmpToDB(double dB);
 template <typename FLOAT_TYPE>
 void
 BLUtils::AmpToDBNorm(WDL_TypedBuf<FLOAT_TYPE> *ioBuf,
-                   FLOAT_TYPE eps, FLOAT_TYPE minDB)
+                     FLOAT_TYPE eps, FLOAT_TYPE minDB)
 {
     WDL_TypedBuf<FLOAT_TYPE> ampBuf = *ioBuf;
     
     AmpToDBNorm(ioBuf, ampBuf, eps, minDB);
 }
 template void BLUtils::AmpToDBNorm(WDL_TypedBuf<float> *ioBuf,
-                        float eps, float minDB);
+                                   float eps, float minDB);
 template void BLUtils::AmpToDBNorm(WDL_TypedBuf<double> *ioBuf,
-                        double eps, double minDB);
+                                   double eps, double minDB);
 
 template <typename FLOAT_TYPE>
 void
@@ -4972,7 +4983,7 @@ template double BLUtils::DBToAmpNorm(double sampleVal, double eps, double minDB)
 template <typename FLOAT_TYPE>
 void
 BLUtils::DBToAmpNorm(WDL_TypedBuf<FLOAT_TYPE> *ioBuf,
-                   FLOAT_TYPE eps, FLOAT_TYPE minDB)
+                     FLOAT_TYPE eps, FLOAT_TYPE minDB)
 {
     int bufSize = ioBuf->GetSize();
     FLOAT_TYPE *bufData = ioBuf->Get();
@@ -4985,9 +4996,9 @@ BLUtils::DBToAmpNorm(WDL_TypedBuf<FLOAT_TYPE> *ioBuf,
     }
 }
 template void BLUtils::DBToAmpNorm(WDL_TypedBuf<float> *ioBuf,
-                        float eps, float minDB);
+                                   float eps, float minDB);
 template void BLUtils::DBToAmpNorm(WDL_TypedBuf<double> *ioBuf,
-                        double eps, double minDB);
+                                   double eps, double minDB);
 
 int
 BLUtils::NextPowerOfTwo(int value)
@@ -5037,7 +5048,7 @@ template void BLUtils::AddValues(WDL_TypedBuf<double> *ioBuf, const WDL_TypedBuf
 
 void
 BLUtils::AddValues(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuf,
-                 const WDL_TypedBuf<WDL_FFT_COMPLEX> &addBuf)
+                   const WDL_TypedBuf<WDL_FFT_COMPLEX> &addBuf)
 {
     int ioBufSize = ioBuf->GetSize();
     WDL_FFT_COMPLEX *ioBufData = ioBuf->Get();
@@ -5116,7 +5127,7 @@ template void BLUtils::SubstractValues(WDL_TypedBuf<double> *ioBuf, const WDL_Ty
 
 void
 BLUtils::SubstractValues(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuf,
-                       const WDL_TypedBuf<WDL_FFT_COMPLEX> &subBuf)
+                         const WDL_TypedBuf<WDL_FFT_COMPLEX> &subBuf)
 {
     int ioBufSize = ioBuf->GetSize();
     WDL_FFT_COMPLEX *ioBufData = ioBuf->Get();
@@ -5137,8 +5148,8 @@ BLUtils::SubstractValues(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuf,
 template <typename FLOAT_TYPE>
 void
 BLUtils::ComputeDiff(WDL_TypedBuf<FLOAT_TYPE> *resultDiff,
-                   const WDL_TypedBuf<FLOAT_TYPE> &buf0,
-                   const WDL_TypedBuf<FLOAT_TYPE> &buf1)
+                     const WDL_TypedBuf<FLOAT_TYPE> &buf0,
+                     const WDL_TypedBuf<FLOAT_TYPE> &buf1)
 {
     resultDiff->Resize(buf0.GetSize());
     
@@ -5180,17 +5191,17 @@ BLUtils::ComputeDiff(WDL_TypedBuf<FLOAT_TYPE> *resultDiff,
     }
 }
 template void BLUtils::ComputeDiff(WDL_TypedBuf<float> *resultDiff,
-                        const WDL_TypedBuf<float> &buf0,
-                        const WDL_TypedBuf<float> &buf1);
+                                   const WDL_TypedBuf<float> &buf0,
+                                   const WDL_TypedBuf<float> &buf1);
 template void BLUtils::ComputeDiff(WDL_TypedBuf<double> *resultDiff,
-                        const WDL_TypedBuf<double> &buf0,
-                        const WDL_TypedBuf<double> &buf1);
+                                   const WDL_TypedBuf<double> &buf0,
+                                   const WDL_TypedBuf<double> &buf1);
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::ComputeDiff(FLOAT_TYPE *resultDiff,
-                   const FLOAT_TYPE* buf0, const FLOAT_TYPE* buf1,
-                   int bufSize)
+                     const FLOAT_TYPE* buf0, const FLOAT_TYPE* buf1,
+                     int bufSize)
 {
 #if USE_SIMD
     if (_useSimd && (bufSize % SIMD_PACK_SIZE == 0))
@@ -5225,15 +5236,15 @@ BLUtils::ComputeDiff(FLOAT_TYPE *resultDiff,
     }
 }
 template void BLUtils::ComputeDiff(float *resultDiff,
-                        const float *buf0, const float *buf1,
-                        int bufSize);
+                                   const float *buf0, const float *buf1,
+                                   int bufSize);
 template void BLUtils::ComputeDiff(double *resultDiff,
-                        const double *buf0, const double *buf1,
-                        int bufSize);
+                                   const double *buf0, const double *buf1,
+                                   int bufSize);
 void
 BLUtils::ComputeDiff(WDL_TypedBuf<WDL_FFT_COMPLEX> *resultDiff,
-                   const WDL_TypedBuf<WDL_FFT_COMPLEX> &buf0,
-                   const WDL_TypedBuf<WDL_FFT_COMPLEX> &buf1)
+                     const WDL_TypedBuf<WDL_FFT_COMPLEX> &buf0,
+                     const WDL_TypedBuf<WDL_FFT_COMPLEX> &buf1)
 {
     resultDiff->Resize(buf0.GetSize());
     
@@ -5269,8 +5280,8 @@ BLUtils::ComputeDiff(WDL_TypedBuf<WDL_FFT_COMPLEX> *resultDiff,
 
 void
 BLUtils::ComputeDiff(WDL_TypedBuf<WDL_FFT_COMPLEX> *resultDiff,
-                   const vector<WDL_FFT_COMPLEX> &buf0,
-                   const vector<WDL_FFT_COMPLEX> &buf1)
+                     const vector<WDL_FFT_COMPLEX> &buf0,
+                     const vector<WDL_FFT_COMPLEX> &buf1)
 {
     resultDiff->Resize(buf0.size());
     
@@ -5293,8 +5304,8 @@ BLUtils::ComputeDiff(WDL_TypedBuf<WDL_FFT_COMPLEX> *resultDiff,
 template <typename FLOAT_TYPE>
 void
 BLUtils::Permute(WDL_TypedBuf<FLOAT_TYPE> *values,
-               const WDL_TypedBuf<int> &indices,
-               bool forward)
+                 const WDL_TypedBuf<int> &indices,
+                 bool forward)
 {
     if (values->GetSize() != indices.GetSize())
         return;
@@ -5320,16 +5331,16 @@ BLUtils::Permute(WDL_TypedBuf<FLOAT_TYPE> *values,
     }
 }
 template void BLUtils::Permute(WDL_TypedBuf<float> *values,
-                    const WDL_TypedBuf<int> &indices,
-                    bool forward);
+                               const WDL_TypedBuf<int> &indices,
+                               bool forward);
 template void BLUtils::Permute(WDL_TypedBuf<double> *values,
-                    const WDL_TypedBuf<int> &indices,
-                    bool forward);
+                               const WDL_TypedBuf<int> &indices,
+                               bool forward);
 
 void
 BLUtils::Permute(vector< vector< int > > *values,
-               const WDL_TypedBuf<int> &indices,
-               bool forward)
+                 const WDL_TypedBuf<int> &indices,
+                 bool forward)
 {
     if (values->size() != indices.GetSize())
         return;
@@ -5546,8 +5557,8 @@ template void BLUtils::ThresholdMinRel(WDL_TypedBuf<double> *values, double min)
 template <typename FLOAT_TYPE>
 void
 BLUtils::Diff(WDL_TypedBuf<FLOAT_TYPE> *diff,
-            const WDL_TypedBuf<FLOAT_TYPE> &prevValues,
-            const WDL_TypedBuf<FLOAT_TYPE> &values)
+              const WDL_TypedBuf<FLOAT_TYPE> &prevValues,
+              const WDL_TypedBuf<FLOAT_TYPE> &values)
 {
 #if USE_SIMD_OPTIM
     // Diff and ComputeDiff are the same function
@@ -5574,16 +5585,16 @@ BLUtils::Diff(WDL_TypedBuf<FLOAT_TYPE> *diff,
     }
 }
 template void BLUtils::Diff(WDL_TypedBuf<float> *diff,
-                 const WDL_TypedBuf<float> &prevValues,
-                 const WDL_TypedBuf<float> &values);
+                            const WDL_TypedBuf<float> &prevValues,
+                            const WDL_TypedBuf<float> &values);
 template void BLUtils::Diff(WDL_TypedBuf<double> *diff,
-                 const WDL_TypedBuf<double> &prevValues,
-                 const WDL_TypedBuf<double> &values);
+                            const WDL_TypedBuf<double> &prevValues,
+                            const WDL_TypedBuf<double> &values);
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::ApplyDiff(WDL_TypedBuf<FLOAT_TYPE> *values,
-                 const WDL_TypedBuf<FLOAT_TYPE> &diff)
+                   const WDL_TypedBuf<FLOAT_TYPE> &diff)
 {
 #if USE_SIMD_OPTIM
     AddValues(values, diff);
@@ -5607,15 +5618,15 @@ BLUtils::ApplyDiff(WDL_TypedBuf<FLOAT_TYPE> *values,
     }
 }
 template void BLUtils::ApplyDiff(WDL_TypedBuf<float> *values,
-                      const WDL_TypedBuf<float> &diff);
+                                 const WDL_TypedBuf<float> &diff);
 template void BLUtils::ApplyDiff(WDL_TypedBuf<double> *values,
-                      const WDL_TypedBuf<double> &diff);
+                                 const WDL_TypedBuf<double> &diff);
 
 
 template <typename FLOAT_TYPE>
 bool
 BLUtils::IsEqual(const WDL_TypedBuf<FLOAT_TYPE> &values0,
-               const WDL_TypedBuf<FLOAT_TYPE> &values1)
+                 const WDL_TypedBuf<FLOAT_TYPE> &values1)
 {
     if (values0.GetSize() != values1.GetSize())
         return false;
@@ -5661,9 +5672,9 @@ BLUtils::IsEqual(const WDL_TypedBuf<FLOAT_TYPE> &values0,
     return true;
 }
 template bool BLUtils::IsEqual(const WDL_TypedBuf<float> &values0,
-                    const WDL_TypedBuf<float> &values1);
+                               const WDL_TypedBuf<float> &values1);
 template bool BLUtils::IsEqual(const WDL_TypedBuf<double> &values0,
-                    const WDL_TypedBuf<double> &values1);
+                               const WDL_TypedBuf<double> &values1);
 
 template <typename FLOAT_TYPE>
 void
@@ -5806,8 +5817,8 @@ template void BLUtils::ApplySqrt(WDL_TypedBuf<double> *values);
 template <typename FLOAT_TYPE>
 void
 BLUtils::DecimateValues(WDL_TypedBuf<FLOAT_TYPE> *result,
-                      const WDL_TypedBuf<FLOAT_TYPE> &buf,
-                      FLOAT_TYPE decFactor)
+                        const WDL_TypedBuf<FLOAT_TYPE> &buf,
+                        FLOAT_TYPE decFactor)
 {
     if (buf.GetSize() == 0)
         return;
@@ -5856,32 +5867,32 @@ BLUtils::DecimateValues(WDL_TypedBuf<FLOAT_TYPE> *result,
     }
 }
 template void BLUtils::DecimateValues(WDL_TypedBuf<float> *result,
-                                    const WDL_TypedBuf<float> &buf,
-                                    float decFactor);
+                                      const WDL_TypedBuf<float> &buf,
+                                      float decFactor);
 template void BLUtils::DecimateValues(WDL_TypedBuf<double> *result,
-                                    const WDL_TypedBuf<double> &buf,
-                                    double decFactor);
+                                      const WDL_TypedBuf<double> &buf,
+                                      double decFactor);
 
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::DecimateValues(WDL_TypedBuf<FLOAT_TYPE> *ioValues,
-                      FLOAT_TYPE decFactor)
+                        FLOAT_TYPE decFactor)
 {
     WDL_TypedBuf<FLOAT_TYPE> origSamples = *ioValues;
     DecimateValues(ioValues, origSamples, decFactor);
 }
 template void BLUtils::DecimateValues(WDL_TypedBuf<float> *ioValues,
-                                    float decFactor);
+                                      float decFactor);
 template void BLUtils::DecimateValues(WDL_TypedBuf<double> *ioValues,
-                                    double decFactor);
+                                      double decFactor);
 
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::DecimateValuesDb(WDL_TypedBuf<FLOAT_TYPE> *result,
-                        const WDL_TypedBuf<FLOAT_TYPE> &buf,
-                        FLOAT_TYPE decFactor, FLOAT_TYPE minValueDb)
+                          const WDL_TypedBuf<FLOAT_TYPE> &buf,
+                          FLOAT_TYPE decFactor, FLOAT_TYPE minValueDb)
 {
     if (buf.GetSize() == 0)
         return;
@@ -5931,11 +5942,11 @@ BLUtils::DecimateValuesDb(WDL_TypedBuf<FLOAT_TYPE> *result,
     }
 }
 template void BLUtils::DecimateValuesDb(WDL_TypedBuf<float> *result,
-                                      const WDL_TypedBuf<float> &buf,
-                                      float decFactor, float minValueDb);
+                                        const WDL_TypedBuf<float> &buf,
+                                        float decFactor, float minValueDb);
 template void BLUtils::DecimateValuesDb(WDL_TypedBuf<double> *result,
-                                      const WDL_TypedBuf<double> &buf,
-                                      double decFactor, double minValueDb);
+                                        const WDL_TypedBuf<double> &buf,
+                                        double decFactor, double minValueDb);
 
 
 // FIX: to avoid long series of positive values not looking like waveforms
@@ -5943,8 +5954,8 @@ template void BLUtils::DecimateValuesDb(WDL_TypedBuf<double> *result,
 template <typename FLOAT_TYPE>
 void
 BLUtils::DecimateSamples(WDL_TypedBuf<FLOAT_TYPE> *result,
-                       const WDL_TypedBuf<FLOAT_TYPE> &buf,
-                       FLOAT_TYPE decFactor)
+                         const WDL_TypedBuf<FLOAT_TYPE> &buf,
+                         FLOAT_TYPE decFactor)
 {
     if (buf.GetSize() == 0)
         return;
@@ -6066,11 +6077,11 @@ BLUtils::DecimateSamples(WDL_TypedBuf<FLOAT_TYPE> *result,
     }
 }
 template void BLUtils::DecimateSamples(WDL_TypedBuf<float> *result,
-                                     const WDL_TypedBuf<float> &buf,
-                                     float decFactor);
+                                       const WDL_TypedBuf<float> &buf,
+                                       float decFactor);
 template void BLUtils::DecimateSamples(WDL_TypedBuf<double> *result,
-                                     const WDL_TypedBuf<double> &buf,
-                                     double decFactor);
+                                       const WDL_TypedBuf<double> &buf,
+                                       double decFactor);
 
 
 // DOESN'T WORK...
@@ -6079,8 +6090,8 @@ template void BLUtils::DecimateSamples(WDL_TypedBuf<double> *result,
 template <typename FLOAT_TYPE>
 void
 BLUtils::DecimateSamples2(WDL_TypedBuf<FLOAT_TYPE> *result,
-                        const WDL_TypedBuf<FLOAT_TYPE> &buf,
-                        FLOAT_TYPE decFactor)
+                          const WDL_TypedBuf<FLOAT_TYPE> &buf,
+                          FLOAT_TYPE decFactor)
 {
     FLOAT_TYPE factor = 0.5;
     
@@ -6097,11 +6108,11 @@ BLUtils::DecimateSamples2(WDL_TypedBuf<FLOAT_TYPE> *result,
     *result = tmp;
 }
 template void BLUtils::DecimateSamples2(WDL_TypedBuf<float> *result,
-                                      const WDL_TypedBuf<float> &buf,
-                                      float decFactor);
+                                        const WDL_TypedBuf<float> &buf,
+                                        float decFactor);
 template void BLUtils::DecimateSamples2(WDL_TypedBuf<double> *result,
-                                      const WDL_TypedBuf<double> &buf,
-                                      double decFactor);
+                                        const WDL_TypedBuf<double> &buf,
+                                        double decFactor);
 
 
 template <typename FLOAT_TYPE>
@@ -6113,17 +6124,17 @@ BLUtils::DecimateSamples(WDL_TypedBuf<FLOAT_TYPE> *ioSamples,
     DecimateSamples(ioSamples, origSamples, decFactor);
 }
 template void BLUtils::DecimateSamples(WDL_TypedBuf<float> *ioSamples,
-                                     float decFactor);
+                                       float decFactor);
 template void BLUtils::DecimateSamples(WDL_TypedBuf<double> *ioSamples,
-                                     double decFactor);
+                                       double decFactor);
 
 // Simply take some samples and throw out the others
 // ("sparkling" when zooming in Ghost)
 template <typename FLOAT_TYPE>
 void
 BLUtils::DecimateSamplesFast(WDL_TypedBuf<FLOAT_TYPE> *result,
-                           const WDL_TypedBuf<FLOAT_TYPE> &buf,
-                           FLOAT_TYPE decFactor)
+                             const WDL_TypedBuf<FLOAT_TYPE> &buf,
+                             FLOAT_TYPE decFactor)
 {
     BLUtils::ResizeFillZeros(result, buf.GetSize()*decFactor);
     
@@ -6146,11 +6157,11 @@ BLUtils::DecimateSamplesFast(WDL_TypedBuf<FLOAT_TYPE> *result,
     }
 }
 template void BLUtils::DecimateSamplesFast(WDL_TypedBuf<float> *result,
-                                const WDL_TypedBuf<float> &buf,
-                                float decFactor);
+                                           const WDL_TypedBuf<float> &buf,
+                                           float decFactor);
 template void BLUtils::DecimateSamplesFast(WDL_TypedBuf<double> *result,
-                                const WDL_TypedBuf<double> &buf,
-                                double decFactor);
+                                           const WDL_TypedBuf<double> &buf,
+                                           double decFactor);
 
 template <typename FLOAT_TYPE>
 void
@@ -6217,15 +6228,15 @@ template void BLUtils::DecimateStep(const WDL_TypedBuf<double> &inSamples,
 template <typename FLOAT_TYPE>
 void
 BLUtils::DecimateSamplesFast(WDL_TypedBuf<FLOAT_TYPE> *ioSamples,
-                           FLOAT_TYPE decFactor)
+                             FLOAT_TYPE decFactor)
 {
     WDL_TypedBuf<FLOAT_TYPE> buf = *ioSamples;
     DecimateSamplesFast(ioSamples, buf, decFactor);
 }
 template void BLUtils::DecimateSamplesFast(WDL_TypedBuf<float> *ioSamples,
-                                float decFactor);
+                                           float decFactor);
 template void BLUtils::DecimateSamplesFast(WDL_TypedBuf<double> *ioSamples,
-                                double decFactor);
+                                           double decFactor);
 
 template <typename FLOAT_TYPE>
 int
@@ -6289,8 +6300,8 @@ BLUtils::FillSecondFftHalf(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer)
       //
       // NOTE: could fix many plugins, like for example StereoViz
       //
-      ioBufferData[ioBufferSize2].re = 0.0;
-      ioBufferData[ioBufferSize2].im = 0.0;
+        ioBufferData[ioBufferSize2].re = 0.0;
+        ioBufferData[ioBufferSize2].im = 0.0;
 #endif
         
 #if 0 // Bug fix (but strange WDL behaviour)
@@ -6616,7 +6627,7 @@ class Value
 {
 public:
     static bool IsGreater(const Value& v0, const Value& v1)
-        { return v0.mSrcValue < v1.mSrcValue; }
+    { return v0.mSrcValue < v1.mSrcValue; }
     
     FLOAT_TYPE mSrcValue;
     FLOAT_TYPE mDstValue;
@@ -6625,8 +6636,8 @@ public:
 template <typename FLOAT_TYPE>
 FLOAT_TYPE
 BLUtils::FindMatchingValue(FLOAT_TYPE srcVal,
-                         const WDL_TypedBuf<FLOAT_TYPE> &srcValues,
-                         const WDL_TypedBuf<FLOAT_TYPE> &dstValues)
+                           const WDL_TypedBuf<FLOAT_TYPE> &srcValues,
+                           const WDL_TypedBuf<FLOAT_TYPE> &dstValues)
 {
     // Fill the vector
     vector<Value<FLOAT_TYPE> > values;
@@ -6682,16 +6693,16 @@ BLUtils::FindMatchingValue(FLOAT_TYPE srcVal,
     return res;
 }
 template float BLUtils::FindMatchingValue(float srcVal,
-                               const WDL_TypedBuf<float> &srcValues,
-                               const WDL_TypedBuf<float> &dstValues);
+                                          const WDL_TypedBuf<float> &srcValues,
+                                          const WDL_TypedBuf<float> &dstValues);
 template double BLUtils::FindMatchingValue(double srcVal,
-                                const WDL_TypedBuf<double> &srcValues,
-                                const WDL_TypedBuf<double> &dstValues);
+                                           const WDL_TypedBuf<double> &srcValues,
+                                           const WDL_TypedBuf<double> &dstValues);
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::PrepareMatchingValueSorted(WDL_TypedBuf<FLOAT_TYPE> *srcValues,
-                                  WDL_TypedBuf<FLOAT_TYPE> *dstValues)
+                                    WDL_TypedBuf<FLOAT_TYPE> *dstValues)
 {
     // Fill the vector
     vector<Value<FLOAT_TYPE> > values;
@@ -6744,15 +6755,15 @@ BLUtils::PrepareMatchingValueSorted(WDL_TypedBuf<FLOAT_TYPE> *srcValues,
     }
 }
 template void BLUtils::PrepareMatchingValueSorted(WDL_TypedBuf<float> *srcValues,
-                                       WDL_TypedBuf<float> *dstValues);
+                                                  WDL_TypedBuf<float> *dstValues);
 template void BLUtils::PrepareMatchingValueSorted(WDL_TypedBuf<double> *srcValues,
-                                       WDL_TypedBuf<double> *dstValues);
+                                                  WDL_TypedBuf<double> *dstValues);
 
 template <typename FLOAT_TYPE>
 FLOAT_TYPE
 BLUtils::FindMatchingValueSorted(FLOAT_TYPE srcVal,
-                               const WDL_TypedBuf<FLOAT_TYPE> &sortedSrcValues,
-                               const WDL_TypedBuf<FLOAT_TYPE> &sortedDstValues)
+                                 const WDL_TypedBuf<FLOAT_TYPE> &sortedSrcValues,
+                                 const WDL_TypedBuf<FLOAT_TYPE> &sortedDstValues)
 {
     // Find the index and the t parameter
     FLOAT_TYPE t;
@@ -6773,11 +6784,11 @@ BLUtils::FindMatchingValueSorted(FLOAT_TYPE srcVal,
     return res;
 }
 template float BLUtils::FindMatchingValueSorted(float srcVal,
-                                     const WDL_TypedBuf<float> &sortedSrcValues,
-                                     const WDL_TypedBuf<float> &sortedDstValues);
+                                                const WDL_TypedBuf<float> &sortedSrcValues,
+                                                const WDL_TypedBuf<float> &sortedDstValues);
 template double BLUtils::FindMatchingValueSorted(double srcVal,
-                                      const WDL_TypedBuf<double> &sortedSrcValues,
-                                      const WDL_TypedBuf<double> &sortedDstValues);
+                                                 const WDL_TypedBuf<double> &sortedSrcValues,
+                                                 const WDL_TypedBuf<double> &sortedDstValues);
 
 template <typename FLOAT_TYPE>
 FLOAT_TYPE
@@ -6817,8 +6828,8 @@ template void BLUtils::ShiftSamples(const WDL_TypedBuf<double> *ioSamples, int s
 template <typename FLOAT_TYPE>
 void
 BLUtils::ComputeEnvelope(const WDL_TypedBuf<FLOAT_TYPE> &samples,
-                       WDL_TypedBuf<FLOAT_TYPE> *envelope,
-                       bool extendBoundsValues)
+                         WDL_TypedBuf<FLOAT_TYPE> *envelope,
+                         bool extendBoundsValues)
 {
     WDL_TypedBuf<FLOAT_TYPE> maxValues;
     maxValues.Resize(samples.GetSize());
@@ -6866,8 +6877,8 @@ BLUtils::ComputeEnvelope(const WDL_TypedBuf<FLOAT_TYPE> &samples,
         prevSamples[2] = sample;
         
         if ((prevSamples[1] >= prevSamples[0]) &&
-           (prevSamples[1] >= prevSamples[2]))
-           // Local maximum
+            (prevSamples[1] >= prevSamples[2]))
+            // Local maximum
         {
             int idx = i - 1;
             if (idx < 0)
@@ -7017,21 +7028,21 @@ BLUtils::ComputeEnvelope(const WDL_TypedBuf<FLOAT_TYPE> &samples,
 #endif
 }
 template void BLUtils::ComputeEnvelope(const WDL_TypedBuf<float> &samples,
-                            WDL_TypedBuf<float> *envelope,
-                            bool extendBoundsValues);
+                                       WDL_TypedBuf<float> *envelope,
+                                       bool extendBoundsValues);
 template void BLUtils::ComputeEnvelope(const WDL_TypedBuf<double> &samples,
-                            WDL_TypedBuf<double> *envelope,
-                            bool extendBoundsValues);
+                                       WDL_TypedBuf<double> *envelope,
+                                       bool extendBoundsValues);
 
 // GOOD: makes good linerp !
 // And fixed NaN
 template <typename FLOAT_TYPE>
 void
 BLUtils::FillMissingValues(WDL_TypedBuf<FLOAT_TYPE> *values,
-                         bool extendBounds, FLOAT_TYPE undefinedValue)
+                           bool extendBounds, FLOAT_TYPE undefinedValue)
 {
     if (extendBounds)
-    // Extend the last value to the end
+        // Extend the last value to the end
     {
         // Find the last max
         int lastIndex = values->GetSize() - 1;
@@ -7147,14 +7158,14 @@ BLUtils::FillMissingValues(WDL_TypedBuf<FLOAT_TYPE> *values,
     }
 }
 template void BLUtils::FillMissingValues(WDL_TypedBuf<float> *values,
-                              bool extendBounds, float undefinedValue);
+                                         bool extendBounds, float undefinedValue);
 template void BLUtils::FillMissingValues(WDL_TypedBuf<double> *values,
-                              bool extendBounds, double undefinedValue);
+                                         bool extendBounds, double undefinedValue);
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::FillMissingValues2(WDL_TypedBuf<FLOAT_TYPE> *values,
-                          bool extendBounds, FLOAT_TYPE undefinedValue)
+                            bool extendBounds, FLOAT_TYPE undefinedValue)
 {
     if (extendBounds)
         // Extend the last value to the end
@@ -7273,14 +7284,14 @@ BLUtils::FillMissingValues2(WDL_TypedBuf<FLOAT_TYPE> *values,
     }
 }
 template void BLUtils::FillMissingValues2(WDL_TypedBuf<float> *values,
-                               bool extendBounds, float undefinedValue);
+                                          bool extendBounds, float undefinedValue);
 template void BLUtils::FillMissingValues2(WDL_TypedBuf<double> *values,
-                               bool extendBounds, double undefinedValue);
+                                          bool extendBounds, double undefinedValue);
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::FillMissingValues3(WDL_TypedBuf<FLOAT_TYPE> *values,
-                          bool extendBounds, FLOAT_TYPE undefinedValue)
+                            bool extendBounds, FLOAT_TYPE undefinedValue)
 {
     if (extendBounds)
         // Extend the last value to the end
@@ -7401,9 +7412,9 @@ BLUtils::FillMissingValues3(WDL_TypedBuf<FLOAT_TYPE> *values,
     }
 }
 template void BLUtils::FillMissingValues3(WDL_TypedBuf<float> *values,
-                               bool extendBounds, float undefinedValue);
+                                          bool extendBounds, float undefinedValue);
 template void BLUtils::FillMissingValues3(WDL_TypedBuf<double> *values,
-                               bool extendBounds, double undefinedValue);
+                                          bool extendBounds, double undefinedValue);
 
 // Smooth, then compute envelope
 ///template <typename FLOAT_TYPE>
@@ -7443,13 +7454,13 @@ BLUtils::ComputeEnvelopeSmooth(CMA2Smoother *smoother,
     ComputeEnvelope(smoothedSamples, envelope, extendBoundsValues);
 }
 /*template void BLUtils::ComputeEnvelopeSmooth(const WDL_TypedBuf<float> &samples,
-                                  WDL_TypedBuf<float> *envelope,
-                                  float smoothCoeff,
-                                  bool extendBoundsValues);
-                                  template void BLUtils::ComputeEnvelopeSmooth(const WDL_TypedBuf<double> &samples,
-                                  WDL_TypedBuf<double> *envelope,
-                                  double smoothCoeff,
-                                  bool extendBoundsValues);
+  WDL_TypedBuf<float> *envelope,
+  float smoothCoeff,
+  bool extendBoundsValues);
+  template void BLUtils::ComputeEnvelopeSmooth(const WDL_TypedBuf<double> &samples,
+  WDL_TypedBuf<double> *envelope,
+  double smoothCoeff,
+  bool extendBoundsValues);
 */
 
 // Compute an envelope by only smoothing
@@ -7742,8 +7753,8 @@ template void BLUtils::LogScaleNormInv2(WDL_TypedBuf<double> *values, double fac
 template <typename FLOAT_TYPE>
 void
 BLUtils::FreqsToLogNorm(WDL_TypedBuf<FLOAT_TYPE> *resultMagns,
-                      const WDL_TypedBuf<FLOAT_TYPE> &magns,
-                      FLOAT_TYPE hzPerBin)
+                        const WDL_TypedBuf<FLOAT_TYPE> &magns,
+                        FLOAT_TYPE hzPerBin)
 {
     BLUtils::ResizeFillZeros(resultMagns, magns.GetSize());
     
@@ -7783,18 +7794,18 @@ BLUtils::FreqsToLogNorm(WDL_TypedBuf<FLOAT_TYPE> *resultMagns,
     }
 }
 template void BLUtils::FreqsToLogNorm(WDL_TypedBuf<float> *resultMagns,
-                           const WDL_TypedBuf<float> &magns,
-                           float hzPerBin);
+                                      const WDL_TypedBuf<float> &magns,
+                                      float hzPerBin);
 template void BLUtils::FreqsToLogNorm(WDL_TypedBuf<double> *resultMagns,
-                           const WDL_TypedBuf<double> &magns,
-                           double hzPerBin);
+                                      const WDL_TypedBuf<double> &magns,
+                                      double hzPerBin);
 
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::LogToFreqsNorm(WDL_TypedBuf<FLOAT_TYPE> *resultMagns,
-                      const WDL_TypedBuf<FLOAT_TYPE> &magns,
-                      FLOAT_TYPE hzPerBin)
+                        const WDL_TypedBuf<FLOAT_TYPE> &magns,
+                        FLOAT_TYPE hzPerBin)
 {
     BLUtils::ResizeFillZeros(resultMagns, magns.GetSize());
     
@@ -7838,18 +7849,18 @@ BLUtils::LogToFreqsNorm(WDL_TypedBuf<FLOAT_TYPE> *resultMagns,
     }
 }
 template void BLUtils::LogToFreqsNorm(WDL_TypedBuf<float> *resultMagns,
-                           const WDL_TypedBuf<float> &magns,
-                           float hzPerBin);
+                                      const WDL_TypedBuf<float> &magns,
+                                      float hzPerBin);
 template void BLUtils::LogToFreqsNorm(WDL_TypedBuf<double> *resultMagns,
-                           const WDL_TypedBuf<double> &magns,
-                           double hzPerBin);
+                                      const WDL_TypedBuf<double> &magns,
+                                      double hzPerBin);
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::FreqsToDbNorm(WDL_TypedBuf<FLOAT_TYPE> *resultMagns,
-                     const WDL_TypedBuf<FLOAT_TYPE> &magns,
-                     FLOAT_TYPE hzPerBin,
-                     FLOAT_TYPE minValue, FLOAT_TYPE maxValue)
+                       const WDL_TypedBuf<FLOAT_TYPE> &magns,
+                       FLOAT_TYPE hzPerBin,
+                       FLOAT_TYPE minValue, FLOAT_TYPE maxValue)
 {
     BLUtils::ResizeFillZeros(resultMagns, magns.GetSize());
     
@@ -7891,13 +7902,13 @@ BLUtils::FreqsToDbNorm(WDL_TypedBuf<FLOAT_TYPE> *resultMagns,
     }
 }
 template void BLUtils::FreqsToDbNorm(WDL_TypedBuf<float> *resultMagns,
-                                   const WDL_TypedBuf<float> &magns,
-                                   float hzPerBin,
-                                   float minValue, float maxValue);
+                                     const WDL_TypedBuf<float> &magns,
+                                     float hzPerBin,
+                                     float minValue, float maxValue);
 template void BLUtils::FreqsToDbNorm(WDL_TypedBuf<double> *resultMagns,
-                                   const WDL_TypedBuf<double> &magns,
-                                   double hzPerBin,
-                                   double minValue, double maxValue);
+                                     const WDL_TypedBuf<double> &magns,
+                                     double hzPerBin,
+                                     double minValue, double maxValue);
 
 // TODO: need to check this
 template <typename FLOAT_TYPE>
@@ -7946,7 +7957,7 @@ template int BLUtils::FreqIdToLogNormId(int idx, double hzPerBin, int bufferSize
 template <typename FLOAT_TYPE>
 void
 BLUtils::ApplyWindow(WDL_TypedBuf<FLOAT_TYPE> *values,
-                   const WDL_TypedBuf<FLOAT_TYPE> &window)
+                     const WDL_TypedBuf<FLOAT_TYPE> &window)
 {
     if (values->GetSize() != window.GetSize())
         return;
@@ -7972,15 +7983,15 @@ BLUtils::ApplyWindow(WDL_TypedBuf<FLOAT_TYPE> *values,
     }
 }
 template void BLUtils::ApplyWindow(WDL_TypedBuf<float> *values,
-                        const WDL_TypedBuf<float> &window);
+                                   const WDL_TypedBuf<float> &window);
 template void BLUtils::ApplyWindow(WDL_TypedBuf<double> *values,
-                        const WDL_TypedBuf<double> &window);
+                                   const WDL_TypedBuf<double> &window);
 
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::ApplyWindowRescale(WDL_TypedBuf<FLOAT_TYPE> *values,
-                          const WDL_TypedBuf<FLOAT_TYPE> &window)
+                            const WDL_TypedBuf<FLOAT_TYPE> &window)
 {
     FLOAT_TYPE coeff = ((FLOAT_TYPE)window.GetSize())/values->GetSize();
     
@@ -8005,15 +8016,15 @@ BLUtils::ApplyWindowRescale(WDL_TypedBuf<FLOAT_TYPE> *values,
     }
 }
 template void BLUtils::ApplyWindowRescale(WDL_TypedBuf<float> *values,
-                               const WDL_TypedBuf<float> &window);
+                                          const WDL_TypedBuf<float> &window);
 template void BLUtils::ApplyWindowRescale(WDL_TypedBuf<double> *values,
-                               const WDL_TypedBuf<double> &window);
+                                          const WDL_TypedBuf<double> &window);
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::ApplyWindowFft(WDL_TypedBuf<FLOAT_TYPE> *ioMagns,
-                      const WDL_TypedBuf<FLOAT_TYPE> &phases,
-                      const WDL_TypedBuf<FLOAT_TYPE> &window)
+                        const WDL_TypedBuf<FLOAT_TYPE> &phases,
+                        const WDL_TypedBuf<FLOAT_TYPE> &window)
 {
     WDL_TypedBuf<int> samplesIds;
     BLUtils::FftIdsToSamplesIds(phases, &samplesIds);
@@ -8037,17 +8048,17 @@ BLUtils::ApplyWindowFft(WDL_TypedBuf<FLOAT_TYPE> *ioMagns,
     *ioMagns = sampleMagns;
 }
 template void BLUtils::ApplyWindowFft(WDL_TypedBuf<float> *ioMagns,
-                           const WDL_TypedBuf<float> &phases,
-                           const WDL_TypedBuf<float> &window);
+                                      const WDL_TypedBuf<float> &phases,
+                                      const WDL_TypedBuf<float> &window);
 template void BLUtils::ApplyWindowFft(WDL_TypedBuf<double> *ioMagns,
-                           const WDL_TypedBuf<double> &phases,
-                           const WDL_TypedBuf<double> &window);
+                                      const WDL_TypedBuf<double> &phases,
+                                      const WDL_TypedBuf<double> &window);
 
 // boundSize is used to not divide by the extremities, which are often zero
 template <typename FLOAT_TYPE>
 void
 BLUtils::UnapplyWindow(WDL_TypedBuf<FLOAT_TYPE> *values, const WDL_TypedBuf<FLOAT_TYPE> &window,
-                     int boundSize)
+                       int boundSize)
 {    
     if (values->GetSize() != window.GetSize())
         return;
@@ -8114,18 +8125,18 @@ BLUtils::UnapplyWindow(WDL_TypedBuf<FLOAT_TYPE> *values, const WDL_TypedBuf<FLOA
     }
 }
 template void BLUtils::UnapplyWindow(WDL_TypedBuf<float> *values,
-                          const WDL_TypedBuf<float> &window,
-                          int boundSize);
+                                     const WDL_TypedBuf<float> &window,
+                                     int boundSize);
 template void BLUtils::UnapplyWindow(WDL_TypedBuf<double> *values,
-                          const WDL_TypedBuf<double> &window,
-                          int boundSize);
+                                     const WDL_TypedBuf<double> &window,
+                                     int boundSize);
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::UnapplyWindowFft(WDL_TypedBuf<FLOAT_TYPE> *ioMagns,
-                        const WDL_TypedBuf<FLOAT_TYPE> &phases,
-                        const WDL_TypedBuf<FLOAT_TYPE> &window,
-                        int boundSize)
+                          const WDL_TypedBuf<FLOAT_TYPE> &phases,
+                          const WDL_TypedBuf<FLOAT_TYPE> &window,
+                          int boundSize)
 {
     WDL_TypedBuf<int> samplesIds;
     BLUtils::FftIdsToSamplesIds(phases, &samplesIds);
@@ -8149,19 +8160,19 @@ BLUtils::UnapplyWindowFft(WDL_TypedBuf<FLOAT_TYPE> *ioMagns,
     *ioMagns = sampleMagns;
 }
 template void BLUtils::UnapplyWindowFft(WDL_TypedBuf<float> *ioMagns,
-                             const WDL_TypedBuf<float> &phases,
-                             const WDL_TypedBuf<float> &window,
-                             int boundSize);
+                                        const WDL_TypedBuf<float> &phases,
+                                        const WDL_TypedBuf<float> &window,
+                                        int boundSize);
 template void BLUtils::UnapplyWindowFft(WDL_TypedBuf<double> *ioMagns,
-                             const WDL_TypedBuf<double> &phases,
-                             const WDL_TypedBuf<double> &window,
-                             int boundSize);
+                                        const WDL_TypedBuf<double> &phases,
+                                        const WDL_TypedBuf<double> &window,
+                                        int boundSize);
 
 // See: http://werner.yellowcouch.org/Papers/transients12/index.html
 template <typename FLOAT_TYPE>
 void
 BLUtils::FftIdsToSamplesIds(const WDL_TypedBuf<FLOAT_TYPE> &phases,
-                          WDL_TypedBuf<int> *samplesIds)
+                            WDL_TypedBuf<int> *samplesIds)
 {
     samplesIds->Resize(phases.GetSize());
     BLUtils::FillAllZero(samplesIds);
@@ -8197,15 +8208,15 @@ BLUtils::FftIdsToSamplesIds(const WDL_TypedBuf<FLOAT_TYPE> &phases,
     //BLUtils::Reverse(samplesIds);
 }
 template void BLUtils::FftIdsToSamplesIds(const WDL_TypedBuf<float> &phases,
-                               WDL_TypedBuf<int> *samplesIds);
+                                          WDL_TypedBuf<int> *samplesIds);
 template void BLUtils::FftIdsToSamplesIds(const WDL_TypedBuf<double> &phases,
-                               WDL_TypedBuf<int> *samplesIds);
+                                          WDL_TypedBuf<int> *samplesIds);
 
 // See: http://werner.yellowcouch.org/Papers/transients12/index.html
 template <typename FLOAT_TYPE>
 void
 BLUtils::FftIdsToSamplesIdsFloat(const WDL_TypedBuf<FLOAT_TYPE> &phases,
-                               WDL_TypedBuf<FLOAT_TYPE> *samplesIds)
+                                 WDL_TypedBuf<FLOAT_TYPE> *samplesIds)
 {
     samplesIds->Resize(phases.GetSize());
     BLUtils::FillAllZero(samplesIds);
@@ -8241,14 +8252,14 @@ BLUtils::FftIdsToSamplesIdsFloat(const WDL_TypedBuf<FLOAT_TYPE> &phases,
     //BLUtils::Reverse(samplesIds);
 }
 template void BLUtils::FftIdsToSamplesIdsFloat(const WDL_TypedBuf<float> &phases,
-                                    WDL_TypedBuf<float> *samplesIds);
+                                               WDL_TypedBuf<float> *samplesIds);
 template void BLUtils::FftIdsToSamplesIdsFloat(const WDL_TypedBuf<double> &phases,
-                                    WDL_TypedBuf<double> *samplesIds);
+                                               WDL_TypedBuf<double> *samplesIds);
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::FftIdsToSamplesIdsSym(const WDL_TypedBuf<FLOAT_TYPE> &phases,
-                             WDL_TypedBuf<int> *samplesIds)
+                               WDL_TypedBuf<int> *samplesIds)
 {
     samplesIds->Resize(phases.GetSize());
     BLUtils::FillAllZero(samplesIds);
@@ -8284,14 +8295,14 @@ BLUtils::FftIdsToSamplesIdsSym(const WDL_TypedBuf<FLOAT_TYPE> &phases,
     }
 }
 template void BLUtils::FftIdsToSamplesIdsSym(const WDL_TypedBuf<float> &phases,
-                                  WDL_TypedBuf<int> *samplesIds);
+                                             WDL_TypedBuf<int> *samplesIds);
 template void BLUtils::FftIdsToSamplesIdsSym(const WDL_TypedBuf<double> &phases,
-                                  WDL_TypedBuf<int> *samplesIds);
+                                             WDL_TypedBuf<int> *samplesIds);
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::SamplesIdsToFftIds(const WDL_TypedBuf<FLOAT_TYPE> &phases,
-                          WDL_TypedBuf<int> *fftIds)
+                            WDL_TypedBuf<int> *fftIds)
 {
     fftIds->Resize(phases.GetSize());
     BLUtils::FillAllZero(fftIds);
@@ -8385,9 +8396,9 @@ template void BLUtils::FindNextPhase(double *phase, double refPhase);
 template <typename FLOAT_TYPE>
 void
 BLUtils::ComputeTimeDelays(WDL_TypedBuf<FLOAT_TYPE> *timeDelays,
-                         const WDL_TypedBuf<FLOAT_TYPE> &phasesL,
-                         const WDL_TypedBuf<FLOAT_TYPE> &phasesR,
-                         FLOAT_TYPE sampleRate)
+                           const WDL_TypedBuf<FLOAT_TYPE> &phasesL,
+                           const WDL_TypedBuf<FLOAT_TYPE> &phasesR,
+                           FLOAT_TYPE sampleRate)
 {
     if (phasesL.GetSize() != phasesR.GetSize())
         // R can be empty if we are in mono
@@ -8426,13 +8437,13 @@ BLUtils::ComputeTimeDelays(WDL_TypedBuf<FLOAT_TYPE> *timeDelays,
 #endif
 }
 template void BLUtils::ComputeTimeDelays(WDL_TypedBuf<float> *timeDelays,
-                              const WDL_TypedBuf<float> &phasesL,
-                              const WDL_TypedBuf<float> &phasesR,
-                              float sampleRate);
+                                         const WDL_TypedBuf<float> &phasesL,
+                                         const WDL_TypedBuf<float> &phasesR,
+                                         float sampleRate);
 template void BLUtils::ComputeTimeDelays(WDL_TypedBuf<double> *timeDelays,
-                              const WDL_TypedBuf<double> &phasesL,
-                              const WDL_TypedBuf<double> &phasesR,
-                              double sampleRate);
+                                         const WDL_TypedBuf<double> &phasesL,
+                                         const WDL_TypedBuf<double> &phasesR,
+                                         double sampleRate);
 
 #if 0 // Quite costly version !
 void
@@ -8569,9 +8580,9 @@ template void BLUtils::MapToPi(WDL_TypedBuf<double> *values);
 template <typename FLOAT_TYPE>
 void
 BLUtils::PolarToCartesian(const WDL_TypedBuf<FLOAT_TYPE> &Rs,
-                        const WDL_TypedBuf<FLOAT_TYPE> &thetas,
-                        WDL_TypedBuf<FLOAT_TYPE> *xValues,
-                        WDL_TypedBuf<FLOAT_TYPE> *yValues)
+                          const WDL_TypedBuf<FLOAT_TYPE> &thetas,
+                          WDL_TypedBuf<FLOAT_TYPE> *xValues,
+                          WDL_TypedBuf<FLOAT_TYPE> *yValues)
 {
     xValues->Resize(thetas.GetSize());
     yValues->Resize(thetas.GetSize());
@@ -8596,20 +8607,20 @@ BLUtils::PolarToCartesian(const WDL_TypedBuf<FLOAT_TYPE> &Rs,
     }
 }
 template void BLUtils::PolarToCartesian(const WDL_TypedBuf<float> &Rs,
-                             const WDL_TypedBuf<float> &thetas,
-                             WDL_TypedBuf<float> *xValues,
-                             WDL_TypedBuf<float> *yValues);
+                                        const WDL_TypedBuf<float> &thetas,
+                                        WDL_TypedBuf<float> *xValues,
+                                        WDL_TypedBuf<float> *yValues);
 template void BLUtils::PolarToCartesian(const WDL_TypedBuf<double> &Rs,
-                             const WDL_TypedBuf<double> &thetas,
-                             WDL_TypedBuf<double> *xValues,
-                             WDL_TypedBuf<double> *yValues);
+                                        const WDL_TypedBuf<double> &thetas,
+                                        WDL_TypedBuf<double> *xValues,
+                                        WDL_TypedBuf<double> *yValues);
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::PhasesPolarToCartesian(const WDL_TypedBuf<FLOAT_TYPE> &phasesDiff,
-                              const WDL_TypedBuf<FLOAT_TYPE> *magns,
-                              WDL_TypedBuf<FLOAT_TYPE> *xValues,
-                              WDL_TypedBuf<FLOAT_TYPE> *yValues)
+                                const WDL_TypedBuf<FLOAT_TYPE> *magns,
+                                WDL_TypedBuf<FLOAT_TYPE> *xValues,
+                                WDL_TypedBuf<FLOAT_TYPE> *yValues)
 {
     xValues->Resize(phasesDiff.GetSize());
     yValues->Resize(phasesDiff.GetSize());
@@ -8640,13 +8651,13 @@ BLUtils::PhasesPolarToCartesian(const WDL_TypedBuf<FLOAT_TYPE> &phasesDiff,
     }
 }
 template void BLUtils::PhasesPolarToCartesian(const WDL_TypedBuf<float> &phasesDiff,
-                                   const WDL_TypedBuf<float> *magns,
-                                   WDL_TypedBuf<float> *xValues,
-                                   WDL_TypedBuf<float> *yValues);
+                                              const WDL_TypedBuf<float> *magns,
+                                              WDL_TypedBuf<float> *xValues,
+                                              WDL_TypedBuf<float> *yValues);
 template void BLUtils::PhasesPolarToCartesian(const WDL_TypedBuf<double> &phasesDiff,
-                                   const WDL_TypedBuf<double> *magns,
-                                   WDL_TypedBuf<double> *xValues,
-                                   WDL_TypedBuf<double> *yValues);
+                                              const WDL_TypedBuf<double> *magns,
+                                              WDL_TypedBuf<double> *xValues,
+                                              WDL_TypedBuf<double> *yValues);
 
 // From (angle, distance) to (normalized angle on x, hight distance on y)
 template <typename FLOAT_TYPE>
@@ -8708,8 +8719,8 @@ template void BLUtils::PolarToCartesianFlat(WDL_TypedBuf<double> *xVector, WDL_T
 template <typename FLOAT_TYPE>
 void
 BLUtils::ApplyInverseWindow(WDL_TypedBuf<WDL_FFT_COMPLEX> *fftSamples,
-                          const WDL_TypedBuf<FLOAT_TYPE> &window,
-                          const WDL_TypedBuf<FLOAT_TYPE> *originEnvelope)
+                            const WDL_TypedBuf<FLOAT_TYPE> &window,
+                            const WDL_TypedBuf<FLOAT_TYPE> *originEnvelope)
 {
     WDL_TypedBuf<FLOAT_TYPE> magns;
     WDL_TypedBuf<FLOAT_TYPE> phases;
@@ -8720,18 +8731,18 @@ BLUtils::ApplyInverseWindow(WDL_TypedBuf<WDL_FFT_COMPLEX> *fftSamples,
     BLUtils::MagnPhaseToComplex(fftSamples, magns, phases);
 }
 template void BLUtils::ApplyInverseWindow(WDL_TypedBuf<WDL_FFT_COMPLEX> *fftSamples,
-                               const WDL_TypedBuf<float> &window,
-                               const WDL_TypedBuf<float> *originEnvelope);
+                                          const WDL_TypedBuf<float> &window,
+                                          const WDL_TypedBuf<float> *originEnvelope);
 template void BLUtils::ApplyInverseWindow(WDL_TypedBuf<WDL_FFT_COMPLEX> *fftSamples,
-                               const WDL_TypedBuf<double> &window,
-                               const WDL_TypedBuf<double> *originEnvelope);
+                                          const WDL_TypedBuf<double> &window,
+                                          const WDL_TypedBuf<double> *originEnvelope);
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::ApplyInverseWindow(WDL_TypedBuf<FLOAT_TYPE> *magns,
-                          const WDL_TypedBuf<FLOAT_TYPE> &phases,
-                          const WDL_TypedBuf<FLOAT_TYPE> &window,
-                          const WDL_TypedBuf<FLOAT_TYPE> *originEnvelope)
+                            const WDL_TypedBuf<FLOAT_TYPE> &phases,
+                            const WDL_TypedBuf<FLOAT_TYPE> &window,
+                            const WDL_TypedBuf<FLOAT_TYPE> *originEnvelope)
 {
 #define WIN_EPS 1e-3
     
@@ -8787,19 +8798,19 @@ BLUtils::ApplyInverseWindow(WDL_TypedBuf<FLOAT_TYPE> *magns,
     }
 }
 template void BLUtils::ApplyInverseWindow(WDL_TypedBuf<float> *magns,
-                               const WDL_TypedBuf<float> &phases,
-                               const WDL_TypedBuf<float> &window,
-                               const WDL_TypedBuf<float> *originEnvelope);
+                                          const WDL_TypedBuf<float> &phases,
+                                          const WDL_TypedBuf<float> &window,
+                                          const WDL_TypedBuf<float> *originEnvelope);
 template void BLUtils::ApplyInverseWindow(WDL_TypedBuf<double> *magns,
-                               const WDL_TypedBuf<double> &phases,
-                               const WDL_TypedBuf<double> &window,
-                               const WDL_TypedBuf<double> *originEnvelope);
+                                          const WDL_TypedBuf<double> &phases,
+                                          const WDL_TypedBuf<double> &window,
+                                          const WDL_TypedBuf<double> *originEnvelope);
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::CorrectEnvelope(WDL_TypedBuf<FLOAT_TYPE> *samples,
-                       const WDL_TypedBuf<FLOAT_TYPE> &envelope0,
-                       const WDL_TypedBuf<FLOAT_TYPE> &envelope1)
+                         const WDL_TypedBuf<FLOAT_TYPE> &envelope0,
+                         const WDL_TypedBuf<FLOAT_TYPE> &envelope1)
 {
     int samplesSize = samples->GetSize();
     FLOAT_TYPE *samplesData = samples->Get();
@@ -8830,17 +8841,17 @@ BLUtils::CorrectEnvelope(WDL_TypedBuf<FLOAT_TYPE> *samples,
     }
 }
 template void BLUtils::CorrectEnvelope(WDL_TypedBuf<float> *samples,
-                            const WDL_TypedBuf<float> &envelope0,
-                            const WDL_TypedBuf<float> &envelope1);
+                                       const WDL_TypedBuf<float> &envelope0,
+                                       const WDL_TypedBuf<float> &envelope1);
 template void BLUtils::CorrectEnvelope(WDL_TypedBuf<double> *samples,
-                            const WDL_TypedBuf<double> &envelope0,
-                            const WDL_TypedBuf<double> &envelope1);
+                                       const WDL_TypedBuf<double> &envelope0,
+                                       const WDL_TypedBuf<double> &envelope1);
 
 template <typename FLOAT_TYPE>
 int
 BLUtils::GetEnvelopeShift(const WDL_TypedBuf<FLOAT_TYPE> &envelope0,
-                        const WDL_TypedBuf<FLOAT_TYPE> &envelope1,
-                        int precision)
+                          const WDL_TypedBuf<FLOAT_TYPE> &envelope1,
+                          int precision)
 {
     int max0 = BLUtils::FindMaxIndex(envelope0);
     int max1 = BLUtils::FindMaxIndex(envelope1);
@@ -8860,11 +8871,11 @@ BLUtils::GetEnvelopeShift(const WDL_TypedBuf<FLOAT_TYPE> &envelope0,
     return shift;
 }
 template int BLUtils::GetEnvelopeShift(const WDL_TypedBuf<float> &envelope0,
-                            const WDL_TypedBuf<float> &envelope1,
-                            int precision);
+                                       const WDL_TypedBuf<float> &envelope1,
+                                       int precision);
 template int BLUtils::GetEnvelopeShift(const WDL_TypedBuf<double> &envelope0,
-                            const WDL_TypedBuf<double> &envelope1,
-                            int precision);
+                                       const WDL_TypedBuf<double> &envelope1,
+                                       int precision);
 
 template <typename FLOAT_TYPE>
 FLOAT_TYPE
@@ -9077,7 +9088,7 @@ BLUtils::AppendValuesFileBinFloatShutdown(void *cookie)
 template <typename FLOAT_TYPE>
 void
 BLUtils::ResizeLinear(WDL_TypedBuf<FLOAT_TYPE> *ioBuffer,
-                    int newSize)
+                      int newSize)
 {
     FLOAT_TYPE *data = ioBuffer->Get();
     int size = ioBuffer->GetSize();
@@ -9119,8 +9130,8 @@ template void BLUtils::ResizeLinear(WDL_TypedBuf<float> *ioBuffer, int newSize);
 template <typename FLOAT_TYPE>
 void
 BLUtils::ResizeLinear(WDL_TypedBuf<FLOAT_TYPE> *rescaledBuf,
-                    const WDL_TypedBuf<FLOAT_TYPE> &buf,
-                    int newSize)
+                      const WDL_TypedBuf<FLOAT_TYPE> &buf,
+                      int newSize)
 {
     FLOAT_TYPE *data = buf.Get();
     int size = buf.GetSize();
@@ -9154,16 +9165,16 @@ BLUtils::ResizeLinear(WDL_TypedBuf<FLOAT_TYPE> *rescaledBuf,
     }
 }
 template void BLUtils::ResizeLinear(WDL_TypedBuf<float> *rescaledBuf,
-                         const WDL_TypedBuf<float> &buf,
-                         int newSize);
+                                    const WDL_TypedBuf<float> &buf,
+                                    int newSize);
 template void BLUtils::ResizeLinear(WDL_TypedBuf<double> *rescaledBuf,
-                         const WDL_TypedBuf<double> &buf,
-                         int newSize);
+                                    const WDL_TypedBuf<double> &buf,
+                                    int newSize);
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::ResizeLinear2(WDL_TypedBuf<FLOAT_TYPE> *ioBuffer,
-                    int newSize)
+                       int newSize)
 {
     if (ioBuffer->GetSize() == 0)
         return;
@@ -9212,9 +9223,9 @@ BLUtils::ResizeLinear2(WDL_TypedBuf<FLOAT_TYPE> *ioBuffer,
     ioBuffer->Get()[ioBuffer->GetSize() - 1] = lastValue;
 }
 template void BLUtils::ResizeLinear2(WDL_TypedBuf<float> *ioBuffer,
-                          int newSize);
+                                     int newSize);
 template void BLUtils::ResizeLinear2(WDL_TypedBuf<double> *ioBuffer,
-                          int newSize);
+                                     int newSize);
 
 #if 0 // Disable, to avoid including libmfcc in each plugins
 // Use https://github.com/jsawruk/libmfcc
@@ -9222,8 +9233,8 @@ template void BLUtils::ResizeLinear2(WDL_TypedBuf<double> *ioBuffer,
 // NOTE: Not tested !
 void
 BLUtils::FreqsToMfcc(WDL_TypedBuf<FLOAT_TYPE> *result,
-                   const WDL_TypedBuf<FLOAT_TYPE> freqs,
-                   FLOAT_TYPE sampleRate)
+                     const WDL_TypedBuf<FLOAT_TYPE> freqs,
+                     FLOAT_TYPE sampleRate)
 {
     int numFreqs = freqs.GetSize();
     FLOAT_TYPE *spectrum = freqs.Get();
@@ -9273,9 +9284,9 @@ template double BLUtils::MelToFreq(double mel);
 #if 0 // ORIGIN
 void
 BLUtils::FreqsToMelNorm(WDL_TypedBuf<FLOAT_TYPE> *resultMagns,
-                      const WDL_TypedBuf<FLOAT_TYPE> &magns,
-                      FLOAT_TYPE hzPerBin,
-                      FLOAT_TYPE zeroValue)
+                        const WDL_TypedBuf<FLOAT_TYPE> &magns,
+                        FLOAT_TYPE hzPerBin,
+                        FLOAT_TYPE zeroValue)
 {
     //BLUtils::ResizeFillZeros(resultMagns, magns.GetSize());
     
@@ -9332,9 +9343,9 @@ BLUtils::FreqsToMelNorm(WDL_TypedBuf<FLOAT_TYPE> *resultMagns,
 template <typename FLOAT_TYPE>
 void
 BLUtils::FreqsToMelNorm(WDL_TypedBuf<FLOAT_TYPE> *resultMagns,
-                      const WDL_TypedBuf<FLOAT_TYPE> &magns,
-                      FLOAT_TYPE hzPerBin,
-                      FLOAT_TYPE zeroValue)
+                        const WDL_TypedBuf<FLOAT_TYPE> &magns,
+                        FLOAT_TYPE hzPerBin,
+                        FLOAT_TYPE zeroValue)
 {
     //BLUtils::ResizeFillZeros(resultMagns, magns.GetSize());
     
@@ -9388,20 +9399,20 @@ BLUtils::FreqsToMelNorm(WDL_TypedBuf<FLOAT_TYPE> *resultMagns,
     }
 }
 template void BLUtils::FreqsToMelNorm(WDL_TypedBuf<float> *resultMagns,
-                           const WDL_TypedBuf<float> &magns,
-                           float hzPerBin,
-                           float zeroValue);
+                                      const WDL_TypedBuf<float> &magns,
+                                      float hzPerBin,
+                                      float zeroValue);
 template void BLUtils::FreqsToMelNorm(WDL_TypedBuf<double> *resultMagns,
-                           const WDL_TypedBuf<double> &magns,
-                           double hzPerBin,
-                           double zeroValue);
+                                      const WDL_TypedBuf<double> &magns,
+                                      double hzPerBin,
+                                      double zeroValue);
 #endif
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::MelToFreqsNorm(WDL_TypedBuf<FLOAT_TYPE> *resultMagns,
-                      const WDL_TypedBuf<FLOAT_TYPE> &magns,
-                      FLOAT_TYPE hzPerBin, FLOAT_TYPE zeroValue)
+                        const WDL_TypedBuf<FLOAT_TYPE> &magns,
+                        FLOAT_TYPE hzPerBin, FLOAT_TYPE zeroValue)
 {
     //BLUtils::ResizeFillZeros(resultMagns, magns.GetSize());
     
@@ -9450,17 +9461,17 @@ BLUtils::MelToFreqsNorm(WDL_TypedBuf<FLOAT_TYPE> *resultMagns,
     }
 }
 template void BLUtils::MelToFreqsNorm(WDL_TypedBuf<float> *resultMagns,
-                           const WDL_TypedBuf<float> &magns,
-                           float hzPerBin, float zeroValue);
+                                      const WDL_TypedBuf<float> &magns,
+                                      float hzPerBin, float zeroValue);
 template void BLUtils::MelToFreqsNorm(WDL_TypedBuf<double> *resultMagns,
-                           const WDL_TypedBuf<double> &magns,
-                           double hzPerBin, double zeroValue);
+                                      const WDL_TypedBuf<double> &magns,
+                                      double hzPerBin, double zeroValue);
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::MelToFreqsNorm2(WDL_TypedBuf<FLOAT_TYPE> *resultMagns,
-                       const WDL_TypedBuf<FLOAT_TYPE> &magns,
-                       FLOAT_TYPE hzPerBin, FLOAT_TYPE zeroValue)
+                         const WDL_TypedBuf<FLOAT_TYPE> &magns,
+                         FLOAT_TYPE hzPerBin, FLOAT_TYPE zeroValue)
 {
     // For dB
     resultMagns->Resize(magns.GetSize());
@@ -9493,8 +9504,8 @@ BLUtils::MelToFreqsNorm2(WDL_TypedBuf<FLOAT_TYPE> *resultMagns,
         FLOAT_TYPE magn = 0.0;
         
         if (id1 - id0 > 1.0)
-        // Scaling down
-        // Scaling from biggest scale => must take several values
+            // Scaling down
+            // Scaling from biggest scale => must take several values
         {
             // Compute simple average
             FLOAT_TYPE avg = 0.0;
@@ -9541,18 +9552,18 @@ BLUtils::MelToFreqsNorm2(WDL_TypedBuf<FLOAT_TYPE> *resultMagns,
     }
 }
 template void BLUtils::MelToFreqsNorm2(WDL_TypedBuf<float> *resultMagns,
-                            const WDL_TypedBuf<float> &magns,
-                            float hzPerBin, float zeroValue);
+                                       const WDL_TypedBuf<float> &magns,
+                                       float hzPerBin, float zeroValue);
 template void BLUtils::MelToFreqsNorm2(WDL_TypedBuf<double> *resultMagns,
-                            const WDL_TypedBuf<double> &magns,
-                            double hzPerBin, double zeroValue);
+                                       const WDL_TypedBuf<double> &magns,
+                                       double hzPerBin, double zeroValue);
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::FreqsToMelNorm2(WDL_TypedBuf<FLOAT_TYPE> *resultMagns,
-                       const WDL_TypedBuf<FLOAT_TYPE> &magns,
-                       FLOAT_TYPE hzPerBin,
-                       FLOAT_TYPE zeroValue)
+                         const WDL_TypedBuf<FLOAT_TYPE> &magns,
+                         FLOAT_TYPE hzPerBin,
+                         FLOAT_TYPE zeroValue)
 {
     // For dB
     resultMagns->Resize(magns.GetSize());
@@ -9649,13 +9660,13 @@ BLUtils::FreqsToMelNorm2(WDL_TypedBuf<FLOAT_TYPE> *resultMagns,
     }
 }
 template void BLUtils::FreqsToMelNorm2(WDL_TypedBuf<float> *resultMagns,
-                            const WDL_TypedBuf<float> &magns,
-                            float hzPerBin,
-                            float zeroValue);
+                                       const WDL_TypedBuf<float> &magns,
+                                       float hzPerBin,
+                                       float zeroValue);
 template void BLUtils::FreqsToMelNorm2(WDL_TypedBuf<double> *resultMagns,
-                            const WDL_TypedBuf<double> &magns,
-                            double hzPerBin,
-                            double zeroValue);
+                                       const WDL_TypedBuf<double> &magns,
+                                       double hzPerBin,
+                                       double zeroValue);
 
 // Ok
 template <typename FLOAT_TYPE>
@@ -9864,7 +9875,7 @@ template void BLUtils::MixParamToCoeffs(double mix, double *coeff0, double *coef
 template <typename FLOAT_TYPE>
 void
 BLUtils::SmoothDataWin(WDL_TypedBuf<FLOAT_TYPE> *ioData,
-                     const WDL_TypedBuf<FLOAT_TYPE> &win)
+                       const WDL_TypedBuf<FLOAT_TYPE> &win)
 {
     WDL_TypedBuf<FLOAT_TYPE> data = *ioData;
     SmoothDataWin(ioData, data, win);
@@ -9927,8 +9938,8 @@ template void BLUtils::SmoothDataWin(WDL_TypedBuf<double> *result,
 template <typename FLOAT_TYPE>
 void
 BLUtils::SmoothDataPyramid(WDL_TypedBuf<FLOAT_TYPE> *result,
-                         const WDL_TypedBuf<FLOAT_TYPE> &data,
-                         int maxLevel)
+                           const WDL_TypedBuf<FLOAT_TYPE> &data,
+                           int maxLevel)
 {
     WDL_TypedBuf<FLOAT_TYPE> xCoordinates;
     xCoordinates.Resize(data.GetSize());
@@ -9959,9 +9970,9 @@ BLUtils::SmoothDataPyramid(WDL_TypedBuf<FLOAT_TYPE> *result,
         
         // Copy the last value (in case of odd size)
         newXCoordinates.Get()[(int)newSize - 1] =
-                xCoordinates.Get()[xCoordinates.GetSize() - 1];
+        xCoordinates.Get()[xCoordinates.GetSize() - 1];
         newYCoordinates.Get()[(int)newSize - 1] =
-            yCoordinates.Get()[yCoordinates.GetSize() - 1];
+        yCoordinates.Get()[yCoordinates.GetSize() - 1];
         
         // Divide by 2
         
@@ -10034,11 +10045,11 @@ BLUtils::SmoothDataPyramid(WDL_TypedBuf<FLOAT_TYPE> *result,
     BLUtils::FillMissingValues(result, false, (FLOAT_TYPE)0.0);
 }
 template void BLUtils::SmoothDataPyramid(WDL_TypedBuf<float> *result,
-                              const WDL_TypedBuf<float> &data,
-                              int maxLevel);
+                                         const WDL_TypedBuf<float> &data,
+                                         int maxLevel);
 template void BLUtils::SmoothDataPyramid(WDL_TypedBuf<double> *result,
-                              const WDL_TypedBuf<double> &data,
-                              int maxLevel);
+                                         const WDL_TypedBuf<double> &data,
+                                         int maxLevel);
 
 template <typename FLOAT_TYPE>
 void
@@ -10218,7 +10229,7 @@ template double BLUtils::ComputeSigma(const vector<double> &values);
 template <typename FLOAT_TYPE>
 void
 BLUtils::GetMinMaxFreqAxisValues(FLOAT_TYPE *minHzValue, FLOAT_TYPE *maxHzValue,
-                               int bufferSize, FLOAT_TYPE sampleRate)
+                                 int bufferSize, FLOAT_TYPE sampleRate)
 {
     FLOAT_TYPE hzPerBin = sampleRate/bufferSize;
     
@@ -10226,9 +10237,9 @@ BLUtils::GetMinMaxFreqAxisValues(FLOAT_TYPE *minHzValue, FLOAT_TYPE *maxHzValue,
     *maxHzValue = (bufferSize/2)*hzPerBin;
 }
 template void BLUtils::GetMinMaxFreqAxisValues(float *minHzValue, float *maxHzValue,
-                                    int bufferSize, float sampleRate);
+                                               int bufferSize, float sampleRate);
 template void BLUtils::GetMinMaxFreqAxisValues(double *minHzValue, double *maxHzValue,
-                                    int bufferSize, double sampleRate);
+                                               int bufferSize, double sampleRate);
 
 template <typename FLOAT_TYPE>
 void
@@ -10298,28 +10309,28 @@ BLUtils::CutHalfSamples(WDL_TypedBuf<FLOAT_TYPE> *samples, bool cutDown)
 #if !FIX_SPREAD_LAST_VALUE
         if ((samp >= 0.0) && !cutDown)
 #else
-        if ((samp > 0.0) && !cutDown)
+            if ((samp > 0.0) && !cutDown)
 #endif
-        {
-            samp = prevValue;
+            {
+                samp = prevValue;
             
-            samples->Get()[i] = samp;
+                samples->Get()[i] = samp;
             
-            continue;
-        }
+                continue;
+            }
 
 #if !FIX_SPREAD_LAST_VALUE
         if ((samp <= 0.0) && cutDown)
 #else
-        if ((samp < 0.0) && cutDown)
+            if ((samp < 0.0) && cutDown)
 #endif
-        {
-            samp = prevValue;
+            {
+                samp = prevValue;
             
-            samples->Get()[i] = samp;
+                samples->Get()[i] = samp;
             
-            continue;
-        }
+                continue;
+            }
         
         prevValue = samp;
     }
@@ -10330,8 +10341,8 @@ template void BLUtils::CutHalfSamples(WDL_TypedBuf<double> *samples, bool cutDow
 template <typename FLOAT_TYPE>
 bool
 BLUtils::IsMono(const WDL_TypedBuf<FLOAT_TYPE> &leftSamples,
-              const WDL_TypedBuf<FLOAT_TYPE> &rightSamples,
-              FLOAT_TYPE eps)
+                const WDL_TypedBuf<FLOAT_TYPE> &rightSamples,
+                FLOAT_TYPE eps)
 {
     if (leftSamples.GetSize() != rightSamples.GetSize())
         return false;
@@ -10377,17 +10388,17 @@ BLUtils::IsMono(const WDL_TypedBuf<FLOAT_TYPE> &leftSamples,
     return true;
 }
 template bool BLUtils::IsMono(const WDL_TypedBuf<float> &leftSamples,
-                   const WDL_TypedBuf<float> &rightSamples,
-                   float eps);
+                              const WDL_TypedBuf<float> &rightSamples,
+                              float eps);
 template bool BLUtils::IsMono(const WDL_TypedBuf<double> &leftSamples,
-                   const WDL_TypedBuf<double> &rightSamples,
-                   double eps);
+                              const WDL_TypedBuf<double> &rightSamples,
+                              double eps);
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::Smooth(WDL_TypedBuf<FLOAT_TYPE> *ioCurrentValues,
-              WDL_TypedBuf<FLOAT_TYPE> *ioPrevValues,
-              FLOAT_TYPE smoothFactor)
+                WDL_TypedBuf<FLOAT_TYPE> *ioPrevValues,
+                FLOAT_TYPE smoothFactor)
 {
     if (ioCurrentValues->GetSize() != ioPrevValues->GetSize())
         return;
@@ -10415,18 +10426,18 @@ BLUtils::Smooth(WDL_TypedBuf<FLOAT_TYPE> *ioCurrentValues,
     *ioPrevValues = *ioCurrentValues;
 }
 template void BLUtils::Smooth(WDL_TypedBuf<float> *ioCurrentValues,
-                            WDL_TypedBuf<float> *ioPrevValues,
-                            float smoothFactor);
+                              WDL_TypedBuf<float> *ioPrevValues,
+                              float smoothFactor);
 template void BLUtils::Smooth(WDL_TypedBuf<double> *ioCurrentValues,
-                            WDL_TypedBuf<double> *ioPrevValues,
-                            double smoothFactor);
+                              WDL_TypedBuf<double> *ioPrevValues,
+                              double smoothFactor);
 
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::Smooth(vector<WDL_TypedBuf<FLOAT_TYPE> > *ioCurrentValues,
-              vector<WDL_TypedBuf<FLOAT_TYPE> > *ioPrevValues,
-              FLOAT_TYPE smoothFactor)
+                vector<WDL_TypedBuf<FLOAT_TYPE> > *ioPrevValues,
+                FLOAT_TYPE smoothFactor)
 {
     if (ioCurrentValues->size() != ioPrevValues->size())
         return;
@@ -10458,17 +10469,17 @@ BLUtils::Smooth(vector<WDL_TypedBuf<FLOAT_TYPE> > *ioCurrentValues,
     *ioPrevValues = *ioCurrentValues;
 }
 template void BLUtils::Smooth(vector<WDL_TypedBuf<float> > *ioCurrentValues,
-                            vector<WDL_TypedBuf<float> > *ioPrevValues,
-                            float smoothFactor);
+                              vector<WDL_TypedBuf<float> > *ioPrevValues,
+                              float smoothFactor);
 template void BLUtils::Smooth(vector<WDL_TypedBuf<double> > *ioCurrentValues,
-                            vector<WDL_TypedBuf<double> > *ioPrevValues,
-                            double smoothFactor);
+                              vector<WDL_TypedBuf<double> > *ioPrevValues,
+                              double smoothFactor);
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::SmoothMax(WDL_TypedBuf<FLOAT_TYPE> *ioCurrentValues,
-                 WDL_TypedBuf<FLOAT_TYPE> *ioPrevValues,
-                 FLOAT_TYPE smoothFactor)
+                   WDL_TypedBuf<FLOAT_TYPE> *ioPrevValues,
+                   FLOAT_TYPE smoothFactor)
 {
     if (ioCurrentValues->GetSize() != ioPrevValues->GetSize())
         return;
@@ -10494,18 +10505,18 @@ BLUtils::SmoothMax(WDL_TypedBuf<FLOAT_TYPE> *ioCurrentValues,
 #endif
 }
 template void BLUtils::SmoothMax(WDL_TypedBuf<float> *ioCurrentValues,
-                               WDL_TypedBuf<float> *ioPrevValues,
-                               float smoothFactor);
+                                 WDL_TypedBuf<float> *ioPrevValues,
+                                 float smoothFactor);
 template void BLUtils::SmoothMax(WDL_TypedBuf<double> *ioCurrentValues,
-                               WDL_TypedBuf<double> *ioPrevValues,
-                               double smoothFactor);
+                                 WDL_TypedBuf<double> *ioPrevValues,
+                                 double smoothFactor);
 
 // Detect all maxima in the data
 // NOTE: for the moment take 0 for the minimal value
 template <typename FLOAT_TYPE>
 void
 BLUtils::FindMaxima(const WDL_TypedBuf<FLOAT_TYPE> &data,
-                  WDL_TypedBuf<FLOAT_TYPE> *result)
+                    WDL_TypedBuf<FLOAT_TYPE> *result)
 {
     result->Resize(data.GetSize());
     BLUtils::FillAllZero(result);
@@ -10528,15 +10539,15 @@ BLUtils::FindMaxima(const WDL_TypedBuf<FLOAT_TYPE> &data,
     }
 }
 template void BLUtils::FindMaxima(const WDL_TypedBuf<float> &data,
-                       WDL_TypedBuf<float> *result);
+                                  WDL_TypedBuf<float> *result);
 template void BLUtils::FindMaxima(const WDL_TypedBuf<double> &data,
-                       WDL_TypedBuf<double> *result);
+                                  WDL_TypedBuf<double> *result);
 
 // Fill with 1.0 where there is a maxima, 0.0 elsewhere
 template <typename FLOAT_TYPE>
 void
 BLUtils::FindMaxima2(const WDL_TypedBuf<FLOAT_TYPE> &data,
-                   WDL_TypedBuf<FLOAT_TYPE> *result)
+                     WDL_TypedBuf<FLOAT_TYPE> *result)
 {
     result->Resize(data.GetSize());
     BLUtils::FillAllZero(result);
@@ -10559,9 +10570,9 @@ BLUtils::FindMaxima2(const WDL_TypedBuf<FLOAT_TYPE> &data,
     }
 }
 template void BLUtils::FindMaxima2(const WDL_TypedBuf<float> &data,
-                        WDL_TypedBuf<float> *result);
+                                   WDL_TypedBuf<float> *result);
 template void BLUtils::FindMaxima2(const WDL_TypedBuf<double> &data,
-                        WDL_TypedBuf<double> *result);
+                                   WDL_TypedBuf<double> *result);
 
 template <typename FLOAT_TYPE>
 void
@@ -10578,9 +10589,9 @@ template void BLUtils::FindMaxima(WDL_TypedBuf<double> *ioData);
 template <typename FLOAT_TYPE>
 void
 BLUtils::FindMaxima2D(int width, int height,
-                    const WDL_TypedBuf<FLOAT_TYPE> &data,
-                    WDL_TypedBuf<FLOAT_TYPE> *result,
-                    bool keepMaxValue)
+                      const WDL_TypedBuf<FLOAT_TYPE> &data,
+                      WDL_TypedBuf<FLOAT_TYPE> *result,
+                      bool keepMaxValue)
 {
     result->Resize(data.GetSize());
     BLUtils::FillAllZero(result);
@@ -10625,32 +10636,32 @@ BLUtils::FindMaxima2D(int width, int height,
     }
 }
 template void BLUtils::FindMaxima2D(int width, int height,
-                         const WDL_TypedBuf<float> &data,
-                         WDL_TypedBuf<float> *result,
-                         bool keepMaxValue);
+                                    const WDL_TypedBuf<float> &data,
+                                    WDL_TypedBuf<float> *result,
+                                    bool keepMaxValue);
 template void BLUtils::FindMaxima2D(int width, int height,
-                         const WDL_TypedBuf<double> &data,
-                         WDL_TypedBuf<double> *result,
-                         bool keepMaxValue);
+                                    const WDL_TypedBuf<double> &data,
+                                    WDL_TypedBuf<double> *result,
+                                    bool keepMaxValue);
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::FindMaxima2D(int width, int height, WDL_TypedBuf<FLOAT_TYPE> *ioData,
-                    bool keepMaxValue)
+                      bool keepMaxValue)
 {
     WDL_TypedBuf<FLOAT_TYPE> data = *ioData;
     FindMaxima2D(width, height, data, ioData, keepMaxValue);
 }
 template void BLUtils::FindMaxima2D(int width, int height, WDL_TypedBuf<float> *ioData,
-                         bool keepMaxValue);
+                                    bool keepMaxValue);
 template void BLUtils::FindMaxima2D(int width, int height, WDL_TypedBuf<double> *ioData,
-                         bool keepMaxValue);
+                                    bool keepMaxValue);
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::FindMinima(const WDL_TypedBuf<FLOAT_TYPE> &data,
-                  WDL_TypedBuf<FLOAT_TYPE> *result,
-                  FLOAT_TYPE infValue)
+                    WDL_TypedBuf<FLOAT_TYPE> *result,
+                    FLOAT_TYPE infValue)
 {
     result->Resize(data.GetSize());
     BLUtils::FillAllValue(result, infValue);
@@ -10673,16 +10684,16 @@ BLUtils::FindMinima(const WDL_TypedBuf<FLOAT_TYPE> &data,
     }
 }
 template void BLUtils::FindMinima(const WDL_TypedBuf<float> &data,
-                       WDL_TypedBuf<float> *result,
-                       float infValue);
+                                  WDL_TypedBuf<float> *result,
+                                  float infValue);
 template void BLUtils::FindMinima(const WDL_TypedBuf<double> &data,
-                       WDL_TypedBuf<double> *result,
-                       double infValue);
+                                  WDL_TypedBuf<double> *result,
+                                  double infValue);
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::FindMinima(const WDL_TypedBuf<FLOAT_TYPE> &data,
-                  WDL_TypedBuf<FLOAT_TYPE> *result)
+                    WDL_TypedBuf<FLOAT_TYPE> *result)
 {
     if (data.GetSize() == 0)
         return;
@@ -10708,15 +10719,15 @@ BLUtils::FindMinima(const WDL_TypedBuf<FLOAT_TYPE> &data,
     }
 }
 template void BLUtils::FindMinima(const WDL_TypedBuf<float> &data,
-                       WDL_TypedBuf<float> *result);
+                                  WDL_TypedBuf<float> *result);
 template void BLUtils::FindMinima(const WDL_TypedBuf<double> &data,
-                       WDL_TypedBuf<double> *result);
+                                  WDL_TypedBuf<double> *result);
 
 // Fill with 0.0 where there is a minima, 0.0 elsewhere
 template <typename FLOAT_TYPE>
 void
 BLUtils::FindMinima2(const WDL_TypedBuf<FLOAT_TYPE> &data,
-                   WDL_TypedBuf<FLOAT_TYPE> *result)
+                     WDL_TypedBuf<FLOAT_TYPE> *result)
 {
     if (data.GetSize() == 0)
         return;
@@ -10742,14 +10753,14 @@ BLUtils::FindMinima2(const WDL_TypedBuf<FLOAT_TYPE> &data,
     }
 }
 template void BLUtils::FindMinima2(const WDL_TypedBuf<float> &data,
-                        WDL_TypedBuf<float> *result);
+                                   WDL_TypedBuf<float> *result);
 template void BLUtils::FindMinima2(const WDL_TypedBuf<double> &data,
-                        WDL_TypedBuf<double> *result);
+                                   WDL_TypedBuf<double> *result);
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::ComputeDerivative(const WDL_TypedBuf<FLOAT_TYPE> &values,
-                         WDL_TypedBuf<FLOAT_TYPE> *result)
+                           WDL_TypedBuf<FLOAT_TYPE> *result)
 {
     if (values.GetSize() == 0)
         return;
@@ -10772,9 +10783,9 @@ BLUtils::ComputeDerivative(const WDL_TypedBuf<FLOAT_TYPE> &values,
     }
 }
 template void BLUtils::ComputeDerivative(const WDL_TypedBuf<float> &values,
-                              WDL_TypedBuf<float> *result);
+                                         WDL_TypedBuf<float> *result);
 template void BLUtils::ComputeDerivative(const WDL_TypedBuf<double> &values,
-                              WDL_TypedBuf<double> *result);
+                                         WDL_TypedBuf<double> *result);
 
 template <typename FLOAT_TYPE>
 void
@@ -10787,32 +10798,32 @@ template void BLUtils::ComputeDerivative(WDL_TypedBuf<float> *ioValues);
 template void BLUtils::ComputeDerivative(WDL_TypedBuf<double> *ioValues);
 
 /*void
-BLUtils::SwapColors(LICE_MemBitmap *bmp)
-{
-    int w = bmp->getWidth();
-    int h = bmp->getHeight();
+  BLUtils::SwapColors(LICE_MemBitmap *bmp)
+  {
+  int w = bmp->getWidth();
+  int h = bmp->getHeight();
     
-    LICE_pixel *buf = bmp->getBits();
+  LICE_pixel *buf = bmp->getBits();
     
-    for (int i = 0; i < w*h; i++)
-    {
-        LICE_pixel &pix = buf[i];
+  for (int i = 0; i < w*h; i++)
+  {
+  LICE_pixel &pix = buf[i];
         
-        int r = LICE_GETR(pix);
-        int g = LICE_GETG(pix);
-        int b = LICE_GETB(pix);
-        int a = LICE_GETA(pix);
+  int r = LICE_GETR(pix);
+  int g = LICE_GETG(pix);
+  int b = LICE_GETB(pix);
+  int a = LICE_GETA(pix);
         
-        pix = LICE_RGBA(b, g, r, a);
-    }
-}*/
+  pix = LICE_RGBA(b, g, r, a);
+  }
+  }*/
 
 // See: http://paulbourke.net/miscellaneous/correlate/
 template <typename FLOAT_TYPE>
 void
 BLUtils::CrossCorrelation2D(const vector<WDL_TypedBuf<FLOAT_TYPE> > &image,
-                          const vector<WDL_TypedBuf<FLOAT_TYPE> > &mask,
-                          vector<WDL_TypedBuf<FLOAT_TYPE> > *corr)
+                            const vector<WDL_TypedBuf<FLOAT_TYPE> > &mask,
+                            vector<WDL_TypedBuf<FLOAT_TYPE> > *corr)
 {
     if (image.empty())
         return;
@@ -10882,16 +10893,16 @@ BLUtils::CrossCorrelation2D(const vector<WDL_TypedBuf<FLOAT_TYPE> > &image,
     }
 }
 template void BLUtils::CrossCorrelation2D(const vector<WDL_TypedBuf<float> > &image,
-                               const vector<WDL_TypedBuf<float> > &mask,
-                               vector<WDL_TypedBuf<float> > *corr);
+                                          const vector<WDL_TypedBuf<float> > &mask,
+                                          vector<WDL_TypedBuf<float> > *corr);
 template void BLUtils::CrossCorrelation2D(const vector<WDL_TypedBuf<double> > &image,
-                               const vector<WDL_TypedBuf<double> > &mask,
-                               vector<WDL_TypedBuf<double> > *corr);
+                                          const vector<WDL_TypedBuf<double> > &mask,
+                                          vector<WDL_TypedBuf<double> > *corr);
 
 template <typename FLOAT_TYPE>
 FLOAT_TYPE
 BLUtils::BinaryImageMatch(const vector<WDL_TypedBuf<FLOAT_TYPE> > &image0,
-                        const vector<WDL_TypedBuf<FLOAT_TYPE> > &image1)
+                          const vector<WDL_TypedBuf<FLOAT_TYPE> > &image1)
 {
     FLOAT_TYPE matchScore0 = 0.0; //BinaryImageMatchAux(image0, image1);
     FLOAT_TYPE matchScore1 = BinaryImageMatchAux(image1, image0);
@@ -10901,14 +10912,14 @@ BLUtils::BinaryImageMatch(const vector<WDL_TypedBuf<FLOAT_TYPE> > &image0,
     return matchScore;
 }
 template float BLUtils::BinaryImageMatch(const vector<WDL_TypedBuf<float> > &image0,
-                              const vector<WDL_TypedBuf<float> > &image1);
+                                         const vector<WDL_TypedBuf<float> > &image1);
 template double BLUtils::BinaryImageMatch(const vector<WDL_TypedBuf<double> > &image0,
-                               const vector<WDL_TypedBuf<double> > &image1);
+                                          const vector<WDL_TypedBuf<double> > &image1);
 
 template <typename FLOAT_TYPE>
 FLOAT_TYPE
 BLUtils::BinaryImageMatchAux(const vector<WDL_TypedBuf<FLOAT_TYPE> > &image0,
-                           const vector<WDL_TypedBuf<FLOAT_TYPE> > &image1)
+                             const vector<WDL_TypedBuf<FLOAT_TYPE> > &image1)
 {
     int numHit = 0;
     int numMiss = 0;
@@ -10946,9 +10957,9 @@ BLUtils::BinaryImageMatchAux(const vector<WDL_TypedBuf<FLOAT_TYPE> > &image0,
     return matchScore;
 }
 template float BLUtils::BinaryImageMatchAux(const vector<WDL_TypedBuf<float> > &image0,
-                                 const vector<WDL_TypedBuf<float> > &image1);
+                                            const vector<WDL_TypedBuf<float> > &image1);
 template double BLUtils::BinaryImageMatchAux(const vector<WDL_TypedBuf<double> > &image0,
-                                  const vector<WDL_TypedBuf<double> > &image1);
+                                             const vector<WDL_TypedBuf<double> > &image1);
 
 template <typename FLOAT_TYPE>
 void
@@ -11136,7 +11147,7 @@ template void BLUtils::Normalize(double *values, int numValues);
 template <typename FLOAT_TYPE>
 void
 BLUtils::Normalize(WDL_TypedBuf<FLOAT_TYPE> *values,
-                 FLOAT_TYPE minimum, FLOAT_TYPE maximum)
+                   FLOAT_TYPE minimum, FLOAT_TYPE maximum)
 {
 #if !USE_SIMD_OPTIM
     for (int i = 0; i < values->GetSize(); i++)
@@ -11166,9 +11177,9 @@ BLUtils::Normalize(WDL_TypedBuf<FLOAT_TYPE> *values,
 #endif
 }
 template void BLUtils::Normalize(WDL_TypedBuf<float> *values,
-                      float minimum, float maximum);
+                                 float minimum, float maximum);
 template void BLUtils::Normalize(WDL_TypedBuf<double> *values,
-                      double minimum, double maximum);
+                                 double minimum, double maximum);
 
 template <typename FLOAT_TYPE>
 FLOAT_TYPE
@@ -11336,7 +11347,7 @@ template double ComputeC0Freq(double aTune);
 template <typename FLOAT_TYPE>
 void
 BLUtils::BinsToChromaBins(int numBins, WDL_TypedBuf<FLOAT_TYPE> *chromaBins,
-                        FLOAT_TYPE sampleRate, FLOAT_TYPE aTune)
+                          FLOAT_TYPE sampleRate, FLOAT_TYPE aTune)
 {
     chromaBins->Resize(numBins);
     
@@ -11390,17 +11401,17 @@ BLUtils::BinsToChromaBins(int numBins, WDL_TypedBuf<FLOAT_TYPE> *chromaBins,
     }
 }
 template void BLUtils::BinsToChromaBins(int numBins, WDL_TypedBuf<float> *chromaBins,
-                             float sampleRate, float aTune);
+                                        float sampleRate, float aTune);
 template void BLUtils::BinsToChromaBins(int numBins, WDL_TypedBuf<double> *chromaBins,
-                             double sampleRate, double aTune);
+                                        double sampleRate, double aTune);
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::ComputeSamplesByFrequency(WDL_TypedBuf<FLOAT_TYPE> *freqSamples,
-                                 FLOAT_TYPE sampleRate,
-                                 const WDL_TypedBuf<FLOAT_TYPE> &magns,
-                                 const WDL_TypedBuf<FLOAT_TYPE> &phases,
-                                 int tBinNum)
+                                   FLOAT_TYPE sampleRate,
+                                   const WDL_TypedBuf<FLOAT_TYPE> &magns,
+                                   const WDL_TypedBuf<FLOAT_TYPE> &phases,
+                                   int tBinNum)
 {
     freqSamples->Resize(magns.GetSize());
  
@@ -11422,21 +11433,21 @@ BLUtils::ComputeSamplesByFrequency(WDL_TypedBuf<FLOAT_TYPE> *freqSamples,
     }
 }
 template void BLUtils::ComputeSamplesByFrequency(WDL_TypedBuf<float> *freqSamples,
-                                      float sampleRate,
-                                      const WDL_TypedBuf<float> &magns,
-                                      const WDL_TypedBuf<float> &phases,
-                                      int tBinNum);
+                                                 float sampleRate,
+                                                 const WDL_TypedBuf<float> &magns,
+                                                 const WDL_TypedBuf<float> &phases,
+                                                 int tBinNum);
 template void BLUtils::ComputeSamplesByFrequency(WDL_TypedBuf<double> *freqSamples,
-                                      double sampleRate,
-                                      const WDL_TypedBuf<double> &magns,
-                                      const WDL_TypedBuf<double> &phases,
-                                      int tBinNum);
+                                                 double sampleRate,
+                                                 const WDL_TypedBuf<double> &magns,
+                                                 const WDL_TypedBuf<double> &phases,
+                                                 int tBinNum);
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::SeparatePeaks2D(int width, int height,
-                       WDL_TypedBuf<FLOAT_TYPE> *ioData,
-                       bool keepMaxValue)
+                         WDL_TypedBuf<FLOAT_TYPE> *ioData,
+                         bool keepMaxValue)
 {
     WDL_TypedBuf<FLOAT_TYPE> result = *ioData;
     
@@ -11524,17 +11535,17 @@ BLUtils::SeparatePeaks2D(int width, int height,
     *ioData = result;
 }
 template void BLUtils::SeparatePeaks2D(int width, int height,
-                            WDL_TypedBuf<float> *ioData,
-                            bool keepMaxValue);
+                                       WDL_TypedBuf<float> *ioData,
+                                       bool keepMaxValue);
 template void BLUtils::SeparatePeaks2D(int width, int height,
-                            WDL_TypedBuf<double> *ioData,
-                            bool keepMaxValue);
+                                       WDL_TypedBuf<double> *ioData,
+                                       bool keepMaxValue);
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::SeparatePeaks2D2(int width, int height,
-                        WDL_TypedBuf<FLOAT_TYPE> *ioData,
-                        bool keepMaxValue)
+                          WDL_TypedBuf<FLOAT_TYPE> *ioData,
+                          bool keepMaxValue)
 {
 #define WIN_SIZE 3
 #define HALF_WIN_SIZE 1 //WIN_SIZE*0.5
@@ -11624,17 +11635,17 @@ BLUtils::SeparatePeaks2D2(int width, int height,
     *ioData = result;
 }
 template void BLUtils::SeparatePeaks2D2(int width, int height,
-                             WDL_TypedBuf<float> *ioData,
-                             bool keepMaxValue);
+                                        WDL_TypedBuf<float> *ioData,
+                                        bool keepMaxValue);
 template void BLUtils::SeparatePeaks2D2(int width, int height,
-                             WDL_TypedBuf<double> *ioData,
-                             bool keepMaxValue);
+                                        WDL_TypedBuf<double> *ioData,
+                                        bool keepMaxValue);
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::Reshape(WDL_TypedBuf<FLOAT_TYPE> *ioBuf,
-               int inWidth, int inHeight,
-               int outWidth, int outHeight)
+                 int inWidth, int inHeight,
+                 int outWidth, int outHeight)
 {
     if (ioBuf->GetSize() != inWidth*inHeight)
         return;
@@ -11723,16 +11734,16 @@ BLUtils::Reshape(WDL_TypedBuf<FLOAT_TYPE> *ioBuf,
     *ioBuf = result;
 }
 template void BLUtils::Reshape(WDL_TypedBuf<float> *ioBuf,
-                    int inWidth, int inHeight,
-                    int outWidth, int outHeight);
+                               int inWidth, int inHeight,
+                               int outWidth, int outHeight);
 template void BLUtils::Reshape(WDL_TypedBuf<double> *ioBuf,
-                    int inWidth, int inHeight,
-                    int outWidth, int outHeight);
+                               int inWidth, int inHeight,
+                               int outWidth, int outHeight);
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::Transpose(WDL_TypedBuf<FLOAT_TYPE> *ioBuf,
-                 int width, int height)
+                   int width, int height)
 {
     if (ioBuf->GetSize() != width*height)
         return;
@@ -11751,9 +11762,9 @@ BLUtils::Transpose(WDL_TypedBuf<FLOAT_TYPE> *ioBuf,
     *ioBuf = result;
 }
 template void BLUtils::Transpose(WDL_TypedBuf<float> *ioBuf,
-                      int width, int height);
+                                 int width, int height);
 template void BLUtils::Transpose(WDL_TypedBuf<double> *ioBuf,
-                      int width, int height);
+                                 int width, int height);
 
 template <typename FLOAT_TYPE>
 FLOAT_TYPE
@@ -11835,13 +11846,13 @@ template double BLUtils::ComputeVariance2(const vector<double> &data);
 template <typename FLOAT_TYPE>
 FLOAT_TYPE
 BLUtils::LagrangeInterp4(FLOAT_TYPE x,
-                       FLOAT_TYPE p0[2], FLOAT_TYPE p1[2],
-                       FLOAT_TYPE p2[2], FLOAT_TYPE p3[2])
+                         FLOAT_TYPE p0[2], FLOAT_TYPE p1[2],
+                         FLOAT_TYPE p2[2], FLOAT_TYPE p3[2])
 {
     FLOAT_TYPE pts[4][2] = { { p0[0], p0[1] },
-                         { p1[0], p1[1] },
-                         { p2[0], p2[1] },
-                         { p3[0], p3[1] } };
+                             { p1[0], p1[1] },
+                             { p2[0], p2[1] },
+                             { p3[0], p3[1] } };
     
     FLOAT_TYPE l[4] = { 1.0, 1.0, 1.0, 1.0 };
     for (int j = 0; j < 4; j++)
@@ -11896,7 +11907,7 @@ BLUtils::ConvertToGUIFloatType(WDL_TypedBuf<BL_GUI_FLOAT> *dst,
 
 void
 BLUtils::ConvertToGUIFloatType(WDL_TypedBuf<BL_GUI_FLOAT> *dst,
-                             const WDL_TypedBuf<double> &src)
+                               const WDL_TypedBuf<double> &src)
 {
     if (sizeof(BL_GUI_FLOAT) == sizeof(double))
     {
@@ -11963,9 +11974,9 @@ BLUtils::FixDenormal(WDL_TypedBuf<BL_FLOAT> *data)
 // result size is: SignalLen + KernelLen - 1
 void
 BLUtils::Convolve(const WDL_TypedBuf<BL_FLOAT> &a,
-                const WDL_TypedBuf<BL_FLOAT> &b,
-                WDL_TypedBuf<BL_FLOAT> *result,
-                int convoMode)
+                  const WDL_TypedBuf<BL_FLOAT> &b,
+                  WDL_TypedBuf<BL_FLOAT> *result,
+                  int convoMode)
 {
     // Standard convolution
     if (a.GetSize() != b.GetSize())
@@ -12070,18 +12081,18 @@ bool
 BLUtils::SegSegIntersect(BL_FLOAT seg0[2][2], BL_FLOAT seg1[2][2])
 {
     int inter =
-        get_line_intersection(seg0[0][0], seg0[0][1], seg0[1][0], seg0[1][1],
-                              seg1[0][0], seg1[0][1], seg1[1][0], seg1[1][1],
-                              NULL, NULL);
+    get_line_intersection(seg0[0][0], seg0[0][1], seg0[1][0], seg0[1][1],
+                          seg1[0][0], seg1[0][1], seg1[1][0], seg1[1][1],
+                          NULL, NULL);
     
     return (bool)inter;
 }
 
 void
 BLUtils::AddIntermediatePoints(const WDL_TypedBuf<BL_FLOAT> &x,
-                             const WDL_TypedBuf<BL_FLOAT> &y,
-                             WDL_TypedBuf<BL_FLOAT> *newX,
-                             WDL_TypedBuf<BL_FLOAT> *newY)
+                               const WDL_TypedBuf<BL_FLOAT> &y,
+                               WDL_TypedBuf<BL_FLOAT> *newX,
+                               WDL_TypedBuf<BL_FLOAT> *newY)
 {
     if (x.GetSize() != y.GetSize())
         return;
@@ -12135,12 +12146,12 @@ BLUtils::GetFullPlugResourcesPath(const IPluginBase &plug, WDL_String *resPath)
 #define DUMMY_RES_FILE "dummy.txt"
     
     EResourceLocation resourceFound =
-        LocateResource(DUMMY_RES_FILE,
-                       "txt",
-                       *resPath,
-                       plug.GetBundleID(),
-                       NULL, //GetWinModuleHandle(),
-                       SHARED_RESOURCES_SUBPATH);// defined in plugin config.h
+    LocateResource(DUMMY_RES_FILE,
+                   "txt",
+                   *resPath,
+                   plug.GetBundleID(),
+                   NULL, //GetWinModuleHandle(),
+                   SHARED_RESOURCES_SUBPATH);// defined in plugin config.h
     
     if (resourceFound == EResourceLocation::kNotFound)
     {

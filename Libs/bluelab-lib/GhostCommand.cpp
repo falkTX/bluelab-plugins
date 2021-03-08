@@ -55,16 +55,21 @@ GhostCommand::SetSelection(BL_FLOAT x0, BL_FLOAT y0, BL_FLOAT x1, BL_FLOAT y1,
 void
 GhostCommand::ApplySlice(vector<WDL_TypedBuf<BL_FLOAT> > *magns,
                          vector<WDL_TypedBuf<BL_FLOAT> > *phases,
-                         int offsetXLines)
+                         //int offsetXLines)
+                         int keepBorderSize)
 {
     DataToBuf(*magns, &mSavedMagnsSlice);
     DataToBuf(*phases, &mSavedPhasesSlice);
     
     vector<WDL_TypedBuf<BL_FLOAT> > magnsSel;
-    ExtractAux(&magnsSel, *magns, offsetXLines);
+    ExtractAux(&magnsSel, *magns,
+               //offsetXLines);
+               keepBorderSize);
     
     vector<WDL_TypedBuf<BL_FLOAT> > phasesSel;
-    ExtractAux(&phasesSel, *phases, offsetXLines);
+    ExtractAux(&phasesSel, *phases,
+               //offsetXLines);
+               keepBorderSize);
     
     Apply(&magnsSel, &phasesSel);
     
@@ -73,7 +78,8 @@ GhostCommand::ApplySlice(vector<WDL_TypedBuf<BL_FLOAT> > *magns,
     {
         WDL_TypedBuf<BL_FLOAT> &magns0 = magnsSel[i];
         
-        (*magns)[i + offsetXLines] = magns0;
+        //(*magns)[i + offsetXLines] = magns0;
+        (*magns)[i + keepBorderSize] = magns0;
     }
     
     // Phases
@@ -81,7 +87,8 @@ GhostCommand::ApplySlice(vector<WDL_TypedBuf<BL_FLOAT> > *magns,
     {
         WDL_TypedBuf<BL_FLOAT> &phases0 = phasesSel[i];
         
-        (*phases)[i + offsetXLines] = phases0;
+        //(*phases)[i + offsetXLines] = phases0;
+        (*phases)[i + keepBorderSize] = phases0;
     }
 }
 
@@ -95,7 +102,7 @@ GhostCommand::GetSelection(BL_FLOAT *x0, BL_FLOAT *y0, BL_FLOAT *x1, BL_FLOAT *y
     *y1 = mSelection[3];
     
     *y0 = mScale->ApplyScale(yScale, *y0,
-                            (BL_FLOAT)0.0, (BL_FLOAT)(mSampleRate*0.5));
+                             (BL_FLOAT)0.0, (BL_FLOAT)(mSampleRate*0.5));
     *y1 = mScale->ApplyScale(yScale, *y1,
                              (BL_FLOAT)0.0, (BL_FLOAT)(mSampleRate*0.5));
 
@@ -111,7 +118,7 @@ GhostCommand::GetSelection(BL_FLOAT *x0, BL_FLOAT *y0, BL_FLOAT *x1, BL_FLOAT *y
 
 void
 GhostCommand::Undo(vector<WDL_TypedBuf<BL_FLOAT> > *magns,
-              vector<WDL_TypedBuf<BL_FLOAT> > *phases)
+                   vector<WDL_TypedBuf<BL_FLOAT> > *phases)
 {    
     //ReplaceSelectedDataY(data, mSavedDataSlice);
     BufToData(magns, mSavedMagnsSlice);
@@ -186,7 +193,7 @@ GhostCommand::GetSelectedDataY(const vector<WDL_TypedBuf<BL_FLOAT> > &data,
 
 void
 GhostCommand::ReplaceSelectedData(vector<WDL_TypedBuf<BL_FLOAT> > *data,
-                             const WDL_TypedBuf<BL_FLOAT> &selectedData)
+                                  const WDL_TypedBuf<BL_FLOAT> &selectedData)
 {
     // Save original data (for history mechanisme)
     GetSelectedData(*data, &mSavedData);
@@ -230,7 +237,7 @@ GhostCommand::ReplaceSelectedData(vector<WDL_TypedBuf<BL_FLOAT> > *data,
 
 void
 GhostCommand::ReplaceSelectedDataY(vector<WDL_TypedBuf<BL_FLOAT> > *data,
-                              const WDL_TypedBuf<BL_FLOAT> &selectedData)
+                                   const WDL_TypedBuf<BL_FLOAT> &selectedData)
 {
     // Save original data (for history mechanisme)
     GetSelectedDataY(*data, &mSavedData);
@@ -268,7 +275,7 @@ GhostCommand::ReplaceSelectedDataY(vector<WDL_TypedBuf<BL_FLOAT> > *data,
 
 void
 GhostCommand::DataToBuf(const vector<WDL_TypedBuf<BL_FLOAT> > &data,
-                   WDL_TypedBuf<BL_FLOAT> *buf)
+                        WDL_TypedBuf<BL_FLOAT> *buf)
 {
     int w = data.size();
     if (w == 0)
@@ -292,20 +299,20 @@ GhostCommand::DataToBuf(const vector<WDL_TypedBuf<BL_FLOAT> > &data,
 
 void
 GhostCommand::BufToData(vector<WDL_TypedBuf<BL_FLOAT> > *data,
-                   const WDL_TypedBuf<BL_FLOAT> &buf)
+                        const WDL_TypedBuf<BL_FLOAT> &buf)
 {
     int w = data->size();
     if (w == 0)
         return;
     
-    int h = (*data)[0].GetSize();;
+    int h = (*data)[0].GetSize();
     
     if (buf.GetSize() != w*h)
         return;
     
     for (int i = 0; i < w; i++)
     {
-        const WDL_TypedBuf<BL_FLOAT> &col = (*data)[i];
+        /*const*/ WDL_TypedBuf<BL_FLOAT> &col = (*data)[i];
         for (int j = 0; j < h; j++)
         {
             BL_FLOAT val = buf.Get()[i + j*w];
@@ -318,7 +325,7 @@ GhostCommand::BufToData(vector<WDL_TypedBuf<BL_FLOAT> > *data,
 
 bool
 GhostCommand::GetDataBounds(const vector<WDL_TypedBuf<BL_FLOAT> > &data,
-                       int *x0, int *y0, int *x1, int *y1)
+                            int *x0, int *y0, int *x1, int *y1)
 {
     if (data.empty())
         return false;
@@ -349,7 +356,7 @@ GhostCommand::GetDataBounds(const vector<WDL_TypedBuf<BL_FLOAT> > &data,
 
 bool
 GhostCommand::GetDataBoundsSlice(const vector<WDL_TypedBuf<BL_FLOAT> > &data,
-                            int *y0, int *y1)
+                                 int *y0, int *y1)
 {
     if (data.empty())
         return false;
@@ -370,10 +377,12 @@ GhostCommand::GetDataBoundsSlice(const vector<WDL_TypedBuf<BL_FLOAT> > &data,
 
 void
 GhostCommand::ExtractAux(vector<WDL_TypedBuf<BL_FLOAT> > *dataSel,
-                    const vector<WDL_TypedBuf<BL_FLOAT> > &data,
-                    int offsetXLines)
+                         const vector<WDL_TypedBuf<BL_FLOAT> > &data,
+                         //int offsetXLines)
+                         int keepBorderSize)
 {
-    for (int i = offsetXLines; i < data.size() - offsetXLines; i++)
+    //for (int i = offsetXLines; i < data.size() - offsetXLines; i++)
+    for (int i = keepBorderSize; i < (int)data.size() - keepBorderSize; i++)
     {
         const WDL_TypedBuf<BL_FLOAT> &data0 = data[i];
     

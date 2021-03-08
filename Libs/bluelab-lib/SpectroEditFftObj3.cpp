@@ -1,5 +1,5 @@
 //
-//  SpectroEditFftObj2.cpp
+//  SpectroEditFftObj3.cpp
 //  BL-Ghost
 //
 //  Created by Pan on 02/06/18.
@@ -8,16 +8,16 @@
 
 #include <BLUtils.h>
 
-#include "SpectroEditFftObj2.h"
+#include "SpectroEditFftObj3.h"
 
-SpectroEditFftObj2::SpectroEditFftObj2(int bufferSize, int oversampling, int freqRes,
-                                     BL_FLOAT sampleRate)
+SpectroEditFftObj3::SpectroEditFftObj3(int bufferSize, int oversampling,
+                                       int freqRes, BL_FLOAT sampleRate)
 : ProcessObj(bufferSize)
 {
     ProcessObj::Reset(bufferSize, oversampling, freqRes, sampleRate);
-    
-    //mLineCount = 0;
-    mLineCount = 0.0;
+
+    mSamples = NULL;
+    mSamplesPos = 0.0;
     
     mMode = BYPASS;
     
@@ -28,21 +28,18 @@ SpectroEditFftObj2::SpectroEditFftObj2(int bufferSize, int oversampling, int fre
     mDataSelection[1] = 0.0;
     mDataSelection[2] = 0.0;
     mDataSelection[3] = 0.0;
-    
-    mSamples = NULL;
 }
 
-SpectroEditFftObj2::~SpectroEditFftObj2() {}
+SpectroEditFftObj3::~SpectroEditFftObj3() {}
 
 void
-SpectroEditFftObj2::SetSamples(WDL_TypedBuf<BL_FLOAT> *samples)
+SpectroEditFftObj3::SetSamples(WDL_TypedBuf<BL_FLOAT> *samples)
 {
     mSamples = samples;
 }
 
-#if 0 // ORIGIN
 void
-SpectroEditFftObj2::PreProcessSamplesBuffer(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
+SpectroEditFftObj3::PreProcessSamplesBuffer(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
                                             const WDL_TypedBuf<BL_FLOAT> *scBuffer)
 {
     if ((mMode == PLAY) || (mMode == PLAY_RENDER) || (mMode == GEN_DATA))
@@ -51,27 +48,10 @@ SpectroEditFftObj2::PreProcessSamplesBuffer(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
             BLUtils::FillAllZero(ioBuffer);
         
         if (mSamples != NULL)
-        {
-            int sampleId = LineCountToSampleId(mLineCount);
-           
-            if ((mMode == PLAY) || (mMode == PLAY_RENDER))
-                // Manage latency, from the spectrogram display to the sound played
-            {
-                sampleId -= mBufferSize;
-            }
-            
-            if (mMode == GEN_DATA)
-            // Manage latency, to fix a shift when editing (extract slice, then re-paste it)
-            {
-                // After "BL_FLOAT GetNumLines()", which fixed data selection incorrect rounding
-                //
-                // NOTE: previously tested with 0.75*bufferSize and 0.5*bufferSize
-                
-                sampleId -= mBufferSize;
-            }
-            
+        {            
             // Manages zeros if we get out of bounds
-            if ((sampleId < 0) || (sampleId + mBufferSize >= mSamples->GetSize()))
+            if ((mSamplesPos < 0) ||
+                (mSamplesPos + mBufferSize >= mSamples->GetSize()))
                 // Out of bounds
                 // We are processing one of the borders of the spectrogram
             {
@@ -80,75 +60,14 @@ SpectroEditFftObj2::PreProcessSamplesBuffer(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
             }
             else // We are in bounds
             {
-                ioBuffer->Resize(0);
-                ioBuffer->Add(&mSamples->Get()[sampleId], mBufferSize);
+                BLUtils::SetBufResize(ioBuffer, *mSamples, mSamplesPos, mBufferSize);
             }
         }
     }
 }
-#endif
-
-#if 1 // For Fft15 and latency
-void
-SpectroEditFftObj2::PreProcessSamplesBuffer(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
-                                            const WDL_TypedBuf<BL_FLOAT> *scBuffer)
-{
-    if ((mMode == PLAY) || (mMode == PLAY_RENDER) || (mMode == GEN_DATA))
-    {
-        if (mMode != PLAY_RENDER)
-            BLUtils::FillAllZero(ioBuffer);
-        
-        if (mSamples != NULL)
-        {
-            int sampleId = LineCountToSampleId(mLineCount);
-            
-            if ((mMode == PLAY) || (mMode == PLAY_RENDER))
-                // Manage latency, from the spectrogram display to the sound played
-            {
-                
-#if 0 // 0: GOOD for Fft15 => no shift !
-                sampleId -= mBufferSize;
-#endif
-            }
-            
-            if (mMode == GEN_DATA)
-                // Manage latency, to fix a shift when editing (extract slice, then re-paste it)
-            {
-                // After "BL_FLOAT GetNumLines()", which fixed data selection incorrect rounding
-                //
-                // NOTE: previously tested with 0.75*bufferSize and 0.5*bufferSize
-                
-#if 0 // 0: GOOD for Fft15 => no shift !
-                sampleId -= mBufferSize;
-#endif
-            }
-            
-            // Manages zeros if we get out of bounds
-            if ((sampleId < 0) || (sampleId + mBufferSize >= mSamples->GetSize()))
-                // Out of bounds
-                // We are processing one of the borders of the spectrogram
-            {
-                // Generate a buffer filled of zeros
-                BLUtils::ResizeFillZeros(ioBuffer, mBufferSize);
-            }
-            else // We are in bounds
-            {
-                //ioBuffer->Resize(0);
-                //ioBuffer->Add(&mSamples->Get()[sampleId], mBufferSize);
-
-                /*ioBuffer->Resize(mBufferSize);
-                  memcpy(ioBuffer->Get(), &mSamples->Get()[sampleId],
-                  mBufferSize*sizeof(BL_FLOAT));*/
-
-                BLUtils::SetBufResize(ioBuffer, *mSamples, sampleId, mBufferSize);
-            }
-        }
-    }
-}
-#endif
 
 void
-SpectroEditFftObj2::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer0,
+SpectroEditFftObj3::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer0,
                                      const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer)
 {
     //BLUtils::TakeHalf(ioBuffer);
@@ -168,14 +87,13 @@ SpectroEditFftObj2::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer0,
     {
         if (mSamples != NULL)
         {
-            int sampleId = LineCountToSampleId(mLineCount);
             if (mSelectionEnabled)
             {
                 BL_FLOAT x1 = mDataSelection[2];
-                if (mLineCount > x1)
+                if (mSamplesPos > x1)
                     mSelectionPlayFinished = true;
             }
-            else if (sampleId >= mSamples->GetSize())
+            else if (mSamplesPos >= mSamples->GetSize())
             {
                 mSelectionPlayFinished = true;
             }
@@ -222,8 +140,8 @@ SpectroEditFftObj2::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer0,
     if (mMode == GEN_DATA)
     {
         // Accumulate the data only if we are into selection bounds
-        if ((mLineCount >= mDataSelection[0]) &&
-            (mLineCount < mDataSelection[2]))
+        if ((mSamplesPos >= mDataSelection[0]) &&
+            (mSamplesPos < mDataSelection[2]))
         {
             mCurrentMagns.push_back(magns);
             mCurrentPhases.push_back(phases);
@@ -243,12 +161,12 @@ SpectroEditFftObj2::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer0,
         if (!mCurrentReplaceMagns.empty())
         {
             // Replace the data only if we are into selection bounds
-            if ((mLineCount >= mDataSelection[0]) &&
-                (mLineCount < mDataSelection[2]))
+            if ((mSamplesPos >= mDataSelection[0]) &&
+                (mSamplesPos < mDataSelection[2]))
             {
                 magns = mCurrentReplaceMagns[0];
                 phases = mCurrentReplacePhases[0];
-
+                
                 // NOTE: this is not optimal for memory
                 BLUtils::ConsumeLeft(&mCurrentReplaceMagns);
                 BLUtils::ConsumeLeft(&mCurrentReplacePhases);
@@ -266,73 +184,67 @@ SpectroEditFftObj2::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer0,
         (mMode == GEN_DATA) ||
         (mMode == REPLACE_DATA))
     {
-        mLineCount++;
+        mSamplesPos += mBufferSize/mOverlapping;
     }
 
     WDL_TypedBuf<WDL_FFT_COMPLEX> &result = mTmpBuf5;
     BLUtils::MagnPhaseToComplex(&result, magns, phases);
 
-    //memcpy(ioBuffer0->Get(), result.Get(),
-    //       result.GetSize()*sizeof(WDL_FFT_COMPLEX));
     BLUtils::SetBuf(ioBuffer0, result);
-    
-    //BLUtils::ResizeFillZeros(ioBuffer, ioBuffer->GetSize()*2);
 
     BLUtils::FillSecondFftHalf(ioBuffer0);
 }
 
 void
-SpectroEditFftObj2::Reset(int bufferSize, int oversampling,
+SpectroEditFftObj3::Reset(int bufferSize, int oversampling,
                           int freqRes, BL_FLOAT sampleRate)
 {
     ProcessObj::Reset(bufferSize, oversampling, freqRes, sampleRate);
     
-    mLineCount = 0.0;
+    mSamplesPos = 0.0;
     
     mSelectionEnabled = false;
     mSelectionPlayFinished = false;
 }
 
 void
-SpectroEditFftObj2::SetMode(Mode mode)
+SpectroEditFftObj3::SetMode(Mode mode)
 {
     mMode = mode;
 }
 
-SpectroEditFftObj2::Mode
-SpectroEditFftObj2::GetMode()
+SpectroEditFftObj3::Mode
+SpectroEditFftObj3::GetMode()
 {
     return mMode;
 }
 
 void
-SpectroEditFftObj2::SetDataSelection(BL_FLOAT x0, BL_FLOAT y0,
+SpectroEditFftObj3::SetDataSelection(BL_FLOAT x0, BL_FLOAT y0,
                                      BL_FLOAT x1, BL_FLOAT y1)
 {
-    mDataSelection[0] = x0*mOverlapping;
+    mDataSelection[0] = x0;
     mDataSelection[1] = y0;
-    mDataSelection[2] = x1*mOverlapping;
+    mDataSelection[2] = x1;
     mDataSelection[3] = y1;
-    
-    SwapSelection(mDataSelection);
     
     mSelectionEnabled = true;
 }
 
 void
-SpectroEditFftObj2::SetSelectionEnabled(bool flag)
+SpectroEditFftObj3::SetSelectionEnabled(bool flag)
 {
     mSelectionEnabled = flag;
 }
 
 bool
-SpectroEditFftObj2::IsSelectionEnabled()
+SpectroEditFftObj3::IsSelectionEnabled()
 {
     return mSelectionEnabled;
 }
 
 void
-SpectroEditFftObj2::GetNormSelection(BL_FLOAT selection[4])
+SpectroEditFftObj3::GetNormSelection(BL_FLOAT selection[4])
 {
     if ((mSamples == NULL) || (mSamples->GetSize() == 0))
     {
@@ -344,115 +256,83 @@ SpectroEditFftObj2::GetNormSelection(BL_FLOAT selection[4])
         return;
     }
     
-    BL_FLOAT numLines = GetNumLines();
-    
+    BL_FLOAT numSamples = mSamples->GetSize();
     int lineSize = mBufferSize/2;
     
-    selection[0] = mDataSelection[0]/numLines;
+    selection[0] = mDataSelection[0]/numSamples;
     selection[1] = mDataSelection[1]/lineSize;
     
-    selection[2] = mDataSelection[2]/numLines;
+    selection[2] = mDataSelection[2]/numSamples;
     selection[3] = mDataSelection[3]/lineSize;
 }
 
 void
-SpectroEditFftObj2::SetNormSelection(const BL_FLOAT selection[4])
+SpectroEditFftObj3::SetNormSelection(const BL_FLOAT selection[4])
 {
     if ((mSamples == NULL) || (mSamples->GetSize() == 0))
         return;
     
-    BL_FLOAT numLines = GetNumLines();
-    
+    BL_FLOAT numSamples = mSamples->GetSize();
     int lineSize = mBufferSize/2;
     
-    mDataSelection[0] = selection[0]*numLines;
+    mDataSelection[0] = selection[0]*numSamples;
     mDataSelection[1] = selection[1]*lineSize;
-    mDataSelection[2] = selection[2]*numLines;
+    mDataSelection[2] = selection[2]*numSamples;
     mDataSelection[3] = selection[3]*lineSize;
-    
-    SwapSelection(mDataSelection);
 }
 
 void
-SpectroEditFftObj2::RewindToStartSelection()
+SpectroEditFftObj3::RewindToStartSelection()
 {
     // Rewind to the beginning of the selection
-    mLineCount = mDataSelection[0];
+    mSamplesPos = mDataSelection[0];
     
     mSelectionPlayFinished = false;
 }
 
 void
-SpectroEditFftObj2::RewindToNormValue(BL_FLOAT value)
+SpectroEditFftObj3::RewindToNormValue(BL_FLOAT value)
 {
-    BL_FLOAT numLines = GetNumLines();
-    
-    mLineCount = (mSamples == NULL) ? 0 : value*numLines;
+    if (mSamples == NULL)
+        mSamplesPos =  0.0;
+    else
+        mSamplesPos = value*mSamples->GetSize();
     
     mSelectionPlayFinished = false;
 }
 
 bool
-SpectroEditFftObj2::SelectionPlayFinished()
+SpectroEditFftObj3::SelectionPlayFinished()
 {
     return mSelectionPlayFinished;
 }
 
 BL_FLOAT
-SpectroEditFftObj2::GetPlayPosition()
+SpectroEditFftObj3::GetPlayPosition()
 {
     if ((mSamples == NULL) || (mSamples->GetSize() == 0))
         return 0.0;
     
-    BL_FLOAT numLines = GetNumLines();
-    //BL_FLOAT res = ((BL_FLOAT)mLineCount)/numLines;
-    BL_FLOAT res = mLineCount/numLines;
+    BL_FLOAT numSamples = mSamples->GetSize();
+    BL_FLOAT res = mSamplesPos/numSamples;
     
     return res;
 }
 
 BL_FLOAT
-SpectroEditFftObj2::GetSelPlayPosition()
+SpectroEditFftObj3::GetSelPlayPosition()
 {
     if ((mSamples == NULL) || (mSamples->GetSize() == 0))
         return 0.0;
     
-    //BL_FLOAT res = ((BL_FLOAT)(mLineCount - mDataSelection[0]))/
-    //                      (mDataSelection[2] - mDataSelection[0]);
-    BL_FLOAT res = (mLineCount - mDataSelection[0])/
+    BL_FLOAT res = (mSamplesPos - mDataSelection[0])/
     (mDataSelection[2] - mDataSelection[0]);
     
     return res;
 }
 
-BL_FLOAT
-SpectroEditFftObj2::GetViewPlayPosition(BL_FLOAT startDataPos, BL_FLOAT endDataPos)
-{
-    if ((mSamples == NULL) || (mSamples->GetSize() == 0))
-        return 0.0;
-    
-    //BL_FLOAT res = ((BL_FLOAT)(mLineCount - startDataPos))/
-    //                      (mOverlapping*(endDataPos - startDataPos));
-    BL_FLOAT res = (mLineCount - startDataPos)/
-    (mOverlapping*(endDataPos - startDataPos));
-    
-    return res;
-}
-
-BL_FLOAT/*long*/
-SpectroEditFftObj2::GetLineCount()
-{
-    return mLineCount;
-}
-
 void
-SpectroEditFftObj2::SetLineCount(BL_FLOAT/*long*/ lineCount)
-{
-     mLineCount = lineCount;
-}
-
-void
-SpectroEditFftObj2::GetGeneratedData(vector<WDL_TypedBuf<BL_FLOAT> > *magns,
+SpectroEditFftObj3::GetGeneratedData(vector<WDL_TypedBuf<BL_FLOAT> > *magns,
                                      vector<WDL_TypedBuf<BL_FLOAT> > *phases)
 {
     *magns = mCurrentMagns;
@@ -460,7 +340,7 @@ SpectroEditFftObj2::GetGeneratedData(vector<WDL_TypedBuf<BL_FLOAT> > *magns,
 }
 
 void
-SpectroEditFftObj2::ClearGeneratedData()
+SpectroEditFftObj3::ClearGeneratedData()
 {
     mCurrentMagns.clear();
     mCurrentPhases.clear();
@@ -469,14 +349,14 @@ SpectroEditFftObj2::ClearGeneratedData()
 // Just for principle
 // In reality, these data should be consumed when playing
 void
-SpectroEditFftObj2::ClearReplaceData()
+SpectroEditFftObj3::ClearReplaceData()
 {
     mCurrentReplaceMagns.clear();
     mCurrentReplacePhases.clear();
 }
 
 void
-SpectroEditFftObj2::SetReplaceData(const vector<WDL_TypedBuf<BL_FLOAT> > &magns,
+SpectroEditFftObj3::SetReplaceData(const vector<WDL_TypedBuf<BL_FLOAT> > &magns,
                                    const vector<WDL_TypedBuf<BL_FLOAT> > &phases)
 {
     mCurrentReplaceMagns = magns;
@@ -484,7 +364,7 @@ SpectroEditFftObj2::SetReplaceData(const vector<WDL_TypedBuf<BL_FLOAT> > &magns,
 }
 
 void
-SpectroEditFftObj2::GetData(const WDL_TypedBuf<BL_FLOAT> &currentData,
+SpectroEditFftObj3::GetData(const WDL_TypedBuf<BL_FLOAT> &currentData,
                             WDL_TypedBuf<BL_FLOAT> *data)
 {
     if (!mSelectionEnabled)
@@ -498,9 +378,9 @@ SpectroEditFftObj2::GetData(const WDL_TypedBuf<BL_FLOAT> &currentData,
     BL_FLOAT x1 = mDataSelection[2];
     
     // Here, we manage data on x
-    if ((mLineCount < x0) || (mLineCount > x1) ||
+    if ((mSamplesPos < x0) || (mSamplesPos > x1) ||
         (mSamples == NULL) ||
-        (mLineCount >= mOverlapping*mSamples->GetSize()/mBufferSize))
+        (mSamplesPos >= mSamples->GetSize()))
     {
         // Set to 0 outside x selection
         BLUtils::FillAllZero(data);
@@ -508,7 +388,7 @@ SpectroEditFftObj2::GetData(const WDL_TypedBuf<BL_FLOAT> &currentData,
     else
     {
         // Here, we manage data on y
-        if (mLineCount < mOverlapping*mSamples->GetSize()/mBufferSize)
+        if (mSamplesPos < mSamples->GetSize())
         {
             // Original line
             *data = currentData;
@@ -542,40 +422,4 @@ SpectroEditFftObj2::GetData(const WDL_TypedBuf<BL_FLOAT> &currentData,
             BLUtils::FillAllZero(data);
         }
     }
-}
-
-long
-SpectroEditFftObj2::LineCountToSampleId(BL_FLOAT/*long*/ lineCount)
-{
-    long sampleId = lineCount*mBufferSize/mOverlapping;
-    
-    return sampleId;
-}
-
-BL_FLOAT
-SpectroEditFftObj2::GetNumLines()
-{
-    BL_FLOAT numLines = (((BL_FLOAT)mSamples->GetSize())/mBufferSize)*mOverlapping;
-    
-    return numLines;
-}
-
-void
-SpectroEditFftObj2::SwapSelection(BL_FLOAT selection[4])
-{
-#if 0 // Not needed anymore since iPlug2
-    if (selection[0] > selection[2])
-    {
-        BL_FLOAT tmp = selection[0];
-        selection[0] = selection[2];
-        selection[2] = tmp;
-    }
-    
-    if (selection[1] > selection[3])
-    {
-        BL_FLOAT tmp = selection[1];
-        selection[1] = selection[3];
-        selection[3] = tmp;
-    }
-#endif
 }
