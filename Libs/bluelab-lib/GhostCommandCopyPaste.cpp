@@ -2,12 +2,10 @@
 
 #include "GhostCommandCopyPaste.h"
 
-GhostCommandCopyPaste::GhostCommandCopyPaste(BL_FLOAT sampleRate,
-                                             int keepBorderSize)
+GhostCommandCopyPaste::GhostCommandCopyPaste(BL_FLOAT sampleRate)
 : GhostCommand(sampleRate)
 {
     mIsPasteDone = false;
-    mKeepBorderSize = keepBorderSize;
 }
 
 GhostCommandCopyPaste::GhostCommandCopyPaste(const GhostCommandCopyPaste &other)
@@ -18,8 +16,6 @@ GhostCommandCopyPaste::GhostCommandCopyPaste(const GhostCommandCopyPaste &other)
     
     for (int i = 0; i < 4; i++)
         mCopiedSelection[i] = other.mCopiedSelection[i];
-
-    mKeepBorderSize = other.mKeepBorderSize;
     
     mIsPasteDone = false;
 }
@@ -35,10 +31,10 @@ GhostCommandCopyPaste::Copy(const vector<WDL_TypedBuf<BL_FLOAT> > &magns,
         mCopiedSelection[i] = mSelection[i];
     
     vector<WDL_TypedBuf<BL_FLOAT> > magnsSel;
-    ExtractAux(&magnsSel, magns, mKeepBorderSize);
+    ExtractAux(&magnsSel, magns);
     
     vector<WDL_TypedBuf<BL_FLOAT> > phasesSel;
-    ExtractAux(&phasesSel, phases, mKeepBorderSize);
+    ExtractAux(&phasesSel, phases);
     
     GetSelectedDataY(magnsSel, &mCopiedMagns);
     GetSelectedDataY(phasesSel, &mCopiedPhases);

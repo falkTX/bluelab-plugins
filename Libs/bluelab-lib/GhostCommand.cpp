@@ -36,18 +36,16 @@ GhostCommand::SetSelection(BL_FLOAT x0, BL_FLOAT y0, BL_FLOAT x1, BL_FLOAT y1,
 
 void
 GhostCommand::ApplySlice(vector<WDL_TypedBuf<BL_FLOAT> > *magns,
-                         vector<WDL_TypedBuf<BL_FLOAT> > *phases,
-                         //int offsetXLines)
-                         int keepBorderSize)
+                         vector<WDL_TypedBuf<BL_FLOAT> > *phases)
 {
     DataToBuf(*magns, &mSavedMagnsSlice);
     DataToBuf(*phases, &mSavedPhasesSlice);
     
     vector<WDL_TypedBuf<BL_FLOAT> > magnsSel;
-    ExtractAux(&magnsSel, *magns, keepBorderSize);
+    ExtractAux(&magnsSel, *magns);
     
     vector<WDL_TypedBuf<BL_FLOAT> > phasesSel;
-    ExtractAux(&phasesSel, *phases, keepBorderSize);
+    ExtractAux(&phasesSel, *phases);
     
     Apply(&magnsSel, &phasesSel);
     
@@ -56,7 +54,7 @@ GhostCommand::ApplySlice(vector<WDL_TypedBuf<BL_FLOAT> > *magns,
     {
         WDL_TypedBuf<BL_FLOAT> &magns0 = magnsSel[i];
         
-        (*magns)[i + keepBorderSize] = magns0;
+        (*magns)[i] = magns0;
     }
     
     // Phases
@@ -64,7 +62,7 @@ GhostCommand::ApplySlice(vector<WDL_TypedBuf<BL_FLOAT> > *magns,
     {
         WDL_TypedBuf<BL_FLOAT> &phases0 = phasesSel[i];
         
-        (*phases)[i + keepBorderSize] = phases0;
+        (*phases)[i] = phases0;
     }
 }
 
@@ -343,11 +341,9 @@ GhostCommand::GetDataBoundsSlice(const vector<WDL_TypedBuf<BL_FLOAT> > &data,
 
 void
 GhostCommand::ExtractAux(vector<WDL_TypedBuf<BL_FLOAT> > *dataSel,
-                         const vector<WDL_TypedBuf<BL_FLOAT> > &data,
-                         //int offsetXLines)
-                         int keepBorderSize)
+                         const vector<WDL_TypedBuf<BL_FLOAT> > &data)
 {
-    for (int i = keepBorderSize; i < (int)data.size() - keepBorderSize; i++)
+    for (int i = 0; i < (int)data.size(); i++)
     {
         const WDL_TypedBuf<BL_FLOAT> &data0 = data[i];
     

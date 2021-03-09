@@ -266,12 +266,26 @@ public:
                            const FLOAT_TYPE *buf1Data,
                            int bufSize,
                            FLOAT_TYPE fadeStart, FLOAT_TYPE fadeEnd);
+
+    template <typename FLOAT_TYPE>
+    static void Fade2(FLOAT_TYPE *ioBuf0Data, const FLOAT_TYPE *buf1Data, int bufSize,
+                      FLOAT_TYPE fadeStartPos, FLOAT_TYPE fadeEndPos,
+                      FLOAT_TYPE startT, FLOAT_TYPE endT,
+                      FLOAT_TYPE sigmoA = (FLOAT_TYPE)0.5);
     
+    template <typename FLOAT_TYPE>
+    static void Fade2Double(FLOAT_TYPE *ioBuf0Data,
+                            const FLOAT_TYPE *buf1Data, int bufSize,
+                            FLOAT_TYPE fadeStartPos, FLOAT_TYPE fadeEndPos,
+                            FLOAT_TYPE startT, FLOAT_TYPE endT,
+                            FLOAT_TYPE sigmaA = (FLOAT_TYPE)0.5);
+        
     template <typename FLOAT_TYPE>
     static void AntiClipping(WDL_TypedBuf<FLOAT_TYPE> *values, FLOAT_TYPE maxValue);
     
     template <typename FLOAT_TYPE>
-    static void SamplesAntiClipping(WDL_TypedBuf<FLOAT_TYPE> *samples, FLOAT_TYPE maxValue);
+    static void SamplesAntiClipping(WDL_TypedBuf<FLOAT_TYPE> *samples,
+                                    FLOAT_TYPE maxValue);
     
     // Plugin operations
     static void PlugInits();
@@ -1582,7 +1596,16 @@ public:
     template <typename FLOAT_TYPE>
     static void SetBuf(WDL_TypedBuf<FLOAT_TYPE> *dstBuffer,
                        const WDL_TypedBuf<FLOAT_TYPE> &srcBuffer);
-        
+
+    // Schlick sigmoid, see:
+    //
+    // https://dept-info.labri.u-bordeaux.fr/~schlick/DOC/gem2.ps.gz
+    //
+    // a included in [0, 1]
+    // a = 0.5 -> gives a line
+    template <typename FLOAT_TYPE>
+    static FLOAT_TYPE ApplySigmoid(FLOAT_TYPE t, FLOAT_TYPE a);
+    
 protected:
     template <typename FLOAT_TYPE>
     static FLOAT_TYPE BinaryImageMatchAux(const vector<WDL_TypedBuf<FLOAT_TYPE> > &image0,

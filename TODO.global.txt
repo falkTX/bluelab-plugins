@@ -296,7 +296,7 @@ For all plugins (=> new Design):
 - TODO(all): check that we use the latest TimeAxis and FreqAxis
 SmoothCurveDb => additional arg: sampleRate
 - TODO(all): set output data to zero at the beginning, for all plugins
-
+- TODO(all): should use BLUtils::Fades with sigmoid (see Ghost) => far better!
 - TODO: check log scale (with many lines, w/ gamma = 1)
 
 - TODO: set bevel for all curves

@@ -40,6 +40,7 @@ extern "C" {
 #include <IPlugPaths.h>
 
 #include <FastMath.h>
+#include <BLDebug.h>
 
 #include "BLUtils.h"
 
@@ -4408,7 +4409,8 @@ template void BLUtils::Fade(WDL_TypedBuf<double> *buf, double fadeStart, double 
 
 template <typename FLOAT_TYPE>
 void
-BLUtils::Fade(FLOAT_TYPE *buf, int origBufSize, FLOAT_TYPE fadeStart, FLOAT_TYPE fadeEnd, bool fadeIn)
+BLUtils::Fade(FLOAT_TYPE *buf, int origBufSize,
+              FLOAT_TYPE fadeStart, FLOAT_TYPE fadeEnd, bool fadeIn)
 {
     int bufSize = origBufSize - 1;
     
@@ -4681,6 +4683,92 @@ template void BLUtils::Fade(double *ioBuf0Data,
                             const double *buf1Data,
                             int bufSize,
                             double fadeStart, double fadeEnd);
+
+template <typename FLOAT_TYPE>
+void
+BLUtils::Fade2Double(FLOAT_TYPE *ioBuf0Data, const FLOAT_TYPE *buf1Data, int bufSize,
+                     FLOAT_TYPE fadeStartPos, FLOAT_TYPE fadeEndPos,
+                     FLOAT_TYPE startT, FLOAT_TYPE endT,
+                     FLOAT_TYPE sigmoA)
+{
+    Fade2(ioBuf0Data, buf1Data, bufSize,
+          fadeStartPos, fadeEndPos,
+          startT, endT, sigmoA);
+    
+    Fade2(ioBuf0Data, buf1Data, bufSize,
+          (FLOAT_TYPE)1.0 - fadeEndPos, (FLOAT_TYPE)1.0 - fadeStartPos,
+          endT, startT, sigmoA);
+}
+template void BLUtils::Fade2Double(float *ioBuf0Data, const float *buf1Data,
+                                   int bufSize,
+                                   float fadeStartPos, float fadeEndPos,
+                                   float startT, float endT,
+                                   float sigmoA);
+template void BLUtils::Fade2Double(double *ioBuf0Data, const double *buf1Data,
+                                   int bufSize,
+                                   double fadeStartPos, double fadeEndPos,
+                                   double startT, double endT,
+                                   double sigmoA);
+
+template <typename FLOAT_TYPE>
+void
+BLUtils::Fade2(FLOAT_TYPE *ioBuf0Data, const FLOAT_TYPE *buf1Data, int bufSize,
+               FLOAT_TYPE fadeStartPos, FLOAT_TYPE fadeEndPos,
+               FLOAT_TYPE startT, FLOAT_TYPE endT,
+               FLOAT_TYPE sigmoA)
+{
+    // NEW: check for bounds !
+    // Added for Ghost-X and FftProcessObj15 (latency fix)
+    if (fadeStartPos < 0.0)
+        fadeStartPos = 0.0;
+    if (fadeStartPos > 1.0)
+        fadeStartPos = 1.0;
+    
+    if (fadeEndPos < 0.0)
+        fadeEndPos = 0.0;
+    if (fadeEndPos > 1.0)
+        fadeEndPos = 1.0;
+                       
+    for (int i = 0; i < bufSize; i++)
+    {
+        FLOAT_TYPE prevVal = ioBuf0Data[i];
+        FLOAT_TYPE newVal = buf1Data[i];
+        
+        // Fades only on the part of the frame
+        FLOAT_TYPE u = 0.0;
+        if ((i >= bufSize*fadeStartPos) &&
+            (i < bufSize*fadeEndPos))
+        {
+            u = (i - bufSize*fadeStartPos)/(bufSize*(fadeEndPos - fadeStartPos));
+        }
+        
+        if (i >= bufSize*fadeEndPos)
+            u = 1.0;
+        
+        FLOAT_TYPE t = startT + u*(endT - startT);
+
+        // OLD: use power
+        //t = std::pow(t, fadeShapePower);
+
+        // NEW: use sigmoid
+        t = BLUtils::ApplySigmoid(t, sigmoA);
+        
+        FLOAT_TYPE result = (1.0 - t)*prevVal + t*newVal;
+        
+        ioBuf0Data[i] = result;
+    }
+}
+template void BLUtils::Fade2(float *ioBuf0Data,
+                             const float *buf1Data, int bufSize,
+                             float fadeStartPos, float fadeEndPos,
+                             float startT, float endT,
+                             float fadeShapePower);
+                             
+template void BLUtils::Fade2(double *ioBuf0Data,
+                             const double *buf1Data, int bufSize,
+                             double fadeStartPos, double fadeEndPos,
+                             double startT, double endT,
+                             double fadeShapePower);
 
 template <typename FLOAT_TYPE>
 FLOAT_TYPE
@@ -12357,3 +12445,44 @@ template void BLUtils::SetBuf(WDL_TypedBuf<double> *dstBuffer,
                               const WDL_TypedBuf<double> &srcBuffer);
 template void BLUtils::SetBuf(WDL_TypedBuf<WDL_FFT_COMPLEX> *dstBuffer,
                               const WDL_TypedBuf<WDL_FFT_COMPLEX> &srcBuffer);
+
+// Schlick sigmoid, see:
+//
+// https://dept-info.labri.u-bordeaux.fr/~schlick/DOC/gem2.ps.gz
+//
+// a included in [0, 1]
+// a = 0.5 -> gives a line
+
+// bias
+static float betaA(float t, float a)
+{
+    float bA = powf(t, -log2f(a));
+    return bA;
+}
+
+static double betaA(double t, double a)
+{
+    double bA = pow(t, -log2(a));
+    return bA;
+}
+
+template <typename FLOAT_TYPE>
+FLOAT_TYPE BLUtils::ApplySigmoid(FLOAT_TYPE t, FLOAT_TYPE a)
+{
+    if (t < 0.0)
+        t = 0.0;
+    if (t > 1.0)
+        t = 1.0;
+    
+    // gain
+    FLOAT_TYPE gammaA;
+    if (t < (FLOAT_TYPE)0.5)
+        gammaA = 0.5*betaA((FLOAT_TYPE)2.0*t, a);
+    else
+        gammaA = 1.0 - 0.5*betaA(2.0 - 2.0*t, a);
+
+    return gammaA;
+        
+}
+template float BLUtils::ApplySigmoid(float t, float a);
+template double BLUtils::ApplySigmoid(double t, double a);

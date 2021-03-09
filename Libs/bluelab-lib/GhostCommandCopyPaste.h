@@ -8,7 +8,7 @@
 class GhostCommandCopyPaste : public GhostCommand
 {
 public:
-    GhostCommandCopyPaste(BL_FLOAT sampleRate, int keepBorderSize);
+    GhostCommandCopyPaste(BL_FLOAT sampleRate);
    
     // To manage on copy then multiple pastes
     GhostCommandCopyPaste(const GhostCommandCopyPaste &other);
@@ -35,8 +35,6 @@ public:
 protected:
     WDL_TypedBuf<BL_FLOAT> mCopiedMagns;
     WDL_TypedBuf<BL_FLOAT> mCopiedPhases;
-    
-    int mKeepBorderSize;
     
     BL_FLOAT mCopiedSelection[4];
     BL_FLOAT mPastedSelection[4];

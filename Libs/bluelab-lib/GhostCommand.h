@@ -28,8 +28,7 @@ public:
     // Provide an "overflow", since the extracted data slice has extra magins in x,
     // for good reconstruction
     virtual void ApplySlice(vector<WDL_TypedBuf<BL_FLOAT> > *magns,
-                            vector<WDL_TypedBuf<BL_FLOAT> > *phases,
-                            int keepBorderSize);
+                            vector<WDL_TypedBuf<BL_FLOAT> > *phases);
     
     virtual void Apply(vector<WDL_TypedBuf<BL_FLOAT> > *magns,
                        vector<WDL_TypedBuf<BL_FLOAT> > *phases) = 0;
@@ -64,8 +63,7 @@ protected:
                             int *y0, int *y1);
 
     void ExtractAux(vector<WDL_TypedBuf<BL_FLOAT> > *dataSel,
-                    const vector<WDL_TypedBuf<BL_FLOAT> > &data,
-                    int keepBorderSize);
+                    const vector<WDL_TypedBuf<BL_FLOAT> > &data);
 
     void DataToBuf(const vector<WDL_TypedBuf<BL_FLOAT> > &data,
                    WDL_TypedBuf<BL_FLOAT> *buf);
