@@ -168,7 +168,7 @@ SpectroEditFftObj3::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer0,
                 magns = mCurrentReplaceMagns[0];
                 phases = mCurrentReplacePhases[0];
 
-#if 0 //1 // DEBUG
+#if 0 // Set to 1 to DEBUG
                 BLUtils::FillAllZero(&magns);
                 BLUtils::FillAllZero(&phases);
 #endif

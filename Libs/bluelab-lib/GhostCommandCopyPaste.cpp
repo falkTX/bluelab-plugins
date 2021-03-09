@@ -69,7 +69,7 @@ GhostCommandCopyPaste::Apply(vector<WDL_TypedBuf<BL_FLOAT> > *magns,
 
 void
 GhostCommandCopyPaste::Undo(vector<WDL_TypedBuf<BL_FLOAT> > *magns,
-                       vector<WDL_TypedBuf<BL_FLOAT> > *phases)
+                            vector<WDL_TypedBuf<BL_FLOAT> > *phases)
 {
     if (!mIsPasteDone)
         return;
