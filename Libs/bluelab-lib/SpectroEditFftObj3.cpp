@@ -55,6 +55,8 @@ SpectroEditFftObj3::PreProcessSamplesBuffer(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
                 // Out of bounds
                 // We are processing one of the borders of the spectrogram
             {
+                // TODO: adjust the numbers of zeros
+                
                 // Generate a buffer filled of zeros
                 BLUtils::ResizeFillZeros(ioBuffer, mBufferSize);
             }
@@ -165,7 +167,11 @@ SpectroEditFftObj3::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer0,
             {
                 magns = mCurrentReplaceMagns[0];
                 phases = mCurrentReplacePhases[0];
-                
+
+#if 0 //1 // DEBUG
+                BLUtils::FillAllZero(&magns);
+                BLUtils::FillAllZero(&phases);
+#endif
                 // NOTE: this is not optimal for memory
                 BLUtils::ConsumeLeft(&mCurrentReplaceMagns);
                 BLUtils::ConsumeLeft(&mCurrentReplacePhases);
