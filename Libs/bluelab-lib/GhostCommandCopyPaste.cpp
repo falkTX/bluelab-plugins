@@ -108,17 +108,11 @@ GhostCommandCopyPaste::GetPastedSelection(BL_FLOAT pastedSelection[4],
 {
     for (int i = 0; i < 4; i++)
         pastedSelection[i] = mPastedSelection[i];
-    
-#if 0 // TODO
-    if (yLogScale)
-    {
-        pastedSelection[1] = BLUtils::LogScaleNormInv(pastedSelection[1], 1.0, Y_LOG_SCALE_FACTOR);
-        pastedSelection[3] = BLUtils::LogScaleNormInv(pastedSelection[3], 1.0, Y_LOG_SCALE_FACTOR);
-    }
-#endif
-    
+
     pastedSelection[1] = mScale->ApplyScale(yScale, pastedSelection[1],
-                                            (BL_FLOAT)0.0, (BL_FLOAT)(mSampleRate*0.5));
+                                            (BL_FLOAT)0.0,
+                                            (BL_FLOAT)(mSampleRate*0.5));
+    
     pastedSelection[3] = mScale->ApplyScale(yScale,
                                             pastedSelection[3],
                                             (BL_FLOAT)0.0,

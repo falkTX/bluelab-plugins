@@ -424,8 +424,12 @@ SamplesPyramid2::GetValues(BL_FLOAT start, BL_FLOAT end, long numValues,
         numZerosEnd /= 2;
         
         pyramidLevel++;
-    }
 
+        // NEW
+        if (pyramidLevel >= mMaxPyramidLevel)
+            break;
+    }
+    
     mTmpBuf0.resize(mMaxPyramidLevel + 1);
 
     //WDL_TypedBuf<BL_FLOAT> currentPyramidLevel;
