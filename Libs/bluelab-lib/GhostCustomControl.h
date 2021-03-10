@@ -7,7 +7,8 @@
 
 #include <GhostPluginInterface.h>
 
-class SpectrogramDisplay2;
+//class SpectrogramDisplay2;
+class SpectrogramDisplay3;
 class MiniView2;
 class GhostCustomControl : public GraphCustomControl
 {
@@ -19,7 +20,8 @@ public:
     void Resize(int prevWidth, int prevHeight,
                 int newWidth, int newHeight);
     
-    void SetSpectrogramDisplay(SpectrogramDisplay2 *spectroDisplay);
+    //void SetSpectrogramDisplay(SpectrogramDisplay2 *spectroDisplay);
+    void SetSpectrogramDisplay(SpectrogramDisplay3 *spectroDisplay);
     void SetMiniView(MiniView2 *miniView);
     
     void SetSelectionType(GhostPluginInterface::SelectionType selectionType);
@@ -77,7 +79,8 @@ protected:
     bool mPrevMouseDownInsideSpectro;
     bool mPrevMouseDownInsideMiniView;
     
-    SpectrogramDisplay2 *mSpectroDisplay;
+    //SpectrogramDisplay2 *mSpectroDisplay;
+    SpectrogramDisplay3 *mSpectroDisplay;
     
     GhostPluginInterface::SelectionType mSelectionType;
     

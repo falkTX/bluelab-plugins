@@ -1,6 +1,7 @@
 #ifdef IGRAPHICS_NANOVG
 
-#include <SpectrogramDisplay2.h>
+//#include <SpectrogramDisplay2.h>
+#include <SpectrogramDisplay3.h>
 #include <MiniView2.h>
 
 #include <GhostPluginInterface.h>
@@ -56,7 +57,7 @@ GhostCustomControl::Resize(int prevWidth, int prevHeight,
 }
 
 void
-GhostCustomControl::SetSpectrogramDisplay(SpectrogramDisplay2 *spectroDisplay)
+GhostCustomControl::SetSpectrogramDisplay(SpectrogramDisplay3 *spectroDisplay)
 {
     mSpectroDisplay = spectroDisplay;
 }

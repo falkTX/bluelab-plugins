@@ -1,5 +1,5 @@
 //
-//  SpectrogramDisplay2.cpp
+//  SpectrogramDisplay3.cpp
 //  BL-Ghost
 //
 //  Created by Pan on 14/06/18.
@@ -11,13 +11,13 @@
 #include <BLSpectrogram4.h>
 //#include <MiniView.h>
 
-#include "SpectrogramDisplay2.h"
+#include "SpectrogramDisplay3.h"
 
 #define USE_ZOOM_NVG_TRANSFORM 1
 
 #define USE_SPECTRO_NEAREST 0
 
-SpectrogramDisplay2::SpectrogramDisplay2(SpectrogramDisplayState *state)
+SpectrogramDisplay3::SpectrogramDisplay3(SpectrogramDisplayState *state)
 {
     mState = state;
     if (mState == NULL)
@@ -65,7 +65,7 @@ SpectrogramDisplay2::SpectrogramDisplay2(SpectrogramDisplayState *state)
     mNeedRedraw = true;
 }
 
-SpectrogramDisplay2::~SpectrogramDisplay2()
+SpectrogramDisplay3::~SpectrogramDisplay3()
 {
     if (mVg == NULL)
       return;
@@ -80,14 +80,14 @@ SpectrogramDisplay2::~SpectrogramDisplay2()
         nvgDeleteImage(mVg, mNvgBGSpectroImage);
 }
 
-SpectrogramDisplay2::SpectrogramDisplayState *
-SpectrogramDisplay2::GetState()
+SpectrogramDisplay3::SpectrogramDisplayState *
+SpectrogramDisplay3::GetState()
 {
     return mState;
 }
 
 void
-SpectrogramDisplay2::Reset()
+SpectrogramDisplay3::Reset()
 {
     mSpectroImageData.Resize(0);
     
@@ -104,13 +104,13 @@ SpectrogramDisplay2::Reset()
 }
 
 bool
-SpectrogramDisplay2::NeedUpdateSpectrogram()
+SpectrogramDisplay3::NeedUpdateSpectrogram()
 {
     return mNeedUpdateSpectrogram;
 }
 
 bool
-SpectrogramDisplay2::DoUpdateSpectrogram()
+SpectrogramDisplay3::DoUpdateSpectrogram()
 {
     if (mVg == NULL)
       return true;
@@ -279,7 +279,7 @@ SpectrogramDisplay2::DoUpdateSpectrogram()
 }
 
 void
-SpectrogramDisplay2::PreDraw(NVGcontext *vg, int width, int height)
+SpectrogramDisplay3::PreDraw(NVGcontext *vg, int width, int height)
 {
     mVg = vg;
 
@@ -412,13 +412,13 @@ SpectrogramDisplay2::PreDraw(NVGcontext *vg, int width, int height)
 }
 
 bool
-SpectrogramDisplay2::NeedRedraw()
+SpectrogramDisplay3::NeedRedraw()
 {
     return mNeedRedraw;
 }
 
 bool
-SpectrogramDisplay2::PointInsideSpectrogram(int x, int y, int width, int height)
+SpectrogramDisplay3::PointInsideSpectrogram(int x, int y, int width, int height)
 {
     // Warning: y is reversed !
     BL_FLOAT nx = ((BL_FLOAT)x)/width;
@@ -442,7 +442,7 @@ SpectrogramDisplay2::PointInsideSpectrogram(int x, int y, int width, int height)
 
 #if 0
 bool
-SpectrogramDisplay2::PointInsideMiniView(int x, int y, int width, int height)
+SpectrogramDisplay3::PointInsideMiniView(int x, int y, int width, int height)
 {
     if (mMiniView == NULL)
         return false;
@@ -454,7 +454,7 @@ SpectrogramDisplay2::PointInsideMiniView(int x, int y, int width, int height)
 #endif
 
 void
-SpectrogramDisplay2::GetSpectroNormCoordinate(int x, int y, int width, int height,
+SpectrogramDisplay3::GetSpectroNormCoordinate(int x, int y, int width, int height,
                                              BL_FLOAT *nx, BL_FLOAT *ny)
 {
     BL_FLOAT nx0 = ((BL_FLOAT)x)/width;
@@ -468,7 +468,7 @@ SpectrogramDisplay2::GetSpectroNormCoordinate(int x, int y, int width, int heigh
 }
 
 void
-SpectrogramDisplay2::SetBounds(BL_FLOAT left, BL_FLOAT top,
+SpectrogramDisplay3::SetBounds(BL_FLOAT left, BL_FLOAT top,
                                BL_FLOAT right, BL_FLOAT bottom)
 {
     mSpectrogramBounds[0] = left;
@@ -478,7 +478,7 @@ SpectrogramDisplay2::SetBounds(BL_FLOAT left, BL_FLOAT top,
 }
 
 void
-SpectrogramDisplay2::SetSpectrogram(BLSpectrogram4 *spectro)
+SpectrogramDisplay3::SetSpectrogram(BLSpectrogram4 *spectro)
 {
     mSpectrogram = spectro;
     
@@ -492,14 +492,14 @@ SpectrogramDisplay2::SetSpectrogram(BLSpectrogram4 *spectro)
 
 /*
 void
-SpectrogramDisplay2::SetMiniView(MiniView *view)
+SpectrogramDisplay3::SetMiniView(MiniView *view)
 {
   mMiniView = view;
 }
 */
 
 void
-SpectrogramDisplay2::ShowSpectrogram(bool flag)
+SpectrogramDisplay3::ShowSpectrogram(bool flag)
 {
     mShowSpectrogram = flag;
     
@@ -507,7 +507,7 @@ SpectrogramDisplay2::ShowSpectrogram(bool flag)
 }
 
 void
-SpectrogramDisplay2::UpdateSpectrogram(bool updateData, bool updateBGData)
+SpectrogramDisplay3::UpdateSpectrogram(bool updateData, bool updateBGData)
 {
     mNeedUpdateSpectrogram = true;
     
@@ -524,7 +524,7 @@ SpectrogramDisplay2::UpdateSpectrogram(bool updateData, bool updateBGData)
 }
 
 void
-SpectrogramDisplay2::UpdateColormap(bool flag)
+SpectrogramDisplay3::UpdateColormap(bool flag)
 {
     mNeedUpdateSpectrogram = true;
     
@@ -537,7 +537,7 @@ SpectrogramDisplay2::UpdateColormap(bool flag)
 }
 
 void
-SpectrogramDisplay2::ResetSpectrogramTransform()
+SpectrogramDisplay3::ResetSpectrogramTransform()
 {
     mState->mMinX = 0.0;
     mState->mMaxX = 1.0;
@@ -552,7 +552,7 @@ SpectrogramDisplay2::ResetSpectrogramTransform()
 }
 
 void
-SpectrogramDisplay2::ResetSpectrogramTranslation()
+SpectrogramDisplay3::ResetSpectrogramTranslation()
 {
     mState->mAbsTranslation = 0.0;
     
@@ -560,7 +560,7 @@ SpectrogramDisplay2::ResetSpectrogramTranslation()
 }
 
 void
-SpectrogramDisplay2::SetSpectrogramZoom(BL_FLOAT zoomX)
+SpectrogramDisplay3::SetSpectrogramZoom(BL_FLOAT zoomX)
 {
     BL_FLOAT norm = (mState->mCenterPos - mState->mMinX)/
                         (mState->mMaxX - mState->mMinX);
@@ -572,7 +572,7 @@ SpectrogramDisplay2::SetSpectrogramZoom(BL_FLOAT zoomX)
 }
 
 void
-SpectrogramDisplay2::SetSpectrogramAbsZoom(BL_FLOAT zoomX)
+SpectrogramDisplay3::SetSpectrogramAbsZoom(BL_FLOAT zoomX)
 {
     BL_FLOAT norm = (mState->mCenterPos - mState->mAbsMinX)/
                         (mState->mAbsMaxX - mState->mAbsMinX);
@@ -584,7 +584,7 @@ SpectrogramDisplay2::SetSpectrogramAbsZoom(BL_FLOAT zoomX)
 }
 
 void
-SpectrogramDisplay2::SetSpectrogramCenterPos(BL_FLOAT centerPos)
+SpectrogramDisplay3::SetSpectrogramCenterPos(BL_FLOAT centerPos)
 {
     mState->mCenterPos = centerPos;
     
@@ -592,7 +592,7 @@ SpectrogramDisplay2::SetSpectrogramCenterPos(BL_FLOAT centerPos)
 }
 
 bool
-SpectrogramDisplay2::SetSpectrogramTranslation(BL_FLOAT tX)
+SpectrogramDisplay3::SetSpectrogramTranslation(BL_FLOAT tX)
 {
     BL_FLOAT dX = tX - mState->mAbsTranslation;
     
@@ -615,7 +615,7 @@ SpectrogramDisplay2::SetSpectrogramTranslation(BL_FLOAT tX)
 }
 
 void
-SpectrogramDisplay2::GetSpectrogramVisibleNormBounds(BL_FLOAT *minX, BL_FLOAT *maxX)
+SpectrogramDisplay3::GetSpectrogramVisibleNormBounds(BL_FLOAT *minX, BL_FLOAT *maxX)
 {
     if (mState->mAbsMinX < 0.0)
         *minX = -mState->mAbsMinX/
@@ -631,7 +631,7 @@ SpectrogramDisplay2::GetSpectrogramVisibleNormBounds(BL_FLOAT *minX, BL_FLOAT *m
 }
 
 void
-SpectrogramDisplay2::GetSpectrogramVisibleNormBounds2(BL_FLOAT *minX, BL_FLOAT *maxX)
+SpectrogramDisplay3::GetSpectrogramVisibleNormBounds2(BL_FLOAT *minX, BL_FLOAT *maxX)
 {
     *minX = -mState->mAbsMinX/
                 (mState->mAbsMaxX - mState->mAbsMinX);
@@ -640,7 +640,7 @@ SpectrogramDisplay2::GetSpectrogramVisibleNormBounds2(BL_FLOAT *minX, BL_FLOAT *
 }
 
 void
-SpectrogramDisplay2::SetSpectrogramVisibleNormBounds2(BL_FLOAT minX, BL_FLOAT maxX)
+SpectrogramDisplay3::SetSpectrogramVisibleNormBounds2(BL_FLOAT minX, BL_FLOAT maxX)
 {
     minX *= mState->mAbsMaxX - mState->mAbsMinX;
     BL_FLOAT spectroAbsMinX = -minX;
@@ -664,7 +664,7 @@ SpectrogramDisplay2::SetSpectrogramVisibleNormBounds2(BL_FLOAT minX, BL_FLOAT ma
 }
 
 void
-SpectrogramDisplay2::ResetSpectrogramZoomAndTrans()
+SpectrogramDisplay3::ResetSpectrogramZoomAndTrans()
 {
     mState->mMinX = 0.0;
     mState->mMaxX = 1.0;
@@ -674,14 +674,14 @@ SpectrogramDisplay2::ResetSpectrogramZoomAndTrans()
 
 #if 0
 MiniView *
-SpectrogramDisplay2::GetMiniView()
+SpectrogramDisplay3::GetMiniView()
 {
     return mMiniView;
 }
 #endif
 
 void
-SpectrogramDisplay2::SetDrawBGSpectrogram(bool flag)
+SpectrogramDisplay3::SetDrawBGSpectrogram(bool flag)
 {
     mDrawBGSpectrogram = flag;
     
@@ -689,13 +689,13 @@ SpectrogramDisplay2::SetDrawBGSpectrogram(bool flag)
 }
 
 void
-SpectrogramDisplay2::SetAlpha(BL_FLOAT alpha)
+SpectrogramDisplay3::SetAlpha(BL_FLOAT alpha)
 {
     mSpectrogramAlpha = alpha;
 }
 
 void
-SpectrogramDisplay2::ClearBGSpectrogram()
+SpectrogramDisplay3::ClearBGSpectrogram()
 {
     mState->mSpectroImageWidth = 0;
     mState->mSpectroImageHeight = 0;

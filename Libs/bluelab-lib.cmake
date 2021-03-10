@@ -712,6 +712,8 @@ set(_bluelab-lib_src
   SpectroExpeFftObj.h
   SpectrogramDisplay2.cpp
   SpectrogramDisplay2.h
+  SpectrogramDisplay3.cpp
+  SpectrogramDisplay3.h
   SpectrogramDisplay.cpp
   SpectrogramDisplay.h
   SpectrogramDisplayScroll2.cpp
@@ -720,12 +722,16 @@ set(_bluelab-lib_src
   SpectrogramDisplayScroll3.h
   SpectrogramDisplayScroll.cpp
   SpectrogramDisplayScroll.h
-  SpectrogramFftObj.cpp
   SpectrogramFftObjEXPE.cpp
   SpectrogramFftObjEXPE.h
+  SpectrogramFftObj.cpp
   SpectrogramFftObj.h
+  SpectrogramFftObj2.cpp
+  SpectrogramFftObj2.h
   SpectrogramView.cpp
   SpectrogramView.h
+  SpectrogramView2.cpp
+  SpectrogramView2.h
   Spectrum.cpp
   Spectrum.h
   SpectrumViewFftObj.cpp
