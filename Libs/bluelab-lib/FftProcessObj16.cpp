@@ -71,7 +71,8 @@ ProcessObj::ProcessObj(int bufferSize)
 ProcessObj::~ProcessObj() {}
     
 void
-ProcessObj::Reset(int bufferSize, int oversampling, int freqRes, BL_FLOAT sampleRate)
+ProcessObj::Reset(int bufferSize, int oversampling,
+                  int freqRes, BL_FLOAT sampleRate)
 {
     if (bufferSize > 0)
         mBufferSize = bufferSize;
@@ -1553,6 +1554,14 @@ int
 FftProcessObj16::GetOverlapping()
 {
     return mOverlapping;
+}
+
+void
+FftProcessObj16::SetOverlapping(int overlapping)
+{
+    mOverlapping = overlapping;
+
+    Reset(mBufferSize, mOverlapping, mFreqRes, mSampleRate);
 }
 
 int

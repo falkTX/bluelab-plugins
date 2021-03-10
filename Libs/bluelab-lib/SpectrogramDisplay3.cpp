@@ -249,7 +249,7 @@ SpectrogramDisplay3::PreDraw(NVGcontext *vg, int width, int height)
 
     bool updated = DoUpdateSpectrogram();
 
-    //////////////////////DEBUG
+#if 0 //////////////////////DEBUG
     if (mSpectrogram != NULL)
     {
         int maxNumCols = mSpectrogram->GetMaxNumCols();
@@ -260,6 +260,7 @@ SpectrogramDisplay3::PreDraw(NVGcontext *vg, int width, int height)
                 maxNumCols, numCols, height0);
     }
     //////////////////////
+#endif
     
     if (!mShowSpectrogram)
     {

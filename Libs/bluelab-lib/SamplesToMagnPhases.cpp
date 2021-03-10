@@ -72,10 +72,13 @@ SamplesToMagnPhases::ReadSpectroDataSlice(vector<WDL_TypedBuf<BL_FLOAT> > magns[
         if (mSpectroEditObjs[i] != NULL)
             mSpectroEditObjs[i]->SetMode(SpectroEditFftObj3::GEN_DATA);
     }
-    
+
     // Adjust selection for latency etc.
     int bufferSize = mFftObj->GetBufferSize();
-    int bufStepSize = bufferSize/mFftObj->GetOverlapping();
+    int overlapping = mFftObj->GetOverlapping();
+
+    //
+    int bufStepSize = bufferSize/overlapping;
     
     // Latency of fft obj
     // The magnitudes are not computed until number of input samples is >= latency

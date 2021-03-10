@@ -284,18 +284,6 @@ SpectrogramDisplay2::PreDraw(NVGcontext *vg, int width, int height)
     mVg = vg;
 
     bool updated = DoUpdateSpectrogram();
-
-    //////////////////////DEBUG
-    if (mSpectrogram != NULL)
-    {
-        int maxNumCols = mSpectrogram->GetMaxNumCols();
-        int numCols = mSpectrogram->GetNumCols();
-        int height0 = mSpectrogram->GetHeight();
-
-        fprintf(stderr, "maxc: %d [c = %d   h = %d]\n",
-                maxNumCols, numCols, height0);
-    }
-    //////////////////////
     
     if (!mShowSpectrogram)
     {

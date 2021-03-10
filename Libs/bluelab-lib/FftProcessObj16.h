@@ -206,7 +206,8 @@ public:
     
     int ComputeLatency(int blockSize);
     
-    virtual void Reset(int bufferSize, int overlapping, int freqRes, BL_FLOAT sampleRate);
+    virtual void Reset(int bufferSize, int overlapping,
+                       int freqRes, BL_FLOAT sampleRate);
     
     virtual void Reset();
     
@@ -214,6 +215,7 @@ public:
     virtual int GetBufferSize();
     
     virtual int GetOverlapping();
+    virtual void SetOverlapping(int overlapping);
     
     virtual int GetFreqRes();
     
