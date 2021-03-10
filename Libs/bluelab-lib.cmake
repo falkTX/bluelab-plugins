@@ -568,6 +568,8 @@ set(_bluelab-lib_src
   SamplesPyramid2.h
   SamplesPyramid.cpp
   SamplesPyramid.h
+  SamplesToMagnPhases.cpp
+  SamplesToMagnPhases.h
   SamplesToSpectrogram.cpp
   SamplesToSpectrogram.h
   SASFrame2.cpp

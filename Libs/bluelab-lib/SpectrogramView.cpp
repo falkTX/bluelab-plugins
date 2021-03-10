@@ -546,7 +546,8 @@ SpectrogramView::UpdateSpectrogramData(BL_FLOAT minNormX, BL_FLOAT maxNormX)
     for (int i = 0; i < maxI; i++)
     {
         WDL_TypedBuf<BL_FLOAT> chunk;
-        if ((preFillPos >= 0) && (preFillPos < (*mChannels)[0].GetSize() - bufferSize))
+        if ((preFillPos >= 0) &&
+            (preFillPos < (*mChannels)[0].GetSize() - bufferSize))
         {
             // In bounds
             chunk.Add(&(*mChannels)[0].Get()[preFillPos], bufferSize);

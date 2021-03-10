@@ -130,9 +130,7 @@ SamplesToSpectrogram::SetSamples(const WDL_TypedBuf<BL_FLOAT> &samples)
             WDL_TypedBuf<BL_FLOAT> zeros;
             BLUtils::ResizeFillZeros(&zeros, numZeros);
             
-            buf.Add(zeros.Get(), zeros.GetSize());
-            
-            
+            buf.Add(zeros.Get(), zeros.GetSize());            
         }
         
         vector<WDL_TypedBuf<BL_FLOAT> > in;
