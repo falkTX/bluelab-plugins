@@ -4,6 +4,8 @@
 #include <vector>
 using namespace std;
 
+#include <SpectroEditFftObj3.h>
+
 #include "IPlug_include_in_plug_hdr.h"
 
 class FftProcessObj16;
@@ -22,6 +24,8 @@ class SamplesToMagnPhases
                         SpectroEditFftObj3 *spectroEditObjs[2],
                         SamplesPyramid2 *samplesPyramid = NULL);
     virtual ~SamplesToMagnPhases();
+
+    void SetSamples(vector<WDL_TypedBuf<BL_FLOAT> > *samples);
     
     void ReadSpectroDataSlice(vector<WDL_TypedBuf<BL_FLOAT> > magns[2],
                               vector<WDL_TypedBuf<BL_FLOAT> > phases[2],

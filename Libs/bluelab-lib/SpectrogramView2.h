@@ -18,11 +18,14 @@ using namespace std;
 
 class BLSpectrogram4;
 class FftProcessObj16;
+class SamplesToMagnPhases;
+class SpectroEditFftObj3;
 class SpectrogramView2
 {
 public:
     SpectrogramView2(BLSpectrogram4 *spectro,
                      FftProcessObj16 *fftObj,
+                     SpectroEditFftObj3 *spectroEditObjs[2],
                      int maxNumCols,
                      BL_FLOAT x0, BL_FLOAT y0, BL_FLOAT x1, BL_FLOAT y1,
                      BL_FLOAT sampleRate);
@@ -32,8 +35,10 @@ public:
     void Reset();
 
     BLSpectrogram4 *GetSpectrogram();
-    
-    void SetData(vector<WDL_TypedBuf<BL_FLOAT> > *channels);
+
+    // Multi channel samples
+    // (possibilty an entiere stereo file)
+    void SetData(vector<WDL_TypedBuf<BL_FLOAT> > *samples);
     
     void SetViewBarPosition(BL_FLOAT pos);
     
@@ -99,7 +104,7 @@ protected:
     
     // Use a pointer, to avoid duplicating the file data,
     // to save memory on big files
-    vector<WDL_TypedBuf<BL_FLOAT> > *mChannels;
+    vector<WDL_TypedBuf<BL_FLOAT> > *mSamples;
     
     // Use BL_FLOAT => avoid small translations due to rounging
     BL_FLOAT mViewBarPos;
@@ -123,6 +128,8 @@ protected:
     
     // Just for resampling
     BL_FLOAT mSampleRate;
+
+    SamplesToMagnPhases *mSamplesToMagnPhases;
 };
 
 #endif

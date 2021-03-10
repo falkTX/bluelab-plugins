@@ -26,6 +26,12 @@ SamplesToMagnPhases::SamplesToMagnPhases(vector<WDL_TypedBuf<BL_FLOAT> > *sample
 SamplesToMagnPhases::~SamplesToMagnPhases() {}
 
 void
+SamplesToMagnPhases::SetSamples(vector<WDL_TypedBuf<BL_FLOAT> > *samples)
+{
+    mSamples = samples;
+}
+
+void
 SamplesToMagnPhases::ReadSpectroDataSlice(vector<WDL_TypedBuf<BL_FLOAT> > magns[2],
                                           vector<WDL_TypedBuf<BL_FLOAT> > phases[2],
                                           BL_FLOAT minXNorm,
@@ -62,7 +68,10 @@ SamplesToMagnPhases::ReadSpectroDataSlice(vector<WDL_TypedBuf<BL_FLOAT> > magns[
                               &minDataXSamples, &maxDataXSamples);
     
     for (int i = 0; i < 2; i++)
-        mSpectroEditObjs[i]->SetMode(SpectroEditFftObj3::GEN_DATA);
+    {
+        if (mSpectroEditObjs[i] != NULL)
+            mSpectroEditObjs[i]->SetMode(SpectroEditFftObj3::GEN_DATA);
+    }
     
     // Adjust selection for latency etc.
     int bufferSize = mFftObj->GetBufferSize();
@@ -155,7 +164,10 @@ SamplesToMagnPhases::WriteSpectroDataSlice(vector<WDL_TypedBuf<BL_FLOAT> > magns
                               &minDataXSamples, &maxDataXSamples);
 
     for (int i = 0; i < 2; i++)
-        mSpectroEditObjs[i]->SetMode(SpectroEditFftObj3::REPLACE_DATA);
+    {
+        if (mSpectroEditObjs[i] != NULL)
+            mSpectroEditObjs[i]->SetMode(SpectroEditFftObj3::REPLACE_DATA);
+    }
     
     // Set all the magns and phases to replace, it will be consumed progressively
     for (int i = 0; i < 2; i++)

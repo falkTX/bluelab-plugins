@@ -73,7 +73,11 @@ public:
     bool GetLine(int index,
                  WDL_TypedBuf<BL_FLOAT> *magns,
                  WDL_TypedBuf<BL_FLOAT> *phases);
-    
+
+    // Replace all the data
+    void SetLines(const vector<WDL_TypedBuf<BL_FLOAT> > &magns,
+                  const vector<WDL_TypedBuf<BL_FLOAT> > &phases);
+                  
     // Image data
     bool GetImageDataFloat(unsigned char *buf);
     
@@ -124,7 +128,8 @@ protected:
     void SavePPM(const char *filename, int maxValue);
     
     static BLSpectrogram4 *ImageToSpectrogram(BL_FLOAT sampleRate,
-                                              PPMFile::PPMImage *image, bool is16Bits);
+                                              PPMFile::PPMImage *image,
+                                              bool is16Bits);
     
     static BLSpectrogram4 *ImagesToSpectrogram(BL_FLOAT sampleRate,
                                                PPMFile::PPMImage *magnsImage,

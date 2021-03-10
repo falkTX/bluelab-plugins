@@ -9,7 +9,9 @@
 
 #include <BLSpectrogram4.h>
 #include <FftProcessObj16.h>
-#include <Resampler2.h>
+
+#include <SamplesToMagnPhases.h>
+
 #include <BLUtils.h>
 
 #include "SpectrogramView2.h"
@@ -21,14 +23,10 @@
 //#define MAX_ZOOM 400.0
 #define MAX_ZOOM 800.0
 
-// Works quite well with 1
-// (make some light diffrence, but really better
-// than a black band !)
-#define NUM_BUFFERS_PREFILL 1 // TODO: remove this
-
 
 SpectrogramView2::SpectrogramView2(BLSpectrogram4 *spectro,
                                    FftProcessObj16 *fftObj,
+                                   SpectroEditFftObj3 *spectroEditObjs[2],
                                    int maxNumCols,
                                    BL_FLOAT x0, BL_FLOAT y0, BL_FLOAT x1, BL_FLOAT y1,
                                    BL_FLOAT sampleRate)
@@ -52,12 +50,21 @@ SpectrogramView2::SpectrogramView2(BLSpectrogram4 *spectro,
     
     mSampleRate = sampleRate;
     
-    mChannels = NULL;
+    mSamples = NULL;
+
+    // For the moment, use only the left channel
+    SpectroEditFftObj3 *spectroEditObjs0[2] = { spectroEditObjs[0], NULL };
+    mSamplesToMagnPhases = new SamplesToMagnPhases(NULL, // samples
+                                                   fftObj, spectroEditObjs0,
+                                                   NULL); // pyramid
     
     Reset();
 }
 
-SpectrogramView2::~SpectrogramView2() {}
+SpectrogramView2::~SpectrogramView2()
+{
+    delete mSamplesToMagnPhases;
+}
 
 void
 SpectrogramView2::Reset()
@@ -76,26 +83,28 @@ SpectrogramView2::GetSpectrogram()
 }
 
 void
-SpectrogramView2::SetData(vector<WDL_TypedBuf<BL_FLOAT> > *channels)
+SpectrogramView2::SetData(vector<WDL_TypedBuf<BL_FLOAT> > *samples)
 {
-    mChannels = channels;
+    mSamples = samples;
+
+    mSamplesToMagnPhases->SetSamples(mSamples);
     
     mStartDataPos = 0.0;
     mEndDataPos = 0.0;
     
     int bufferSize = mFftObj->GetBufferSize();
     
-    if (!channels->empty())
+    if (!mSamples->empty())
     {
-        long channelSize = (*channels)[0].GetSize();
-        mEndDataPos = ((BL_FLOAT)channelSize)/bufferSize;
+        long numSamples = (*mSamples)[0].GetSize();
+        mEndDataPos = ((BL_FLOAT)numSamples)/bufferSize;
     }
 }
 
 void
 SpectrogramView2::SetViewBarPosition(BL_FLOAT pos)
 {
-    if ((mChannels == NULL) || mChannels->empty())
+    if ((mSamples == NULL) || mSamples->empty())
         return;
     
     mViewBarPos = pos;
@@ -167,9 +176,9 @@ SpectrogramView2::ClearViewSelection()
 
 void
 SpectrogramView2::GetViewDataBounds(BL_FLOAT *startDataPos, BL_FLOAT *endDataPos,
-                                    BL_FLOAT minNormX, BL_FLOAT maxNormX)
+                                    BL_FLOAT minNormX, BL_FLOAT maxXNorm)
 {
-    if ((mChannels == NULL) || mChannels->empty())
+    if ((mSamples == NULL) || mSamples->empty())
     {
         *startDataPos = 0;
         *endDataPos = 0;
@@ -177,8 +186,8 @@ SpectrogramView2::GetViewDataBounds(BL_FLOAT *startDataPos, BL_FLOAT *endDataPos
         return;
     }
     
-    long channelSize = (*mChannels)[0].GetSize();
-    if (channelSize == 0)
+    long numSamples = (*mSamples)[0].GetSize();
+    if (numSamples == 0)
     {
         *startDataPos = 0;
         *endDataPos = 0;
@@ -188,9 +197,8 @@ SpectrogramView2::GetViewDataBounds(BL_FLOAT *startDataPos, BL_FLOAT *endDataPos
     
     int bufferSize = mFftObj->GetBufferSize();
     
-    *startDataPos = minNormX*((BL_FLOAT)channelSize)/bufferSize;
-
-    *endDataPos = maxNormX*((BL_FLOAT)channelSize)/bufferSize;;
+    *startDataPos = minNormX*((BL_FLOAT)numSamples)/bufferSize;
+    *endDataPos = maxXNorm*((BL_FLOAT)numSamples)/bufferSize;;
 }
 
 bool
@@ -200,7 +208,7 @@ SpectrogramView2::GetDataSelection(BL_FLOAT *x0, BL_FLOAT *y0,
     if (!mSelectionActive)
         return false;
     
-    if ((mChannels == NULL) || mChannels->empty())
+    if ((mSamples == NULL) || mSamples->empty())
         return false;
     
     int bufferSize = mFftObj->GetBufferSize();
@@ -222,24 +230,24 @@ SpectrogramView2::GetDataSelection(BL_FLOAT *x0, BL_FLOAT *y0,
 bool
 SpectrogramView2::GetDataSelection2(BL_FLOAT *x0, BL_FLOAT *y0,
                                     BL_FLOAT *x1, BL_FLOAT *y1,
-                                    BL_FLOAT minNormX, BL_FLOAT maxNormX)
+                                    BL_FLOAT minNormX, BL_FLOAT maxXNorm)
 {
     if (!mSelectionActive)
         return false;
     
-    if ((mChannels == NULL) || mChannels->empty())
+    if ((mSamples == NULL) || mSamples->empty())
         return false;
     
-    long channelSize = (*mChannels)[0].GetSize();
-    if (channelSize == 0)
+    long numSamples = (*mSamples)[0].GetSize();
+    if (numSamples == 0)
         return false;
     
     int bufferSize = mFftObj->GetBufferSize();
     int overlapping = mFftObj->GetOverlapping();
     
-    BL_FLOAT startDataPos = minNormX*((BL_FLOAT)channelSize)/bufferSize;
+    BL_FLOAT startDataPos = minNormX*((BL_FLOAT)numSamples)/bufferSize;
 
-    BL_FLOAT endDataPos = maxNormX*((BL_FLOAT)channelSize)/bufferSize - 1;
+    BL_FLOAT endDataPos = maxXNorm*((BL_FLOAT)numSamples)/bufferSize - 1;
     
     *x0 = startDataPos + mSelection[0]*(endDataPos - startDataPos + 1);
     
@@ -257,21 +265,21 @@ SpectrogramView2::GetDataSelection2(BL_FLOAT *x0, BL_FLOAT *y0,
 void
 SpectrogramView2::SetDataSelection2(BL_FLOAT x0, BL_FLOAT y0,
                                     BL_FLOAT x1, BL_FLOAT y1,
-                                    BL_FLOAT minNormX, BL_FLOAT maxNormX)
+                                    BL_FLOAT minNormX, BL_FLOAT maxXNorm)
 {
-    if ((mChannels == NULL) || mChannels->empty())
+    if ((mSamples == NULL) || mSamples->empty())
         return;
     
-    long channelSize = (*mChannels)[0].GetSize();
-    if (channelSize == 0)
+    long numSamples = (*mSamples)[0].GetSize();
+    if (numSamples == 0)
         return;
     
     int bufferSize = mFftObj->GetBufferSize();
     int overlapping = mFftObj->GetOverlapping();
     
-    BL_FLOAT startDataPos = minNormX*((BL_FLOAT)channelSize)/bufferSize;
+    BL_FLOAT startDataPos = minNormX*((BL_FLOAT)numSamples)/bufferSize;
 
-    BL_FLOAT endDataPos = maxNormX*((BL_FLOAT)channelSize)/bufferSize - 1;
+    BL_FLOAT endDataPos = maxXNorm*((BL_FLOAT)numSamples)/bufferSize - 1; // ??
     
     mSelection[0] = (x0 - startDataPos)/(endDataPos - startDataPos + 1);
     
@@ -288,7 +296,7 @@ bool
 SpectrogramView2::GetNormDataSelection(BL_FLOAT *x0, BL_FLOAT *y0,
                                        BL_FLOAT *x1, BL_FLOAT *y1)
 {    
-    if ((mChannels == NULL) || mChannels->empty())
+    if ((mSamples == NULL) || mSamples->empty())
         return false;
     
     bool selectionActive = mSelectionActive;
@@ -307,11 +315,11 @@ SpectrogramView2::GetNormDataSelection(BL_FLOAT *x0, BL_FLOAT *y0,
     
     int bufferSize = mFftObj->GetBufferSize();
     
-    int channelSize = (*mChannels)[0].GetSize();
-    *x0 = ((BL_FLOAT)dataSelection[0]*bufferSize)/channelSize;
+    int numSamples = (*mSamples)[0].GetSize();
+    *x0 = ((BL_FLOAT)dataSelection[0]*bufferSize)/numSamples;
     *y0 = ((BL_FLOAT)dataSelection[1])/(bufferSize/2.0);
 
-    *x1 = ((BL_FLOAT)dataSelection[2]*bufferSize)/channelSize;
+    *x1 = ((BL_FLOAT)dataSelection[2]*bufferSize)/numSamples;
     *y1 = ((BL_FLOAT)dataSelection[3])/(bufferSize/2.0);
     
     return true;
@@ -320,15 +328,15 @@ SpectrogramView2::GetNormDataSelection(BL_FLOAT *x0, BL_FLOAT *y0,
 bool
 SpectrogramView2::UpdateZoomFactor(BL_FLOAT zoomChange)
 {
-    if ((mChannels == NULL) || mChannels->empty())
+    if ((mSamples == NULL) || mSamples->empty())
         return false;
     
     // Avoid zooming too much
     BL_FLOAT prevAbsZoomFactor = mAbsZoomFactor;
     mAbsZoomFactor *= zoomChange;
     
-    long channelSize = (*mChannels)[0].GetSize();
-    BL_FLOAT maxZoom = MAX_ZOOM*((BL_FLOAT)channelSize)/100000.0;
+    long numSamples = (*mSamples)[0].GetSize();
+    BL_FLOAT maxZoom = MAX_ZOOM*((BL_FLOAT)numSamples)/100000.0;
     
     if ((mAbsZoomFactor < MIN_ZOOM) || (mAbsZoomFactor > maxZoom))
     {
@@ -358,11 +366,11 @@ SpectrogramView2::GetAbsZoomFactor()
 BL_FLOAT
 SpectrogramView2::GetNormZoom()
 {
-    if ((mChannels == NULL) || mChannels->empty())
+    if ((mSamples == NULL) || mSamples->empty())
         return 0.0;
     
-    long channelSize = (*mChannels)[0].GetSize();
-    BL_FLOAT maxZoom = MAX_ZOOM*((BL_FLOAT)channelSize)/100000.0;
+    long numSamples = (*mSamples)[0].GetSize();
+    BL_FLOAT maxZoom = MAX_ZOOM*((BL_FLOAT)numSamples)/100000.0;
 
     BL_FLOAT result = (mAbsZoomFactor - MIN_ZOOM)/(maxZoom - MIN_ZOOM);
     
@@ -381,142 +389,39 @@ SpectrogramView2::GetTranslation()
     return mTranslation;
 }
 
-// Use step
 void
-SpectrogramView2::UpdateSpectrogramData(BL_FLOAT minNormX, BL_FLOAT maxNormX)
+SpectrogramView2::UpdateSpectrogramData(BL_FLOAT minXNorm, BL_FLOAT maxXNorm)
 {
+    // Test for input
+    if (mSpectrogram == NULL)
+        return;
+
     BL_FLOAT sampleRate = mSpectrogram->GetSampleRate();
     mSpectrogram->Reset(sampleRate);
-    
-    if ((mChannels == NULL) || mChannels->empty())
+
+    if ((mSamples == NULL) || mSamples->empty())
         return;
     
-    long channelSize = (*mChannels)[0].GetSize();
-    if (channelSize == 0)
+    long numSamples = (*mSamples)[0].GetSize();
+    if (numSamples == 0)
         return;
     
     int bufferSize = mFftObj->GetBufferSize();
     
     // Recompute data pos
-    mStartDataPos = ((BL_FLOAT)minNormX*channelSize)/bufferSize;
-    mEndDataPos = ((BL_FLOAT)maxNormX*channelSize)/bufferSize;
+    mStartDataPos = ((BL_FLOAT)minXNorm*numSamples)/bufferSize;
+    mEndDataPos = ((BL_FLOAT)maxXNorm*numSamples)/bufferSize;
     
-    // FIX: avoid consuming a lot of memory when zooming at the maximum,
-    // then de-zooming at the maximum
-    //
-    // FIX: also fix the problem of refresh when zooming directly at the maximum
-    // (before, we had to dezoom a little to have a good refresh
-    BL_FLOAT viewNumLines = mEndDataPos - mStartDataPos + 1.0;
-    
-    int overlapping = mFftObj->GetOverlapping();
-    
-    // TODO: manage stereo
-    // (for the moment, we manage only mono)
-    
-    vector<WDL_TypedBuf<BL_FLOAT> > dummySc;
-    vector<WDL_TypedBuf<BL_FLOAT> > dummyOut;
-    
-    int numChunks = viewNumLines*overlapping;
-    if (viewNumLines < 1)
-        numChunks = 1;
-    
-    BL_FLOAT step = ((BL_FLOAT)numChunks)/mMaxNumCols;
-        
-    // If step is greater than 1, then force overlapping to 1
-    // This will avoid vertical clear bars in the spectrogram
-    // and will save much useless computation
-    int prevOverlap = mFftObj->GetOverlapping();
-    int prevFreqRes = mFftObj->GetFreqRes();
-    BL_FLOAT prevSampleRate = mFftObj->GetSampleRate();
-    bool overlapForce = false;
-    
-    // The magic is here !
-    if (step > 1.0)
-    {
-        overlapForce = true;
-        
-        mFftObj->Reset(bufferSize, 1, prevFreqRes, prevSampleRate);
-        
-        step /= prevOverlap;
-    }
-    
-    if (step < 1.0)
-        step = 1.0;
-    
-    // Fill start pos
-    int pos = mStartDataPos*bufferSize;
-    
-    // Pre-fill the beginning
-    // (try to begin to fill the fft buffer, to avoid black border on the left)
-    int preFillPos = pos - step*NUM_BUFFERS_PREFILL*bufferSize;
-    if (preFillPos < 0)
-        preFillPos = 0;
-    int maxI = ((BL_FLOAT)(pos - preFillPos))/bufferSize;
-    
-    for (int i = 0; i < maxI; i++)
-    {
-        WDL_TypedBuf<BL_FLOAT> chunk;
-        if ((preFillPos >= 0) &&
-            (preFillPos < (*mChannels)[0].GetSize() - bufferSize))
-        {
-            // In bounds
-            chunk.Add(&(*mChannels)[0].Get()[preFillPos], bufferSize);
-        }
-        else
-        {
-            // Out of bounds
-            BLUtils::ResizeFillZeros(&chunk, bufferSize);
-        }
-        
-        vector<WDL_TypedBuf<BL_FLOAT> > in;
-        in.resize(1);
-        in[0] = chunk;
-        
-        mFftObj->Process(in, dummySc, NULL);
-        
-        preFillPos += bufferSize;
-    }
+    // Compute magns and phases
+    vector<WDL_TypedBuf<BL_FLOAT> > magns[2];
+    vector<WDL_TypedBuf<BL_FLOAT> > phases[2];
+    mSamplesToMagnPhases->ReadSpectroDataSlice(magns, phases,
+                                               minXNorm, maxXNorm);
 
-    // Empty the spectrogram
-    // So here, the fft buffer is pre-filled with the previous data
-    // and the spectrogram is ready
-    mSpectrogram->Reset(sampleRate);
-    
-    // Fill normally
-    while(pos < mEndDataPos*bufferSize)
-    {
-        WDL_TypedBuf<BL_FLOAT> chunk;
-        if ((pos >= 0) && (pos < (*mChannels)[0].GetSize() - bufferSize))
-        {
-            // In bounds
-            chunk.Add(&(*mChannels)[0].Get()[pos], bufferSize);
-        }
-        else
-        {
-            // Out of bounds
-            BLUtils::ResizeFillZeros(&chunk, bufferSize);
-        }
+    // Update spectrogram
+    mSpectrogram->SetLines(magns[0], phases[0]);
         
-        // Fill the rest with zeros if the buffer is too short
-        if (chunk.GetSize() < bufferSize)
-            // Should not happen
-            BLUtils::ResizeFillZeros(&chunk, bufferSize);
-        
-        vector<WDL_TypedBuf<BL_FLOAT> > in;
-        in.resize(1);
-        in[0] = chunk;
-            
-        mFftObj->Process(in, dummySc, NULL);
-        
-        pos += step*bufferSize;
-    }
-    
-    if (overlapForce)
-    {
-        // Restore
-        mFftObj->Reset(bufferSize, prevOverlap, prevFreqRes, prevSampleRate);
-    }
-    
+    // Adjust zoom
     mZoomFactor = 1.0;
 }
 

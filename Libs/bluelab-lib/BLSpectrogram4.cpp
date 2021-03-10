@@ -404,6 +404,21 @@ BLSpectrogram4::GetLine(int index,
 }
 
 void
+BLSpectrogram4::SetLines(const vector<WDL_TypedBuf<BL_FLOAT> > &magns,
+                         const vector<WDL_TypedBuf<BL_FLOAT> > &phases)
+{
+    if (magns.size() != phases.size())
+        return;
+    
+    Reset(mSampleRate);
+
+    for (int i = 0; i < magns.size(); i++)
+    {
+        AddLine(magns[i], phases[i]);
+    }
+}
+
+void
 BLSpectrogram4::TouchData()
 {
 #if OPTIM_SPECTROGRAM2
