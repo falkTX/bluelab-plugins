@@ -9,13 +9,12 @@
 #ifdef IGRAPHICS_NANOVG
 
 #include <BLSpectrogram4.h>
-//#include <MiniView.h>
 
 #include "SpectrogramDisplay3.h"
 
-#define USE_ZOOM_NVG_TRANSFORM 1
 
 #define USE_SPECTRO_NEAREST 0
+
 
 SpectrogramDisplay3::SpectrogramDisplay3(SpectrogramDisplayState *state)
 {
@@ -54,11 +53,7 @@ SpectrogramDisplay3::SpectrogramDisplay3(SpectrogramDisplayState *state)
     
     mShowSpectrogram = false;
     
-    //mSpectrogramGain = 1.0;
-    
     mSpectrogramAlpha = 1.0;
-    
-    //mMiniView = NULL;
     
     mDrawBGSpectrogram = true;
     
@@ -68,7 +63,7 @@ SpectrogramDisplay3::SpectrogramDisplay3(SpectrogramDisplayState *state)
 SpectrogramDisplay3::~SpectrogramDisplay3()
 {
     if (mVg == NULL)
-      return;
+        return;
   
     if (mNvgSpectroImage != 0)
         nvgDeleteImage(mVg, mNvgSpectroImage);
@@ -94,12 +89,6 @@ SpectrogramDisplay3::Reset()
     mNeedUpdateSpectrogram = true;   
     mNeedUpdateSpectrogramData = true;
     
-    // FIX: with this line uncommented, there is a bug:
-    // the background is updated at each edit but with the current zoom
-#if 0
-    mNeedUpdateBGSpectrogramData = true;
-#endif
-    
     mNeedRedraw = true;
 }
 
@@ -113,31 +102,15 @@ bool
 SpectrogramDisplay3::DoUpdateSpectrogram()
 {
     if (mVg == NULL)
-      return true;
+        return true;
   
     // Update first, before displaying
     if (!mNeedUpdateSpectrogram)
-      return false;
+        return false;
     
-    //int w = mSpectrogram->GetMaxNumCols();
-    int w = mSpectrogram->GetNumCols(); // ??
+    int w = mSpectrogram->GetNumCols();
     int h = mSpectrogram->GetHeight();
 
-    // FIX; commented this, otherwise sometimes the texture was
-    // not created, and we called directly texture update
-    // (which made a valgrind error in GL)
-#if 0
-    // Avoid white image when there is no data
-    if (mSpectroImageData.GetSize() == 0)
-    {
-        mSpectroImageData.Resize(4);
-        memset(mSpectroImageData.Get(), 0, 4);
-        
-        mNeedUpdateSpectrogramData = true;
-        mNeedUpdateBGSpectrogramData = true;
-    }
-#endif
-    
     // The following lines avoid that: at startup when there is no data loaded,
     // all the background was white.
     if ((w == 0) || (h == 0))
@@ -149,9 +122,9 @@ SpectrogramDisplay3::DoUpdateSpectrogram()
     int imageSize = w*h*4;
     
     if ((mNeedUpdateSpectrogramData ||
-        (mNvgSpectroImage == 0) ||
-        (mNvgBGSpectroImage == 0)) ||
-        (mSpectroImageData.GetSize() != imageSize)) // NEW
+         (mNvgSpectroImage == 0) ||
+         (mNvgBGSpectroImage == 0)) ||
+        (mSpectroImageData.GetSize() != imageSize))
     {
         bool imageCreated = false;
         if ((mSpectroImageData.GetSize() != imageSize) ||
@@ -195,14 +168,13 @@ SpectrogramDisplay3::DoUpdateSpectrogram()
                 nvgDeleteImage(mVg, mNvgBGSpectroImage);
                 
             mNvgBGSpectroImage = nvgCreateImageRGBA(mVg,
-                                                      mState->mSpectroImageWidth,
-                                                      mState->mSpectroImageHeight,
+                                                    mState->mSpectroImageWidth,
+                                                    mState->mSpectroImageHeight,
 #if USE_SPECTRO_NEAREST
-                                                      NVG_IMAGE_NEAREST |
+                                                    NVG_IMAGE_NEAREST |
 #endif
-                                                      NVG_IMAGE_ONE_FLOAT_FORMAT,
-                                                      //mSpectroImageData.Get());
-                                                      mState->mBGSpectroImageData.Get());
+                                                    NVG_IMAGE_ONE_FLOAT_FORMAT,
+                                                    mState->mBGSpectroImageData.Get());
             
             
             bgImageCreated = true;
@@ -242,33 +214,25 @@ SpectrogramDisplay3::DoUpdateSpectrogram()
 
     if (mNeedUpdateColormapData || (mNvgColormapImage == 0))
     {
-      // Colormap
-      //WDL_TypedBuf<unsigned int> colorMapData;
-      bool updated = mSpectrogram->GetColormapImageDataRGBA(&mColormapImageData);
-    
-      //if ((colorMapData.GetSize() != mColormapImageData.GetSize()) ||
-      //    (mNvgColormapImage == 0))
-      if (mNvgColormapImage == 0)
-      {
-          //mColormapImageData = colorMapData;
+        // Colormap
+        bool updated = mSpectrogram->GetColormapImageDataRGBA(&mColormapImageData);
+        if (mNvgColormapImage == 0)
+        {        
+            if (mNvgColormapImage != 0)
+                nvgDeleteImage(mVg, mNvgColormapImage);
         
-          if (mNvgColormapImage != 0)
-              nvgDeleteImage(mVg, mNvgColormapImage);
-        
-          mNvgColormapImage =
-                        nvgCreateImageRGBA(mVg,
-                                           mColormapImageData.GetSize(), 1,
-                                           NVG_IMAGE_NEAREST,
-                                           (unsigned char *)mColormapImageData.Get());
-      }
-      else
-      {
-        //mColormapImageData = colorMapData;
-        
-          if (updated)
-              nvgUpdateImage(mVg, mNvgColormapImage,
-                             (unsigned char *)mColormapImageData.Get());
-      }
+            mNvgColormapImage =
+            nvgCreateImageRGBA(mVg,
+                               mColormapImageData.GetSize(), 1,
+                               NVG_IMAGE_NEAREST,
+                               (unsigned char *)mColormapImageData.Get());
+        }
+        else
+        { 
+            if (updated)
+                nvgUpdateImage(mVg, mNvgColormapImage,
+                               (unsigned char *)mColormapImageData.Get());
+        }
     }
     
     mNeedUpdateSpectrogram = false;
@@ -299,11 +263,6 @@ SpectrogramDisplay3::PreDraw(NVGcontext *vg, int width, int height)
     
     if (!mShowSpectrogram)
     {
-        /*if (mMiniView != NULL)
-        {
-            mMiniView->Display(mVg, width, height);
-        }*/
-    
         mNeedRedraw = false;
         
         return;
@@ -334,14 +293,14 @@ SpectrogramDisplay3::PreDraw(NVGcontext *vg, int width, int height)
                                                mSpectrogramBounds[1])*height,
                                               0.0,
                                               mNvgBGSpectroImage, mSpectrogramAlpha);
-#if USE_ZOOM_NVG_TRANSFORM
+        //
         nvgResetTransform(mVg);
     
         BL_FLOAT absZoom = mState->mAbsMaxX - mState->mAbsMinX;
     
         nvgTranslate(mVg, mState->mAbsMinX*width, 0.0);
         nvgScale(mVg, absZoom, 1.0);
-#endif
+        
     
         BL_GUI_FLOAT b1f = mSpectrogramBounds[1]*height;
         BL_GUI_FLOAT b3f = (mSpectrogramBounds[3] - mSpectrogramBounds[1])*height;
@@ -355,10 +314,9 @@ SpectrogramDisplay3::PreDraw(NVGcontext *vg, int width, int height)
     
         nvgFillPaint(mVg, bgImgPaint);
         nvgFill(mVg);
-    
-#if USE_ZOOM_NVG_TRANSFORM
+
+        //
         nvgResetTransform(mVg);
-#endif
     }
 #endif
     
@@ -377,15 +335,14 @@ SpectrogramDisplay3::PreDraw(NVGcontext *vg, int width, int height)
                                          mSpectrogramBounds[1])*height,
                                         0.0, mNvgSpectroImage, mSpectrogramAlpha);
     
-    
-#if USE_ZOOM_NVG_TRANSFORM
+    //
     nvgResetTransform(mVg);
     
     BL_FLOAT zoom = mState->mMaxX - mState->mMinX;
     
     nvgTranslate(mVg, mState->mMinX*width, 0.0);
     nvgScale(mVg, zoom, 1.0);
-#endif
+
     
     BL_GUI_FLOAT b1f = mSpectrogramBounds[1]*height;
     BL_GUI_FLOAT b3f = (mSpectrogramBounds[3] - mSpectrogramBounds[1])*height;
@@ -400,9 +357,8 @@ SpectrogramDisplay3::PreDraw(NVGcontext *vg, int width, int height)
     nvgFillPaint(mVg, imgPaint);
     nvgFill(mVg);
     
-#if USE_ZOOM_NVG_TRANSFORM
+    //
     nvgResetTransform(mVg);
-#endif
     
 #endif
     
@@ -440,28 +396,15 @@ SpectrogramDisplay3::PointInsideSpectrogram(int x, int y, int width, int height)
     return true;
 }
 
-#if 0
-bool
-SpectrogramDisplay3::PointInsideMiniView(int x, int y, int width, int height)
-{
-    if (mMiniView == NULL)
-        return false;
-    
-    bool inside = mMiniView->IsPointInside(x, y, width, height);
-    
-    return inside;
-}
-#endif
-
 void
 SpectrogramDisplay3::GetSpectroNormCoordinate(int x, int y, int width, int height,
-                                             BL_FLOAT *nx, BL_FLOAT *ny)
+                                              BL_FLOAT *nx, BL_FLOAT *ny)
 {
     BL_FLOAT nx0 = ((BL_FLOAT)x)/width;
     BL_FLOAT ny0 = ((BL_FLOAT)y)/height;
     
     *nx = (nx0 - mSpectrogramBounds[0])/
-            (mSpectrogramBounds[2] - mSpectrogramBounds[0]);
+    (mSpectrogramBounds[2] - mSpectrogramBounds[0]);
     
     *ny = (ny0 - mSpectrogramBounds[1])/
     (mSpectrogramBounds[3] - mSpectrogramBounds[1]);
@@ -489,14 +432,6 @@ SpectrogramDisplay3::SetSpectrogram(BLSpectrogram4 *spectro)
     
     mNeedRedraw = true;
 }
-
-/*
-void
-SpectrogramDisplay3::SetMiniView(MiniView *view)
-{
-  mMiniView = view;
-}
-*/
 
 void
 SpectrogramDisplay3::ShowSpectrogram(bool flag)
@@ -563,7 +498,7 @@ void
 SpectrogramDisplay3::SetSpectrogramZoom(BL_FLOAT zoomX)
 {
     BL_FLOAT norm = (mState->mCenterPos - mState->mMinX)/
-                        (mState->mMaxX - mState->mMinX);
+    (mState->mMaxX - mState->mMinX);
     
     mState->mMinX = mState->mCenterPos - norm*zoomX;
     mState->mMaxX = mState->mCenterPos + (1.0 - norm)*zoomX;
@@ -575,7 +510,7 @@ void
 SpectrogramDisplay3::SetSpectrogramAbsZoom(BL_FLOAT zoomX)
 {
     BL_FLOAT norm = (mState->mCenterPos - mState->mAbsMinX)/
-                        (mState->mAbsMaxX - mState->mAbsMinX);
+    (mState->mAbsMaxX - mState->mAbsMinX);
     
     mState->mAbsMinX = mState->mCenterPos - norm*zoomX;
     mState->mAbsMaxX = mState->mCenterPos + (1.0 - norm)*zoomX;
@@ -619,7 +554,7 @@ SpectrogramDisplay3::GetSpectrogramVisibleNormBounds(BL_FLOAT *minX, BL_FLOAT *m
 {
     if (mState->mAbsMinX < 0.0)
         *minX = -mState->mAbsMinX/
-                    (mState->mAbsMaxX - mState->mAbsMinX);
+        (mState->mAbsMaxX - mState->mAbsMinX);
     else
         *minX = 0.0;
     
@@ -627,16 +562,16 @@ SpectrogramDisplay3::GetSpectrogramVisibleNormBounds(BL_FLOAT *minX, BL_FLOAT *m
         *maxX = 1.0;
     else
         *maxX = 1.0 - (mState->mAbsMaxX - 1.0)/
-                        (mState->mAbsMaxX - mState->mAbsMinX);
+        (mState->mAbsMaxX - mState->mAbsMinX);
 }
 
 void
 SpectrogramDisplay3::GetSpectrogramVisibleNormBounds2(BL_FLOAT *minX, BL_FLOAT *maxX)
 {
     *minX = -mState->mAbsMinX/
-                (mState->mAbsMaxX - mState->mAbsMinX);
+    (mState->mAbsMaxX - mState->mAbsMinX);
     *maxX = 1.0 - (mState->mAbsMaxX - 1.0)/
-                (mState->mAbsMaxX - mState->mAbsMinX);
+    (mState->mAbsMaxX - mState->mAbsMinX);
 }
 
 void
@@ -671,14 +606,6 @@ SpectrogramDisplay3::ResetSpectrogramZoomAndTrans()
     
     mNeedRedraw = true;
 }
-
-#if 0
-MiniView *
-SpectrogramDisplay3::GetMiniView()
-{
-    return mMiniView;
-}
-#endif
 
 void
 SpectrogramDisplay3::SetDrawBGSpectrogram(bool flag)

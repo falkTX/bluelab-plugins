@@ -17,7 +17,6 @@
 #include <GraphControl12.h>
 
 class BLSpectrogram4;
-//class MiniView;
 class NVGcontext;
 class SpectrogramDisplay3 : public GraphCustomDrawer
 {
@@ -76,8 +75,6 @@ public:
 
     void UpdateColormap(bool flag);
     
-    //void SetMiniView(MiniView *view);
-    
     // Reset all
     void ResetSpectrogramTransform();
     
@@ -104,8 +101,6 @@ public:
     
     // Called after local data recomputation
     void ResetSpectrogramZoomAndTrans();
-
-    //MiniView *GetMiniView();
     
     // For optimization
     // To be able to disable background spectrogram
@@ -142,14 +137,9 @@ protected:
     //
     bool mShowSpectrogram;
     
-    //BL_FLOAT mSpectrogramGain;
-    
     // Colormap
     int mNvgColormapImage;
     WDL_TypedBuf<unsigned int> mColormapImageData;
-    
-    // Mini view
-    //MiniView *mMiniView;
     
     // For optimization (Chroma)
     bool mDrawBGSpectrogram;
