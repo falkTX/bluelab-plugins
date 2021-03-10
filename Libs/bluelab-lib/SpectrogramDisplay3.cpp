@@ -552,22 +552,6 @@ SpectrogramDisplay3::SetSpectrogramTranslation(BL_FLOAT tX)
 void
 SpectrogramDisplay3::GetSpectrogramVisibleNormBounds(BL_FLOAT *minX, BL_FLOAT *maxX)
 {
-    if (mState->mAbsMinX < 0.0)
-        *minX = -mState->mAbsMinX/
-        (mState->mAbsMaxX - mState->mAbsMinX);
-    else
-        *minX = 0.0;
-    
-    if (mState->mAbsMaxX < 1.0)
-        *maxX = 1.0;
-    else
-        *maxX = 1.0 - (mState->mAbsMaxX - 1.0)/
-        (mState->mAbsMaxX - mState->mAbsMinX);
-}
-
-void
-SpectrogramDisplay3::GetSpectrogramVisibleNormBounds2(BL_FLOAT *minX, BL_FLOAT *maxX)
-{
     *minX = -mState->mAbsMinX/
     (mState->mAbsMaxX - mState->mAbsMinX);
     *maxX = 1.0 - (mState->mAbsMaxX - 1.0)/
@@ -575,7 +559,7 @@ SpectrogramDisplay3::GetSpectrogramVisibleNormBounds2(BL_FLOAT *minX, BL_FLOAT *
 }
 
 void
-SpectrogramDisplay3::SetSpectrogramVisibleNormBounds2(BL_FLOAT minX, BL_FLOAT maxX)
+SpectrogramDisplay3::SetSpectrogramVisibleNormBounds(BL_FLOAT minX, BL_FLOAT maxX)
 {
     minX *= mState->mAbsMaxX - mState->mAbsMinX;
     BL_FLOAT spectroAbsMinX = -minX;

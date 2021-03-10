@@ -91,13 +91,10 @@ public:
     // Return true if we are in bounds
     bool SetSpectrogramTranslation(BL_FLOAT tX);
     
-    // Clamps
+    // Allows result ouside of [0, 1]
     void GetSpectrogramVisibleNormBounds(BL_FLOAT *minX, BL_FLOAT *maxX);
     
-    // Allows result ouside of [0, 1]
-    void GetSpectrogramVisibleNormBounds2(BL_FLOAT *minX, BL_FLOAT *maxX);
-    
-    void SetSpectrogramVisibleNormBounds2(BL_FLOAT minX, BL_FLOAT maxX);
+    void SetSpectrogramVisibleNormBounds(BL_FLOAT minX, BL_FLOAT maxX);
     
     // Called after local data recomputation
     void ResetSpectrogramZoomAndTrans();
