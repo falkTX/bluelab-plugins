@@ -55,10 +55,14 @@ SpectroEditFftObj3::PreProcessSamplesBuffer(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
                 // Out of bounds
                 // We are processing one of the borders of the spectrogram
             {
-                // TODO: adjust the numbers of zeros
-                
                 // Generate a buffer filled of zeros
-                BLUtils::ResizeFillZeros(ioBuffer, mBufferSize);
+                //BLUtils::ResizeFillZeros(ioBuffer, mBufferSize);
+
+                // Fill with exactly the right number of zeros
+                SpectroEditFftObj3::FillFromSelection(ioBuffer,
+                                                      *mSamples,
+                                                      mSamplesPos,
+                                                      mBufferSize);
             }
             else // We are in bounds
             {
@@ -425,6 +429,25 @@ SpectroEditFftObj3::GetData(const WDL_TypedBuf<BL_FLOAT> &currentData,
         else
         {
             BLUtils::FillAllZero(data);
+        }
+    }
+}
+
+void
+SpectroEditFftObj3::FillFromSelection(WDL_TypedBuf<BL_FLOAT> *result,
+                                      const WDL_TypedBuf<BL_FLOAT> &inBuf,
+                                      int selStartSamples,
+                                      int selSizeSamples)
+{
+    result->Resize(selSizeSamples);
+    BLUtils::FillAllZero(result);
+    
+    for (int i = selStartSamples; i < selStartSamples + selSizeSamples; i++)
+    {
+        if ((i >= 0) && (i < inBuf.GetSize()))
+        {
+            BL_FLOAT val = inBuf.Get()[i];
+            result->Get()[i - selStartSamples] = val;
         }
     }
 }

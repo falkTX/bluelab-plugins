@@ -86,6 +86,12 @@ public:
                         const vector<WDL_TypedBuf<BL_FLOAT> > &phases);
     void ClearReplaceData();
 
+    // Fill some parts with zeros if selection is partially out of bounds
+    static void FillFromSelection(WDL_TypedBuf<BL_FLOAT> *result,
+                                  const WDL_TypedBuf<BL_FLOAT> &inBuf,
+                                  int selStartSamples,
+                                  int selSizeSamples);
+    
 protected:
     void GetData(const WDL_TypedBuf<BL_FLOAT> &currentData,
                  WDL_TypedBuf<BL_FLOAT> *data);

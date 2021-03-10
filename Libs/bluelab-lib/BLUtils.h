@@ -267,12 +267,33 @@ public:
                            int bufSize,
                            FLOAT_TYPE fadeStart, FLOAT_TYPE fadeEnd);
 
+    // Fade 2 (works well, and uses sigmoid)
+    //
     template <typename FLOAT_TYPE>
     static void Fade2(FLOAT_TYPE *ioBuf0Data, const FLOAT_TYPE *buf1Data, int bufSize,
                       FLOAT_TYPE fadeStartPos, FLOAT_TYPE fadeEndPos,
                       FLOAT_TYPE startT, FLOAT_TYPE endT,
                       FLOAT_TYPE sigmoA = (FLOAT_TYPE)0.5);
-    
+
+    // Helper function
+    // Fade the left part
+    template <typename FLOAT_TYPE>
+    static void Fade2Left(FLOAT_TYPE *ioBuf0Data,
+                          const FLOAT_TYPE *buf1Data, int bufSize,
+                          FLOAT_TYPE fadeStartPos, FLOAT_TYPE fadeEndPos,
+                          FLOAT_TYPE startT, FLOAT_TYPE endT,
+                          FLOAT_TYPE sigmoA = (FLOAT_TYPE)0.5);
+
+    // Helper function
+    // Fde the right part
+    template <typename FLOAT_TYPE>
+    static void Fade2Right(FLOAT_TYPE *ioBuf0Data,
+                           const FLOAT_TYPE *buf1Data, int bufSize,
+                           FLOAT_TYPE fadeStartPos, FLOAT_TYPE fadeEndPos,
+                           FLOAT_TYPE startT, FLOAT_TYPE endT,
+                           FLOAT_TYPE sigmoA = (FLOAT_TYPE)0.5);
+
+    // Halper function: do Fade2Left() and Fade2Right()
     template <typename FLOAT_TYPE>
     static void Fade2Double(FLOAT_TYPE *ioBuf0Data,
                             const FLOAT_TYPE *buf1Data, int bufSize,

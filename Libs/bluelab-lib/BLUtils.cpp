@@ -4686,32 +4686,6 @@ template void BLUtils::Fade(double *ioBuf0Data,
 
 template <typename FLOAT_TYPE>
 void
-BLUtils::Fade2Double(FLOAT_TYPE *ioBuf0Data, const FLOAT_TYPE *buf1Data, int bufSize,
-                     FLOAT_TYPE fadeStartPos, FLOAT_TYPE fadeEndPos,
-                     FLOAT_TYPE startT, FLOAT_TYPE endT,
-                     FLOAT_TYPE sigmoA)
-{
-    Fade2(ioBuf0Data, buf1Data, bufSize,
-          fadeStartPos, fadeEndPos,
-          startT, endT, sigmoA);
-    
-    Fade2(ioBuf0Data, buf1Data, bufSize,
-          (FLOAT_TYPE)1.0 - fadeEndPos, (FLOAT_TYPE)1.0 - fadeStartPos,
-          endT, startT, sigmoA);
-}
-template void BLUtils::Fade2Double(float *ioBuf0Data, const float *buf1Data,
-                                   int bufSize,
-                                   float fadeStartPos, float fadeEndPos,
-                                   float startT, float endT,
-                                   float sigmoA);
-template void BLUtils::Fade2Double(double *ioBuf0Data, const double *buf1Data,
-                                   int bufSize,
-                                   double fadeStartPos, double fadeEndPos,
-                                   double startT, double endT,
-                                   double sigmoA);
-
-template <typename FLOAT_TYPE>
-void
 BLUtils::Fade2(FLOAT_TYPE *ioBuf0Data, const FLOAT_TYPE *buf1Data, int bufSize,
                FLOAT_TYPE fadeStartPos, FLOAT_TYPE fadeEndPos,
                FLOAT_TYPE startT, FLOAT_TYPE endT,
@@ -4731,6 +4705,11 @@ BLUtils::Fade2(FLOAT_TYPE *ioBuf0Data, const FLOAT_TYPE *buf1Data, int bufSize,
                        
     for (int i = 0; i < bufSize; i++)
     {
+        // Avoid accessing buffer out of bounds just after
+        if ((i < bufSize*fadeStartPos) ||
+            (i >= bufSize*fadeEndPos))
+            continue;
+            
         FLOAT_TYPE prevVal = ioBuf0Data[i];
         FLOAT_TYPE newVal = buf1Data[i];
         
@@ -4769,6 +4748,76 @@ template void BLUtils::Fade2(double *ioBuf0Data,
                              double fadeStartPos, double fadeEndPos,
                              double startT, double endT,
                              double fadeShapePower);
+
+template <typename FLOAT_TYPE>
+void
+BLUtils::Fade2Left(FLOAT_TYPE *ioBuf0Data, const FLOAT_TYPE *buf1Data, int bufSize,
+                   FLOAT_TYPE fadeStartPos, FLOAT_TYPE fadeEndPos,
+                   FLOAT_TYPE startT, FLOAT_TYPE endT,
+                   FLOAT_TYPE sigmoA)
+{
+    Fade2(ioBuf0Data, buf1Data, bufSize,
+          fadeStartPos, fadeEndPos,
+          startT, endT, sigmoA);
+}
+template void BLUtils::Fade2Left(float *ioBuf0Data, const float *buf1Data,
+                                 int bufSize,
+                                 float fadeStartPos, float fadeEndPos,
+                                 float startT, float endT,
+                                 float sigmoA);
+template void BLUtils::Fade2Left(double *ioBuf0Data, const double *buf1Data,
+                                 int bufSize,
+                                 double fadeStartPos, double fadeEndPos,
+                                 double startT, double endT,
+                                 double sigmoA);
+
+
+template <typename FLOAT_TYPE>
+void
+BLUtils::Fade2Right(FLOAT_TYPE *ioBuf0Data, const FLOAT_TYPE *buf1Data, int bufSize,
+                   FLOAT_TYPE fadeStartPos, FLOAT_TYPE fadeEndPos,
+                   FLOAT_TYPE startT, FLOAT_TYPE endT,
+                   FLOAT_TYPE sigmoA)
+{
+    Fade2(ioBuf0Data, buf1Data, bufSize,
+          (FLOAT_TYPE)1.0 - fadeEndPos, (FLOAT_TYPE)1.0 - fadeStartPos,
+          endT, startT, sigmoA);
+}
+template void BLUtils::Fade2Right(float *ioBuf0Data, const float *buf1Data,
+                                 int bufSize,
+                                 float fadeStartPos, float fadeEndPos,
+                                 float startT, float endT,
+                                 float sigmoA);
+template void BLUtils::Fade2Right(double *ioBuf0Data, const double *buf1Data,
+                                 int bufSize,
+                                 double fadeStartPos, double fadeEndPos,
+                                 double startT, double endT,
+                                 double sigmoA);
+
+template <typename FLOAT_TYPE>
+void
+BLUtils::Fade2Double(FLOAT_TYPE *ioBuf0Data, const FLOAT_TYPE *buf1Data, int bufSize,
+                     FLOAT_TYPE fadeStartPos, FLOAT_TYPE fadeEndPos,
+                     FLOAT_TYPE startT, FLOAT_TYPE endT,
+                     FLOAT_TYPE sigmoA)
+{
+    Fade2Left(ioBuf0Data, buf1Data, bufSize,
+              fadeStartPos, fadeEndPos,
+              startT, endT, sigmoA);
+    Fade2Right(ioBuf0Data, buf1Data, bufSize,
+               fadeStartPos, fadeEndPos,
+               startT, endT, sigmoA);
+}
+template void BLUtils::Fade2Double(float *ioBuf0Data, const float *buf1Data,
+                                   int bufSize,
+                                   float fadeStartPos, float fadeEndPos,
+                                   float startT, float endT,
+                                   float sigmoA);
+template void BLUtils::Fade2Double(double *ioBuf0Data, const double *buf1Data,
+                                   int bufSize,
+                                   double fadeStartPos, double fadeEndPos,
+                                   double startT, double endT,
+                                   double sigmoA);
 
 template <typename FLOAT_TYPE>
 FLOAT_TYPE
@@ -12479,7 +12528,7 @@ FLOAT_TYPE BLUtils::ApplySigmoid(FLOAT_TYPE t, FLOAT_TYPE a)
     if (t < (FLOAT_TYPE)0.5)
         gammaA = 0.5*betaA((FLOAT_TYPE)2.0*t, a);
     else
-        gammaA = 1.0 - 0.5*betaA(2.0 - 2.0*t, a);
+        gammaA = 1.0 - 0.5*betaA((FLOAT_TYPE)(2.0 - 2.0*t), a);
 
     return gammaA;
         
