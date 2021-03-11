@@ -566,6 +566,8 @@ set(_bluelab-lib_src
   SamplesProcessObj.h
   SamplesPyramid2.cpp
   SamplesPyramid2.h
+  SamplesPyramid3.cpp
+  SamplesPyramid3.h
   SamplesPyramid.cpp
   SamplesPyramid.h
   SamplesToMagnPhases.cpp

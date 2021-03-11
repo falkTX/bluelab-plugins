@@ -1,6 +1,7 @@
 #include <FftProcessObj16.h>
 #include <SpectroEditFftObj3.h>
-#include <SamplesPyramid2.h>
+//#include <SamplesPyramid2.h>
+#include <SamplesPyramid3.h>
 
 #include <BLUtils.h>
 #include <BLDebug.h>
@@ -12,7 +13,7 @@
 SamplesToMagnPhases::SamplesToMagnPhases(vector<WDL_TypedBuf<BL_FLOAT> > *samples,
                                          FftProcessObj16 *fftObj,
                                          SpectroEditFftObj3 *spectroEditObjs[2],
-                                         SamplesPyramid2 *samplesPyramid)
+                                         SamplesPyramid3 *samplesPyramid)
 {
     mSamples = samples;
     

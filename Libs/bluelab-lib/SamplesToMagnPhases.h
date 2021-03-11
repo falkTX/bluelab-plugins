@@ -10,7 +10,8 @@ using namespace std;
 
 class FftProcessObj16;
 class SpectroEditFftObj3;
-class SamplesPyramid2;
+//class SamplesPyramid2;
+class SamplesPyramid3;
 
 // Very accurate conversion, sample aligned
 // Used for Ghost edition
@@ -22,7 +23,7 @@ class SamplesToMagnPhases
     SamplesToMagnPhases(vector<WDL_TypedBuf<BL_FLOAT> > *samples,
                         FftProcessObj16 *fftObj,
                         SpectroEditFftObj3 *spectroEditObjs[2],
-                        SamplesPyramid2 *samplesPyramid = NULL);
+                        SamplesPyramid3 *samplesPyramid = NULL);
     virtual ~SamplesToMagnPhases();
 
     void SetSamples(vector<WDL_TypedBuf<BL_FLOAT> > *samples);
@@ -63,7 +64,8 @@ class SamplesToMagnPhases
     FftProcessObj16 *mFftObj;
     SpectroEditFftObj3 *mSpectroEditObjs[2];
 
-    SamplesPyramid2 *mSamplesPyramid;
+    //SamplesPyramid2 *mSamplesPyramid;
+    SamplesPyramid3 *mSamplesPyramid;
 
  private:
     // Tmp buffers
