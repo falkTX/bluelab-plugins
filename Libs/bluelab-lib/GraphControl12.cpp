@@ -762,6 +762,19 @@ GraphControl12::IsDirty()
 }
 
 void
+GraphControl12::SetValueToDefault(int valIdx)
+{
+    // Do nothing.
+
+    // It is used to avoid "trying to reset" the graph parameter
+    // when ctrl-click on the graph
+    // If so, IControl would call SetDirty(true), then OnParamChange()
+    // and finally make a pthread assertion
+    // (certainly mutex_lock() called two times on the same mutex in the
+    // same thread
+}
+    
+void
 GraphControl12::DisplayCurveDescriptions()
 {
 #define OFFSET_Y 4.0

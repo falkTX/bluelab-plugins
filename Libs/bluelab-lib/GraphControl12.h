@@ -235,7 +235,10 @@ public:
     
     // Hacked, always return true
     bool IsDirty() override;
-    
+
+    // Hack
+    void SetValueToDefault(int valIdx) override;
+        
 protected:
     void DoDraw(IGraphics &graphics);
     
