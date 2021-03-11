@@ -358,16 +358,10 @@ SamplesPyramid3::ReplaceValues(long start, const WDL_TypedBuf<BL_FLOAT> &samples
     }
 }
 
-#if !FIX_GLITCH
-void
-SamplesPyramid3::GetValues(long start, long end, long numValues,
-                          WDL_TypedBuf<BL_FLOAT> *samples)
-#else
 void
 SamplesPyramid3::GetValues(BL_FLOAT start, BL_FLOAT end, long numValues,
                            WDL_TypedBuf<BL_FLOAT> *samples)
 
-#endif
 {
     // Check if we must add zeros at the beginning
     int numZerosBegin = 0;
@@ -401,7 +395,9 @@ SamplesPyramid3::GetValues(BL_FLOAT start, BL_FLOAT end, long numValues,
         long size = end - start;
         
         // We must start at the first bigger interval
-        if ((pyramidLevel >= mSamplesPyramid.size()) || (size < numValues))
+        if ((pyramidLevel >= mSamplesPyramid.size()) ||
+            //(size < numValues))
+            (size <= numValues))
         {
 #if !FIX_BIG_ZOOM
             pyramidLevel--;

@@ -47,13 +47,8 @@ public:
     
     void ReplaceValues(long start, const WDL_TypedBuf<BL_FLOAT> &samples);
     
-#if !FIX_GLITCH
-    void GetValues(long start, long end, long numValues,
-                   WDL_TypedBuf<BL_FLOAT> *samples);
-#else
     void GetValues(BL_FLOAT start, BL_FLOAT end, long numValues,
                    WDL_TypedBuf<BL_FLOAT> *samples);
-#endif
     
 protected:
     void ResetTmpBuffers();
