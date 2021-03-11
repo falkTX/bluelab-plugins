@@ -6094,6 +6094,10 @@ BLUtils::DecimateSamples(WDL_TypedBuf<FLOAT_TYPE> *result,
                          const WDL_TypedBuf<FLOAT_TYPE> &buf,
                          FLOAT_TYPE decFactor)
 {
+    // In case buf size is odd, and result size is even,
+    // be sure to manage the last buf value
+#define FIX_ODD_DECIMATE 1
+    
     if (buf.GetSize() == 0)
         return;
     
@@ -6105,38 +6109,31 @@ BLUtils::DecimateSamples(WDL_TypedBuf<FLOAT_TYPE> *result,
     }
     
     BLUtils::ResizeFillZeros(result, buf.GetSize()*decFactor);
+
+    // Buffers
+    int bufSize = buf.GetSize();
+    FLOAT_TYPE *bufData = buf.Get();
+    int resultSize = result->GetSize();
+    FLOAT_TYPE *resultData = result->Get();
     
     int resultIdx = 0;
     
     // Keep the maxima when decimating
     FLOAT_TYPE count = 0.0;
     
-    // When set to the first value instead of 0,
-    // it avoid a first line from 0 to the first value at the beginning
-    //FLOAT_TYPE minSample = 0.0;
-    //FLOAT_TYPE maxSample = 0.0;
-    //FLOAT_TYPE prevSample = 0.0;
-    
     FLOAT_TYPE minSample = buf.Get()[0];
     FLOAT_TYPE maxSample = buf.Get()[0];
     FLOAT_TYPE prevSample = buf.Get()[0];
     
     // When set to true, avoid flat beginning when the first values are negative
-    //bool zeroCrossed = false;
     bool zeroCrossed = true;
     
     FLOAT_TYPE prevSampleUsed = 0.0;
     
-    int bufSize = buf.GetSize();
-    FLOAT_TYPE *bufData = buf.Get();
-    int resultSize = result->GetSize();
-    FLOAT_TYPE *resultData = result->Get();
-    
     for (int i = 0; i < bufSize; i++)
     {
         FLOAT_TYPE samp = bufData[i];
-        //if (std::fabs(samp) > std::fabs(maxSample))
-        //    maxSample = samp;
+        
         if (samp > maxSample)
             maxSample = samp;
         
@@ -6147,7 +6144,6 @@ BLUtils::DecimateSamples(WDL_TypedBuf<FLOAT_TYPE> *result,
         // (sometimes we run through millions of samples,
         // so it could be worth it to optimize this)
         
-        //if (samp*prevSample < 0.0)
         if ((samp > 0.0 && prevSample < 0.0) ||
             (samp < 0.0 && prevSample > 0.0))
             zeroCrossed = true;
@@ -6156,9 +6152,15 @@ BLUtils::DecimateSamples(WDL_TypedBuf<FLOAT_TYPE> *result,
         
         // Fix for spectrograms
         //count += 1.0/decFactor;
+
         count += decFactor;
-        
+
+#if !FIX_ODD_DECIMATE
         if (count >= 1.0)
+#else
+        if ((count >= 1.0) || // Enough src samples visited
+            (i == bufSize - 1)) // Last src sample
+#endif            
         {
             // Take care, if we crossed zero,
             // we take alternately positive and negative samples
@@ -6174,43 +6176,43 @@ BLUtils::DecimateSamples(WDL_TypedBuf<FLOAT_TYPE> *result,
                     sampleToUse = maxSample;
                     
                     // FIX: avoid segments stuck at 0 during several samples
-                    maxSample = samp; //0.0;
+                    maxSample = samp;
                 }
                 else
                 {
                     sampleToUse = minSample;
-                    minSample = samp; //0.0;
+                    minSample = samp;
                 }
-            } else
+            }
+            else
             {
                 if (prevSampleUsed >= 0.0)
                 {
                     sampleToUse = minSample;
-                    minSample = samp; //0.0;
+                    minSample = samp;
                 }
                 else
                 {
                     sampleToUse = maxSample;
-                    maxSample = samp; //0.0;
+                    maxSample = samp;
                 }
             }
             
             resultData[resultIdx++] = sampleToUse;
-            
-            // Prefer reseting only min or max, not both, to avoid loosing
-            // interesting values
-            
-            //minSample = 0.0;
-            //maxSample = 0.0;
             
             count -= 1.0;
             
             prevSampleUsed = sampleToUse;
             zeroCrossed = false;
         }
-        
+
+#if !FIX_ODD_DECIMATE
         if (resultIdx >=  resultSize)
             break;
+#else
+        if (resultIdx > resultSize - 1)
+            resultIdx = resultSize - 1;
+#endif
     }
 }
 template void BLUtils::DecimateSamples(WDL_TypedBuf<float> *result,
