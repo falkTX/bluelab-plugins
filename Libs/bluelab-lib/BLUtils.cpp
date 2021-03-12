@@ -6088,6 +6088,9 @@ template void BLUtils::DecimateValuesDb(WDL_TypedBuf<double> *result,
 
 // FIX: to avoid long series of positive values not looking like waveforms
 // FIX2: improved initial fix: really avoid loosing interesting min and max
+//
+// BUG: last value is not well managed
+// (test: series of 10 impulses, with 1 impulse at the end => it is rest to 0)
 template <typename FLOAT_TYPE>
 void
 BLUtils::DecimateSamples(WDL_TypedBuf<FLOAT_TYPE> *result,
@@ -6096,7 +6099,21 @@ BLUtils::DecimateSamples(WDL_TypedBuf<FLOAT_TYPE> *result,
 {
     // In case buf size is odd, and result size is even,
     // be sure to manage the last buf value
+#define FIX_LAST_SAMPLE 0 //1
+
+    // Adjust the result size to ceil(), and adjust decFactor
+    // (in case of odd input buffer)
 #define FIX_ODD_DECIMATE 1
+    
+    // Avoid re-using samples several times
+    // e.g: Series of 10 impulses, after a certain level,
+    // impulse peaks gets duplicated
+#define FIX_SAMPLES_REUSE 1
+
+    // Be sure to keep the first sample value
+    // e.g: Series of 10 impulses,
+    // first sample is an impulse peak
+#define FIX_FIRST_SAMPLE 1
     
     if (buf.GetSize() == 0)
         return;
@@ -6107,8 +6124,16 @@ BLUtils::DecimateSamples(WDL_TypedBuf<FLOAT_TYPE> *result,
         
         return;
     }
+
+#if !FIX_ODD_DECIMATE
+    int newSize = buf.GetSize()*decFactor;
+#else
+    int newSize = ceil(buf.GetSize()*decFactor);
+    // Adjust decimation factor
+    decFactor = ((BL_FLOAT)newSize)/buf.GetSize();
+#endif
     
-    BLUtils::ResizeFillZeros(result, buf.GetSize()*decFactor);
+    BLUtils::ResizeFillZeros(result, newSize);
 
     // Buffers
     int bufSize = buf.GetSize();
@@ -6127,12 +6152,33 @@ BLUtils::DecimateSamples(WDL_TypedBuf<FLOAT_TYPE> *result,
     
     // When set to true, avoid flat beginning when the first values are negative
     bool zeroCrossed = true;
-    
+
     FLOAT_TYPE prevSampleUsed = 0.0;
+    
+#if FIX_SAMPLES_REUSE
+    bool maxSampleUsed = false;
+    bool minSampleUsed = false;
+#endif
     
     for (int i = 0; i < bufSize; i++)
     {
         FLOAT_TYPE samp = bufData[i];
+
+        // Avoid re-using same samples several times
+#if FIX_SAMPLES_REUSE
+        if (maxSampleUsed)
+        {
+            maxSample = samp;
+
+            maxSampleUsed = false;
+        }
+        if (minSampleUsed)
+        {
+            minSample = samp;
+
+            minSampleUsed = false;
+        }
+#endif
         
         if (samp > maxSample)
             maxSample = samp;
@@ -6155,7 +6201,7 @@ BLUtils::DecimateSamples(WDL_TypedBuf<FLOAT_TYPE> *result,
 
         count += decFactor;
 
-#if !FIX_ODD_DECIMATE
+#if !FIX_LAST_SAMPLE
         if (count >= 1.0)
 #else
         if ((count >= 1.0) || // Enough src samples visited
@@ -6177,11 +6223,19 @@ BLUtils::DecimateSamples(WDL_TypedBuf<FLOAT_TYPE> *result,
                     
                     // FIX: avoid segments stuck at 0 during several samples
                     maxSample = samp;
+
+#if FIX_SAMPLES_REUSE
+                    maxSampleUsed = true;
+#endif
                 }
                 else
                 {
                     sampleToUse = minSample;
                     minSample = samp;
+
+#if FIX_SAMPLES_REUSE
+                    minSampleUsed = true;
+#endif
                 }
             }
             else
@@ -6190,15 +6244,42 @@ BLUtils::DecimateSamples(WDL_TypedBuf<FLOAT_TYPE> *result,
                 {
                     sampleToUse = minSample;
                     minSample = samp;
+
+#if FIX_SAMPLES_REUSE
+                    minSampleUsed = true;
+#endif
                 }
                 else
                 {
                     sampleToUse = maxSample;
                     maxSample = samp;
+
+#if FIX_SAMPLES_REUSE
+                    maxSampleUsed = true;
+#endif
                 }
             }
             
-            resultData[resultIdx++] = sampleToUse;
+            resultData[resultIdx] = sampleToUse;
+
+#if FIX_FIRST_SAMPLE
+            if (resultIdx == 0)
+            {
+                // Be sure that the first sample will be the same
+                // in th origin buf and in the decimated buf
+                resultData[resultIdx] = buf.Get()[0];
+
+#if FIX_SAMPLES_REUSE
+                // Avoid re-using same value several times
+                if (std::fabs(buf.Get()[0] - minSample) < BL_EPS)
+                    minSampleUsed = true;
+                else
+                    maxSampleUsed = true;
+#endif
+            }
+#endif
+
+            resultIdx++;
             
             count -= 1.0;
             
@@ -6206,7 +6287,7 @@ BLUtils::DecimateSamples(WDL_TypedBuf<FLOAT_TYPE> *result,
             zeroCrossed = false;
         }
 
-#if !FIX_ODD_DECIMATE
+#if !FIX_LAST_SAMPLE
         if (resultIdx >=  resultSize)
             break;
 #else
@@ -6222,7 +6303,7 @@ template void BLUtils::DecimateSamples(WDL_TypedBuf<double> *result,
                                        const WDL_TypedBuf<double> &buf,
                                        double decFactor);
 
-
+#if 0
 // DOESN'T WORK...
 // Incremental version
 // Try to fix long sections of 0 values
@@ -6250,6 +6331,224 @@ template void BLUtils::DecimateSamples2(WDL_TypedBuf<float> *result,
                                         const WDL_TypedBuf<float> &buf,
                                         float decFactor);
 template void BLUtils::DecimateSamples2(WDL_TypedBuf<double> *result,
+                                        const WDL_TypedBuf<double> &buf,
+                                        double decFactor);
+#endif
+
+// FIX: to avoid long series of positive values not looking like waveforms
+// FIX2: improved initial fix: really avoid loosing interesting min and max
+//
+// FIXED: last value is not well managed
+// (test: series of 10 impulses, with 1 impulse at the end => it is rest to 0)
+template <typename FLOAT_TYPE>
+void
+BLUtils::DecimateSamples3(WDL_TypedBuf<FLOAT_TYPE> *result,
+                          const WDL_TypedBuf<FLOAT_TYPE> &buf,
+                          FLOAT_TYPE decFactor)
+{
+    // In case buf size is odd, and result size is even,
+    // be sure to manage the last buf value
+#define FIX_LAST_SAMPLE 0 //1
+
+    // Adjust the result size to ceil(), and adjust decFactor
+    // (in case of odd input buffer)
+#define FIX_ODD_DECIMATE 1
+    
+    // Avoid re-using samples several times
+    // e.g: Series of 10 impulses, after a certain level,
+    // impulse peaks gets duplicated
+#define FIX_SAMPLES_REUSE 1
+
+    // Be sure to keep the first sample value
+    // e.g: Series of 10 impulses,
+    // first sample is an impulse peak
+#define FIX_FIRST_SAMPLE 1
+    
+    if (buf.GetSize() == 0)
+        return;
+    
+    if (decFactor >= 1.0)
+    {
+        *result = buf;
+        
+        return;
+    }
+
+#if !FIX_ODD_DECIMATE
+    int newSize = buf.GetSize()*decFactor;
+#else
+    int newSize = ceil(buf.GetSize()*decFactor);
+    // Adjust decimation factor
+    decFactor = ((BL_FLOAT)newSize)/buf.GetSize();
+#endif
+    
+    BLUtils::ResizeFillZeros(result, newSize);
+
+    // Buffers
+    int bufSize = buf.GetSize();
+    FLOAT_TYPE *bufData = buf.Get();
+    int resultSize = result->GetSize();
+    FLOAT_TYPE *resultData = result->Get();
+    
+    int resultIdx = 0;
+    
+    // Keep the maxima when decimating
+    FLOAT_TYPE count = 0.0;
+    
+    FLOAT_TYPE minSample = buf.Get()[0];
+    FLOAT_TYPE maxSample = buf.Get()[0];
+    FLOAT_TYPE prevSample = buf.Get()[0];
+    
+    // When set to true, avoid flat beginning when the first values are negative
+    bool zeroCrossed = true;
+
+    FLOAT_TYPE prevSampleUsed = 0.0;
+    
+#if FIX_SAMPLES_REUSE
+    bool maxSampleUsed = false;
+    bool minSampleUsed = false;
+#endif
+    
+    for (int i = 0; i < bufSize; i++)
+    {
+        FLOAT_TYPE samp = bufData[i];
+
+        // Avoid re-using same samples several times
+#if FIX_SAMPLES_REUSE
+        if (maxSampleUsed)
+        {
+            maxSample = samp;
+
+            maxSampleUsed = false;
+        }
+        if (minSampleUsed)
+        {
+            minSample = samp;
+
+            minSampleUsed = false;
+        }
+#endif
+        
+        if (samp > maxSample)
+            maxSample = samp;
+        
+        if (samp < minSample)
+            minSample = samp;
+        
+        // Optimize by removing the multiplication
+        // (sometimes we run through millions of samples,
+        // so it could be worth it to optimize this)
+        
+        if ((samp > 0.0 && prevSample < 0.0) ||
+            (samp < 0.0 && prevSample > 0.0))
+            zeroCrossed = true;
+        
+        prevSample = samp;
+        
+        // Fix for spectrograms
+        //count += 1.0/decFactor;
+
+        count += decFactor;
+
+#if !FIX_LAST_SAMPLE
+        if (count >= 1.0)
+#else
+        if ((count >= 1.0) || // Enough src samples visited
+            (i == bufSize - 1)) // Last src sample
+#endif            
+        {
+            // Take care, if we crossed zero,
+            // we take alternately positive and negative samples
+            // (otherwise, we could have very long series of positive samples
+            // for example. And this won't look like a waveform anymore...
+            FLOAT_TYPE sampleToUse;
+            if (!zeroCrossed)
+            {
+                // Prefer reseting only min or max, not both, to avoid loosing
+                // interesting values
+                if (prevSampleUsed >= 0.0)
+                {
+                    sampleToUse = maxSample;
+                    
+                    // FIX: avoid segments stuck at 0 during several samples
+                    maxSample = samp;
+
+#if FIX_SAMPLES_REUSE
+                    maxSampleUsed = true;
+#endif
+                }
+                else
+                {
+                    sampleToUse = minSample;
+                    minSample = samp;
+
+#if FIX_SAMPLES_REUSE
+                    minSampleUsed = true;
+#endif
+                }
+            }
+            else
+            {
+                if (prevSampleUsed >= 0.0)
+                {
+                    sampleToUse = minSample;
+                    minSample = samp;
+
+#if FIX_SAMPLES_REUSE
+                    minSampleUsed = true;
+#endif
+                }
+                else
+                {
+                    sampleToUse = maxSample;
+                    maxSample = samp;
+
+#if FIX_SAMPLES_REUSE
+                    maxSampleUsed = true;
+#endif
+                }
+            }
+            
+            resultData[resultIdx] = sampleToUse;
+
+#if FIX_FIRST_SAMPLE
+            if (resultIdx == 0)
+            {
+                // Be sure that the first sample will be the same
+                // in th origin buf and in the decimated buf
+                resultData[resultIdx] = buf.Get()[0];
+
+#if FIX_SAMPLES_REUSE
+                // Avoid re-using same value several times
+                if (std::fabs(buf.Get()[0] - minSample) < BL_EPS)
+                    minSampleUsed = true;
+                else
+                    maxSampleUsed = true;
+#endif
+            }
+#endif
+
+            resultIdx++;
+            
+            count -= 1.0;
+            
+            prevSampleUsed = sampleToUse;
+            zeroCrossed = false;
+        }
+
+#if !FIX_LAST_SAMPLE
+        if (resultIdx >=  resultSize)
+            break;
+#else
+        if (resultIdx > resultSize - 1)
+            resultIdx = resultSize - 1;
+#endif
+    }
+}
+template void BLUtils::DecimateSamples3(WDL_TypedBuf<float> *result,
+                                        const WDL_TypedBuf<float> &buf,
+                                        float decFactor);
+template void BLUtils::DecimateSamples3(WDL_TypedBuf<double> *result,
                                         const WDL_TypedBuf<double> &buf,
                                         double decFactor);
 
