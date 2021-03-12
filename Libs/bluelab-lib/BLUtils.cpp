@@ -6337,6 +6337,7 @@ template void BLUtils::DecimateSamples2(WDL_TypedBuf<double> *result,
 
 
 // New: take the maximum spaced value (no more zero crossing
+// => code a lot simpler, and result very good
 //
 // FIX: to avoid long series of positive values not looking like waveforms
 // FIX2: improved initial fix: really avoid loosing interesting min and max
