@@ -44,7 +44,7 @@
 
 // FIX: Ghost, big zoom on the right part of the waveform
 // => after a given zoom level, the waveform stops zooming
-#define FIX_BIG_ZOOM 0 //1
+#define FIX_BIG_ZOOM 1 //0 //1
 
 SamplesPyramid3::SamplesPyramid3(int maxLevel)
 {
