@@ -83,6 +83,8 @@ public:
     bool UpdateZoomFactor(BL_FLOAT zoomChange);
     BL_FLOAT GetZoomFactor();
     BL_FLOAT GetAbsZoomFactor();
+    // To make the spectrogram exactly aligned to waveform
+    BL_FLOAT GetZoomAdjustFactor();
     
     // Between 0 and 1 => for zoom between min and max
     BL_FLOAT GetNormZoom();
@@ -134,7 +136,7 @@ protected:
     SamplesToMagnPhases *mSamplesToMagnPhases;
 
     // To make the spectrogram exactly aligned to waveform
-    //BL_FLOAT mZoomAdjustFactor;
+    BL_FLOAT mZoomAdjustFactor;
 };
 
 #endif

@@ -75,7 +75,7 @@ SpectrogramView2::Reset()
     
     mTranslation = 0.0;
 
-    //mZoomAdjustFactor = 1.0;
+    mZoomAdjustFactor = 1.0;
 }
 
 BLSpectrogram4 *
@@ -356,13 +356,19 @@ SpectrogramView2::UpdateZoomFactor(BL_FLOAT zoomChange)
 BL_FLOAT
 SpectrogramView2::GetZoomFactor()
 {
-    return mZoomFactor; //*mZoomAdjustFactor;
+    return mZoomFactor;
 }
 
 BL_FLOAT
 SpectrogramView2::GetAbsZoomFactor()
 {
     return mAbsZoomFactor;
+}
+
+BL_FLOAT
+SpectrogramView2::GetZoomAdjustFactor()
+{
+    return mZoomAdjustFactor;
 }
 
 BL_FLOAT
@@ -425,20 +431,16 @@ SpectrogramView2::UpdateSpectrogramData(BL_FLOAT minXNorm, BL_FLOAT maxXNorm)
     // Update spectrogram
     mSpectrogram->SetLines(magns[0], phases[0]);
         
-    // Adjust zoom
+    // Initial zoom
     mZoomFactor = 1.0;
 
-    /////////////////////DEBUG
+    // Compute zoom adjust factor,
+    // so that the spctrogram will be axactly aligned to the waveform
     int overlapping = mFftObj->GetOverlapping();
     
     BL_FLOAT selSize = ((maxXNorm - minXNorm)*numSamples)/(bufferSize/overlapping);
     BL_FLOAT dataSize = magns[0].size();
-    BL_FLOAT coeff = dataSize/selSize;
-    //BL_FLOAT coeff = 1.0 + (dataSize/selSize - 1.0)*overlapping;
-    //BL_FLOAT coeff = dataSize/(dataSize - 1.0);
-     
-    //mZoomAdjustFactor = coeff;
-    //////////////////////////
+    mZoomAdjustFactor = dataSize/selSize;
 }
 
 void

@@ -34,6 +34,8 @@ public:
         BL_FLOAT mAbsTranslation;
         
         BL_FLOAT mCenterPos;
+
+        BL_FLOAT mZoomAdjustFactor;
         
         // Background spectrogram
         int mSpectroImageWidth;
@@ -62,8 +64,8 @@ public:
     bool PointInsideMiniView(int x, int y,
                              int width, int height);
     
-    void GetSpectroNormCoordinate(int x, int y, int width, int height,
-                                  BL_FLOAT *nx, BL_FLOAT *ny);
+    void GetNormCoordinate(int x, int y, int width, int height,
+                           BL_FLOAT *nx, BL_FLOAT *ny);
     
     // Spectrogram
     void SetBounds(BL_FLOAT left, BL_FLOAT top,
@@ -76,28 +78,29 @@ public:
     void UpdateColormap(bool flag);
     
     // Reset all
-    void ResetSpectrogramTransform();
+    void ResetTransform();
     
     // Rest internal translation only
-    void ResetSpectrogramTranslation();
+    void ResetTranslation();
     
     //
-    void SetSpectrogramZoom(BL_FLOAT zoomX);
+    void SetZoom(BL_FLOAT zoomX);
+    void SetAbsZoom(BL_FLOAT zoomX);
+    // To be set first
+    void SetZoomAdjust(BL_FLOAT zoomAdjust);
     
-    void SetSpectrogramAbsZoom(BL_FLOAT zoomX);
-    
-    void SetSpectrogramCenterPos(BL_FLOAT centerPos);
+    void SetCenterPos(BL_FLOAT centerPos);
     
     // Return true if we are in bounds
-    bool SetSpectrogramTranslation(BL_FLOAT tX);
+    bool SetTranslation(BL_FLOAT tX);
     
     // Allows result ouside of [0, 1]
-    void GetSpectrogramVisibleNormBounds(BL_FLOAT *minX, BL_FLOAT *maxX);
+    void GetVisibleNormBounds(BL_FLOAT *minX, BL_FLOAT *maxX);
     
-    void SetSpectrogramVisibleNormBounds(BL_FLOAT minX, BL_FLOAT maxX);
+    void SetVisibleNormBounds(BL_FLOAT minX, BL_FLOAT maxX);
     
     // Called after local data recomputation
-    void ResetSpectrogramZoomAndTrans();
+    void ResetZoomAndTrans();
     
     // For optimization
     // To be able to disable background spectrogram
@@ -115,6 +118,8 @@ protected:
     // Spectrogram
     BLSpectrogram4 *mSpectrogram;
     BL_FLOAT mSpectrogramBounds[4];
+
+    BL_FLOAT mZoomAdjustFactor;
     
     int mNvgSpectroImage;
     WDL_TypedBuf<unsigned char> mSpectroImageData;

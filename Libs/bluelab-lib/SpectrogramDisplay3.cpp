@@ -34,6 +34,8 @@ SpectrogramDisplay3::SpectrogramDisplay3(SpectrogramDisplayState *state)
         
         mState->mSpectroImageWidth = 0;
         mState->mSpectroImageHeight = 0;
+
+        mState->mZoomAdjustFactor = 1.0;
     }
     
     mVg = NULL;
@@ -398,7 +400,7 @@ SpectrogramDisplay3::PointInsideSpectrogram(int x, int y, int width, int height)
 }
 
 void
-SpectrogramDisplay3::GetSpectroNormCoordinate(int x, int y, int width, int height,
+SpectrogramDisplay3::GetNormCoordinate(int x, int y, int width, int height,
                                               BL_FLOAT *nx, BL_FLOAT *ny)
 {
     BL_FLOAT nx0 = ((BL_FLOAT)x)/width;
@@ -473,7 +475,7 @@ SpectrogramDisplay3::UpdateColormap(bool flag)
 }
 
 void
-SpectrogramDisplay3::ResetSpectrogramTransform()
+SpectrogramDisplay3::ResetTransform()
 {
     mState->mMinX = 0.0;
     mState->mMaxX = 1.0;
@@ -488,7 +490,7 @@ SpectrogramDisplay3::ResetSpectrogramTransform()
 }
 
 void
-SpectrogramDisplay3::ResetSpectrogramTranslation()
+SpectrogramDisplay3::ResetTranslation()
 {
     mState->mAbsTranslation = 0.0;
     
@@ -496,7 +498,7 @@ SpectrogramDisplay3::ResetSpectrogramTranslation()
 }
 
 void
-SpectrogramDisplay3::SetSpectrogramZoom(BL_FLOAT zoomX)
+SpectrogramDisplay3::SetZoom(BL_FLOAT zoomX)
 {
     BL_FLOAT norm = (mState->mCenterPos - mState->mMinX)/
     (mState->mMaxX - mState->mMinX);
@@ -508,7 +510,13 @@ SpectrogramDisplay3::SetSpectrogramZoom(BL_FLOAT zoomX)
 }
 
 void
-SpectrogramDisplay3::SetSpectrogramAbsZoom(BL_FLOAT zoomX)
+SpectrogramDisplay3::SetZoomAdjust(BL_FLOAT zoomAdjust)
+{
+    mState->mZoomAdjustFactor = zoomAdjust;
+}
+    
+void
+SpectrogramDisplay3::SetAbsZoom(BL_FLOAT zoomX)
 {
     BL_FLOAT norm = (mState->mCenterPos - mState->mAbsMinX)/
     (mState->mAbsMaxX - mState->mAbsMinX);
@@ -520,7 +528,7 @@ SpectrogramDisplay3::SetSpectrogramAbsZoom(BL_FLOAT zoomX)
 }
 
 void
-SpectrogramDisplay3::SetSpectrogramCenterPos(BL_FLOAT centerPos)
+SpectrogramDisplay3::SetCenterPos(BL_FLOAT centerPos)
 {
     mState->mCenterPos = centerPos;
     
@@ -528,7 +536,7 @@ SpectrogramDisplay3::SetSpectrogramCenterPos(BL_FLOAT centerPos)
 }
 
 bool
-SpectrogramDisplay3::SetSpectrogramTranslation(BL_FLOAT tX)
+SpectrogramDisplay3::SetTranslation(BL_FLOAT tX)
 {
     BL_FLOAT dX = tX - mState->mAbsTranslation;
     
@@ -551,7 +559,7 @@ SpectrogramDisplay3::SetSpectrogramTranslation(BL_FLOAT tX)
 }
 
 void
-SpectrogramDisplay3::GetSpectrogramVisibleNormBounds(BL_FLOAT *minX, BL_FLOAT *maxX)
+SpectrogramDisplay3::GetVisibleNormBounds(BL_FLOAT *minX, BL_FLOAT *maxX)
 {
     *minX = -mState->mAbsMinX/
     (mState->mAbsMaxX - mState->mAbsMinX);
@@ -560,19 +568,19 @@ SpectrogramDisplay3::GetSpectrogramVisibleNormBounds(BL_FLOAT *minX, BL_FLOAT *m
 }
 
 void
-SpectrogramDisplay3::SetSpectrogramVisibleNormBounds(BL_FLOAT minX, BL_FLOAT maxX)
+SpectrogramDisplay3::SetVisibleNormBounds(BL_FLOAT minX, BL_FLOAT maxX)
 {
     minX *= mState->mAbsMaxX - mState->mAbsMinX;
-    BL_FLOAT spectroAbsMinX = -minX;
+    BL_FLOAT absMinX = -minX;
     
     maxX *= mState->mAbsMaxX - mState->mAbsMinX;
     
-    BL_FLOAT spectroAbsMaxX = -maxX;
+    BL_FLOAT absMaxX = -maxX;
     
-    BL_FLOAT trans = spectroAbsMinX - mState->mAbsMinX;
+    BL_FLOAT trans = absMinX - mState->mAbsMinX;
     
-    mState->mAbsMinX = spectroAbsMinX;
-    mState->mAbsMaxX = spectroAbsMaxX;
+    mState->mAbsMinX = absMinX;
+    mState->mAbsMaxX = absMaxX;
     
     //
     mState->mMinX += trans;
@@ -584,10 +592,12 @@ SpectrogramDisplay3::SetSpectrogramVisibleNormBounds(BL_FLOAT minX, BL_FLOAT max
 }
 
 void
-SpectrogramDisplay3::ResetSpectrogramZoomAndTrans()
+SpectrogramDisplay3::ResetZoomAndTrans()
 {
     mState->mMinX = 0.0;
     mState->mMaxX = 1.0;
+
+    mState->mZoomAdjustFactor = 1.0;
     
     mNeedRedraw = true;
 }
