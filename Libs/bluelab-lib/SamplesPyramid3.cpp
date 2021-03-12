@@ -397,14 +397,15 @@ SamplesPyramid3::GetValues(BL_FLOAT start, BL_FLOAT end, long numValues,
     
     mTmpBuf0.resize(mMaxPyramidLevel + 1);
     WDL_TypedBuf<BL_FLOAT> &currentPyramidLevel = mTmpBuf0[pyramidLevel];
-    
     BLUtils::FastQueueToBuf(mSamplesPyramid[pyramidLevel], &currentPyramidLevel);
-
+    
     mTmpBuf1.resize(mMaxPyramidLevel + 1);
     WDL_TypedBuf<BL_FLOAT> &level = mTmpBuf1[pyramidLevel];
     
-    // Use ceil to avoid missing last sample
-    int size = ceil(end - start);
+    // Use ceil to avoid missing last sample...
+    //int size = ceil(end - start);
+    // ... and add 1, to be very sure to get the last sample in any case
+    int size = ceil(end - start) + 1;
     
     // NOTE: crashed here, fixed SetBufResize()
     BLUtils::SetBufResize(&level, currentPyramidLevel, start, size);
