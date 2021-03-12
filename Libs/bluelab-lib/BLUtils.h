@@ -1109,13 +1109,14 @@ public:
     
     // DOESN'T WORK ?
     // Fix for flat sections at 0
-    //template <typename FLOAT_TYPE>
-    //static void DecimateSamples2(WDL_TypedBuf<FLOAT_TYPE> *result,
-    //                             const WDL_TypedBuf<FLOAT_TYPE> &buf,
-    //                             FLOAT_TYPE decFactor);
+    template <typename FLOAT_TYPE>
+    static void DecimateSamples2(WDL_TypedBuf<FLOAT_TYPE> *result,
+                                 const WDL_TypedBuf<FLOAT_TYPE> &buf,
+                                 FLOAT_TYPE decFactor);
 
     template <typename FLOAT_TYPE>
-    static void DecimateSamples3(WDL_TypedBuf<FLOAT_TYPE> *ioSamples,
+    static void DecimateSamples3(WDL_TypedBuf<FLOAT_TYPE> *result,
+                                 const WDL_TypedBuf<FLOAT_TYPE> &buf,
                                  FLOAT_TYPE decFactor);
     
     // Quick and rought version
