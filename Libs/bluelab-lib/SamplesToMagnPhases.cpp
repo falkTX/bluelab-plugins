@@ -406,11 +406,20 @@ SamplesToMagnPhases::ReadWriteSliceSaveState(ReadWriteSliceState *state)
         
         mSpectroEditObjs[i]->GetNormSelection(state->mSpectroEditSels[i]);
     }
+
+    // Reset after having saved state
+    // because Reset() also resets the selection
+    //if (mFftObj != NULL)
+    //    mFftObj->Reset();
 }
 
 void
 SamplesToMagnPhases::ReadWriteSliceRestoreState(const ReadWriteSliceState &state)
 {
+    // Reset before restoring
+    // because Reset() also resets the selection
+    //mFftObj->Reset();
+    
     for (int i = 0; i < 2; i++)
     {
         if (mSpectroEditObjs[i] != NULL)

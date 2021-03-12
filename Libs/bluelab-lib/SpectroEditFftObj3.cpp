@@ -209,7 +209,7 @@ SpectroEditFftObj3::Reset(int bufferSize, int oversampling,
                           int freqRes, BL_FLOAT sampleRate)
 {
     ProcessObj::Reset(bufferSize, oversampling, freqRes, sampleRate);
-    
+
     mSamplesPos = 0.0;
     
     mSelectionEnabled = false;
