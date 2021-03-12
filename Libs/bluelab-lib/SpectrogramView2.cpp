@@ -281,17 +281,17 @@ SpectrogramView2::SetDataSelection2(BL_FLOAT x0, BL_FLOAT y0,
     
     BL_FLOAT startDataPos = minNormX*((BL_FLOAT)numSamples)/bufferSize;
 
-    BL_FLOAT endDataPos = maxXNorm*((BL_FLOAT)numSamples)/bufferSize /*- 1*/; // ?? // TEST
+    BL_FLOAT endDataPos = maxXNorm*((BL_FLOAT)numSamples)/bufferSize /*- 1*/; // TEST
     
     mSelection[0] = (x0 - startDataPos)/(endDataPos - startDataPos /*+ 1*/); // TEST
     
     // Warning, y is reversed !
-    mSelection[3] = -y0/(bufferSize/2.0); // + 1.0; // TEST
+    mSelection[3] = 1.0 - y0/(bufferSize/2.0);
     
     mSelection[2] = (x1 - startDataPos)/(endDataPos - startDataPos /*+ 1*/); // TEST
     
     // Warning, y is reversed !
-    mSelection[1] = -y1/(bufferSize/2.0) /*+ 1.0*/; // TEST
+    mSelection[1] = 1.0 -y1/(bufferSize/2.0);
 }
 
 bool
@@ -436,9 +436,6 @@ SpectrogramView2::UpdateSpectrogramData(BL_FLOAT minXNorm, BL_FLOAT maxXNorm)
     BL_FLOAT coeff = dataSize/selSize;
     //BL_FLOAT coeff = 1.0 + (dataSize/selSize - 1.0)*overlapping;
     //BL_FLOAT coeff = dataSize/(dataSize - 1.0);
-    
-    fprintf(stderr, "sel: %g  data: %g  coeff: %g\n",
-            selSize, dataSize, coeff);
      
     //mZoomAdjustFactor = coeff;
     //////////////////////////

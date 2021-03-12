@@ -5,7 +5,8 @@
 #include "GhostCustomDrawer.h"
 
 GhostCustomDrawer::GhostCustomDrawer(GhostPluginInterface *plug,
-                                     BL_FLOAT x0, BL_FLOAT y0, BL_FLOAT x1, BL_FLOAT y1,
+                                     BL_FLOAT x0, BL_FLOAT y0,
+                                     BL_FLOAT x1, BL_FLOAT y1,
                                      State *state)
 {
     mState = state;
@@ -114,7 +115,7 @@ GhostCustomDrawer::SetSelection(BL_FLOAT x0, BL_FLOAT y0,
         y1 = mBounds[1];
     if (y1 > mBounds[3])
         y1 = mBounds[3];
-    
+        
     mState->mSelection[0] = x0;
     mState->mSelection[1] = y0;
     mState->mSelection[2] = x1;
@@ -217,7 +218,7 @@ GhostCustomDrawer::DrawBar(NVGcontext *vg, int width, int height)
 
 void
 GhostCustomDrawer::DrawSelection(NVGcontext *vg, int width, int height)
-{
+{    
     if (!mState->mSelectionActive)
         return;
     
@@ -231,7 +232,8 @@ GhostCustomDrawer::DrawSelection(NVGcontext *vg, int width, int height)
         nvgStrokeWidth(vg, strokeWidths[i]);
     
         SWAP_COLOR(colors[i]);
-        nvgStrokeColor(vg, nvgRGBA(colors[i][0], colors[i][1], colors[i][2], colors[i][3]));
+        nvgStrokeColor(vg, nvgRGBA(colors[i][0], colors[i][1],
+                                   colors[i][2], colors[i][3]));
     
         // Draw the circle
         nvgBeginPath(vg);
