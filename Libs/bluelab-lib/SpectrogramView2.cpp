@@ -74,6 +74,8 @@ SpectrogramView2::Reset()
     mAbsZoomFactor = 1.0;
     
     mTranslation = 0.0;
+
+    //mZoomAdjustFactor = 1.0;
 }
 
 BLSpectrogram4 *
@@ -247,14 +249,14 @@ SpectrogramView2::GetDataSelection2(BL_FLOAT *x0, BL_FLOAT *y0,
     
     BL_FLOAT startDataPos = minNormX*((BL_FLOAT)numSamples)/bufferSize;
 
-    BL_FLOAT endDataPos = maxXNorm*((BL_FLOAT)numSamples)/bufferSize - 1;
+    BL_FLOAT endDataPos = maxXNorm*((BL_FLOAT)numSamples)/bufferSize; // - 1; // TEST
     
-    *x0 = startDataPos + mSelection[0]*(endDataPos - startDataPos + 1);
+    *x0 = startDataPos + mSelection[0]*(endDataPos - startDataPos /*+ 1*/); // TEST
     
     // Warning, y is reversed !
     *y0 = (1.0 - mSelection[3])*bufferSize/2.0;
     
-    *x1 = startDataPos + mSelection[2]*(endDataPos - startDataPos + 1);
+    *x1 = startDataPos + mSelection[2]*(endDataPos - startDataPos /*+ 1*/); // TEST
     
     // Warning, y is reversed !
     *y1 = (1.0 - mSelection[1])*bufferSize/2.0;
@@ -279,17 +281,17 @@ SpectrogramView2::SetDataSelection2(BL_FLOAT x0, BL_FLOAT y0,
     
     BL_FLOAT startDataPos = minNormX*((BL_FLOAT)numSamples)/bufferSize;
 
-    BL_FLOAT endDataPos = maxXNorm*((BL_FLOAT)numSamples)/bufferSize - 1; // ??
+    BL_FLOAT endDataPos = maxXNorm*((BL_FLOAT)numSamples)/bufferSize /*- 1*/; // ?? // TEST
     
-    mSelection[0] = (x0 - startDataPos)/(endDataPos - startDataPos + 1);
-    
-    // Warning, y is reversed !
-    mSelection[3] = -y0/(bufferSize/2.0) + 1.0;
-    
-    mSelection[2] = (x1 - startDataPos)/(endDataPos - startDataPos + 1);
+    mSelection[0] = (x0 - startDataPos)/(endDataPos - startDataPos /*+ 1*/); // TEST
     
     // Warning, y is reversed !
-    mSelection[1] = -y1/(bufferSize/2.0) + 1.0;
+    mSelection[3] = -y0/(bufferSize/2.0); // + 1.0; // TEST
+    
+    mSelection[2] = (x1 - startDataPos)/(endDataPos - startDataPos /*+ 1*/); // TEST
+    
+    // Warning, y is reversed !
+    mSelection[1] = -y1/(bufferSize/2.0) /*+ 1.0*/; // TEST
 }
 
 bool
@@ -354,7 +356,7 @@ SpectrogramView2::UpdateZoomFactor(BL_FLOAT zoomChange)
 BL_FLOAT
 SpectrogramView2::GetZoomFactor()
 {
-    return mZoomFactor;
+    return mZoomFactor; //*mZoomAdjustFactor;
 }
 
 BL_FLOAT
@@ -418,17 +420,52 @@ SpectrogramView2::UpdateSpectrogramData(BL_FLOAT minXNorm, BL_FLOAT maxXNorm)
     mSamplesToMagnPhases->ReadSpectroDataSlice(magns, phases,
                                                minXNorm, maxXNorm);
 
+    DBG_AnnotateMagns(&magns[0]);
+    
     // Update spectrogram
     mSpectrogram->SetLines(magns[0], phases[0]);
         
     // Adjust zoom
     mZoomFactor = 1.0;
+
+    /////////////////////DEBUG
+    int overlapping = mFftObj->GetOverlapping();
+    
+    BL_FLOAT selSize = ((maxXNorm - minXNorm)*numSamples)/(bufferSize/overlapping);
+    BL_FLOAT dataSize = magns[0].size();
+    BL_FLOAT coeff = dataSize/selSize;
+    //BL_FLOAT coeff = 1.0 + (dataSize/selSize - 1.0)*overlapping;
+    //BL_FLOAT coeff = dataSize/(dataSize - 1.0);
+    
+    fprintf(stderr, "sel: %g  data: %g  coeff: %g\n",
+            selSize, dataSize, coeff);
+     
+    //mZoomAdjustFactor = coeff;
+    //////////////////////////
 }
 
 void
 SpectrogramView2::SetSampleRate(BL_FLOAT sampleRate)
 {
     mSampleRate = sampleRate;
+}
+
+void
+SpectrogramView2::DBG_AnnotateMagns(vector<WDL_TypedBuf<BL_FLOAT> > *ioMagns)
+{
+#define NUM_SCALES 16
+#define SIZE_COEFF 0.75
+    
+    for (int i = 0; i < ioMagns->size(); i++)
+    {
+        WDL_TypedBuf<BL_FLOAT> &magns = (*ioMagns)[i];
+
+        int mod = i % NUM_SCALES;
+        int size = magns.GetSize()*(1.0/NUM_SCALES)*mod*SIZE_COEFF;
+
+        for (int j = magns.GetSize() - size - 1; j < magns.GetSize(); j++)
+            magns.Get()[j] = mod*(1.0/NUM_SCALES);
+    }
 }
 
 #endif

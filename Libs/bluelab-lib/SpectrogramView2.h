@@ -97,6 +97,8 @@ public:
     void SetSampleRate(BL_FLOAT sampleRate);
     
 protected:
+    void DBG_AnnotateMagns(vector<WDL_TypedBuf<BL_FLOAT> > *ioMagns);
+        
     BLSpectrogram4 *mSpectrogram;
     int mMaxNumCols;
     
@@ -130,6 +132,9 @@ protected:
     BL_FLOAT mSampleRate;
 
     SamplesToMagnPhases *mSamplesToMagnPhases;
+
+    // To make the spectrogram exactly aligned to waveform
+    //BL_FLOAT mZoomAdjustFactor;
 };
 
 #endif

@@ -297,6 +297,7 @@ For all plugins (=> new Design):
 SmoothCurveDb => additional arg: sampleRate
 - TODO(all): set output data to zero at the beginning, for all plugins
 - TODO(all): should use BLUtils::Fades with sigmoid (see Ghost) => far better!
+- TODO(all): do not use DecimateSamples2() => use DecimateSamples() or DecimateSamples3(). (we use it at least in Graphcurve5)
 - TODO: check log scale (with many lines, w/ gamma = 1)
 
 - TODO: set bevel for all curves

@@ -7,6 +7,7 @@
 //
 
 #include <BLUtils.h>
+#include <BLDebug.h>
 
 #include "SamplesPyramid3.h"
 
@@ -43,7 +44,7 @@
 
 // FIX: Ghost, big zoom on the right part of the waveform
 // => after a given zoom level, the waveform stops zooming
-#define FIX_BIG_ZOOM 1
+#define FIX_BIG_ZOOM 0 //1
 
 SamplesPyramid3::SamplesPyramid3(int maxLevel)
 {
@@ -81,26 +82,27 @@ SamplesPyramid3::Reset()
 void
 SamplesPyramid3::SetValues(const WDL_TypedBuf<BL_FLOAT> &samples)
 {
+    //BLDebug::DumpData("data0.txt", samples);
+    
 #if PUSH_POP_POW_TWO
-    //mPushBuf.Resize(0);
     mPushBuf.Clear();
     
     mRemainToPop = 0;
 #endif
 
     // Compute the size
-    int pyrLevel = 1; // start at 1, at least 1 level!
+    int pyrLevel = 0; //1; // start at 1, at least 1 level!
     int pyrLevelSize = samples.GetSize();
     while(true)
     {
-        pyrLevel++;
-        
         if (pyrLevelSize < 2)
             break;
 
-        //if (pyrLevel >= mMaxPyramidLevel)
-        if (pyrLevel > mMaxPyramidLevel)
+        //if (pyrLevel > mMaxPyramidLevel)
+        if (pyrLevel >= mMaxPyramidLevel)
             break;
+        
+        pyrLevel++;
         
         pyrLevelSize /= 2;
     }
@@ -108,32 +110,43 @@ SamplesPyramid3::SetValues(const WDL_TypedBuf<BL_FLOAT> &samples)
 #if !FIX_VEC_FAST_QUEUE_RESIZE
     // NOTE: maybe this is not exactly the same level as before FastQueue
     // (maybe +1 or -1)
-    //mSamplesPyramid.resize(pyrLevelSize);
-    mSamplesPyramid.resize(pyrLevel);
+    //mSamplesPyramid.resize(pyrLevel);
+    mSamplesPyramid.resize(pyrLevel + 1);
 #endif
-    
+
+    // Level0
     BLUtils::BufToFastQueue(samples, &mSamplesPyramid[0]);
     
     int pyramidLevel = 1;
     while(true)
     {        
-        //WDL_TypedBuf<BL_FLOAT> prevLevel;
-        WDL_TypedBuf<BL_FLOAT> &prevLevel = mTmpBuf7[pyramidLevel /*- 1*/];
+        WDL_TypedBuf<BL_FLOAT> &prevLevel = mTmpBuf7[pyramidLevel];
         
         BLUtils::FastQueueToBuf(mSamplesPyramid[pyramidLevel - 1], &prevLevel);
         
         if (prevLevel.GetSize() < 2)
             break;
 
-        // TEST
-        //if (pyramidLevel >= mMaxPyramidLevel)
         if (pyramidLevel > mMaxPyramidLevel)
             break;
+
+        //if (pyramidLevel == 2)
+        if (pyramidLevel == 3)
+        {
+            int dummy = 0;
+        }
+
+        //BLDebug::DumpData("prev.txt", prevLevel);
         
-        //WDL_TypedBuf<BL_FLOAT> newLevel;
-        WDL_TypedBuf<BL_FLOAT> &newLevel = mTmpBuf8[pyramidLevel /*- 1*/];
-        BLUtils::DecimateSamples(&newLevel, prevLevel, (BL_FLOAT)0.5);
-        
+        WDL_TypedBuf<BL_FLOAT> &newLevel = mTmpBuf8[pyramidLevel];
+        //BLUtils::DecimateSamples(&newLevel, prevLevel, (BL_FLOAT)0.5);
+        BLUtils::DecimateSamples3(&newLevel, prevLevel, (BL_FLOAT)0.5);
+
+        BLDebug::DumpData("input0.txt", prevLevel);
+        BLDebug::DumpData("output0.txt", newLevel);
+    
+        //BLDebug::DumpData("new.txt", newLevel);
+
         BLUtils::BufToFastQueue(newLevel, &mSamplesPyramid[pyramidLevel]);
         
         if (pyramidLevel >= mMaxPyramidLevel)
@@ -141,6 +154,9 @@ SamplesPyramid3::SetValues(const WDL_TypedBuf<BL_FLOAT> &samples)
 
         pyramidLevel++;
     }
+
+
+    int dummy = 0;
 }
 
 void
@@ -246,8 +262,10 @@ SamplesPyramid3::PushValues(const WDL_TypedBuf<BL_FLOAT> &samples)
         
         //WDL_TypedBuf<BL_FLOAT> samplesNextLevel;
         WDL_TypedBuf<BL_FLOAT> &samplesNextLevel = mTmpBuf4[pyramidLevel /*- 1*/];
-        BLUtils::DecimateSamples(&samplesNextLevel,
-                                 samplesCurrentLevel, (BL_FLOAT)0.5);
+        //BLUtils::DecimateSamples(&samplesNextLevel,
+        //                         samplesCurrentLevel, (BL_FLOAT)0.5);
+        BLUtils::DecimateSamples3(&samplesNextLevel,
+                                  samplesCurrentLevel, (BL_FLOAT)0.5);
         
         numSamplesOverlap /= 2;
         
@@ -351,7 +369,8 @@ SamplesPyramid3::ReplaceValues(long start, const WDL_TypedBuf<BL_FLOAT> &samples
         BLUtils::Replace(&mSamplesPyramid[pyramidLevel], startD, samples0);
         
         WDL_TypedBuf<BL_FLOAT> tmp = samples0;
-        BLUtils::DecimateSamples(&samples0, tmp, (BL_FLOAT)0.5);
+        //BLUtils::DecimateSamples(&samples0, tmp, (BL_FLOAT)0.5);
+        BLUtils::DecimateSamples3(&samples0, tmp, (BL_FLOAT)0.5);
         
         startD /= 2.0;
         pyramidLevel++;
@@ -400,15 +419,19 @@ SamplesPyramid3::GetValues(BL_FLOAT start, BL_FLOAT end, long numValues,
             (size <= numValues))
         {
 #if !FIX_BIG_ZOOM
-            pyramidLevel--;
-            if (pyramidLevel < 0)
-                pyramidLevel = 0;
+            if (size < numValues)
+            {
+                // Rewind one step
+                pyramidLevel--;
+                if (pyramidLevel < 0)
+                    pyramidLevel = 0;
             
-            start *= 2;
-            end *= 2;
+                start *= 2;
+                end *= 2;
             
-            numZerosBegin *= 2;
-            numZerosEnd *= 2;
+                numZerosBegin *= 2;
+                numZerosEnd *= 2;
+            }
 #endif       
             break;
         }
@@ -430,15 +453,22 @@ SamplesPyramid3::GetValues(BL_FLOAT start, BL_FLOAT end, long numValues,
 
     //WDL_TypedBuf<BL_FLOAT> currentPyramidLevel;
     WDL_TypedBuf<BL_FLOAT> &currentPyramidLevel = mTmpBuf0[pyramidLevel /*- 1*/];
-        
+    
     BLUtils::FastQueueToBuf(mSamplesPyramid[pyramidLevel], &currentPyramidLevel);
 
+    BLDebug::DumpData("pyr-get.txt", currentPyramidLevel);
+
+    BLDebug::DumpData("buf0.txt", currentPyramidLevel);
+    
     mTmpBuf1.resize(mMaxPyramidLevel + 1);
 
     //WDL_TypedBuf<BL_FLOAT> level;
     WDL_TypedBuf<BL_FLOAT> &level = mTmpBuf1[pyramidLevel/* - 1*/];
     
-    int size = end - start;
+    //int size = end - start;
+    // Use ceil to avoid missing last sample
+    int size = ceil(end - start);
+    
     //level.Add(&currentPyramidLevel.Get()[(long)start], size);
 
     /*level.Resize(size);
@@ -448,24 +478,37 @@ SamplesPyramid3::GetValues(BL_FLOAT start, BL_FLOAT end, long numValues,
 
     // NOTE: crashed here, fixed SetBufResize()
     BLUtils::SetBufResize(&level, currentPyramidLevel, start, size);
-                    
+
+    BLDebug::DumpData("buf1.txt", level);
+    
     // Add zeros if necessary
     if (numZerosBegin > 0)
     {
         BLUtils::PadZerosLeft(&level, numZerosBegin);
     }
+
+    BLDebug::DumpData("buf2.txt", level);
     
     if (numZerosEnd > 0)
     {
         BLUtils::PadZerosRight(&level, numZerosEnd);
     }
+
+    BLDebug::DumpData("buf3.txt", level);
     
     // Update the size with the zeros added
     size = level.GetSize();
-    
+
     // Decimate
     BL_FLOAT decimFactor = ((BL_FLOAT)numValues)/size;
-    BLUtils::DecimateSamples(samples, level, decimFactor);
+    //BLUtils::DecimateSamples(samples, level, decimFactor);
+    BLUtils::DecimateSamples3(samples, level, decimFactor);
+
+#if 1 //0 //1//////////////////DEBUG
+    BLDebug::DumpData("input1.txt", level);
+    BLDebug::DumpData("output1.txt", *samples);
+    ///////////////////////
+#endif
 }
 
 void
