@@ -1,6 +1,9 @@
 #include <BLTypes.h>
+
 #include <ImageInpaint2.h>
+
 #include <SimpleInpaint.h>
+#include <SimpleInpaintComp.h>
 
 #include "GhostCommandReplace.h"
 
@@ -24,11 +27,14 @@ GhostCommandReplace::Apply(vector<WDL_TypedBuf<BL_FLOAT> > *magns,
     // Do not use phases
     
 #define BORDER_RATIO 0.1
-    
-    WDL_TypedBuf<BL_FLOAT> selectedMagns;
-    
+
     // Get the selected data, just for convenience
+    WDL_TypedBuf<BL_FLOAT> selectedMagns;
     GetSelectedDataY(*magns, &selectedMagns);
+
+    // Phases, for SimpleInpaintComp
+    WDL_TypedBuf<BL_FLOAT> selectedPhases;
+    GetSelectedDataY(*phases, &selectedPhases);
     
     int y0;
     int y1;
@@ -49,10 +55,15 @@ GhostCommandReplace::Apply(vector<WDL_TypedBuf<BL_FLOAT> > *magns,
                            mProcessHorizontal,
                            mProcessVertical);
 #else
-    SimpleInpaint inpaint(mProcessHorizontal, mProcessVertical);
-    inpaint.Process(&selectedMagns, width, height);
+    //SimpleInpaint inpaint(mProcessHorizontal, mProcessVertical);
+    //inpaint.Process(&selectedMagns, width, height);
+
+    // Complex simple inpaint
+    SimpleInpaintComp inpaint(mProcessHorizontal, mProcessVertical);
+    inpaint.Process(&selectedMagns, &selectedPhases, width, height);
 #endif
     
     // And replace in the result
     ReplaceSelectedDataY(magns, selectedMagns);
+    ReplaceSelectedDataY(phases, selectedPhases);
 }
