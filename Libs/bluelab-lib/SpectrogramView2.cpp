@@ -427,7 +427,7 @@ SpectrogramView2::UpdateSpectrogramData(BL_FLOAT minXNorm, BL_FLOAT maxXNorm)
     vector<WDL_TypedBuf<BL_FLOAT> > phases[2];
     mSamplesToMagnPhases->ReadSpectroDataSlice(magns, phases, minXNorm, maxXNorm);
 
-    DBG_AnnotateMagns(&magns[0]);
+    //DBG_AnnotateMagns(&magns[0]);
     
     // Update spectrogram
     mSpectrogram->SetLines(magns[0], phases[0]);
