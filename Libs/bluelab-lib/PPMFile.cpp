@@ -242,7 +242,13 @@ PPMFile::SavePPM(const char *filename, BL_FLOAT *image,
                  BL_FLOAT colorCoeff, bool deInterlace)
 {
     char fullFilename[MAX_PATH];
+#if __APPLE__
     sprintf(fullFilename, "/Users/applematuer/Documents/BlueLabAudio-Debug/%s", filename);
+#endif
+    
+#if __linux__
+    sprintf(fullFilename, "/home/niko/Documents/BlueLabAudio-Debug/%s", filename);
+#endif
     
     FILE *file = fopen(fullFilename, "w");
     

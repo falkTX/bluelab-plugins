@@ -25,6 +25,8 @@
 // vertically the highest frequencies)
 #define UNIDIRECTION_IMPROV 1
 
+#define DEBUG_DUMP_IMAGES 1
+
 void
 ImageInpaint2::Inpaint(BL_FLOAT *image, int width, int height,
                        BL_FLOAT borderRatio,
@@ -53,7 +55,9 @@ ImageInpaint2::Inpaint(BL_FLOAT *image, int width, int height,
     }
 #endif
 
-    //PPMFile::SavePPM("image0.ppm", image, width, height, 1, 24.0*255.0*255.0);
+#if DEBUG_DUMP_IMAGES
+    PPMFile::SavePPM("image0.ppm", image, width, height, 1, 24.0*255.0*255.0);
+#endif
     
     // GOOD !
 #if 1 // Keep only a band of 1 pixel around
@@ -74,7 +78,9 @@ ImageInpaint2::Inpaint(BL_FLOAT *image, int width, int height,
     }
 #endif
 
-    //PPMFile::SavePPM("mask.ppm", mask, width, height, 1, 255.0);
+#if DEBUG_DUMP_IMAGES
+    PPMFile::SavePPM("mask.ppm", mask, width, height, 1, 255.0);
+#endif
     
 #if UNIDIRECTION_IMPROV
     // Fill the border with a gradient from the corner points
@@ -124,8 +130,10 @@ ImageInpaint2::Inpaint(BL_FLOAT *image, int width, int height,
         }
     }
 #endif
-    
-    //PPMFile::SavePPM("image1.ppm", image, width, height, 1, 24.0*255.0*255.0);
+
+#if DEBUG_DUMP_IMAGES
+    PPMFile::SavePPM("image1.ppm", image, width, height, 1, 24.0*255.0*255.0);
+#endif
     
     IsophoteInpaint inpaint(processHorizontal, processVertical);
     
@@ -139,6 +147,8 @@ ImageInpaint2::Inpaint(BL_FLOAT *image, int width, int height,
     }
     
     free(mask);
-    
-    //PPMFile::SavePPM("image2.ppm", image, width, height, 1, 24.0*255.0*255.0);
+
+#if DEBUG_DUMP_IMAGES
+    PPMFile::SavePPM("image2.ppm", image, width, height, 1, 24.0*255.0*255.0);
+#endif
 }
