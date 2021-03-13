@@ -668,6 +668,8 @@ SpectrogramDisplay3::ApplyZoomAdjustFactor(BL_FLOAT *zoom, BL_FLOAT *tx,
     *tx = minX - (zoomAdjustOffset*size)*0.5;
 }
 
+// Useful whe opening a file after having opened another file before
+// So we are then sure to regenerate the background image
 void
 SpectrogramDisplay3::CleanBGSpectrogram()
 {
