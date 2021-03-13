@@ -35,7 +35,13 @@ SpectrogramDisplay3::SpectrogramDisplay3(SpectrogramDisplayState *state)
         mState->mSpectroImageWidth = 0;
         mState->mSpectroImageHeight = 0;
 
+        // Zoom adjust
         mState->mZoomAdjustFactor = 1.0;
+        mState->mZoomAdjustOffset = 0.0;
+
+        // Zoom adjust for background
+        mState->mZoomAdjustFactorBG = 1.0;
+        mState->mZoomAdjustOffsetBG = 0.0;
     }
     
     mVg = NULL;
@@ -158,7 +164,7 @@ SpectrogramDisplay3::DoUpdateSpectrogram()
 #endif
                                                   NVG_IMAGE_ONE_FLOAT_FORMAT,
                                                   mSpectroImageData.Get());
-            
+
             imageCreated = true;
         }
         
@@ -177,10 +183,8 @@ SpectrogramDisplay3::DoUpdateSpectrogram()
 #endif
                                                     NVG_IMAGE_ONE_FLOAT_FORMAT,
                                                     mState->mBGSpectroImageData.Get());
-            
-            
+                    
             bgImageCreated = true;
-
         }
         
         if (!imageCreated || !bgImageCreated)
@@ -195,7 +199,8 @@ SpectrogramDisplay3::DoUpdateSpectrogram()
                     if (mNvgSpectroImage != 0)
                     {
                         // Spectrogram image
-                        nvgUpdateImage(mVg, mNvgSpectroImage, mSpectroImageData.Get());
+                        nvgUpdateImage(mVg, mNvgSpectroImage,
+                                       mSpectroImageData.Get());
                     }
                 }
                 
@@ -240,6 +245,8 @@ SpectrogramDisplay3::DoUpdateSpectrogram()
     mNeedUpdateSpectrogram = false;
     mNeedUpdateSpectrogramData = false;
     mNeedUpdateBGSpectrogramData = false;
+
+    mNeedRedraw = true; // TEST
     
     return true;
 }
@@ -250,19 +257,6 @@ SpectrogramDisplay3::PreDraw(NVGcontext *vg, int width, int height)
     mVg = vg;
 
     bool updated = DoUpdateSpectrogram();
-
-#if 0 //////////////////////DEBUG
-    if (mSpectrogram != NULL)
-    {
-        int maxNumCols = mSpectrogram->GetMaxNumCols();
-        int numCols = mSpectrogram->GetNumCols();
-        int height0 = mSpectrogram->GetHeight();
-
-        fprintf(stderr, "maxc: %d [c = %d   h = %d]\n",
-                maxNumCols, numCols, height0);
-    }
-    //////////////////////
-#endif
     
     if (!mShowSpectrogram)
     {
@@ -300,8 +294,13 @@ SpectrogramDisplay3::PreDraw(NVGcontext *vg, int width, int height)
         nvgResetTransform(mVg);
     
         BL_FLOAT absZoom = mState->mAbsMaxX - mState->mAbsMinX;
-    
-        nvgTranslate(mVg, mState->mAbsMinX*width, 0.0);
+        BL_FLOAT tx = mState->mAbsMinX;
+        ApplyZoomAdjustFactor(&absZoom, &tx, mState->mAbsMinX, mState->mAbsMaxX,
+                              mState->mZoomAdjustFactorBG,
+                              mState->mZoomAdjustOffsetBG);
+
+        //nvgTranslate(mVg, mState->mAbsMinX*width, 0.0);
+        nvgTranslate(mVg, tx*width, 0.0);
         nvgScale(mVg, absZoom, 1.0);
         
     
@@ -342,10 +341,13 @@ SpectrogramDisplay3::PreDraw(NVGcontext *vg, int width, int height)
     nvgResetTransform(mVg);
     
     BL_FLOAT zoom = mState->mMaxX - mState->mMinX;
-    
-    nvgTranslate(mVg, mState->mMinX*width, 0.0);
-    nvgScale(mVg, zoom, 1.0);
+    BL_FLOAT tx = mState->mMinX;
+    ApplyZoomAdjustFactor(&zoom, &tx, mState->mMinX, mState->mMaxX,
+                          mState->mZoomAdjustFactor, mState->mZoomAdjustOffset);
 
+    //nvgTranslate(mVg, mState->mMinX*width, 0.0);
+    nvgTranslate(mVg, tx*width, 0.0);
+    nvgScale(mVg, zoom, 1.0);
     
     BL_GUI_FLOAT b1f = mSpectrogramBounds[1]*height;
     BL_GUI_FLOAT b3f = (mSpectrogramBounds[3] - mSpectrogramBounds[1])*height;
@@ -381,7 +383,6 @@ SpectrogramDisplay3::PointInsideSpectrogram(int x, int y, int width, int height)
 {
     // Warning: y is reversed !
     BL_FLOAT nx = ((BL_FLOAT)x)/width;
-    //BL_FLOAT ny = 1.0 - ((BL_FLOAT)y)/height;
     BL_FLOAT ny = ((BL_FLOAT)y)/height;
     
     if (nx < mSpectrogramBounds[0])
@@ -407,10 +408,10 @@ SpectrogramDisplay3::GetNormCoordinate(int x, int y, int width, int height,
     BL_FLOAT ny0 = ((BL_FLOAT)y)/height;
     
     *nx = (nx0 - mSpectrogramBounds[0])/
-    (mSpectrogramBounds[2] - mSpectrogramBounds[0]);
+        (mSpectrogramBounds[2] - mSpectrogramBounds[0]);
     
     *ny = (ny0 - mSpectrogramBounds[1])/
-    (mSpectrogramBounds[3] - mSpectrogramBounds[1]);
+        (mSpectrogramBounds[3] - mSpectrogramBounds[1]);
 }
 
 void
@@ -421,6 +422,8 @@ SpectrogramDisplay3::SetBounds(BL_FLOAT left, BL_FLOAT top,
     mSpectrogramBounds[1] = top;
     mSpectrogramBounds[2] = right;
     mSpectrogramBounds[3] = bottom;
+
+    mNeedRedraw = true; // TEST
 }
 
 void
@@ -499,10 +502,10 @@ SpectrogramDisplay3::ResetTranslation()
 
 void
 SpectrogramDisplay3::SetZoom(BL_FLOAT zoomX)
-{
-    BL_FLOAT norm = (mState->mCenterPos - mState->mMinX)/
-    (mState->mMaxX - mState->mMinX);
-    
+{       
+    BL_FLOAT norm =
+        (mState->mCenterPos - mState->mMinX)/(mState->mMaxX - mState->mMinX);
+                                     
     mState->mMinX = mState->mCenterPos - norm*zoomX;
     mState->mMaxX = mState->mCenterPos + (1.0 - norm)*zoomX;
     
@@ -510,16 +513,37 @@ SpectrogramDisplay3::SetZoom(BL_FLOAT zoomX)
 }
 
 void
-SpectrogramDisplay3::SetZoomAdjust(BL_FLOAT zoomAdjust)
+SpectrogramDisplay3::SetZoomAdjust(BL_FLOAT zoomAdjustZoom, BL_FLOAT zoomAdjustOffset)
 {
-    mState->mZoomAdjustFactor = zoomAdjust;
-}
+    mState->mZoomAdjustFactor = zoomAdjustZoom;
+    mState->mZoomAdjustOffset = zoomAdjustOffset;
     
+    // TEST
+    mNeedUpdateSpectrogram = true;
+    mNeedUpdateSpectrogramData = true;
+    
+    mNeedRedraw = true;
+}
+
+void
+SpectrogramDisplay3::SetZoomAdjustBG(BL_FLOAT zoomAdjustZoom,
+                                     BL_FLOAT zoomAdjustOffset)
+{
+    mState->mZoomAdjustFactorBG = zoomAdjustZoom;
+    mState->mZoomAdjustOffsetBG = zoomAdjustOffset;
+    
+    // TEST
+    mNeedUpdateSpectrogram = true;
+    mNeedUpdateSpectrogramData = true;
+    
+    mNeedRedraw = true;
+}
+
 void
 SpectrogramDisplay3::SetAbsZoom(BL_FLOAT zoomX)
-{
+{ 
     BL_FLOAT norm = (mState->mCenterPos - mState->mAbsMinX)/
-    (mState->mAbsMaxX - mState->mAbsMinX);
+        (mState->mAbsMaxX - mState->mAbsMinX);
     
     mState->mAbsMinX = mState->mCenterPos - norm*zoomX;
     mState->mAbsMaxX = mState->mCenterPos + (1.0 - norm)*zoomX;
@@ -561,10 +585,8 @@ SpectrogramDisplay3::SetTranslation(BL_FLOAT tX)
 void
 SpectrogramDisplay3::GetVisibleNormBounds(BL_FLOAT *minX, BL_FLOAT *maxX)
 {
-    *minX = -mState->mAbsMinX/
-    (mState->mAbsMaxX - mState->mAbsMinX);
-    *maxX = 1.0 - (mState->mAbsMaxX - 1.0)/
-    (mState->mAbsMaxX - mState->mAbsMinX);
+    *minX = -mState->mAbsMinX/(mState->mAbsMaxX - mState->mAbsMinX);
+    *maxX = 1.0 - (mState->mAbsMaxX - 1.0)/(mState->mAbsMaxX - mState->mAbsMinX);
 }
 
 void
@@ -597,7 +619,12 @@ SpectrogramDisplay3::ResetZoomAndTrans()
     mState->mMinX = 0.0;
     mState->mMaxX = 1.0;
 
+#if 0 // TEST
     mState->mZoomAdjustFactor = 1.0;
+    mState->mZoomAdjustOffset = 0.0;
+
+    // TODO: reset also BG transforms?
+#endif
     
     mNeedRedraw = true;
 }
@@ -614,6 +641,8 @@ void
 SpectrogramDisplay3::SetAlpha(BL_FLOAT alpha)
 {
     mSpectrogramAlpha = alpha;
+
+    mNeedRedraw = true; // TEST
 }
 
 void
@@ -623,6 +652,24 @@ SpectrogramDisplay3::ClearBGSpectrogram()
     mState->mSpectroImageHeight = 0;
     
     mState->mBGSpectroImageData.Resize(0);
+
+    mNeedRedraw = true; // TEST
+}
+
+void
+SpectrogramDisplay3::ApplyZoomAdjustFactor(BL_FLOAT *zoom, BL_FLOAT *tx,
+                                           BL_FLOAT minX, BL_FLOAT maxX,
+                                           BL_FLOAT zoomAdjustFactor,
+                                           BL_FLOAT zoomAdjustOffset)
+{
+    BL_FLOAT size = maxX - minX;
+    BL_FLOAT norm = (mState->mCenterPos - minX)/(maxX - minX);
+    
+    BL_FLOAT minX1 = mState->mCenterPos - norm*zoomAdjustFactor*size;
+    BL_FLOAT maxX1 = mState->mCenterPos + (1.0 - norm)*zoomAdjustFactor*size;
+    
+    *zoom = maxX1 - minX1;
+    *tx = minX - (zoomAdjustOffset*size)*0.5;
 }
 
 #endif // IGRAPHICS_NANOVG

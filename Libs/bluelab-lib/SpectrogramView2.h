@@ -84,7 +84,7 @@ public:
     BL_FLOAT GetZoomFactor();
     BL_FLOAT GetAbsZoomFactor();
     // To make the spectrogram exactly aligned to waveform
-    BL_FLOAT GetZoomAdjustFactor();
+    void GetZoomAdjust(BL_FLOAT *zoom, BL_FLOAT *offset);
     
     // Between 0 and 1 => for zoom between min and max
     BL_FLOAT GetNormZoom();
@@ -99,6 +99,8 @@ public:
     void SetSampleRate(BL_FLOAT sampleRate);
     
 protected:
+    void ComputeZoomAdjustFactor(BL_FLOAT minXNorm, BL_FLOAT maxXNorm);
+        
     void DBG_AnnotateMagns(vector<WDL_TypedBuf<BL_FLOAT> > *ioMagns);
         
     BLSpectrogram4 *mSpectrogram;
@@ -110,7 +112,7 @@ protected:
     // to save memory on big files
     vector<WDL_TypedBuf<BL_FLOAT> > *mSamples;
     
-    // Use BL_FLOAT => avoid small translations due to rounging
+    // Use BL_FLOAT ! => avoid small translations due to rounging
     BL_FLOAT mViewBarPos;
     BL_FLOAT mStartDataPos;
     BL_FLOAT mEndDataPos;
@@ -137,6 +139,7 @@ protected:
 
     // To make the spectrogram exactly aligned to waveform
     BL_FLOAT mZoomAdjustFactor;
+    BL_FLOAT mZoomAdjustOffset;
 };
 
 #endif

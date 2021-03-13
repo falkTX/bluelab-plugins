@@ -35,7 +35,13 @@ public:
         
         BL_FLOAT mCenterPos;
 
+        // For foreground spectrogram
         BL_FLOAT mZoomAdjustFactor;
+        BL_FLOAT mZoomAdjustOffset;
+
+        // For background spectrogram
+        BL_FLOAT mZoomAdjustFactorBG;
+        BL_FLOAT mZoomAdjustOffsetBG;
         
         // Background spectrogram
         int mSpectroImageWidth;
@@ -86,8 +92,10 @@ public:
     //
     void SetZoom(BL_FLOAT zoomX);
     void SetAbsZoom(BL_FLOAT zoomX);
-    // To be set first
-    void SetZoomAdjust(BL_FLOAT zoomAdjust);
+
+    // Zoom adjust, for the spectrogram exactly adjusted to th waveform
+    void SetZoomAdjust(BL_FLOAT zoomAdjustZoom, BL_FLOAT zoomAdjustOffset);
+    void SetZoomAdjustBG(BL_FLOAT zoomAdjustZoom, BL_FLOAT zoomAdjustOffset);
     
     void SetCenterPos(BL_FLOAT centerPos);
     
@@ -112,14 +120,17 @@ public:
     void ClearBGSpectrogram();
     
 protected:
+    void ApplyZoomAdjustFactor(BL_FLOAT *zoom, BL_FLOAT *tx,
+                               BL_FLOAT minX, BL_FLOAT maxX,
+                               BL_FLOAT zoomAdjustFactor,
+                               BL_FLOAT zoomAdjustOffset);
+        
     // NanoVG
     NVGcontext *mVg;
     
     // Spectrogram
     BLSpectrogram4 *mSpectrogram;
     BL_FLOAT mSpectrogramBounds[4];
-
-    BL_FLOAT mZoomAdjustFactor;
     
     int mNvgSpectroImage;
     WDL_TypedBuf<unsigned char> mSpectroImageData;
