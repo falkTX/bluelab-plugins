@@ -17,7 +17,7 @@
 #define BOTTOM_BORDER_OFFSET 3 //2
 
 MiniView2::MiniView2(int maxNumPoints,
-                   BL_FLOAT x0, BL_FLOAT y0, BL_FLOAT x1, BL_FLOAT y1)
+                     BL_FLOAT x0, BL_FLOAT y0, BL_FLOAT x1, BL_FLOAT y1)
 {
     mBounds[0] = x0;
     mBounds[1] = y0;
@@ -63,11 +63,16 @@ MiniView2::PostDraw(NVGcontext *vg, int width, int height)
     // FIX: the bottom miniview border was not displayed
     b3f -= BOTTOM_BORDER_OFFSET;
     
-    nvgMoveTo(vg, (mBounds[0] + mMinNormX*boundsSizeX)*width + BORDER_OFFSET_WIDTH, b1f);
-    nvgLineTo(vg, (mBounds[0] + mMaxNormX*boundsSizeX)*width /*-*/+ BORDER_OFFSET_WIDTH, b1f);
-    nvgLineTo(vg, (mBounds[0] + mMaxNormX*boundsSizeX)*width /*-*/+ BORDER_OFFSET_WIDTH, b3f);
-    nvgLineTo(vg, (mBounds[0] + mMinNormX*boundsSizeX)*width + BORDER_OFFSET_WIDTH, b3f);
-    nvgLineTo(vg, (mBounds[0] + mMinNormX*boundsSizeX)*width + BORDER_OFFSET_WIDTH, b1f);
+    nvgMoveTo(vg, (mBounds[0] + mMinNormX*boundsSizeX)*width +
+              BORDER_OFFSET_WIDTH, b1f);
+    nvgLineTo(vg, (mBounds[0] + mMaxNormX*boundsSizeX)*width /*-*/+
+              BORDER_OFFSET_WIDTH, b1f);
+    nvgLineTo(vg, (mBounds[0] + mMaxNormX*boundsSizeX)*width /*-*/+
+              BORDER_OFFSET_WIDTH, b3f);
+    nvgLineTo(vg, (mBounds[0] + mMinNormX*boundsSizeX)*width +
+              BORDER_OFFSET_WIDTH, b3f);
+    nvgLineTo(vg, (mBounds[0] + mMinNormX*boundsSizeX)*width +
+              BORDER_OFFSET_WIDTH, b1f);
     
     nvgStroke(vg);
     
@@ -107,8 +112,8 @@ MiniView2::SetData(const WDL_TypedBuf<BL_FLOAT> &data)
     mWaveForm = data;
     
     BL_FLOAT decFactor = ((BL_FLOAT)mWaveForm.GetSize())/mMaxNumPoints;
-    
-    BLUtils::DecimateSamples(&mWaveForm, (BL_FLOAT)(1.0/decFactor));
+    //BLUtils::DecimateSamples(&mWaveForm, (BL_FLOAT)(1.0/decFactor));
+    BLUtils::DecimateSamples3(&mWaveForm, data, (BL_FLOAT)(1.0/decFactor));
     
     BL_FLOAT maxVal = BLUtils::ComputeMaxAbs(mWaveForm);
     
