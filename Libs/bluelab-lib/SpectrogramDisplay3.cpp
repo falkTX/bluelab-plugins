@@ -246,7 +246,7 @@ SpectrogramDisplay3::DoUpdateSpectrogram()
     mNeedUpdateSpectrogramData = false;
     mNeedUpdateBGSpectrogramData = false;
 
-    mNeedRedraw = true; // TEST
+    mNeedRedraw = true;
     
     return true;
 }
@@ -426,7 +426,7 @@ SpectrogramDisplay3::SetBounds(BL_FLOAT left, BL_FLOAT top,
     mSpectrogramBounds[2] = right;
     mSpectrogramBounds[3] = bottom;
 
-    mNeedRedraw = true; // TEST
+    mNeedRedraw = true;
 }
 
 void
@@ -521,10 +521,6 @@ SpectrogramDisplay3::SetZoomAdjust(BL_FLOAT zoomAdjustZoom, BL_FLOAT zoomAdjustO
     mState->mZoomAdjustFactor = zoomAdjustZoom;
     mState->mZoomAdjustOffset = zoomAdjustOffset;
     
-    // TEST
-    mNeedUpdateSpectrogram = true;
-    mNeedUpdateSpectrogramData = true;
-    
     mNeedRedraw = true;
 }
 
@@ -534,10 +530,6 @@ SpectrogramDisplay3::SetZoomAdjustBG(BL_FLOAT zoomAdjustZoom,
 {
     mState->mZoomAdjustFactorBG = zoomAdjustZoom;
     mState->mZoomAdjustOffsetBG = zoomAdjustOffset;
-    
-    // TEST
-    mNeedUpdateSpectrogram = true;
-    mNeedUpdateSpectrogramData = true;
     
     mNeedRedraw = true;
 }
@@ -638,7 +630,7 @@ SpectrogramDisplay3::SetAlpha(BL_FLOAT alpha)
 {
     mSpectrogramAlpha = alpha;
 
-    mNeedRedraw = true; // TEST
+    mNeedRedraw = true;
 }
 
 void
@@ -649,7 +641,7 @@ SpectrogramDisplay3::ClearBGSpectrogram()
     
     mState->mBGSpectroImageData.Resize(0);
 
-    mNeedRedraw = true; // TEST
+    mNeedRedraw = true;
 }
 
 void
