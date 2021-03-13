@@ -256,6 +256,9 @@ SpectrogramDisplay3::PreDraw(NVGcontext *vg, int width, int height)
 {
     mVg = vg;
 
+    // Clear vg image if necessary
+    CleanBGSpectrogram();
+    
     bool updated = DoUpdateSpectrogram();
     
     if (!mShowSpectrogram)
@@ -618,13 +621,6 @@ SpectrogramDisplay3::ResetZoomAndTrans()
 {
     mState->mMinX = 0.0;
     mState->mMaxX = 1.0;
-
-#if 0 // TEST
-    mState->mZoomAdjustFactor = 1.0;
-    mState->mZoomAdjustOffset = 0.0;
-
-    // TODO: reset also BG transforms?
-#endif
     
     mNeedRedraw = true;
 }
@@ -670,6 +666,20 @@ SpectrogramDisplay3::ApplyZoomAdjustFactor(BL_FLOAT *zoom, BL_FLOAT *tx,
     
     *zoom = maxX1 - minX1;
     *tx = minX - (zoomAdjustOffset*size)*0.5;
+}
+
+void
+SpectrogramDisplay3::CleanBGSpectrogram()
+{
+    if (mState->mBGSpectroImageData.GetSize() == 0)
+    {
+        if (mNvgBGSpectroImage != 0)
+        {
+            nvgDeleteImage(mVg, mNvgBGSpectroImage);
+
+            mNvgBGSpectroImage = 0;
+        }
+    }
 }
 
 #endif // IGRAPHICS_NANOVG

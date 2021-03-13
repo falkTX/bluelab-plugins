@@ -124,7 +124,9 @@ protected:
                                BL_FLOAT minX, BL_FLOAT maxX,
                                BL_FLOAT zoomAdjustFactor,
                                BL_FLOAT zoomAdjustOffset);
-        
+    
+    void CleanBGSpectrogram();
+    
     // NanoVG
     NVGcontext *mVg;
     
