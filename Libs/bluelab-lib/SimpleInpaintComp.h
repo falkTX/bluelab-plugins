@@ -9,6 +9,7 @@
 
 // SimpleInpaint: Very simple, but no so bad on real cases!
 // SimpleInpaintComp: try to improves phases issues
+// NOTE: it doesn't work well
 class SimpleInpaintComp
 {
  public:

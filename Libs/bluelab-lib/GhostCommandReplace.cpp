@@ -4,11 +4,15 @@
 
 #include <SimpleInpaint.h>
 #include <SimpleInpaintComp.h>
+#include <SimpleInpaintPolar.h>
 
 #include "GhostCommandReplace.h"
 
 // Origin: 0 (use ImageInpaint2)
-#define USE_SIMPLE_INPAINT 1 // 0
+#define USE_IMAGE_INPAINT 0
+#define USE_SIMPLE_INPAINT 0 //1
+#define USE_SIMPLE_INPAINT_COMP 0
+#define USE_SIMPLE_INPAINT_POLAR 1
 
 GhostCommandReplace::GhostCommandReplace(BL_FLOAT sampleRate,
                                          bool processHorizontal, bool processVertical)
@@ -48,18 +52,27 @@ GhostCommandReplace::Apply(vector<WDL_TypedBuf<BL_FLOAT> > *magns,
                           width, height, BORDER_RATIO);
 #endif
 
-#if !USE_SIMPLE_INPAINT
+#if USE_IMAGE_INPAINT
     // New method, use real (but simple) inpainting
     ImageInpaint2::Inpaint(selectedMagns.Get(),
                            width, height, BORDER_RATIO,
                            mProcessHorizontal,
                            mProcessVertical);
-#else
-    //SimpleInpaint inpaint(mProcessHorizontal, mProcessVertical);
-    //inpaint.Process(&selectedMagns, width, height);
+#endif
 
+#if USE_SIMPLE_INPAINT
+    SimpleInpaint inpaint(mProcessHorizontal, mProcessVertical);
+    inpaint.Process(&selectedMagns, width, height);
+#endif
+
+#if USE_SIMPLE_INPAINT_COMP
     // Complex simple inpaint
     SimpleInpaintComp inpaint(mProcessHorizontal, mProcessVertical);
+    inpaint.Process(&selectedMagns, &selectedPhases, width, height);
+#endif
+
+#if USE_SIMPLE_INPAINT_POLAR
+    SimpleInpaintPolar inpaint(mProcessHorizontal, mProcessVertical);
     inpaint.Process(&selectedMagns, &selectedPhases, width, height);
 #endif
     
