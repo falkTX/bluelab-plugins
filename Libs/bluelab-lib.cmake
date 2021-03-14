@@ -606,6 +606,8 @@ set(_bluelab-lib_src
   SimpleInpaintComp.h
   SimpleInpaintPolar.cpp
   SimpleInpaintPolar.h
+  SimpleInpaintPolar2.cpp
+  SimpleInpaintPolar2.h
   SimpleSpectrogramFftObj.cpp
   SimpleSpectrogramFftObj.h
   SineSynth2.cpp

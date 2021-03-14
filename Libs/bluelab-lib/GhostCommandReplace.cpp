@@ -4,7 +4,8 @@
 
 #include <SimpleInpaint.h>
 #include <SimpleInpaintComp.h>
-#include <SimpleInpaintPolar.h>
+//#include <SimpleInpaintPolar.h>
+#include <SimpleInpaintPolar2.h>
 
 #include "GhostCommandReplace.h"
 
@@ -72,7 +73,7 @@ GhostCommandReplace::Apply(vector<WDL_TypedBuf<BL_FLOAT> > *magns,
 #endif
 
 #if USE_SIMPLE_INPAINT_POLAR
-    SimpleInpaintPolar inpaint(mProcessHorizontal, mProcessVertical);
+    SimpleInpaintPolar2 inpaint(mProcessHorizontal, mProcessVertical);
     inpaint.Process(&selectedMagns, &selectedPhases, width, height);
 #endif
     
