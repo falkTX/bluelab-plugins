@@ -13,7 +13,7 @@
 class SimpleInpaintPolar2
 {
  public:
-    SimpleInpaintPolar2(bool processHorizontal, bool processVertical);
+    SimpleInpaintPolar2(bool processHoriz, bool processVert);
     virtual ~SimpleInpaintPolar2();
 
     void Process(WDL_TypedBuf<BL_FLOAT> *magns,
@@ -21,19 +21,73 @@ class SimpleInpaintPolar2
                  int width, int height);
     
  protected:
-    void ProcessMagnsHorizontal(WDL_TypedBuf<BL_FLOAT> *magns,
-                                int width, int height);
+    void ProcessMagnsHoriz(WDL_TypedBuf<BL_FLOAT> *magns, int width, int height);
 
-    void ProcessMagnsVertical(WDL_TypedBuf<BL_FLOAT> *magns,
-                              int width, int height);
+    void ProcessMagnsVert(WDL_TypedBuf<BL_FLOAT> *magns, int width, int height);
 
     void ProcessMagnsBothDir(WDL_TypedBuf<BL_FLOAT> *magns,
                              int width, int height);
 
+    // Phases, horizontal
     //
-    void ProcessPhasesHorizontal(WDL_TypedBuf<BL_FLOAT> *phases,
+    
+    //
+    void ProcessPhasesHorizLToR(WDL_TypedBuf<BL_FLOAT> *phases,
+                                int width, int height);
+
+    // TEST
+    // From right to left
+    void ProcessPhasesHorizRToL(WDL_TypedBuf<BL_FLOAT> *phases,
+                                int width, int height);
+
+    // Combined, L -> R or R -> L (choose the best)
+    void ProcessPhasesHorizCombined(const WDL_TypedBuf<BL_FLOAT> &magns,
+                                    WDL_TypedBuf<BL_FLOAT> *phases,
+                                    int width, int height);
+
+    // Method 1 (not good)
+    void CombinePhaseHorizInterp(const WDL_TypedBuf<BL_FLOAT> &phasesL,
+                                 const WDL_TypedBuf<BL_FLOAT> &phasesR,
+                                 WDL_TypedBuf<BL_FLOAT> *phasesResult,
                                  int width, int height);
 
+    // Method 2 (a bit better, but not very good)
+    void CombinePhaseHorizInterpComp(const WDL_TypedBuf<BL_FLOAT> &phasesL,
+                                     const WDL_TypedBuf<BL_FLOAT> &phasesR,
+                                     const WDL_TypedBuf<BL_FLOAT> &magns,
+                                     WDL_TypedBuf<BL_FLOAT> *phasesResult,
+                                     int width, int height);
+
+    // Method 3: take the bigger magn to find the direction
+    // for each line => very good!
+    void CombinePhaseHorizBiggestMagn(const WDL_TypedBuf<BL_FLOAT> &phasesL,
+                                      const WDL_TypedBuf<BL_FLOAT> &phasesR,
+                                      const WDL_TypedBuf<BL_FLOAT> &magns,
+                                      WDL_TypedBuf<BL_FLOAT> *phasesResult,
+                                      int width, int height);
+
+    // Phases, vertical
+    //
+
+    // Very good
+    void ProcessPhasesVertDToU(WDL_TypedBuf<BL_FLOAT> *phases,
+                               int width, int height);
+
+    
+    void ProcessPhasesVertUToD(WDL_TypedBuf<BL_FLOAT> *phases,
+                               int width, int height);
+
+    // Combined, D -> U or U -> D (choose the best)
+    void ProcessPhasesVertCombined(const WDL_TypedBuf<BL_FLOAT> &magns,
+                                   WDL_TypedBuf<BL_FLOAT> *phases,
+                                   int width, int height);
+    
+    void CombinePhaseVertBiggestMagn(const WDL_TypedBuf<BL_FLOAT> &phasesD,
+                                     const WDL_TypedBuf<BL_FLOAT> &phasesU,
+                                     const WDL_TypedBuf<BL_FLOAT> &magns,
+                                     WDL_TypedBuf<BL_FLOAT> *phasesResult,
+                                     int width, int height);
+    
     // TODO: put this in BLUtils
     //
     // And add notes in PhaseUnwrapper
@@ -45,15 +99,26 @@ class SimpleInpaintPolar2
     // TODO: put it in BLUtils
     static void UnwrapPhases2(WDL_TypedBuf<BL_FLOAT> *phases,
                               bool dbgUnwrap180 = false);
-    
+
     // This is a debug method, tham makes modulus PI and not TWO_PI
     // Useful for debugging
     static void FindClosestPhase180(BL_FLOAT *phase, BL_FLOAT refPhase);
 
-    //
-    static void DBG_DumpPhaseRow(const char *fileName, int index,
+    // 1 line, all the frequencies
+    static void DBG_DumpPhaseCol(const char *fileName, int timeIndex,
                                  WDL_TypedBuf<BL_FLOAT> *phases,
                                  int width, int height);
+
+    // TODO: put this in BLUtils
+    static void InterpComp(BL_FLOAT magn0, BL_FLOAT phase0,
+                           BL_FLOAT magn1, BL_FLOAT phase1,
+                           BL_FLOAT t,
+                           BL_FLOAT *resMagn, BL_FLOAT *resPhase);
+    
+    // 1 line, all the times
+    static void DBG_DumpPhaseLine(const char *fileName, int freqIndex,
+                                  WDL_TypedBuf<BL_FLOAT> *phases,
+                                  int width, int height);
     
     static void DBG_DumpSignal(const char *fileName,
                                WDL_TypedBuf<BL_FLOAT> *magns,
@@ -62,8 +127,8 @@ class SimpleInpaintPolar2
                                int index);
     
     //
-    bool mProcessHorizontal;
-    bool mProcessVertical;
+    bool mProcessHoriz;
+    bool mProcessVert;
 };
 
 #endif

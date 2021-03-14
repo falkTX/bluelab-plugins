@@ -11,10 +11,10 @@
 // and remove this
 #define TWO_PI 6.28318530717959
 
-SimpleInpaintPolar2::SimpleInpaintPolar2(bool processHorizontal, bool processVertical)
+SimpleInpaintPolar2::SimpleInpaintPolar2(bool processHoriz, bool processVert)
 {
-    mProcessHorizontal = processHorizontal;
-    mProcessVertical = processVertical;
+    mProcessHoriz = processHoriz;
+    mProcessVert = processVert;
 }
 
 SimpleInpaintPolar2::~SimpleInpaintPolar2() {}
@@ -27,18 +27,22 @@ SimpleInpaintPolar2::Process(WDL_TypedBuf<BL_FLOAT> *magns,
     if ((width <= 2) || (height <= 2))
         return;
     
-    if (mProcessHorizontal && !mProcessVertical)
+    if (mProcessHoriz && !mProcessVert)
     {
-        ProcessMagnsHorizontal(magns, width, height);
-        ProcessPhasesHorizontal(phases, width, height);
+        ProcessMagnsHoriz(magns, width, height);
+        //ProcessPhasesHorizontalLToR(phases, width, height); // ORIG
+        //ProcessPhasesHorizontalRToL(phases, width, height);
+        ProcessPhasesHorizCombined(*magns, phases, width, height);
         
         return;
     }
 
-    if (!mProcessHorizontal && mProcessVertical)
+    if (!mProcessHoriz && mProcessVert)
     {
-        ProcessMagnsVertical(magns, width, height);
-        //ProcessVertical(phases, width, height);
+        ProcessMagnsVert(magns, width, height);
+        //ProcessPhasesVertDToU(phases, width, height);
+        //ProcessPhasesVertUToD(phases, width, height);
+        ProcessPhasesVertCombined(*magns, phases, width, height);
         
         return;
     }
@@ -49,8 +53,8 @@ SimpleInpaintPolar2::Process(WDL_TypedBuf<BL_FLOAT> *magns,
 }
 
 void
-SimpleInpaintPolar2::ProcessMagnsHorizontal(WDL_TypedBuf<BL_FLOAT> *magns,
-                                            int width, int height)
+SimpleInpaintPolar2::ProcessMagnsHoriz(WDL_TypedBuf<BL_FLOAT> *magns,
+                                       int width, int height)
 {
     for (int j = 0; j < height; j++)
     {
@@ -69,8 +73,8 @@ SimpleInpaintPolar2::ProcessMagnsHorizontal(WDL_TypedBuf<BL_FLOAT> *magns,
 }
 
 void
-SimpleInpaintPolar2::ProcessMagnsVertical(WDL_TypedBuf<BL_FLOAT> *magns,
-                                          int width, int height)
+SimpleInpaintPolar2::ProcessMagnsVert(WDL_TypedBuf<BL_FLOAT> *magns,
+                                      int width, int height)
 {
     for (int i = 0; i < width ; i++)
     {
@@ -93,10 +97,10 @@ SimpleInpaintPolar2::ProcessMagnsBothDir(WDL_TypedBuf<BL_FLOAT> *magns,
                                          int width, int height)
 {
     WDL_TypedBuf<BL_FLOAT> horiz = *magns;
-    ProcessMagnsHorizontal(&horiz, width, height);
+    ProcessMagnsHoriz(&horiz, width, height);
 
     WDL_TypedBuf<BL_FLOAT> vert = *magns;
-    ProcessMagnsHorizontal(&vert, width, height);
+    ProcessMagnsHoriz(&vert, width, height);
 
     for (int i = 0; i < magns->GetSize(); i++)
     {
@@ -109,8 +113,8 @@ SimpleInpaintPolar2::ProcessMagnsBothDir(WDL_TypedBuf<BL_FLOAT> *magns,
 }
 
 void
-SimpleInpaintPolar2::ProcessPhasesHorizontal(WDL_TypedBuf<BL_FLOAT> *phases,
-                                             int width, int height)
+SimpleInpaintPolar2::ProcessPhasesHorizLToR(WDL_TypedBuf<BL_FLOAT> *phases,
+                                            int width, int height)
 {
     for (int j = 0; j < height; j++)
     {
@@ -141,9 +145,333 @@ SimpleInpaintPolar2::ProcessPhasesHorizontal(WDL_TypedBuf<BL_FLOAT> *phases,
         {
             BL_FLOAT t = ((BL_FLOAT)i)/(width - 1);
 
+            // TEST
+            //#define SIGMO_A 0.25 //0.5 //0.95 //0.05
+            //t = BLUtils::ApplySigmoid(t, SIGMO_A);
+            
             BL_FLOAT m = (1.0 - t)*m0 + t*m1;
 
             phases->Get()[i + j*width] = m;
+        }
+    }
+}
+
+void
+SimpleInpaintPolar2::ProcessPhasesHorizRToL(WDL_TypedBuf<BL_FLOAT> *phases,
+                                            int width, int height)
+{
+    for (int j = 0; j < height; j++)
+    {
+        // First point
+        //BL_FLOAT m0 = phases->Get()[0 + j*width];
+        BL_FLOAT m0 = phases->Get()[(width - 1) + j*width];
+
+        // Compute phse derivative at point 0
+        //BL_FLOAT m01 = phases->Get()[1 + j*width];
+        BL_FLOAT m01 = phases->Get()[(width - 2) + j*width];
+#if 0 //1 // ORIGIN: works well (most of the time..)
+        BL_FLOAT dphase = m01 - m0;
+#endif
+#if 1 // NEW
+        BL_FLOAT m01Close = m01;
+        FindClosestPhase(&m01Close, m0);
+        BL_FLOAT dphase = m01Close - m0;
+#endif
+        
+        // Last point
+        //BL_FLOAT m1 = phases->Get()[(width - 1) + j*width];
+        BL_FLOAT m1 = phases->Get()[0 + j*width];
+
+        // Extrapolated point, from the left derivative
+        BL_FLOAT extra = m0 + dphase*(width - 1);
+        
+        // Last point, wrapped to the extrapolated point
+        FindClosestPhase(&m1, extra);
+        
+        for (int i = 1; i < width - 1; i++)
+        {
+            BL_FLOAT t = ((BL_FLOAT)i)/(width - 1);
+            
+            //BL_FLOAT m = (1.0 - t)*m0 + t*m1;
+            BL_FLOAT m = (1.0 - t)*m1 + t*m0;
+
+            phases->Get()[i + j*width] = m;
+        }
+    }
+}
+
+// TEST: pure sine, cut, try to inpaint over half of the hole
+void
+SimpleInpaintPolar2::
+ProcessPhasesHorizCombined(const WDL_TypedBuf<BL_FLOAT> &magns,
+                           WDL_TypedBuf<BL_FLOAT> *phases,
+                           int width, int height)
+{
+    // Process L -> R, then R -> L, then blend
+
+    //#define DBG_INDEX 22
+    //DBG_DumpPhaseLine("phases0.txt", DBG_INDEX, phases, width, height);
+        
+    // L -> R
+    WDL_TypedBuf<BL_FLOAT> phasesL = *phases;
+    ProcessPhasesHorizLToR(&phasesL, width, height);
+
+    //DBG_DumpPhaseLine("phases1.txt", DBG_INDEX, &phasesL, width, height);
+    
+    // R -> L
+    WDL_TypedBuf<BL_FLOAT> phasesR = *phases;
+    ProcessPhasesHorizRToL(&phasesR, width, height);
+
+    //DBG_DumpPhaseLine("phases2.txt", DBG_INDEX, &phasesR, width, height);
+
+    //CombinePhaseHorizInterp(phasesL, phasesR, phases, width, height);
+    //CombinePhaseHorizInterpComp(phasesL, phasesR, magns, phases, width, height);
+    CombinePhaseHorizBiggestMagn(phasesL, phasesR,
+                                 magns, phases, width, height);
+    
+    
+    //DBG_DumpPhaseLine("phases3.txt", DBG_INDEX, phases, width, height);
+}
+
+// Method 1 (not good)
+void
+SimpleInpaintPolar2::CombinePhaseHorizInterp(const WDL_TypedBuf<BL_FLOAT> &phasesL,
+                                             const WDL_TypedBuf<BL_FLOAT> &phasesR,
+                                             WDL_TypedBuf<BL_FLOAT> *phasesResult,
+                                             int width, int height)
+{
+    phasesResult->Resize(phasesL.GetSize());
+                         
+    // Combine
+    for (int j = 0; j < height; j++)
+    {
+        BL_FLOAT offset = phasesL.Get()[j*width] - phasesR.Get()[j*width];
+            
+        for (int i = 1; i < width - 1; i++)
+        {
+            BL_FLOAT p0 = phasesL.Get()[i + j*width];
+            BL_FLOAT p1 = phasesR.Get()[i + j*width];
+
+            p1 += offset;
+            
+            BL_FLOAT t = ((BL_FLOAT)i)/(width - 1);
+
+#define SIGMO_A 0.95 //0.05 //0.25 //0.5 //0.95 //0.05
+            t = BLUtils::ApplySigmoid(t, SIGMO_A);
+            
+            BL_FLOAT p = (1.0 - t)*p0 + t*p1;
+
+            phasesResult->Get()[i + j*width] = p;
+        }
+    }
+}
+
+// Method 2
+void
+SimpleInpaintPolar2::
+CombinePhaseHorizInterpComp(const WDL_TypedBuf<BL_FLOAT> &phasesL,
+                            const WDL_TypedBuf<BL_FLOAT> &phasesR,
+                            const WDL_TypedBuf<BL_FLOAT> &magns,
+                            WDL_TypedBuf<BL_FLOAT> *phasesResult,
+                            int width, int height)
+{
+    phasesResult->Resize(phasesL.GetSize());
+                         
+    // Combine
+    for (int j = 0; j < height; j++)
+    {
+        BL_FLOAT offset = phasesL.Get()[j*width] - phasesR.Get()[j*width];
+            
+        for (int i = 1; i < width - 1; i++)
+        {
+            BL_FLOAT m = magns.Get()[i + j*width];
+            
+            BL_FLOAT p0 = phasesL.Get()[i + j*width];
+            BL_FLOAT p1 = phasesR.Get()[i + j*width];
+            p1 += offset;
+            
+            BL_FLOAT t = ((BL_FLOAT)i)/(width - 1);
+
+            //#define SIGMO_A 0.95 //0.05 //0.25 //0.5 //0.95 //0.05
+            //t = BLUtils::ApplySigmoid(t, SIGMO_A);
+
+            BL_FLOAT p;
+            BL_FLOAT resMagn;
+            InterpComp(m, p0, m, p1, t, &resMagn, &p);
+            
+            //BL_FLOAT p = (1.0 - t)*p0 + t*p1;
+
+            phasesResult->Get()[i + j*width] = p;
+
+            // Useful ?
+            // NOTE: seems worse with it...
+            //ioMagns->Get()[i + j*width] = resMagn;
+        }
+    }
+}
+
+// Method 3
+// Take the biggest magn, used to choose the phase "direction"
+void
+SimpleInpaintPolar2::
+CombinePhaseHorizBiggestMagn(const WDL_TypedBuf<BL_FLOAT> &phasesL,
+                             const WDL_TypedBuf<BL_FLOAT> &phasesR,
+                             const WDL_TypedBuf<BL_FLOAT> &magns,
+                             WDL_TypedBuf<BL_FLOAT> *phasesResult,
+                             int width, int height)
+{
+    phasesResult->Resize(phasesL.GetSize());
+                         
+    // Combine
+    for (int j = 0; j < height; j++)
+    {
+        BL_FLOAT m0 = magns.Get()[0 + j*width];
+        BL_FLOAT m1 = magns.Get()[(width - 1) + j*width];
+        
+        for (int i = 1; i < width - 1; i++)
+        {
+            BL_FLOAT p0 = phasesL.Get()[i + j*width];
+            BL_FLOAT p1 = phasesR.Get()[i + j*width];
+
+            // Take the most significant magn to choose
+            // which phase direction we take
+            //
+            // To test: use a pure sine, make a hole,
+            // and inpaint with region over one edge of the hole
+            BL_FLOAT p = (m0 >= m1) ? p0 : p1;
+                
+            phasesResult->Get()[i + j*width] = p;
+        }
+    }
+}
+
+void
+SimpleInpaintPolar2::ProcessPhasesVertDToU(WDL_TypedBuf<BL_FLOAT> *phases,
+                                           int width, int height)
+{
+    for (int i = 0; i < width; i++)
+    {
+        // First point
+        BL_FLOAT m0 = phases->Get()[i + 0*width];
+
+        // Compute phse derivative at point 0
+        BL_FLOAT m01 = phases->Get()[i + 1*width];
+
+        BL_FLOAT m01Close = m01;
+        FindClosestPhase(&m01Close, m0);
+        BL_FLOAT dphase = m01Close - m0;
+        
+        // Last point
+        BL_FLOAT m1 = phases->Get()[i + (height - 1)*width];
+
+        // Extrapolated point, from the left derivative
+        BL_FLOAT extra = m0 + dphase*(height - 1);
+        
+        // Last point, wrapped to the extrapolated point
+        FindClosestPhase(&m1, extra);
+        
+        for (int j = 1; j < height - 1; j++)
+        {
+            BL_FLOAT t = ((BL_FLOAT)j)/(height - 1);
+
+            BL_FLOAT m = (1.0 - t)*m0 + t*m1;
+
+            phases->Get()[i + j*width] = m;
+        }
+    }
+}
+
+void
+SimpleInpaintPolar2::ProcessPhasesVertUToD(WDL_TypedBuf<BL_FLOAT> *phases,
+                                           int width, int height)
+{
+    for (int i = 0; i < width; i++)
+    {
+        // First point
+        BL_FLOAT m0 = phases->Get()[i + (height - 1)*width];
+
+        // Compute phse derivative at point 0
+        BL_FLOAT m01 = phases->Get()[i + (height - 2)*width];
+
+        BL_FLOAT m01Close = m01;
+        FindClosestPhase(&m01Close, m0);
+        BL_FLOAT dphase = m01Close - m0;
+        
+        // Last point
+        //BL_FLOAT m1 = phases->Get()[(width - 1) + j*width];
+        BL_FLOAT m1 = phases->Get()[i + 0*width];
+
+        // Extrapolated point, from the left derivative
+        BL_FLOAT extra = m0 + dphase*(height - 1);
+        
+        // Last point, wrapped to the extrapolated point
+        FindClosestPhase(&m1, extra);
+        
+        for (int j = 1; j < height - 1; j++)
+        {
+            BL_FLOAT t = ((BL_FLOAT)j)/(height - 1);
+            
+            //BL_FLOAT m = (1.0 - t)*m0 + t*m1;
+            BL_FLOAT m = (1.0 - t)*m1 + t*m0;
+
+            phases->Get()[i + j*width] = m;
+        }
+    }
+}
+
+// TEST: pure impulse, cut, try to inpaint over half of the hole
+void
+SimpleInpaintPolar2::
+ProcessPhasesVertCombined(const WDL_TypedBuf<BL_FLOAT> &magns,
+                          WDL_TypedBuf<BL_FLOAT> *phases,
+                          int width, int height)
+{
+    // Process D -> U, then U -> D, then blend
+    
+    // D -> U
+    WDL_TypedBuf<BL_FLOAT> phasesL = *phases;
+    ProcessPhasesVertDToU(&phasesL, width, height);
+    
+    // U -> D
+    WDL_TypedBuf<BL_FLOAT> phasesR = *phases;
+    ProcessPhasesVertUToD(&phasesR, width, height);
+
+    // Combine
+    CombinePhaseVertBiggestMagn(phasesL, phasesR,
+                                magns, phases, width, height);
+    
+}
+
+// Take the biggest magn, used to choose the phase "direction"
+void
+SimpleInpaintPolar2::
+CombinePhaseVertBiggestMagn(const WDL_TypedBuf<BL_FLOAT> &phasesD,
+                            const WDL_TypedBuf<BL_FLOAT> &phasesU,
+                            const WDL_TypedBuf<BL_FLOAT> &magns,
+                            WDL_TypedBuf<BL_FLOAT> *phasesResult,
+                            int width, int height)
+{
+    phasesResult->Resize(phasesD.GetSize());
+                         
+    // Combine
+    for (int i = 0; i < width; i++)
+    {
+        BL_FLOAT m0 = magns.Get()[i + 0*width];
+        BL_FLOAT m1 = magns.Get()[i + (height - 1)*width];
+        
+        for (int j = 1; j < height - 1; j++)
+        {
+            BL_FLOAT p0 = phasesD.Get()[i + j*width];
+            BL_FLOAT p1 = phasesU.Get()[i + j*width];
+
+            // Take the most significant magn to choose
+            // which phase direction we take
+            //
+            // To test: use a pure sine, make a hole,
+            // and inpaint with region over one edge of the hole
+            BL_FLOAT p = (m0 >= m1) ? p0 : p1;
+                
+            phasesResult->Get()[i + j*width] = p;
         }
     }
 }
@@ -230,7 +558,28 @@ SimpleInpaintPolar2::UnwrapPhases2(WDL_TypedBuf<BL_FLOAT> *phases,
 }
 
 void
-SimpleInpaintPolar2::DBG_DumpPhaseRow(const char *fileName, int index,
+SimpleInpaintPolar2::InterpComp(BL_FLOAT magn0, BL_FLOAT phase0,
+                                BL_FLOAT magn1, BL_FLOAT phase1,
+                                BL_FLOAT t,
+                                BL_FLOAT *resMagn, BL_FLOAT *resPhase)
+{
+    WDL_FFT_COMPLEX c0;
+    MAGN_PHASE_COMP(magn0, phase0, c0);
+
+    WDL_FFT_COMPLEX c1;
+    MAGN_PHASE_COMP(magn1, phase1, c1);
+
+    WDL_FFT_COMPLEX resC;
+    resC.re = (1.0 - t)*c0.re + t*c1.re;
+    resC.im = (1.0 - t)*c0.im + t*c1.im;
+
+    *resMagn = COMP_MAGN(resC);
+    *resPhase = COMP_PHASE(resC);
+}
+
+void
+SimpleInpaintPolar2::DBG_DumpPhaseCol(const char *fileName,
+                                      int timeIndex,
                                       WDL_TypedBuf<BL_FLOAT> *phases,
                                       int width, int height)
 {
@@ -239,7 +588,7 @@ SimpleInpaintPolar2::DBG_DumpPhaseRow(const char *fileName, int index,
 
     for (int j = 0; j < height; j++)
     {
-        BL_FLOAT val = phases->Get()[index + j*width];
+        BL_FLOAT val = phases->Get()[timeIndex + j*width];
         buf.Get()[j] = val;
     }
 
@@ -247,6 +596,24 @@ SimpleInpaintPolar2::DBG_DumpPhaseRow(const char *fileName, int index,
     
     //UnwrapPhases2(&buf);
     //UnwrapPhases2(&buf, true);
+        
+    BLDebug::DumpData(fileName, buf);
+}
+
+void
+SimpleInpaintPolar2::DBG_DumpPhaseLine(const char *fileName,
+                                       int freqIndex,
+                                       WDL_TypedBuf<BL_FLOAT> *phases,
+                                       int width, int height)
+{
+    WDL_TypedBuf<BL_FLOAT> buf;
+    buf.Resize(width);
+
+    for (int i = 0; i < width; i++)
+    {
+        BL_FLOAT val = phases->Get()[i + freqIndex*width];
+        buf.Get()[i] = val;
+    }
         
     BLDebug::DumpData(fileName, buf);
 }
