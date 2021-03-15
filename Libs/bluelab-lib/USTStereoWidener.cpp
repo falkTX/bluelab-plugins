@@ -7,7 +7,10 @@
 //
 
 #include <USTWidthAdjuster9.h>
+
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
+#include <BLUtilsComp.h>
 
 #include "USTStereoWidener.h"
 

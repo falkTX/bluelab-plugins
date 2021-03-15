@@ -1,4 +1,5 @@
 #include <BLUtils.h>
+#include <BLUtilsComp.h>
 
 #include "FftProcessBufObj.h"
 

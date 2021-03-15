@@ -7,6 +7,7 @@
 //
 
 #include <BLUtils.h>
+#include <BLUtilsPhases.h>
 
 #include "PhasesUnwrapper.h"
 
@@ -64,7 +65,7 @@ PhasesUnwrapper::SetHistorySize(long historySize)
 void
 PhasesUnwrapper::UnwrapPhasesFreq(WDL_TypedBuf<BL_FLOAT> *phases)
 {
-    BLUtils::UnwrapPhases(phases);
+    BLUtilsPhases::UnwrapPhases(phases);
 }
 
 void
@@ -182,7 +183,7 @@ PhasesUnwrapper::UnwrapPhasesTime(WDL_TypedBuf<BL_FLOAT> *phases)
     if (mUnwrappedPhasesTime.empty())
     {
         // Unwrap the first value
-        BLUtils::UnwrapPhases(phases);
+        BLUtilsPhases::UnwrapPhases(phases);
         
         mUnwrappedPhasesTime.push_back(*phases);
         
@@ -195,10 +196,10 @@ PhasesUnwrapper::UnwrapPhasesTime(WDL_TypedBuf<BL_FLOAT> *phases)
     for (int i = 0; i < phases->GetSize(); i++)
     {
         BL_FLOAT prevPhase = prevUnwrapPhases.Get()[i];
-        BLUtils::FindNextPhase(&prevPhase, (BL_FLOAT)0.0);
+        BLUtilsPhases::FindNextPhase(&prevPhase, (BL_FLOAT)0.0);
                 
         BL_FLOAT phase = phases->Get()[i];
-        BLUtils::FindNextPhase(&phase, prevPhase);
+        BLUtilsPhases::FindNextPhase(&phase, prevPhase);
         phases->Get()[i] = phase;
     }
     

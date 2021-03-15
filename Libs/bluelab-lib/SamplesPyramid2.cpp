@@ -7,6 +7,8 @@
 //
 
 #include <BLUtils.h>
+#include <BLUtilsDecim.h>
+#include <BLUtilsMath.h>
 
 #include "SamplesPyramid2.h"
 
@@ -132,7 +134,7 @@ SamplesPyramid2::SetValues(const WDL_TypedBuf<BL_FLOAT> &samples)
         
         //WDL_TypedBuf<BL_FLOAT> newLevel;
         WDL_TypedBuf<BL_FLOAT> &newLevel = mTmpBuf8[pyramidLevel /*- 1*/];
-        BLUtils::DecimateSamples(&newLevel, prevLevel, (BL_FLOAT)0.5);
+        BLUtilsDecim::DecimateSamples(&newLevel, prevLevel, (BL_FLOAT)0.5);
         
         BLUtils::BufToFastQueue(newLevel, &mSamplesPyramid[pyramidLevel]);
         
@@ -155,7 +157,7 @@ SamplesPyramid2::PushValues(const WDL_TypedBuf<BL_FLOAT> &samples)
     
     //int numToAdd = mPushBuf.GetSize();
     int numToAdd = mPushBuf.Available();
-    numToAdd = BLUtils::NextPowerOfTwo(numToAdd);
+    numToAdd = BLUtilsMath::NextPowerOfTwo(numToAdd);
     
 #if !FIX_PUSH_POP_POW_TWO
     numToAdd /= 2;
@@ -246,7 +248,7 @@ SamplesPyramid2::PushValues(const WDL_TypedBuf<BL_FLOAT> &samples)
         
         //WDL_TypedBuf<BL_FLOAT> samplesNextLevel;
         WDL_TypedBuf<BL_FLOAT> &samplesNextLevel = mTmpBuf4[pyramidLevel /*- 1*/];
-        BLUtils::DecimateSamples(&samplesNextLevel,
+        BLUtilsDecim::DecimateSamples(&samplesNextLevel,
                                  samplesCurrentLevel, (BL_FLOAT)0.5);
         
         numSamplesOverlap /= 2;
@@ -283,7 +285,7 @@ SamplesPyramid2::PopValues(long numSamples)
     // will not scroll correclly).
     long numSamples0 = numSamples + mRemainToPop;
     
-    numSamples0 = BLUtils::NextPowerOfTwo((int)numSamples0);
+    numSamples0 = BLUtilsMath::NextPowerOfTwo((int)numSamples0);
     
 #if !FIX_PUSH_POP_POW_TWO
     numSamples0 /= 2;
@@ -351,7 +353,7 @@ SamplesPyramid2::ReplaceValues(long start, const WDL_TypedBuf<BL_FLOAT> &samples
         BLUtils::Replace(&mSamplesPyramid[pyramidLevel], startD, samples0);
         
         WDL_TypedBuf<BL_FLOAT> tmp = samples0;
-        BLUtils::DecimateSamples(&samples0, tmp, (BL_FLOAT)0.5);
+        BLUtilsDecim::DecimateSamples(&samples0, tmp, (BL_FLOAT)0.5);
         
         startD /= 2.0;
         pyramidLevel++;
@@ -469,7 +471,7 @@ SamplesPyramid2::GetValues(BL_FLOAT start, BL_FLOAT end, long numValues,
     
     // Decimate
     BL_FLOAT decimFactor = ((BL_FLOAT)numValues)/size;
-    BLUtils::DecimateSamples(samples, level, decimFactor);
+    BLUtilsDecim::DecimateSamples(samples, level, decimFactor);
 }
 
 void

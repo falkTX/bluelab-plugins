@@ -9,6 +9,8 @@
 #include <DualDelayLine.h>
 
 #include <BLUtils.h>
+#include <BLUtilsComp.h>
+
 #include <BLDebug.h>
 
 #include <PPMFile.h>
@@ -177,7 +179,7 @@ SourceLocalisationSystem::ComputeCoincidences(const WDL_TypedBuf<WDL_FFT_COMPLEX
         ComputeDiff(&diffSamps, delayedSamples[0], delayedSamples[1], j);
         
         WDL_TypedBuf<BL_FLOAT> diffMagn;
-        BLUtils::ComplexToMagn(&diffMagn, diffSamps);
+        BLUtilsComp::ComplexToMagn(&diffMagn, diffSamps);
         
         coincidence->push_back(diffMagn);
     }

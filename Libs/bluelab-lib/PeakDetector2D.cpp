@@ -12,12 +12,13 @@ using namespace std;
 #include "IPlug_include_in_plug_hdr.h"
 
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
 
 #include <FillTriangle.hpp>
 
 #include "PeakDetector2D.h"
 
-#define TWO_PI 6.28318530717959
+//#define TWO_PI 6.28318530717959
 
 #define INF 1e15
 #define EPS 1e-15

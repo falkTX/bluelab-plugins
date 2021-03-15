@@ -7,6 +7,8 @@
 //
 
 #include <BLUtils.h>
+#include <BLUtilsComp.h>
+
 //#include <USTWidthAdjuster3.h>
 #include <DelayObj4.h>
 

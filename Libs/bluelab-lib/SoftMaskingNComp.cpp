@@ -7,6 +7,7 @@
 //
 
 #include <BLUtils.h>
+#include <BLUtilsComp.h>
 
 #include "SoftMaskingNComp.h"
 

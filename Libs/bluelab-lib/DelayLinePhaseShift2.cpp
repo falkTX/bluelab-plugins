@@ -7,6 +7,9 @@
 //
 
 #include <BLUtils.h>
+#include <BLUtilsComp.h>
+#include <BLUtilsFft.h>
+
 #include <BLDebug.h>
 
 // For DBG_Test
@@ -108,7 +111,7 @@ DelayLinePhaseShift2::DBG_Test(int bufferSize, BL_FLOAT sampleRate,
 {
     WDL_TypedBuf<WDL_FFT_COMPLEX> fftSamples0 = fftSamples;
     fftSamples0.Resize(fftSamples0.GetSize()*2);
-    BLUtils::FillSecondFftHalf(&fftSamples0);
+    BLUtilsFft::FillSecondFftHalf(&fftSamples0);
     
     WDL_TypedBuf<BL_FLOAT> samples0;
     FftProcessObj16::FftToSamples(fftSamples0, &samples0);
@@ -141,7 +144,7 @@ DelayLinePhaseShift2::DBG_Test(int bufferSize, BL_FLOAT sampleRate,
     
     // Convert to samples and dump
     fftSamples1.Resize(fftSamples1.GetSize()*2);
-    BLUtils::FillSecondFftHalf(&fftSamples1);
+    BLUtilsFft::FillSecondFftHalf(&fftSamples1);
     
     WDL_TypedBuf<BL_FLOAT> samples1;
     FftProcessObj16::FftToSamples(fftSamples1, &samples1);

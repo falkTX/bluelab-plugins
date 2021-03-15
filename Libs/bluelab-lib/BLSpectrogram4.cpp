@@ -11,7 +11,11 @@
 //#include <BLDefs.h>
 
 #include <BLTypes.h>
+
 #include <BLUtils.h>
+#include <BLUtilsDecim.h>
+#include <BLUtilsPhases.h>
+
 #include <BLDebug.h>
 #include <Scale.h>
 
@@ -326,14 +330,14 @@ BLSpectrogram4::AddLine(const WDL_TypedBuf<BL_FLOAT> &magns,
         //WDL_TypedBuf<BL_FLOAT> &origMagns = mTmpBuf3;
         WDL_TypedBuf<BL_FLOAT> *origMagns = &mTmpBuf3;
         *origMagns = magns0;
-        BLUtils::DecimateSamples(&magns0, *origMagns,
-                                 ((BL_FLOAT)mHeight)/magns0.GetSize());
+        BLUtilsDecim::DecimateSamples(&magns0, *origMagns,
+                                      ((BL_FLOAT)mHeight)/magns0.GetSize());
 
         //WDL_TypedBuf<BL_FLOAT> &origPhases = mTmpBuf4;
         WDL_TypedBuf<BL_FLOAT> *origPhases = &mTmpBuf4;
         *origPhases = phases0;
-        BLUtils::DecimateSamples(&phases0, *origPhases,
-                                 ((BL_FLOAT)mHeight)/phases0.GetSize());
+        BLUtilsDecim::DecimateSamples(&phases0, *origPhases,
+                                      ((BL_FLOAT)mHeight)/phases0.GetSize());
     }
     
     // Convert amp to dB
@@ -516,7 +520,7 @@ BLSpectrogram4::UnwrapAllPhases(const bl_queue<WDL_TypedBuf<BL_FLOAT> > &inPhase
             WDL_TypedBuf<BL_FLOAT> &phases0 = (*outPhases)[0];
             BL_FLOAT prevPhase = phases0.Get()[i];
             
-            BLUtils::FindNextPhase(&prevPhase, (BL_FLOAT)0.0);
+            BLUtilsPhases::FindNextPhase(&prevPhase, (BL_FLOAT)0.0);
             
             for (int j = 0; j < outPhases->size(); j++)
             {
@@ -524,7 +528,7 @@ BLSpectrogram4::UnwrapAllPhases(const bl_queue<WDL_TypedBuf<BL_FLOAT> > &inPhase
                 
                 BL_FLOAT phase = phases.Get()[i];
                 
-                BLUtils::FindNextPhase(&phase, prevPhase);
+                BLUtilsPhases::FindNextPhase(&phase, prevPhase);
                 
                 phases.Get()[i] = phase;
                 
@@ -620,9 +624,9 @@ BLSpectrogram4::UnwrapLineX(WDL_TypedBuf<BL_FLOAT> *phases)
             BL_FLOAT prevPhase = prevPhases.Get()[i];
             
             // Just in case
-            BLUtils::FindNextPhase(&prevPhase, (BL_FLOAT)0.0);
+            BLUtilsPhases::FindNextPhase(&prevPhase, (BL_FLOAT)0.0);
             
-            BLUtils::FindNextPhase(&phase, prevPhase);
+            BLUtilsPhases::FindNextPhase(&phase, prevPhase);
             
             phases->Get()[i] = phase;
         }
@@ -632,7 +636,7 @@ BLSpectrogram4::UnwrapLineX(WDL_TypedBuf<BL_FLOAT> *phases)
 void
 BLSpectrogram4::UnwrapLineY(WDL_TypedBuf<BL_FLOAT> *phases)
 {
-    BLUtils::UnwrapPhases(phases);
+    BLUtilsPhases::UnwrapPhases(phases);
 }
 
 void

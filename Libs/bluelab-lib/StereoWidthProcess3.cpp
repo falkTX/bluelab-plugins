@@ -7,6 +7,10 @@
 //
 
 #include <BLUtils.h>
+#include <BLUtilsComp.h>
+#include <BLUtilsFft.h>
+#include <BLUtilsMath.h>
+
 #include <PolarViz.h>
 #include <SourcePos.h>
 
@@ -214,8 +218,8 @@ StereoWidthProcess3::ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *i
     WDL_TypedBuf<BL_FLOAT> magns[2];
     WDL_TypedBuf<BL_FLOAT> phases[2];
     
-    BLUtils::ComplexToMagnPhase(&magns[0], &phases[0], fftSamples[0]);
-    BLUtils::ComplexToMagnPhase(&magns[1], &phases[1], fftSamples[1]);
+    BLUtilsComp::ComplexToMagnPhase(&magns[0], &phases[0], fftSamples[0]);
+    BLUtilsComp::ComplexToMagnPhase(&magns[1], &phases[1], fftSamples[1]);
     
     WDL_TypedBuf<BL_FLOAT> sourceRs;
     WDL_TypedBuf<BL_FLOAT> sourceThetas;
@@ -248,7 +252,7 @@ StereoWidthProcess3::ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *i
     if (mProcessNum % mDisplayRefreshRate == 0)
     {
         WDL_TypedBuf<BL_FLOAT> freqs;
-        BLUtils::FftFreqs(&freqs, phases[0].GetSize(), mSampleRate);
+        BLUtilsFft::FftFreqs(&freqs, phases[0].GetSize(), mSampleRate);
     
         //
         // Prepare polar coordinates for display
@@ -388,10 +392,10 @@ StereoWidthProcess3::ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *i
     //
     // Re-synthetise the data with the new diff
     //
-    BLUtils::MagnPhaseToComplex(&fftSamples[0], magns[0], phases[0]);
+    BLUtilsComp::MagnPhaseToComplex(&fftSamples[0], magns[0], phases[0]);
     fftSamples[0].Resize(fftSamples[0].GetSize()*2);
     
-    BLUtils::MagnPhaseToComplex(&fftSamples[1], magns[1], phases[1]);
+    BLUtilsComp::MagnPhaseToComplex(&fftSamples[1], magns[1], phases[1]);
     fftSamples[1].Resize(fftSamples[1].GetSize()*2);
     
 #if 0
@@ -400,8 +404,8 @@ StereoWidthProcess3::ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *i
     //fftSamples[1].Get()[0] = (*ioFftSamples)[1]->Get()[0];
 #endif
     
-    BLUtils::FillSecondFftHalf(&fftSamples[0]);
-    BLUtils::FillSecondFftHalf(&fftSamples[1]);
+    BLUtilsFft::FillSecondFftHalf(&fftSamples[0]);
+    BLUtilsFft::FillSecondFftHalf(&fftSamples[1]);
     
     // Result
     *(*ioFftSamples)[0] = fftSamples[0];
@@ -435,7 +439,7 @@ StereoWidthProcess3::ApplyWidthChange(WDL_TypedBuf<BL_FLOAT> *ioMagnsL,
                                      WDL_TypedBuf<BL_FLOAT> *outSourceThetas)
 {
     WDL_TypedBuf<BL_FLOAT> freqs;
-    BLUtils::FftFreqs(&freqs, ioPhasesL->GetSize(), mSampleRate);
+    BLUtilsFft::FftFreqs(&freqs, ioPhasesL->GetSize(), mSampleRate);
     
     BL_FLOAT widthFactor = ComputeFactor(mWidthChange, MAX_WIDTH_CHANGE);
     

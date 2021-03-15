@@ -6,8 +6,11 @@
 //
 //
 
+#include <BLUtils.h>
+#include <BLUtilsPhases.h>
+#include <BLUtilsMath.h>
+
 #include "SourcePos.h"
-#include "BLUtils.h"
 
 // Let's say 1cm (Zoom H1)
 //#define MICROPHONES_SEPARATION 0.01 // orig
@@ -165,7 +168,7 @@ SourcePos::MagnPhasesToSourcePos(BL_FLOAT *sourceR, BL_FLOAT *sourceTheta,
     BL_FLOAT phaseDiff = phaseR - phaseL;
     
     // Avoid negative phase diff (would make problems below)
-    phaseDiff = BLUtils::MapToPi(phaseDiff);
+    phaseDiff = BLUtilsPhases::MapToPi(phaseDiff);
     phaseDiff += 2.0*M_PI;
     
     // Magns ratio
@@ -378,7 +381,7 @@ SourcePos::SourcePosToMagnPhases(BL_FLOAT sourceR, BL_FLOAT sourceTheta,
     BL_FLOAT C0 = -(sourceR*sourceR - b*b + d*d/4.0);
     
     BL_FLOAT a2[2];
-    int numSol = BLUtils::SecondOrderEqSolve(A0, B0, C0, a2);
+    int numSol = BLUtilsMath::SecondOrderEqSolve(A0, B0, C0, a2);
     if (numSol == 0)
     {
         return false;
@@ -441,7 +444,7 @@ SourcePos::SourcePosToMagnPhases(BL_FLOAT sourceR, BL_FLOAT sourceTheta,
 #endif
     
     // Added after volume rendering tests
-    phaseDiff = BLUtils::MapToPi(phaseDiff);
+    phaseDiff = BLUtilsPhases::MapToPi(phaseDiff);
     phaseDiff += 2.0*M_PI;
     
     // GOOD ... (old)
@@ -484,8 +487,8 @@ SourcePos::SourcePosToMagnPhases(BL_FLOAT sourceR, BL_FLOAT sourceTheta,
     }
 #endif
     
-    *ioPhaseL = BLUtils::MapToPi(*ioPhaseL);
-    *ioPhaseR = BLUtils::MapToPi(*ioPhaseR);
+    *ioPhaseL = BLUtilsPhases::MapToPi(*ioPhaseL);
+    *ioPhaseR = BLUtilsPhases::MapToPi(*ioPhaseR);
 #endif
     
 #endif

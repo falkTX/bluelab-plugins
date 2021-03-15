@@ -7,6 +7,9 @@
 //
 
 #include <BLUtils.h>
+#include <BLUtilsComp.h>
+#include <BLUtilsFft.h>
+
 #include <PolarViz.h>
 #include <SourcePos.h>
 
@@ -129,8 +132,8 @@ StereoWidthProcessDisp::ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * >
     WDL_TypedBuf<BL_FLOAT> magns[2];
     WDL_TypedBuf<BL_FLOAT> phases[2];
     
-    BLUtils::ComplexToMagnPhase(&magns[0], &phases[0], fftSamples[0]);
-    BLUtils::ComplexToMagnPhase(&magns[1], &phases[1], fftSamples[1]);
+    BLUtilsComp::ComplexToMagnPhase(&magns[0], &phases[0], fftSamples[0]);
+    BLUtilsComp::ComplexToMagnPhase(&magns[1], &phases[1], fftSamples[1]);
     
     WDL_TypedBuf<BL_FLOAT> sourceRs;
     WDL_TypedBuf<BL_FLOAT> sourceThetas;
@@ -142,7 +145,7 @@ StereoWidthProcessDisp::ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * >
     if (mProcessNum % mDisplayRefreshRate == 0)
     {
         WDL_TypedBuf<BL_FLOAT> freqs;
-        BLUtils::FftFreqs(&freqs, phases[0].GetSize(), mSampleRate);
+        BLUtilsFft::FftFreqs(&freqs, phases[0].GetSize(), mSampleRate);
     
         //
         // Prepare polar coordinates for display

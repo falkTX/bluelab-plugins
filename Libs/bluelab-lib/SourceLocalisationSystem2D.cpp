@@ -9,6 +9,8 @@
 #include <DelayLinePhaseShift.h>
 
 #include <BLUtils.h>
+#include <BLUtilsComp.h>
+
 #include <BLDebug.h>
 
 #include <PPMFile.h>
@@ -224,7 +226,7 @@ SourceLocalisationSystem2D::ComputeCoincidences(const WDL_TypedBuf<WDL_FFT_COMPL
             ComputeDiff(&diffSampsX, delayedSamplesX[0][i], delayedSamplesX[1][i], j);
         
             WDL_TypedBuf<BL_FLOAT> diffMagnsX;
-            BLUtils::ComplexToMagn(&diffMagnsX, diffSampsX);
+            BLUtilsComp::ComplexToMagn(&diffMagnsX, diffSampsX);
         
             // Y
             WDL_TypedBuf<WDL_FFT_COMPLEX> diffSampsY;
@@ -233,7 +235,7 @@ SourceLocalisationSystem2D::ComputeCoincidences(const WDL_TypedBuf<WDL_FFT_COMPL
             ComputeDiff(&diffSampsY, delayedSamplesY[0][i], delayedSamplesY[1][i], j);
             
             WDL_TypedBuf<BL_FLOAT> diffMagnsY;
-            BLUtils::ComplexToMagn(&diffMagnsY, diffSampsY);
+            BLUtilsComp::ComplexToMagn(&diffMagnsY, diffSampsY);
             
             //
             WDL_TypedBuf<BL_FLOAT> diffMagns = diffMagnsX;

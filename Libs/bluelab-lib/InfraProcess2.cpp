@@ -10,6 +10,8 @@
 using namespace std;
 
 #include <BLUtils.h>
+#include <BLUtilsComp.h>
+
 #include <BLDebug.h>
 #include <DebugGraph.h>
 
@@ -232,7 +234,7 @@ InfraProcess2::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
 #if !SKIP_FFT_PHASES
     BLUtils::ComplexToMagnPhase(&magns, &phases, fftSamples);
 #else
-    BLUtils::ComplexToMagn(&magns, fftSamples);
+    BLUtilsComp::ComplexToMagn(&magns, fftSamples);
     phases.Resize(magns.GetSize());
     BLUtils::FillAllZero(&phases);
 #endif

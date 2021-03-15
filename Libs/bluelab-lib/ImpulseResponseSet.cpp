@@ -1,4 +1,5 @@
 #include <BLUtils.h>
+#include <BLUtilsFade.h>
 
 #include "ImpulseResponseSet.h"
 
@@ -517,7 +518,7 @@ ImpulseResponseSet::DenoiseImpulseResponse(WDL_TypedBuf<BL_FLOAT> *impulseRespon
         BL_FLOAT fadeEnd = ((BL_FLOAT)lastIndex + WINDOW_SIZE)/respSize;
         bool fadeIn = false;
     
-        BLUtils::Fade(impulseResponse, fadeStart, fadeEnd, fadeIn);
+        BLUtilsFade::Fade(impulseResponse, fadeStart, fadeEnd, fadeIn);
     }
 }
 

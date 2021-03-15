@@ -9,7 +9,10 @@
 #include <stdlib.h>
 
 #include <GtiInpaint.h>
+
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
+
 #include <PPMFile.h>
 
 #include "ImageInpaint.h"
@@ -34,8 +37,8 @@ ImageInpaint::Inpaint(BL_FLOAT *image, int width, int height,
     // TODO: manage single channel instead of 3 channels
     
     // Extend the image to the next power of two
-    int w2 = BLUtils::NextPowerOfTwo(width);
-    int h2 = BLUtils::NextPowerOfTwo(height);
+    int w2 = BLUtilsMath::NextPowerOfTwo(width);
+    int h2 = BLUtilsMath::NextPowerOfTwo(height);
     BL_FLOAT *image2 = (BL_FLOAT*)malloc(sizeof(BL_FLOAT)*w2*h2);
     for (int j = 0; j < h2; j++)
     {

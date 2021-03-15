@@ -10,7 +10,10 @@
 
 #include <GraphAxis2.h>
 #include <GUIHelper12.h>
+
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
+
 #include <Scale.h>
 
 #include <GraphControl12.h>

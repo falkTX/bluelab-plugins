@@ -12,7 +12,7 @@
 #include <cmath>
 
 #include <BLTypes.h>
-#include <BLUtils.h>
+#include <BLUtilsMath.h>
 
 // 140ms => coeff 0.999 at 44100Hz
 #define DEFAULT_SMOOTHING_TIME_MS 140.0
@@ -47,7 +47,7 @@ public:
     {
         mSampleRate = sampleRate;
         
-        mA = std::exp(-(BL_FLOAT)M_TWO_PI/
+        mA = std::exp(-(BL_FLOAT)TWO_PI/
                       (mSmoothingTimeMs * (BL_FLOAT)0.001 * sampleRate));
         mB = 1.0 - mA;
         //mZ = 0.0;

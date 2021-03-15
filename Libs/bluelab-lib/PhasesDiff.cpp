@@ -6,8 +6,11 @@
 //
 //
 
-#include "FftProcessObj16.h"
-#include "BLUtils.h"
+#include <FftProcessObj16.h>
+
+#include <BLUtils.h>
+#include <BLUtilsPhases.h>
+
 #include "PolarViz.h"
 
 #include "PhasesDiff.h"
@@ -167,8 +170,8 @@ PhasesDiff::Capture(const WDL_TypedBuf<BL_FLOAT> &magnsL,
     mPrevPhases[1] = phasesR;
     
 #if USE_PHASES_UNWRAP
-    BLUtils::UnwrapPhases(&mPrevPhases[0]);
-    BLUtils::UnwrapPhases(&mPrevPhases[1]);
+    BLUtilsPhases::UnwrapPhases(&mPrevPhases[0]);
+    BLUtilsPhases::UnwrapPhases(&mPrevPhases[1]);
 #endif
 }
 
@@ -192,8 +195,8 @@ PhasesDiff::ApplyPhasesDiff(WDL_TypedBuf<BL_FLOAT> *ioPhasesL,
     WDL_TypedBuf<BL_FLOAT> phasesR = *ioPhasesR;
     
 #if USE_PHASES_UNWRAP
-    BLUtils::UnwrapPhases(&phasesL);
-    BLUtils::UnwrapPhases(&phasesR);
+    BLUtilsPhases::UnwrapPhases(&phasesL);
+    BLUtilsPhases::UnwrapPhases(&phasesR);
 #endif
     
     // Algo
@@ -318,11 +321,11 @@ PhasesDiff::ComputeDiff(WDL_TypedBuf<BL_FLOAT> *result,
     WDL_TypedBuf<BL_FLOAT> phasesR0 = phasesR;
     
     // ?
-    BLUtils::MapToPi(&phasesL0);
-    BLUtils::MapToPi(&phasesR0);
+    BLUtilsPhases::MapToPi(&phasesL0);
+    BLUtilsPhases::MapToPi(&phasesR0);
     
     BLUtils::Diff(result, phasesL0, phasesR0);
-    BLUtils::MapToPi(result);
+    BLUtilsPhases::MapToPi(result);
 }
 
 void

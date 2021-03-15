@@ -9,7 +9,9 @@
 #include <math.h> // for exp10
 
 #include <BLTypes.h>
+
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
 
 #include <MelScale.h>
 #include <FilterBank.h>

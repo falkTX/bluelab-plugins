@@ -10,7 +10,10 @@
 
 #include <BLSpectrogram4.h>
 #include <Window.h>
+
 #include <BLUtils.h>
+#include <BLUtilsComp.h>
+#include <BLUtilsMath.h>
 
 #include <SpectrogramDisplayScroll3.h>
 #include <HistoMaskLine2.h>
@@ -79,7 +82,7 @@ ChromaFftObj2::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer0,
     
     WDL_TypedBuf<BL_FLOAT> &magns = mTmpBuf1;
     WDL_TypedBuf<BL_FLOAT> &phases = mTmpBuf2;
-    BLUtils::ComplexToMagnPhase(&magns, &phases, ioBuffer);
+    BLUtilsComp::ComplexToMagnPhase(&magns, &phases, ioBuffer);
 
     WDL_TypedBuf<BL_FLOAT> &chromaLine = mTmpBuf3;
     

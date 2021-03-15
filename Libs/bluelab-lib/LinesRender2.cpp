@@ -19,6 +19,7 @@ using namespace std;
 #include <GraphSwapColor.h>
 
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
 
 #include "LinesRender2.h"
 

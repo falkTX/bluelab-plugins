@@ -1,4 +1,7 @@
 #include <BLUtils.h>
+#include <BLUtilsPhases.h>
+#include <BLUtilsComp.h>
+#include <BLUtilsFft.h>
 
 #include <BLDebug.h>
 
@@ -6,10 +9,6 @@
 #include <FftProcessObj16.h>
 
 #include "SimpleInpaintPolar3.h"
-
-// TODO: in BLUtils, put TWO_PI in BLUtils.h
-// and remove this
-#define TWO_PI 6.28318530717959
 
 SimpleInpaintPolar3::SimpleInpaintPolar3(bool processHoriz, bool processVert)
 {
@@ -105,7 +104,7 @@ SimpleInpaintPolar3::ProcessBothDir(WDL_TypedBuf<BL_FLOAT> *magns,
     ProcessPhasesVertCombined(magns1, &phases1, width, height);
 
     // Naive method: simply mix the two results
-    InterpComp(magns0, phases0, magns1, phases1, 0.5, magns, phases);
+    BLUtilsComp::InterpComp(magns0, phases0, magns1, phases1, 0.5, magns, phases);
 }
 
 void
@@ -121,7 +120,7 @@ SimpleInpaintPolar3::ProcessPhasesHorizLToR(WDL_TypedBuf<BL_FLOAT> *phases,
         BL_FLOAT m01 = phases->Get()[1 + j*width];
 
         BL_FLOAT m01Close = m01;
-        FindClosestPhase(&m01Close, m0);
+        BLUtilsPhases::FindClosestPhase(&m01Close, m0);
         BL_FLOAT dphase = m01Close - m0;
         
         // Last point
@@ -131,7 +130,7 @@ SimpleInpaintPolar3::ProcessPhasesHorizLToR(WDL_TypedBuf<BL_FLOAT> *phases,
         BL_FLOAT extra = m0 + dphase*(width - 1);
         
         // Last point, wrapped to the extrapolated point
-        FindClosestPhase(&m1, extra);
+        BLUtilsPhases::FindClosestPhase(&m1, extra);
         
         for (int i = 1; i < width - 1; i++)
         {
@@ -157,7 +156,7 @@ SimpleInpaintPolar3::ProcessPhasesHorizRToL(WDL_TypedBuf<BL_FLOAT> *phases,
         BL_FLOAT m01 = phases->Get()[(width - 2) + j*width];
 
         BL_FLOAT m01Close = m01;
-        FindClosestPhase(&m01Close, m0);
+        BLUtilsPhases::FindClosestPhase(&m01Close, m0);
         BL_FLOAT dphase = m01Close - m0;
         
         // Last point
@@ -167,7 +166,7 @@ SimpleInpaintPolar3::ProcessPhasesHorizRToL(WDL_TypedBuf<BL_FLOAT> *phases,
         BL_FLOAT extra = m0 + dphase*(width - 1);
         
         // Last point, wrapped to the extrapolated point
-        FindClosestPhase(&m1, extra);
+        BLUtilsPhases::FindClosestPhase(&m1, extra);
         
         for (int i = 1; i < width - 1; i++)
         {
@@ -249,7 +248,7 @@ SimpleInpaintPolar3::ProcessPhasesVertDToU(WDL_TypedBuf<BL_FLOAT> *phases,
         BL_FLOAT m01 = phases->Get()[i + 1*width];
 
         BL_FLOAT m01Close = m01;
-        FindClosestPhase(&m01Close, m0);
+        BLUtilsPhases::FindClosestPhase(&m01Close, m0);
         BL_FLOAT dphase = m01Close - m0;
         
         // Last point
@@ -259,7 +258,7 @@ SimpleInpaintPolar3::ProcessPhasesVertDToU(WDL_TypedBuf<BL_FLOAT> *phases,
         BL_FLOAT extra = m0 + dphase*(height - 1);
         
         // Last point, wrapped to the extrapolated point
-        FindClosestPhase(&m1, extra);
+        BLUtilsPhases::FindClosestPhase(&m1, extra);
         
         for (int j = 1; j < height - 1; j++)
         {
@@ -285,7 +284,7 @@ SimpleInpaintPolar3::ProcessPhasesVertUToD(WDL_TypedBuf<BL_FLOAT> *phases,
         BL_FLOAT m01 = phases->Get()[i + (height - 2)*width];
 
         BL_FLOAT m01Close = m01;
-        FindClosestPhase(&m01Close, m0);
+        BLUtilsPhases::FindClosestPhase(&m01Close, m0);
         BL_FLOAT dphase = m01Close - m0;
         
         // Last point
@@ -295,7 +294,7 @@ SimpleInpaintPolar3::ProcessPhasesVertUToD(WDL_TypedBuf<BL_FLOAT> *phases,
         BL_FLOAT extra = m0 + dphase*(height - 1);
         
         // Last point, wrapped to the extrapolated point
-        FindClosestPhase(&m1, extra);
+        BLUtilsPhases::FindClosestPhase(&m1, extra);
         
         for (int j = 1; j < height - 1; j++)
         {
@@ -366,156 +365,6 @@ CombinePhaseVertBiggestMagn(const WDL_TypedBuf<BL_FLOAT> &phasesD,
 }
 
 void
-SimpleInpaintPolar3::FindClosestPhase(BL_FLOAT *phase, BL_FLOAT refPhase)
-{
-    BL_FLOAT refMod = BLUtils::fmod_negative(refPhase, (BL_FLOAT)TWO_PI);
-    BL_FLOAT pMod = BLUtils::fmod_negative(*phase, (BL_FLOAT)TWO_PI);
-    
-    // Find closest
-    if (std::fabs((pMod - (BL_FLOAT)TWO_PI) - refMod) <
-        std::fabs(pMod - refMod))
-        pMod -= TWO_PI;
-    else
-        if (std::fabs((pMod + (BL_FLOAT)TWO_PI) - refMod) <
-            std::fabs(pMod - refMod))
-            pMod += TWO_PI;
-    
-    *phase = (refPhase - refMod) + pMod;
-}
-
-// For debugging, use modulo PI insteaod of modulo TWO_PI
-void
-SimpleInpaintPolar3::FindClosestPhase180(BL_FLOAT *phase, BL_FLOAT refPhase)
-{
-    BL_FLOAT refMod = BLUtils::fmod_negative(refPhase, (BL_FLOAT)M_PI);
-    BL_FLOAT pMod = BLUtils::fmod_negative(*phase, (BL_FLOAT)M_PI);
-    
-    // Find closest
-    if (std::fabs((pMod - (BL_FLOAT)M_PI) - refMod) <
-        std::fabs(pMod - refMod))
-        pMod -= M_PI;
-    else
-        if (std::fabs((pMod + (BL_FLOAT)M_PI) - refMod) <
-            std::fabs(pMod - refMod))
-            pMod += M_PI;
-    
-    *phase = (refPhase - refMod) + pMod;
-}
-
-// TODO: put this in BLUtils
-//
-// We must use "closest", not "next"
-// See: https://ccrma.stanford.edu/~jos/fp/Phase_Unwrapping.html
-//
-// Use smooth coeff to avoid several successive jumps
-// that finally gets the data very far from the begining values
-//
-// NOTE: this is normal to have some jumps by PI
-// See: https://ccrma.stanford.edu/~jos/fp/Example_Zero_Phase_Filter_Design.html#fig:remezexb
-//
-// Set dbgUnwrap180 to true in order to make module PI instead of TWO_PI
-// (just for debugging)
-void
-SimpleInpaintPolar3::UnwrapPhases2(WDL_TypedBuf<BL_FLOAT> *phases,
-                                   bool dbgUnwrap180)
-{
-#define UNWRAP_SMOOTH_COEFF 0.9 //0.5
-    
-    if (phases->GetSize() == 0)
-        // Empty phases
-        return;
-    
-    BL_FLOAT prevPhaseSmooth = phases->Get()[0];
-    
-    int phasesSize = phases->GetSize();
-    BL_FLOAT *phasesData = phases->Get();
-    for (int i = 0; i < phasesSize; i++)
-    {
-        BL_FLOAT phase = phasesData[i];
-
-        if (!dbgUnwrap180)
-            // Correct dehaviour
-            FindClosestPhase(&phase, prevPhaseSmooth);
-        else
-            FindClosestPhase180(&phase, prevPhaseSmooth);
-        
-        phasesData[i] = phase;
-        
-        prevPhaseSmooth =
-            (1.0 - UNWRAP_SMOOTH_COEFF)*phase + UNWRAP_SMOOTH_COEFF*prevPhaseSmooth;
-    }
-}
-
-void
-SimpleInpaintPolar3::InterpComp(BL_FLOAT magn0, BL_FLOAT phase0,
-                                BL_FLOAT magn1, BL_FLOAT phase1,
-                                BL_FLOAT t,
-                                BL_FLOAT *resMagn, BL_FLOAT *resPhase)
-{
-    WDL_FFT_COMPLEX c0;
-    MAGN_PHASE_COMP(magn0, phase0, c0);
-
-    WDL_FFT_COMPLEX c1;
-    MAGN_PHASE_COMP(magn1, phase1, c1);
-
-    WDL_FFT_COMPLEX resC;
-    resC.re = (1.0 - t)*c0.re + t*c1.re;
-    resC.im = (1.0 - t)*c0.im + t*c1.im;
-
-    *resMagn = COMP_MAGN(resC);
-    *resPhase = COMP_PHASE(resC);
-}
-
-void
-SimpleInpaintPolar3::InterpComp(const WDL_TypedBuf<BL_FLOAT> &magns0,
-                                const WDL_TypedBuf<BL_FLOAT> &phases0,
-                                const WDL_TypedBuf<BL_FLOAT> &magns1,
-                                const WDL_TypedBuf<BL_FLOAT> &phases1,
-                                BL_FLOAT t,
-                                WDL_TypedBuf<BL_FLOAT> *resMagns,
-                                WDL_TypedBuf<BL_FLOAT> *resPhases)
-{
-    // Check input size
-    if (magns0.GetSize() != phases0.GetSize())
-        return;
-    if (magns1.GetSize() != phases1.GetSize())
-        return;
-    if (magns0.GetSize() != magns1.GetSize())
-        return;
-
-    // Resize result
-    resMagns->Resize(magns0.GetSize());
-    resPhases->Resize(phases0.GetSize());
-
-    WDL_FFT_COMPLEX c0;
-    WDL_FFT_COMPLEX c1;
-    WDL_FFT_COMPLEX resC;
-    for (int i = 0; i < magns0.GetSize(); i++)
-    {
-        // 0
-        BL_FLOAT magn0 = magns0.Get()[i];
-        BL_FLOAT phase0 = phases0.Get()[i];
-        MAGN_PHASE_COMP(magn0, phase0, c0);
-
-        // 1
-        BL_FLOAT magn1 = magns1.Get()[i];
-        BL_FLOAT phase1 = phases1.Get()[i];
-        MAGN_PHASE_COMP(magn1, phase1, c1);
-
-        // interp
-        resC.re = (1.0 - t)*c0.re + t*c1.re;
-        resC.im = (1.0 - t)*c0.im + t*c1.im;
-
-        // res
-        BL_FLOAT resMagn = COMP_MAGN(resC);
-        BL_FLOAT resPhase = COMP_PHASE(resC);
-        
-        resMagns->Get()[i] = resMagn;
-        resPhases->Get()[i] = resPhase;
-    }
-}
-
-void
 SimpleInpaintPolar3::DBG_DumpPhaseCol(const char *fileName,
                                       int timeIndex,
                                       WDL_TypedBuf<BL_FLOAT> *phases,
@@ -579,7 +428,7 @@ SimpleInpaintPolar3::DBG_DumpSignal(const char *fileName,
     BLDebug::DumpData(magnsFileName, magns0);
 
     //
-    UnwrapPhases2(&phases0, false); // true
+    BLUtilsPhases::UnwrapPhases2(&phases0, false); // true
     
     char phasesFileName[512];
     sprintf(phasesFileName, "phases-%s", fileName);
@@ -587,10 +436,10 @@ SimpleInpaintPolar3::DBG_DumpSignal(const char *fileName,
     
     //
     WDL_TypedBuf<WDL_FFT_COMPLEX> comp0;
-    BLUtils::MagnPhaseToComplex(&comp0, magns0, phases0);
+    BLUtilsComp::MagnPhaseToComplex(&comp0, magns0, phases0);
 
     WDL_TypedBuf<WDL_FFT_COMPLEX> comp1;
-    BLUtils::FillSecondFftHalf(comp0, &comp1);
+    BLUtilsFft::FillSecondFftHalf(comp0, &comp1);
 
     WDL_TypedBuf<BL_FLOAT> samples;
     FftProcessObj16::FftToSamples(comp1, &samples);

@@ -11,7 +11,10 @@
 #include <SpectrogramDisplay.h>
 #include <ImageDisplay.h>
 #include <DUETSeparator3.h>
+
 #include <BLUtils.h>
+#include <BLUtilsComp.h>
+#include <BLUtilsFft.h>
 
 #include "StereoDeReverbProcess.h"
 
@@ -110,8 +113,8 @@ StereoDeReverbProcess::ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > 
     
     WDL_TypedBuf<BL_FLOAT> *magns = mTmpBuf2;
     WDL_TypedBuf<BL_FLOAT> *phases = mTmpBuf3;
-    BLUtils::ComplexToMagnPhase(&magns[0], &phases[0], ioBuffers[0]);
-    BLUtils::ComplexToMagnPhase(&magns[1], &phases[1], ioBuffers[1]);
+    BLUtilsComp::ComplexToMagnPhase(&magns[0], &phases[0], ioBuffers[0]);
+    BLUtilsComp::ComplexToMagnPhase(&magns[1], &phases[1], ioBuffers[1]);
     
     //
     // Must set magns anyway
@@ -186,8 +189,8 @@ StereoDeReverbProcess::ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > 
     BLUtils::SetBuf(&ioBuffers0[0], ioBuffers[0]);
     BLUtils::SetBuf(&ioBuffers0[1], ioBuffers[1]);
     
-    BLUtils::FillSecondFftHalf(&ioBuffers0[0]);
-    BLUtils::FillSecondFftHalf(&ioBuffers0[1]);
+    BLUtilsFft::FillSecondFftHalf(&ioBuffers0[0]);
+    BLUtilsFft::FillSecondFftHalf(&ioBuffers0[1]);
     
     *(*ioFftSamples)[0] = ioBuffers0[0];
     *(*ioFftSamples)[1] = ioBuffers0[1];

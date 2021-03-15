@@ -7,7 +7,9 @@
 //
 
 #include <MelScale.h>
+
 #include <BLUtils.h>
+#include <BLUtilsComp.h>
 
 #include <StereoWidenProcess.h>
 
@@ -110,7 +112,7 @@ RebalanceDumpFftObj2::ProcessSpectrogramData(vector<WDL_TypedBuf<WDL_FFT_COMPLEX
     BLUtils::TakeHalf(&dataBuffer);
     
     WDL_TypedBuf<BL_FLOAT> magnsMix;
-    BLUtils::ComplexToMagn(&magnsMix, dataBuffer);
+    BLUtilsComp::ComplexToMagn(&magnsMix, dataBuffer);
     
     // Downsample and convert to mel
 #if REBALANCE_USE_MEL_FILTER_METHOD
@@ -145,7 +147,7 @@ RebalanceDumpFftObj2::ProcessStereoData(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * >
     for (int i = 0; i < 2; i++)
     {
         BLUtils::TakeHalf(&fftSamples[i]);
-        BLUtils::ComplexToMagnPhase(&magns[i], &phases[i], fftSamples[i]);
+        BLUtilsComp::ComplexToMagnPhase(&magns[i], &phases[i], fftSamples[i]);
     }
     
     WDL_TypedBuf<BL_FLOAT> widthData;

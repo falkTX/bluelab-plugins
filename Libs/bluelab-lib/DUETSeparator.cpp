@@ -12,6 +12,7 @@ using namespace std;
 #include <DUETHistogram.h>
 
 #include <BLUtils.h>
+#include <BLUtilsComp.h>
 
 #include <ImageSmootherKernel.h>
 

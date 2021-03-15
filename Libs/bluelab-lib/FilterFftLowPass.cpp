@@ -9,6 +9,7 @@
 #include <FftProcessObj16.h>
 
 #include <BLUtils.h>
+#include <BLUtilsFft.h>
 
 #include "FilterFftLowPass.h"
 
@@ -102,7 +103,7 @@ FftLowPassProcess::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     }
     
     ioBuffer->Resize(ioBuffer->GetSize()*2);
-    BLUtils::FillSecondFftHalf(ioBuffer);
+    BLUtilsFft::FillSecondFftHalf(ioBuffer);
 }
 
 //

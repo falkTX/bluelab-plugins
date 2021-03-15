@@ -16,6 +16,7 @@
 #include <FilterFftLowPass.h>
 
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
 
 #include "ResampProcessObj.h"
 

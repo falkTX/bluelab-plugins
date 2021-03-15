@@ -10,6 +10,7 @@
 #include <FastRTConvolver3.h>
 
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
 
 #include "BLReverbIR.h"
 
@@ -28,7 +29,7 @@ BLReverbIR::BLReverbIR(BLReverb *reverb, BL_FLOAT sampleRate,
     mReverb = reverb;
     
     int numSamples = mIRLengthSeconds*mSampleRate;
-    numSamples = BLUtils::NextPowerOfTwo(numSamples);
+    numSamples = BLUtilsMath::NextPowerOfTwo(numSamples);
     WDL_TypedBuf<BL_FLOAT> irs[2];
     mReverb->GetIRs(irs, numSamples);
     
@@ -74,7 +75,7 @@ void
 BLReverbIR::UpdateIRs()
 {
     int numSamples = mIRLengthSeconds*mSampleRate;
-    numSamples = BLUtils::NextPowerOfTwo(numSamples);
+    numSamples = BLUtilsMath::NextPowerOfTwo(numSamples);
     WDL_TypedBuf<BL_FLOAT> irs[2];
     mReverb->GetIRs(irs, numSamples);
     

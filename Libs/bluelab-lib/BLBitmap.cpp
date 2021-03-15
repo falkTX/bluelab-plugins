@@ -6,7 +6,9 @@
 #include "stb_image.h"
 
 #include <BLBitmap.h>
+
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
 
 #if 0
 TODO: for resizing think about using https://raw.githubusercontent.com/nothings/stb/master/stb_image_resize.h

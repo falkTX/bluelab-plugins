@@ -10,6 +10,7 @@
 #include <FastRTConvolver3.h>
 
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
 
 #include "FilterSincConvoBandPass.h"
 
@@ -85,7 +86,8 @@ FilterSincConvoBandPass::Init(BL_FLOAT fl, BL_FLOAT fh, BL_FLOAT sampleRate, int
 
     // Default
     //BLUtils::Convolve(filterDataHigh, filterDataLow, &mFilterData, CONVO_MODE_FULL);
-    BLUtils::Convolve(filterDataHigh, filterDataLow, &mFilterData, CONVO_MODE_SAME);
+    BLUtilsMath::Convolve(filterDataHigh, filterDataLow,
+                          &mFilterData, CONVO_MODE_SAME);
     
     /*BLDebug::DumpData("lpf.txt", filterDataLow);
     BLDebug::DumpData("hpf.txt", filterDataHigh);

@@ -9,6 +9,7 @@
 #ifdef IGRAPHICS_NANOVG
 
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
 
 #include "RCQuadTree.h"
 
@@ -50,8 +51,8 @@ RCQuadTree::BuildFromBottom(RC_FLOAT bbox[2][2], int resolution[2])
 {
     RCQuadTree *root = NULL;
     
-    resolution[0] = BLUtils::NextPowerOfTwo(resolution[0]);
-    resolution[1] = BLUtils::NextPowerOfTwo(resolution[1]);
+    resolution[0] = BLUtilsMath::NextPowerOfTwo(resolution[0]);
+    resolution[1] = BLUtilsMath::NextPowerOfTwo(resolution[1]);
     
     int numTrees = resolution[0]*resolution[1];
     

@@ -11,7 +11,10 @@
 #include <BLSpectrogram4.h>
 #include <SpectrogramDisplay.h>
 #include <SpectrogramDisplayScroll3.h>
+
 #include <BLUtils.h>
+#include <BLUtilsComp.h>
+#include <BLUtilsFft.h>
 
 #include "InfrasonicViewerFftObj2.h"
 
@@ -65,7 +68,7 @@ InfrasonicViewerFftObj2::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffe
     
     WDL_TypedBuf<BL_FLOAT> &magns0 = mTmpBuf1;
     WDL_TypedBuf<BL_FLOAT> &phases0 = mTmpBuf2;
-    BLUtils::ComplexToMagnPhase(&magns0, &phases0, ioBuffer);
+    BLUtilsComp::ComplexToMagnPhase(&magns0, &phases0, ioBuffer);
 
     WDL_TypedBuf<BL_FLOAT> &magns = mTmpBuf5;
     WDL_TypedBuf<BL_FLOAT> &phases = mTmpBuf6;
@@ -78,7 +81,7 @@ InfrasonicViewerFftObj2::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffe
     
     //BLUtils::ResizeFillZeros(ioBuffer, ioBuffer->GetSize()*2);
     BLUtils::SetBuf(ioBuffer0, ioBuffer);
-    BLUtils::FillSecondFftHalf(ioBuffer0);
+    BLUtilsFft::FillSecondFftHalf(ioBuffer0);
 }
 
 #if 0 // ORIGIN

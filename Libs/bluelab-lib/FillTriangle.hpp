@@ -10,6 +10,7 @@
 
 //#define INF 1e15
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
 
 template <typename T>
 class FillTriangle

@@ -7,6 +7,8 @@
 //
 
 #include <BLUtils.h>
+#include <BLUtilsComp.h>
+
 #include <BLDebug.h>
 
 //#include "TransientLib4.h"
@@ -229,7 +231,7 @@ TransientShaperFftObj3::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer
     
     WDL_TypedBuf<BL_FLOAT> &magns = mTmpBuf2;
     WDL_TypedBuf<BL_FLOAT> &phases = mTmpBuf3;
-    BLUtils::ComplexToMagnPhase(&magns, &phases, fftBuffer);
+    BLUtilsComp::ComplexToMagnPhase(&magns, &phases, fftBuffer);
 
 #if !DENOISER_OPTIM5
     

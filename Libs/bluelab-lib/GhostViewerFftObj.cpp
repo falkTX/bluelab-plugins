@@ -9,7 +9,12 @@
 #ifdef IGRAPHICS_NANOVG
 
 #include <BLSpectrogram4.h>
+
 #include <BLUtils.h>
+#include <BLUtilsComp.h>
+#include <BLUtilsFft.h>
+#include <BLUtilsMath.h>
+
 #include <BLDebug.h>
 
 #include <SpectrogramDisplay.h>
@@ -47,7 +52,7 @@ GhostViewerFftObj::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer0,
     
     WDL_TypedBuf<BL_FLOAT> &magns = mTmpBuf1;
     WDL_TypedBuf<BL_FLOAT> &phases = mTmpBuf2;
-    BLUtils::ComplexToMagnPhase(&magns, &phases, ioBuffer);
+    BLUtilsComp::ComplexToMagnPhase(&magns, &phases, ioBuffer);
     
     if (mLineCount % mSpeedMod == 0)
         AddSpectrogramLine(magns, phases);
@@ -56,7 +61,7 @@ GhostViewerFftObj::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer0,
     
     //BLUtils::ResizeFillZeros(ioBuffer, ioBuffer->GetSize()*2);
     BLUtils::SetBuf(ioBuffer0, ioBuffer);
-    BLUtils::FillSecondFftHalf(ioBuffer0);
+    BLUtilsFft::FillSecondFftHalf(ioBuffer0);
 }
 
 void

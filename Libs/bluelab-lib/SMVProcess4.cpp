@@ -9,6 +9,9 @@
 #ifdef IGRAPHICS_NANOVG
 
 #include <BLUtils.h>
+#include <BLUtilsComp.h>
+#include <BLUtilsFft.h>
+
 #include <PolarViz.h>
 #include <SourcePos.h>
 
@@ -481,8 +484,8 @@ SMVProcess4::ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamp
         
         WDL_TypedBuf<BL_FLOAT> magns[2];
         WDL_TypedBuf<BL_FLOAT> phases[2];
-        BLUtils::ComplexToMagnPhase(&magns[0], &phases[0], fftSamples[0]);
-        BLUtils::ComplexToMagnPhase(&magns[1], &phases[1], fftSamples[1]);
+        BLUtilsComp::ComplexToMagnPhase(&magns[0], &phases[0], fftSamples[0]);
+        BLUtilsComp::ComplexToMagnPhase(&magns[1], &phases[1], fftSamples[1]);
     
         // Do not refresh the display at each step !
         // (too CPU costly)
@@ -510,8 +513,8 @@ SMVProcess4::ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamp
         //
         // Re-synthetise the data with the new diff
         //
-        BLUtils::MagnPhaseToComplex(&fftSamples[0], magns[0], phases[0]);
-        BLUtils::MagnPhaseToComplex(&fftSamples[1], magns[1], phases[1]);
+        BLUtilsComp::MagnPhaseToComplex(&fftSamples[0], magns[0], phases[0]);
+        BLUtilsComp::MagnPhaseToComplex(&fftSamples[1], magns[1], phases[1]);
         
         // Get the center of selection in the RayCaster
         long currentSliceNum = mVolRender->GetCurrentSlice();
@@ -548,8 +551,8 @@ SMVProcess4::ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamp
     fftSamples[0].Resize(fftSamples[0].GetSize()*2);
     fftSamples[1].Resize(fftSamples[1].GetSize()*2);
     
-    BLUtils::FillSecondFftHalf(&fftSamples[0]);
-    BLUtils::FillSecondFftHalf(&fftSamples[1]);
+    BLUtilsFft::FillSecondFftHalf(&fftSamples[0]);
+    BLUtilsFft::FillSecondFftHalf(&fftSamples[1]);
     
     // Result
     *(*ioFftSamples)[0] = fftSamples[0];
@@ -1109,8 +1112,8 @@ SMVProcess4::RecomputeResult()
         WDL_TypedBuf<BL_FLOAT> magns[2];
         WDL_TypedBuf<BL_FLOAT> phases[2];
     
-        BLUtils::ComplexToMagnPhase(&magns[0], &phases[0], fftSamples[0]);
-        BLUtils::ComplexToMagnPhase(&magns[1], &phases[1], fftSamples[1]);
+        BLUtilsComp::ComplexToMagnPhase(&magns[0], &phases[0], fftSamples[0]);
+        BLUtilsComp::ComplexToMagnPhase(&magns[1], &phases[1], fftSamples[1]);
     
     
         WDL_TypedBuf<BL_FLOAT> widthValuesX;

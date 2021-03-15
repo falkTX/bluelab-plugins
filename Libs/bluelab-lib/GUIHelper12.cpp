@@ -7,7 +7,9 @@
 //
 
 #include <GraphControl12.h>
+
 #include <BLUtils.h>
+#include <BLUtilsPlug.h>
 
 #include <IBitmapControlAnim.h>
 #include <IHelpButtonControl.h>
@@ -711,7 +713,7 @@ GUIHelper12::GetManualFullPath(Plugin *plug, IGraphics *graphics,
 {
 #ifndef WIN32 // Mac
     WDL_String wdlResDir;
-    BLUtils::GetFullPlugResourcesPath(*plug, &wdlResDir);
+    BLUtilsPlug::GetFullPlugResourcesPath(*plug, &wdlResDir);
     const char *resDir = wdlResDir.Get();
     
     sprintf(fullFileName, "%s/%s", resDir, manualFileName);

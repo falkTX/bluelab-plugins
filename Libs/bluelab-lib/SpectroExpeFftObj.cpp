@@ -9,7 +9,11 @@
 #ifdef IGRAPHICS_NANOVG
 
 #include <BLSpectrogram4.h>
+
 #include <BLUtils.h>
+#include <BLUtilsComp.h>
+#include <BLUtilsMath.h>
+
 #include <BLDebug.h>
 
 #include <SpectrogramDisplay.h>
@@ -22,8 +26,6 @@
 #include <StereoWidenProcess.h>
 
 #include "SpectroExpeFftObj.h"
-
-#define TWO_PI 6.28318530717959
 
 #define USE_AVG_LINES 0 //1
 
@@ -67,8 +69,9 @@ SpectroExpeFftObj::~SpectroExpeFftObj()
 }
 
 void
-SpectroExpeFftObj::ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamples,
-				   const vector<WDL_TypedBuf<WDL_FFT_COMPLEX> > *scBuffer)
+SpectroExpeFftObj::
+ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamples,
+                const vector<WDL_TypedBuf<WDL_FFT_COMPLEX> > *scBuffer)
 {
     WDL_TypedBuf<WDL_FFT_COMPLEX> fftSamples[2];
     fftSamples[0] = *(*ioFftSamples)[0];
@@ -80,7 +83,7 @@ SpectroExpeFftObj::ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioF
     for (int i = 0; i < 2; i++)
     {
         BLUtils::TakeHalf(&fftSamples[i]);
-        BLUtils::ComplexToMagnPhase(&magns[i], &phases[i], fftSamples[i]);
+        BLUtilsComp::ComplexToMagnPhase(&magns[i], &phases[i], fftSamples[i]);
     }
 
     if (mLineCount % mSpeedMod == 0)

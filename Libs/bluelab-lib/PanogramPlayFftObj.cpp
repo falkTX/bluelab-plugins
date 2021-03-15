@@ -9,6 +9,8 @@
 #include <HistoMaskLine2.h>
 
 #include <BLUtils.h>
+#include <BLUtilsComp.h>
+#include <BLUtilsFft.h>
 
 #include "PanogramPlayFftObj.h"
 
@@ -124,10 +126,10 @@ PanogramPlayFftObj::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
             BLUtils::FillAllZero(&phases);
         }
         
-        BLUtils::MagnPhaseToComplex(ioBuffer, magns, phases);
+        BLUtilsComp::MagnPhaseToComplex(ioBuffer, magns, phases);
         
         BLUtils::ResizeFillZeros(ioBuffer, ioBuffer->GetSize()*2);
-        BLUtils::FillSecondFftHalf(ioBuffer);
+        BLUtilsFft::FillSecondFftHalf(ioBuffer);
         
         if (mIsPlaying)
         {
@@ -146,7 +148,7 @@ PanogramPlayFftObj::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
         
         WDL_TypedBuf<BL_FLOAT> &magns = mTmpBuf3;
         WDL_TypedBuf<BL_FLOAT> &phases = mTmpBuf4;
-        BLUtils::ComplexToMagnPhase(&magns, &phases, ioBuffer0);
+        BLUtilsComp::ComplexToMagnPhase(&magns, &phases, ioBuffer0);
 
         if (mCurrentMagns.size() != mNumCols)
         {
@@ -196,9 +198,9 @@ PanogramPlayFftObj::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
             //BLUtils::ResizeFillZeros(ioBuffer, ioBuffer->GetSize()*2);
             //BLUtils::FillSecondFftHalf(ioBuffer);
 
-            BLUtils::MagnPhaseToComplex(&ioBuffer0, magns, phases);
+            BLUtilsComp::MagnPhaseToComplex(&ioBuffer0, magns, phases);
             BLUtils::SetBuf(ioBuffer, ioBuffer0);
-            BLUtils::FillSecondFftHalf(ioBuffer);
+            BLUtilsFft::FillSecondFftHalf(ioBuffer);
         }
     }
 }

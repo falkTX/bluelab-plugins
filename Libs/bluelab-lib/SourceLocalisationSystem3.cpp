@@ -15,6 +15,9 @@
 #include <DelayLinePhaseShift2.h>
 
 #include <BLUtils.h>
+#include <BLUtilsComp.h>
+#include <BLUtilsMath.h>
+
 #include <BLDebug.h>
 
 #include <PPMFile.h>
@@ -442,7 +445,7 @@ SourceLocalisationSystem3::ComputeCoincidences(const WDL_TypedBuf<WDL_FFT_COMPLE
             (*coincidence)[j].Resize(mResultDiff.GetSize());
         }
         
-        BLUtils::ComplexToMagn(&(*coincidence)[j], mResultDiff);
+        BLUtilsComp::ComplexToMagn(&(*coincidence)[j], mResultDiff);
     }
 }
 
@@ -486,7 +489,7 @@ SourceLocalisationSystem3::ComputeAmpCoincidences(const WDL_TypedBuf<WDL_FFT_COM
 #if FIX_EPS_MAGNS
         //#define EPS 1e-10
         
-        if ((std::fabs(l) <BL_EPS10) && (std::fabs(r) < BL_EPS10))
+        if ((std::fabs(l) < BL_EPS10) && (std::fabs(r) < BL_EPS10))
             continue;
 #endif
         
@@ -1088,7 +1091,7 @@ SourceLocalisationSystem3::FreqIntegrateStencil2(const vector<WDL_TypedBuf<BL_FL
         const vector<WDL_TypedBuf<BL_FLOAT> > &mask = mStencilMasks[i];
                 
         vector<WDL_TypedBuf<BL_FLOAT> > corr;
-        BLUtils::CrossCorrelation2D(coincidence, mask, &corr);
+        BLUtilsMath::CrossCorrelation2D(coincidence, mask, &corr);
         
         BL_FLOAT corrMaxVal = BLUtils::FindMaxValue(corr);
         

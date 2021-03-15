@@ -10,7 +10,10 @@
 
 #include <BLSpectrogram4.h>
 #include <Window.h>
+
 #include <BLUtils.h>
+#include <BLUtilsComp.h>
+#include <BLUtilsFft.h>
 
 #include <SpectrogramDisplay.h>
 #include <HistoMaskLine2.h>
@@ -95,7 +98,7 @@ BatFftObj::ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSample
     for (int i = 0; i < 2; i++)
     {
         BLUtils::TakeHalf(&fftSamples[i]);
-        BLUtils::ComplexToMagnPhase(&magns[i], &phases[i], fftSamples[i]);
+        BLUtilsComp::ComplexToMagnPhase(&magns[i], &phases[i], fftSamples[i]);
         
 #if USE_DB_MAGNS
         BLUtils::AmpToDBNorm(&magns[i], 1e-15, -200.0);
@@ -119,7 +122,7 @@ BatFftObj::ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSample
             continue;
         
         BLUtils::TakeHalf(&scFftSamples[i]);
-        BLUtils::ComplexToMagnPhase(&scMagns[i], &scPhases[i], scFftSamples[i]);
+        BLUtilsComp::ComplexToMagnPhase(&scMagns[i], &scPhases[i], scFftSamples[i]);
         
 #if USE_DB_MAGNS
         BLUtils::AmpToDBNorm(&scMagns[i], 1e-15, -200.0);
@@ -392,7 +395,7 @@ BatFftObj::ComputeCoords3(const WDL_TypedBuf<BL_FLOAT> magns[2],
 {
     //
     WDL_TypedBuf<BL_FLOAT> freqs;
-    BLUtils::FftFreqs(&freqs, phases[0].GetSize(), mSampleRate);
+    BLUtilsFft::FftFreqs(&freqs, phases[0].GetSize(), mSampleRate);
     
     WDL_TypedBuf<BL_FLOAT> timeDelays;
     BLUtils::ComputeTimeDelays(&timeDelays, phases[0], phases[1], mSampleRate);

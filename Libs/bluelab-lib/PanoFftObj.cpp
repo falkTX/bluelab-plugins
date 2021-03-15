@@ -11,7 +11,10 @@
 #include <BLSpectrogram4.h>
 #include <Window.h>
 #include <SpectrogramDisplayScroll.h>
+
 #include <BLUtils.h>
+#include <BLUtilsComp.h>
+#include <BLUtilsMath.h>
 
 #include "PanoFftObj.h"
 
@@ -63,7 +66,7 @@ PanoFftObj::ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSampl
     for (int i = 0; i < 2; i++)
     {
         BLUtils::TakeHalf(&fftSamples[i]);
-        BLUtils::ComplexToMagnPhase(&magns[i], &phases[i], *(*ioFftSamples)[i]);
+        BLUtilsComp::ComplexToMagnPhase(&magns[i], &phases[i], *(*ioFftSamples)[i]);
     }
     
     WDL_TypedBuf<BL_FLOAT> panoLine;

@@ -10,6 +10,7 @@
 #include <math.h>
 
 #include <BLUtils.h> // For M_PI
+#include <BLUtilsComp.h>
 
 #include <BLDebug.h>
 

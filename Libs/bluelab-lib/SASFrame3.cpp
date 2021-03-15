@@ -21,6 +21,10 @@
 #include <SinLUT.h>
 
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
+#include <BLUtilsComp.h>
+#include <BLUtilsFft.h>
+
 #include <BLDebug.h>
 
 #include <Scale.h>
@@ -354,9 +358,9 @@ SASFrame3::ComputeFftPartials(WDL_TypedBuf<BL_FLOAT> *samples)
     
     // Apply Ifft
     WDL_TypedBuf<WDL_FFT_COMPLEX> complexBuf;
-    BLUtils::MagnPhaseToComplex(&complexBuf, magns, phases);
+    BLUtilsComp::MagnPhaseToComplex(&complexBuf, magns, phases);
     complexBuf.Resize(complexBuf.GetSize()*2);
-    BLUtils::FillSecondFftHalf(&complexBuf);
+    BLUtilsFft::FillSecondFftHalf(&complexBuf);
     
     // Ifft
     FftProcessObj16::FftToSamples(complexBuf, samples);
@@ -1552,9 +1556,9 @@ SASFrame3::ComputeFftSAS(WDL_TypedBuf<BL_FLOAT> *samples)
     
     // Apply Ifft
     WDL_TypedBuf<WDL_FFT_COMPLEX> complexBuf;
-    BLUtils::MagnPhaseToComplex(&complexBuf, magns, phases);
+    BLUtilsComp::MagnPhaseToComplex(&complexBuf, magns, phases);
     complexBuf.Resize(complexBuf.GetSize()*2);
-    BLUtils::FillSecondFftHalf(&complexBuf);
+    BLUtilsFft::FillSecondFftHalf(&complexBuf);
     
     // Ifft
     FftProcessObj16::FftToSamples(complexBuf, samples);
@@ -1669,9 +1673,9 @@ SASFrame3::ComputeFftSASFreqAdjust(WDL_TypedBuf<BL_FLOAT> *samples)
         
     // Apply Ifft
     WDL_TypedBuf<WDL_FFT_COMPLEX> complexBuf;
-    BLUtils::MagnPhaseToComplex(&complexBuf, magns, phases);
+    BLUtilsComp::MagnPhaseToComplex(&complexBuf, magns, phases);
     complexBuf.Resize(complexBuf.GetSize()*2);
-    BLUtils::FillSecondFftHalf(&complexBuf);
+    BLUtilsFft::FillSecondFftHalf(&complexBuf);
     
     // Ifft
     FftProcessObj16::FftToSamples(complexBuf, samples);
@@ -2144,7 +2148,7 @@ SASFrame3::ComputeNormWarpingAux()
         idx = bl_round(idx);
         
         BL_FLOAT freq = mPartials[i].mFreq;
-        BL_FLOAT freq1 = BLUtils::FindNearestHarmonic(freq, freq0);
+        BL_FLOAT freq1 = BLUtilsMath::FindNearestHarmonic(freq, freq0);
         
         BL_FLOAT normWarp = freq/freq1;
         

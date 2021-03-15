@@ -7,6 +7,9 @@
 //
 
 #include <BLUtils.h>
+#include <BLUtilsComp.h>
+#include <BLUtilsFft.h>
+
 //#include <TransientLib4.h>
 #include <TransientLib5.h>
 
@@ -105,7 +108,7 @@ SpectroEditFftObj2EXPE::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer
     
     WDL_TypedBuf<BL_FLOAT> magns;
     WDL_TypedBuf<BL_FLOAT> phases;
-    BLUtils::ComplexToMagnPhase(&magns, &phases, *ioBuffer);
+    BLUtilsComp::ComplexToMagnPhase(&magns, &phases, *ioBuffer);
  
     if (mMode == BYPASS)
     {
@@ -141,7 +144,7 @@ SpectroEditFftObj2EXPE::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer
             
             //
             WDL_TypedBuf<int> samplesIds;
-            BLUtils::FftIdsToSamplesIds(phases, &samplesIds);
+            BLUtilsFft::FftIdsToSamplesIds(phases, &samplesIds);
             
             WDL_TypedBuf<BL_FLOAT> sampleTrans = transientness;
             
@@ -250,10 +253,10 @@ SpectroEditFftObj2EXPE::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer
         mLineCount++;
     }
     
-    BLUtils::MagnPhaseToComplex(ioBuffer, magns, phases);
+    BLUtilsComp::MagnPhaseToComplex(ioBuffer, magns, phases);
     
     BLUtils::ResizeFillZeros(ioBuffer, ioBuffer->GetSize()*2);
-    BLUtils::FillSecondFftHalf(ioBuffer);
+    BLUtilsFft::FillSecondFftHalf(ioBuffer);
 }
 
 void

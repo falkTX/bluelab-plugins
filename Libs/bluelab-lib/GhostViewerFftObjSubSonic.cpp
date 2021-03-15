@@ -9,7 +9,11 @@
 #ifdef IGRAPHICS_NANOVG
 
 #include <BLSpectrogram4.h>
+
 #include <BLUtils.h>
+#include <BLUtilsComp.h>
+#include <BLUtilsFft.h>
+#include <BLUtilsMath.h>
 
 #include <SpectrogramDisplay.h>
 #include <SpectrogramDisplayScroll.h>
@@ -57,7 +61,7 @@ GhostViewerFftObjSubSonic::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuf
     
     WDL_TypedBuf<BL_FLOAT> magns;
     WDL_TypedBuf<BL_FLOAT> phases;
-    BLUtils::ComplexToMagnPhase(&magns, &phases, *ioBuffer);
+    BLUtilsComp::ComplexToMagnPhase(&magns, &phases, *ioBuffer);
     
     SelectSubSonic(&magns, &phases);
     
@@ -66,7 +70,7 @@ GhostViewerFftObjSubSonic::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuf
     mLineCount++;
     
     BLUtils::ResizeFillZeros(ioBuffer, ioBuffer->GetSize()*2);
-    BLUtils::FillSecondFftHalf(ioBuffer);
+    BLUtilsFft::FillSecondFftHalf(ioBuffer);
 }
 
 void
@@ -228,7 +232,7 @@ GhostViewerFftObjSubSonic::ComputeLastBin(BL_FLOAT freq)
     BL_FLOAT hzPerBin = ((BL_FLOAT)mSampleRate)/mBufferSize;
     int binNum = ceil(freq*hzPerBin);
     
-    int binNumPow2 = BLUtils::NextPowerOfTwo(binNum);
+    int binNumPow2 = BLUtilsMath::NextPowerOfTwo(binNum);
     if (binNumPow2/2 == binNum)
         binNumPow2 /= 2;
     

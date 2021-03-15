@@ -9,6 +9,8 @@
 #include <Window.h>
 
 #include <BLUtils.h>
+#include <BLUtilsComp.h>
+#include <BLUtilsMath.h>
 
 #include "SoftMaskingComp3.h"
 

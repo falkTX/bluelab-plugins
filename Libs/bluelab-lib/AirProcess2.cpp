@@ -7,6 +7,10 @@
 //
 
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
+#include <BLUtilsComp.h>
+#include <BLUtilsFft.h>
+
 #include <BLDebug.h>
 #include <DebugGraph.h>
 
@@ -125,7 +129,7 @@ AirProcess2::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer0,
         
     WDL_TypedBuf<BL_FLOAT> &magns = mTmpBuf1;
     WDL_TypedBuf<BL_FLOAT> &phases = mTmpBuf2;
-    BLUtils::ComplexToMagnPhase(&magns, &phases, fftSamples);
+    BLUtilsComp::ComplexToMagnPhase(&magns, &phases, fftSamples);
     
     DetectPartials(magns, phases);
         
@@ -312,14 +316,14 @@ AirProcess2::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer0,
             outResultData[i] = res;
         }
         
-        BLUtils::ComplexToMagn(&mSum, outResult);
+        BLUtilsComp::ComplexToMagn(&mSum, outResult);
         
         // Optim: avoid reconverting to magns
         // and return early
         //ioBuffer = outResult;
         //ioBuffer->Resize(ioBuffer->GetSize()*2);
         memcpy(ioBuffer0->Get(), outResult.Get(), outResult.GetSize());
-        BLUtils::FillSecondFftHalf(ioBuffer0);
+        BLUtilsFft::FillSecondFftHalf(ioBuffer0);
         
         return;
 #endif
@@ -332,10 +336,10 @@ AirProcess2::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer0,
     //ioBuffer->Resize(ioBuffer->GetSize()*2);
 
     WDL_TypedBuf<WDL_FFT_COMPLEX> &result = mTmpBuf16;
-    BLUtils::MagnPhaseToComplex(&result, magns, phases);
+    BLUtilsComp::MagnPhaseToComplex(&result, magns, phases);
     memcpy(ioBuffer0->Get(), result.Get(),
            result.GetSize()*sizeof(WDL_FFT_COMPLEX));
-    BLUtils::FillSecondFftHalf(ioBuffer0);
+    BLUtilsFft::FillSecondFftHalf(ioBuffer0);
     
 #if AIR_PROCESS_PROFILE
     BlaTimer::StopAndDump(&mTimer, &mCount, "AirProcess-profile.txt", "%ld");

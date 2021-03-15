@@ -9,6 +9,8 @@
 #include <Window.h>
 
 #include <BLUtils.h>
+#include <BLUtilsComp.h>
+#include <BLUtilsMath.h>
 
 #include "SoftMaskingComp4.h"
 
@@ -161,8 +163,8 @@ SoftMaskingComp4::ProcessCentered(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioSum,
         // NOTE: square abs => complex conjugate
         
         // Compute squares (using complex conjugate)
-        BLUtils::ComputeSquareConjugate(&newHistoLine.mMasked0Square);
-        BLUtils::ComputeSquareConjugate(&newHistoLine.mMasked1Square);
+        BLUtilsComp::ComputeSquareConjugate(&newHistoLine.mMasked0Square);
+        BLUtilsComp::ComputeSquareConjugate(&newHistoLine.mMasked1Square);
     }
     else // Not enabled, fill history with zeros
     {

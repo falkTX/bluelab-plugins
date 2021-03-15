@@ -7,6 +7,9 @@
 //
 
 #include <BLUtils.h>
+#include <BLUtilsComp.h>
+#include <BLUtilsFft.h>
+
 #include <BLDebug.h>
 #include <DebugGraph.h>
 
@@ -100,7 +103,7 @@ AirProcess::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     
     WDL_TypedBuf<BL_FLOAT> magns;
     WDL_TypedBuf<BL_FLOAT> phases;
-    BLUtils::ComplexToMagnPhase(&magns, &phases, fftSamples);
+    BLUtilsComp::ComplexToMagnPhase(&magns, &phases, fftSamples);
                     
     DetectPartials(magns, phases);
     
@@ -155,9 +158,9 @@ AirProcess::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     }
     
     // For noise envelope
-    BLUtils::MagnPhaseToComplex(ioBuffer, magns, phases);
+    BLUtilsComp::MagnPhaseToComplex(ioBuffer, magns, phases);
     ioBuffer->Resize(ioBuffer->GetSize()*2);
-    BLUtils::FillSecondFftHalf(ioBuffer);
+    BLUtilsFft::FillSecondFftHalf(ioBuffer);
 }
 
 void
@@ -201,7 +204,7 @@ AirProcess::ComputeTransientness(const WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer)
 {
     WDL_TypedBuf<BL_FLOAT> magns;
     WDL_TypedBuf<BL_FLOAT> phases;
-    BLUtils::ComplexToMagnPhase(&magns, &phases, *ioBuffer);
+    BLUtilsComp::ComplexToMagnPhase(&magns, &phases, *ioBuffer);
     
     WDL_TypedBuf<BL_FLOAT> transS;
     BL_FLOAT freqAmpRatioS = 0.0;

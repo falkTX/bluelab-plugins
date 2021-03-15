@@ -11,6 +11,7 @@
 #include <math.h>
 
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
 
 #include "FreqAdjustObj3.h"
 
@@ -376,11 +377,11 @@ BL_FLOAT
 FreqAdjustObj3::MapToPi(BL_FLOAT val)
 {
     /* Map delta phase into +/- Pi interval */
-    val =  fmod(val, M_TWO_PI);
+    val =  fmod(val, TWO_PI);
     if (val <= -M_PI)
-        val += M_TWO_PI;
+        val += TWO_PI;
     if (val > M_PI)
-        val -= M_TWO_PI;
+        val -= TWO_PI;
     
     return val;
 }

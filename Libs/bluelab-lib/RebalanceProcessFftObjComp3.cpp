@@ -8,7 +8,12 @@
 
 #include <RebalanceMaskPredictorComp6.h>
 #include <SoftMaskingNComp.h>
+
 #include <BLUtils.h>
+#include <BLUtilsComp.h>
+#include <BLUtilsFft.h>
+#include <BLUtilsMath.h>
+
 #include <BLDebug.h>
 #include <Scale.h>
 
@@ -137,7 +142,7 @@ RebalanceProcessFftObjComp3::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioB
     WDL_TypedBuf<BL_FLOAT> magns0;
     WDL_TypedBuf<BL_FLOAT> phases0;
     
-    BLUtils::ComplexToMagnPhase(&magns0, &phases0, mixBuffer);
+    BLUtilsComp::ComplexToMagnPhase(&magns0, &phases0, mixBuffer);
     
     for (int i = 0; i < magns0.GetSize(); i++)
     {
@@ -147,7 +152,7 @@ RebalanceProcessFftObjComp3::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioB
         magns0.Get()[i] = val;
     }
 
-    BLUtils::MagnPhaseToComplex(&mixBuffer, magns0, phases0);
+    BLUtilsComp::MagnPhaseToComplex(&mixBuffer, magns0, phases0);
 #endif
     
     // For soft masks
@@ -171,7 +176,7 @@ RebalanceProcessFftObjComp3::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioB
 #if PROCESS_SIGNAL_DB
     WDL_TypedBuf<BL_FLOAT> magns1;
     WDL_TypedBuf<BL_FLOAT> phases1;
-    BLUtils::ComplexToMagnPhase(&magns1, &phases1, dataSoft);
+    BLUtilsComp::ComplexToMagnPhase(&magns1, &phases1, dataSoft);
     
     for (int i = 0; i < magns1.GetSize(); i++)
     {
@@ -187,7 +192,7 @@ RebalanceProcessFftObjComp3::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioB
         magns1.Get()[i] = val;
     }
     
-    BLUtils::MagnPhaseToComplex(&dataSoft, magns1, phases1);
+    BLUtilsComp::MagnPhaseToComplex(&dataSoft, magns1, phases1);
 #endif
     
     // Fill the result
@@ -195,7 +200,7 @@ RebalanceProcessFftObjComp3::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioB
     
     fftSamples.Resize(fftSamples.GetSize()*2);
     
-    BLUtils::FillSecondFftHalf(&fftSamples);
+    BLUtilsFft::FillSecondFftHalf(&fftSamples);
     
     // Result
     *ioBuffer = fftSamples;

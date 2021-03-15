@@ -16,6 +16,8 @@
 #include <DelayObj4.h>
 
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
+
 #include <BLDebug.h>
 
 #include "PseudoStereoObj2.h"
@@ -244,7 +246,7 @@ void
 PseudoStereoObj2::SetIRSize(BL_FLOAT sampleRate)
 {
     mIRSize = IR_SIZE*(sampleRate/44100.0);
-    mIRSize = BLUtils::NextPowerOfTwo(mIRSize);
+    mIRSize = BLUtilsMath::NextPowerOfTwo(mIRSize);
 }
 
 void

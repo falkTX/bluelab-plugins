@@ -12,6 +12,8 @@
 #include <GraphCurve5.h>
 
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
+
 #include <BLDebug.h>
 
 #include "SmoothCurveDB.h"

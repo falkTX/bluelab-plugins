@@ -7,6 +7,11 @@
 //
 
 #include <BLUtils.h>
+#include <BLUtilsComp.h>
+#include <BLUtilsFft.h>
+#include <BLUtilsMath.h>
+#include <BLUtilsPhases.h>
+
 #include <PolarViz.h>
 #include <DebugGraph.h>
 
@@ -456,8 +461,8 @@ StereoWidthProcess2::ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *i
     WDL_TypedBuf<BL_FLOAT> magns[2];
     WDL_TypedBuf<BL_FLOAT> phases[2];
     
-    BLUtils::ComplexToMagnPhase(&magns[0], &phases[0], fftSamples[0]);
-    BLUtils::ComplexToMagnPhase(&magns[1], &phases[1], fftSamples[1]);
+    BLUtilsComp::ComplexToMagnPhase(&magns[0], &phases[0], fftSamples[0]);
+    BLUtilsComp::ComplexToMagnPhase(&magns[1], &phases[1], fftSamples[1]);
     
     WDL_TypedBuf<BL_FLOAT> sourceRs;
     WDL_TypedBuf<BL_FLOAT> sourceThetas;
@@ -476,7 +481,7 @@ StereoWidthProcess2::ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *i
     }
     
     WDL_TypedBuf<BL_FLOAT> freqs;
-    BLUtils::FftFreqs(&freqs, phases[0].GetSize(), mSampleRate);
+    BLUtilsFft::FftFreqs(&freqs, phases[0].GetSize(), mSampleRate);
     
     //
     // Prepare polar coordinates for display
@@ -618,14 +623,14 @@ StereoWidthProcess2::ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *i
     //
     // Re-synthetise the data with the new diff
     //
-    BLUtils::MagnPhaseToComplex(&fftSamples[0], magns[0], phases[0]);
+    BLUtilsComp::MagnPhaseToComplex(&fftSamples[0], magns[0], phases[0]);
     fftSamples[0].Resize(fftSamples[0].GetSize()*2);
     
-    BLUtils::MagnPhaseToComplex(&fftSamples[1], magns[1], phases[1]);
+    BLUtilsComp::MagnPhaseToComplex(&fftSamples[1], magns[1], phases[1]);
     fftSamples[1].Resize(fftSamples[1].GetSize()*2);
     
-    BLUtils::FillSecondFftHalf(&fftSamples[0]);
-    BLUtils::FillSecondFftHalf(&fftSamples[1]);
+    BLUtilsFft::FillSecondFftHalf(&fftSamples[0]);
+    BLUtilsFft::FillSecondFftHalf(&fftSamples[1]);
     
     // Result
     *(*ioFftSamples)[0] = fftSamples[0];
@@ -659,7 +664,7 @@ StereoWidthProcess2::ApplyWidthChange(WDL_TypedBuf<BL_FLOAT> *ioMagnsL,
                                      WDL_TypedBuf<BL_FLOAT> *outSourceThetas)
 {
     WDL_TypedBuf<BL_FLOAT> freqs;
-    BLUtils::FftFreqs(&freqs, ioPhasesL->GetSize(), mSampleRate);
+    BLUtilsFft::FftFreqs(&freqs, ioPhasesL->GetSize(), mSampleRate);
     
     BL_FLOAT widthFactor = ComputeFactor(mWidthChange, MAX_WIDTH_CHANGE);
     
@@ -992,7 +997,7 @@ StereoWidthProcess2::MagnPhasesToSourcePos(BL_FLOAT *sourceR, BL_FLOAT *sourceTh
     BL_FLOAT phaseDiff = phaseR - phaseL;
     
     // Avoid negative phase diff (would make problems below)
-    phaseDiff = BLUtils::MapToPi(phaseDiff);
+    phaseDiff = BLUtilsPhases::MapToPi(phaseDiff);
     phaseDiff += 2.0*M_PI;
     
     // Magns ratio
@@ -1276,8 +1281,10 @@ StereoWidthProcess2::SourcePosToMagnPhasesHRTF(const WDL_TypedBuf<BL_FLOAT> &sou
     // Sum
     for (int i = 0; i < NUM_HRTF_SLICES; i++)
     {
-        BLUtils::ComplexSum(ioMagnsL, ioPhasesL, resultMagns[i][0], resultPhases[i][0]);
-        BLUtils::ComplexSum(ioMagnsR, ioPhasesR, resultMagns[i][1], resultPhases[i][1]);
+        BLUtilsComp::ComplexSum(ioMagnsL, ioPhasesL,
+                                resultMagns[i][0], resultPhases[i][0]);
+        BLUtilsComp::ComplexSum(ioMagnsR, ioPhasesR,
+                                resultMagns[i][1], resultPhases[i][1]);
     }
 }
 
@@ -1423,7 +1430,7 @@ StereoWidthProcess2::SourcePosToMagnPhases(BL_FLOAT sourceR, BL_FLOAT sourceThet
     
     // For phases, take the left and compute the right
     *ioPhaseR = *ioPhaseL + phaseDiff;
-    *ioPhaseR = BLUtils::MapToPi(*ioPhaseR);
+    *ioPhaseR = BLUtilsPhases::MapToPi(*ioPhaseR);
 #endif
     
     return true;
@@ -1554,7 +1561,7 @@ StereoWidthProcess2::SourcePosToMagnPhases2(BL_FLOAT sourceR, BL_FLOAT sourceThe
 #endif
     
     // Added after volume rendering tests
-    phaseDiff = BLUtils::MapToPi(phaseDiff);
+    phaseDiff = BLUtilsPhases::MapToPi(phaseDiff);
     phaseDiff += 2.0*M_PI;
     
     // GOOD ... (old)
@@ -1597,8 +1604,8 @@ StereoWidthProcess2::SourcePosToMagnPhases2(BL_FLOAT sourceR, BL_FLOAT sourceThe
     }
 #endif
     
-    *ioPhaseL = BLUtils::MapToPi(*ioPhaseL);
-    *ioPhaseR = BLUtils::MapToPi(*ioPhaseR);
+    *ioPhaseL = BLUtilsPhases::MapToPi(*ioPhaseL);
+    *ioPhaseR = BLUtilsPhases::MapToPi(*ioPhaseR);
 #endif
     
 #endif
@@ -1630,10 +1637,10 @@ StereoWidthProcess2::ComputeTimeDelays(WDL_TypedBuf<BL_FLOAT> *timeDelays,
     timeDelays->Resize(phasesL.GetSize());
     
     WDL_TypedBuf<BL_FLOAT> samplesIdsL;
-    BLUtils::FftIdsToSamplesIdsFloat(phasesL, &samplesIdsL);
+    BLUtilsFft::FftIdsToSamplesIdsFloat(phasesL, &samplesIdsL);
     
     WDL_TypedBuf<BL_FLOAT> samplesIdsR;
-    BLUtils::FftIdsToSamplesIdsFloat(phasesR, &samplesIdsR);
+    BLUtilsFft::FftIdsToSamplesIdsFloat(phasesR, &samplesIdsR);
     
     for (int i = 0; i < timeDelays->GetSize(); i++)
     {
@@ -1757,7 +1764,8 @@ StereoWidthProcess2::ComputeColorWeightsFreqs(WDL_TypedBuf<BL_FLOAT> *outWeights
 }
 
 int
-StereoWidthProcess2::SecondOrderEqSolve(BL_FLOAT a, BL_FLOAT b, BL_FLOAT c, BL_FLOAT res[2])
+StereoWidthProcess2::SecondOrderEqSolve(BL_FLOAT a, BL_FLOAT b, BL_FLOAT c,
+                                        BL_FLOAT res[2])
 {
     // See: http://math.lyceedebaudre.net/premiere-sti2d/second-degre/resoudre-une-equation-du-second-degre
     //

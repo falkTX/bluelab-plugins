@@ -7,6 +7,10 @@
 //
 
 #include <BLUtils.h>
+#include <BLUtilsComp.h>
+#include <BLUtilsFft.h>
+#include <BLUtilsMath.h>
+
 #include <BLDebug.h>
 
 #include <PartialTracker5.h>
@@ -89,7 +93,7 @@ AirProcess3::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer0,
         
     WDL_TypedBuf<BL_FLOAT> &magns = mTmpBuf1;
     WDL_TypedBuf<BL_FLOAT> &phases = mTmpBuf2;
-    BLUtils::ComplexToMagnPhase(&magns, &phases, fftSamples);
+    BLUtilsComp::ComplexToMagnPhase(&magns, &phases, fftSamples);
     
     DetectPartials(magns, phases);
         
@@ -155,9 +159,9 @@ AirProcess3::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer0,
             }
 
             // Keep the sum
-            BLUtils::ComplexToMagn(&mSum, fftSamples);
+            BLUtilsComp::ComplexToMagn(&mSum, fftSamples);
             
-            BLUtils::FillSecondFftHalf(fftSamples, ioBuffer0);
+            BLUtilsFft::FillSecondFftHalf(fftSamples, ioBuffer0);
         }
         else // Use oft masking
         {
@@ -185,10 +189,10 @@ AirProcess3::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer0,
             }
             
             // Keep the sum
-            BLUtils::ComplexToMagn(&mSum, fftSamples);
+            BLUtilsComp::ComplexToMagn(&mSum, fftSamples);
             
             // Result
-            BLUtils::FillSecondFftHalf(fftSamples, ioBuffer0);
+            BLUtilsFft::FillSecondFftHalf(fftSamples, ioBuffer0);
         }
     }
 }

@@ -9,6 +9,7 @@
 #include <math.h>
 
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
 
 #include "WavetableSynth.h"
 

@@ -7,6 +7,7 @@
 //
 
 #include <BLUtils.h>
+#include <BLUtilsComp.h>
 
 #include "SpectrumViewFftObj.h"
 
@@ -17,7 +18,8 @@ SpectrumViewFftObj::SpectrumViewFftObj(int bufferSize, int oversampling, int fre
 SpectrumViewFftObj::~SpectrumViewFftObj() {}
 
 void
-SpectrumViewFftObj::Reset(int bufferSize, int oversampling, int freqRes, BL_FLOAT sampleRate)
+SpectrumViewFftObj::Reset(int bufferSize, int oversampling,
+                          int freqRes, BL_FLOAT sampleRate)
 {
     ProcessObj::Reset(bufferSize, oversampling, freqRes, sampleRate);
     
@@ -35,7 +37,7 @@ SpectrumViewFftObj::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer0,
     
     WDL_TypedBuf<BL_FLOAT> &sigMagns = mTmpBuf1;
     WDL_TypedBuf<BL_FLOAT> &phases = mTmpBuf2;
-    BLUtils::ComplexToMagnPhase(&sigMagns, &phases, ioBuffer);
+    BLUtilsComp::ComplexToMagnPhase(&sigMagns, &phases, ioBuffer);
     
     mSignalBuf = sigMagns;
 }

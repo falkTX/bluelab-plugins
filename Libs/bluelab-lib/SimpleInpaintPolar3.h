@@ -77,42 +77,11 @@ class SimpleInpaintPolar3
                                      WDL_TypedBuf<BL_FLOAT> *phasesResult,
                                      int width, int height);
     
-    // TODO: put this in BLUtils
-    //
-    // And add notes in PhaseUnwrapper
-    // Unwrap is "closest", not "next"
-    // See: https://ccrma.stanford.edu/~jos/fp/Phase_Unwrapping.html
-    // this is the correct mehtod
-    static void FindClosestPhase(BL_FLOAT *phase, BL_FLOAT refPhase);
-
-    // TODO: put it in BLUtils
-    static void UnwrapPhases2(WDL_TypedBuf<BL_FLOAT> *phases,
-                              bool dbgUnwrap180 = false);
-
-    // This is a debug method, tham makes modulus PI and not TWO_PI
-    // Useful for debugging
-    static void FindClosestPhase180(BL_FLOAT *phase, BL_FLOAT refPhase);
-
     // 1 line, all the frequencies
     static void DBG_DumpPhaseCol(const char *fileName, int timeIndex,
                                  WDL_TypedBuf<BL_FLOAT> *phases,
                                  int width, int height);
 
-    // TODO: put this in BLUtils
-    static void InterpComp(BL_FLOAT magn0, BL_FLOAT phase0,
-                           BL_FLOAT magn1, BL_FLOAT phase1,
-                           BL_FLOAT t,
-                           BL_FLOAT *resMagn, BL_FLOAT *resPhase);
-
-    // => BLUtils
-    static void InterpComp(const WDL_TypedBuf<BL_FLOAT> &magns0,
-                           const WDL_TypedBuf<BL_FLOAT> &phases0,
-                           const WDL_TypedBuf<BL_FLOAT> &magns1,
-                           const WDL_TypedBuf<BL_FLOAT> &phases1,
-                           BL_FLOAT t,
-                           WDL_TypedBuf<BL_FLOAT> *resMagns,
-                           WDL_TypedBuf<BL_FLOAT> *resPhases);
-    
     // 1 line, all the times
     static void DBG_DumpPhaseLine(const char *fileName, int freqIndex,
                                   WDL_TypedBuf<BL_FLOAT> *phases,

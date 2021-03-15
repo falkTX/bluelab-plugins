@@ -7,6 +7,8 @@
 //
 
 #include <BLUtils.h>
+#include <BLUtilsDecim.h>
+
 #include "FifoDecimator2.h"
 
 FifoDecimator2::FifoDecimator2(long maxSize,
@@ -84,8 +86,8 @@ FifoDecimator2::GetValues(WDL_TypedBuf<BL_FLOAT> *values)
     mValues.GetToBuf(0, buf.Get(), buf.GetSize());
                      
     if (mIsSamples)
-        BLUtils::DecimateSamples(values, buf/*mValues*/, mDecimFactor);
+        BLUtilsDecim::DecimateSamples(values, buf/*mValues*/, mDecimFactor);
         //BLUtils::DecimateSamplesFast(values, mValues, mDecimFactor);
     else
-        BLUtils::DecimateValues(values, buf/*mValues*/, mDecimFactor);
+        BLUtilsDecim::DecimateValues(values, buf/*mValues*/, mDecimFactor);
 }

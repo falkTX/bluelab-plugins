@@ -9,6 +9,7 @@
 #ifdef IGRAPHICS_NANOVG
 
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
 
 #include "QuadTree.h"
 
@@ -85,8 +86,8 @@ QuadTree::BuildFromBottom(BL_FLOAT bbox[2][2], int resolution[2])
 {
     QuadTree *root = NULL;
     
-    resolution[0] = BLUtils::NextPowerOfTwo(resolution[0]);
-    resolution[1] = BLUtils::NextPowerOfTwo(resolution[1]);
+    resolution[0] = BLUtilsMath::NextPowerOfTwo(resolution[0]);
+    resolution[1] = BLUtilsMath::NextPowerOfTwo(resolution[1]);
     
     int numTrees = resolution[0]*resolution[1];
     

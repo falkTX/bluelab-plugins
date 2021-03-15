@@ -7,7 +7,12 @@
 //
 
 #include <Window.h>
+
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
+#include <BLUtilsComp.h>
+#include <BLUtilsFft.h>
+
 #include <BLDebug.h>
 
 #include "FftProcessObj16.h"
@@ -1858,7 +1863,7 @@ FftProcessObj16::SamplesToMagnPhases(const WDL_TypedBuf<BL_FLOAT> &inSamples,
                                      WDL_TypedBuf<BL_FLOAT> *outFftPhases)
 {
     int numSamples = inSamples.GetSize();
-    int numPaddedSamples = BLUtils::NextPowerOfTwo(numSamples);
+    int numPaddedSamples = BLUtilsMath::NextPowerOfTwo(numSamples);
     
     WDL_TypedBuf<BL_FLOAT> paddedSamples = inSamples;
     BLUtils::ResizeFillZeros(&paddedSamples, numPaddedSamples);
@@ -1869,7 +1874,7 @@ FftProcessObj16::SamplesToMagnPhases(const WDL_TypedBuf<BL_FLOAT> &inSamples,
     
     WDL_TypedBuf<BL_FLOAT> magns;
     WDL_TypedBuf<BL_FLOAT> phases;
-    BLUtils::ComplexToMagnPhase(&magns, &phases, fftSamples);
+    BLUtilsComp::ComplexToMagnPhase(&magns, &phases, fftSamples);
     
     if (outFftMagns != NULL)
         *outFftMagns = magns;
@@ -1884,7 +1889,7 @@ FftProcessObj16::SamplesToHalfMagnPhases(const WDL_TypedBuf<BL_FLOAT> &inSamples
                                          WDL_TypedBuf<BL_FLOAT> *outFftPhases)
 {
     int numSamples = inSamples.GetSize();
-    int numPaddedSamples = BLUtils::NextPowerOfTwo(numSamples);
+    int numPaddedSamples = BLUtilsMath::NextPowerOfTwo(numSamples);
     
     WDL_TypedBuf<BL_FLOAT> paddedSamples = inSamples;
     BLUtils::ResizeFillZeros(&paddedSamples, numPaddedSamples);
@@ -1897,7 +1902,7 @@ FftProcessObj16::SamplesToHalfMagnPhases(const WDL_TypedBuf<BL_FLOAT> &inSamples
     
     WDL_TypedBuf<BL_FLOAT> magns;
     WDL_TypedBuf<BL_FLOAT> phases;
-    BLUtils::ComplexToMagnPhase(&magns, &phases, fftSamples);
+    BLUtilsComp::ComplexToMagnPhase(&magns, &phases, fftSamples);
     
     if (outFftMagns != NULL)
         *outFftMagns = magns;
@@ -1911,7 +1916,7 @@ FftProcessObj16::SamplesToHalfMagns(const WDL_TypedBuf<BL_FLOAT> &inSamples,
                                     WDL_TypedBuf<BL_FLOAT> *outFftMagns)
 {
     int numSamples = inSamples.GetSize();
-    int numPaddedSamples = BLUtils::NextPowerOfTwo(numSamples);
+    int numPaddedSamples = BLUtilsMath::NextPowerOfTwo(numSamples);
     
     WDL_TypedBuf<BL_FLOAT> paddedSamples = inSamples;
     BLUtils::ResizeFillZeros(&paddedSamples, numPaddedSamples);
@@ -1923,7 +1928,7 @@ FftProcessObj16::SamplesToHalfMagns(const WDL_TypedBuf<BL_FLOAT> &inSamples,
     BLUtils::TakeHalf(&fftSamples);
     
     WDL_TypedBuf<BL_FLOAT> magns;
-    BLUtils::ComplexToMagn(&magns, fftSamples);
+    BLUtilsComp::ComplexToMagn(&magns, fftSamples);
     
     if (outFftMagns != NULL)
         *outFftMagns = magns;
@@ -2011,7 +2016,7 @@ FftProcessObj16::HalfFftToSamples(const WDL_TypedBuf<WDL_FFT_COMPLEX> &fftBuffer
     WDL_TypedBuf<WDL_FFT_COMPLEX> BL_FLOATFftBuffer = fftBuffer;
     BL_FLOATFftBuffer.Resize(fftBuffer.GetSize()*2);
     
-    BLUtils::FillSecondFftHalf(&BL_FLOATFftBuffer);
+    BLUtilsFft::FillSecondFftHalf(&BL_FLOATFftBuffer);
     
     FftToSamples(BL_FLOATFftBuffer, outSamples);
 }
@@ -2025,7 +2030,7 @@ FftProcessObj16::MagnsToCepstrum(const WDL_TypedBuf<BL_FLOAT> &halfMagns,
     WDL_TypedBuf<BL_FLOAT> magns = halfMagns;
     magns.Resize(magns.GetSize()*2);
                  
-    BLUtils::FillSecondFftHalf(&magns);
+    BLUtilsFft::FillSecondFftHalf(&magns);
 
 #if 1
     // Compute the square
@@ -2070,7 +2075,7 @@ FftProcessObj16::MagnsToCepstrum(const WDL_TypedBuf<BL_FLOAT> &halfMagns,
     WDL_TypedBuf<BL_FLOAT> result;
     result.Resize(iFftSamples.GetSize());
                   
-    BLUtils::ComplexToMagn(&result, iFftSamples);
+    BLUtilsComp::ComplexToMagn(&result, iFftSamples);
         
     // Power Cepstrum => compute the square
     for (int i = 0; i < result.GetSize(); i++)
@@ -2158,7 +2163,7 @@ FftProcessObj16::MagnPhasesToSamples(const WDL_TypedBuf<BL_FLOAT> &fftMagns,
     outSamples->Resize(fftMagns.GetSize());
     
     WDL_TypedBuf<WDL_FFT_COMPLEX> fftBuffer;
-    BLUtils::MagnPhaseToComplex(&fftBuffer, fftMagns, fftPhases);
+    BLUtilsComp::MagnPhaseToComplex(&fftBuffer, fftMagns, fftPhases);
     
     int freqRes = 1;
     ComputeInverseFft(fftBuffer, outSamples, freqRes);
@@ -2172,10 +2177,10 @@ FftProcessObj16::HalfMagnPhasesToSamples(const WDL_TypedBuf<BL_FLOAT> &fftMagns,
     outSamples->Resize(fftMagns.GetSize()*2);
     
     WDL_TypedBuf<WDL_FFT_COMPLEX> fftBuffer;
-    BLUtils::MagnPhaseToComplex(&fftBuffer, fftMagns, fftPhases);
+    BLUtilsComp::MagnPhaseToComplex(&fftBuffer, fftMagns, fftPhases);
     
     fftBuffer.Resize(fftBuffer.GetSize()*2);
-    BLUtils::FillSecondFftHalf(&fftBuffer);
+    BLUtilsFft::FillSecondFftHalf(&fftBuffer);
     
     int freqRes = 1;
     ComputeInverseFft(fftBuffer, outSamples, freqRes);
@@ -2888,7 +2893,7 @@ FftProcessObj16::ComputeInverseFft(const WDL_TypedBuf<WDL_FFT_COMPLEX> &fftSampl
     
 	// FIX crash with StudioOne 4, Windows 7 + debug with ApplicationVerifier
 	// Because WDL fft is not designed to process zero data
-	if (BLUtils::IsAllZeroComp(fftSamples))
+	if (BLUtilsComp::IsAllZeroComp(fftSamples))
 	{
 		BLUtils::FillAllZero(samples);
 

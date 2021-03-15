@@ -15,6 +15,8 @@ using namespace std;
 #include <CMASmoother.h>
 
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
+
 #include <BLDebug.h>
 
 #include "PartialTracker.h"

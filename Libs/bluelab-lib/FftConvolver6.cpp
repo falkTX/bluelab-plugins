@@ -8,7 +8,11 @@
 
 #include "Resampler2.h"
 #include <Window.h>
+
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
+#include <BLUtilsComp.h>
+#include <BLUtilsFft.h>
 
 #include "FftConvolver6.h"
 
@@ -701,11 +705,11 @@ FftConvolver6::Process(const WDL_TypedBuf<BL_FLOAT> &inMagns,
                        WDL_TypedBuf<BL_FLOAT> *resultPhases)
 {
     WDL_TypedBuf<WDL_FFT_COMPLEX> &ioBuffer = mTmpBuf9;
-    BLUtils::MagnPhaseToComplex(&ioBuffer, inMagns, inPhases);
+    BLUtilsComp::MagnPhaseToComplex(&ioBuffer, inMagns, inPhases);
     
     ProcessFftBuffer2(&ioBuffer, mPadFftResponse);
     
-    BLUtils::ComplexToMagnPhase(resultMagns, resultPhases, ioBuffer);
+    BLUtilsComp::ComplexToMagnPhase(resultMagns, resultPhases, ioBuffer);
     
     return true;
 }
@@ -985,7 +989,7 @@ void
 FftConvolver6::ResizeImpulse(WDL_TypedBuf<BL_FLOAT> *impulseResponse)
 {
     int respSize = impulseResponse->GetSize();
-    int newSize = BLUtils::NextPowerOfTwo(respSize);
+    int newSize = BLUtilsMath::NextPowerOfTwo(respSize);
     int diff = newSize - impulseResponse->GetSize();
         
     impulseResponse->Resize(newSize);
@@ -1032,7 +1036,7 @@ FftConvolver6::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer0,
     //BLUtils::ResizeFillZeros(ioBuffer, ioBuffer->GetSize()*2);
     BLUtils::SetBuf(ioBuffer0, ioBuffer);
     
-    BLUtils::FillSecondFftHalf(ioBuffer0);
+    BLUtilsFft::FillSecondFftHalf(ioBuffer0);
 }
 
 // For using with already frequential signal
@@ -1131,7 +1135,7 @@ FftConvolver6::ComputeInverseFft(const WDL_TypedBuf<WDL_FFT_COMPLEX> *fftSamples
     // Should not do this step when not necessary (for example for transients)
     
 #if FIX_FFT_ZERO
-    if (BLUtils::IsAllZeroComp(*fftSamples))
+    if (BLUtilsComp::IsAllZeroComp(*fftSamples))
     {
         BLUtils::FillAllZero(samples);
         
@@ -1157,7 +1161,7 @@ FftConvolver6::NormalizeResponseFft(WDL_TypedBuf<WDL_FFT_COMPLEX> *fftSamples)
     
     WDL_TypedBuf<BL_FLOAT> &magns = mTmpBuf17;
     WDL_TypedBuf<BL_FLOAT> &phases = mTmpBuf18;
-    BLUtils::ComplexToMagnPhase(&magns, &phases, *fftSamples);
+    BLUtilsComp::ComplexToMagnPhase(&magns, &phases, *fftSamples);
     
     // Take sum(samples) and not sum(abs(samples)) !
     BL_FLOAT sum = BLUtils::ComputeSum(magns);
@@ -1180,6 +1184,6 @@ FftConvolver6::NormalizeResponseFft(WDL_TypedBuf<WDL_FFT_COMPLEX> *fftSamples)
     
     BLUtils::MultValues(&magns, coeff);
     
-    BLUtils::MagnPhaseToComplex(fftSamples, magns, phases);
+    BLUtilsComp::MagnPhaseToComplex(fftSamples, magns, phases);
 }
 

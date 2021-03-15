@@ -7,7 +7,9 @@
 //
 
 #include "BufProcessObj.h"
+
 #include <BLUtils.h>
+#include <BLUtilsFade.h>
 
 #include "BufProcessObjSmooth2.h"
 
@@ -277,7 +279,7 @@ BufProcessObjSmooth2::Process(BL_FLOAT *input, BL_FLOAT *output, int nFrames)
         BL_FLOAT v0 = 0.0;
         BL_FLOAT v1 = 1.0;
         
-        BLUtils::Fade(mResultBuf[0], mResultBuf[1], output, t0, t1, v0, v1);
+        BLUtilsFade::Fade(mResultBuf[0], mResultBuf[1], output, t0, t1, v0, v1);
 
         mBufComplete = -1.0;
         
@@ -321,10 +323,10 @@ BufProcessObjSmooth2::Process(BL_FLOAT *input, BL_FLOAT *output, int nFrames)
         BL_FLOAT v0 = 1.0;
         BL_FLOAT v1 = 0.0;
         
-        BLUtils::Fade(mResultBuf[1], mResultBuf[0], output, t0, t1, v0, v1);
+        BLUtilsFade::Fade(mResultBuf[1], mResultBuf[0], output, t0, t1, v0, v1);
         
 #if DEBUG_DUMP
-        BLUtils::Fade(zeros, ones, t.Get(), t0, t1, v0, v1);
+        BLUtilsFade::Fade(zeros, ones, t.Get(), t0, t1, v0, v1);
 #endif
         
         mBufComplete = -1.0;

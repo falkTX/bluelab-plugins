@@ -11,6 +11,8 @@
 #include <PartialTWMEstimate.h>
 
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
+
 #include <BLDebug.h>
 
 #include "SASFrame.h"
@@ -746,7 +748,7 @@ SASFrame::ComputeNormWarpingAux()
         idx = bl_round(idx);
         
         BL_FLOAT freq = mPartials[i].mFreq;
-        BL_FLOAT freq1 = BLUtils::FindNearestHarmonic(freq, freq0);
+        BL_FLOAT freq1 = BLUtilsMath::FindNearestHarmonic(freq, freq0);
         
         BL_FLOAT normWarp = freq/freq1;
         

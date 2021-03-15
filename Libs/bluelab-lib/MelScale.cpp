@@ -12,6 +12,8 @@
 using namespace std;
 
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
+
 #include <BLDebug.h>
 
 #include <FastMath.h>

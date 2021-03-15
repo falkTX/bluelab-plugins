@@ -1,6 +1,8 @@
 #include <BLUtils.h>
+#include <BLUtilsComp.h>
 
 #include "SpectralDiffObj.h"
+
 
 SpectralDiffObj::SpectralDiffObj(int bufferSize, int oversampling, int freqRes,
                                  BL_FLOAT sampleRate)
@@ -89,7 +91,7 @@ SpectralDiffObj::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     // Signal
     WDL_TypedBuf<BL_FLOAT> &signalMagns = mTmpBuf1;
     WDL_TypedBuf<BL_FLOAT> &signalPhases = mTmpBuf2;
-    BLUtils::ComplexToMagnPhase(&signalMagns, &signalPhases, halfBuffer);
+    BLUtilsComp::ComplexToMagnPhase(&signalMagns, &signalPhases, halfBuffer);
     
     // Side chain in input
     mOutSignal0 = signalMagns;
@@ -105,7 +107,7 @@ SpectralDiffObj::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     if (scBuffer != NULL)
     {
         // We have sidechain
-        BLUtils::ComplexToMagnPhase(&scMagns, &scPhases, halfScBuffer);
+        BLUtilsComp::ComplexToMagnPhase(&scMagns, &scPhases, halfScBuffer);
         
         mOutSignal1 = scMagns;
     }

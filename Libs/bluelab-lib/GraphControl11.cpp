@@ -18,7 +18,10 @@
 #include "SpectrogramDisplay.h"
 #include "SpectrogramDisplayScroll.h"
 #include "SpectrogramDisplayScroll2.h"
+
 #include <BLUtils.h>
+#include <BLUtilsDecim.h>
+#include <BLUtilsPlug.h>
 
 #include <ImageDisplay.h>
 #include <UpTime.h>
@@ -2207,9 +2210,9 @@ GraphControl11::SetCurveValuesDecimate2(int curveNum,
     
     WDL_TypedBuf<BL_GUI_FLOAT> decimValues;
     if (isWaveSignal)
-        BLUtils::DecimateSamples(&decimValues, *values, decFactor);
+        BLUtilsDecim::DecimateSamples(&decimValues, *values, decFactor);
     else
-        BLUtils::DecimateValues(&decimValues, *values, decFactor);
+        BLUtilsDecim::DecimateValues(&decimValues, *values, decFactor);
     
     for (int i = 0; i < decimValues.GetSize(); i++)
     {
@@ -2247,9 +2250,9 @@ GraphControl11::SetCurveValuesDecimate3(int curveNum,
     
     WDL_TypedBuf<BL_GUI_FLOAT> decimValues;
     if (isWaveSignal)
-        BLUtils::DecimateSamples2(&decimValues, *values, decFactor);
+        BLUtilsDecim::DecimateSamples2(&decimValues, *values, decFactor);
     else
-        BLUtils::DecimateValues(&decimValues, *values, decFactor);
+        BLUtilsDecim::DecimateValues(&decimValues, *values, decFactor);
     
     for (int i = 0; i < decimValues.GetSize(); i++)
     {
@@ -2272,7 +2275,7 @@ GraphControl11::SetCurveValuesXDbDecimate(int curveNum,
 {
     WDL_MutexLock lock(&mMutex);
     
-    int bufferSize = BLUtils::PlugComputeBufferSize(nativeBufferSize, sampleRate);
+    int bufferSize = BLUtilsPlug::PlugComputeBufferSize(nativeBufferSize, sampleRate);
     BL_GUI_FLOAT hzPerBin = sampleRate/bufferSize;
     
     BL_GUI_FLOAT minHzValue;
@@ -2285,7 +2288,7 @@ GraphControl11::SetCurveValuesXDbDecimate(int curveNum,
                          minHzValue, maxHzValue);
     
     WDL_TypedBuf<BL_GUI_FLOAT> decimSignal;
-    BLUtils::DecimateValues(&decimSignal, logSignal, decimFactor);
+    BLUtilsDecim::DecimateValues(&decimSignal, logSignal, decimFactor);
     
     for (int i = 0; i < decimSignal.GetSize(); i++)
     {
@@ -2303,7 +2306,7 @@ GraphControl11::SetCurveValuesXDbDecimateDb(int curveNum,
 {
     WDL_MutexLock lock(&mMutex);
     
-    int bufferSize = BLUtils::PlugComputeBufferSize(nativeBufferSize, sampleRate);
+    int bufferSize = BLUtilsPlug::PlugComputeBufferSize(nativeBufferSize, sampleRate);
     BL_GUI_FLOAT hzPerBin = sampleRate/bufferSize;
     
     BL_GUI_FLOAT minHzValue;
@@ -2316,7 +2319,7 @@ GraphControl11::SetCurveValuesXDbDecimateDb(int curveNum,
                          minHzValue, maxHzValue);
     
     WDL_TypedBuf<BL_GUI_FLOAT> decimSignal;
-    BLUtils::DecimateValuesDb(&decimSignal, logSignal, decimFactor, minValueDb);
+    BLUtilsDecim::DecimateValuesDb(&decimSignal, logSignal, decimFactor, minValueDb);
     
     for (int i = 0; i < decimSignal.GetSize(); i++)
     {

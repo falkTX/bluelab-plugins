@@ -10,6 +10,10 @@
 using namespace std;
 
 #include <BLUtils.h>
+#include <BLUtilsPlug.h>
+#include <BLUtilsComp.h>
+#include <BLUtilsMath.h>
+
 #include <PPMFile.h>
 
 #include <BLDebug.h>
@@ -102,7 +106,7 @@ RebalanceMaskPredictorComp5::RebalanceMaskPredictorComp5(int bufferSize,
     //const char *resourcePath = graphics->GetSharedResourcesSubPath();
     
     WDL_String resPath;
-    BLUtils::GetFullPlugResourcesPath(plug, &resPath);
+    BLUtilsPlug::GetFullPlugResourcesPath(plug, &resPath);
     
     const char *resourcePath = resPath.Get();
     
@@ -293,7 +297,7 @@ RebalanceMaskPredictorComp5::ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX
     
     WDL_TypedBuf<BL_FLOAT> magns;
     WDL_TypedBuf<BL_FLOAT> phases;
-    BLUtils::ComplexToMagnPhase(&magns, &phases, fftSamples);
+    BLUtilsComp::ComplexToMagnPhase(&magns, &phases, fftSamples);
     
     //
     

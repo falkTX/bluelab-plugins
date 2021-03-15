@@ -9,6 +9,8 @@
 #ifdef IGRAPHICS_NANOVG
 
 #include <BLUtils.h>
+#include <BLUtilsComp.h>
+
 #include <DebugGraph.h>
 
 #include <WavesRender.h>
@@ -65,7 +67,7 @@ WavesProcess::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     BLUtils::TakeHalf(*ioBuffer, &fftSamples);
     
     WDL_TypedBuf<BL_FLOAT> &magns = mTmpBuf1;
-    BLUtils::ComplexToMagn(&magns, fftSamples);
+    BLUtilsComp::ComplexToMagn(&magns, fftSamples);
     
     if (mWavesRender != NULL)
     {

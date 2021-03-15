@@ -1,5 +1,9 @@
 #include <FftProcessBufObj.h>
+
 #include <BLUtils.h>
+#include <BLUtilsComp.h>
+#include <BLUtilsMath.h>
+
 #include <BLTypes.h>
 
 #include "EQHackFftObj2.h"

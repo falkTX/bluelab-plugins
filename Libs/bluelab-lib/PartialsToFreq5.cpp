@@ -10,7 +10,9 @@
 using namespace std;
 
 #include <PartialTWMEstimate3.h>
+
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
 
 #include "PartialsToFreq5.h"
 
@@ -113,8 +115,9 @@ PartialsToFreq5::AdjustFreqToPartial(BL_FLOAT freq,
 }
 
 BL_FLOAT
-PartialsToFreq5::AdjustFreqToPartialOctave(BL_FLOAT freq,
-                                           const vector<PartialTracker5::Partial> &partials)
+PartialsToFreq5::
+AdjustFreqToPartialOctave(BL_FLOAT freq,
+                          const vector<PartialTracker5::Partial> &partials)
 {    
     BL_FLOAT octaveCoeff = 1.0;
     

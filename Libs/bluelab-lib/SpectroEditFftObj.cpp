@@ -7,6 +7,8 @@
 //
 
 #include <BLUtils.h>
+#include <BLUtilsComp.h>
+#include <BLUtilsFft.h>
 
 #include "SpectroEditFftObj.h"
 
@@ -39,7 +41,7 @@ SpectroEditFftObj::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     
     WDL_TypedBuf<BL_FLOAT> magns;
     WDL_TypedBuf<BL_FLOAT> phases;
-    BLUtils::ComplexToMagnPhase(&magns, &phases, *ioBuffer);
+    BLUtilsComp::ComplexToMagnPhase(&magns, &phases, *ioBuffer);
  
     if (mMode == BYPASS)
     {
@@ -78,10 +80,10 @@ SpectroEditFftObj::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     if (mMode == PLAY)
         mLineCount++;
     
-    BLUtils::MagnPhaseToComplex(ioBuffer, magns, phases);
+    BLUtilsComp::MagnPhaseToComplex(ioBuffer, magns, phases);
     
     BLUtils::ResizeFillZeros(ioBuffer, ioBuffer->GetSize()*2);
-    BLUtils::FillSecondFftHalf(ioBuffer);
+    BLUtilsFft::FillSecondFftHalf(ioBuffer);
 }
 
 void

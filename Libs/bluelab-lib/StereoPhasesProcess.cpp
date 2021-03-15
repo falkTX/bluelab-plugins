@@ -6,7 +6,10 @@
 //
 //
 
-#include "BLUtils.h"
+#include <BLUtils.h>
+#include <BLUtilsComp.h>
+#include <BLUtilsFft.h>
+
 #include "StereoPhasesProcess.h"
 
 StereoPhasesProcess::StereoPhasesProcess(int bufferSize)
@@ -55,8 +58,8 @@ StereoPhasesProcess::ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *i
     WDL_TypedBuf<BL_FLOAT> magns[2];
     WDL_TypedBuf<BL_FLOAT> phases[2];
     
-    BLUtils::ComplexToMagnPhase(&magns[0], &phases[0], fftSamples[0]);
-    BLUtils::ComplexToMagnPhase(&magns[1], &phases[1], fftSamples[1]);
+    BLUtilsComp::ComplexToMagnPhase(&magns[0], &phases[0], fftSamples[0]);
+    BLUtilsComp::ComplexToMagnPhase(&magns[1], &phases[1], fftSamples[1]);
     
     mPhasesDiff.Capture(magns[0], phases[0], magns[1], phases[1]);
     
@@ -86,19 +89,19 @@ StereoPhasesProcess::ProcessResultFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *
     WDL_TypedBuf<BL_FLOAT> magns[2];
     WDL_TypedBuf<BL_FLOAT> phases[2];
     
-    BLUtils::ComplexToMagnPhase(&magns[0], &phases[0], *fftSamples[0]);
-    BLUtils::ComplexToMagnPhase(&magns[1], &phases[1], *fftSamples[1]);
+    BLUtilsComp::ComplexToMagnPhase(&magns[0], &phases[0], *fftSamples[0]);
+    BLUtilsComp::ComplexToMagnPhase(&magns[1], &phases[1], *fftSamples[1]);
     
     // Process
     mPhasesDiff.ApplyPhasesDiff(&phases[0], &phases[1]);
     
-    BLUtils::MagnPhaseToComplex(fftSamples[0], magns[0], phases[0]);
-    BLUtils::MagnPhaseToComplex(fftSamples[1], magns[1], phases[1]);
+    BLUtilsComp::MagnPhaseToComplex(fftSamples[0], magns[0], phases[0]);
+    BLUtilsComp::MagnPhaseToComplex(fftSamples[1], magns[1], phases[1]);
     
     // Fill second half
     fftSamples[0]->Resize(fftSamples[0]->GetSize()*2);
-    BLUtils::FillSecondFftHalf(fftSamples[0]);
+    BLUtilsFft::FillSecondFftHalf(fftSamples[0]);
     
     fftSamples[1]->Resize(fftSamples[1]->GetSize()*2);
-    BLUtils::FillSecondFftHalf(fftSamples[1]);
+    BLUtilsFft::FillSecondFftHalf(fftSamples[1]);
 }

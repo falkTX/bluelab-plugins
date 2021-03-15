@@ -6,7 +6,9 @@
 //
 //
 
-#include "BLUtils.h"
+#include <BLUtils.h>
+#include <BLUtilsComp.h>
+#include <BLUtilsFft.h>
 
 #include "PitchShiftFftObj3.h"
 
@@ -83,7 +85,7 @@ PitchShiftFftObj3::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer0,
     
     WDL_TypedBuf<BL_FLOAT> &magns = mTmpBuf0;
     WDL_TypedBuf<BL_FLOAT> &phases = mTmpBuf1;
-    BLUtils::ComplexToMagnPhase(&magns, &phases, ioBuffer);
+    BLUtilsComp::ComplexToMagnPhase(&magns, &phases, ioBuffer);
     
 #if KEEP_BOUND_VALUES
     // Problem with first magn and first phase
@@ -117,12 +119,12 @@ PitchShiftFftObj3::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer0,
     
     //NormalizeFftValues(&magns);
     
-    BLUtils::MagnPhaseToComplex(&ioBuffer, magns, phases);
+    BLUtilsComp::MagnPhaseToComplex(&ioBuffer, magns, phases);
     
     //BLUtils::ResizeFillZeros(ioBuffer, ioBuffer->GetSize()*2);
     BLUtils::SetBuf(ioBuffer0, ioBuffer);
     
-    BLUtils::FillSecondFftHalf(ioBuffer0);
+    BLUtilsFft::FillSecondFftHalf(ioBuffer0);
 }
 
 void

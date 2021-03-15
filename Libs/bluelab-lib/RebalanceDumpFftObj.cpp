@@ -7,6 +7,7 @@
 //
 
 #include <BLUtils.h>
+#include <BLUtilsComp.h>
 
 #include "RebalanceDumpFftObj.h"
 
@@ -70,7 +71,7 @@ RebalanceDumpFftObj::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     BLUtils::TakeHalf(&mixBuffer);
     
     WDL_TypedBuf<double> magnsMix;
-    BLUtils::ComplexToMagn(&magnsMix, mixBuffer);
+    BLUtilsComp::ComplexToMagn(&magnsMix, mixBuffer);
     
     mMixCols.push_back(magnsMix);
     //if (mMixCols.size() > NUM_INPUT_COLS)
@@ -81,7 +82,7 @@ RebalanceDumpFftObj::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     BLUtils::TakeHalf(&sourceBuffer);
     
     WDL_TypedBuf<double> magnsSource;
-    BLUtils::ComplexToMagn(&magnsSource, sourceBuffer);
+    BLUtilsComp::ComplexToMagn(&magnsSource, sourceBuffer);
     
     mSourceCols.push_back(magnsSource);
     //if (mSourceCols.size() > NUM_INPUT_COLS)

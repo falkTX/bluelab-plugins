@@ -7,6 +7,7 @@
 //
 
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
 
 #include "RebalanceMaskStack.h"
 
@@ -125,7 +126,7 @@ RebalanceMaskStack::GetMaskVariance(deque<WDL_TypedBuf<BL_FLOAT> > *mask)
                     col.push_back(val);
             }
             
-            BL_FLOAT var = BLUtils::ComputeVariance(col);
+            BL_FLOAT var = BLUtilsMath::ComputeVariance(col);
             
             var *= col.size();
             

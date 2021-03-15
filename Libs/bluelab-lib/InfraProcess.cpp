@@ -12,6 +12,8 @@ using namespace std;
 #include <IPlugUtilities.h>
 
 #include <BLUtils.h>
+#include <BLUtilsComp.h>
+
 #include <DebugGraph.h>
 
 #include <PartialTracker3.h>
@@ -196,7 +198,7 @@ InfraProcess::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
 #if !SKIP_FFT_PHASES
     BLUtils::ComplexToMagnPhase(&magns, &phases, fftSamples);
 #else
-    BLUtils::ComplexToMagn(&magns, fftSamples);
+    BLUtilsComp::ComplexToMagn(&magns, fftSamples);
     phases.Resize(magns.GetSize());
     BLUtils::FillAllZero(&phases);
 #endif

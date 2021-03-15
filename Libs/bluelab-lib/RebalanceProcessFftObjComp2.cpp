@@ -12,6 +12,9 @@
 #include <DbgSpectrogram.h>
 
 #include <BLUtils.h>
+#include <BLUtilsFft.h>
+#include <BLUtilsComp.h>
+
 #include <SoftMaskingNComp.h>
 
 #include "RebalanceProcessFftObjComp2.h"
@@ -202,7 +205,7 @@ RebalanceProcessFftObjComp2::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioB
     
     fftSamples.Resize(fftSamples.GetSize()*2);
     
-    BLUtils::FillSecondFftHalf(&fftSamples);
+    BLUtilsFft::FillSecondFftHalf(&fftSamples);
     
     // Result
     *ioBuffer = fftSamples;

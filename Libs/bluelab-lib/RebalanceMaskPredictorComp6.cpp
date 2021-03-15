@@ -10,6 +10,10 @@
 using namespace std;
 
 #include <BLUtils.h>
+#include <BLUtilsPlug.h>
+#include <BLUtilsComp.h>
+#include <BLUtilsMath.h>
+
 #include <BLDebug.h>
 
 // Darknet
@@ -72,7 +76,7 @@ RebalanceMaskPredictorComp6::RebalanceMaskPredictorComp6(int bufferSize,
     
 #ifndef WIN32
     WDL_String resPath;
-    BLUtils::GetFullPlugResourcesPath(plug, &resPath);
+    BLUtilsPlug::GetFullPlugResourcesPath(plug, &resPath);
     
     const char *resourcePath = resPath.Get();
     
@@ -158,7 +162,7 @@ RebalanceMaskPredictorComp6::ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX
     
     WDL_TypedBuf<BL_FLOAT> magns;
     WDL_TypedBuf<BL_FLOAT> phases;
-    BLUtils::ComplexToMagnPhase(&magns, &phases, fftSamples);
+    BLUtilsComp::ComplexToMagnPhase(&magns, &phases, fftSamples);
     
     //
     DownsampleHzToMel(&magns);

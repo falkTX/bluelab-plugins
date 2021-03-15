@@ -7,7 +7,9 @@
 //
 
 #include <DelayObj4.h>
+
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
 
 #include "EarlyReflections2.h"
 
@@ -355,7 +357,7 @@ EarlyReflections2::GenerateRays(vector<Ray> *newRays,
             seg1[1][0] = sourceImg[0];
             seg1[1][1] = sourceImg[1];
             
-            bool intersect = BLUtils::SegSegIntersect(seg0, seg1);
+            bool intersect = BLUtilsMath::SegSegIntersect(seg0, seg1);
             if (!intersect)
                 continue;
             

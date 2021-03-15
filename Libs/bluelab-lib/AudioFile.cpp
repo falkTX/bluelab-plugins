@@ -8,8 +8,10 @@
 
 #include <BLTypes.h>
 
-#include "Resampler2.h"
 #include <BLUtils.h>
+#include <BLUtilsFile.h>
+
+#include "Resampler2.h"
 #include "AudioFile.h"
 
 #define	BLOCK_SIZE 4096
@@ -125,7 +127,7 @@ AudioFile::Save(const char *fileName)
 	sfinfo.frames = (mData->size() > 0) ? (*mData)[0].GetSize() : 0;
 	sfinfo.channels	= mNumChannels;
     
-    char *ext = BLUtils::GetFileExtension(fileName);
+    char *ext = BLUtilsFile::GetFileExtension(fileName);
     if (ext == NULL)
         ext = "wav";
     

@@ -10,6 +10,11 @@
 #include <ParamSmoother.h>
 
 #include <BLUtils.h>
+#include <BLUtilsPlug.h>
+#include <BLUtilsComp.h>
+#include <BLUtilsFft.h>
+#include <BLUtilsMath.h>
+
 #include <BLDebug.h>
 
 #include "AutoGainObj.h"
@@ -308,7 +313,7 @@ AutoGainObj::ProcessInputSamplesWin(vector<WDL_TypedBuf<BL_FLOAT> * > *ioSamples
     // we will receive zeros by the side chain
     
     // FIX: type mistake fixed for FL Studio graphic freeze
-    bool scAllZero = ((scBuffer == NULL) || BLUtils::ChannelAllZero(*scBuffer));
+    bool scAllZero = ((scBuffer == NULL) || BLUtilsPlug::ChannelAllZero(*scBuffer));
     
     if ((scBuffer == NULL) || scBuffer->empty() || scAllZero)
     {
@@ -351,7 +356,7 @@ AutoGainObj::ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamp
         
         WDL_TypedBuf<BL_FLOAT> &magns = mTmpBuf29;
         WDL_TypedBuf<BL_FLOAT> &phases = mTmpBuf30;
-        BLUtils::ComplexToMagnPhase(&magns, &phases, ioFftSamples[i]);
+        BLUtilsComp::ComplexToMagnPhase(&magns, &phases, ioFftSamples[i]);
         
         //in.push_back(magns);
         //inPhases.push_back(phases);
@@ -375,7 +380,7 @@ AutoGainObj::ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamp
             
             WDL_TypedBuf<BL_FLOAT> &magns = mTmpBuf4;
             WDL_TypedBuf<BL_FLOAT> &phases = mTmpBuf5;
-            BLUtils::ComplexToMagnPhase(&magns, &phases, scBufferCopy[i]);
+            BLUtilsComp::ComplexToMagnPhase(&magns, &phases, scBufferCopy[i]);
             
             //scIn.push_back(magns);
             scIn[i] = magns;
@@ -430,7 +435,7 @@ AutoGainObj::ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamp
     // Result
     for (int i = 0; i < ioFftSamples0->size(); i++)
     {
-        BLUtils::MagnPhaseToComplex(&ioFftSamples[i], out[i], outPhases[i]);
+        BLUtilsComp::MagnPhaseToComplex(&ioFftSamples[i], out[i], outPhases[i]);
 
         // NOTE: not optimal for memory
         //BLUtils::ResizeFillZeros((*ioFftSamples)[i], (*ioFftSamples)[i]->GetSize()*2);
@@ -440,7 +445,7 @@ AutoGainObj::ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamp
         //       ioFftSamples[i].GetSize()*sizeof(WDL_FFT_COMPLEX));
         BLUtils::SetBuf((*ioFftSamples0)[i], ioFftSamples[i]);
         
-        BLUtils::FillSecondFftHalf((*ioFftSamples0)[i]);
+        BLUtilsFft::FillSecondFftHalf((*ioFftSamples0)[i]);
     }
 }
 

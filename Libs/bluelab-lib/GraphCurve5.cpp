@@ -9,7 +9,11 @@
 #ifdef IGRAPHICS_NANOVG
 
 #include <GraphControl12.h>
+
 #include <BLUtils.h>
+#include <BLUtilsDecim.h>
+#include <BLUtilsPlug.h>
+#include <BLUtilsMath.h>
 
 #include "GraphCurve5.h"
 
@@ -950,9 +954,9 @@ GraphCurve5::SetValuesDecimate2(const WDL_TypedBuf<BL_GUI_FLOAT> *values,
     // Decimate
     WDL_TypedBuf<BL_GUI_FLOAT> &decimValues = mTmpBuf3;
     if (isWaveSignal)
-        BLUtils::DecimateSamples(&decimValues, *values, decFactor);
+        BLUtilsDecim::DecimateSamples(&decimValues, *values, decFactor);
     else
-        BLUtils::DecimateValues(&decimValues, *values, decFactor);
+        BLUtilsDecim::DecimateValues(&decimValues, *values, decFactor);
     
     for (int i = 0; i < decimValues.GetSize(); i++)
     {
@@ -979,9 +983,9 @@ GraphCurve5::SetValuesDecimate3(const WDL_TypedBuf<BL_GUI_FLOAT> *values,
     // Decimate
     WDL_TypedBuf<BL_GUI_FLOAT> &decimValues = mTmpBuf4;
     if (isWaveSignal)
-        BLUtils::DecimateSamples2(&decimValues, *values, decFactor);
+        BLUtilsDecim::DecimateSamples2(&decimValues, *values, decFactor);
     else
-        BLUtils::DecimateValues(&decimValues, *values, decFactor);
+        BLUtilsDecim::DecimateValues(&decimValues, *values, decFactor);
     
     for (int i = 0; i < decimValues.GetSize(); i++)
     {
@@ -1000,7 +1004,7 @@ GraphCurve5::SetValuesXDbDecimate(const WDL_TypedBuf<BL_GUI_FLOAT> *values,
                                   int nativeBufferSize, BL_GUI_FLOAT sampleRate,
                                   BL_GUI_FLOAT decimFactor)
 {
-    int bufferSize = BLUtils::PlugComputeBufferSize(nativeBufferSize, sampleRate);
+    int bufferSize = BLUtilsPlug::PlugComputeBufferSize(nativeBufferSize, sampleRate);
     BL_GUI_FLOAT hzPerBin = sampleRate/bufferSize;
     
     BL_GUI_FLOAT minHzValue;
@@ -1013,7 +1017,7 @@ GraphCurve5::SetValuesXDbDecimate(const WDL_TypedBuf<BL_GUI_FLOAT> *values,
                            minHzValue, maxHzValue);
     
     WDL_TypedBuf<BL_GUI_FLOAT> &decimSignal = mTmpBuf6;
-    BLUtils::DecimateValues(&decimSignal, logSignal, decimFactor);
+    BLUtilsDecim::DecimateValues(&decimSignal, logSignal, decimFactor);
     
     for (int i = 0; i < decimSignal.GetSize(); i++)
     {
@@ -1030,7 +1034,7 @@ GraphCurve5::SetValuesXDbDecimateDb(const WDL_TypedBuf<BL_GUI_FLOAT> *values,
                                     int nativeBufferSize, BL_GUI_FLOAT sampleRate,
                                     BL_GUI_FLOAT decimFactor, BL_GUI_FLOAT minValueDb)
 {
-    int bufferSize = BLUtils::PlugComputeBufferSize(nativeBufferSize, sampleRate);
+    int bufferSize = BLUtilsPlug::PlugComputeBufferSize(nativeBufferSize, sampleRate);
     BL_GUI_FLOAT hzPerBin = sampleRate/bufferSize;
     
     BL_GUI_FLOAT minHzValue;
@@ -1043,7 +1047,7 @@ GraphCurve5::SetValuesXDbDecimateDb(const WDL_TypedBuf<BL_GUI_FLOAT> *values,
                            minHzValue, maxHzValue);
     
     WDL_TypedBuf<BL_GUI_FLOAT> &decimSignal = mTmpBuf8;
-    BLUtils::DecimateValuesDb(&decimSignal, logSignal, decimFactor, minValueDb);
+    BLUtilsDecim::DecimateValuesDb(&decimSignal, logSignal, decimFactor, minValueDb);
     
     for (int i = 0; i < decimSignal.GetSize(); i++)
     {

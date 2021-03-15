@@ -4,6 +4,8 @@
 #include <SamplesPyramid3.h>
 
 #include <BLUtils.h>
+#include <BLUtilsFade.h>
+
 #include <BLDebug.h>
 
 #include <TestSigmoid.h>
@@ -333,9 +335,9 @@ SamplesToMagnPhases::WriteSpectroDataSlice(vector<WDL_TypedBuf<BL_FLOAT> > magns
             if ((leftFadeMin >= 0) &&
                 (leftFadeMax < (*mSamples)[i].GetSize()))
             {
-                BLUtils::Fade2Left(dst, src, bufSize,
-                                   fadeStartPos, fadeEndPos, 1.0, 0.0,
-                                   SIGMO_A);
+                BLUtilsFade::Fade2Left(dst, src, bufSize,
+                                       fadeStartPos, fadeEndPos, 1.0, 0.0,
+                                       SIGMO_A);
             }
 
             // Right fade
@@ -344,9 +346,9 @@ SamplesToMagnPhases::WriteSpectroDataSlice(vector<WDL_TypedBuf<BL_FLOAT> > magns
             if ((rightFadeMin >= 0) &&
                 (rightFadeMax < (*mSamples)[i].GetSize()))
             {
-                BLUtils::Fade2Right(dst, src, bufSize,
-                                    fadeStartPos, fadeEndPos, 1.0, 0.0,
-                                    SIGMO_A);
+                BLUtilsFade::Fade2Right(dst, src, bufSize,
+                                        fadeStartPos, fadeEndPos, 1.0, 0.0,
+                                        SIGMO_A);
             }
             
         }

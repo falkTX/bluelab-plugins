@@ -13,6 +13,10 @@
 //#include "../../WDL/IPlug/Containers.h"
 
 #include <BLUtils.h>
+#include <BLUtilsComp.h>
+#include <BLUtilsFft.h>
+#include <BLUtilsMath.h>
+
 #include <CMA2Smoother.h>
 #include <Window.h>
 
@@ -122,7 +126,7 @@ TransientLib5::DetectTransients(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioFftBuf,
         BL_FLOAT magn;
         BL_FLOAT phase;
         WDL_FFT_COMPLEX comp = ioFftBuf->Get()[i];
-        BLUtils::ComplexToMagnPhase(comp, &magn, &phase);
+        BLUtilsComp::ComplexToMagnPhase(comp, &magn, &phase);
     
         // NOTE: maybe mistake in the direction of the mix parameter
         BL_FLOAT newMagn = mix*strippedMagns.Get()[i] + (1.0 - mix)*transientMagns.Get()[i];
@@ -131,7 +135,7 @@ TransientLib5::DetectTransients(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioFftBuf,
 #define CORRECTION_COEFF0 2.0
         newMagn *= CORRECTION_COEFF0;
         
-        BLUtils::MagnPhaseToComplex(&comp, newMagn, phase);
+        BLUtilsComp::MagnPhaseToComplex(&comp, newMagn, phase);
         
         ioFftBuf->Get()[i] = comp;
     }
@@ -188,7 +192,7 @@ TransientLib5::DetectTransientsSmooth(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioFftBuf,
         
         BL_FLOAT magn;
         BL_FLOAT phase;
-        BLUtils::ComplexToMagnPhase(c, &magn, &phase);
+        BLUtilsComp::ComplexToMagnPhase(c, &magn, &phase);
         
         magns.Get()[i] = magn;
         
@@ -306,11 +310,11 @@ TransientLib5::DetectTransientsSmooth(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioFftBuf,
         BL_FLOAT magn;
         BL_FLOAT phase;
         WDL_FFT_COMPLEX comp = ioFftBuf->Get()[i];
-        BLUtils::ComplexToMagnPhase(comp, &magn, &phase);
+        BLUtilsComp::ComplexToMagnPhase(comp, &magn, &phase);
         
         BL_FLOAT newMagn = newMagns.Get()[i];
         
-        BLUtils::MagnPhaseToComplex(&comp, newMagn, phase);
+        BLUtilsComp::MagnPhaseToComplex(&comp, newMagn, phase);
         
         ioFftBuf->Get()[i] = comp;
     }
@@ -390,7 +394,7 @@ TransientLib5::DetectTransientsSmooth2(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioFftBuf,
         
         BL_FLOAT magn;
         BL_FLOAT phase;
-        BLUtils::ComplexToMagnPhase(c, &magn, &phase);
+        BLUtilsComp::ComplexToMagnPhase(c, &magn, &phase);
         
         magns.Get()[i] = magn;
         
@@ -531,11 +535,11 @@ TransientLib5::DetectTransientsSmooth2(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioFftBuf,
         BL_FLOAT magn;
         BL_FLOAT phase;
         WDL_FFT_COMPLEX comp = ioFftBuf->Get()[i];
-        BLUtils::ComplexToMagnPhase(comp, &magn, &phase);
+        BLUtilsComp::ComplexToMagnPhase(comp, &magn, &phase);
         
         BL_FLOAT newMagn = newMagns.Get()[i];
         
-        BLUtils::MagnPhaseToComplex(&comp, newMagn, phase);
+        BLUtilsComp::MagnPhaseToComplex(&comp, newMagn, phase);
         
         ioFftBuf->Get()[i] = comp;
     }
@@ -598,7 +602,7 @@ TransientLib5::ComputeTransientness(const WDL_TypedBuf<BL_FLOAT> &magns,
     BLUtils::FillAllZero(transientness);
     
     WDL_TypedBuf<int> &sampleIds = mTmpBuf12;
-    BLUtils::FftIdsToSamplesIds(phases, &sampleIds);
+    BLUtilsFft::FftIdsToSamplesIds(phases, &sampleIds);
     
     for (int i = 0; i < sampleIds.GetSize(); i++)
     {
@@ -692,7 +696,7 @@ TransientLib5::ComputeTransientness2(const WDL_TypedBuf<BL_FLOAT> &magns,
     BLUtils::FillAllZero(transientness);
     
     WDL_TypedBuf<int> &sampleIds = mTmpBuf13;
-    BLUtils::FftIdsToSamplesIds(phases, &sampleIds);
+    BLUtilsFft::FftIdsToSamplesIds(phases, &sampleIds);
     
     for (int i = 0; i < sampleIds.GetSize(); i++)
     {
@@ -788,7 +792,7 @@ TransientLib5::ComputeTransientness3(const WDL_TypedBuf<BL_FLOAT> &magns,
     BLUtils::FillAllZero(&transientnessP);
     
     WDL_TypedBuf<int> &sampleIds = mTmpBuf16;
-    BLUtils::FftIdsToSamplesIds(phases, &sampleIds);
+    BLUtilsFft::FftIdsToSamplesIds(phases, &sampleIds);
     
     for (int i = 0; i < sampleIds.GetSize(); i++)
     {
@@ -910,7 +914,7 @@ TransientLib5::ComputeTransientness4(const WDL_TypedBuf<BL_FLOAT> &magns,
     BLUtils::FillAllZero(&transientnessP);
     
     WDL_TypedBuf<int> &sampleIds = mTmpBuf19;
-    BLUtils::FftIdsToSamplesIds(phases, &sampleIds);
+    BLUtilsFft::FftIdsToSamplesIds(phases, &sampleIds);
         
     for (int i = 0; i < sampleIds.GetSize(); i++)
     {
@@ -1046,7 +1050,7 @@ TransientLib5::ComputeTransientness5(const WDL_TypedBuf<BL_FLOAT> &magns,
     BLUtils::FillAllZero(&transientnessP);
     
     WDL_TypedBuf<int> &sampleIds = mTmpBuf22;
-    BLUtils::FftIdsToSamplesIds(phases, &sampleIds);
+    BLUtilsFft::FftIdsToSamplesIds(phases, &sampleIds);
     
 #if USE_SAMPLE_RATE_COEFF
     // With 88200Hz by default, transient data looks wrong
@@ -1266,7 +1270,7 @@ TransientLib5::ComputeTransientness6(const WDL_TypedBuf<BL_FLOAT> &magns,
     BLUtils::FillAllZero(&transientnessP);
     
     WDL_TypedBuf<int> &sampleIds = mTmpBuf25;
-    BLUtils::FftIdsToSamplesIds(phases, &sampleIds);
+    BLUtilsFft::FftIdsToSamplesIds(phases, &sampleIds);
     
     for (int i = 0; i < sampleIds.GetSize(); i++)
     {
@@ -1461,7 +1465,7 @@ TransientLib5::ComputeTransientnessMix(WDL_TypedBuf<BL_FLOAT> *magns,
     BLUtils::FillAllZero(transientness);
     
     WDL_TypedBuf<int> &sampleIds = mTmpBuf40;
-    BLUtils::FftIdsToSamplesIds(phases, &sampleIds);
+    BLUtilsFft::FftIdsToSamplesIds(phases, &sampleIds);
     
     // Map, to find the magn positions who have participated to
     // a given transient value
@@ -1681,7 +1685,7 @@ TransientLib5::ComputeTransientnessMix2(WDL_TypedBuf<BL_FLOAT> *magns,
     BLUtils::FillAllZero(transientness);
     
     WDL_TypedBuf<int> &sampleIds = mTmpBuf31;
-    BLUtils::FftIdsToSamplesIds(phases, &sampleIds);
+    BLUtilsFft::FftIdsToSamplesIds(phases, &sampleIds);
     
     // Map, to find the magn positions who have participated to
     // a given transient value

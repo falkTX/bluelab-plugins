@@ -69,6 +69,24 @@ set(_bluelab-lib_src
   BLUpmixGraphDrawer.h
   BLUtils.cpp
   BLUtils.h
+  BLUtilsComp.cpp
+  BLUtilsComp.h
+  BLUtilsDecim.cpp
+  BLUtilsDecim.h
+  BLUtilsEnvelope.cpp
+  BLUtilsEnvelope.h
+  BLUtilsFade.cpp
+  BLUtilsFade.h
+  BLUtilsFft.cpp
+  BLUtilsFft.h
+  BLUtilsFile.cpp
+  BLUtilsFile.h
+  BLUtilsMath.cpp
+  BLUtilsMath.h
+  BLUtilsPhases.cpp
+  BLUtilsPhases.h
+  BLUtilsPlug.cpp
+  BLUtilsPlug.h
   BLVectorscope.cpp
   BLVectorscope.h
   BLVectorscopeProcess.cpp

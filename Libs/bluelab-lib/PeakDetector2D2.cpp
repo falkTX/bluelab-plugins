@@ -17,7 +17,7 @@ using namespace std;
 
 #include "PeakDetector2D2.h"
 
-#define TWO_PI 6.28318530717959
+//#define TWO_PI 6.28318530717959
 
 #define INF 1e15
 #define EPS 1e-15

@@ -7,6 +7,7 @@
 //
 
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
 
 #include "FastRTConvolver3.h"
 
@@ -352,7 +353,7 @@ FastRTConvolver3::ComputeBufferSize(int blockSize)
 {
     // Update buffer size
     int bufferSize = blockSize;
-    bufferSize = BLUtils::NextPowerOfTwo(bufferSize);
+    bufferSize = BLUtilsMath::NextPowerOfTwo(bufferSize);
     if (bufferSize > blockSize)
         bufferSize *= 0.5;
     

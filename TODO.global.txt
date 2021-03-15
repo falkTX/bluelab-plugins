@@ -372,3 +372,6 @@ Mickael: phase calculator plug
 https://github.com/tne-lab/phase-calculator/tree/e7569499c49ba7dff7db2a7d93a1b898a1551a6d?fbclid=IwAR3LUaqiRAG1pgwhrFdunWSj3lblekrC6BIKmjGRS2QW7Qy8NSGuLJH8fY4
 LPC (linear predictive coding):
 http://support.ircam.fr/docs/AudioSculpt/3.0/co/LPC.html
+
+TODO: for BLSpectrogram4, use the "closest" phase unwrapping (used in Ghost inpaint)
+for PArtialTracker5 too

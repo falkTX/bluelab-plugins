@@ -19,6 +19,7 @@
 #include <GraphTimeAxis4.h>
 
 #include <BLUtils.h>
+#include <BLUtilsDecim.h>
 
 #include "MultiViewer.h"
 
@@ -134,7 +135,7 @@ MultiViewer::SetSamples(const WDL_TypedBuf<BL_FLOAT> &samples)
     // Curves
     WDL_TypedBuf<BL_FLOAT> decimValues;
     BL_FLOAT decFactor = ((BL_FLOAT)GRAPH_CONTROL_NUM_POINTS)/samples.GetSize();
-    BLUtils::DecimateSamples(&decimValues, samples, decFactor);
+    BLUtilsDecim::DecimateSamples(&decimValues, samples, decFactor);
     
     mGraph->SetCurveValues3(GRAPH_WAVEFORM_CURVE, &decimValues);
     mGraph->SetCurveValues3(GRAPH_WAVEFORM_CURVE0, &decimValues);

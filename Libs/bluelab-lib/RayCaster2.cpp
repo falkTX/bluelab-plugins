@@ -15,13 +15,15 @@ using namespace std;
 
 #include <GraphSwapColor.h>
 
+#include <BLUtilsMath.h>
+
 #include <BLDebug.h>
 
 #ifndef M_PI
 #define M_PI 3.141592653589793
 #endif
 
-#define TWO_PI 6.28318530717959
+//#define TWO_PI 6.28318530717959
 
 #define LOG_2 0.693147180559945
 

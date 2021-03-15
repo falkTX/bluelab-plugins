@@ -1,5 +1,10 @@
 #include <FftProcessBufObj.h>
+
 #include <BLUtils.h>
+#include <BLUtilsComp.h>
+#include <BLUtilsMath.h>
+#include <BLUtilsFft.h>
+
 #include <BLTypes.h>
 
 #include "EQHackFftObj.h"
@@ -122,7 +127,7 @@ EQHackFftObj::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     *ioBuffer = result;
   
     BLUtils::ResizeFillZeros(ioBuffer, ioBuffer->GetSize()*2);
-    BLUtils::FillSecondFftHalf(ioBuffer);
+    BLUtilsFft::FillSecondFftHalf(ioBuffer);
 }
 
 void

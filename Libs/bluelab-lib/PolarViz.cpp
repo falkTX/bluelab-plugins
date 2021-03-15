@@ -7,7 +7,11 @@
 //
 
 #include "FftProcessObj16.h"
-#include "BLUtils.h"
+
+#include <BLUtils.h>
+#include <BLUtilsComp.h>
+#include <BLUtilsFft.h>
+
 #include "PolarViz.h"
 
 #define EPS_DB 1e-15
@@ -119,19 +123,19 @@ PolarViz::PolarSamplesToCartesian(const WDL_TypedBuf<BL_FLOAT> &magns,
     
     // Get the samples
     WDL_TypedBuf<WDL_FFT_COMPLEX> complex;
-    BLUtils::MagnPhaseToComplex(&complex, magns, phases);
+    BLUtilsComp::MagnPhaseToComplex(&complex, magns, phases);
     complex.Resize(complex.GetSize()*2);
-    BLUtils::FillSecondFftHalf(&complex);
+    BLUtilsFft::FillSecondFftHalf(&complex);
     FftProcessObj16::FftToSamples(complex, &samples);
     
     // TODO: optimize this !
     WDL_TypedBuf<BL_FLOAT> fullPhases;
     WDL_TypedBuf<BL_FLOAT> dummyMagns;
-    BLUtils::ComplexToMagnPhase(&dummyMagns, &fullPhases, complex);
+    BLUtilsComp::ComplexToMagnPhase(&dummyMagns, &fullPhases, complex);
     
     WDL_TypedBuf<int> samplesIds;
     //BLUtils::FftIdsToSamplesIds(fullPhases, &samplesIds);
-    BLUtils::SamplesIdsToFftIds(fullPhases, &samplesIds);
+    BLUtilsFft::SamplesIdsToFftIds(fullPhases, &samplesIds);
     BLUtils::Permute(&samples, samplesIds, false); // TODO check direction
     
     BLUtils::TakeHalf(&samples);
@@ -166,7 +170,7 @@ PolarViz::PolarSamplesToCartesian2(const WDL_TypedBuf<BL_FLOAT> &samples,
     
     WDL_TypedBuf<int> samplesIds;
     //BLUtils::FftIdsToSamplesIds(fullPhases, &samplesIds);
-    BLUtils::SamplesIdsToFftIds(phases, &samplesIds);
+    BLUtilsFft::SamplesIdsToFftIds(phases, &samplesIds);
     
     WDL_TypedBuf<BL_FLOAT> permSamples = samples;
     BLUtils::Permute(&permSamples, samplesIds, true); // TODO check direction

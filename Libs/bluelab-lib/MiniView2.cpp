@@ -9,7 +9,9 @@
 #ifdef IGRAPHICS_NANOVG
 
 #include <GraphSwapColor.h>
+
 #include <BLUtils.h>
+#include <BLUtilsDecim.h>
 
 #include "MiniView2.h"
 
@@ -113,7 +115,7 @@ MiniView2::SetData(const WDL_TypedBuf<BL_FLOAT> &data)
     
     BL_FLOAT decFactor = ((BL_FLOAT)mWaveForm.GetSize())/mMaxNumPoints;
     //BLUtils::DecimateSamples(&mWaveForm, (BL_FLOAT)(1.0/decFactor));
-    BLUtils::DecimateSamples3(&mWaveForm, data, (BL_FLOAT)(1.0/decFactor));
+    BLUtilsDecim::DecimateSamples3(&mWaveForm, data, (BL_FLOAT)(1.0/decFactor));
     
     BL_FLOAT maxVal = BLUtils::ComputeMaxAbs(mWaveForm);
     

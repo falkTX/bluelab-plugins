@@ -15,6 +15,8 @@
 #include <ImageDisplay2.h>
 
 #include <BLUtils.h>
+#include <BLUtilsComp.h>
+#include <BLUtilsFft.h>
 
 #include <GraphControl12.h>
 
@@ -91,8 +93,8 @@ DUETFftObj2::ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamp
     
     WDL_TypedBuf<BL_FLOAT> magns[2];
     WDL_TypedBuf<BL_FLOAT> phases[2];
-    BLUtils::ComplexToMagnPhase(&magns[0], &phases[0], ioBuffers[0]);
-    BLUtils::ComplexToMagnPhase(&magns[1], &phases[1], ioBuffers[1]);
+    BLUtilsComp::ComplexToMagnPhase(&magns[0], &phases[0], ioBuffers[0]);
+    BLUtilsComp::ComplexToMagnPhase(&magns[1], &phases[1], ioBuffers[1]);
     
     //
     // Must set magns anyway
@@ -107,8 +109,8 @@ DUETFftObj2::ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamp
     {
         mSeparator->GetOutputData(magns, phases);
         
-        BLUtils::MagnPhaseToComplex(&ioBuffers[0], magns[0], phases[0]);
-        BLUtils::MagnPhaseToComplex(&ioBuffers[1], magns[1], phases[1]);
+        BLUtilsComp::MagnPhaseToComplex(&ioBuffers[0], magns[0], phases[0]);
+        BLUtilsComp::MagnPhaseToComplex(&ioBuffers[1], magns[1], phases[1]);
     }
     else
         mSeparator->GetOutputDataComp(ioBuffers);
@@ -117,8 +119,8 @@ DUETFftObj2::ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamp
     BLUtils::ResizeFillZeros(&ioBuffers[0], ioBuffers[0].GetSize()*2);
     BLUtils::ResizeFillZeros(&ioBuffers[1], ioBuffers[1].GetSize()*2);
     
-    BLUtils::FillSecondFftHalf(&ioBuffers[0]);
-    BLUtils::FillSecondFftHalf(&ioBuffers[1]);
+    BLUtilsFft::FillSecondFftHalf(&ioBuffers[0]);
+    BLUtilsFft::FillSecondFftHalf(&ioBuffers[1]);
     
     *(*ioFftSamples)[0] = ioBuffers[0];
     *(*ioFftSamples)[1] = ioBuffers[1];

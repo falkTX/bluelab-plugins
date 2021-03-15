@@ -9,6 +9,10 @@
 #ifdef IGRAPHICS_NANOVG
 
 #include <BLUtils.h>
+#include <BLUtilsComp.h>
+#include <BLUtilsFft.h>
+#include <BLUtilsMath.h>
+
 #include <DebugGraph.h>
 
 #include <SASViewerRender.h>
@@ -318,14 +322,14 @@ SASViewerProcess::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     
     WDL_TypedBuf<BL_FLOAT> magns;
     WDL_TypedBuf<BL_FLOAT> phases;
-    BLUtils::ComplexToMagnPhase(&magns, &phases, fftSamples);
+    BLUtilsComp::ComplexToMagnPhase(&magns, &phases, fftSamples);
     
     // Sc
     BLUtils::TakeHalf(&scFftSamples);
     
     WDL_TypedBuf<BL_FLOAT> scMagns;
     WDL_TypedBuf<BL_FLOAT> scPhases;
-    BLUtils::ComplexToMagnPhase(&scMagns, &scPhases, scFftSamples);
+    BLUtilsComp::ComplexToMagnPhase(&scMagns, &scPhases, scFftSamples);
     
     if (!mUseSideChain || !mSideChainProvided)
         mCurrentMagns = magns;
@@ -397,9 +401,9 @@ SASViewerProcess::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     }
     
     // For noise envelope
-    BLUtils::MagnPhaseToComplex(ioBuffer, magns, phases);
+    BLUtilsComp::MagnPhaseToComplex(ioBuffer, magns, phases);
     ioBuffer->Resize(ioBuffer->GetSize()*2);
-    BLUtils::FillSecondFftHalf(ioBuffer);
+    BLUtilsFft::FillSecondFftHalf(ioBuffer);
 }
 
 void

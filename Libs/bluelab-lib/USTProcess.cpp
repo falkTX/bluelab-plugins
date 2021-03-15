@@ -9,6 +9,8 @@
 #include <cmath>
 
 #include <BLUtils.h>
+#include <BLUtilsComp.h>
+
 //#include <USTWidthAdjuster4.h> // old
 #include <USTWidthAdjuster5.h>
 #include <DelayObj4.h>

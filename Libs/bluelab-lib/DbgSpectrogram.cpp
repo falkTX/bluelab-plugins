@@ -16,6 +16,8 @@
 #include <BLUtils.h>
 #include "PPMFile.h"
 
+#include <BLUtilsDecim.h>
+
 #include "DbgSpectrogram.h"
 
 
@@ -131,8 +133,8 @@ DbgSpectrogram::AddLine(const WDL_TypedBuf<BL_FLOAT> &magns)
     
     if (magns0.GetSize() > mHeight)
     {
-        BLUtils::DecimateSamples(&magns0,
-                               ((BL_FLOAT)mHeight)/magns0.GetSize());
+        BLUtilsDecim::DecimateSamples(&magns0,
+                                      ((BL_FLOAT)mHeight)/magns0.GetSize());
     }
     
     if (mAmpDb)

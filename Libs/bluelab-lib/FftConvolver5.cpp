@@ -8,7 +8,11 @@
 
 #include "Resampler2.h"
 #include <Window.h>
+
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
+#include <BLUtilsFft.h>
+#include <BLUtilsComp.h>
 
 #include "FftConvolver5.h"
 
@@ -314,7 +318,7 @@ void
 FftConvolver5::ResizeImpulse(WDL_TypedBuf<BL_FLOAT> *impulseResponse)
 {
     int respSize = impulseResponse->GetSize();
-    int newSize = BLUtils::NextPowerOfTwo(respSize);
+    int newSize = BLUtilsMath::NextPowerOfTwo(respSize);
     int diff = newSize - impulseResponse->GetSize();
         
     impulseResponse->Resize(newSize);
@@ -357,7 +361,7 @@ FftConvolver5::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     }
     
     BLUtils::ResizeFillZeros(ioBuffer, ioBuffer->GetSize()*2);
-    BLUtils::FillSecondFftHalf(ioBuffer);
+    BLUtilsFft::FillSecondFftHalf(ioBuffer);
 }
 
 void
@@ -436,7 +440,7 @@ FftConvolver5::NormalizeResponseFft(WDL_TypedBuf<WDL_FFT_COMPLEX> *fftSamples)
     
     WDL_TypedBuf<BL_FLOAT> magns;
     WDL_TypedBuf<BL_FLOAT> phases;
-    BLUtils::ComplexToMagnPhase(&magns, &phases, *fftSamples);
+    BLUtilsComp::ComplexToMagnPhase(&magns, &phases, *fftSamples);
     
     // Take sum(samples) and not sum(abs(samples)) !
     BL_FLOAT sum = BLUtils::ComputeSum(magns);
@@ -449,6 +453,6 @@ FftConvolver5::NormalizeResponseFft(WDL_TypedBuf<WDL_FFT_COMPLEX> *fftSamples)
     
     BLUtils::MultValues(&magns, coeff);
     
-    BLUtils::MagnPhaseToComplex(fftSamples, magns, phases);
+    BLUtilsComp::MagnPhaseToComplex(fftSamples, magns, phases);
 }
 

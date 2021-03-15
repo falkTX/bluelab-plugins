@@ -14,6 +14,7 @@ using namespace std;
 #include <FftProcessObj16.h>
 
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
 
 #include "PartialsToFreqCepstrum.h"
 

@@ -7,6 +7,7 @@
 //
 
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
 
 #include "RebalanceMaskStack2.h"
 
@@ -185,7 +186,7 @@ RebalanceMaskStack2::GetMaskVariance(deque<WDL_TypedBuf<BL_FLOAT> > *mask)
                     col.push_back(val);
             }
             
-            BL_FLOAT var = BLUtils::ComputeVariance(col);
+            BL_FLOAT var = BLUtilsMath::ComputeVariance(col);
             var *= col.size();
             
             line.Get()[j] = var;
@@ -416,7 +417,7 @@ RebalanceMaskStack2::ComputeVariance(const deque<WDL_TypedBuf<BL_FLOAT> > &histo
     if (col.size() == 1)
         return col[0];
     
-    BL_FLOAT var = BLUtils::ComputeVariance(col);
+    BL_FLOAT var = BLUtilsMath::ComputeVariance(col);
     //var *= col.size();
     
     return var;

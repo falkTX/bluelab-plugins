@@ -9,6 +9,7 @@
 #include "resource.h"
 
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
 
 #include "ColorMap4.h"
 

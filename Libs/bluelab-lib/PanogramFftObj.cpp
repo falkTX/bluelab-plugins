@@ -12,7 +12,10 @@
 #include <Window.h>
 #include <SpectrogramDisplayScroll3.h>
 #include <PanogramPlayFftObj.h>
+
 #include <BLUtils.h>
+#include <BLUtilsComp.h>
+#include <BLUtilsMath.h>
 
 #include "PanogramFftObj.h"
 
@@ -89,7 +92,7 @@ PanogramFftObj::ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftS
 
         ////BLUtils::ComplexToMagnPhase(&magns[i], &phases[i], *(*ioFftSamples)[i]);
         //BLUtils::ComplexToMagnPhase(&magns[i], &phases[i], fftSamples[i]);
-        BLUtils::ComplexToMagnPhase(&magns[i], &phases[i], half);
+        BLUtilsComp::ComplexToMagnPhase(&magns[i], &phases[i], half);
     }
     
     //HistoMaskLine2 maskLine(mBufferSize);

@@ -17,6 +17,9 @@ using namespace std;
 #include <AWeighting.h>
 
 #include <BLUtils.h>
+#include <BLUtilsPhases.h>
+#include <BLUtilsMath.h>
+
 #include <BLDebug.h>
 
 #include "PartialTracker5.h"
@@ -2375,7 +2378,7 @@ PartialTracker5::PreProcess(WDL_TypedBuf<BL_FLOAT> *magns,
     PreProcessDataXY(magns);
     
 #if MEL_UNWRAP_PHASES
-    BLUtils::UnwrapPhases(phases);
+    BLUtilsPhases::UnwrapPhases(phases);
 #endif
 
     // Phases
