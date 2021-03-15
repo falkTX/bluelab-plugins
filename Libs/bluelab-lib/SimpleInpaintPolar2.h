@@ -21,13 +21,17 @@ class SimpleInpaintPolar2
                  int width, int height);
     
  protected:
+    // Magns
     void ProcessMagnsHoriz(WDL_TypedBuf<BL_FLOAT> *magns, int width, int height);
-
     void ProcessMagnsVert(WDL_TypedBuf<BL_FLOAT> *magns, int width, int height);
-
     void ProcessMagnsBothDir(WDL_TypedBuf<BL_FLOAT> *magns,
                              int width, int height);
 
+    // "both", magns + phases
+    void ProcessBothDir(WDL_TypedBuf<BL_FLOAT> *magns,
+                        WDL_TypedBuf<BL_FLOAT> *phases,
+                        int width, int height);
+    
     // Phases, horizontal
     //
     
@@ -114,6 +118,15 @@ class SimpleInpaintPolar2
                            BL_FLOAT magn1, BL_FLOAT phase1,
                            BL_FLOAT t,
                            BL_FLOAT *resMagn, BL_FLOAT *resPhase);
+
+    // => BLUtils
+    static void InterpComp(const WDL_TypedBuf<BL_FLOAT> &magns0,
+                           const WDL_TypedBuf<BL_FLOAT> &phases0,
+                           const WDL_TypedBuf<BL_FLOAT> &magns1,
+                           const WDL_TypedBuf<BL_FLOAT> &phases1,
+                           BL_FLOAT t,
+                           WDL_TypedBuf<BL_FLOAT> *resMagns,
+                           WDL_TypedBuf<BL_FLOAT> *resPhases);
     
     // 1 line, all the times
     static void DBG_DumpPhaseLine(const char *fileName, int freqIndex,

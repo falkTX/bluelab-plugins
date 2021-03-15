@@ -47,9 +47,11 @@ SimpleInpaintPolar2::Process(WDL_TypedBuf<BL_FLOAT> *magns,
         return;
     }
 
+    
+        
     // else...
-    ProcessMagnsBothDir(magns, width, height);   
-    //ProcessBothDir(phases, width, height);   
+    //ProcessMagnsBothDir(magns, width, height);   
+    ProcessBothDir(magns, phases, width, height);   
 }
 
 void
@@ -92,6 +94,7 @@ SimpleInpaintPolar2::ProcessMagnsVert(WDL_TypedBuf<BL_FLOAT> *magns,
     }
 }
 
+// Still used ?
 void
 SimpleInpaintPolar2::ProcessMagnsBothDir(WDL_TypedBuf<BL_FLOAT> *magns,
                                          int width, int height)
@@ -110,6 +113,27 @@ SimpleInpaintPolar2::ProcessMagnsBothDir(WDL_TypedBuf<BL_FLOAT> *magns,
         BL_FLOAT m = (h + v)*0.5;
         magns->Get()[i] = m;
     }
+}
+
+void
+SimpleInpaintPolar2::ProcessBothDir(WDL_TypedBuf<BL_FLOAT> *magns,
+                                    WDL_TypedBuf<BL_FLOAT> *phases,
+                                    int width, int height)
+{
+    // Horiz
+    WDL_TypedBuf<BL_FLOAT> magns0 = *magns;
+    ProcessMagnsHoriz(&magns0, width, height);
+    WDL_TypedBuf<BL_FLOAT> phases0 = *phases;
+    ProcessPhasesHorizCombined(magns0, &phases0, width, height);
+
+    // Vert
+    WDL_TypedBuf<BL_FLOAT> magns1 = *magns;
+    ProcessMagnsVert(&magns1, width, height);
+    WDL_TypedBuf<BL_FLOAT> phases1 = *phases;
+    ProcessPhasesVertCombined(magns1, &phases1, width, height);
+
+    // Naive method: simply mix the two results
+    InterpComp(magns0, phases0, magns1, phases1, 0.5, magns, phases);
 }
 
 void
@@ -575,6 +599,55 @@ SimpleInpaintPolar2::InterpComp(BL_FLOAT magn0, BL_FLOAT phase0,
 
     *resMagn = COMP_MAGN(resC);
     *resPhase = COMP_PHASE(resC);
+}
+
+void
+SimpleInpaintPolar2::InterpComp(const WDL_TypedBuf<BL_FLOAT> &magns0,
+                                const WDL_TypedBuf<BL_FLOAT> &phases0,
+                                const WDL_TypedBuf<BL_FLOAT> &magns1,
+                                const WDL_TypedBuf<BL_FLOAT> &phases1,
+                                BL_FLOAT t,
+                                WDL_TypedBuf<BL_FLOAT> *resMagns,
+                                WDL_TypedBuf<BL_FLOAT> *resPhases)
+{
+    // Check input size
+    if (magns0.GetSize() != phases0.GetSize())
+        return;
+    if (magns1.GetSize() != phases1.GetSize())
+        return;
+    if (magns0.GetSize() != magns1.GetSize())
+        return;
+
+    // Resize result
+    resMagns->Resize(magns0.GetSize());
+    resPhases->Resize(phases0.GetSize());
+
+    WDL_FFT_COMPLEX c0;
+    WDL_FFT_COMPLEX c1;
+    WDL_FFT_COMPLEX resC;
+    for (int i = 0; i < magns0.GetSize(); i++)
+    {
+        // 0
+        BL_FLOAT magn0 = magns0.Get()[i];
+        BL_FLOAT phase0 = phases0.Get()[i];
+        MAGN_PHASE_COMP(magn0, phase0, c0);
+
+        // 1
+        BL_FLOAT magn1 = magns1.Get()[i];
+        BL_FLOAT phase1 = phases1.Get()[i];
+        MAGN_PHASE_COMP(magn1, phase1, c1);
+
+        // interp
+        resC.re = (1.0 - t)*c0.re + t*c1.re;
+        resC.im = (1.0 - t)*c0.im + t*c1.im;
+
+        // res
+        BL_FLOAT resMagn = COMP_MAGN(resC);
+        BL_FLOAT resPhase = COMP_PHASE(resC);
+        
+        resMagns->Get()[i] = resMagn;
+        resPhases->Get()[i] = resPhase;
+    }
 }
 
 void
