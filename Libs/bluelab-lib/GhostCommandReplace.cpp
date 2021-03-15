@@ -2,10 +2,9 @@
 
 #include <ImageInpaint2.h>
 
-#include <SimpleInpaint.h>
-#include <SimpleInpaintComp.h>
-//#include <SimpleInpaintPolar.h>
-#include <SimpleInpaintPolar2.h>
+//#include <SimpleInpaint.h>
+//#include <SimpleInpaintComp.h>
+#include <SimpleInpaintPolar3.h>
 
 #include "GhostCommandReplace.h"
 
@@ -73,7 +72,7 @@ GhostCommandReplace::Apply(vector<WDL_TypedBuf<BL_FLOAT> > *magns,
 #endif
 
 #if USE_SIMPLE_INPAINT_POLAR
-    SimpleInpaintPolar2 inpaint(mProcessHorizontal, mProcessVertical);
+    SimpleInpaintPolar3 inpaint(mProcessHorizontal, mProcessVertical);
     inpaint.Process(&selectedMagns, &selectedPhases, width, height);
 #endif
     

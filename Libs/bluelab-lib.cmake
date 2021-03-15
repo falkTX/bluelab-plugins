@@ -600,14 +600,8 @@ set(_bluelab-lib_src
   SGSmooth.h
   SimpleCompressor.cpp
   SimpleCompressor.h
-  SimpleInpaint.cpp
-  SimpleInpaint.h
-  SimpleInpaintComp.cpp
-  SimpleInpaintComp.h
-  SimpleInpaintPolar.cpp
-  SimpleInpaintPolar.h
-  SimpleInpaintPolar2.cpp
-  SimpleInpaintPolar2.h
+  SimpleInpaintPolar3.cpp
+  SimpleInpaintPolar3.h
   SimpleSpectrogramFftObj.cpp
   SimpleSpectrogramFftObj.h
   SineSynth2.cpp
