@@ -30,6 +30,8 @@ SpectroEditFftObj3::SpectroEditFftObj3(int bufferSize, int oversampling,
     mDataSelection[1] = 0.0;
     mDataSelection[2] = 0.0;
     mDataSelection[3] = 0.0;
+
+    mStep = 1.0;
 }
 
 SpectroEditFftObj3::~SpectroEditFftObj3() {}
@@ -38,6 +40,16 @@ void
 SpectroEditFftObj3::SetSamples(WDL_TypedBuf<BL_FLOAT> *samples)
 {
     mSamples = samples;
+}
+
+// Step is used if ever we want to squeeze buffers
+// For example if we have a big file in input
+// In this case, we will advance more at each call,
+// not just by one buffer
+void
+SpectroEditFftObj3::SetStep(BL_FLOAT step)
+{
+    mStep = step;
 }
 
 void
@@ -195,7 +207,10 @@ SpectroEditFftObj3::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer0,
         (mMode == GEN_DATA) ||
         (mMode == REPLACE_DATA))
     {
-        mSamplesPos += mBufferSize/mOverlapping;
+        // Step is used to advance more at each call,
+        // in the case we process a large file and we have too much data
+        
+        mSamplesPos += (mBufferSize/mOverlapping)*mStep;
     }
 
     WDL_TypedBuf<WDL_FFT_COMPLEX> &result = mTmpBuf5;
@@ -216,6 +231,8 @@ SpectroEditFftObj3::Reset(int bufferSize, int oversampling,
     
     mSelectionEnabled = false;
     mSelectionPlayFinished = false;
+    
+    //mStep = 1.0; // Reset the step or not?
 }
 
 void

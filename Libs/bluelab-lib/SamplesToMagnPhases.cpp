@@ -24,6 +24,8 @@ SamplesToMagnPhases::SamplesToMagnPhases(vector<WDL_TypedBuf<BL_FLOAT> > *sample
         mSpectroEditObjs[i] = spectroEditObjs[i];
 
     mSamplesPyramid = samplesPyramid;
+
+    mStep = 1.0;
 }
 
 SamplesToMagnPhases::~SamplesToMagnPhases() {}
@@ -69,7 +71,7 @@ SamplesToMagnPhases::ReadSpectroDataSlice(vector<WDL_TypedBuf<BL_FLOAT> > magns[
     BL_FLOAT maxDataXSamples;
     NormalizedPosToSamplesPos(minXNorm, maxXNorm,
                               &minDataXSamples, &maxDataXSamples);
-    
+
     for (int i = 0; i < 2; i++)
     {
         if (mSpectroEditObjs[i] != NULL)
@@ -128,7 +130,7 @@ SamplesToMagnPhases::ReadSpectroDataSlice(vector<WDL_TypedBuf<BL_FLOAT> > magns[
             }
         }
         
-        currentX += bufStepSize;
+        currentX += bufStepSize*mStep;
 
         // Check bounds
         if (mSpectroEditObjs[0]->SelectionPlayFinished())
@@ -246,7 +248,7 @@ SamplesToMagnPhases::WriteSpectroDataSlice(vector<WDL_TypedBuf<BL_FLOAT> > magns
         for (int i = 0; i < numChannels; i++)
             tmpOutChannels[i].Add(out[i].Get(), out[i].GetSize());
         
-        currentX += bufStepSize;
+        currentX += bufStepSize*mStep;
 
         // Check bounds
         if (mSpectroEditObjs[0]->SelectionPlayFinished())
@@ -390,6 +392,18 @@ SamplesToMagnPhases::WriteSpectroDataSlice(vector<WDL_TypedBuf<BL_FLOAT> > magns
     
     // Restore state
     ReadWriteSliceRestoreState(state);
+}
+
+void
+SamplesToMagnPhases::SetStep(BL_FLOAT step)
+{
+    mStep = step;
+
+    for (int i = 0; i < 2; i++)
+    {
+        if (mSpectroEditObjs[i] != NULL)
+            mSpectroEditObjs[i]->SetStep(mStep);
+    }
 }
 
 void

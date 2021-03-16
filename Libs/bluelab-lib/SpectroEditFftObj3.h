@@ -47,6 +47,8 @@ public:
                           const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer = NULL);
     
     void Reset(int bufferSize, int oversampling, int freqRes, BL_FLOAT sampleRate);
+
+    void SetStep(BL_FLOAT step);
     
     void SetMode(Mode mode);
     Mode GetMode();
@@ -118,6 +120,8 @@ protected:
     // For REPLACE_DATA
     vector<WDL_TypedBuf<BL_FLOAT> > mCurrentReplaceMagns;
     vector<WDL_TypedBuf<BL_FLOAT> > mCurrentReplacePhases;
+
+    BL_FLOAT mStep;
     
 private:
     // Tmp buffers

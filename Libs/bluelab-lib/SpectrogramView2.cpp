@@ -20,6 +20,9 @@
 //#define MAX_ZOOM 20.0
 #define MAX_ZOOM 800.0 // Big zoom
 
+// NOTE: We can see some "wobbling" due to the windowing
+// in the case of step > 1 (whatever the min overlap)
+#define MIN_OVERLAP 1
 
 SpectrogramView2::SpectrogramView2(BLSpectrogram4 *spectro,
                                    FftProcessObj16 *fftObj,
@@ -87,7 +90,7 @@ void
 SpectrogramView2::SetData(vector<WDL_TypedBuf<BL_FLOAT> > *samples)
 {
     mSamples = samples;
-
+    
     mSamplesToMagnPhases->SetSamples(mSamples);
     
     mStartDataPos = 0.0;
@@ -406,6 +409,9 @@ SpectrogramView2::UpdateSpectrogramData(BL_FLOAT minXNorm, BL_FLOAT maxXNorm)
     if (mSpectrogram == NULL)
         return;
 
+    // Save for step    
+    int prevOverlap = mFftObj->GetOverlapping();
+    
     BL_FLOAT sampleRate = mSpectrogram->GetSampleRate();
     mSpectrogram->Reset(sampleRate);
 
@@ -421,6 +427,10 @@ SpectrogramView2::UpdateSpectrogramData(BL_FLOAT minXNorm, BL_FLOAT maxXNorm)
     // Recompute data pos
     mStartDataPos = ((BL_FLOAT)minXNorm*numSamples)/bufferSize;
     mEndDataPos = ((BL_FLOAT)maxXNorm*numSamples)/bufferSize;
+            
+    // Update step.
+    // Usefull to avoid recomputing all the data when the file is long
+    BL_FLOAT step = UpdateStep();
     
     // Compute magns and phases
     vector<WDL_TypedBuf<BL_FLOAT> > magns[2];
@@ -431,11 +441,15 @@ SpectrogramView2::UpdateSpectrogramData(BL_FLOAT minXNorm, BL_FLOAT maxXNorm)
     
     // Update spectrogram
     mSpectrogram->SetLines(magns[0], phases[0]);
-        
+
     // Initial zoom
     mZoomFactor = 1.0;
 
-    ComputeZoomAdjustFactor(minXNorm, maxXNorm);
+    ComputeZoomAdjustFactor(minXNorm, maxXNorm, step);
+
+    // Restore for step
+    mFftObj->SetOverlapping(prevOverlap);
+    mSamplesToMagnPhases->SetStep(1.0);
 }
 
 void
@@ -463,8 +477,19 @@ SpectrogramView2::DBG_AnnotateMagns(vector<WDL_TypedBuf<BL_FLOAT> > *ioMagns)
 }
 
 void
-SpectrogramView2::ComputeZoomAdjustFactor(BL_FLOAT minXNorm, BL_FLOAT maxXNorm)
+SpectrogramView2::ComputeZoomAdjustFactor(BL_FLOAT minXNorm, BL_FLOAT maxXNorm,
+                                          BL_FLOAT step)
 {
+    // If step > 1, it means that we would get much data (> 1024 lines)
+    // => Do not bother to adjust the zoom factor, simply ignore it
+    if (step > 1.0)
+    {
+        mZoomAdjustFactor = 1.0;
+        mZoomAdjustOffset = 0.0;
+        
+        return;
+    }
+    
     int dataSize = mSpectrogram->GetNumCols();
     
     if (mSamples->empty() || (dataSize == 0))
@@ -486,6 +511,55 @@ SpectrogramView2::ComputeZoomAdjustFactor(BL_FLOAT minXNorm, BL_FLOAT maxXNorm)
     
     mZoomAdjustFactor = dataSize/selSize;
     mZoomAdjustOffset = ((BL_FLOAT)overlapping)/selSize;
+}
+
+BL_FLOAT
+SpectrogramView2::UpdateStep()
+{
+    int overlap = mFftObj->GetOverlapping();
+    BL_FLOAT viewNumLines = mEndDataPos - mStartDataPos;
+    viewNumLines *= overlap;
+    if (viewNumLines < 1.0)
+        viewNumLines = 1.0;
+
+    // Be sure we never go over mMaxNumCols
+    viewNumLines = ceil(viewNumLines) + 1;
+    
+    // Step. If it is > 1, this means that we would get too much data
+    BL_FLOAT step = ((BL_FLOAT)viewNumLines)/mMaxNumCols;
+    
+    if (step > 1.0)
+    // We would get too much data
+    {
+        // First, try to reduce the overlap and check if it is sufficient
+        int overlap0 = overlap;
+        while(overlap0 > MIN_OVERLAP)
+        {
+            overlap0 /= 2;
+            step /= 2;
+
+            // Be sure we never go over mMaxNumCols
+            viewNumLines = step*mMaxNumCols;
+            viewNumLines = ceil(viewNumLines) + 1;
+            step = ((BL_FLOAT)viewNumLines)/mMaxNumCols;
+            
+            if (step <= 1.0)
+                break;
+        }
+        
+        // Set overlap
+        mFftObj->SetOverlapping(overlap0);
+        
+        // Set step if we need to reduce
+        if (step > 1.0)
+        {
+            mSamplesToMagnPhases->SetStep(step);
+        }
+
+        *newOverlap = overlap0;
+    }
+    
+    return step;
 }
 
 #endif

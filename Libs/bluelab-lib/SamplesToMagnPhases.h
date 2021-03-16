@@ -37,6 +37,10 @@ class SamplesToMagnPhases
                                BL_FLOAT minXNorm, BL_FLOAT maxNormX,
                                int fadeNumSamples = 0);
 
+    // If we want not to process all the data, set step > 1
+    // e.g to process half of the data set step to 2.0
+    void SetStep(BL_FLOAT step);
+    
  protected:
     struct ReadWriteSliceState
     {
@@ -67,6 +71,8 @@ class SamplesToMagnPhases
     //SamplesPyramid2 *mSamplesPyramid;
     SamplesPyramid3 *mSamplesPyramid;
 
+    BL_FLOAT mStep;
+    
  private:
     // Tmp buffers
     vector<WDL_TypedBuf<BL_FLOAT> > mTmpBuf0;
