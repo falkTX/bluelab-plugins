@@ -190,6 +190,8 @@ GUIHelper12::GUIHelper12(Style style)
 
         mGraphCurveColorGray = IColor(255, 64, 64, 64);
         mGraphCurveColorRed = IColor(255, 255, 64, 64);
+
+        mGraphCurveColorBlack = IColor(255, 0, 0, 0);
     }
 
     if (style == STYLE_BLUELAB_V3)
@@ -305,6 +307,8 @@ GUIHelper12::GUIHelper12(Style style)
 
         mGraphCurveColorGray = IColor(255, 64, 64, 64);
         mGraphCurveColorRed = IColor(255, 255, 64, 64);
+
+        mGraphCurveColorBlack = IColor(255, 0, 0, 0);
 
         // Circle drawer
         mCircleGDCircleLineWidth = 2.5; //3.0; //2.0;
@@ -1176,6 +1180,15 @@ GUIHelper12::GetGraphCurveColorRed(int color[4])
     color[1] = mGraphCurveColorRed.G;
     color[2] = mGraphCurveColorRed.B;
     color[3] = mGraphCurveColorRed.A;
+}
+
+void
+GUIHelper12::GetGraphCurveColorBlack(int color[4])
+{
+  color[0] = mGraphCurveColorBlack.R;
+  color[1] = mGraphCurveColorBlack.G;
+  color[2] = mGraphCurveColorBlack.B;
+  color[3] = mGraphCurveColorBlack.A;
 }
 
 void

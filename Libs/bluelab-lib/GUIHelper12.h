@@ -203,6 +203,10 @@ public:
     
     void GetGraphCurveColorGray(int color[4]);
     void GetGraphCurveColorRed(int color[4]);
+
+    // For overlay curves
+    void GetGraphCurveColorBlack(int color[4]);
+
     
     static void ResetParameter(Plugin *plug, int paramIdx);
     
@@ -349,6 +353,8 @@ protected:
     IColor mGraphCurveColorGray;
     IColor mGraphCurveColorRed;
 
+    IColor mGraphCurveColorBlack;
+    
     // Circle graph drawer
     float mCircleGDCircleLineWidth;
     float mCircleGDLinesWidth;
