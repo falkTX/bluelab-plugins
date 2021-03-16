@@ -77,6 +77,7 @@ private:
     WDL_TypedBuf<BL_FLOAT> mTmpBuf6;
     vector<WDL_TypedBuf<BL_FLOAT> > mTmpBuf7;
     vector<WDL_TypedBuf<BL_FLOAT> > mTmpBuf8;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf9;
 };
 
 #endif /* defined(__BL_Ghost__SamplesPyramid3__) */

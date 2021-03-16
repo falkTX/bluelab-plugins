@@ -397,9 +397,12 @@ SamplesPyramid3::GetValues(BL_FLOAT start, BL_FLOAT end, long numValues,
         if (pyramidLevel >= mMaxPyramidLevel)
             break;
     }
-    
+
+#if 0 // Costly for big files
     mTmpBuf0.resize(mMaxPyramidLevel + 1);
     WDL_TypedBuf<BL_FLOAT> &currentPyramidLevel = mTmpBuf0[pyramidLevel];
+    // Very costly for long files
+    // (will copy the buffer at each step)
     BLUtils::FastQueueToBuf(mSamplesPyramid[pyramidLevel], &currentPyramidLevel);
     
     mTmpBuf1.resize(mMaxPyramidLevel + 1);
@@ -412,6 +415,18 @@ SamplesPyramid3::GetValues(BL_FLOAT start, BL_FLOAT end, long numValues,
     
     // NOTE: crashed here, fixed SetBufResize()
     BLUtils::SetBufResize(&level, currentPyramidLevel, start, size);
+#endif
+
+#if 1 // Optimized versio (copy only the necessary from queue to buf
+    // Use ceil to avoid missing last sample...
+    //int size = ceil(end - start);
+    // ... and add 1, to be very sure to get the last sample in any case
+    int size = ceil(end - start) + 1;
+
+    WDL_TypedBuf<BL_FLOAT> &level = mTmpBuf9;
+    BLUtils::FastQueueToBuf(mSamplesPyramid[pyramidLevel], start,
+                            &level, size);
+#endif
     
     // Add zeros if necessary
     if (numZerosBegin > 0)
