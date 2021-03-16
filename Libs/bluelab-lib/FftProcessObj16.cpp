@@ -18,10 +18,6 @@
 #include "FftProcessObj16.h"
 
 
-//#define INF 1e15
-//#define EPS 1e-15
-
-
 #define NORMALIZE_FFT 1
 
 // WARNING: this is buggy and false, need some fix and reconsidered if want to use it
@@ -64,13 +60,8 @@
 #define OPTIM_CONSUME_LEFT 1
 
 ProcessObj::ProcessObj(int bufferSize)
-//: mInput(true),
-//  mOutput(true)
 {
     mBufferSize = bufferSize;
-    
-    //mTrackInput = false;
-    //mTrackOutput = false;
 }
     
 ProcessObj::~ProcessObj() {}
@@ -87,17 +78,7 @@ ProcessObj::Reset(int bufferSize, int oversampling,
         mFreqRes = freqRes;
     if (sampleRate > 0)
         mSampleRate = sampleRate;
-    
-    //Reset();
 }
-
-/*void
-ProcessObj::Reset()
-{
-    // Tracking
-    mInput.Reset();
-    mOutput.Reset();
-}*/
 
 void
 ProcessObj::ProcessInputSamplesPre(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
@@ -105,10 +86,7 @@ ProcessObj::ProcessInputSamplesPre(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
 
 void
 ProcessObj::PreProcessSamplesBuffer(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
-                                    const WDL_TypedBuf<BL_FLOAT> *scBuffer)
-{
-    //mInput.AddValues(*ioBuffer);
-}
+                                    const WDL_TypedBuf<BL_FLOAT> *scBuffer) {}
     
 void
 ProcessObj::PreProcessSamplesBufferWin(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
@@ -128,41 +106,10 @@ ProcessObj::ProcessSamplesBufferWin(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
 
 void
 ProcessObj::ProcessSamplesBufferEnergy(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
-                                       const WDL_TypedBuf<BL_FLOAT> *scBuffer)
-{
-    //mOutput.AddValues(*ioBuffer);
-}
+                                       const WDL_TypedBuf<BL_FLOAT> *scBuffer) {}
 
 void
 ProcessObj::ProcessSamplesPost(WDL_TypedBuf<BL_FLOAT> *ioBuffer) {}
-
-/*void
-ProcessObj::SetTrackIO(int maxNumPoints, BL_FLOAT decimFactor,
-                       bool trackInput, bool trackOutput)
-{
-    mTrackInput = trackInput;
-    mTrackOutput = trackOutput;
-        
-    //if (mTrackInput)
-    //    mInput.SetParams(maxNumPoints, decimFactor);
-        
-    //if (mTrackOutput)
-    //    mOutput.SetParams(maxNumPoints, decimFactor);
-}*/
-
-/*
-void
-ProcessObj::GetCurrentInput(WDL_TypedBuf<BL_FLOAT> *outInput)
-{
-    mInput.GetValues(outInput);
-}
-    
-void
-ProcessObj::GetCurrentOutput(WDL_TypedBuf<BL_FLOAT> *outOutput)
-{
-    mOutput.GetValues(outOutput);
-}
-*/
 
 ///
 
@@ -175,12 +122,10 @@ public:
     
     void SetDefaultLatency(int latency);
     
-    // For latency fix 2
-    //int GetLatency();
-    
     int ComputeLatency(int blockSize);
     
-    virtual void Reset(int bufferSize, int overlapping, int freqRes, BL_FLOAT sampleRate);
+    virtual void Reset(int bufferSize, int overlapping,
+                       int freqRes, BL_FLOAT sampleRate);
     
     virtual void Reset();
     
@@ -231,7 +176,6 @@ public:
     bool GetResult(WDL_TypedBuf<BL_FLOAT> *output, int numRequested);
     
     // Accessors for processing horizontally
-    //WDL_TypedBuf<BL_FLOAT> *GetSamples();
     WDL_TypedFastQueue<BL_FLOAT> *GetSamples();
     
     WDL_TypedBuf<WDL_FFT_COMPLEX> *GetFft();
@@ -306,18 +250,15 @@ protected:
     bool mIsEnabled;
     
     // Input samples (bufferized)
-    //WDL_TypedBuf<BL_FLOAT> mSamplesIn;
     WDL_TypedFastQueue<BL_FLOAT> mSamplesIn;
     
     // Current result
     WDL_TypedBuf<BL_FLOAT> mResult;
     
     // Result with overlap add
-    //WDL_TypedBuf<BL_FLOAT> mResultSum;
     WDL_TypedFastQueue<BL_FLOAT> mResultSum;
     
     // Result output that is totally ready
-    //WDL_TypedBuf<BL_FLOAT> mResultOut;
     WDL_TypedFastQueue<BL_FLOAT> mResultOut;
     
     
@@ -331,18 +272,10 @@ protected:
 #if DC_OFFSET_PROCESS
     BL_FLOAT mDCOffset;
 #endif
-
-#if 0
-    // For latency fix
-    bool mBufWasFull;
-    unsigned long long mTotalInSamples;
-#endif
     
-#if 1
     // For latency fix 2
     int mLatency;
     int mCurrentLatency;
-#endif
     
     // Flag set if a channel is empty
     // Avoids processing an empty channel,
@@ -394,18 +327,10 @@ ProcessObjChannel::ProcessObjChannel(ProcessObj *processObj, int bufferSize)
     mScChan = NULL;
     
     mMustMakeWindows = true;
-    
-#if 0
-    // Latency fix
-    mBufWasFull = false;
-    mTotalInSamples = 0;
-#endif
-    
-#if 1
+        
     // Latency fix 2
     mLatency = mBufferSize;
     mCurrentLatency = mLatency;
-#endif
     
     mEmptyChannel = false;
     
@@ -424,12 +349,6 @@ ProcessObjChannel::SetDefaultLatency(int latency)
     mLatency = latency;
     mCurrentLatency = mLatency;
 }
-
-//int
-//ProcessObjChannel::GetLatency()
-//{
-//    return mLatency;
-//}
 
 int
 ProcessObjChannel::ComputeLatency(int blockSize)
@@ -503,43 +422,27 @@ ProcessObjChannel::Reset()
                                  mAnalysisMethod, mSynthesisMethod,
                                  &mAnalysisWindow, &mSynthesisWindow);
     // Set the buffers
-    //mSamplesIn.Resize(0);
     mSamplesIn.Clear();
     
-     // TEST
-    //BLUtils::ResizeFillZeros(&mResult, mBufferSize);
     mResult.Resize(mBufferSize);
     BLUtils::FillAllZero(&mResult);
     
     int resultSize = 2*mBufferSize*mFreqRes;
-    //BLUtils::ResizeFillZeros(&mResultSum, resultSize);
-
-    //mResultSum.Resize(resultSize);
-    //BLUtils::FillAllZero(&mResultSum);
+    
     mResultSum.Clear();
     mResultSum.Add(0, resultSize);
     
-    //mResultOut.Resize(0);
     mResultOut.Clear();
     
     int bufSize = mBufferSize*mFreqRes;
-    //BLUtils::ResizeFillZeros(&mFftBuf, bufSize);
     mFftBuf.Resize(bufSize);
     BLUtils::FillAllZero(&mFftBuf);
     
     if (mProcessObj != NULL)
         mProcessObj->Reset(mBufferSize, mOverlapping, mFreqRes, mSampleRate);
     
-#if 0
-    // For latency fix
-    mBufWasFull = false;
-    mTotalInSamples = 0;
-#endif
-    
-#if 1
     // For latency fix 2
     mCurrentLatency = mLatency;
-#endif
     
     mEmptyChannel = false;
 }
@@ -612,7 +515,6 @@ ProcessObjChannel::SetSkipIFft(bool flag)
 bool
 ProcessObjChannel::HasSamplesToProcess()
 {
-    //bool result = (mSamplesIn.GetSize() >= mBufferSize);
     bool result = (mSamplesIn.Available() >= mBufferSize);
     
     return result;
@@ -633,156 +535,8 @@ ProcessObjChannel::AddSamples(const WDL_TypedBuf<BL_FLOAT> &samples)
 {
     int samplesSize = samples.GetSize();
     mSamplesIn.Add(samples.Get(), samplesSize);
-    
-#if 0
-    // For latency fix
-    mTotalInSamples += samples.GetSize();
-#endif
 }
 
-#if 0 // ORIGIN
-bool
-ProcessObjChannel::GetResult(WDL_TypedBuf<BL_FLOAT> *output, int numRequested)
-{
-    // Get the computed result
-    int numOutSamples = mResultOut.GetSize();
-    if (numRequested <= numOutSamples)
-    {
-        if (output != NULL)
-        {
-            GetResultOutBuffer(output, numRequested);
-        }
-        
-        return true;
-    }
-    else
-        // Fill with zeros
-        // (as required when there is latency and data is not yet available)
-    {
-        if (output != NULL)
-        {
-            BLUtils::ResizeFillZeros(output, numRequested);
-        }
-        
-        return false;
-    }
-}
-#endif
-
-#if 0 // Latency fix 1: 
-      // Fails with Spatializer,
-      // buffer size 2000, width=100%, bypass FftProcessObj16::ProcessFftBuffer()
-      // => crackles
-
-// New version, manages latency exactly
-// (until nFrames <= 2048)
-bool
-ProcessObjChannel::GetResult(WDL_TypedBuf<BL_FLOAT> *output, int numRequested)
-{
-    // Get the computed result
-    int numOutSamples = mResultOut.GetSize();
-    
-    // Latency fix
-    //
-    // Special case:
-    // - first time we have enough data
-    // - and nFrames <= BUFFER_SIZE 
-    //
-    // NOTE: for nFrames > BUFFER_SIZE, we will have latency, impossible to fix
-    //
-    if (!mBufWasFull &&
-        (numRequested < mBufferSize))
-    {
-        if (numOutSamples == 0)
-            // Nothing processed yet
-        {
-            // For the moment, keep accumulating, to manage latency well
-            if (output != NULL)
-            {
-                BLUtils::ResizeFillZeros(output, numRequested);
-            }
-            
-            return false;
-        }
-
-        // NEW
-        
-        // FIX: fixes auval crash
-        if (mTotalInSamples < mBufferSize)
-        {
-            // For the moment, keep accumulating, to manage latency well
-            if (output != NULL)
-            {
-                BLUtils::ResizeFillZeros(output, numRequested);
-            }
-            
-            return false;
-        }
-
-        // We just have computed something
-        //
-        // This means we have got more than 2048 samples in input
-        // We have reached the latency limit (2048), so we need to start outputing
-        //
-        // Take care of returning only a part of the result
-        // to manage latency well
-        //
-        
-        // Compute the number of samples to send to output
-        int remaining = mTotalInSamples - mBufferSize;
-        
-        if (remaining > numRequested)
-            // Just in case
-            remaining = numRequested;
-        
-        // Compute the starting buffer position where to output samples
-        int numZeros = numRequested - remaining;
-     
-        // get only the necessary samples
-        WDL_TypedBuf<BL_FLOAT> &buf = mTmpBuf7;
-        GetResultOutBuffer(&buf, remaining);
-            
-        if (output != NULL)
-        {
-            output->Resize(numRequested);
-            BLUtils::FillAllZero(output);
-            
-            // Write to output, the correct number of samples,
-            // and at the correct position
-            for (int i = 0; i < remaining; i++)
-            {
-                output->Get()[numZeros + i] = buf.Get()[i];
-            }
-        }
-        
-        mBufWasFull = true;
-        
-        return true;
-    }
-    
-    // We have enough out data to provide
-    //
-    if (numRequested <= numOutSamples)
-    {
-        if (output != NULL)
-        {
-            GetResultOutBuffer(output, numRequested);
-        }
-            
-        return true;
-    }
-    
-    // We don't have enough data yet
-    if (output != NULL)
-    {
-        BLUtils::ResizeFillZeros(output, numRequested);
-    }
-            
-    return false;
-}
-#endif
-
-#if 1
 // Latency fix 2 
 //
 // More clear fix
@@ -904,11 +658,9 @@ ProcessObjChannel::GetResult(WDL_TypedBuf<BL_FLOAT> *output, int numRequested)
     
     return false;
 }
-#endif
 
 
 // Accessors for processing horizontally
-//WDL_TypedBuf<BL_FLOAT> *
 WDL_TypedFastQueue<BL_FLOAT> *
 ProcessObjChannel::GetSamples()
 {
@@ -947,9 +699,7 @@ ProcessObjChannel::IsEnabled()
 
 void
 ProcessObjChannel::PrepareBufferStep()
-{
-    // NEW
-  
+{  
     // This can be an empty channel !
     // i.e without samples added
     // (e.g in the case we create 2 channels, and we are in mono)
@@ -965,11 +715,8 @@ ProcessObjChannel::PrepareBufferStep()
     mPreparedBuffer.Resize(mBufferSize);
     
 #if !OPTIM_SIMD
-    //for (int i = 0; i < mBufferSize; i++)
-    //    mPreparedBuffer.Get()[i] = mSamplesIn.Get()[i];
     mSamplesIn.GetToBuf(0, mPreparedBuffer.Get(), mBufferSize);
 #else
-    //memcpy(mPreparedBuffer.Get(), mSamplesIn.Get(), mBufferSize*sizeof(BL_FLOAT));
     mSamplesIn.GetToBuf(0, mPreparedBuffer.Get(), mBufferSize);
 #endif
     
@@ -1037,15 +784,7 @@ ProcessObjChannel::MakeFftStep()
     
     if (!mIsEnabled || mSkipFFT)
     {
-#if 0 // Original version, tested a lot on iPlug1
-        // Be careful to not add the beginning of the buffer
-        // (otherwise the windows will be applied twice sometimes).
-        mResult.Add(mPreparedBuffer.Get(), mBufferSize);
-#endif
-
-#if 1 // New version, for iPlug2 and memory optimization
         mResult = mPreparedBuffer;
-#endif
     }
     else
     {
@@ -1091,11 +830,6 @@ ProcessObjChannel::MakeIFftStep()
     }
     else
     {
-        // Solution 1: zero buffer
-        //mResult.Resize(mFftBuf.GetSize());
-        //BLUtils::FillAllZero(&mResult); // Just in case
-        
-        // Solution 2: take the previous windowed samples
         mResult = mPreparedBuffer;
     }
     
@@ -1182,17 +916,6 @@ ProcessObjChannel::CommitResultStep()
     if (mResult.GetSize() < loopCount)
         return;
 
-#if 0
-#if !OPTIM_SIMD
-    for (int i = 0; i < loopCount; i++)
-    {
-        mResultSum.Get()[i] += mResult.Get()[i];
-    }
-#else
-    BLUtils::AddValues(mResultSum.Get(), mResult.Get(), loopCount);
-#endif
-#endif
-
     WDL_TypedBuf<BL_FLOAT> &buf = mTmpBuf3;
     buf.Resize(loopCount);
     mResultSum.GetToBuf(0, buf.Get(), loopCount);
@@ -1213,19 +936,15 @@ void
 ProcessObjChannel::NextSamplesBuffer()
 {
     // Reduce the size by mOverlap
-    //int size = mSamplesIn.GetSize();
     int size = mSamplesIn.Available();
     
     if (size == mShift)
     {
-        //mSamplesIn.Resize(0);
         mSamplesIn.Clear();
     }
     else if (size > mShift)
     {
         // Resize down, skipping left
-        
-        //BLUtils::ConsumeLeft(&mSamplesIn, mShift);
         mSamplesIn.Advance(mShift);
     }
 }
@@ -1235,17 +954,11 @@ ProcessObjChannel::NextSamplesBuffer()
 void
 ProcessObjChannel::NextOutBuffer()
 {
-    //if (mResultSum.GetSize() < mBufferSize)
-    //    return;
     if (mResultSum.Available() < mBufferSize)
         return;
-        
-    // NEW
     
     // Let the possiblity to modify, or even resample
     // the result, before adding it to the object
-    //WDL_TypedBuf<BL_FLOAT> samplesToAdd;
-    //samplesToAdd.Add(mResultSum.Get(), mShift);
     WDL_TypedBuf<BL_FLOAT> &samplesToAdd = mTmpBuf4;
     samplesToAdd.Resize(mShift);
     mResultSum.GetToBuf(0, sampleToAdd.Get(), mShift);
@@ -1256,26 +969,6 @@ ProcessObjChannel::NextOutBuffer()
     }
     mResultOut.Add(samplesToAdd.Get(), samplesToAdd.GetSize());
     
-    // OLD
-    
-    //WDL_TypedBuf<BL_FLOAT> newBuffer;
-    //mResultOut.Add(mResultSum.Get(), mShift);
-
-#if 0
-    if (mResultSum.GetSize() == mShift)
-    {
-        mResultSum.Resize(0);
-    }
-    else if (mResultSum.GetSize() > mBufferSize)
-    {
-        // Resize down, skipping left
-        BLUtils::ConsumeLeft(&mResultSum, mShift);
-    }
-    
-    // Grow the output with zeros
-    BLUtils::ResizeFillZeros(&mResultSum,
-                             mResultSum.GetSize() + mShift);
-#endif
     if (mResultSum.Available() == mShift)
     {
         mResultSum.Clear();
@@ -1294,8 +987,6 @@ ProcessObjChannel::NextOutBuffer()
 void
 ProcessObjChannel::NextOutBuffer()
 {
-    //if (mResultSum.GetSize() < mBufferSize)
-    //    return;
     if (mResultSum.Available() < mBufferSize)
         return;
         
@@ -1303,10 +994,8 @@ ProcessObjChannel::NextOutBuffer()
     // the result, before adding it to the object
     if (mTmpBuf0.GetSize() != mShift)
         mTmpBuf0.Resize(mShift);
-    
-    //samplesToAdd.Add(mResultSum.Get(), mShift);
+   
     WDL_TypedBuf<BL_FLOAT> &samplesToAdd = mTmpBuf0;
-    //memcpy(samplesToAdd.Get(), mResultSum.Get(), mShift*sizeof(BL_FLOAT));
     mResultSum.GetToBuf(0, samplesToAdd.Get(), mShift);
     
     if (mProcessObj != NULL)
@@ -1316,57 +1005,19 @@ ProcessObjChannel::NextOutBuffer()
     mResultOut.Add(samplesToAdd.Get(), samplesToAdd.GetSize());
     
     //
-
-#if 0
-    if (mResultSum.GetSize() == mShift)
-    {
-        mResultSum.Resize(0);
-    
-        // Grow the output with zeros
-        BLUtils::ResizeFillZeros(&mResultSum,
-                                 mResultSum.GetSize() + mShift);
-    }
-    else if (mResultSum.GetSize() > mBufferSize)
-    {
-        if (mTmpBuf1.GetSize() != mResultSum.GetSize())
-            mTmpBuf1.Resize(mResultSum.GetSize());
-        // Copy the intersting data at the beginning
-        memcpy(mTmpBuf1.Get(),
-               &mResultSum.Get()[mShift],
-               (mResultSum.GetSize() - mShift)*sizeof(BL_FLOAT));
-       
-        // Fill the end with zeros
-        memset(&mTmpBuf1.Get()[mTmpBuf1.GetSize() - mShift],
-               0, mShift*sizeof(BL_FLOAT));
-        
-        // Copy the result
-        memcpy(mResultSum.Get(),
-               mTmpBuf1.Get(),
-               mResultSum.GetSize()*sizeof(BL_FLOAT));
-    }
-#endif
-
     if (mResultSum.Available() == mShift)
     {
         mResultSum.Clear();
     
         // Grow the output with zeros
-        //BLUtils::ResizeFillZeros(&mResultSum,
-        //                         mResultSum.GetSize() + mShift);
         mResultSum.Add(0, mShift);
     }
-    //else if (mResultSum.GetSize() > mBufferSize)
     else if (mResultSum.Available() > mBufferSize)
     {
-        //if (mTmpBuf1.GetSize() != mResultSum.GetSize())
-        //    mTmpBuf1.Resize(mResultSum.GetSize());
         if (mTmpBuf1.GetSize() != mResultSum.Available())
             mTmpBuf1.Resize(mResultSum.Available());
     
         // Copy the intersting data at the beginning
-        //memcpy(mTmpBuf1.Get(),
-        //       &mResultSum.Get()[mShift],
-        //       (mResultSum.GetSize() - mShift)*sizeof(BL_FLOAT));
         mResultSum.GetToBuf(mShift, mTmpBuf1.Get(), mResultSum.Available() - mShift);
         
         // Fill the end with zeros
@@ -1374,9 +1025,6 @@ ProcessObjChannel::NextOutBuffer()
                0, mShift*sizeof(BL_FLOAT));
         
         // Copy the result
-        //memcpy(mResultSum.Get(),
-        //       mTmpBuf1.Get(),
-        //       mResultSum.GetSize()*sizeof(BL_FLOAT));
         mResultSum.SetFromBuf(0, mTmpBuf1.Get(), mResultSum.Available());
     }
 }
@@ -1386,7 +1034,6 @@ void
 ProcessObjChannel::GetResultOutBuffer(WDL_TypedBuf<BL_FLOAT> *output,
                                       int numRequested)
 {
-    //int size = mResultOut.GetSize();
     int size = mResultOut.Available();
     
     // Should not happen
@@ -1397,11 +1044,9 @@ ProcessObjChannel::GetResultOutBuffer(WDL_TypedBuf<BL_FLOAT> *output,
     output->Resize(numRequested);
     
     // Copy the result
-    //memcpy(output->Get(), mResultOut.Get(), numRequested*sizeof(BL_FLOAT));
     mResultOut.GetToBuf(0, output->Get(), numRequested);
     
     // Resize down, skipping left
-    //BLUtils::ConsumeLeft(&mResultOut, numRequested);
     mResultOut.Advance(numRequested);
 }
 
@@ -1491,17 +1136,6 @@ FftProcessObj16::SetDefaultLatency(int latency)
         mChannels[i]->SetDefaultLatency(latency);
 }
 
-//int
-//FftProcessObj16::GetLatency()
-//{
-//    if (mChannels.empty())
-//        return mBufferSize;
-//
-//    int latency = mChannels[0]->GetLatency();
-//
-//    return latency;
-//}
-
 int
 FftProcessObj16::ComputeLatency(int blockSize)
 {
@@ -1516,7 +1150,8 @@ FftProcessObj16::ComputeLatency(int blockSize)
 }
 
 void
-FftProcessObj16::Reset(int bufferSize, int overlapping, int freqRes, BL_FLOAT sampleRate)
+FftProcessObj16::Reset(int bufferSize, int overlapping,
+                       int freqRes, BL_FLOAT sampleRate)
 {
     if (bufferSize > 0) // Tests added for Ghost-X (FIX_FFT_SAMPLERATE)
         mBufferSize = bufferSize;
@@ -1659,7 +1294,6 @@ FftProcessObj16::SetSkipIFft(int channelNum, bool flag)
     }
 }
 
-
 void
 FftProcessObj16::AddMultichannelProcess(MultichannelProcess *mcProcess)
 {
@@ -1672,7 +1306,6 @@ FftProcessObj16::InputSamplesReady()
     if (mMcProcesses.empty())
         return;
     
-    //vector<WDL_TypedBuf<BL_FLOAT> * > samples;
     vector<WDL_TypedFastQueue<BL_FLOAT> * > &samples0 = mTmpBuf9;
     GetAllSamples(&samples0);
     
@@ -1720,7 +1353,6 @@ FftProcessObj16::InputSamplesWinReady()
     if (mMcProcesses.empty())
         return;
     
-    //vector<WDL_TypedBuf<BL_FLOAT> * > samples;
     vector<WDL_TypedFastQueue<BL_FLOAT> * > &samples0 = mTmpBuf11;
     GetAllSamples(&samples0);
 
@@ -1934,61 +1566,6 @@ FftProcessObj16::SamplesToHalfMagns(const WDL_TypedBuf<BL_FLOAT> &inSamples,
         *outFftMagns = magns;
 }
 
-/*void
-FftProcessObj16::SamplesToHalfMagnPhases(const WDL_TypedBuf<BL_FLOAT> &inSamples,
-                                         WDL_TypedBuf<float> *outFftMagns,
-                                         WDL_TypedBuf<float> *outFftPhases)
-{
-    int numSamples = inSamples.GetSize();
-    int numPaddedSamples = BLUtils::NextPowerOfTwo(numSamples);
-    
-    WDL_TypedBuf<BL_FLOAT> paddedSamples = inSamples;
-    BLUtils::ResizeFillZeros(&paddedSamples, numPaddedSamples);
-    
-    WDL_TypedBuf<WDL_FFT_COMPLEX> fftSamples;
-    int freqRes = 1;
-    ComputeFft(paddedSamples, &fftSamples, freqRes);
-    
-    BLUtils::TakeHalf(&fftSamples);
-    
-    WDL_TypedBuf<float> magns;
-    WDL_TypedBuf<float> phases;
-    BLUtils::ComplexToMagnPhase(&magns, &phases, fftSamples);
-    
-    if (outFftMagns != NULL)
-        *outFftMagns = magns;
-    
-    if (outFftPhases != NULL)
-        *outFftPhases = phases;
-}
-*/
-
-/*
-void
-FftProcessObj16::SamplesToHalfMagns(const WDL_TypedBuf<BL_FLOAT> &inSamples,
-                                    WDL_TypedBuf<float> *outFftMagns)
-{
-    int numSamples = inSamples.GetSize();
-    int numPaddedSamples = BLUtils::NextPowerOfTwo(numSamples);
-    
-    WDL_TypedBuf<BL_FLOAT> paddedSamples = inSamples;
-    BLUtils::ResizeFillZeros(&paddedSamples, numPaddedSamples);
-    
-    WDL_TypedBuf<WDL_FFT_COMPLEX> fftSamples;
-    int freqRes = 1;
-    ComputeFft(paddedSamples, &fftSamples, freqRes);
-    
-    BLUtils::TakeHalf(&fftSamples);
-    
-    WDL_TypedBuf<float> magns;
-    WDL_TypedBuf<float> phases;
-    BLUtils::ComplexToMagn(&magns, fftSamples);
-    
-    if (outFftMagns != NULL)
-        *outFftMagns = magns;
-}
-*/
-
 void
 FftProcessObj16::FftToSamples(const WDL_TypedBuf<WDL_FFT_COMPLEX> &fftBuffer,
                               WDL_TypedBuf<BL_FLOAT> *outSamples)
@@ -2032,7 +1609,6 @@ FftProcessObj16::MagnsToCepstrum(const WDL_TypedBuf<BL_FLOAT> &halfMagns,
                  
     BLUtilsFft::FillSecondFftHalf(&magns);
 
-#if 1
     // Compute the square
     for (int i = 0; i < magns.GetSize(); i++)
     {
@@ -2040,7 +1616,6 @@ FftProcessObj16::MagnsToCepstrum(const WDL_TypedBuf<BL_FLOAT> &halfMagns,
         BL_FLOAT val2 = val*val;
         magns.Get()[i] = val2;
     }
-#endif
     
     // Compute the (natural) log
     for (int i = 0; i < magns.GetSize(); i++)
@@ -2110,15 +1685,12 @@ FftProcessObj16::SetChannelProcessObject(int channelNum, ProcessObj *obj)
     mChannels[channelNum]->SetProcessObject(obj);
 }
 
-
-//WDL_TypedBuf<BL_FLOAT> *
 WDL_TypedFastQueue<BL_FLOAT> *
 FftProcessObj16::GetChannelSamples(int channelNum)
 {
     if ((channelNum < 0) || (channelNum >= mChannels.size()))
         return NULL;
     
-    //WDL_TypedBuf<BL_FLOAT> *result = mChannels[channelNum]->GetSamples();
     WDL_TypedFastQueue<BL_FLOAT> *result = mChannels[channelNum]->GetSamples();
     
     return result;
@@ -2194,16 +1766,10 @@ FftProcessObj16::AddSamples(const vector<WDL_TypedBuf<BL_FLOAT> > &inputs,
     
     // Make a copy of the input
     // because it may be modified before adding it
-    //vector<WDL_TypedBuf<BL_FLOAT> > samplesIn = inputs;
     vector<WDL_TypedBuf<BL_FLOAT> > &samplesIn = mTmpBuf1;
     samplesIn = inputs;
     
     // Convert to the right format for Mc
-    /*vector<WDL_TypedBuf<BL_FLOAT> *> samplesInMc;
-      for (int i = 0; i < samplesIn.size(); i++)
-      {
-      samplesInMc.push_back(&samplesIn[i]);
-      }*/
     vector<WDL_TypedBuf<BL_FLOAT> *> &samplesInMc = mTmpBuf5;
     samplesInMc.resize(samplesIn.size());
     for (int i = 0; i < samplesIn.size(); i++)
@@ -2211,11 +1777,6 @@ FftProcessObj16::AddSamples(const vector<WDL_TypedBuf<BL_FLOAT> > &inputs,
         samplesInMc[i] = &samplesIn[i];
     }
     
-    /*vector<WDL_TypedBuf<BL_FLOAT> > samplesInScMc;
-      for (int i = 0; i < scInputs.size(); i++)
-      {
-      samplesInScMc.push_back(scInputs[i]);
-      }*/
     vector<WDL_TypedBuf<BL_FLOAT> > &samplesInScMc = mTmpBuf2;
     samplesInScMc.resize(scInputs.size());
     for (int i = 0; i < scInputs.size(); i++)
@@ -2235,7 +1796,6 @@ FftProcessObj16::AddSamples(const vector<WDL_TypedBuf<BL_FLOAT> > &inputs,
         mcProcess->ProcessInputSamplesPre(&samplesInMc, sc);
     }
     
-    // NEW
     for (int i = 0; i < inputs.size(); i++)
     {
         WDL_TypedBuf<BL_FLOAT> *scInput = NULL;
@@ -2348,12 +1908,6 @@ FftProcessObj16::ProcessSamples()
         // Iterate over all channels and call ProcessFftStep() for each channel
         // Put is in a method, so it can be overloaded
         ProcessAllFftSteps();
-        
-        //for (int i = mChannels.size() - 1; i >= 0 ; i--)
-        //{
-        //    ProcessObjChannel *chan = mChannels[i];
-        //    chan->ProcessFftStep();
-        //}
         
         ResultFftReady();
             
@@ -2468,12 +2022,10 @@ FftProcessObj16::Process(const vector<WDL_TypedBuf<BL_FLOAT> > &inputs,
                          const vector<WDL_TypedBuf<BL_FLOAT> > &scInputs,
                          vector<WDL_TypedBuf<BL_FLOAT> > *outputs)
 {
-    //vector<WDL_TypedBuf<BL_FLOAT> > inputs0 = inputs;
     vector<WDL_TypedBuf<BL_FLOAT> > &inputs0 = mTmpBuf0;
     if (inputs.size() > 0)
         inputs0 = inputs;
     else
-        //if (inputs0.size() == 0)
     {
         // Create dummy input samples
         inputs0 = *outputs;
@@ -2603,8 +2155,6 @@ FftProcessObj16::MakeWindows(int bufSize, int overlapping,
     // FIX: if we want to analyse only, with overlapping > 1, we need a window !
     // (otherwise there would be some discontinuities, due to rectangular window)
     // (vertical clear bars in the spectrogram for Ghost for example)
-    
-    //if ((analysisMethod == WindowHanning) && (overlapping > 1))
     if (analysisMethod == WindowHanning)
         Window::MakeHanningPow(anaWindowSize, hanningFactor, analysisWindow);
     else
@@ -2614,8 +2164,6 @@ FftProcessObj16::MakeWindows(int bufSize, int overlapping,
     
     // FIX (not tested): it should be logical to have synthesis window
     // for synthesis and overlapping == 1
-    
-    //if ((synthesisMethod == WindowHanning) && (overlapping > 1))
     if (synthesisMethod == WindowHanning)
         Window::MakeHanningPow(synWindowSize, hanningFactor, synthesisWindow);
     else
@@ -2663,25 +2211,21 @@ FftProcessObj16::MakeWindows(int bufSize, int overlapping,
 }
 
 void
-//FftProcessObj16::GetAllSamples(vector<WDL_TypedBuf<BL_FLOAT> * > *samples)
 FftProcessObj16::GetAllSamples(vector<WDL_TypedFastQueue<BL_FLOAT> * > *samples)
 {
     samples->resize(mChannels.size() - mNumScInputs);
     
-    for (int i = 0; i < mChannels.size() - mNumScInputs; i++) // NEW
+    for (int i = 0; i < mChannels.size() - mNumScInputs; i++)
     {
         ProcessObjChannel *chan = mChannels[i];
     
-        //WDL_TypedBuf<BL_FLOAT> *s = chan->GetSamples();
         WDL_TypedFastQueue<BL_FLOAT> *s = chan->GetSamples();
     
-        //samples->push_back(s);
         (*samples)[i] = s;
     }
 }
 
 void
-//FftProcessObj16::GetAllScSamples(vector<WDL_TypedBuf<BL_FLOAT> > *scSamples)
 FftProcessObj16::GetAllScSamples(vector<WDL_TypedBuf<BL_FLOAT> > *scSamples)
 {
     int numScChan = 0;
@@ -2701,10 +2245,8 @@ FftProcessObj16::GetAllScSamples(vector<WDL_TypedBuf<BL_FLOAT> > *scSamples)
         ProcessObjChannel *scChan = chan->GetSideChainChannel();
         if (scChan != NULL)
         {
-            //WDL_TypedBuf<BL_FLOAT> *s = scChan->GetSamples();
             WDL_TypedFastQueue<BL_FLOAT> *s = scChan->GetSamples();
         
-            //scSamples->push_back(*s);
             (*scSamples)[i].Resize(s->Available());
             s->GetToBuf(0, (*scSamples)[i].Get(), s->Available());
         }
@@ -2716,13 +2258,12 @@ FftProcessObj16::GetAllFftSamples(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *samp
 {
     samples->resize(mChannels.size() - mNumScInputs);
     
-    for (int i = 0; i < mChannels.size() - mNumScInputs; i++) // NEW
+    for (int i = 0; i < mChannels.size() - mNumScInputs; i++)
     {
         ProcessObjChannel *chan = mChannels[i];
         
         WDL_TypedBuf<WDL_FFT_COMPLEX> *s = chan->GetFft();
         
-        //samples->push_back(s);
         (*samples)[i] = s;
     }
 }
@@ -2750,7 +2291,6 @@ FftProcessObj16::GetAllFftScSamples(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> > *scSa
         {
             WDL_TypedBuf<WDL_FFT_COMPLEX> *s = scChan->GetFft();
         
-            //scSamples->push_back(*s);
             (*scSamples)[scIdx++] = *s;
         }
     }
@@ -2761,13 +2301,12 @@ FftProcessObj16::GetAllResultSamples(vector<WDL_TypedBuf<BL_FLOAT> * > *samples)
 {
     samples->resize(mChannels.size() - mNumScInputs);
     
-    for (int i = 0; i < mChannels.size() - mNumScInputs; i++) // NEW
+    for (int i = 0; i < mChannels.size() - mNumScInputs; i++)
     {
         ProcessObjChannel *chan = mChannels[i];
         
         WDL_TypedBuf<BL_FLOAT> *s = chan->GetResultSamples();
         
-        //samples->push_back(s);
         (*samples)[i] = s;
     }
 }
@@ -2797,7 +2336,6 @@ FftProcessObj16::GetAllResultScSamples(vector<WDL_TypedBuf<BL_FLOAT> > *scSample
         {
             WDL_TypedBuf<BL_FLOAT> *s = scChan->GetResultSamples();
             
-            //scSamples->push_back(*s);
             (*scSamples)[scIdx++] = *s;
         }
     }
@@ -2843,8 +2381,6 @@ FftProcessObj16::ComputeFft(const WDL_TypedBuf<BL_FLOAT> &samples,
     for (int i = 0; i < bufSize; i++)
     {
         // No need to divide by mBufSize if we ponderate analysis hanning window
-        //tmpFftBuf.Get()[i].re = samples.Get()[i]*coeff;
-        //tmpFftBuf.Get()[i].im = 0.0;
         tmpFftBufData[i].re = samplesData[i]*coeff;
         tmpFftBufData[i].im = 0.0;
     }
@@ -2852,7 +2388,6 @@ FftProcessObj16::ComputeFft(const WDL_TypedBuf<BL_FLOAT> &samples,
     // Take FREQ_RES into account
     // Not sure we must do that only when normalizing or not
     for (int i = 0; i < bufSize; i++)
-        //tmpFftBuf.Get()[i].re *= freqRes;
         tmpFftBufData[i].re *= freqRes;
     
     // Do the fft
@@ -2866,12 +2401,9 @@ FftProcessObj16::ComputeFft(const WDL_TypedBuf<BL_FLOAT> &samples,
         int k = WDL_fft_permute(bufSize, i);
 
 #if !DENOISER_OPTIM3
-        //fftSamples->Get()[i].re = tmpFftBuf.Get()[k].re;
-        //fftSamples->Get()[i].im = tmpFftBuf.Get()[k].im;
         fftSamplesData()[i].re = tmpFftBufData[k].re;
         fftSamplesData()[i].im = tmpFftBufData[k].im;
 #else
-        //fftSamples->Get()[i] = tmpFftBuf.Get()[k];
         fftSamplesData[i] = tmpFftBufData[k];
 #endif
     }
@@ -2907,12 +2439,9 @@ FftProcessObj16::ComputeInverseFft(const WDL_TypedBuf<WDL_FFT_COMPLEX> &fftSampl
         int k = WDL_fft_permute(bufSize, i);
         
 #if !DENOISER_OPTIM3
-        //tmpFftBuf.Get()[k].re = fftSamples.Get()[i].re;
-        //tmpFftBuf.Get()[k].im = fftSamples.Get()[i].im;
         tmpFftBufData[k].re = fftSamplesData[i].re;
         tmpFftBufData[k].im = fftSamplesData[i].im;
 #else
-        //tmpFftBuf.Get()[k] = fftSamples.Get()[i];
         tmpFftBufData[k] = fftSamplesData[i];
 #endif
     }
@@ -2924,7 +2453,6 @@ FftProcessObj16::ComputeInverseFft(const WDL_TypedBuf<WDL_FFT_COMPLEX> &fftSampl
 
     BL_FLOAT *samplesData = samples->Get();
     for (int i = 0; i < bufSize; i++)
-        //samples->Get()[i] = tmpFftBuf.Get()[i].re;
         samplesData[i] = tmpFftBufData[i].re;
     
     // fft
@@ -2940,7 +2468,6 @@ FftProcessObj16::ComputeInverseFft(const WDL_TypedBuf<WDL_FFT_COMPLEX> &fftSampl
     
 #if !OPTIM_SIMD
     for (int i = 0; i < bufSize; i++)
-        //samples->Get()[i] *= coeff;
         samplesData[i] *= coeff;
 #else
     BLUtils::MultValues(samples, coeff);
@@ -2996,7 +2523,7 @@ FftProcessObj16::ComputeInverseFft(const WDL_TypedBuf<BL_FLOAT> &fftSamplesReal,
     WDL_TypedBuf<WDL_FFT_COMPLEX> tmpBuf0;
     
     WDL_TypedBuf<WDL_FFT_COMPLEX> &fftSamples =
-    (tmpBuffer != NULL) ? *tmpBuffer : tmpBuf0;
+        (tmpBuffer != NULL) ? *tmpBuffer : tmpBuf0;
     
     fftSamples.Resize(fftSamplesReal.GetSize());
     for (int i = 0; i < fftSamplesReal.GetSize(); i++)

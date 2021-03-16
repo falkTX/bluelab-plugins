@@ -17,8 +17,6 @@ using namespace std;
 #include "../../WDL/fft.h"
 #include "../../WDL/fastqueue.h"
 
-//#include <FifoDecimator.h>
-
 #include "BufProcessObj.h"
 
 // Better reconstruction, do not make low oscillations in the reconstructed signal
@@ -69,9 +67,8 @@ public:
     
     virtual ~ProcessObj();
     
-    virtual void Reset(int bufferSize, int oversampling, int freqRes, BL_FLOAT sampleRate);
-
-    //virtual void Reset();
+    virtual void Reset(int bufferSize, int oversampling,
+                       int freqRes, BL_FLOAT sampleRate);
     
     //
     // Callbacks
@@ -108,25 +105,7 @@ public:
     // After having processed
     virtual void ProcessSamplesPost(WDL_TypedBuf<BL_FLOAT> *ioBuffer);
     
-    //
-    // Tracking
-    //
-    
-    //virtual void SetTrackIO(int maxNumPoints, BL_FLOAT decimFactor,
-    //                        bool trackInput, bool trackOutput);
-    
-    //virtual void GetCurrentInput(WDL_TypedBuf<BL_FLOAT> *outInput);
-    
-    //virtual void GetCurrentOutput(WDL_TypedBuf<BL_FLOAT> *outOutput);
-    
 protected:
-    // For tracking
-    //FifoDecimator mInput;
-    //FifoDecimator mOutput;
-    
-    //bool mTrackInput;
-    //bool mTrackOutput;
-    
     int mBufferSize;
     
     int mOverlapping;
@@ -145,28 +124,36 @@ public:
     virtual void Reset() {}
     
     // For PhaseDiff::USE_LINERP_PHASES
-    virtual void Reset(int bufferSize, int overlapping, int oversampling, BL_FLOAT sampleRate) {}
+    virtual void Reset(int bufferSize, int overlapping,
+                       int oversampling, BL_FLOAT sampleRate) {}
 
-    virtual void ProcessInputSamplesPre(vector<WDL_TypedBuf<BL_FLOAT> * > *ioSamples,
-                                        const vector<WDL_TypedBuf<BL_FLOAT> > *scBuffer) {}
+    virtual void
+    ProcessInputSamplesPre(vector<WDL_TypedBuf<BL_FLOAT> * > *ioSamples,
+                           const vector<WDL_TypedBuf<BL_FLOAT> > *scBuffer) {}
     
-    virtual void ProcessInputSamples(vector<WDL_TypedBuf<BL_FLOAT> * > *ioSamples,
-                                     const vector<WDL_TypedBuf<BL_FLOAT> > *scBuffer) {}
+    virtual void
+    ProcessInputSamples(vector<WDL_TypedBuf<BL_FLOAT> * > *ioSamples,
+                        const vector<WDL_TypedBuf<BL_FLOAT> > *scBuffer) {}
 
-    virtual void ProcessInputSamplesWin(vector<WDL_TypedBuf<BL_FLOAT> * > *ioSamples,
-                                        const vector<WDL_TypedBuf<BL_FLOAT> > *scBuffer) {}
+    virtual void
+    ProcessInputSamplesWin(vector<WDL_TypedBuf<BL_FLOAT> * > *ioSamples,
+                           const vector<WDL_TypedBuf<BL_FLOAT> > *scBuffer) {}
 
-    virtual void ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamples,
-                                 const vector<WDL_TypedBuf<WDL_FFT_COMPLEX> > *scBuffer) {}
+    virtual void
+    ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamples,
+                    const vector<WDL_TypedBuf<WDL_FFT_COMPLEX> > *scBuffer) {}
 
-    virtual void ProcessResultFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamples,
-                                  const vector<WDL_TypedBuf<WDL_FFT_COMPLEX> > *scBuffer) {}
+    virtual void
+    ProcessResultFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamples,
+                     const vector<WDL_TypedBuf<WDL_FFT_COMPLEX> > *scBuffer) {}
 
-    virtual void ProcessResultSamples(vector<WDL_TypedBuf<BL_FLOAT> * > *ioSamples,
-                                      const vector<WDL_TypedBuf<BL_FLOAT> > *scBuffer) {}
+    virtual void
+    ProcessResultSamples(vector<WDL_TypedBuf<BL_FLOAT> * > *ioSamples,
+                         const vector<WDL_TypedBuf<BL_FLOAT> > *scBuffer) {}
     
-    virtual void ProcessResultSamplesWin(vector<WDL_TypedBuf<BL_FLOAT> * > *ioSamples,
-                                         const vector<WDL_TypedBuf<BL_FLOAT> > *scBuffer) {}
+    virtual void
+    ProcessResultSamplesWin(vector<WDL_TypedBuf<BL_FLOAT> * > *ioSamples,
+                            const vector<WDL_TypedBuf<BL_FLOAT> > *scBuffer) {}
 };
 
 //
@@ -200,9 +187,6 @@ public:
     
     // Set latency, when we want a value that is not the default (buffer size)
     void SetDefaultLatency(int latency);
-    
-    // Not used ?
-    //int GetLatency();
     
     int ComputeLatency(int blockSize);
     
@@ -272,7 +256,6 @@ public:
     ProcessObj *GetChannelProcessObject(int channelNum);
     void SetChannelProcessObject(int channelNum, ProcessObj *obj);
     
-    //WDL_TypedBuf<BL_FLOAT> *GetChannelSamples(int channelNum);
     WDL_TypedFastQueue<BL_FLOAT> *GetChannelSamples(int channelNum);
     
     WDL_TypedBuf<WDL_FFT_COMPLEX> *GetChannelFft(int channelNum);
@@ -299,15 +282,8 @@ public:
                                         WDL_TypedBuf<BL_FLOAT> *outMagns,
                                         WDL_TypedBuf<BL_FLOAT> *outPhases);
     
-    //static void SamplesToHalfMagnPhases(const WDL_TypedBuf<BL_FLOAT> &inSamples,
-    //                                    WDL_TypedBuf<float> *outMagns,
-    //                                    WDL_TypedBuf<float> *outPhases);
-    
     static void SamplesToHalfMagns(const WDL_TypedBuf<BL_FLOAT> &inSamples,
                                    WDL_TypedBuf<BL_FLOAT> *outMagns);
-    
-    //static void SamplesToHalfMagns(const WDL_TypedBuf<BL_FLOAT> &inSamples,
-    //                               WDL_TypedBuf<float> *outMagns);
     
     static void FftToSamples(const WDL_TypedBuf<WDL_FFT_COMPLEX> &fftBuffer,
                              WDL_TypedBuf<BL_FLOAT> *outSamples);
@@ -359,7 +335,6 @@ protected:
     void SetupSideChain();
     
     //
-    //void GetAllSamples(vector<WDL_TypedBuf<BL_FLOAT> * > *samples);
     void GetAllSamples(vector<WDL_TypedFastQueue<BL_FLOAT> * > *samples);
     void GetAllScSamples(vector<WDL_TypedBuf<BL_FLOAT> > *scSamples);
 
@@ -370,17 +345,6 @@ protected:
     
     void GetAllResultSamples(vector<WDL_TypedBuf<BL_FLOAT> * > *samples);
     void GetAllResultScSamples(vector<WDL_TypedBuf<BL_FLOAT> > *scSamples);
-    
-#if 0
-    //
-    static void ComputeFft(const WDL_TypedBuf<BL_FLOAT> &samples,
-                           WDL_TypedBuf<WDL_FFT_COMPLEX> *fftSamples,
-                           int freqRes);
-    
-    static void ComputeInverseFft(const WDL_TypedBuf<WDL_FFT_COMPLEX> &fftSamples,
-                                  WDL_TypedBuf<BL_FLOAT> *samples,
-                                  int freqRes);
-#endif
     
     // Raw
     static void ComputeInverseFft(const WDL_TypedBuf<WDL_FFT_COMPLEX> &fftSamples,
