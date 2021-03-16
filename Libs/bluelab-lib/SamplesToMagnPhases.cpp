@@ -81,7 +81,7 @@ SamplesToMagnPhases::ReadSpectroDataSlice(vector<WDL_TypedBuf<BL_FLOAT> > magns[
     // Adjust selection for latency etc.
     int bufferSize = mFftObj->GetBufferSize();
     int overlapping = mFftObj->GetOverlapping();
-
+    
     //
     int bufStepSize = bufferSize/overlapping;
     

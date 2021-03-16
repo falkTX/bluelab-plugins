@@ -99,8 +99,13 @@ public:
     void SetSampleRate(BL_FLOAT sampleRate);
     
 protected:
-    void ComputeZoomAdjustFactor(BL_FLOAT minXNorm, BL_FLOAT maxXNorm);
-        
+    void ComputeZoomAdjustFactor(BL_FLOAT minXNorm, BL_FLOAT maxXNorm,
+                                 BL_FLOAT step = 1.0);
+
+    // Do not compute all the lines if the file is long
+    // Compute and set the step, and return it
+    BL_FLOAT UpdateStep();
+    
     void DBG_AnnotateMagns(vector<WDL_TypedBuf<BL_FLOAT> > *ioMagns);
         
     BLSpectrogram4 *mSpectrogram;
