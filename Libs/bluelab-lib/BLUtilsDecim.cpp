@@ -1,6 +1,8 @@
 #include <BLUtils.h>
 #include <BLUtilsMath.h>
 
+#include <BLDebug.h>
+
 #include "BLUtilsDecim.h"
 
 template <typename FLOAT_TYPE>
@@ -388,7 +390,7 @@ template void BLUtilsDecim::DecimateSamples2(WDL_TypedBuf<double> *result,
                                              double decFactor);
 
 
-// New: take the maximum spaced value (no more zero crossing
+// New: take the maximum spaced value (no more zero crossing)
 // => code a lot simpler, and result very good
 //
 // FIX: to avoid long series of positive values not looking like waveforms
@@ -453,7 +455,7 @@ BLUtilsDecim::DecimateSamples3(WDL_TypedBuf<FLOAT_TYPE> *result,
     {
         FLOAT_TYPE samp = bufData[i];
 
-        // Take the maximum spacing (whatever the sign
+        // Take the maximum spacing (whatever the sign)
         if (std::fabs(samp - prevSampleUsed) > std::fabs(maxSample - prevSampleUsed))
             maxSample = samp;
         
@@ -497,6 +499,69 @@ template void BLUtilsDecim::DecimateSamples3(WDL_TypedBuf<double> *result,
                                              const WDL_TypedBuf<double> &buf,
                                              double decFactor);
 
+
+// Run through the souce buffer, and splat values to the destination
+// (smaller) buffer. Keep the most significant values when splatting.
+template <typename FLOAT_TYPE>
+void
+BLUtilsDecim::DecimateSamples4(WDL_TypedBuf<FLOAT_TYPE> *result,
+                               const WDL_TypedBuf<FLOAT_TYPE> &buf,
+                               FLOAT_TYPE decFactor)
+{
+    // Idea from spikes save/restore,
+    // see: https://stackoverflow.com/questions/59093503/how-to-downsample-a-signal-preserving-spikes
+
+    // Adjust the result size to ceil(), and adjust decFactor
+    // (in case of odd input buffer)
+#define FIX_ODD_DECIMATE 1
+    
+    if (buf.GetSize() == 0)
+        return;
+    
+    if (decFactor >= 1.0)
+    {
+        *result = buf;
+        
+        return;
+    }
+
+#if !FIX_ODD_DECIMATE
+    int newSize = buf.GetSize()*decFactor;
+#else
+    int newSize = ceil(buf.GetSize()*decFactor);
+    // Adjust decimation factor
+    decFactor = ((FLOAT_TYPE)newSize)/buf.GetSize();
+#endif
+    
+    BLUtils::ResizeFillZeros(result, newSize);
+        
+    if (buf.GetSize() == 0)
+        return;
+    
+    // Fill the spikes buffer
+    for (int i = 0; i < buf.GetSize(); i++)
+    {
+        BL_FLOAT val = buf.Get()[i];
+                    
+        int spikeIdx = i*decFactor;
+        if (spikeIdx < result->GetSize())
+        {            
+            // Choose the maximum spike
+            // (will avoid overwriting a big spike with a very small spike)
+            FLOAT_TYPE spike = result->Get()[spikeIdx];
+            if (std::fabs(val) > std::fabs(spike))
+            {
+                result->Get()[spikeIdx] = val;
+            }
+        }
+    }
+}
+template void BLUtilsDecim::DecimateSamples4(WDL_TypedBuf<float> *result,
+                                             const WDL_TypedBuf<float> &buf,
+                                             float decFactor);
+template void BLUtilsDecim::DecimateSamples4(WDL_TypedBuf<double> *result,
+                                             const WDL_TypedBuf<double> &buf,
+                                             double decFactor);
 
 template <typename FLOAT_TYPE>
 void

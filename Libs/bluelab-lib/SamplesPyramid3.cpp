@@ -49,6 +49,10 @@
 // => after a given zoom level, the waveform stops zooming
 #define FIX_BIG_ZOOM 1 //0 //1
 
+#define DECIMATE_SAMPLES_FUNC BLUtilsDecim::DecimateSamples3
+//#define DECIMATE_SAMPLES_FUNC BLUtilsDecim::DecimateSamples4
+
+
 SamplesPyramid3::SamplesPyramid3(int maxLevel)
 {
     mMaxPyramidLevel = maxLevel;
@@ -129,8 +133,8 @@ SamplesPyramid3::SetValues(const WDL_TypedBuf<BL_FLOAT> &samples)
             break;
         
         WDL_TypedBuf<BL_FLOAT> &newLevel = mTmpBuf8[pyramidLevel];
-        BLUtilsDecim::DecimateSamples3(&newLevel, prevLevel, (BL_FLOAT)0.5);
-
+        DECIMATE_SAMPLES_FUNC(&newLevel, prevLevel, (BL_FLOAT)0.5);
+        
         BLUtils::BufToFastQueue(newLevel, &mSamplesPyramid[pyramidLevel]);
         
         if (pyramidLevel >= mMaxPyramidLevel)
@@ -223,9 +227,9 @@ SamplesPyramid3::PushValues(const WDL_TypedBuf<BL_FLOAT> &samples)
         BLUtils::SetBufResize(&samplesCurrentLevel, currentLevel, start, size);
         
         WDL_TypedBuf<BL_FLOAT> &samplesNextLevel = mTmpBuf4[pyramidLevel];
-        BLUtilsDecim::DecimateSamples3(&samplesNextLevel,
-                                       samplesCurrentLevel, (BL_FLOAT)0.5);
-        
+        DECIMATE_SAMPLES_FUNC(&samplesNextLevel,
+                              samplesCurrentLevel, (BL_FLOAT)0.5);
+                                       
         numSamplesOverlap /= 2;
         
         // Take only the second half of the buffer
@@ -322,7 +326,7 @@ SamplesPyramid3::ReplaceValues(long start, const WDL_TypedBuf<BL_FLOAT> &samples
         BLUtils::Replace(&mSamplesPyramid[pyramidLevel], startD, samples0);
         
         WDL_TypedBuf<BL_FLOAT> tmp = samples0;
-        BLUtilsDecim::DecimateSamples3(&samples0, tmp, (BL_FLOAT)0.5);
+        DECIMATE_SAMPLES_FUNC(&samples0, tmp, (BL_FLOAT)0.5);
         
         startD /= 2.0;
         pyramidLevel++;
@@ -444,7 +448,25 @@ SamplesPyramid3::GetValues(BL_FLOAT start, BL_FLOAT end, long numValues,
 
     // Decimate
     BL_FLOAT decimFactor = ((BL_FLOAT)numValues)/size;
-    BLUtilsDecim::DecimateSamples3(samples, level, decimFactor);
+
+    // Final step decimate only if the level size is really bigger
+    // Problem: this last step decimation if done, would make waveform
+    // "jitter" while zooming or translating
+    // (small peaks popping quickly while zooming).
+    //
+    // To avoid this, choose a sufficient big max pyramid level
+    // (and this will also save resources by avoiding decimating e.g 50000 samples
+    // at the end)
+    //
+    if (level.GetSize() > numValues*2)
+    {
+        DECIMATE_SAMPLES_FUNC(samples, level, decimFactor);
+    }
+    else
+    {
+        // We don't have too many samples at the and => simple copy
+        *samples = level;
+    }
 }
 
 void
