@@ -49,7 +49,10 @@
 // => after a given zoom level, the waveform stops zooming
 #define FIX_BIG_ZOOM 1 //0 //1
 
+// Good (just some slight dark lines, due to overlay 
 #define DECIMATE_SAMPLES_FUNC BLUtilsDecim::DecimateSamples3
+
+// Not so good (many dark lines, due to missing maxima)
 //#define DECIMATE_SAMPLES_FUNC BLUtilsDecim::DecimateSamples4
 
 
