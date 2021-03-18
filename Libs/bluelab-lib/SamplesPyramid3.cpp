@@ -356,7 +356,8 @@ SamplesPyramid3::GetValues(BL_FLOAT start, BL_FLOAT end, long numValues,
 
 {
     // Check if we must add zeros at the beginning
-    int numZerosBegin = 0;
+    //int numZerosBegin = 0;
+    BL_FLOAT numZerosBegin = 0.0;
     if (start < 0)
     {
         numZerosBegin = -start;
@@ -364,7 +365,8 @@ SamplesPyramid3::GetValues(BL_FLOAT start, BL_FLOAT end, long numValues,
     }
     
     // Check if we must add zeros at the end
-    int numZerosEnd = 0;
+    //int numZerosEnd = 0;
+    BL_FLOAT numZerosEnd = 0.0;
     if (!mSamplesPyramid.empty() && (end > mSamplesPyramid[0].Available()))
     {
         numZerosEnd = end - mSamplesPyramid[0].Available();
@@ -452,12 +454,12 @@ SamplesPyramid3::GetValues(BL_FLOAT start, BL_FLOAT end, long numValues,
     // Add zeros if necessary
     if (numZerosBegin > 0)
     {
-        BLUtils::PadZerosLeft(&level, numZerosBegin);
+        BLUtils::PadZerosLeft(&level, (int)numZerosBegin);
     }
     
     if (numZerosEnd > 0)
     {
-        BLUtils::PadZerosRight(&level, numZerosEnd);
+        BLUtils::PadZerosRight(&level, (int)numZerosEnd);
     }
     
     // Update the size with the zeros added
@@ -500,16 +502,35 @@ SamplesPyramid3::GetValues(BL_FLOAT start, BL_FLOAT end, long numValues,
             BL_FLOAT start0 = floor(start);
             BL_FLOAT end0 = ceil(end);
             BL_FLOAT size0 = end0 - start0;
-            
-            WDL_TypedBuf<SP_FLOAT> &level = mTmpBuf10;
-            BLUtils::FastQueueToBuf(mSamplesPyramid[pyramidLevel], start0,
-                                    &level, size0);
 
+            // Extract again, with the addtion to left and right values
+            // ( ceil() / floor() )
+            WDL_TypedBuf<SP_FLOAT> &level0 = mTmpBuf10;
+            BLUtils::FastQueueToBuf(mSamplesPyramid[pyramidLevel], start0,
+                                    &level0, size0);
+
+            // Must pad again because we just extracted the level
+            if (numZerosBegin > 0)
+            {
+                BLUtils::PadZerosLeft(&level0, (int)numZerosBegin);
+            }
+            
+            if (numZerosEnd > 0)
+            {
+                BLUtils::PadZerosRight(&level0, (int)numZerosEnd);
+            }
+            
             BL_FLOAT leftT = start - start0;
             BL_FLOAT rightT = end0 - end;
+
+            // Adjust with zeros positions if necessary
+            // NOTE: without this, zoom a lot on begin or end of the signal
+            // then translate => it jitters
+            leftT -= (numZerosBegin - (int)numZerosBegin);
+            rightT -= (numZerosEnd - (int)numZerosEnd);
             
             // Upsample
-            UpsampleResult(numValues, &samples0, level, leftT, rightT);
+            UpsampleResult(numValues, &samples0, level0, leftT, rightT);
         }
     }
 
