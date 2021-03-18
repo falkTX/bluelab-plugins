@@ -424,7 +424,7 @@ SamplesPyramid3::GetValues(BL_FLOAT start, BL_FLOAT end, long numValues,
     BLUtils::SetBufResize(&level, currentPyramidLevel, start, size);
 #endif
 
-#if 1 // Optimized versio (copy only the necessary from queue to buf
+#if 1 // Optimized version (copy only the necessary from queue to buf
     // Use ceil to avoid missing last sample...
     //int size = ceil(end - start);
     // ... and add 1, to be very sure to get the last sample in any case
@@ -467,8 +467,34 @@ SamplesPyramid3::GetValues(BL_FLOAT start, BL_FLOAT end, long numValues,
     }
     else
     {
-        // We don't have too many samples at the and => simple copy
-        *samples = level;
+        if (level.GetSize() > numValues*0.5)
+        {    
+            // We don't have too many samples at the and => simple copy
+            *samples = level;
+        }
+        else
+        {
+            // We have too few samples
+            // Must increase the number of samples,
+            // and adjust very accurately to float start and end
+            // (otherwise we would have small jitter when full zooming,
+            // and translating very progressively)
+
+            // Take the two border values
+            BL_FLOAT start0 = floor(start);
+            BL_FLOAT end0 = ceil(end);
+            BL_FLOAT size0 = end0 - start0;
+            
+            WDL_TypedBuf<BL_FLOAT> &level = mTmpBuf10;
+            BLUtils::FastQueueToBuf(mSamplesPyramid[pyramidLevel], start0,
+                                    &level, size0);
+
+            BL_FLOAT leftT = start - start0;
+            BL_FLOAT rightT = end0 - end;
+            
+            // Upsample
+            UpsampleResult(numValues, samples, level, leftT, rightT);
+        }
     }
 }
 
@@ -492,4 +518,44 @@ SamplesPyramid3::ResetTmpBuffers()
     
     mTmpBuf8.resize(0);
     mTmpBuf8.resize(mMaxPyramidLevel + 1);
+}
+
+void
+SamplesPyramid3::UpsampleResult(int numValues,
+                                WDL_TypedBuf<BL_FLOAT> *result,
+                                const WDL_TypedBuf<BL_FLOAT> &buffer,
+                                BL_FLOAT leftT, BL_FLOAT rightT)
+{
+    if (buffer.GetSize() < 3)
+        return;
+    
+    // Init with undefined
+    result->Resize(numValues);
+    BLUtils::FillAllValue(result, (BL_FLOAT)UTILS_VALUE_UNDEFINED);
+
+    // Left value
+    BL_FLOAT leftVal = (1.0 - leftT)*buffer.Get()[0] + leftT*buffer.Get()[1];
+    result->Get()[0] = leftVal;
+    
+    // Right value
+    BL_FLOAT rightVal =
+        rightT*buffer.Get()[buffer.GetSize() - 2] +
+        (1.0 - rightT)*buffer.Get()[buffer.GetSize() - 1];
+    result->Get()[result->GetSize() - 1] = rightVal;
+    
+    // Intermediate values
+    for (int i = 1; i < buffer.GetSize() - 1; i++)
+    {
+        BL_FLOAT val = buffer.Get()[i];
+
+        BL_FLOAT t = ((BL_FLOAT)i - leftT)/(buffer.GetSize() - 1 - (leftT + rightT));
+        
+        int targetIdx = t*result->GetSize();
+        if ((targetIdx > 0) && (targetIdx < result->GetSize() - 1))
+            result->Get()[targetIdx] = val;
+    }
+    
+    bool extendBounds = false;
+    BLUtils::FillMissingValues(result, extendBounds,
+                               (BL_FLOAT)UTILS_VALUE_UNDEFINED);
 }

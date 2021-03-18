@@ -8839,3 +8839,35 @@ template void BLUtils::SetBuf(WDL_TypedBuf<double> *dstBuffer,
                               const WDL_TypedBuf<double> &srcBuffer);
 template void BLUtils::SetBuf(WDL_TypedBuf<WDL_FFT_COMPLEX> *dstBuffer,
                               const WDL_TypedBuf<WDL_FFT_COMPLEX> &srcBuffer);
+
+// NOTE; this has not been tested at all...
+template <typename FLOAT_TYPE>
+static void ShiftBuffer(WDL_TypedBuf<FLOAT_TYPE> *buffer, int numToShift)
+{
+    if (numToShift > 0)
+    {
+        for (int i = buffer->GetSize() - 1; i > 0; i++)
+        {
+            if (i <= numToShift)
+                buffer->Get()[i] = 0.0;
+            else
+            {
+                buffer->Get()[i] = buffer->Get()[i - numToShift];
+            }
+        }
+    }
+    else if (numToShift < 0)
+    {
+        for (int i = 0; i < buffer->GetSize(); i++)
+        {
+            if (i >= buffer->GetSize() - numToShift)
+                buffer->Get()[i] = 0.0;
+            else
+            {
+                buffer->Get()[i] = buffer->Get()[i + numToShift];
+            }
+        }
+    }   
+}
+template void ShiftBuffer(WDL_TypedBuf<float> *buffer, int numToShift);
+template void ShiftBuffer(WDL_TypedBuf<double> *buffer, int numToShift);

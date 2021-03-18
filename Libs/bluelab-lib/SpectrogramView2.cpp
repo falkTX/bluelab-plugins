@@ -206,8 +206,8 @@ SpectrogramView2::GetViewDataBounds(BL_FLOAT *startDataPos, BL_FLOAT *endDataPos
     
     int bufferSize = mFftObj->GetBufferSize();
     
-    *startDataPos = minNormX*((BL_FLOAT)numSamples)/bufferSize;
-    *endDataPos = maxXNorm*((BL_FLOAT)numSamples)/bufferSize;;
+    *startDataPos = minNormX*(((BL_FLOAT)numSamples)/bufferSize);
+    *endDataPos = maxXNorm*(((BL_FLOAT)numSamples)/bufferSize);
 }
 
 bool
@@ -518,7 +518,7 @@ SpectrogramView2::ComputeZoomAdjustFactor(BL_FLOAT minXNorm, BL_FLOAT maxXNorm,
 
 BL_FLOAT
 SpectrogramView2::UpdateStep()
-{
+{    
     int overlap = mFftObj->GetOverlapping();
     BL_FLOAT viewNumLines = mEndDataPos - mStartDataPos;
     viewNumLines *= overlap;

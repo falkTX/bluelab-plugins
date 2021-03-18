@@ -52,6 +52,13 @@ public:
     
 protected:
     void ResetTmpBuffers();
+
+    void UpsampleResult(int numValues,
+                        WDL_TypedBuf<BL_FLOAT> *result,
+                        const WDL_TypedBuf<BL_FLOAT> &buffer,
+                        BL_FLOAT leftT, BL_FLOAT rightT);
+
+    //
     
     //vector<WDL_TypedBuf<BL_FLOAT> > mSamplesPyramid;
     vector<WDL_TypedFastQueue<BL_FLOAT> > mSamplesPyramid;
@@ -78,6 +85,7 @@ private:
     vector<WDL_TypedBuf<BL_FLOAT> > mTmpBuf7;
     vector<WDL_TypedBuf<BL_FLOAT> > mTmpBuf8;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf9;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf10;
 };
 
 #endif /* defined(__BL_Ghost__SamplesPyramid3__) */

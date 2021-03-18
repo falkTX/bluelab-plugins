@@ -1159,6 +1159,9 @@ public:
     static void SetBuf(WDL_TypedBuf<FLOAT_TYPE> *dstBuffer,
                        const WDL_TypedBuf<FLOAT_TYPE> &srcBuffer);
 
+    template <typename FLOAT_TYPE>
+    static void ShiftBuffer(WDL_TypedBuf<FLOAT_TYPE> *buffer, int numToShift);
+                       
 protected:
     template <typename FLOAT_TYPE>
     static FLOAT_TYPE
