@@ -8584,7 +8584,62 @@ BLUtils::ConvertToFloatType(WDL_TypedBuf<BL_FLOAT> *dst,
     }
 }
 
-                                
+template <typename FLOAT_TYPE>
+void
+BLUtils::ConvertFromFloat(WDL_TypedBuf<FLOAT_TYPE> *dst,
+                          const WDL_TypedBuf<float> &src)
+{
+    if (sizeof(FLOAT_TYPE) == sizeof(float))
+    {
+        *((WDL_TypedBuf<float> *)dst) = src;
+        return;
+    }
+    
+    dst->Resize(src.GetSize());
+
+    int size = src.GetSize();
+    FLOAT_TYPE *dstBuf = dst->Get();
+    float *srcBuf = src.Get();
+    
+    for (int i = 0; i < size; i++)
+    {
+        //dst->Get()[i] = src.Get()[i];
+        dstBuf[i] = srcBuf[i];
+    }
+}
+template void BLUtils::ConvertFromFloat(WDL_TypedBuf<float> *dst,
+                                        const WDL_TypedBuf<float> &src);
+template void BLUtils::ConvertFromFloat(WDL_TypedBuf<double> *dst,
+                                        const WDL_TypedBuf<float> &src);
+
+template <typename FLOAT_TYPE>
+void
+BLUtils::ConvertToFloat(WDL_TypedBuf<float> *dst,
+                        const WDL_TypedBuf<FLOAT_TYPE> &src)
+{
+    if (sizeof(FLOAT_TYPE) == sizeof(float))
+    {
+        *((WDL_TypedBuf<FLOAT_TYPE> *)dst) = src;
+        return;
+    }
+    
+    dst->Resize(src.GetSize());
+
+    int size = src.GetSize();
+    float *dstBuf = dst->Get();
+    FLOAT_TYPE *srcBuf = src.Get();
+    
+    for (int i = 0; i < size; i++)
+    {
+        //dst->Get()[i] = src.Get()[i];
+        dstBuf[i] = srcBuf[i];
+    }
+}
+template void BLUtils::ConvertToFloat(WDL_TypedBuf<float> *dst,
+                                      const WDL_TypedBuf<float> &src);
+template void BLUtils::ConvertToFloat(WDL_TypedBuf<float> *dst,
+                                      const WDL_TypedBuf<double> &src);
+
 void
 BLUtils::FixDenormal(WDL_TypedBuf<BL_FLOAT> *data)
 {

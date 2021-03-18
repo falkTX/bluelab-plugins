@@ -28,6 +28,9 @@ using namespace std;
 // (we don't detect well minima and maxima)
 #define DEFAULT_MAX_PYRAMID_LEVEL 8
 
+// Use float to save memory
+#define SP_FLOAT float
+
 // Make "MipMaps" with samples
 // (to optimize when displaying waveform of long sound)
 class SamplesPyramid3
@@ -54,22 +57,24 @@ protected:
     void ResetTmpBuffers();
 
     void UpsampleResult(int numValues,
-                        WDL_TypedBuf<BL_FLOAT> *result,
-                        const WDL_TypedBuf<BL_FLOAT> &buffer,
-                        BL_FLOAT leftT, BL_FLOAT rightT);
+                        WDL_TypedBuf<SP_FLOAT> *result,
+                        const WDL_TypedBuf<SP_FLOAT> &buffer,
+                        SP_FLOAT leftT, SP_FLOAT rightT);
 
     void DBG_DisplayMemory();
         
     //
     
     //vector<WDL_TypedBuf<BL_FLOAT> > mSamplesPyramid;
-    vector<WDL_TypedFastQueue<BL_FLOAT> > mSamplesPyramid;
+    //vector<WDL_TypedFastQueue<BL_FLOAT> > mSamplesPyramid;
+    vector<WDL_TypedFastQueue<SP_FLOAT> > mSamplesPyramid;
     
     // Keep a push buffer, to be able to push
     // by bloocks of power of two (otherwise,
     // there are artefacts on the second half).
     //WDL_TypedBuf<BL_FLOAT> mPushBuf;
-    WDL_TypedFastQueue<BL_FLOAT> mPushBuf;
+    //WDL_TypedFastQueue<BL_FLOAT> mPushBuf;
+    WDL_TypedFastQueue<SP_FLOAT> mPushBuf;
     
     long mRemainToPop;
 
@@ -77,17 +82,17 @@ protected:
     
 private:
     // Tmp buffers
-    vector<WDL_TypedBuf<BL_FLOAT> > mTmpBuf0;
-    vector<WDL_TypedBuf<BL_FLOAT> > mTmpBuf1;
-    vector<WDL_TypedBuf<BL_FLOAT> > mTmpBuf2;
-    vector<WDL_TypedBuf<BL_FLOAT> > mTmpBuf3;
-    vector<WDL_TypedBuf<BL_FLOAT> > mTmpBuf4;
-    vector<WDL_TypedBuf<BL_FLOAT> > mTmpBuf5;
-    WDL_TypedBuf<BL_FLOAT> mTmpBuf6;
-    vector<WDL_TypedBuf<BL_FLOAT> > mTmpBuf7;
-    vector<WDL_TypedBuf<BL_FLOAT> > mTmpBuf8;
-    WDL_TypedBuf<BL_FLOAT> mTmpBuf9;
-    WDL_TypedBuf<BL_FLOAT> mTmpBuf10;
+    vector<WDL_TypedBuf<SP_FLOAT> > mTmpBuf0;
+    vector<WDL_TypedBuf<SP_FLOAT> > mTmpBuf1;
+    vector<WDL_TypedBuf<SP_FLOAT> > mTmpBuf2;
+    vector<WDL_TypedBuf<SP_FLOAT> > mTmpBuf3;
+    vector<WDL_TypedBuf<SP_FLOAT> > mTmpBuf4;
+    vector<WDL_TypedBuf<SP_FLOAT> > mTmpBuf5;
+    WDL_TypedBuf<SP_FLOAT> mTmpBuf6;
+    vector<WDL_TypedBuf<SP_FLOAT> > mTmpBuf7;
+    vector<WDL_TypedBuf<SP_FLOAT> > mTmpBuf8;
+    WDL_TypedBuf<SP_FLOAT> mTmpBuf9;
+    WDL_TypedBuf<SP_FLOAT> mTmpBuf10;
 };
 
 #endif /* defined(__BL_Ghost__SamplesPyramid3__) */

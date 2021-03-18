@@ -1107,7 +1107,16 @@ public:
                                    const WDL_TypedBuf<double> &src);
     static void ConvertToFloatType(WDL_TypedBuf<BL_FLOAT> *dst,
                                    const WDL_TypedBuf<float> &src);
-    
+
+    // Generic
+    template <typename FLOAT_TYPE>
+    static void ConvertFromFloat(WDL_TypedBuf<FLOAT_TYPE> *dst,
+                                 const WDL_TypedBuf<float> &src);
+    template <typename FLOAT_TYPE>
+    static void ConvertToFloat(WDL_TypedBuf<float> *dst,
+                               const WDL_TypedBuf<FLOAT_TYPE> &src);
+
+            
     static void FixDenormal(WDL_TypedBuf<BL_FLOAT> *data);
     
     static void AddIntermediatePoints(const WDL_TypedBuf<BL_FLOAT> &x,
