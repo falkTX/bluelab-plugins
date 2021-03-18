@@ -125,7 +125,8 @@ SamplesPyramid3::SetValues(const WDL_TypedBuf<BL_FLOAT> &samples)
     int pyramidLevel = 1;
     while(true)
     {        
-        WDL_TypedBuf<BL_FLOAT> &prevLevel = mTmpBuf7[pyramidLevel];
+        //WDL_TypedBuf<BL_FLOAT> &prevLevel = mTmpBuf7[pyramidLevel];
+        WDL_TypedBuf<BL_FLOAT> prevLevel;
         
         BLUtils::FastQueueToBuf(mSamplesPyramid[pyramidLevel - 1], &prevLevel);
         
@@ -135,7 +136,8 @@ SamplesPyramid3::SetValues(const WDL_TypedBuf<BL_FLOAT> &samples)
         if (pyramidLevel > mMaxPyramidLevel)
             break;
         
-        WDL_TypedBuf<BL_FLOAT> &newLevel = mTmpBuf8[pyramidLevel];
+        //WDL_TypedBuf<BL_FLOAT> &newLevel = mTmpBuf8[pyramidLevel];
+        WDL_TypedBuf<BL_FLOAT> newLevel;
         DECIMATE_SAMPLES_FUNC(&newLevel, prevLevel, (BL_FLOAT)0.5);
         
         BLUtils::BufToFastQueue(newLevel, &mSamplesPyramid[pyramidLevel]);
@@ -145,6 +147,9 @@ SamplesPyramid3::SetValues(const WDL_TypedBuf<BL_FLOAT> &samples)
 
         pyramidLevel++;
     }
+
+    // DEBUG
+    //DBG_DisplayMemory();
 }
 
 void
@@ -558,4 +563,20 @@ SamplesPyramid3::UpsampleResult(int numValues,
     bool extendBounds = false;
     BLUtils::FillMissingValues(result, extendBounds,
                                (BL_FLOAT)UTILS_VALUE_UNDEFINED);
+}
+
+void
+SamplesPyramid3::DBG_DisplayMemory()
+{
+    long numSamples = 0;
+
+    for (int i = 0; i < mSamplesPyramid.size(); i++)
+    {
+        numSamples += mSamplesPyramid[i].Available();
+    }
+
+    long numBytes = numSamples*sizeof(BL_FLOAT);
+    long numMB = ((double)numBytes)/1000000;
+
+    fprintf(stderr, "SamplePyramid3 - MEM: %ld MB\n", numMB);
 }

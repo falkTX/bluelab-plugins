@@ -58,6 +58,8 @@ protected:
                         const WDL_TypedBuf<BL_FLOAT> &buffer,
                         BL_FLOAT leftT, BL_FLOAT rightT);
 
+    void DBG_DisplayMemory();
+        
     //
     
     //vector<WDL_TypedBuf<BL_FLOAT> > mSamplesPyramid;
