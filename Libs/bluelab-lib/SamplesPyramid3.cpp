@@ -355,6 +355,28 @@ SamplesPyramid3::GetValues(BL_FLOAT start, BL_FLOAT end, long numValues,
                            WDL_TypedBuf<BL_FLOAT> *samples)
 
 {
+    // First, check the bounds
+    // and maybe return early
+    if (!mSamplesPyramid.empty())
+    {
+        int numTotalSamples = mSamplesPyramid[0].Available();
+            
+            // Check if we are totally out of bounds
+        if (((start <= 0.0) && (end <= 0.0)) ||
+            ((start >= numTotalSamples) && (end >= numTotalSamples)))
+            // Everything out of view
+        {
+            // Simply return a buffer of zeros
+            // (so the waveform won't disappear,
+            // but will be displayed as a simple line)
+            
+            samples->Resize(numValues);
+            BLUtils::FillAllZero(samples);
+            
+            return;
+        }
+    }
+        
     // Check if we must add zeros at the beginning
     //int numZerosBegin = 0;
     BL_FLOAT numZerosBegin = 0.0;
