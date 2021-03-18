@@ -38,7 +38,7 @@ public:
 
     // Multi channel samples
     // (possibilty an entiere stereo file)
-    void SetData(vector<WDL_TypedBuf<BL_FLOAT> > *samples);
+    void SetSamples(vector<WDL_TypedBuf<BL_FLOAT> > *samples);
     
     void SetViewBarPosition(BL_FLOAT pos);
     

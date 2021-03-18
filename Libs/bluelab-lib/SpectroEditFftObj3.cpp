@@ -32,6 +32,9 @@ SpectroEditFftObj3::SpectroEditFftObj3(int bufferSize, int oversampling,
     mDataSelection[3] = 0.0;
 
     mStep = 1.0;
+
+    mForceMono = false;
+    mSamplesForMono = NULL;
 }
 
 SpectroEditFftObj3::~SpectroEditFftObj3() {}
@@ -40,6 +43,18 @@ void
 SpectroEditFftObj3::SetSamples(WDL_TypedBuf<BL_FLOAT> *samples)
 {
     mSamples = samples;
+}
+
+void
+SpectroEditFftObj3::SetSamplesForMono(vector<WDL_TypedBuf<BL_FLOAT> > *samples)
+{
+    mSamplesForMono = samples;
+}
+
+void
+SpectroEditFftObj3::SetForceMono(bool flag)
+{
+    mForceMono = flag;
 }
 
 // Step is used if ever we want to squeeze buffers
@@ -80,7 +95,26 @@ SpectroEditFftObj3::PreProcessSamplesBuffer(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
             }
             else // We are in bounds
             {
-                BLUtils::SetBufResize(ioBuffer, *mSamples, mSamplesPos, mBufferSize);
+                if (!mForceMono || (mSamplesForMono == NULL) ||
+                    (mSamplesForMono->size() < 2))
+                    // Normal behaviour
+                {
+                    BLUtils::SetBufResize(ioBuffer, *mSamples,
+                                          mSamplesPos, mBufferSize);
+                }
+                else
+                    // Convert stereo to mono
+                {
+                    WDL_TypedBuf<BL_FLOAT> buf0;
+                    BLUtils::SetBufResize(&buf0, (*mSamplesForMono)[0],
+                                          mSamplesPos, mBufferSize);
+
+                    WDL_TypedBuf<BL_FLOAT> buf1;
+                    BLUtils::SetBufResize(&buf1, (*mSamplesForMono)[1],
+                                          mSamplesPos, mBufferSize);
+
+                    BLUtils::StereoToMono(ioBuffer, buf0, buf1);
+                }
             }
         }
     }

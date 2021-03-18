@@ -30,7 +30,7 @@ public:
     
     bool IsPointInside(int x, int y, int width, int height);
     
-    void SetData(const WDL_TypedBuf<BL_FLOAT> &data);
+    void SetSamples(const WDL_TypedBuf<BL_FLOAT> &samples);
     
     void GetWaveForm(WDL_TypedBuf<BL_FLOAT> *waveform);
     

@@ -37,6 +37,9 @@ public:
     
     // Set a reference to external samples
     void SetSamples(WDL_TypedBuf<BL_FLOAT> *samples);
+
+    void SetForceMono(bool flag);
+    void SetSamplesForMono(vector<WDL_TypedBuf<BL_FLOAT> > *samples);
     
     // In EDIT mode, replace the input samples buffer, provide by the app,
     // by the internal samples buffer, pointed at the mSamplesPos index
@@ -47,7 +50,7 @@ public:
                           const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer = NULL);
     
     void Reset(int bufferSize, int oversampling, int freqRes, BL_FLOAT sampleRate);
-
+    
     void SetStep(BL_FLOAT step);
     
     void SetMode(Mode mode);
@@ -103,6 +106,9 @@ protected:
     BL_FLOAT mSamplesPos;
     
     WDL_TypedBuf<BL_FLOAT> *mSamples;
+    
+    vector<WDL_TypedBuf<BL_FLOAT> > *mSamplesForMono;
+    bool mForceMono;
     
     bool mSelectionEnabled;
     BL_FLOAT mDataSelection[4];

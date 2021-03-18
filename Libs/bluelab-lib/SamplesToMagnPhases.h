@@ -27,6 +27,8 @@ class SamplesToMagnPhases
     virtual ~SamplesToMagnPhases();
 
     void SetSamples(vector<WDL_TypedBuf<BL_FLOAT> > *samples);
+
+    void SetForceMono(bool flag);
     
     void ReadSpectroDataSlice(vector<WDL_TypedBuf<BL_FLOAT> > magns[2],
                               vector<WDL_TypedBuf<BL_FLOAT> > phases[2],
@@ -72,6 +74,8 @@ class SamplesToMagnPhases
     SamplesPyramid3 *mSamplesPyramid;
 
     BL_FLOAT mStep;
+
+    bool mForceMono;
     
  private:
     // Tmp buffers

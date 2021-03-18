@@ -26,6 +26,8 @@ SamplesToMagnPhases::SamplesToMagnPhases(vector<WDL_TypedBuf<BL_FLOAT> > *sample
     mSamplesPyramid = samplesPyramid;
 
     mStep = 1.0;
+
+    mForceMono = false;
 }
 
 SamplesToMagnPhases::~SamplesToMagnPhases() {}
@@ -34,6 +36,31 @@ void
 SamplesToMagnPhases::SetSamples(vector<WDL_TypedBuf<BL_FLOAT> > *samples)
 {
     mSamples = samples;
+        
+    for (int i = 0; i < 2; i++)
+    {
+        if (mSpectroEditObjs[i] != NULL)
+        {
+            if (i < samples->size())
+                mSpectroEditObjs[i]->SetSamples(&(*samples)[i]);
+            else
+                mSpectroEditObjs[i]->SetSamples(NULL);
+            
+            mSpectroEditObjs[i]->SetSamplesForMono(mSamples);
+        }
+    }
+}
+
+void
+SamplesToMagnPhases::SetForceMono(bool flag)
+{
+    mForceMono = flag;
+
+    for (int i = 0; i < 2; i++)
+    {
+        if (mSpectroEditObjs[i] != NULL)
+            mSpectroEditObjs[i]->SetForceMono(flag);
+    }
 }
 
 void

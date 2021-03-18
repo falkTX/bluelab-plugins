@@ -106,16 +106,16 @@ MiniView2::IsPointInside(int x, int y, int width, int height)
 }
 
 void
-MiniView2::SetData(const WDL_TypedBuf<BL_FLOAT> &data)
+MiniView2::SetSamples(const WDL_TypedBuf<BL_FLOAT> &samples)
 {
-    if (data.GetSize() == 0)
+    if (samples.GetSize() == 0)
         return;
     
-    mWaveForm = data;
+    mWaveForm = samples;
     
     BL_FLOAT decFactor = ((BL_FLOAT)mWaveForm.GetSize())/mMaxNumPoints;
     //BLUtils::DecimateSamples(&mWaveForm, (BL_FLOAT)(1.0/decFactor));
-    BLUtilsDecim::DecimateSamples3(&mWaveForm, data, (BL_FLOAT)(1.0/decFactor));
+    BLUtilsDecim::DecimateSamples3(&mWaveForm, samples, (BL_FLOAT)(1.0/decFactor));
     
     BL_FLOAT maxVal = BLUtils::ComputeMaxAbs(mWaveForm);
     

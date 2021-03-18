@@ -61,6 +61,9 @@ SpectrogramView2::SpectrogramView2(BLSpectrogram4 *spectro,
     mSamplesToMagnPhases = new SamplesToMagnPhases(NULL, // samples
                                                    fftObj, spectroEditObjs0,
                                                    NULL); // pyramid
+
+    // Used only for display, force stereo to mono
+    mSamplesToMagnPhases->SetForceMono(true);
     
     Reset();
 }
@@ -90,7 +93,7 @@ SpectrogramView2::GetSpectrogram()
 }
 
 void
-SpectrogramView2::SetData(vector<WDL_TypedBuf<BL_FLOAT> > *samples)
+SpectrogramView2::SetSamples(vector<WDL_TypedBuf<BL_FLOAT> > *samples)
 {
     mSamples = samples;
     
