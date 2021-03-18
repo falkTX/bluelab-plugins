@@ -407,8 +407,25 @@ SamplesToMagnPhases::WriteSpectroDataSlice(vector<WDL_TypedBuf<BL_FLOAT> > magns
         if (i == 0)
         {
             if (mSamplesPyramid != NULL)
-                mSamplesPyramid->ReplaceValues(minDataXSamples0,
-                                               tmpOutChannels[i]);
+            {
+                if (tmpOutChannels.size() == 1)
+                    // Normal behaviour
+                {
+                    mSamplesPyramid->ReplaceValues(minDataXSamples0,
+                                                   tmpOutChannels[i]);
+                }
+                else if (tmpOutChannels.size() >= 2)
+                {
+                    // Stereo to mono
+                    // NOTE: thing to change in Ghost too
+                    WDL_TypedBuf<BL_FLOAT> mono;
+                    BLUtils::StereoToMono(&mono,
+                                          tmpOutChannels[0],
+                                          tmpOutChannels[1]);
+                
+                    mSamplesPyramid->ReplaceValues(minDataXSamples0, mono);
+                }
+            }
         }
         
         // Simple copy
