@@ -56,7 +56,11 @@ public:
     
     void GetData(int channelNum, WDL_TypedBuf<BL_FLOAT> **data);
     
-    void SetData(int channelNum, const WDL_TypedBuf<BL_FLOAT> &data, long dataSize = -1);
+    void SetData(int channelNum, const WDL_TypedBuf<BL_FLOAT> &data,
+                 long dataSize = -1);
+
+    // Rescale is some samples are > 1.0 or < -1.0
+    void FixDataBounds();
     
 protected:
     int mNumChannels;

@@ -66,7 +66,8 @@ AudioFile::Load(const char *fileName, vector<WDL_TypedBuf<BL_FLOAT> > *data)
         return NULL;
     
     // Keep the loaded format, in case we would like to save to the same format
-    result = new AudioFile(sfinfo.channels, (BL_FLOAT)sfinfo.samplerate, sfinfo.format, data);
+    result = new AudioFile(sfinfo.channels,
+                           (BL_FLOAT)sfinfo.samplerate, sfinfo.format, data);
     
     // Avoid duplicating data
     //vector<WDL_TypedBuf<BL_FLOAT> > channels;
@@ -292,3 +293,34 @@ AudioFile::SetData(int channelNum, const WDL_TypedBuf<BL_FLOAT> &data, long data
         BLUtils::ResizeFillZeros(&(*mData)[channelNum], dataSize);
 }
 
+void
+AudioFile::FixDataBounds()
+{
+    BL_FLOAT maxSamp = 0.0;
+
+    for (int i = 0; i < mData->size(); i++)
+    {
+        const WDL_TypedBuf<BL_FLOAT> &chan = (*mData)[i];
+
+        for (int j = 0; j < chan.GetSize(); j++)
+        {
+            BL_FLOAT val = chan.Get()[j];
+            if (val > maxSamp)
+                maxSamp = val;
+            else if (-val > maxSamp)
+                maxSamp = -val;
+        }
+    }
+
+    if (maxSamp > 1.0)
+    {
+        BL_FLOAT coeff = 1.0/maxSamp;
+        
+        for (int i = 0; i < mData->size(); i++)
+        {
+            WDL_TypedBuf<BL_FLOAT> &chan = (*mData)[i];
+
+            BLUtils::MultValues(&chan, coeff);
+        }
+    }
+}
