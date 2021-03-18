@@ -105,11 +105,11 @@ SpectroEditFftObj3::PreProcessSamplesBuffer(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
                 else
                     // Convert stereo to mono
                 {
-                    WDL_TypedBuf<BL_FLOAT> buf0;
+                    WDL_TypedBuf<BL_FLOAT> &buf0 = mTmpBuf6;
                     BLUtils::SetBufResize(&buf0, (*mSamplesForMono)[0],
                                           mSamplesPos, mBufferSize);
 
-                    WDL_TypedBuf<BL_FLOAT> buf1;
+                    WDL_TypedBuf<BL_FLOAT> &buf1 = mTmpBuf7;
                     BLUtils::SetBufResize(&buf1, (*mSamplesForMono)[1],
                                           mSamplesPos, mBufferSize);
 

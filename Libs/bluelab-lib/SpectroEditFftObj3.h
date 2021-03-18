@@ -137,6 +137,8 @@ private:
     WDL_TypedBuf<BL_FLOAT> mTmpBuf3;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf4;
     WDL_TypedBuf<WDL_FFT_COMPLEX> mTmpBuf5;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf6;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf7;
 };
 
 #endif /* defined(__BL_Ghost__SpectroEditFftObj3__) */
