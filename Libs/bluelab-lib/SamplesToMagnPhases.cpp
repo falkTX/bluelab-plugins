@@ -169,11 +169,13 @@ SamplesToMagnPhases::ReadSpectroDataSlice(vector<WDL_TypedBuf<BL_FLOAT> > magns[
 }
 
 void
-SamplesToMagnPhases::WriteSpectroDataSlice(vector<WDL_TypedBuf<BL_FLOAT> > magns[2],
-                                           vector<WDL_TypedBuf<BL_FLOAT> > phases[2],
-                                           BL_FLOAT minXNorm,
-                                           BL_FLOAT maxXNorm,
-                                           int fadeNumSamples)
+SamplesToMagnPhases::
+WriteSpectroDataSlice(vector<WDL_TypedBuf<BL_FLOAT> > magns[2],
+                      vector<WDL_TypedBuf<BL_FLOAT> > phases[2],
+                      BL_FLOAT minXNorm,
+                      BL_FLOAT maxXNorm,
+                      int fadeNumSamples,
+                      vector<WDL_TypedBuf<BL_FLOAT> > *outSamples)
 {
     // Check arguments
     if (mSpectroEditObjs[0] == NULL)
@@ -218,8 +220,17 @@ SamplesToMagnPhases::WriteSpectroDataSlice(vector<WDL_TypedBuf<BL_FLOAT> > magns
     }
     
     // Must use tmp channels, for skeezing buffers for latency
-    vector<WDL_TypedBuf<BL_FLOAT> > tmpOutChannels;
-    tmpOutChannels.resize(numChannels);
+    vector<WDL_TypedBuf<BL_FLOAT> > tmpBuf;
+    vector<WDL_TypedBuf<BL_FLOAT> > *tmpOutChannels = &tmpBuf;
+    if (outSamples != NULL)
+    {
+        // Clear, just in case
+        outSamples->resize(0);
+        
+        tmpOutChannels = outSamples;
+    }
+    
+    tmpOutChannels->resize(numChannels);
 
     // Setup selection for latency etc.
     //
@@ -273,7 +284,7 @@ SamplesToMagnPhases::WriteSpectroDataSlice(vector<WDL_TypedBuf<BL_FLOAT> > magns
         mFftObj->Process(in, dummyScIn, &out);
             
         for (int i = 0; i < numChannels; i++)
-            tmpOutChannels[i].Add(out[i].Get(), out[i].GetSize());
+            (*tmpOutChannels)[i].Add(out[i].Get(), out[i].GetSize());
         
         currentX += bufStepSize*mStep;
 
@@ -283,15 +294,15 @@ SamplesToMagnPhases::WriteSpectroDataSlice(vector<WDL_TypedBuf<BL_FLOAT> > magns
     }
             
     // Adjust for latency  
-    for (int i = 0; i < tmpOutChannels.size(); i++)
+    for (int i = 0; i < tmpOutChannels->size(); i++)
     {
-        BLUtils::ConsumeLeft(&tmpOutChannels[i], latency);
+        BLUtils::ConsumeLeft(&(*tmpOutChannels)[i], latency);
     }
 
     // Adjust for left overfeed
-    for (int i = 0; i < tmpOutChannels.size(); i++)
+    for (int i = 0; i < tmpOutChannels->size(); i++)
     {
-        BLUtils::ConsumeLeft(&tmpOutChannels[i], leftOverfeed);
+        BLUtils::ConsumeLeft(&(*tmpOutChannels)[i], leftOverfeed);
     }
  
     // Adjust the right remaining samples
@@ -302,10 +313,10 @@ SamplesToMagnPhases::WriteSpectroDataSlice(vector<WDL_TypedBuf<BL_FLOAT> > magns
     // Recompute the right bound, because we had adjusted it to buffer size
     BL_FLOAT realMaxDataXSamples = maxXNorm*(*mSamples)[0].GetSize();
     BL_FLOAT selSize = realMaxDataXSamples - minDataXSamples;
-    for (int i = 0; i < tmpOutChannels.size(); i++)
+    for (int i = 0; i < tmpOutChannels->size(); i++)
     {
-        if (tmpOutChannels[i].GetSize() > selSize)
-            tmpOutChannels[i].Resize(selSize);
+        if ((*tmpOutChannels)[i].GetSize() > selSize)
+            (*tmpOutChannels)[i].Resize(selSize);
     }
     
     for (int i = 0; i < numChannels; i++)
@@ -330,20 +341,20 @@ SamplesToMagnPhases::WriteSpectroDataSlice(vector<WDL_TypedBuf<BL_FLOAT> > magns
             // Test if we have a really small selection compared to the fade size
             // In this case, adjust the fade size
 #define FADE_MIN_RATIO 0.25
-            if (tmpOutChannels[i].GetSize()*FADE_MIN_RATIO < fadeNumSamples*2)
+            if ((*tmpOutChannels)[i].GetSize()*FADE_MIN_RATIO < fadeNumSamples*2)
             {
                 // Take 25% of fade on the left, 25% fade on the right
                 // and 50% not faded at the center
-                fadeNumSamples = tmpOutChannels[i].GetSize()*FADE_MIN_RATIO;
+                fadeNumSamples = (*tmpOutChannels)[i].GetSize()*FADE_MIN_RATIO;
             }
             
             // Fade
-            int bufSize = tmpOutChannels[i].GetSize();
+            int bufSize = (*tmpOutChannels)[i].GetSize();
             BL_FLOAT fadeStartPos = 0.0;
             BL_FLOAT fadeEndPos = ((BL_FLOAT)fadeNumSamples)/bufSize;
             
             const BL_FLOAT *src = &(*mSamples)[i].Get()[(int)minDataXSamples];
-            BL_FLOAT *dst = tmpOutChannels[i].Get();
+            BL_FLOAT *dst = (*tmpOutChannels)[i].Get();
 
             //TestSigmoid::RunTest();
 
@@ -390,52 +401,80 @@ SamplesToMagnPhases::WriteSpectroDataSlice(vector<WDL_TypedBuf<BL_FLOAT> > magns
         if (minDataXSamples0 < 0)
         {
             int numToCut = -minDataXSamples0;
-            BLUtils::ConsumeLeft(&tmpOutChannels[i], numToCut);
+            BLUtils::ConsumeLeft(&(*tmpOutChannels)[i], numToCut);
 
             minDataXSamples0 = 0;
         }
 
         // Adjust right
-        if (minDataXSamples0 + tmpOutChannels[i].GetSize() > (*mSamples)[i].GetSize())
+        if (minDataXSamples0 + (*tmpOutChannels)[i].GetSize() >
+            (*mSamples)[i].GetSize())
         {
-            int numToCut = (minDataXSamples0 + tmpOutChannels[i].GetSize()) -
+            int numToCut = (minDataXSamples0 + (*tmpOutChannels)[i].GetSize()) -
             (*mSamples)[i].GetSize();
             
-            BLUtils::ConsumeRight(&tmpOutChannels[i], numToCut);
+            BLUtils::ConsumeRight(&(*tmpOutChannels)[i], numToCut);
         }
         
-        if (i == 0)
+        if ((i == 0) &&
+            (outSamples == NULL)) // We don't modify mSamples
         {
             if (mSamplesPyramid != NULL)
             {
-                if (tmpOutChannels.size() == 1)
+                if (tmpOutChannels->size() == 1)
                     // Normal behaviour
                 {
                     mSamplesPyramid->ReplaceValues(minDataXSamples0,
-                                                   tmpOutChannels[i]);
+                                                   (*tmpOutChannels)[i]);
                 }
-                else if (tmpOutChannels.size() >= 2)
+                else if (tmpOutChannels->size() >= 2)
                 {
                     // Stereo to mono
                     // NOTE: thing to change in Ghost too
                     WDL_TypedBuf<BL_FLOAT> mono;
                     BLUtils::StereoToMono(&mono,
-                                          tmpOutChannels[0],
-                                          tmpOutChannels[1]);
+                                          (*tmpOutChannels)[0],
+                                          (*tmpOutChannels)[1]);
                 
                     mSamplesPyramid->ReplaceValues(minDataXSamples0, mono);
                 }
             }
         }
-        
-        // Simple copy
-        BL_FLOAT *src = tmpOutChannels[i].Get();
-        BL_FLOAT *dst = &(*mSamples)[i].Get()[(int)minDataXSamples0];
-        memcpy(dst, src, tmpOutChannels[i].GetSize()*sizeof(BL_FLOAT));
+
+        if (outSamples == NULL)
+        {
+            // Simple copy
+            BL_FLOAT *src = (*tmpOutChannels)[i].Get();
+            BL_FLOAT *dst = &(*mSamples)[i].Get()[(int)minDataXSamples0];
+            memcpy(dst, src, (*tmpOutChannels)[i].GetSize()*sizeof(BL_FLOAT));
+        }
     }
     
     // Restore state
     ReadWriteSliceRestoreState(state);
+}
+
+void
+SamplesToMagnPhases::ReadSelectedSamples(vector<WDL_TypedBuf<BL_FLOAT> > *samples,
+                                         BL_FLOAT minXNorm, BL_FLOAT maxNormX)
+{
+    vector<WDL_TypedBuf<BL_FLOAT> > magns[2];
+    vector<WDL_TypedBuf<BL_FLOAT> > phases[2];
+    ReadSpectroDataSlice(magns, phases, minXNorm, maxNormX);
+
+    for (int i = 0; i < 2; i++)
+    {
+        for (int j = 0; j < magns[i].size(); j++)
+        {
+            if (mSpectroEditObjs[0] != NULL)
+            {
+                mSpectroEditObjs[0]->ApplyYSelection(&magns[i][j]);
+                mSpectroEditObjs[0]->ApplyYSelection(&phases[i][j]);
+            }
+        }
+    }
+    
+    WriteSpectroDataSlice(magns, phases, minXNorm, maxNormX, 0, samples);
 }
 
 void

@@ -96,7 +96,11 @@ public:
                                   const WDL_TypedBuf<BL_FLOAT> &inBuf,
                                   int selStartSamples,
                                   int selSizeSamples);
-    
+
+    // Set magns or phases to 0 outside of the y selection
+    // NOTE: maybe it could be done internally
+    void ApplyYSelection(WDL_TypedBuf<BL_FLOAT> *data);
+        
 protected:
     void GetData(const WDL_TypedBuf<BL_FLOAT> &currentData,
                  WDL_TypedBuf<BL_FLOAT> *data);

@@ -34,11 +34,18 @@ class SamplesToMagnPhases
                               vector<WDL_TypedBuf<BL_FLOAT> > phases[2],
                               BL_FLOAT minXNorm, BL_FLOAT maxNormX);
 
+    // If outsamples is not NULL, fill it instead of writing in mSamples
     void WriteSpectroDataSlice(vector<WDL_TypedBuf<BL_FLOAT> > magns[2],
                                vector<WDL_TypedBuf<BL_FLOAT> > phases[2],
                                BL_FLOAT minXNorm, BL_FLOAT maxNormX,
-                               int fadeNumSamples = 0);
+                               int fadeNumSamples = 0,
+                               vector<WDL_TypedBuf<BL_FLOAT> > *outSamples = NULL);
 
+    // Read samples corresponding to bounds
+    // But read them taking into account the selection over the frequencies
+    void ReadSelectedSamples(vector<WDL_TypedBuf<BL_FLOAT> > *samples,
+                             BL_FLOAT minXNorm, BL_FLOAT maxNormX);
+    
     // If we want not to process all the data, set step > 1
     // e.g to process half of the data set step to 2.0
     void SetStep(BL_FLOAT step);

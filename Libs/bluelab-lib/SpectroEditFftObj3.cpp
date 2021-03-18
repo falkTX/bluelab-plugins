@@ -454,30 +454,8 @@ SpectroEditFftObj3::GetData(const WDL_TypedBuf<BL_FLOAT> &currentData,
         {
             // Original line
             *data = currentData;
-        
-            // Set to 0 outside y selection
-            BL_FLOAT y0 = mDataSelection[1];
-            if (y0 < 0.0)
-                y0 = 0.0;
 
-            // After Valgrind tests
-            // Could happen if we dragged the whole selection outside
-            if (y0 >= data->GetSize())
-                y0 = data->GetSize() - 1.0;
-	    
-            BL_FLOAT y1 = mDataSelection[3];
-            if (y1 >= data->GetSize())
-                y1 = data->GetSize() - 1.0;
-            
-            // Can happen if we dragged the whole selection outside
-            if (y1 < 0.0)
-                y1 = 0.0;
-            
-            for (int i = 0; i <= y0; i++)
-                data->Get()[i] = 0.0;
-        
-            for (int i = y1; i < data->GetSize(); i++)
-                data->Get()[i] = 0.0;
+            ApplyYSelection(data);
         }
         else
         {
@@ -503,4 +481,32 @@ SpectroEditFftObj3::FillFromSelection(WDL_TypedBuf<BL_FLOAT> *result,
             result->Get()[i - selStartSamples] = val;
         }
     }
+}
+
+void
+SpectroEditFftObj3::ApplyYSelection(WDL_TypedBuf<BL_FLOAT> *data)
+{
+    // Set to 0 outside y selection
+    BL_FLOAT y0 = mDataSelection[1];
+    if (y0 < 0.0)
+        y0 = 0.0;
+
+    // After Valgrind tests
+    // Could happen if we dragged the whole selection outside
+    if (y0 >= data->GetSize())
+        y0 = data->GetSize() - 1.0;
+	    
+    BL_FLOAT y1 = mDataSelection[3];
+    if (y1 >= data->GetSize())
+        y1 = data->GetSize() - 1.0;
+            
+    // Can happen if we dragged the whole selection outside
+    if (y1 < 0.0)
+        y1 = 0.0;
+            
+    for (int i = 0; i <= y0; i++)
+        data->Get()[i] = 0.0;
+        
+    for (int i = y1; i < data->GetSize(); i++)
+        data->Get()[i] = 0.0;
 }
