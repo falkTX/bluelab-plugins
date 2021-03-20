@@ -35,7 +35,7 @@ public:
     virtual bool OnKeyDown(float x, float y,
                            const IKeyPress &key) override { return false; }
     
-    virtual void OnMouseOver(float x, float y, const IMouseMod &pMod) override {}
+    virtual void OnMouseOver(float x, float y, const IMouseMod &pMod) override;
     virtual void OnMouseOut() override {}
     
     //void UpdateZoomSelection(BL_FLOAT zoomChange);

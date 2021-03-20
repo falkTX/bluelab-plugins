@@ -1143,6 +1143,18 @@ BLSpectrogram4::GetSampleRate()
     return mSampleRate;
 }
 
+BL_FLOAT
+BLSpectrogram4::NormYToFreq(BL_FLOAT normY)
+{
+    BL_FLOAT resultY =
+        mScale->ApplyScaleInv(mYScale, normY,
+                              (BL_FLOAT)0.0, (BL_FLOAT)(mSampleRate*0.5));
+
+    resultY *= mSampleRate*0.5;
+
+    return resultY; 
+}
+
 void
 BLSpectrogram4::ResetQueues()
 {

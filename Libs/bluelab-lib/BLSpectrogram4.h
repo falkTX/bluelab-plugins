@@ -104,6 +104,8 @@ public:
     unsigned long long GetTotalLineNum();
     
     BL_FLOAT GetSampleRate();
+
+    BL_FLOAT NormYToFreq(BL_FLOAT normY);
     
 protected:
     void UnwrapAllPhases(const bl_queue<WDL_TypedBuf<BL_FLOAT> > &inPhases,

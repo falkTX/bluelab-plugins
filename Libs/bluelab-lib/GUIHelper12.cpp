@@ -979,7 +979,8 @@ GUIHelper12::ResetParameter(Plugin *plug, int paramIdx)
     if (plug->GetUI())
     {
         plug->GetParam(paramIdx)->SetToDefault();
-        plug->SendParameterValueFromAPI(paramIdx, plug->GetParam(paramIdx)->Value(), false);
+        plug->SendParameterValueFromAPI(paramIdx,
+                                        plug->GetParam(paramIdx)->Value(), false);
     }
 }
 

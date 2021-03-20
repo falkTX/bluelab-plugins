@@ -200,6 +200,8 @@ void
 GhostCustomControl::OnMouseDrag(float x, float y, float dX, float dY,
                                 const IMouseMod &pMod)
 {
+    mPlug->CursorMoved(x, y);
+    
     if (mPlug->GetMode() != GhostPluginInterface::EDIT)
         return;
     
@@ -406,6 +408,12 @@ GhostCustomControl::OnMouseWheel(float x, float y, const IMouseMod &pMod, float 
     mPlug->SetNeedRecomputeData(true);
 }
 
+void
+GhostCustomControl::OnMouseOver(float x, float y, const IMouseMod &pMod)
+{
+    mPlug->CursorMoved(x, y);
+}
+    
 bool
 GhostCustomControl::InsideSelection(int x, int y)
 {

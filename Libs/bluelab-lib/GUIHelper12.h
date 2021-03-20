@@ -107,14 +107,16 @@ public:
     BLVumeter2SidesControl *CreateVumeter2SidesV(IGraphics *graphics,
                                                  float x, float y,
                                                  const char *bitmapFname,
-                                                 int paramIdx, const char *title = NULL,
+                                                 int paramIdx,
+                                                 const char *title = NULL,
                                                  float marginMin = 0.0,
                                                  float marginMax = 0.0);
     
     BLVumeterNeedleControl *CreateVumeterNeedleV(IGraphics *graphics,
                                                  float x, float y,
                                                  const char *bitmapFname,
-                                                 int paramIdx, const char *title = NULL);
+                                                 int paramIdx,
+                                                 const char *title = NULL);
     
     ITextControl *CreateText(IGraphics *graphics,
                              float x, float y,

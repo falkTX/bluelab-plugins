@@ -59,7 +59,9 @@ public:
   
     // For Protools
     bool PlaybackWasRestarted(unsigned long long delay);
-    
+
+    virtual void CursorMoved(BL_FLOAT x, BL_FLOAT y) = 0;
+        
 protected:
     unsigned long long mPrevUpTime;
 };

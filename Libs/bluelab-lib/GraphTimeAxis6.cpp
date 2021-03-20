@@ -179,6 +179,13 @@ GraphTimeAxis6::SetMustUpdate()
     mMustUpdate = true;
 }
 
+void
+GraphTimeAxis6::GetMinMaxTime(BL_FLOAT *minTimeSec, BL_FLOAT *maxTimeSec)
+{
+    *minTimeSec = mCurrentTime - mTimeDuration;
+    *maxTimeSec = mCurrentTime;
+}
+
 #if 0 // ORIGIN
 void
 GraphTimeAxis6::Update(BL_FLOAT currentTime)

@@ -55,6 +55,9 @@ public:
     // Must be called from ProcessBlock(), to indicate
     // that the plugin is not bypassed
     void SetMustUpdate();
+
+    // Time in seconds
+    void GetMinMaxTime(BL_FLOAT *minTimeSec, BL_FLOAT *maxTimeSec);
     
     static BL_FLOAT ComputeTimeDuration(int numBuffers, int bufferSize,
                                         int oversampling, BL_FLOAT sampleRate);
