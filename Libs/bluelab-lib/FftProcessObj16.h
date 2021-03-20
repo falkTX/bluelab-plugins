@@ -17,7 +17,9 @@ using namespace std;
 #include "../../WDL/fft.h"
 #include "../../WDL/fastqueue.h"
 
-#include "BufProcessObj.h"
+#include <BLTypes.h>
+
+#include <BufProcessObj.h>
 
 // Better reconstruction, do not make low oscillations in the reconstructed signal
 

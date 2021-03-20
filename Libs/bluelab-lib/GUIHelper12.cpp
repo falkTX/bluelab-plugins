@@ -556,8 +556,31 @@ GUIHelper12::CreateText(IGraphics *graphics, float x, float y,
     IRECT rect(x + offsetX, y + offsetY,
                (x + offsetX + width), (y  + size + offsetY));
 
-    
     ITextControl *textControl = new ITextControl(rect, textStr, text);
+    
+    graphics->AttachControl(textControl);
+    
+    return textControl;
+}
+
+ITextButtonControl *
+GUIHelper12::CreateTextButton(IGraphics *graphics, float x, float y,
+                              int paramIdx,
+                              const char *textStr, float size,
+                              const char *font,
+                              const IColor &color, EAlign align,
+                              float offsetX, float offsetY)
+{
+    IText text(size, color, font, align);
+    
+    float width = GetTextWidth(graphics, text, textStr);
+    
+    IRECT rect(x + offsetX, y + offsetY,
+               (x + offsetX + width), (y  + size + offsetY));
+
+    
+    ITextButtonControl *textControl = new ITextButtonControl(rect, paramIdx,
+                                                             textStr, text);
     
     graphics->AttachControl(textControl);
     

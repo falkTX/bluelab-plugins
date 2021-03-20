@@ -19,25 +19,45 @@
 #define TEXT_ALIGN EAlign::Far
 
 GhostMeter::GhostMeter(BL_FLOAT x, BL_FLOAT y,
-                       BL_FLOAT sampleRate)
+                       int timeParamIdx, int freqParamIdx,
+                       int bufferSize, BL_FLOAT sampleRate)
 {
     //mMode = GHOST_METER_HMS;
-    mMode = GHOST_METER_SAMPLES;
+    mTimeMode = GHOST_METER_TIME_SAMPLES;
 
+    mFreqMode = GHOST_METER_FREQ_HZ;
+    
+    mTimeParamIdx = timeParamIdx;
+    mFreqParamIdx = freqParamIdx;
+
+    mBufferSize = bufferSize;
     mSampleRate = sampleRate;
     
     mX = x;
     mY = y;
     
     ClearUI();
+
+    //
+    mPrevCursorTimeX = 0.0;
+    mPrevCursorFreqY = 0.0;
+
+    mPrevSelTimeX = 0.0;
+    mPrevSelFreqY = 0.0;
+    
+    mPrevSelTimeW = 0.0;
+    mPrevSelFreqH = 0.0;
 }
 
 GhostMeter::~GhostMeter() {}
 
 void
-GhostMeter::Reset(BL_FLOAT sampleRate)
+GhostMeter::Reset(int bufferSize, BL_FLOAT sampleRate)
 {
+    mBufferSize = bufferSize;
     mSampleRate = sampleRate;
+
+    RefreshValues();
 }
 
 void
@@ -49,54 +69,60 @@ GhostMeter::GenerateUI(GUIHelper12 *guiHelper,
 
     // Cursor pos
     mCursorPosTexts[0] =
-        guiHelper->CreateText(graphics,
-                              mX, mY,
-                              DEFAULT_TEXT, TEXT_FIELD_V_SIZE,
-                              FONT,
-                              valueColor, TEXT_ALIGN);
+        guiHelper->CreateTextButton(graphics,
+                                    mX, mY,
+                                    mTimeParamIdx,
+                                    DEFAULT_TEXT, TEXT_FIELD_V_SIZE,
+                                    FONT,
+                                    valueColor, TEXT_ALIGN);
 
     IRECT cp0 = mCursorPosTexts[0]->GetRECT();
     mCursorPosTexts[1] =
-        guiHelper->CreateText(graphics,
-                              cp0.R + TEXT_FIELD_H_SPACING1, mY,
-                              DEFAULT_TEXT, TEXT_FIELD_V_SIZE,
-                              FONT,
-                              valueColor, TEXT_ALIGN);
+        guiHelper->CreateTextButton(graphics,
+                                    cp0.R + TEXT_FIELD_H_SPACING1, mY,
+                                    mFreqParamIdx,
+                                    DEFAULT_TEXT, TEXT_FIELD_V_SIZE,
+                                    FONT,
+                                    valueColor, TEXT_ALIGN);
 
     // Selection pos
     mSelPosTexts[0] =
-        guiHelper->CreateText(graphics,
-                              mX, cp0.B + TEXT_FIELD_V_SPACING,
-                              DEFAULT_TEXT, TEXT_FIELD_V_SIZE,
-                              FONT,
-                              valueColor, TEXT_ALIGN);
+        guiHelper->CreateTextButton(graphics,
+                                    mX, cp0.B + TEXT_FIELD_V_SPACING,
+                                    mTimeParamIdx,
+                                    DEFAULT_TEXT, TEXT_FIELD_V_SIZE,
+                                    FONT,
+                                    valueColor, TEXT_ALIGN);
     IRECT sp0 = mSelPosTexts[0]->GetRECT();
     
     mSelPosTexts[1] =
-        guiHelper->CreateText(graphics,
-                              cp0.R + TEXT_FIELD_H_SPACING1,
-                              cp0.B + TEXT_FIELD_V_SPACING,
-                              DEFAULT_TEXT, TEXT_FIELD_V_SIZE,
-                              FONT,
-                              valueColor, TEXT_ALIGN);
+        guiHelper->CreateTextButton(graphics,
+                                    cp0.R + TEXT_FIELD_H_SPACING1,
+                                    cp0.B + TEXT_FIELD_V_SPACING,
+                                    mFreqParamIdx,
+                                    DEFAULT_TEXT, TEXT_FIELD_V_SIZE,
+                                    FONT,
+                                    valueColor, TEXT_ALIGN);
     
     // Selection size
     mSelSizeTexts[0] =
-        guiHelper->CreateText(graphics,
-                              mX,
-                              sp0.B + TEXT_FIELD_V_SPACING,
-                              DEFAULT_TEXT, TEXT_FIELD_V_SIZE,
-                              FONT,
-                              valueColor, TEXT_ALIGN);
+        guiHelper->CreateTextButton(graphics,
+                                    mX,
+                                    sp0.B + TEXT_FIELD_V_SPACING,
+                                    mTimeParamIdx,
+                                    DEFAULT_TEXT, TEXT_FIELD_V_SIZE,
+                                    FONT,
+                                    valueColor, TEXT_ALIGN);
     IRECT ss0 = mSelSizeTexts[0]->GetRECT();
     
     mSelSizeTexts[1] =
-        guiHelper->CreateText(graphics,
-                              ss0.R + TEXT_FIELD_H_SPACING1,
-                              sp0.B + TEXT_FIELD_V_SPACING,
-                              DEFAULT_TEXT, TEXT_FIELD_V_SIZE,
-                              FONT,
-                              valueColor, TEXT_ALIGN);
+        guiHelper->CreateTextButton(graphics,
+                                    ss0.R + TEXT_FIELD_H_SPACING1,
+                                    sp0.B + TEXT_FIELD_V_SPACING,
+                                    mFreqParamIdx,
+                                    DEFAULT_TEXT, TEXT_FIELD_V_SIZE,
+                                    FONT,
+                                    valueColor, TEXT_ALIGN);
 
     UpdateTextBGColor();
 }
@@ -115,15 +141,18 @@ GhostMeter::ClearUI()
 }
 
 void
-GhostMeter::SetCursorPosition(BL_FLOAT x, BL_FLOAT y)
+GhostMeter::SetCursorPosition(BL_FLOAT timeX, BL_FLOAT freqY)
 {
-    y = AdjustFreq(y);
+    mPrevCursorTimeX = timeX;
+    mPrevCursorFreqY = freqY;
+    
+    freqY = AdjustFreq(freqY);
     
     if (mCursorPosTexts[0] != NULL)
     {
         char cpX[256];
-        TimeToStr(x, cpX);
-        //HMSStr(x, cpX);
+        TimeToStr(timeX, cpX);
+        //HMSStr(timX, cpX);
     
         mCursorPosTexts[0]->SetStr(cpX);
     }
@@ -131,8 +160,8 @@ GhostMeter::SetCursorPosition(BL_FLOAT x, BL_FLOAT y)
     if (mCursorPosTexts[1] != NULL)
     {
         char cpY[256];
-        sprintf(cpY, "%g Hz", y);
-    
+        FreqToStr(freqY, cpY);
+        
         mCursorPosTexts[1]->SetStr(cpY);
     }
 }
@@ -148,18 +177,26 @@ GhostMeter::ResetCursorPosition()
 }
 
 void
-GhostMeter::SetSelectionValues(BL_FLOAT x, BL_FLOAT y,
-                               BL_FLOAT w, BL_FLOAT h)
+GhostMeter::SetSelectionValues(BL_FLOAT timeX, BL_FLOAT freqY,
+                               BL_FLOAT timeW, BL_FLOAT freqH)
 {
-    y = AdjustFreq(y);
-    h = AdjustFreq(h);
+    //
+    mPrevSelTimeX = timeX;
+    mPrevSelFreqY = freqY;
+    
+    mPrevSelTimeW = timeW;
+    mPrevSelFreqH = freqH;
+
+    //
+    freqY = AdjustFreq(freqY);
+    freqH = AdjustFreq(freqH);
     
     // Position
     if (mSelPosTexts[0] != NULL)
     {
         char spX[256];
         //HMSStr(x, spX);
-        TimeToStr(x, spX);
+        TimeToStr(timeX, spX);
     
         mSelPosTexts[0]->SetStr(spX);
     }
@@ -167,8 +204,8 @@ GhostMeter::SetSelectionValues(BL_FLOAT x, BL_FLOAT y,
     if (mSelPosTexts[1] != NULL)
     {
         char spY[256];
-        sprintf(spY, "%g Hz", y);
-    
+        FreqToStr(freqY, spY);
+        
         mSelPosTexts[1]->SetStr(spY);
     }
 
@@ -178,7 +215,7 @@ GhostMeter::SetSelectionValues(BL_FLOAT x, BL_FLOAT y,
     {
         char ssW[256];
         //HMSStr(w, ssW);
-        TimeToStr(w, ssW);
+        TimeToStr(timeW, ssW);
         
         mSelSizeTexts[0]->SetStr(ssW);
     }
@@ -186,7 +223,7 @@ GhostMeter::SetSelectionValues(BL_FLOAT x, BL_FLOAT y,
     if (mSelSizeTexts[1] != NULL)
     {
         char ssH[256];
-        sprintf(ssH, "%g Hz", h);
+        FreqToStr(freqH, ssH);
     
         mSelSizeTexts[1]->SetStr(ssH);
     }
@@ -206,6 +243,22 @@ GhostMeter::ResetSelectionValues()
 
     if (mSelSizeTexts[1] != NULL)
         mSelSizeTexts[1]->SetStr(DEFAULT_TEXT);
+}
+
+void
+GhostMeter::SetTimeMode(TimeMode mode)
+{
+    mTimeMode = mode;
+
+    RefreshValues();
+}
+
+void
+GhostMeter::SetFreqMode(FreqMode mode)
+{
+    mFreqMode = mode;
+
+    RefreshValues();
 }
 
 void
@@ -271,10 +324,30 @@ GhostMeter::ConvertToHMS(BL_FLOAT timeSec,
 void
 GhostMeter::TimeToStr(BL_FLOAT timeSec, char buf[256])
 {
-    if (mMode == GHOST_METER_HMS)
+    if (mTimeMode == GHOST_METER_TIME_HMS)
         HMSStr(timeSec, buf);
-    if (mMode == GHOST_METER_SAMPLES)
+    else if (mTimeMode == GHOST_METER_TIME_SAMPLES)
         SamplesStr(timeSec, buf);
+}
+
+void
+GhostMeter::FreqToStr(BL_FLOAT freqHz, char buf[256])
+{
+    if (mFreqMode == GHOST_METER_FREQ_HZ)
+        sprintf(buf, "%g Hz", freqHz);
+    else if (mFreqMode == GHOST_METER_FREQ_BIN)
+    {
+        int binNum = (freqHz/(mSampleRate*0.5))*(mBufferSize*0.5);
+
+#if 0
+        if (binNum == 1)
+            sprintf(buf, "%d bin", binNum);
+        else
+            sprintf(buf, "%d bins", binNum);
+#endif
+
+        sprintf(buf, "%d bin", binNum);
+    }
 }
 
 void
@@ -304,4 +377,13 @@ GhostMeter::AdjustFreq(BL_FLOAT freq)
     freq = ((int)(freq*10))*0.1;
 
     return freq;
+}
+
+void
+GhostMeter::RefreshValues()
+{
+    // Update with prev values
+    SetCursorPosition(mPrevCursorTimeX, mPrevCursorFreqY);
+    SetSelectionValues(mPrevSelTimeX, mPrevSelFreqY,
+                       mPrevSelTimeW, mPrevSelFreqH);
 }

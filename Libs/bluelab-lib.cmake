@@ -312,7 +312,8 @@ set(_bluelab-lib_src
   GhostCustomControl.cpp
   GhostCustomControl.h
   GhostCustomDrawer.cpp
-  GhostCustomDrawer.h
+  GhostMeter.h
+  GhostMeter.cpp
   GhostPluginInterface.cpp
   GhostPluginInterface.h
   GhostTriggerControl.cpp

@@ -15,6 +15,7 @@
 #include <BLVumeterNeedleControl.h>
 #include <BLVumeter2SidesControl.h>
 #include <ResizeGUIPluginInterface.h>
+#include <ITextButtonControl.h>
 
 #include "IPlug_include_in_plug_hdr.h"
 
@@ -125,6 +126,13 @@ public:
                              const IColor &color, EAlign align,
                              float offsetX = 0.0, float offsetY = 0.0);
 
+    ITextButtonControl *CreateTextButton(IGraphics *graphics,
+                                         float x, float y,
+                                         int paramIdx,
+                                         const char *textStr, float size,
+                                         const char *font,
+                                         const IColor &color, EAlign align,
+                                         float offsetX = 0.0, float offsetY = 0.0);
     
     IBitmapControl *CreateBitmap(IGraphics *graphics,
                                  float x, float y,
