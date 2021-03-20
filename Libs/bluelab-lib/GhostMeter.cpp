@@ -15,16 +15,20 @@
 
 #define DEFAULT_TEXT "------------------"
 
-//#define TEXT_ALIGN EAlign::Center
 #define TEXT_ALIGN EAlign::Far
 
 GhostMeter::GhostMeter(BL_FLOAT x, BL_FLOAT y,
                        int timeParamIdx, int freqParamIdx,
                        int bufferSize, BL_FLOAT sampleRate)
 {
-    //mMode = GHOST_METER_HMS;
+#ifdef _DEBUG
+    // When debugging, we prefer samples
     mTimeMode = GHOST_METER_TIME_SAMPLES;
-
+#else
+    // When releasing, h/m/s is better
+    mMode = GHOST_METER_HMS;
+#endif
+    
     mFreqMode = GHOST_METER_FREQ_HZ;
     
     mTimeParamIdx = timeParamIdx;
@@ -152,7 +156,6 @@ GhostMeter::SetCursorPosition(BL_FLOAT timeX, BL_FLOAT freqY)
     {
         char cpX[256];
         TimeToStr(timeX, cpX);
-        //HMSStr(timX, cpX);
     
         mCursorPosTexts[0]->SetStr(cpX);
     }
@@ -195,7 +198,6 @@ GhostMeter::SetSelectionValues(BL_FLOAT timeX, BL_FLOAT freqY,
     if (mSelPosTexts[0] != NULL)
     {
         char spX[256];
-        //HMSStr(x, spX);
         TimeToStr(timeX, spX);
     
         mSelPosTexts[0]->SetStr(spX);
@@ -214,7 +216,6 @@ GhostMeter::SetSelectionValues(BL_FLOAT timeX, BL_FLOAT freqY,
     if (mSelSizeTexts[0] != NULL)
     {
         char ssW[256];
-        //HMSStr(w, ssW);
         TimeToStr(timeW, ssW);
         
         mSelSizeTexts[0]->SetStr(ssW);
@@ -339,13 +340,8 @@ GhostMeter::FreqToStr(BL_FLOAT freqHz, char buf[256])
     {
         int binNum = (freqHz/(mSampleRate*0.5))*(mBufferSize*0.5);
 
-#if 0
-        if (binNum == 1)
-            sprintf(buf, "%d bin", binNum);
-        else
-            sprintf(buf, "%d bins", binNum);
-#endif
-
+        // Don't knpw if we want "bin" or "bins"
+        // => "bin" seems more neutral (e.g for position, this is "bin num"
         sprintf(buf, "%d bin", binNum);
     }
 }
