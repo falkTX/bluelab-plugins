@@ -68,7 +68,8 @@ GhostMeter::Reset(int bufferSize, BL_FLOAT sampleRate)
 
 void
 GhostMeter::GenerateUI(GUIHelper12 *guiHelper,
-                       IGraphics *graphics)
+                       IGraphics *graphics,
+                       int offsetX)
 {
     IColor valueColor;
     guiHelper->GetValueTextColor(&valueColor);
@@ -76,7 +77,7 @@ GhostMeter::GenerateUI(GUIHelper12 *guiHelper,
     // Cursor pos
     mCursorPosTexts[0] =
         guiHelper->CreateTextButton(graphics,
-                                    mX, mY,
+                                    mX + offsetX, mY,
                                     mTimeParamIdx,
                                     DEFAULT_TEXT, TEXT_FIELD_V_SIZE,
                                     FONT,
@@ -94,7 +95,7 @@ GhostMeter::GenerateUI(GUIHelper12 *guiHelper,
     // Selection pos
     mSelPosTexts[0] =
         guiHelper->CreateTextButton(graphics,
-                                    mX, cp0.B + TEXT_FIELD_V_SPACING,
+                                    mX + offsetX, cp0.B + TEXT_FIELD_V_SPACING,
                                     mTimeParamIdx,
                                     DEFAULT_TEXT, TEXT_FIELD_V_SIZE,
                                     FONT,
@@ -113,7 +114,7 @@ GhostMeter::GenerateUI(GUIHelper12 *guiHelper,
     // Selection size
     mSelSizeTexts[0] =
         guiHelper->CreateTextButton(graphics,
-                                    mX,
+                                    mX + offsetX,
                                     sp0.B + TEXT_FIELD_V_SPACING,
                                     mTimeParamIdx,
                                     DEFAULT_TEXT, TEXT_FIELD_V_SIZE,

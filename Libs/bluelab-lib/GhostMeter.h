@@ -35,7 +35,8 @@ public:
 
     void Reset(int bufferSize, BL_FLOAT sampleRate);
     
-    void GenerateUI(GUIHelper12 *guiHelper, IGraphics *graphics);
+    void GenerateUI(GUIHelper12 *guiHelper, IGraphics *graphics,
+                    int offsetX);
     void ClearUI();
     
     void SetCursorPosition(BL_FLOAT timeX, BL_FLOAT freqY);
