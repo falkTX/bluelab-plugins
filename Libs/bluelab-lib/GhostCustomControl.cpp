@@ -516,6 +516,12 @@ GhostCustomControl::SetSelectionActive(bool flag)
     mSelectionActive = flag;
 }
 
+bool
+GhostCustomControl::GetSelectionActive()
+{
+    return mSelectionActive;
+}
+
 void
 GhostCustomControl::UpdateSelection(bool updateCenterPos)
 {

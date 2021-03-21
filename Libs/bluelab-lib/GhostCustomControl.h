@@ -46,6 +46,8 @@ public:
                       BL_FLOAT x1, BL_FLOAT y1);
     
     void SetSelectionActive(bool flag);
+    // NOTE: does not totally work, must click a second time for it to works 
+    bool GetSelectionActive();
     
     // Refresh the selection (for example after zoom)
     void UpdateSelection(bool updateCenterPos);

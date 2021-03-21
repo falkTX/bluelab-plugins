@@ -42,6 +42,8 @@ GhostMeter::GhostMeter(BL_FLOAT x, BL_FLOAT y,
     
     ClearUI();
 
+    mSelectionActive = false;
+    
     //
     mPrevCursorTimeX = 0.0;
     mPrevCursorFreqY = 0.0;
@@ -183,6 +185,8 @@ void
 GhostMeter::SetSelectionValues(BL_FLOAT timeX, BL_FLOAT freqY,
                                BL_FLOAT timeW, BL_FLOAT freqH)
 {
+    mSelectionActive = true;
+    
     //
     mPrevSelTimeX = timeX;
     mPrevSelFreqY = freqY;
@@ -244,6 +248,8 @@ GhostMeter::ResetSelectionValues()
 
     if (mSelSizeTexts[1] != NULL)
         mSelSizeTexts[1]->SetStr(DEFAULT_TEXT);
+
+    mSelectionActive = false;
 }
 
 void
@@ -380,6 +386,10 @@ GhostMeter::RefreshValues()
 {
     // Update with prev values
     SetCursorPosition(mPrevCursorTimeX, mPrevCursorFreqY);
-    SetSelectionValues(mPrevSelTimeX, mPrevSelFreqY,
-                       mPrevSelTimeW, mPrevSelFreqH);
+
+    if (mSelectionActive)
+    {
+        SetSelectionValues(mPrevSelTimeX, mPrevSelFreqY,
+                           mPrevSelTimeW, mPrevSelFreqH);
+    }
 }

@@ -83,6 +83,8 @@ protected:
     ITextButtonControl *mSelPosTexts[2];
     ITextButtonControl *mSelSizeTexts[2];
 
+    bool mSelectionActive;
+    
     // Saved prev values
     BL_FLOAT mPrevCursorTimeX;
     BL_FLOAT mPrevCursorFreqY;

@@ -81,6 +81,12 @@ GhostCustomDrawer::SetSelectionActive(bool flag)
     mState->mSelectionActive = flag;
 }
 
+bool
+GhostCustomDrawer::GetSelectionActive()
+{
+    return mState->mSelectionActive;
+}
+
 BL_FLOAT
 GhostCustomDrawer::GetBarPos()
 {
