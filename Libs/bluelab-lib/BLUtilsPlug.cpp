@@ -830,6 +830,22 @@ BLUtilsPlug::TouchPlugParam(Plugin *plug, int paramIdx)
     plug->EndInformHostOfParamChange(paramIdx);
 }
 
+void
+BLUtilsPlug::SetParameterValue(Plugin *plug, int paramIdx, BL_FLOAT nonNormValue,
+                               bool updateControl)
+{
+    if (!updateControl)
+    {
+        BL_FLOAT normValue = plug->GetParam(paramIdx)->ToNormalized(nonNormValue);
+        plug->SetParameterValue(paramIdx, normValue);
+    }
+    else
+    {
+        // The associated control will move
+        plug->SendParameterValueFromAPI(paramIdx, nonNormValue, false);
+    }
+}
+
 bool
 BLUtilsPlug::GetFullPlugResourcesPath(const IPluginBase &plug, WDL_String *resPath)
 {

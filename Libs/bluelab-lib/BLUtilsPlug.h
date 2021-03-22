@@ -28,7 +28,11 @@ class BLUtilsPlug
     
     // Touch plug param for automation to be written
     static void TouchPlugParam(Plugin *plug, int paramIdx);
-    
+
+    // Set non normalized value
+    static void SetParameterValue(Plugin *plug, int paramIdx, BL_FLOAT nonNormValue,
+                                  bool updateControl);
+                                  
     // For a give index, try to get both in and out buffers
     static bool GetIOBuffers(int index, double *in[2], double *out[2],
                              double **inBuf, double **outBuf);
