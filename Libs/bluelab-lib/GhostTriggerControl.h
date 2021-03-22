@@ -7,6 +7,7 @@
 using namespace iplug;
 using namespace iplug::igraphics;
 
+class GhostPluginInterface;
 //class GhostTriggerControl : public ITriggerControl
 class GhostTriggerControl : public IControl
 {

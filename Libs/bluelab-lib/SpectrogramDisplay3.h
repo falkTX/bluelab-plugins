@@ -81,7 +81,7 @@ public:
     void ShowSpectrogram(bool flag);
     void UpdateSpectrogram(bool updateData = true, bool updateBgData = false);
 
-    void UpdateColormap(bool flag);
+    void UpdateColorMap(bool flag);
     
     // Reset all
     void ResetTransform();
@@ -147,14 +147,14 @@ protected:
     
     BL_FLOAT mSpectrogramAlpha;
 
-    bool mNeedUpdateColormapData;
+    bool mNeedUpdateColorMapData;
     
     //
     bool mShowSpectrogram;
     
     // Colormap
-    int mNvgColormapImage;
-    WDL_TypedBuf<unsigned int> mColormapImageData;
+    int mNvgColorMapImage;
+    WDL_TypedBuf<unsigned int> mColorMapImageData;
     
     // For optimization (Chroma)
     bool mDrawBGSpectrogram;

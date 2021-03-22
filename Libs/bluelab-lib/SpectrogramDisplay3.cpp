@@ -51,11 +51,11 @@ SpectrogramDisplay3::SpectrogramDisplay3(SpectrogramDisplayState *state)
     mNvgSpectroImage = 0;
     mNeedUpdateSpectrogram = false;
     mNeedUpdateSpectrogramData = false;
-    mNvgColormapImage = 0;
+    mNvgColorMapImage = 0;
     
     mNeedUpdateBGSpectrogramData = false;
     
-    mNeedUpdateColormapData = false;
+    mNeedUpdateColorMapData = false;
     
     mNvgBGSpectroImage = 0;
     
@@ -76,8 +76,8 @@ SpectrogramDisplay3::~SpectrogramDisplay3()
     if (mNvgSpectroImage != 0)
         nvgDeleteImage(mVg, mNvgSpectroImage);
     
-    if (mNvgColormapImage != 0)
-        nvgDeleteImage(mVg, mNvgColormapImage);
+    if (mNvgColorMapImage != 0)
+        nvgDeleteImage(mVg, mNvgColorMapImage);
     
     if (mNvgBGSpectroImage != 0)
         nvgDeleteImage(mVg, mNvgBGSpectroImage);
@@ -219,26 +219,26 @@ SpectrogramDisplay3::DoUpdateSpectrogram()
         }
     }
 
-    if (mNeedUpdateColormapData || (mNvgColormapImage == 0))
+    if (mNeedUpdateColorMapData || (mNvgColorMapImage == 0))
     {
         // Colormap
-        bool updated = mSpectrogram->GetColormapImageDataRGBA(&mColormapImageData);
-        if (mNvgColormapImage == 0)
+        bool updated = mSpectrogram->GetColormapImageDataRGBA(&mColorMapImageData);
+        if (mNvgColorMapImage == 0)
         {        
-            if (mNvgColormapImage != 0)
-                nvgDeleteImage(mVg, mNvgColormapImage);
+            if (mNvgColorMapImage != 0)
+                nvgDeleteImage(mVg, mNvgColorMapImage);
         
-            mNvgColormapImage =
+            mNvgColorMapImage =
             nvgCreateImageRGBA(mVg,
-                               mColormapImageData.GetSize(), 1,
+                               mColorMapImageData.GetSize(), 1,
                                NVG_IMAGE_NEAREST,
-                               (unsigned char *)mColormapImageData.Get());
+                               (unsigned char *)mColorMapImageData.Get());
         }
         else
         { 
             if (updated)
-                nvgUpdateImage(mVg, mNvgColormapImage,
-                               (unsigned char *)mColormapImageData.Get());
+                nvgUpdateImage(mVg, mNvgColorMapImage,
+                               (unsigned char *)mColorMapImageData.Get());
         }
     }
     
@@ -272,7 +272,7 @@ SpectrogramDisplay3::PreDraw(NVGcontext *vg, int width, int height)
     nvgSave(mVg);
     
     // New: set colormap only in the spectrogram state
-    nvgSetColormap(mVg, mNvgColormapImage);
+    nvgSetColormap(mVg, mNvgColorMapImage);
     
 #define DEBUG_DISPLAY_FG 1
 #define DEBUG_DISPLAY_BG 1
@@ -468,13 +468,13 @@ SpectrogramDisplay3::UpdateSpectrogram(bool updateData, bool updateBGData)
 }
 
 void
-SpectrogramDisplay3::UpdateColormap(bool flag)
+SpectrogramDisplay3::UpdateColorMap(bool flag)
 {
     mNeedUpdateSpectrogram = true;
     
-    if (!mNeedUpdateColormapData)
+    if (!mNeedUpdateColorMapData)
     {
-        mNeedUpdateColormapData = flag;
+        mNeedUpdateColorMapData = flag;
     }
     
     mNeedRedraw = true;
