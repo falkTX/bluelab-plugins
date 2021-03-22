@@ -86,6 +86,11 @@ GhostCustomControl::SetSelectionType(GhostPluginInterface::SelectionType selecti
 void
 GhostCustomControl::OnMouseDown(float x, float y, const IMouseMod &pMod)
 {
+    if (mSpectroDisplay == NULL)
+        return;
+    if (mMiniView == NULL)
+        return;
+    
     if (mPlug->GetMode() != GhostPluginInterface::EDIT)
         return;
     
