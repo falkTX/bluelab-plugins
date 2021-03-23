@@ -6,6 +6,9 @@ GhostCommandCopyPaste::GhostCommandCopyPaste(BL_FLOAT sampleRate)
 : GhostCommand(sampleRate)
 {
     mIsPasteDone = false;
+
+    mSrcTrackNumSamples = -1;
+    mDstTrackNumSamples = -1;
 }
 
 GhostCommandCopyPaste::GhostCommandCopyPaste(const GhostCommandCopyPaste &other)
@@ -16,6 +19,9 @@ GhostCommandCopyPaste::GhostCommandCopyPaste(const GhostCommandCopyPaste &other)
     
     for (int i = 0; i < 4; i++)
         mCopiedSelection[i] = other.mCopiedSelection[i];
+
+    mSrcTrackNumSamples = other.mSrcTrackNumSamples;
+    mDstTrackNumSamples = other.mDstTrackNumSamples;
     
     mIsPasteDone = false;
 }
@@ -24,8 +30,11 @@ GhostCommandCopyPaste::~GhostCommandCopyPaste() {}
 
 void
 GhostCommandCopyPaste::Copy(const vector<WDL_TypedBuf<BL_FLOAT> > &magns,
-                            const vector<WDL_TypedBuf<BL_FLOAT> > &phases)
+                            const vector<WDL_TypedBuf<BL_FLOAT> > &phases,
+                            int srcTrackNumSamples)
 {
+    mSrcTrackNumSamples = srcTrackNumSamples;
+    
     // Save the selection when copied
     for (int i = 0; i < 4; i++)
         mCopiedSelection[i] = mSelection[i];
@@ -43,7 +52,7 @@ GhostCommandCopyPaste::Copy(const vector<WDL_TypedBuf<BL_FLOAT> > &magns,
 void
 GhostCommandCopyPaste::Apply(vector<WDL_TypedBuf<BL_FLOAT> > *magns,
                              vector<WDL_TypedBuf<BL_FLOAT> > *phases)
-{
+{    
     // Set the selection to the pasted selection
     // in order to process only the selected area
     ComputePastedSelection();
@@ -88,6 +97,13 @@ GhostCommandCopyPaste::ComputePastedSelection()
 {
     BL_FLOAT copySelectWidth = mCopiedSelection[2] - mCopiedSelection[0];
     BL_FLOAT copySelectHeight = mCopiedSelection[3] - mCopiedSelection[1];
+
+    if ((mSrcTrackNumSamples > 0) && (mDstTrackNumSamples > 0) &&
+        (mSrcTrackNumSamples != mDstTrackNumSamples))
+    {
+        copySelectWidth =
+            (copySelectWidth*mSrcTrackNumSamples)/mDstTrackNumSamples;
+    }
     
     // Paste the selection at the same y that was copied
     // (because we must paste at the same frequency range)
@@ -113,4 +129,10 @@ GhostCommandCopyPaste::GetPastedSelection(BL_FLOAT pastedSelection[4],
                                             pastedSelection[3],
                                             (BL_FLOAT)0.0,
                                             (BL_FLOAT)(mSampleRate*0.5));
+}
+
+void
+GhostCommandCopyPaste::SetDstTrackNumSamples(int numSamples)
+{
+    mDstTrackNumSamples = numSamples;
 }

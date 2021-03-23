@@ -16,7 +16,8 @@ public:
     virtual ~GhostCommandCopyPaste();
     
     void Copy(const vector<WDL_TypedBuf<BL_FLOAT> > &magns,
-              const vector<WDL_TypedBuf<BL_FLOAT> > &phases);
+              const vector<WDL_TypedBuf<BL_FLOAT> > &phases,
+              int srcTrackNumSamples);
     
     // Apply is paste
     void Apply(vector<WDL_TypedBuf<BL_FLOAT> > *magns,
@@ -31,6 +32,8 @@ public:
     
     void GetPastedSelection(BL_FLOAT pastedSelection[4],
                             Scale::Type yScale);
+
+    void SetDstTrackNumSamples(int numSamples);
     
 protected:
     WDL_TypedBuf<BL_FLOAT> mCopiedMagns;
@@ -40,6 +43,10 @@ protected:
     BL_FLOAT mPastedSelection[4];
     
     bool mIsPasteDone;
+
+    // For managing "copy from one track, paste to another"
+    int mSrcTrackNumSamples;
+    int mDstTrackNumSamples;
 };
 
 #endif

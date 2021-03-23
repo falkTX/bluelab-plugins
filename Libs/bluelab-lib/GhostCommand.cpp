@@ -338,7 +338,7 @@ GhostCommand::GetDataBoundsSlice(const vector<WDL_TypedBuf<BL_FLOAT> > &data,
     return true;
 }
 
-
+// Unused ?
 void
 GhostCommand::ExtractAux(vector<WDL_TypedBuf<BL_FLOAT> > *dataSel,
                          const vector<WDL_TypedBuf<BL_FLOAT> > &data)
