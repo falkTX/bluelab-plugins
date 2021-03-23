@@ -5,6 +5,9 @@
 
 #include "IPlug_include_in_plug_hdr.h"
 
+using namespace iplug;
+
+
 class BLUtilsFile
 {
  public:
@@ -13,7 +16,12 @@ class BLUtilsFile
 
 	// Get file name from full path
 	static char *GetFileName(const char *path);
-    
+
+    static long GetFileSize(const char *fileName);
+        
+    static void GetPreferencesFileName(const char *bundleName,
+                                       char resultFileName[2048]);
+                                              
     template <typename FLOAT_TYPE>
     static void AppendValuesFile(const char *fileName,
                                  const WDL_TypedBuf<FLOAT_TYPE> &values,

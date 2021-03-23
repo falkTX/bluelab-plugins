@@ -1,3 +1,5 @@
+#include <IPlugPaths.h>
+
 #include "BLUtilsFile.h"
 
 char *
@@ -36,6 +38,56 @@ BLUtilsFile::GetFileName(const char *path)
 	}
 
 	return fileName;
+}
+
+long
+BLUtilsFile::GetFileSize(const char *fileName)
+{
+    FILE *fp = fopen(fileName, "rb");
+    if (fp == NULL)
+        return 0;
+    
+    fseek(fp, 0L, SEEK_END);
+    size_t sz = ftell(fp);
+    fclose(fp);
+    
+    return sz;
+}
+
+void
+BLUtilsFile::GetPreferencesFileName(const char *bundleName,
+                                    char resultFileName[2048])
+{
+    // Path
+    //
+    // See: IPlug/IPlugPaths.h
+    WDL_String iniPathStr;
+    INIPath(iniPathStr, bundleName);
+
+#if 0
+    // Get the path witthout "settings.ini"
+    const char *iniFullPath = iniPathStr.Get();
+    int iniFullPathLen = iniPathStr.GetLength();
+
+    int fileNameSize = strlen("settings.ini");
+    if (iniFullPathLen <= fileNameSize)
+        return;
+    
+    char iniPath[512];
+    memset(iniPath, '\0', 512);
+    strncpy(iniPath, iniFullPath, iniFullPathLen - fileNameSize);
+
+    // Result
+    sprintf(resultFileName, "%s%s.prf", iniPath, BUNDLE_NAME);
+#endif
+
+    // Result
+    const char *iniPath = iniPathStr.Get();
+#ifdef WIN32
+    sprintf(resultFileName, "%s\\%s.prf", iniPath, BUNDLE_NAME);
+#else // Linux or Mac
+    sprintf(resultFileName, "%s/%s.prf", iniPath, BUNDLE_NAME);
+#endif
 }
 
 template <typename FLOAT_TYPE>
