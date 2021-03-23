@@ -261,10 +261,14 @@ SpectroEditFftObj3::Reset(int bufferSize, int oversampling,
 {
     ProcessObj::Reset(bufferSize, oversampling, freqRes, sampleRate);
 
+    // If set to 1, BUG: when copy => the play bar goes to 0
+    // (it should stay at beginning ose selction instead)
+#if 0
     mSamplesPos = 0.0;
     
     mSelectionEnabled = false;
     mSelectionPlayFinished = false;
+#endif
     
     //mStep = 1.0; // Reset the step or not?
 }
@@ -388,7 +392,7 @@ SpectroEditFftObj3::GetSelPlayPosition()
         return 0.0;
     
     BL_FLOAT res = (mSamplesPos - mDataSelection[0])/
-    (mDataSelection[2] - mDataSelection[0]);
+        (mDataSelection[2] - mDataSelection[0]);
     
     return res;
 }
