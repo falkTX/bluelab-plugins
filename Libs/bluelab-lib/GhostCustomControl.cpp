@@ -69,7 +69,8 @@ GhostCustomControl::SetMiniView(MiniView2 *miniView)
 }
 
 void
-GhostCustomControl::SetSelectionType(GhostPluginInterface::SelectionType selectionType)
+GhostCustomControl::
+SetSelectionType(GhostPluginInterface::SelectionType selectionType)
 {
     if (mSelectionType == selectionType)
         return;
