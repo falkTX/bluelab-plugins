@@ -71,6 +71,9 @@ GhostCustomControl::SetMiniView(MiniView2 *miniView)
 void
 GhostCustomControl::SetSelectionType(GhostPluginInterface::SelectionType selectionType)
 {
+    if (mSelectionType == selectionType)
+        return;
+    
     mSelectionType = selectionType;
     
     // Update the selection !
@@ -405,7 +408,7 @@ GhostCustomControl::OnMouseWheel(float x, float y, const IMouseMod &pMod, float 
     UpdateSelectionType();
     
     bool isSelectionActive = mPlug->IsSelectionActive();
-    
+        
     mPlug->UpdateSelection(mSelection[0], mSelection[1],
                            mSelection[2], mSelection[3],
                            false, isSelectionActive);
