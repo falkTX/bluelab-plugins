@@ -20,6 +20,9 @@ GhostCommandCopyPaste::GhostCommandCopyPaste(const GhostCommandCopyPaste &other)
     for (int i = 0; i < 4; i++)
         mCopiedSelection[i] = other.mCopiedSelection[i];
 
+    for (int i = 0; i < 4; i++)
+        mPastedSelection[i] = other.mPastedSelection[i];
+    
     mSrcTrackNumSamples = other.mSrcTrackNumSamples;
     mDstTrackNumSamples = other.mDstTrackNumSamples;
     
@@ -68,7 +71,7 @@ GhostCommandCopyPaste::Apply(vector<WDL_TypedBuf<BL_FLOAT> > *magns,
     // Paste
     ReplaceSelectedDataY(magns, mCopiedMagns);
     ReplaceSelectedDataY(phases, mCopiedPhases);
-    
+
     mIsPasteDone = true;
 }
 
@@ -82,7 +85,7 @@ GhostCommandCopyPaste::Undo(vector<WDL_TypedBuf<BL_FLOAT> > *magns,
     // Set the selection to the state chan pasted
     for (int i = 0; i < 4; i++)
         mSelection[i] = mPastedSelection[i];
-    
+        
     GhostCommand::Undo(magns, phases);
 }
 
@@ -101,8 +104,10 @@ GhostCommandCopyPaste::ComputePastedSelection()
     if ((mSrcTrackNumSamples > 0) && (mDstTrackNumSamples > 0) &&
         (mSrcTrackNumSamples != mDstTrackNumSamples))
     {
+        //copySelectWidth =
+        //    (copySelectWidth*mSrcTrackNumSamples)/mDstTrackNumSamples;
         copySelectWidth =
-            (copySelectWidth*mSrcTrackNumSamples)/mDstTrackNumSamples;
+            copySelectWidth*(((BL_FLOAT)mSrcTrackNumSamples)/mDstTrackNumSamples);
     }
     
     // Paste the selection at the same y that was copied

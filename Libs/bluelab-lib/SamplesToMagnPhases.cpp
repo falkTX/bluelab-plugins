@@ -32,6 +32,22 @@ SamplesToMagnPhases::SamplesToMagnPhases(vector<WDL_TypedBuf<BL_FLOAT> > *sample
 
 SamplesToMagnPhases::~SamplesToMagnPhases() {}
 
+/*
+  void
+  SamplesToMagnPhases::Clear()
+  {
+  for (int i = 0; i < 2; i++)
+  {
+  if (mSpectroEditObjs[i] != NULL)
+  {
+  mSpectroEditObjs[i]->ClearGeneratedData();
+  mSpectroEditObjs[i]->ClearReplaceData();
+  mSpectroEditObjs[i]->ResetSamplesPos();
+  }
+  }
+  }
+*/
+
 void
 SamplesToMagnPhases::SetSamples(vector<WDL_TypedBuf<BL_FLOAT> > *samples)
 {
@@ -128,7 +144,11 @@ SamplesToMagnPhases::ReadSpectroDataSlice(vector<WDL_TypedBuf<BL_FLOAT> > magns[
         vector<WDL_TypedBuf<BL_FLOAT> > &in = mTmpBuf0;
         in.resize(numChannels);
         for (int i = 0; i < numChannels; i++)
-            BLUtils::ResizeFillZeros(&in[i], bufStepSize);
+        {
+            //BLUtils::ResizeFillZeros(&in[i], bufStepSize);
+            in[i].Resize(bufStepSize);
+            BLUtils::FillAllZero(&in[i]);
+        }
 
         // sc
         vector<WDL_TypedBuf<BL_FLOAT> > dummyScIn;
@@ -278,7 +298,11 @@ WriteSpectroDataSlice(vector<WDL_TypedBuf<BL_FLOAT> > magns[2],
         vector<WDL_TypedBuf<BL_FLOAT> > &out = mTmpBuf2;
         out.resize(numChannels);
         for (int i = 0; i < numChannels; i++)
-            BLUtils::ResizeFillZeros(&out[i], bufStepSize);
+        {
+            //BLUtils::ResizeFillZeros(&out[i], bufStepSize);
+            out[i].Resize(bufStepSize);
+            BLUtils::FillAllZero(&out[i]);
+        }
 
         // Process
         mFftObj->Process(in, dummyScIn, &out);

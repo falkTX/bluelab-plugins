@@ -273,6 +273,15 @@ SpectroEditFftObj3::Reset(int bufferSize, int oversampling,
     //mStep = 1.0; // Reset the step or not?
 }
 
+/*void
+  SpectroEditFftObj3::ResetSamplesPos()
+  {
+  mSamplesPos = 0.0;
+  
+  mSelectionEnabled = false;
+  mSelectionPlayFinished = false;
+  }*/
+
 void
 SpectroEditFftObj3::SetMode(Mode mode)
 {

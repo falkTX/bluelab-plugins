@@ -26,6 +26,8 @@ class SamplesToMagnPhases
                         SamplesPyramid3 *samplesPyramid = NULL);
     virtual ~SamplesToMagnPhases();
 
+    //void Clear();
+    
     void SetSamples(vector<WDL_TypedBuf<BL_FLOAT> > *samples);
 
     void SetForceMono(bool flag);
