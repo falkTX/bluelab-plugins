@@ -51,7 +51,7 @@ public:
     
     void Reset(int bufferSize, int oversampling, int freqRes, BL_FLOAT sampleRate);
 
-    //void ResetSamplesPos();
+    void ResetSamplesPos();
         
     void SetStep(BL_FLOAT step);
     
