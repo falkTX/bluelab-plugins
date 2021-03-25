@@ -1,15 +1,15 @@
-BL-Air		    :	features+, mem, bugs
-BL-AutoGain	    :	features+, mem, bugs
+BL-Air		    :	features+, optim, mem, bugs
+BL-AutoGain	    :	features+, optim, mem, bugs
 BL-Bat		    :
-BL-Chroma	    :	features+, mem, bugs
-BL-Denoiser	    :	features+, mem, bugs
+BL-Chroma	    :	features+, optim, mem, bugs
+BL-Denoiser	    :	features+, optim, mem, bugs
 BL-DUET		    :
-BL-Envelope	    :	features+, mem, bugs
-BL-EQHack	    :	features+, mem, bugs
-BL-Gain12	    :	features+, mem, bugs
-BL-Gain200	    :	features+, mem, bugs
-BL-Gain24	    :	features+, mem, bugs
-BL-Gain60	    :	features+, mem, bugs
+BL-Envelope	    :	features+, optim, mem, bugs
+BL-EQHack	    :	features+, optim, mem, bugs
+BL-Gain12	    :	features+, optim, mem, bugs
+BL-Gain200	    :	features+, optim, mem, bugs
+BL-Gain24	    :	features+, optim, mem, bugs
+BL-Gain60	    :	features+, optim, mem, bugs
 BL-Ghost	    :	features+
 BL-GhostViewer	    :
 BL-Impulses	    :
