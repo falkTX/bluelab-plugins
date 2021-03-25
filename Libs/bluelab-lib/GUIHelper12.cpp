@@ -1252,7 +1252,10 @@ bool
 GUIHelper12::PromptForFile(Plugin *plug, EFileAction action, WDL_String *result,
                            char* dir, char* extensions)
 {
-    WDL_String file;
+    //WDL_String file;
+    // For zenity, to open on the right directory
+    WDL_String file(dir);
+ 
     //IFileSelectorControl::EFileSelectorState state = IFileSelectorControl::kFSNone;
     
     if (plug && plug->GetUI())

@@ -5,6 +5,8 @@
 
 #include "IPlug_include_in_plug_hdr.h"
 
+#define FILENAME_SIZE 2048 //1024
+
 using namespace iplug;
 
 
@@ -17,10 +19,14 @@ class BLUtilsFile
 	// Get file name from full path
 	static char *GetFileName(const char *path);
 
+    // Squeeze the file bane
+    static void GetFilePath(const char *fullPath, char path[FILENAME_SIZE],
+                            bool keepLastSlash = false);
+    
     static long GetFileSize(const char *fileName);
         
     static void GetPreferencesFileName(const char *bundleName,
-                                       char resultFileName[2048]);
+                                       char resultFileName[FILENAME_SIZE]);
                                               
     template <typename FLOAT_TYPE>
     static void AppendValuesFile(const char *fileName,

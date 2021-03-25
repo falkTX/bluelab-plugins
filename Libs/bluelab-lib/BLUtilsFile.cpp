@@ -40,6 +40,23 @@ BLUtilsFile::GetFileName(const char *path)
 	return fileName;
 }
 
+void
+BLUtilsFile::GetFilePath(const char *fullPath, char path[FILENAME_SIZE],
+                         bool keepLastSlash)
+{
+    memset(path, '\0', FILENAME_SIZE);
+    
+    char *fileName = GetFileName(fullPath);
+
+    int pathSize = fileName - fullPath;
+    if (!keepLastSlash)
+        pathSize--;
+    if (pathSize <= 0)
+        return;
+    
+    strncpy(path, fullPath, pathSize);
+}
+
 long
 BLUtilsFile::GetFileSize(const char *fileName)
 {
@@ -56,7 +73,7 @@ BLUtilsFile::GetFileSize(const char *fileName)
 
 void
 BLUtilsFile::GetPreferencesFileName(const char *bundleName,
-                                    char resultFileName[2048])
+                                    char resultFileName[FILENAME_SIZE])
 {
     // Path
     //
