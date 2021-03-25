@@ -1,0 +1,40 @@
+BL-Air		    :	features+, mem, bugs
+BL-AutoGain	    :	features+, mem, bugs
+BL-Bat		    :
+BL-Chroma	    :	features+, mem, bugs
+BL-Denoiser	    :	features+, mem, bugs
+BL-DUET		    :
+BL-Envelope	    :	features+, mem, bugs
+BL-EQHack	    :	features+, mem, bugs
+BL-Gain12	    :	features+, mem, bugs
+BL-Gain200	    :	features+, mem, bugs
+BL-Gain24	    :	features+, mem, bugs
+BL-Gain60	    :	features+, mem, bugs
+BL-Ghost	    :	features+
+BL-GhostViewer	    :
+BL-Impulses	    :
+BL-Infra	    :
+BL-InfrasonicViewer :
+BL-InfraSynth	    :
+BL-LoFi		    :
+BL-OnsetDetect	    :
+BL-Panogram	    :
+BL-PitchShift	    :
+BL-Precedence	    :
+BL-Rebalance	    :
+BL-Reverb	    :
+BL-ReverbDepth	    :
+BL-SampleDelay	    :
+BL-SASViewer	    :
+BL-Saturate	    :
+BL-Shaper	    :
+BL-Sine		    :
+BL-SoundMetaViewer  :
+BL-Spatializer	    :
+BL-SpectralDiff	    :
+BL-SpectroExpe	    :
+BL-SpectrumView	    :
+BL-StereoDeReverb   :
+BL-StereoPan	    :
+BL-StereoWidth	    :
+BL-Wav3s	    :
