@@ -135,7 +135,7 @@ SamplesToMagnPhases::ReadSpectroDataSlice(vector<WDL_TypedBuf<BL_FLOAT> > magns[
     int rightOverfeed = bufferSize;
     
     SetDataSelection(minDataXSamples - latency, maxDataXSamples + rightOverfeed);
-    
+
     // Generate data
     int currentX = minDataXSamples;
     while(currentX < maxDataXSamples + latency + rightOverfeed)
