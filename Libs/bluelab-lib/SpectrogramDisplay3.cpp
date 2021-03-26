@@ -302,7 +302,6 @@ SpectrogramDisplay3::PreDraw(NVGcontext *vg, int width, int height)
                               mState->mZoomAdjustFactorBG,
                               mState->mZoomAdjustOffsetBG);
 
-        //nvgTranslate(mVg, mState->mAbsMinX*width, 0.0);
         nvgTranslate(mVg, tx*width, 0.0);
         nvgScale(mVg, absZoom, 1.0);
         

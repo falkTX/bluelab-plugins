@@ -32,22 +32,6 @@ SamplesToMagnPhases::SamplesToMagnPhases(vector<WDL_TypedBuf<BL_FLOAT> > *sample
 
 SamplesToMagnPhases::~SamplesToMagnPhases() {}
 
-/*
-  void
-  SamplesToMagnPhases::Clear()
-  {
-  for (int i = 0; i < 2; i++)
-  {
-  if (mSpectroEditObjs[i] != NULL)
-  {
-  mSpectroEditObjs[i]->ClearGeneratedData();
-  mSpectroEditObjs[i]->ClearReplaceData();
-  mSpectroEditObjs[i]->ResetSamplesPos();
-  }
-  }
-  }
-*/
-
 void
 SamplesToMagnPhases::SetSamples(vector<WDL_TypedBuf<BL_FLOAT> > *samples)
 {
@@ -145,7 +129,6 @@ SamplesToMagnPhases::ReadSpectroDataSlice(vector<WDL_TypedBuf<BL_FLOAT> > magns[
         in.resize(numChannels);
         for (int i = 0; i < numChannels; i++)
         {
-            //BLUtils::ResizeFillZeros(&in[i], bufStepSize);
             in[i].Resize(bufStepSize);
             BLUtils::FillAllZero(&in[i]);
         }
@@ -233,8 +216,7 @@ WriteSpectroDataSlice(vector<WDL_TypedBuf<BL_FLOAT> > magns[2],
         {
             mSpectroEditObjs[i]->ClearReplaceData();
             
-            // Set all the data, will be consummed progressively
-            // by the Fft obj
+            // Set all the data, will be consummed progressively by the Fft obj
             mSpectroEditObjs[i]->SetReplaceData(magns[i], phases[i]);
         }
     }
@@ -283,9 +265,6 @@ WriteSpectroDataSlice(vector<WDL_TypedBuf<BL_FLOAT> > magns[2],
             // Fill input with samples
             // => so the first chunk won't have the windowing effect
             
-            //BLUtils::SetBufResize(&in[i], mSamples[i],
-            //                      (int)currentX, BUF_STEP_SIZE);
-            
             // Fill some parts with zeros if selection is partially out of bounds
             SpectroEditFftObj3::FillFromSelection(&in[i], (*mSamples)[i],
                                                   (int)currentX, bufStepSize);
@@ -299,7 +278,6 @@ WriteSpectroDataSlice(vector<WDL_TypedBuf<BL_FLOAT> > magns[2],
         out.resize(numChannels);
         for (int i = 0; i < numChannels; i++)
         {
-            //BLUtils::ResizeFillZeros(&out[i], bufStepSize);
             out[i].Resize(bufStepSize);
             BLUtils::FillAllZero(&out[i]);
         }
@@ -347,18 +325,6 @@ WriteSpectroDataSlice(vector<WDL_TypedBuf<BL_FLOAT> > magns[2],
     {
         // Copy/Fade
 
-#if 0 // This is bad to use it here
-      // If we load a file, and the volume is quite high, this will clip
-      // after any edit command like copy-paste, cut-paste, gain
-      // (not detectable with the cut command)
-        
-        // Clip the waveform in case it is greater than 1
-        // FIX: avoids waveform that looks right and sounds right
-        // in Ghost-X, but that clips after exported and imported in another
-        // software
-        //mPlug->ClipWaveform(&tmpOutChannels[i]);
-#endif
-
         if (fadeNumSamples != 0)
             // Must consider fading
         {
@@ -386,10 +352,7 @@ WriteSpectroDataSlice(vector<WDL_TypedBuf<BL_FLOAT> > magns[2],
             // 0.2 is a bit flag
             // 0.05 is more flat => better fades!
 #define SIGMO_A 0.05
-            //BLUtils::Fade2Double(dst, src, bufSize,
-            //                     fadeStartPos, fadeEndPos, 1.0, 0.0,
-            //                     SIGMO_A);
-
+            
             // Check bounds for fading
             //
 
@@ -529,20 +492,11 @@ SamplesToMagnPhases::ReadWriteSliceSaveState(ReadWriteSliceState *state)
         
         mSpectroEditObjs[i]->GetNormSelection(state->mSpectroEditSels[i]);
     }
-
-    // Reset after having saved state
-    // because Reset() also resets the selection
-    //if (mFftObj != NULL)
-    //    mFftObj->Reset();
 }
 
 void
 SamplesToMagnPhases::ReadWriteSliceRestoreState(const ReadWriteSliceState &state)
 {
-    // Reset before restoring
-    // because Reset() also resets the selection
-    //mFftObj->Reset();
-    
     for (int i = 0; i < 2; i++)
     {
         if (mSpectroEditObjs[i] != NULL)
@@ -573,7 +527,6 @@ SamplesToMagnPhases::AlignSamplePosToFftBuffers(BL_FLOAT *pos)
     int overlapping = mFftObj->GetOverlapping();
     
     BL_FLOAT result = *pos/(bufferSize/overlapping);
-    //result = round(result);
     result = ceil(result); // Take more!
     result *= bufferSize/overlapping;
     
