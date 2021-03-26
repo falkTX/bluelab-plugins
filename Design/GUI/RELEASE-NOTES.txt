@@ -3,3 +3,5 @@ v3.0
 
 V3.6
 - Modifications after Mickaels's remarks
+- LogoIcon.xcf => tmp icon, for Ghost desktop installation
+
