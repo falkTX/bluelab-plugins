@@ -17,7 +17,8 @@ using namespace std;
 #include <BLDebug.h>
 
 // Darknet
-#include <DNNModelDarknetMc.h>
+//#include <DNNModelDarknetMc.h>
+#include <DNNModelDarknet.h>
 #include <RebalanceMaskStack2.h>
 
 #include <MelScale.h>
@@ -83,7 +84,8 @@ RebalanceMaskPredictorComp6::RebalanceMaskPredictorComp6(int bufferSize,
     CreateModel(MODEL_NAME, resourcePath, &mModel);
     
 #else // WIN32
-    mModel = new DNNModelDarknetMc();
+    //mModel = new DNNModelDarknetMc();
+    mModel = new DNNModelDarknet();
     mModel->LoadWin(graphics, MODEL_FN, WEIGHTS_FN);
 #endif
     
@@ -291,11 +293,13 @@ RebalanceMaskPredictorComp6::SetMasksContrast(BL_FLOAT contrast)
     mMasksContrast = contrast;
 }
 
+#if 0
 void
 RebalanceMaskPredictorComp6::SetDbgThreshold(BL_FLOAT thrs)
 {
     mModel->SetDbgThreshold(thrs);
 }
+#endif
 
 void
 RebalanceMaskPredictorComp6::SetVocalSensitivity(BL_FLOAT vocalSensitivity)
@@ -467,9 +471,11 @@ RebalanceMaskPredictorComp6::ComputeLineMasks(WDL_TypedBuf<BL_FLOAT> masksResult
 void
 RebalanceMaskPredictorComp6::CreateModel(const char *modelFileName,
                                          const char *resourcePath,
-                                         DNNModelMc **model)
+                                         //DNNModelMc **model)
+                                         DNNModel2 **model)
 {
-    *model = new DNNModelDarknetMc();
+    //*model = new DNNModelDarknetMc();
+    *model = new DNNModelDarknet();
     
     (*model)->Load(modelFileName, resourcePath);
 }

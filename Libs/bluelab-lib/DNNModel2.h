@@ -1,13 +1,13 @@
 //
-//  DNNModelMc.h
+//  DNNModel2.h
 //  BL-Rebalance
 //
 //  Created by applematuer on 5/24/20.
 //
 //
 
-#ifndef BL_Rebalance_DNNModelMc_h
-#define BL_Rebalance_DNNModelMc_h
+#ifndef BL_Rebalance_DNNModel2_h
+#define BL_Rebalance_DNNModel2_h
 
 #include <vector>
 using namespace std;
@@ -16,12 +16,12 @@ using namespace std;
 
 using namespace iplug::igraphics;
 
-class DNNModelMc
+class DNNModel2
 {
 public:
-    DNNModelMc() {}
+    DNNModel2() {}
     
-    virtual ~DNNModelMc() {};
+    virtual ~DNNModel2() {};
 
     virtual bool Load(const char *modelFileName,
                       const char *resourcePath) = 0;
@@ -39,7 +39,7 @@ public:
     
     // TESTS
     //virtual void SetDbgThreshold(BL_FLOAT thrs) = 0;
-    //virtual void SetMaskScale(int maskNum, BL_FLOAT scale) = 0;
+    virtual void SetMaskScale(int maskNum, BL_FLOAT scale) = 0;
 };
 
 #endif

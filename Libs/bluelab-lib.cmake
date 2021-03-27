@@ -171,6 +171,8 @@ set(_bluelab-lib_src
   DiracGenerator.h
   DitherMaker.cpp
   DitherMaker.h
+  DNNModelDarknet.cpp
+  DNNModelDarknet.h
   DNNModelDarknetMc.cpp
   DNNModelDarknetMc.h
   DNNModel.h

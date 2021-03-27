@@ -14,7 +14,8 @@ using namespace std;
 
 #include <FftProcessObj16.h>
 
-#include <DNNModelMc.h>
+//#include <DNNModelMc.h>
+#include <DNNModel2.h>
 
 // Include for defines
 #include <Rebalance_defs.h>
@@ -91,7 +92,7 @@ public:
     void SetMasksContrast(BL_FLOAT contrast);
     
     // DEBUG
-    void SetDbgThreshold(BL_FLOAT thrs);
+    //void SetDbgThreshold(BL_FLOAT thrs);
     
 protected:
     void ComputeLineMask(WDL_TypedBuf<BL_FLOAT> *maskResult,
@@ -125,7 +126,8 @@ protected:
     //
     static void CreateModel(const char *modelFileName,
                             const char *resourcePath,
-                            DNNModelMc **model);
+                            DNNModel2 **model);
+                            //DNNModelMc **model);
     
     void InitMixCols();
 
@@ -141,7 +143,8 @@ protected:
     WDL_TypedBuf<BL_FLOAT> mMasks[NUM_STEM_SOURCES];
     
     // DNNs
-    DNNModelMc *mModel;
+    //DNNModelMc *mModel;
+    DNNModel2 *mModel;
     
     deque<WDL_TypedBuf<BL_FLOAT> > mMixCols;
     

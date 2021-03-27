@@ -276,7 +276,9 @@ RebalanceProcessor::GetStereoData(WDL_TypedBuf<BL_FLOAT> data[REBALANCE_NUM_SPEC
 void
 RebalanceProcessor::SetDbgThreshold(BL_FLOAT thrs)
 {
+#if 0
     mMaskPred->SetDbgThreshold(thrs);
+#endif
 }
 
 bool

@@ -10,7 +10,7 @@ BL-Gain12	    :	features+, optim, mem, bugs
 BL-Gain200	    :	features+, optim, mem, bugs
 BL-Gain24	    :	features+, optim, mem, bugs
 BL-Gain60	    :	features+, optim, mem, bugs
-BL-Ghost	    :	features+
+BL-Ghost	    :	features+, optim, mem, bugs
 BL-GhostViewer	    :
 BL-Impulses	    :
 BL-Infra	    :
@@ -21,7 +21,7 @@ BL-OnsetDetect	    :
 BL-Panogram	    :
 BL-PitchShift	    :
 BL-Precedence	    :
-BL-Rebalance	    :
+BL-Rebalance	    :	todo
 BL-Reverb	    :
 BL-ReverbDepth	    :
 BL-SampleDelay	    :
