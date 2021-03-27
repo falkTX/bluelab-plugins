@@ -33,18 +33,18 @@ extern "C" {
 // Was just a test to avoid writing the temporary file to disk (failed)
 #define USE_FMEMOPEN_WIN 0 //1
 
-#define NORMALIZE_INPUT 1
+//#define NORMALIZE_INPUT 1
 
 #define NUM_STEMS 4
 
 // Output is not normalized at all, it has negative values, and values > 1.
-#define FIX_OUTPUT_NORM 1
+//#define FIX_OUTPUT_NORM 1
 
 // Was a test (interesting, but needs more testing)
-#define OTHER_IS_REST2 0
+//#define OTHER_IS_REST2 0
 
 // Was a test
-#define SET_OTHER_TO_ZERO 0
+//#define SET_OTHER_TO_ZERO 0
 
 DNNModelDarknet::DNNModelDarknet()
 {
@@ -193,12 +193,12 @@ DNNModelDarknet::Predict(const WDL_TypedBuf<BL_FLOAT> &input,
     
     WDL_TypedBuf<BL_FLOAT> input0 = input;
     
-#if NORMALIZE_INPUT
+    /*#if NORMALIZE_INPUT
     // Normalize!
     BL_FLOAT normMin;
     BL_FLOAT normMax;
     BLUtils::Normalize(&input0, &normMin, &normMax);
-#endif
+    #endif*/
     
     WDL_TypedBuf<float> X;
     X.Resize(input0.GetSize()*NUM_STEMS);
@@ -206,97 +206,104 @@ DNNModelDarknet::Predict(const WDL_TypedBuf<BL_FLOAT> &input,
     {
         BL_FLOAT val = input0.Get()[i % input0.GetSize()];
         
-#if PROCESS_SIGNAL_DB
+        /*#if PROCESS_SIGNAL_DB
         // Used when model is traind in dB
         val = mScale->ApplyScale(Scale::DB, val,
-                                 (BL_FLOAT)PROCESS_SIGNAL_MIN_DB, (BL_FLOAT)0.0);
-#endif
+        (BL_FLOAT)PROCESS_SIGNAL_MIN_DB, (BL_FLOAT)0.0);
+        #endif*/
         
         X.Get()[i] = val;
     }
+
     
-#define DBG_DUMP 0 // 1
+    // TODO: load .bin example
+
     
+    /*#define DBG_DUMP 0 // 1
 #if DBG_DUMP
     PPMFile::SavePPM("data.ppm", input0.Get(), 256, 32, 1, 255);
 #endif
+    */
     
      // ?
     srand(2222222);
     // Prediction
     float *pred = network_predict(mNet, X.Get());
     
-#if OTHER_IS_REST2
-    for (int i = 0; i < input0.GetSize(); i++)
-    {
-        float vals[NUM_STEMS];
-        for (int j = 0; j < NUM_STEMS; j++)
-        {
-            vals[j] = pred[i + j*input0.GetSize()];
-        }
-        
-        vals[3] = 1.0 - (vals[0] + vals[1] + vals[2]);
-        if (vals[3] < 0.0)
-            vals[3] = 0.0;
-        pred[i + 3*input0.GetSize()] = vals[3];
-    }
-#endif
+    /*#if OTHER_IS_REST2
+      for (int i = 0; i < input0.GetSize(); i++)
+      {
+      float vals[NUM_STEMS];
+      for (int j = 0; j < NUM_STEMS; j++)
+      {
+      vals[j] = pred[i + j*input0.GetSize()];
+      }
+      
+      vals[3] = 1.0 - (vals[0] + vals[1] + vals[2]);
+      if (vals[3] < 0.0)
+      vals[3] = 0.0;
+      pred[i + 3*input0.GetSize()] = vals[3];
+      }
+      #endif*/
     
-#if SET_OTHER_TO_ZERO
-    for (int i = 0; i < input0.GetSize(); i++)
-    {
-        pred[i + 3*input0.GetSize()] = 0.0;
-    }
-#endif
+    /*#if SET_OTHER_TO_ZERO
+      for (int i = 0; i < input0.GetSize(); i++)
+      {
+      pred[i + 3*input0.GetSize()] = 0.0;
+      }
+      #endif*/
     
-#if DBG_DUMP
-    BLDebug::DumpData("pred0.txt", pred, X.GetSize());
-#endif
+    /*#if DBG_DUMP
+      BLDebug::DumpData("pred0.txt", pred, X.GetSize());
+      #endif*/
     
-#if SENSIVITY_IS_SCALE
-    for (int i = 0; i < X.GetSize(); i++)
-    {
-        int maskIndex = i/input0.GetSize();
-        
-        float val = pred[i];
-        val *= mMaskScales[maskIndex];
-        pred[i] = val;
-    }
-#endif
+    /*#if SENSIVITY_IS_SCALE
+      for (int i = 0; i < X.GetSize(); i++)
+      {
+      int maskIndex = i/input0.GetSize();
+      
+      float val = pred[i];
+      val *= mMaskScales[maskIndex];
+      pred[i] = val;
+      }
+      #endif
+    */
     
-#if FIX_OUTPUT_NORM
+    /*#if FIX_OUTPUT_NORM
     // Exactly like the process done in darknet, to multiply masks
     BLUtils::Normalize(pred, input0.GetSize()*NUM_STEMS);
     //my_normalize_chan2(pred, NUM_STEMS, input0.GetSize());
-#endif
+    #endif
+    */
     
-#if USE_DBG_PREDICT_MASK_THRESHOLD
-    for (int i = 0; i < X.GetSize(); i++)
-    {
-        int maskIndex = i/input0.GetSize();
-        if (maskIndex != 3)
-            continue;
-        
-        float val = pred[i];
-        if (val > /*<*/mDbgThreshold)
-            val = 0.0;
-        
-        pred[i] = val;
-    }
-#endif
-    
-#if SET_OTHER_TO_ZERO
+    /*#if USE_DBG_PREDICT_MASK_THRESHOLD
+      for (int i = 0; i < X.GetSize(); i++)
+      {
+      int maskIndex = i/input0.GetSize();
+      if (maskIndex != 3)
+      continue;
+      
+      float val = pred[i];
+      if (val > mDbgThreshold)
+      val = 0.0;
+      pred[i] = val;
+      }
+      #endif
+    */
+
+    /*#if SET_OTHER_TO_ZERO
     // Set to 0 again to avoid a floor effect after normalization
     // (mask would be a constant value instead of 0
     for (int i = 0; i < input0.GetSize(); i++)
     {
-        pred[i + 3*input0.GetSize()] = 0.0;
+    pred[i + 3*input0.GetSize()] = 0.0;
     }
 #endif
+    */
     
-#if DBG_DUMP
-    BLDebug::DumpData("pred1.txt", pred, X.GetSize());
-#endif
+    /*#if DBG_DUMP
+      BLDebug::DumpData("pred1.txt", pred, X.GetSize());
+      #endif*/
     
     masks->resize(NUM_STEMS);
     for (int i = 0; i < NUM_STEMS; i++)
@@ -313,12 +320,12 @@ DNNModelDarknet::Predict(const WDL_TypedBuf<BL_FLOAT> &input,
         (*masks)[maskIndex].Get()[i % input0.GetSize()] = val;
     }
 
-#if DBG_DUMP //0// DEBUG
-    BLDebug::DumpData("pred-mask0.txt", (*masks)[0]);
-    BLDebug::DumpData("pred-mask1.txt", (*masks)[1]);
-    BLDebug::DumpData("pred-mask2.txt", (*masks)[2]);
-    BLDebug::DumpData("pred-mask3.txt", (*masks)[3]);
-#endif
+    /*#if DBG_DUMP //0// DEBUG
+      BLDebug::DumpData("pred-mask0.txt", (*masks)[0]);
+      BLDebug::DumpData("pred-mask1.txt", (*masks)[1]);
+      BLDebug::DumpData("pred-mask2.txt", (*masks)[2]);
+      BLDebug::DumpData("pred-mask3.txt", (*masks)[3]);
+      #endif*/
     
     //
     for (int i = 0; i < NUM_STEMS; i++)
@@ -326,19 +333,19 @@ DNNModelDarknet::Predict(const WDL_TypedBuf<BL_FLOAT> &input,
         BLUtils::ClipMin(&(*masks)[i], (BL_FLOAT)0.0);
     }
     
-#if DBG_DUMP
-    PPMFile::SavePPM("mask0.ppm", (*masks)[0].Get(), 256, 32, 1, 255);
-    PPMFile::SavePPM("mask1.ppm", (*masks)[1].Get(), 256, 32, 1, 255);
-    PPMFile::SavePPM("mask2.ppm", (*masks)[2].Get(), 256, 32, 1, 255);
-    PPMFile::SavePPM("mask3.ppm", (*masks)[3].Get(), 256, 32, 1, 255);
-    
-    static int count = 0;
-    count++;
-    if (count == 7)
-    {
-        int dummy = 0;
-    }
-#endif
+    /*#if DBG_DUMP
+      PPMFile::SavePPM("mask0.ppm", (*masks)[0].Get(), 256, 32, 1, 255);
+      PPMFile::SavePPM("mask1.ppm", (*masks)[1].Get(), 256, 32, 1, 255);
+      PPMFile::SavePPM("mask2.ppm", (*masks)[2].Get(), 256, 32, 1, 255);
+      PPMFile::SavePPM("mask3.ppm", (*masks)[3].Get(), 256, 32, 1, 255);
+      
+      static int count = 0;
+      count++;
+      if (count == 7)
+      {
+      int dummy = 0;
+      }
+      #endif*/
 }
 
 #if 0
