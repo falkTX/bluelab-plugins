@@ -107,6 +107,7 @@ RebalanceProcessor2::InitDetect(const IPluginBase &plug,
         {
             RebalanceProcessFftObjComp4 *obj =
                 new RebalanceProcessFftObjComp4(mBufferSize,
+                                                mSampleRate,
                                                 mMaskPred,
                                                 mNumSpectroCols,
                                                 NUM_STEM_SOURCES);
@@ -274,6 +275,26 @@ GetStereoData(WDL_TypedBuf<BL_FLOAT> data[REBALANCE_NUM_SPECTRO_COLS])
 {
     if (mDumpObj != NULL)
         mDumpObj->GetStereoData(data);
+}
+
+BLSpectrogram4 *
+RebalanceProcessor2::GetSpectrogram()
+{
+    if (mDetectProcessObjs[0] != NULL)
+    {
+        BLSpectrogram4 *spect = mDetectProcessObjs[0]->GetSpectrogram();
+        return spect;
+    }
+
+    return NULL;
+}
+
+void
+RebalanceProcessor2::
+SetSpectrogramDisplay(SpectrogramDisplayScroll3 *spectroDisplay)
+{
+    if (mDetectProcessObjs[0] != NULL)
+        mDetectProcessObjs[0]->SetSpectrogramDisplay(spectroDisplay);
 }
 
 void

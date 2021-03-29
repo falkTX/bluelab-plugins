@@ -32,10 +32,12 @@
 class RebalanceMaskPredictorComp7;
 class SoftMaskingNComp;
 class Scale;
+class BLSpectrogram4;
+class SpectrogramDisplayScroll3;
 class RebalanceProcessFftObjComp4 : public ProcessObj
 {
 public:
-    RebalanceProcessFftObjComp4(int bufferSize,
+    RebalanceProcessFftObjComp4(int bufferSize, BL_FLOAT sampleRate,
                                 RebalanceMaskPredictorComp7 *maskPred,
                                 int numInputCols,
                                 int softMaskHistoSize);
@@ -43,8 +45,10 @@ public:
     virtual ~RebalanceProcessFftObjComp4();
     
     void Reset(int bufferSize, int oversampling, int freqRes, BL_FLOAT sampleRate);
-    
     void Reset();
+
+    BLSpectrogram4 *GetSpectrogram();
+    void SetSpectrogramDisplay(SpectrogramDisplayScroll3 *spectroDisplay);
     
     virtual void ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
                                   const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer);
@@ -64,6 +68,9 @@ public:
     void SetOther(BL_FLOAT other);
     
 protected:
+    void AddSpectrogramLine(const WDL_TypedBuf<BL_FLOAT> &magns,
+                            const WDL_TypedBuf<BL_FLOAT> &phases);
+    
     void ComputeMix(WDL_TypedBuf<WDL_FFT_COMPLEX> *dataResult,
                     const WDL_TypedBuf<WDL_FFT_COMPLEX> &dataMix);
     
@@ -88,7 +95,13 @@ protected:
     // Post normalization
     void NormalizeMasks(WDL_TypedBuf<WDL_FFT_COMPLEX> masks[NUM_STEM_SOURCES]);
     void NormalizeMaskVals(WDL_FFT_COMPLEX maskVals[NUM_STEM_SOURCES]);
-                        
+
+    //
+    BL_FLOAT mSampleRate;
+    
+    BLSpectrogram4 *mSpectrogram;
+    SpectrogramDisplayScroll3 *mSpectroDisplay;
+    
     //
     RebalanceMaskPredictorComp7 *mMaskPred;
     

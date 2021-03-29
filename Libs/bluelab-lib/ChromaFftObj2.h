@@ -72,7 +72,7 @@ protected:
     
     void MagnsToChromaLine(const WDL_TypedBuf<BL_FLOAT> &magns,
                            WDL_TypedBuf<BL_FLOAT> *chromaLine,
-			   HistoMaskLine2 *maskLine = NULL);
+                           HistoMaskLine2 *maskLine = NULL);
     
 #if USE_FREQ_OBJ
     void MagnsToChromaLineFreqs(const WDL_TypedBuf<BL_FLOAT> &magns,
