@@ -38,9 +38,13 @@ extern "C" {
 #define NUM_STEMS 4
 
 #define RESIZE_NETWORK 0 //1
-#if RESIZE_NETWORK
+#define RESIZE_FACTOR 1 //2
+//#if RESIZE_NETWORK
 #include <stb_image_resize.h>
-#endif
+//#endif
+
+#define IMAGE_WIDTH REBALANCE_NUM_SPECTRO_FREQS
+#define IMAGE_HEIGHT REBALANCE_NUM_SPECTRO_COLS
 
 // Output is not normalized at all, it has negative values, and values > 1.
 //#define FIX_OUTPUT_NORM 1
@@ -105,8 +109,8 @@ DNNModelDarknet::Load(const char *modelFileName,
 
 #if RESIZE_NETWORK
     int res = resize_network(mNet,
-                             REBALANCE_NUM_SPECTRO_FREQS/2,
-                             REBALANCE_NUM_SPECTRO_COLS/2);
+                             REBALANCE_NUM_SPECTRO_FREQS/RESIZE_FACTOR,
+                             REBALANCE_NUM_SPECTRO_COLS/RESIZE_FACTOR);
 #endif
     
     return true;
@@ -229,9 +233,6 @@ DNNModelDarknet::Predict(const WDL_TypedBuf<BL_FLOAT> &input,
 #if DEBUG_DATA
     // DEBUG: load .bin example
 #define DBG_INPUT_IMAGE_FNAME "/home/niko/Documents/Dev/plugs-dev/bluelab/BL-Plugins/BL-Rebalance/DNNPack/training/mix" //mix-sum"
-
-#define IMAGE_WIDTH REBALANCE_NUM_SPECTRO_FREQS
-#define IMAGE_HEIGHT REBALANCE_NUM_SPECTRO_COLS
     
     // Load
     WDL_TypedBuf<float> dbgMix;
@@ -253,38 +254,58 @@ DNNModelDarknet::Predict(const WDL_TypedBuf<BL_FLOAT> &input,
     amp_to_db(X.Get(), X.GetSize());
     my_normalize(X.Get(), X.GetSize());
 
-#if RESIZE_NETWORK
-#define IMAGE_WIDTH REBALANCE_NUM_SPECTRO_FREQS
-#define IMAGE_HEIGHT REBALANCE_NUM_SPECTRO_COLS
-    
+#if RESIZE_NETWORK    
     WDL_TypedBuf<float> XResize;
-    XResize.Resize(IMAGE_WIDTH*IMAGE_HEIGHT*NUM_STEMS/4);
+    XResize.Resize(IMAGE_WIDTH*IMAGE_HEIGHT*NUM_STEMS/RESIZE_FACTOR/RESIZE_FACTOR);
     for (int i = 0; i < NUM_STEMS; i++)
     {
         stbir_resize_float(&X.Get()[i*IMAGE_WIDTH*IMAGE_HEIGHT],
                            IMAGE_WIDTH, IMAGE_HEIGHT, 0,
-                           &XResize.Get()[i*IMAGE_WIDTH*IMAGE_HEIGHT/4],
-                           IMAGE_WIDTH/2, IMAGE_HEIGHT/2, 0,
+                           &XResize.Get()[i*IMAGE_WIDTH*
+                                          IMAGE_HEIGHT/RESIZE_FACTOR/RESIZE_FACTOR],
+                           IMAGE_WIDTH/RESIZE_FACTOR, IMAGE_HEIGHT/RESIZE_FACTOR, 0,
                            1);
     }
     X = XResize;
 #endif
+
+    ////////////////DEBUG
+    WDL_TypedBuf<float> XResize;
+    XResize.Resize(IMAGE_WIDTH*IMAGE_HEIGHT*NUM_STEMS/2/2);
+    for (int i = 0; i < NUM_STEMS; i++)
+    {
+        stbir_resize_float(&X.Get()[i*IMAGE_WIDTH*IMAGE_HEIGHT],
+                           IMAGE_WIDTH, IMAGE_HEIGHT, 0,
+                           &XResize.Get()[i*IMAGE_WIDTH*
+                                          IMAGE_HEIGHT/2/2],
+                           IMAGE_WIDTH/2, IMAGE_HEIGHT/2, 0,
+                           1);
+    }
+
+    for (int i = 0; i < NUM_STEMS; i++)
+    {
+        stbir_resize_float(&XResize.Get()[i*IMAGE_WIDTH*IMAGE_HEIGHT/2/2],
+                           IMAGE_WIDTH/2, IMAGE_HEIGHT/2, 0,
+                           &X.Get()[i*IMAGE_WIDTH*
+                                    IMAGE_HEIGHT],
+                           IMAGE_WIDTH, IMAGE_HEIGHT, 0,
+                           1);
+    }
+    /////////////////////
     
      // ?
     srand(2222222);
     // Prediction
     float *pred = network_predict(mNet, X.Get());
 
-#if RESIZE_NETWORK
-#define IMAGE_WIDTH REBALANCE_NUM_SPECTRO_FREQS
-#define IMAGE_HEIGHT REBALANCE_NUM_SPECTRO_COLS
-    
+#if RESIZE_NETWORK    
     WDL_TypedBuf<float> predResize;
     predResize.Resize(IMAGE_WIDTH*IMAGE_HEIGHT*NUM_STEMS);
     for (int i = 0; i < NUM_STEMS; i++)
     {
-        stbir_resize_float(&pred[i*IMAGE_WIDTH*IMAGE_HEIGHT/4],
-                           IMAGE_WIDTH/2, IMAGE_HEIGHT/2, 0,
+        stbir_resize_float(&pred[i*IMAGE_WIDTH*
+                                 IMAGE_HEIGHT/RESIZE_FACTOR/RESIZE_FACTOR],
+                           IMAGE_WIDTH/RESIZE_FACTOR, IMAGE_HEIGHT/RESIZE_FACTOR, 0,
                            &predResize.Get()[i*IMAGE_WIDTH*IMAGE_HEIGHT],
                            IMAGE_WIDTH, IMAGE_HEIGHT, 0,
                            1);
@@ -294,13 +315,12 @@ DNNModelDarknet::Predict(const WDL_TypedBuf<BL_FLOAT> &input,
 #endif
 
 #if DEBUG_DATA
-#define IMAGE_WIDTH REBALANCE_NUM_SPECTRO_FREQS
-#define IMAGE_HEIGHT REBALANCE_NUM_SPECTRO_COLS
-
 #define SAVE_IMG_FNAME "/home/niko/Documents/BlueLabAudio-Debug/X"
     //my_save_image(IMAGE_WIDTH, IMAGE_HEIGHT, 1, X.Get(), SAVE_IMG_FNAME, 1);
-    my_save_image_mc(IMAGE_WIDTH, IMAGE_HEIGHT, 4, X.Get(), SAVE_IMG_FNAME);
-    my_save_image_txt(IMAGE_WIDTH, IMAGE_HEIGHT, 1, X.Get(), SAVE_IMG_FNAME);
+    my_save_image_mc(IMAGE_WIDTH/RESIZE_FACTOR, IMAGE_HEIGHT/RESIZE_FACTOR,
+                     4, X.Get(), SAVE_IMG_FNAME);
+    my_save_image_txt(IMAGE_WIDTH/RESIZE_FACTOR, IMAGE_HEIGHT/RESIZE_FACTOR,
+                      1, X.Get(), SAVE_IMG_FNAME);
     
 #define SAVE_PRED_FNAME "/home/niko/Documents/BlueLabAudio-Debug/pred"
     my_save_image_mc(IMAGE_WIDTH, IMAGE_HEIGHT, 4, pred, SAVE_PRED_FNAME);
