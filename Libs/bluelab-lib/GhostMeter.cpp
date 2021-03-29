@@ -26,7 +26,7 @@ GhostMeter::GhostMeter(BL_FLOAT x, BL_FLOAT y,
     mTimeMode = GHOST_METER_TIME_SAMPLES;
 #else
     // When releasing, h/m/s is better
-    mMode = GHOST_METER_HMS;
+    mTimeMode = GHOST_METER_TIME_HMS;
 #endif
     
     mFreqMode = GHOST_METER_FREQ_HZ;

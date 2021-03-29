@@ -37,6 +37,11 @@ extern "C" {
 
 #define NUM_STEMS 4
 
+#define RESIZE_NETWORK 0 //1
+#if RESIZE_NETWORK
+#include <stb_image_resize.h>
+#endif
+
 // Output is not normalized at all, it has negative values, and values > 1.
 //#define FIX_OUTPUT_NORM 1
 
@@ -45,6 +50,18 @@ extern "C" {
 
 // Was a test
 //#define SET_OTHER_TO_ZERO 0
+
+// From bl-darknet/rebalance.c
+void
+amp_to_db(float *buf, int size)
+{
+    for (int i = 0; i < size; i++)
+    {
+        float v = buf[i];
+        v = my_amp_to_db_norm(v);
+        buf[i] = v;
+    }
+}
 
 DNNModelDarknet::DNNModelDarknet()
 {
@@ -85,6 +102,12 @@ DNNModelDarknet::Load(const char *modelFileName,
     
     mNet = load_network(cfgFullFileName, weightsFileFullFileName, 0);
     set_batch_network(mNet, 1);
+
+#if RESIZE_NETWORK
+    int res = resize_network(mNet,
+                             REBALANCE_NUM_SPECTRO_FREQS/2,
+                             REBALANCE_NUM_SPECTRO_COLS/2);
+#endif
     
     return true;
 }
@@ -193,118 +216,99 @@ DNNModelDarknet::Predict(const WDL_TypedBuf<BL_FLOAT> &input,
     
     WDL_TypedBuf<BL_FLOAT> input0 = input;
     
-    /*#if NORMALIZE_INPUT
-    // Normalize!
-    BL_FLOAT normMin;
-    BL_FLOAT normMax;
-    BLUtils::Normalize(&input0, &normMin, &normMax);
-    #endif*/
-    
     WDL_TypedBuf<float> X;
     X.Resize(input0.GetSize()*NUM_STEMS);
     for (int i = 0; i < X.GetSize(); i++)
     {
         BL_FLOAT val = input0.Get()[i % input0.GetSize()];
         
-        /*#if PROCESS_SIGNAL_DB
-        // Used when model is traind in dB
-        val = mScale->ApplyScale(Scale::DB, val,
-        (BL_FLOAT)PROCESS_SIGNAL_MIN_DB, (BL_FLOAT)0.0);
-        #endif*/
-        
         X.Get()[i] = val;
     }
 
-    
-    // TODO: load .bin example
+#define DEBUG_DATA 0 //1
+#if DEBUG_DATA
+    // DEBUG: load .bin example
+#define DBG_INPUT_IMAGE_FNAME "/home/niko/Documents/Dev/plugs-dev/bluelab/BL-Plugins/BL-Rebalance/DNNPack/training/mix" //mix-sum"
 
+#define IMAGE_WIDTH REBALANCE_NUM_SPECTRO_FREQS
+#define IMAGE_HEIGHT REBALANCE_NUM_SPECTRO_COLS
     
-    /*#define DBG_DUMP 0 // 1
-#if DBG_DUMP
-    PPMFile::SavePPM("data.ppm", input0.Get(), 256, 32, 1, 255);
+    // Load
+    WDL_TypedBuf<float> dbgMix;
+    dbgMix.Resize(IMAGE_WIDTH*IMAGE_HEIGHT);
+    float *dbgMixData = dbgMix.Get();
+    my_load_image_bin(IMAGE_WIDTH, IMAGE_HEIGHT, 1,
+                      dbgMixData, DBG_INPUT_IMAGE_FNAME);
+
+    for (int i = 0; i < X.GetSize(); i++)
+    {
+        BL_FLOAT val = dbgMix.Get()[i % dbgMix.GetSize()];
+        
+        X.Get()[i] = val;
+    }
+#endif   
+
+    // Process
+    my_normalize(X.Get(), X.GetSize());
+    amp_to_db(X.Get(), X.GetSize());
+    my_normalize(X.Get(), X.GetSize());
+
+#if RESIZE_NETWORK
+#define IMAGE_WIDTH REBALANCE_NUM_SPECTRO_FREQS
+#define IMAGE_HEIGHT REBALANCE_NUM_SPECTRO_COLS
+    
+    WDL_TypedBuf<float> XResize;
+    XResize.Resize(IMAGE_WIDTH*IMAGE_HEIGHT*NUM_STEMS/4);
+    for (int i = 0; i < NUM_STEMS; i++)
+    {
+        stbir_resize_float(&X.Get()[i*IMAGE_WIDTH*IMAGE_HEIGHT],
+                           IMAGE_WIDTH, IMAGE_HEIGHT, 0,
+                           &XResize.Get()[i*IMAGE_WIDTH*IMAGE_HEIGHT/4],
+                           IMAGE_WIDTH/2, IMAGE_HEIGHT/2, 0,
+                           1);
+    }
+    X = XResize;
 #endif
-    */
     
      // ?
     srand(2222222);
     // Prediction
     float *pred = network_predict(mNet, X.Get());
-    
-    /*#if OTHER_IS_REST2
-      for (int i = 0; i < input0.GetSize(); i++)
-      {
-      float vals[NUM_STEMS];
-      for (int j = 0; j < NUM_STEMS; j++)
-      {
-      vals[j] = pred[i + j*input0.GetSize()];
-      }
-      
-      vals[3] = 1.0 - (vals[0] + vals[1] + vals[2]);
-      if (vals[3] < 0.0)
-      vals[3] = 0.0;
-      pred[i + 3*input0.GetSize()] = vals[3];
-      }
-      #endif*/
-    
-    /*#if SET_OTHER_TO_ZERO
-      for (int i = 0; i < input0.GetSize(); i++)
-      {
-      pred[i + 3*input0.GetSize()] = 0.0;
-      }
-      #endif*/
-    
-    /*#if DBG_DUMP
-      BLDebug::DumpData("pred0.txt", pred, X.GetSize());
-      #endif*/
-    
-    /*#if SENSIVITY_IS_SCALE
-      for (int i = 0; i < X.GetSize(); i++)
-      {
-      int maskIndex = i/input0.GetSize();
-      
-      float val = pred[i];
-      val *= mMaskScales[maskIndex];
-      pred[i] = val;
-      }
-      #endif
-    */
-    
-    /*#if FIX_OUTPUT_NORM
-    // Exactly like the process done in darknet, to multiply masks
-    BLUtils::Normalize(pred, input0.GetSize()*NUM_STEMS);
-    //my_normalize_chan2(pred, NUM_STEMS, input0.GetSize());
-    #endif
-    */
-    
-    /*#if USE_DBG_PREDICT_MASK_THRESHOLD
-      for (int i = 0; i < X.GetSize(); i++)
-      {
-      int maskIndex = i/input0.GetSize();
-      if (maskIndex != 3)
-      continue;
-      
-      float val = pred[i];
-      if (val > mDbgThreshold)
-      val = 0.0;
-      pred[i] = val;
-      }
-      #endif
-    */
 
-    /*#if SET_OTHER_TO_ZERO
-    // Set to 0 again to avoid a floor effect after normalization
-    // (mask would be a constant value instead of 0
-    for (int i = 0; i < input0.GetSize(); i++)
+#if RESIZE_NETWORK
+#define IMAGE_WIDTH REBALANCE_NUM_SPECTRO_FREQS
+#define IMAGE_HEIGHT REBALANCE_NUM_SPECTRO_COLS
+    
+    WDL_TypedBuf<float> predResize;
+    predResize.Resize(IMAGE_WIDTH*IMAGE_HEIGHT*NUM_STEMS);
+    for (int i = 0; i < NUM_STEMS; i++)
     {
-    pred[i + 3*input0.GetSize()] = 0.0;
+        stbir_resize_float(&pred[i*IMAGE_WIDTH*IMAGE_HEIGHT/4],
+                           IMAGE_WIDTH/2, IMAGE_HEIGHT/2, 0,
+                           &predResize.Get()[i*IMAGE_WIDTH*IMAGE_HEIGHT],
+                           IMAGE_WIDTH, IMAGE_HEIGHT, 0,
+                           1);
     }
+    // TODO: check memory
+    pred = predResize.Get();
 #endif
-    */
+
+#if DEBUG_DATA
+#define IMAGE_WIDTH REBALANCE_NUM_SPECTRO_FREQS
+#define IMAGE_HEIGHT REBALANCE_NUM_SPECTRO_COLS
+
+#define SAVE_IMG_FNAME "/home/niko/Documents/BlueLabAudio-Debug/X"
+    //my_save_image(IMAGE_WIDTH, IMAGE_HEIGHT, 1, X.Get(), SAVE_IMG_FNAME, 1);
+    my_save_image_mc(IMAGE_WIDTH, IMAGE_HEIGHT, 4, X.Get(), SAVE_IMG_FNAME);
+    my_save_image_txt(IMAGE_WIDTH, IMAGE_HEIGHT, 1, X.Get(), SAVE_IMG_FNAME);
     
-    /*#if DBG_DUMP
-      BLDebug::DumpData("pred1.txt", pred, X.GetSize());
-      #endif*/
-    
+#define SAVE_PRED_FNAME "/home/niko/Documents/BlueLabAudio-Debug/pred"
+    my_save_image_mc(IMAGE_WIDTH, IMAGE_HEIGHT, 4, pred, SAVE_PRED_FNAME);
+    my_save_image_txt(IMAGE_WIDTH, IMAGE_HEIGHT, 4, pred, SAVE_PRED_FNAME);
+ 
+    exit(0);
+#endif
+        
     masks->resize(NUM_STEMS);
     for (int i = 0; i < NUM_STEMS; i++)
     {
@@ -320,32 +324,10 @@ DNNModelDarknet::Predict(const WDL_TypedBuf<BL_FLOAT> &input,
         (*masks)[maskIndex].Get()[i % input0.GetSize()] = val;
     }
 
-    /*#if DBG_DUMP //0// DEBUG
-      BLDebug::DumpData("pred-mask0.txt", (*masks)[0]);
-      BLDebug::DumpData("pred-mask1.txt", (*masks)[1]);
-      BLDebug::DumpData("pred-mask2.txt", (*masks)[2]);
-      BLDebug::DumpData("pred-mask3.txt", (*masks)[3]);
-      #endif*/
-    
-    //
     for (int i = 0; i < NUM_STEMS; i++)
     {
         BLUtils::ClipMin(&(*masks)[i], (BL_FLOAT)0.0);
     }
-    
-    /*#if DBG_DUMP
-      PPMFile::SavePPM("mask0.ppm", (*masks)[0].Get(), 256, 32, 1, 255);
-      PPMFile::SavePPM("mask1.ppm", (*masks)[1].Get(), 256, 32, 1, 255);
-      PPMFile::SavePPM("mask2.ppm", (*masks)[2].Get(), 256, 32, 1, 255);
-      PPMFile::SavePPM("mask3.ppm", (*masks)[3].Get(), 256, 32, 1, 255);
-      
-      static int count = 0;
-      count++;
-      if (count == 7)
-      {
-      int dummy = 0;
-      }
-      #endif*/
 }
 
 #if 0
