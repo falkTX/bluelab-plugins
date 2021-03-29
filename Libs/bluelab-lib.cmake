@@ -561,6 +561,8 @@ set(_bluelab-lib_src
   RebalanceMaskPredictorComp5.h
   RebalanceMaskPredictorComp6.cpp
   RebalanceMaskPredictorComp6.h
+  RebalanceMaskPredictorComp7.cpp
+  RebalanceMaskPredictorComp7.h
   RebalanceMaskStack2.cpp
   RebalanceMaskStack2.h
   RebalanceMaskStack.cpp
@@ -569,8 +571,12 @@ set(_bluelab-lib_src
   RebalanceProcessFftObjComp2.h
   RebalanceProcessFftObjComp3.cpp
   RebalanceProcessFftObjComp3.h
+  RebalanceProcessFftObjComp4.cpp
+  RebalanceProcessFftObjComp4.h
   RebalanceProcessor.cpp
   RebalanceProcessor.h
+  RebalanceProcessor2.cpp
+  RebalanceProcessor2.h
   RebalanceTestMultiObj.cpp
   RebalanceTestMultiObj.h
   RELEASE-NOTES.txt
