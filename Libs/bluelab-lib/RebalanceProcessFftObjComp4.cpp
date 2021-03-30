@@ -27,6 +27,7 @@
 // Post normalize, so that when everything is set to default, the plugin is transparent
 #define POST_NORMALIZE 1
 
+#define SPECTRO_NUM_COLS 2048/4 //64
 
 RebalanceProcessFftObjComp4::
 RebalanceProcessFftObjComp4(int bufferSize, BL_FLOAT sampleRate,
@@ -43,7 +44,8 @@ RebalanceProcessFftObjComp4(int bufferSize, BL_FLOAT sampleRate,
     
     mNumInputCols = numInputCols;
 
-    mSpectrogram = new BLSpectrogram4(sampleRate, bufferSize/4, -1);
+    mSpectrogram = new BLSpectrogram4(sampleRate,
+                                      SPECTRO_NUM_COLS/*bufferSize/4*/, -1);
     mSpectroDisplay = NULL;
     
     mScale = new Scale();
@@ -103,7 +105,8 @@ RebalanceProcessFftObjComp4::Reset(int bufferSize, int oversampling,
     srCoeff = bl_round(srCoeff);
     numCols *= srCoeff;
     
-    mSpectrogram->Reset(sampleRate, bufferSize/4, numCols);
+    mSpectrogram->Reset(sampleRate,
+                        SPECTRO_NUM_COLS/*bufferSize/4*/, numCols);
 }
 
 void
@@ -133,7 +136,8 @@ RebalanceProcessFftObjComp4::Reset()
     srCoeff = bl_round(srCoeff);
     numCols *= srCoeff;
     
-    mSpectrogram->Reset(mSampleRate, mBufferSize/4, numCols);
+    mSpectrogram->Reset(mSampleRate,
+                        SPECTRO_NUM_COLS/*mBufferSize/4*/, numCols);
 }
 
 BLSpectrogram4 *

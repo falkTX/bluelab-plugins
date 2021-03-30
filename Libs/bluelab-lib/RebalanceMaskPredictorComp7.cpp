@@ -192,7 +192,7 @@ ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamples,
     
     for (int i = 0; i < NUM_STEM_SOURCES; i++)
     {
-        UpdsampleMelToHz(&masks[i]);
+        UpsampleMelToHz(&masks[i]);
         
         mMasks[i] = masks[i];
     }
@@ -721,7 +721,7 @@ RebalanceMaskPredictorComp7::DownsampleHzToMel(WDL_TypedBuf<BL_FLOAT> *ioMagns)
 }
 
 void
-RebalanceMaskPredictorComp7::UpdsampleMelToHz(WDL_TypedBuf<BL_FLOAT> *ioMagns)
+RebalanceMaskPredictorComp7::UpsampleMelToHz(WDL_TypedBuf<BL_FLOAT> *ioMagns)
 {
 #if REBALANCE_USE_MEL_FILTER_METHOD
     // Origin method with filters
