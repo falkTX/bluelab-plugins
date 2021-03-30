@@ -19,6 +19,7 @@ include(${IPLUG2_DIR}/BL-Dependencies/r8brain.cmake)
 include(${IPLUG2_DIR}/BL-Dependencies/RandomSequence.cmake)
 include(${IPLUG2_DIR}/BL-Dependencies/RTConvolve.cmake)
 include(${IPLUG2_DIR}/BL-Dependencies/sndfilter.cmake)
+include(${IPLUG2_DIR}/BL-Dependencies/OpenBLAS.cmake)
 
 function(bl_add_all_libs target)
   
@@ -42,4 +43,5 @@ function(bl_add_all_libs target)
   iplug_target_add(${target} PUBLIC INCLUDE _RandomSequence LINK _RandomSequence)
   iplug_target_add(${target} PUBLIC INCLUDE _RTConvolve LINK _RTConvolve)
   iplug_target_add(${target} PUBLIC INCLUDE _sndfilter LINK _sndfilter)
+  iplug_target_add(${target} PUBLIC INCLUDE _OpenBLAS LINK _OpenBLAS)
 endfunction()
