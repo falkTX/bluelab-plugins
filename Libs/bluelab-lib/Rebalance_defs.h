@@ -39,8 +39,15 @@
 // Fastest
 #define REBALANCE_PREDICT_MODULO_NUM 3
 
-// When set to 0, use quick method
+// Unused/Legacy, for old classes
 #define REBALANCE_USE_MEL_FILTER_METHOD 1
+
+// Use simple methond (loweer quality)
+#define REBALANCE_MEL_METHOD_SIMPLE 0
+// Use filter bank method (stairs effect)
+#define REBALANCE_MEL_METHOD_FILTER 0 // 1
+// Use Scale object with mel (best method, avoid stairs effect)
+#define REBALANCE_MEL_METHOD_SCALE  1
 
 #define USE_SOFT_MASKS 1
 

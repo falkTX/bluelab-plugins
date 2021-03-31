@@ -7,11 +7,14 @@
 //
 
 #include <MelScale.h>
+#include <Scale.h>
 
 #include <BLUtils.h>
 #include <BLUtilsComp.h>
 
 #include <StereoWidenProcess.h>
+
+#include <Rebalance_defs.h>
 
 #include "RebalanceDumpFftObj2.h"
 
@@ -41,11 +44,13 @@ RebalanceDumpFftObj2::RebalanceDumpFftObj2(int bufferSize,
     mSampleRate = sampleRate;
     
     mMelScale = new MelScale();
+    mScale = new Scale();
 }
 
 RebalanceDumpFftObj2::~RebalanceDumpFftObj2()
 {
     delete mMelScale;
+    delete mScale;
 }
 
 void
@@ -115,12 +120,24 @@ RebalanceDumpFftObj2::ProcessSpectrogramData(vector<WDL_TypedBuf<WDL_FFT_COMPLEX
     BLUtilsComp::ComplexToMagn(&magnsMix, dataBuffer);
     
     // Downsample and convert to mel
-#if REBALANCE_USE_MEL_FILTER_METHOD
+#if REBALANCE_MEL_METHOD_FILTER
     int numMelBins = REBALANCE_NUM_SPECTRO_FREQS;
     WDL_TypedBuf<BL_FLOAT> melMagnsFilters = magnsMix;
     mMelScale->HzToMelFilter(&melMagnsFilters, magnsMix, mSampleRate, numMelBins);
     magnsMix = melMagnsFilters;
-#else
+#endif
+
+#if REBALANCE_MEL_METHOD_SCALE
+    int numMelBins = REBALANCE_NUM_SPECTRO_FREQS;
+    // TODO: use tmp buffers
+    WDL_TypedBuf<BL_FLOAT> melMagnsFilters;
+    Scale::FilterBankType type = mScale->TypeToFilterBankType(Scale::MEL_FILTER);
+    mScale->ApplyScaleFilterBank(type, &melMagnsFilters, magnsMix,
+                                 mSampleRate, numMelBins);
+    magnsMix = melMagnsFilters;
+#endif
+    
+#if REBALANCE_MEL_METHOD_SIMPLE
     // Quick method
     BLUtils::ResizeLinear(magnsMix, REBALANCE_NUM_SPECTRO_FREQS);
     WDL_TypedBuf<BL_FLOAT> melMagnsFilters = magnsMix;
@@ -156,12 +173,24 @@ RebalanceDumpFftObj2::ProcessStereoData(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * >
     BLUtils::MultValues(&widthData, (BL_FLOAT)STEREO_WIDTH_FACTOR);
               
     // Downsample and convert to mel
-#if REBALANCE_USE_MEL_FILTER_METHOD
+#if REBALANCE_MEL_METHOD_FILTER
     int numMelBins = REBALANCE_NUM_SPECTRO_FREQS;
     WDL_TypedBuf<BL_FLOAT> melWidthFilters = widthData;
     mMelScale->HzToMelFilter(&melWidthFilters, widthData, mSampleRate, numMelBins);
     widthData = melWidthFilters;
-#else
+#endif
+
+#if REBALANCE_MEL_METHOD_SCALE
+    int numMelBins = REBALANCE_NUM_SPECTRO_FREQS;
+    // TODO: use tmp buffers
+    WDL_TypedBuf<BL_FLOAT> melWidthFilters;
+    Scale::FilterBankType type = mScale->TypeToFilterBankType(Scale::MEL_FILTER);
+    mScale->ApplyScaleFilterBank(type, &melWidthFilters, widthData,
+                                 mSampleRate, numMelBins);
+    widthData = melWidthFilters;
+#endif
+    
+#if REBALANCE_MEL_METHOD_SIMPLE
     // Quick method
     BLUtils::ResizeLinear(widthData, REBALANCE_NUM_SPECTRO_FREQS);
     WDL_TypedBuf<BL_FLOAT> melWidthFilters = widthData;

@@ -19,6 +19,7 @@ using namespace std;
 // RebalanceDumpFftObj2: from RebalanceDumpFftObj
 // for ResampProcessObj
 class MelScale;
+class Scale;
 class RebalanceDumpFftObj2 : public MultichannelProcess
 {
 public:
@@ -52,8 +53,12 @@ protected:
     deque<WDL_TypedBuf<BL_FLOAT> > mStereoCols;
     
     BL_FLOAT mSampleRate;
-    
+
+    // First filter method
     MelScale *mMelScale;
+
+    // Second filter method
+    Scale *mScale;
 };
 
 #endif /* RebalanceDumpFftObj2_hpp */
