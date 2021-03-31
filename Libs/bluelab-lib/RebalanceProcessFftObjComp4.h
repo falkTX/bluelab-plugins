@@ -83,7 +83,17 @@ protected:
 
     void ApplySoftMasking(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioData,
                           const WDL_TypedBuf<BL_FLOAT> &mask);
-    
+
+    void ComputeInverseDB(WDL_TypedBuf<BL_FLOAT> *magns);
+
+    void ComputeResult(const WDL_TypedBuf<WDL_FFT_COMPLEX> &mixBuffer,
+                       const WDL_TypedBuf<BL_FLOAT> masks[NUM_STEM_SOURCES],
+                       WDL_TypedBuf<WDL_FFT_COMPLEX> *result,
+                       WDL_TypedBuf<BL_FLOAT> *resMagns,
+                       WDL_TypedBuf<BL_FLOAT> *resPhases);
+
+    void RecomputeSpectrogram();
+        
     //
     BL_FLOAT mSampleRate;
     
@@ -105,6 +115,10 @@ protected:
     deque<WDL_TypedBuf<WDL_FFT_COMPLEX> > mMixColsComp;
 
     Scale *mScale;
+
+    // Keep masks history, so when chaging parameters, all the spectrogram changes
+    deque<WDL_TypedBuf<BL_FLOAT> > mMasksHistory[NUM_STEM_SOURCES];
+    deque<WDL_TypedBuf<WDL_FFT_COMPLEX> > mSignalHistory;
 };
 
 #endif /* defined(__BL_Rebalance__RebalanceProcessFftObjComp4__) */

@@ -148,65 +148,93 @@ void
 RebalanceProcessFftObjComp4::SetVocal(BL_FLOAT vocal)
 {
     mMaskProcessor->SetVocalMix(vocal);
+
+    RecomputeSpectrogram();
 }
 
 void
 RebalanceProcessFftObjComp4::SetBass(BL_FLOAT bass)
 {
     mMaskProcessor->SetBassMix(bass);
+
+    RecomputeSpectrogram();
 }
 
 void
 RebalanceProcessFftObjComp4::SetDrums(BL_FLOAT drums)
 {
     mMaskProcessor->SetDrumsMix(drums);
+
+    RecomputeSpectrogram();
 }
 
 void
 RebalanceProcessFftObjComp4::SetOther(BL_FLOAT other)
 {
     mMaskProcessor->SetOtherMix(other);
+
+    RecomputeSpectrogram();
 }
 
 void
 RebalanceProcessFftObjComp4::SetVocalSensitivity(BL_FLOAT vocal)
 {
     mMaskProcessor->SetVocalSensitivity(vocal);
+
+    RecomputeSpectrogram();
 }
 
 void
 RebalanceProcessFftObjComp4::SetBassSensitivity(BL_FLOAT bass)
 {
     mMaskProcessor->SetBassSensitivity(bass);
+
+    RecomputeSpectrogram();
 }
 
 void
 RebalanceProcessFftObjComp4::SetDrumsSensitivity(BL_FLOAT drums)
 {
     mMaskProcessor->SetDrumsSensitivity(drums);
+
+    RecomputeSpectrogram();
 }
 
 void
 RebalanceProcessFftObjComp4::SetOtherSensitivity(BL_FLOAT other)
 {
     mMaskProcessor->SetOtherSensitivity(other);
+
+    RecomputeSpectrogram();
 }
 
 void
 RebalanceProcessFftObjComp4::SetContrast(BL_FLOAT contrast)
 {
     mMaskProcessor->SetContrast(contrast);
+
+    RecomputeSpectrogram();
 }
 
 void
 RebalanceProcessFftObjComp4::AddSpectrogramLine(const WDL_TypedBuf<BL_FLOAT> &magns,
                                                 const WDL_TypedBuf<BL_FLOAT> &phases)
 {
+    // Disabled: so the spectrogram display jitters less
+    // even whn much resource is consumed
+    // And also for updating whole spectrogram when param change
+#if 0
     // Simple add
     if (mSpectroDisplay != NULL)
         mSpectroDisplay->AddSpectrogramLine(magns, phases);
     else
-        mSpectrogram->AddLine(magns, phases);
+#endif
+    
+     mSpectrogram->AddLine(magns, phases);
+
+    // NEW: for updating whole spectrogram when param change
+    if (mSpectroDisplay != NULL)
+        mSpectroDisplay->UpdateSpectrogram(true);
 }
 
 void
@@ -252,44 +280,26 @@ ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     for (int i = 0; i < NUM_STEM_SOURCES; i++)
         mMaskPred->GetMask(i, &masks[i]);
 
+    // Keep mask and signal histories
+    mSignalHistory.push_back(mixBuffer);
+    if (mSignalHistory.size() >= SPECTRO_NUM_COLS)
+        mSignalHistory.pop_front();
+
+    for (int i = 0; i < NUM_STEM_SOURCES; i++)
+    {
+        mMasksHistory[i].push_back(masks[i]);
+        if (mMasksHistory[i].size() >= SPECTRO_NUM_COLS)
+            mMasksHistory[i].pop_front();
+    }
+    
     // Adjust and apply mask
     WDL_TypedBuf<WDL_FFT_COMPLEX> result;
-    BLUtils::ResizeFillZeros(&result, mixBuffer.GetSize());
-
-    // TODO: use tmp buffer
-    WDL_TypedBuf<BL_FLOAT> mask;
-    mMaskProcessor->Process(masks, &mask);
-    
-    //ApplyMask(mixBuffer, &result, mask);
-
-    // TODO: use tmp buffers
-    result = mixBuffer;
-    ApplySoftMasking(&result, mask);
-    
-#if PROCESS_SIGNAL_DB
     WDL_TypedBuf<BL_FLOAT> magns1;
     WDL_TypedBuf<BL_FLOAT> phases1;
-    BLUtilsComp::ComplexToMagnPhase(&magns1, &phases1, result);
-    
-    for (int i = 0; i < magns1.GetSize(); i++)
-    {
-        BL_FLOAT val = magns1.Get()[i];
-        val = mScale->ApplyScaleInv(Scale::DB, val,
-                                    (BL_FLOAT)PROCESS_SIGNAL_MIN_DB, (BL_FLOAT)0.0);
-        
-        // Noise floor
-        BL_FLOAT db = BLUtils::AmpToDB(val);
-        if (db < PROCESS_SIGNAL_MIN_DB + 1)
-            val = 0.0;
-        
-        magns1.Get()[i] = val;
-    }
+    ComputeResult(mixBuffer, masks, &result, &magns1, &phases1);
 
     AddSpectrogramLine(magns1, phases1);
     
-    BLUtilsComp::MagnPhaseToComplex(&result, magns1, phases1);
-#endif
-
     // TODO: tmp buffers / memory optimization
     
     // Fill the result
@@ -352,4 +362,90 @@ RebalanceProcessFftObjComp4::ApplySoftMasking(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioD
             
     if (mSoftMasking->IsProcessingEnabled())
         *ioData = softMaskedResult;
+}
+
+void
+RebalanceProcessFftObjComp4::ComputeInverseDB(WDL_TypedBuf<BL_FLOAT> *magns)
+{
+    for (int i = 0; i < magns->GetSize(); i++)
+    {
+        BL_FLOAT val = magns->Get()[i];
+        val = mScale->ApplyScaleInv(Scale::DB, val,
+                                    (BL_FLOAT)PROCESS_SIGNAL_MIN_DB, (BL_FLOAT)0.0);
+        
+        // Noise floor
+        BL_FLOAT db = BLUtils::AmpToDB(val);
+        if (db < PROCESS_SIGNAL_MIN_DB + 1)
+            val = 0.0;
+        
+        magns->Get()[i] = val;
+    }
+}
+
+void
+RebalanceProcessFftObjComp4::RecomputeSpectrogram()
+{
+    // TODO: use tmp buffers
+    
+    // Keep lines, and add them all at once at the end 
+    vector<WDL_TypedBuf<BL_FLOAT> > magnsVec;
+    vector<WDL_TypedBuf<BL_FLOAT> > phasesVec;
+    
+    for (int i = 0; i < mSignalHistory.size(); i++)
+    {
+        WDL_TypedBuf<WDL_FFT_COMPLEX> signal = mSignalHistory[i];
+
+        WDL_TypedBuf<BL_FLOAT> masks[NUM_STEM_SOURCES];
+        for (int j = 0; j < NUM_STEM_SOURCES; j++)
+        {
+            masks[j] = mMasksHistory[j][i];
+        }
+
+        WDL_TypedBuf<WDL_FFT_COMPLEX> result;
+        WDL_TypedBuf<BL_FLOAT> magns;
+        WDL_TypedBuf<BL_FLOAT> phases;
+        ComputeResult(signal, masks, &result, &magns, &phases);
+
+        //AddSpectrogramLine(magns, phases);
+        magnsVec.push_back(magns);
+        phasesVec.push_back(phases);
+    }
+
+    // Add all lines at once at the end
+    mSpectrogram->SetLines(magnsVec, phasesVec);
+
+    if (mSpectroDisplay != NULL)
+        mSpectroDisplay->UpdateSpectrogram(true);
+}
+
+void
+RebalanceProcessFftObjComp4::
+ComputeResult(const WDL_TypedBuf<WDL_FFT_COMPLEX> &mixBuffer,
+              const WDL_TypedBuf<BL_FLOAT> masks[NUM_STEM_SOURCES],
+              WDL_TypedBuf<WDL_FFT_COMPLEX> *result,
+              WDL_TypedBuf<BL_FLOAT> *resMagns,
+              WDL_TypedBuf<BL_FLOAT> *resPhases)
+{
+    BLUtils::ResizeFillZeros(result, mixBuffer.GetSize());
+
+    // TODO: use tmp buffer
+    WDL_TypedBuf<BL_FLOAT> mask;
+    mMaskProcessor->Process(masks, &mask);
+
+#if 0
+    ApplyMask(mixBuffer, result, mask);
+#endif
+#if 1
+    // TODO: use tmp buffers
+    *result = mixBuffer;
+    ApplySoftMasking(result, mask);
+#endif
+    
+    BLUtilsComp::ComplexToMagnPhase(resMagns, resPhases, *result);
+
+#if PROCESS_SIGNAL_DB
+    ComputeInverseDB(resMagns);
+#endif
+    
+    BLUtilsComp::MagnPhaseToComplex(result, *resMagns, *resPhases);
 }
