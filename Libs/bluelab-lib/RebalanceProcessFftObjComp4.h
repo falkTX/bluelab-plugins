@@ -57,12 +57,6 @@ public:
     virtual void ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
                                   const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer);
     
-    //
-    //void SetMode(RebalanceMode mode);
-    
-    // Soft masks
-    //void SetUseSoftMasks(bool flag);
-    
     void SetVocal(BL_FLOAT vocal);
     void SetBass(BL_FLOAT bass);
     void SetDrums(BL_FLOAT drums);
@@ -77,20 +71,9 @@ public:
     void SetContrast(BL_FLOAT contrast);
     
 protected:
-    //void Process(WDL_TypedBuf<WDL_FFT_COMPLEX> *dataResult,
-    //             const WDL_TypedBuf<WDL_FFT_COMPLEX> &dataMix,
-    //             const WDL_TypedBuf<BL_FLOAT> masks[NUM_STEM_SOURCES]);
-    
     void AddSpectrogramLine(const WDL_TypedBuf<BL_FLOAT> &magns,
                             const WDL_TypedBuf<BL_FLOAT> &phases);
     
-    //void ApplySoftMasks(WDL_TypedBuf<WDL_FFT_COMPLEX> masksResult[NUM_STEM_SOURCES],
-    //                    const WDL_TypedBuf<BL_FLOAT> masksSource[NUM_STEM_SOURCES]);
-
-    //void CompDiv(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> > *estim,
-    //              const WDL_TypedBuf<WDL_FFT_COMPLEX> &mix);
-    
-    //
     void ResetSamplesHistory();
     void ResetMixColsComp();
 
@@ -101,18 +84,6 @@ protected:
     void ApplySoftMasking(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioData,
                           const WDL_TypedBuf<BL_FLOAT> &mask);
     
-    // Mix
-    //void ApplyMix(WDL_TypedBuf<WDL_FFT_COMPLEX> masks[NUM_STEM_SOURCES]);
-    //void ApplyMix(WDL_FFT_COMPLEX masks[NUM_STEM_SOURCES]);
-    
-    //void ApplyMask(const WDL_TypedBuf<WDL_FFT_COMPLEX> &inData,
-    //               WDL_TypedBuf<WDL_FFT_COMPLEX> *outData,
-    //               const WDL_TypedBuf<WDL_FFT_COMPLEX> masks[NUM_STEM_SOURCES]);
-    
-    // Post normalization
-    //void NormalizeMasks(WDL_TypedBuf<WDL_FFT_COMPLEX> masks[NUM_STEM_SOURCES]);
-    //void NormalizeMaskVals(WDL_FFT_COMPLEX maskVals[NUM_STEM_SOURCES]);
-
     //
     BL_FLOAT mSampleRate;
     
@@ -123,25 +94,15 @@ protected:
     RebalanceMaskPredictor8 *mMaskPred;
     RebalanceMaskProcessor *mMaskProcessor;
     
-    //RebalanceMode mMode;
-    
     int mNumInputCols;
     
     // Keep the history of input data
     // So we can get exactly the same correponding the the correct location of the mask
     deque<WDL_TypedBuf<WDL_FFT_COMPLEX> > mSamplesHistory;
     
-    // Soft masks
-    //bool mUseSoftMasks;
-    
-    //SoftMaskingNComp *mSoftMasking;
-
     SoftMaskingComp4 *mSoftMasking;
     
     deque<WDL_TypedBuf<WDL_FFT_COMPLEX> > mMixColsComp;
-    
-    // Mix parameters
-    //BL_FLOAT mMixes[NUM_STEM_SOURCES];
 
     Scale *mScale;
 };

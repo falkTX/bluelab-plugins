@@ -18,7 +18,6 @@
 class FftProcessObj16;
 class RebalanceDumpFftObj2;
 class RebalanceProcessFftObjComp4;
-//class RebalanceMaskPredictorComp7;
 class RebalanceMaskPredictor8;
 class RebalanceProcessor2 : public ResampProcessObj
 {
@@ -87,7 +86,6 @@ protected:
     
     RebalanceDumpFftObj2 *mDumpObj;
     
-    //RebalanceMaskPredictorComp7 *mMaskPred;
     RebalanceMaskPredictor8 *mMaskPred;
     
     RebalanceProcessFftObjComp4 *mDetectProcessObjs[2];

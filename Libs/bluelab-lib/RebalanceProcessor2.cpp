@@ -8,7 +8,6 @@
 
 #include <FftProcessObj16.h>
 #include <RebalanceDumpFftObj2.h>
-//#include <RebalanceMaskPredictorComp7.h>
 #include <RebalanceMaskPredictor8.h>
 #include <RebalanceProcessFftObjComp4.h>
 #include <BLUtils.h>
@@ -231,7 +230,6 @@ RebalanceProcessor2::SetMasksContrast(BL_FLOAT contrast)
 void
 RebalanceProcessor2::SetVocalSensitivity(BL_FLOAT vocalSensitivity)
 {
-    //mMaskPred->SetVocalSensitivity(vocalSensitivity);
     for (int i = 0; i < 2; i++)
         mDetectProcessObjs[i]->SetVocalSensitivity(vocalSensitivity);
 }
@@ -239,7 +237,6 @@ RebalanceProcessor2::SetVocalSensitivity(BL_FLOAT vocalSensitivity)
 void
 RebalanceProcessor2::SetBassSensitivity(BL_FLOAT bassSensitivity)
 {
-    //mMaskPred->SetBassSensitivity(bassSensitivity);
     for (int i = 0; i < 2; i++)
         mDetectProcessObjs[i]->SetBassSensitivity(bassSensitivity);
 }
@@ -247,7 +244,6 @@ RebalanceProcessor2::SetBassSensitivity(BL_FLOAT bassSensitivity)
 void
 RebalanceProcessor2::SetDrumsSensitivity(BL_FLOAT drumsSensitivity)
 {
-    //mMaskPred->SetDrumsSensitivity(drumsSensitivity);
     for (int i = 0; i < 2; i++)
         mDetectProcessObjs[i]->SetDrumsSensitivity(drumsSensitivity);
 }
@@ -255,7 +251,6 @@ RebalanceProcessor2::SetDrumsSensitivity(BL_FLOAT drumsSensitivity)
 void
 RebalanceProcessor2::SetOtherSensitivity(BL_FLOAT otherSensitivity)
 {
-    //mMaskPred->SetOtherSensitivity(otherSensitivity);
     for (int i = 0; i < 2; i++)
         mDetectProcessObjs[i]->SetOtherSensitivity(otherSensitivity);
 }
