@@ -8,7 +8,8 @@
 
 #include <FftProcessObj16.h>
 #include <RebalanceDumpFftObj2.h>
-#include <RebalanceMaskPredictorComp7.h>
+//#include <RebalanceMaskPredictorComp7.h>
+#include <RebalanceMaskPredictor8.h>
 #include <RebalanceProcessFftObjComp4.h>
 #include <BLUtils.h>
 #include <BLDebug.h>
@@ -64,10 +65,10 @@ void
 RebalanceProcessor2::InitDetect(const IPluginBase &plug,
                                IGraphics &graphics)
 {
-    mMaskPred = new RebalanceMaskPredictorComp7(mTargetBufferSize, mOverlapping,
-                                                mTargetSampleRate,
-                                                mNumSpectroCols,
-                                                plug, graphics);
+    mMaskPred = new RebalanceMaskPredictor8(mTargetBufferSize, mOverlapping,
+                                            mTargetSampleRate,
+                                            mNumSpectroCols,
+                                            plug, graphics);
     mMaskPred->SetPredictModuloNum(REBALANCE_PREDICT_MODULO_NUM);
     
     if (mTargetFftObj == NULL)
@@ -106,7 +107,7 @@ RebalanceProcessor2::InitDetect(const IPluginBase &plug,
         for (int i = 0; i < numChannels; i++)
         {
             RebalanceProcessFftObjComp4 *obj =
-                new RebalanceProcessFftObjComp4(mBufferSize,
+                new RebalanceProcessFftObjComp4(mBufferSize, mOverlapping,
                                                 mSampleRate,
                                                 mMaskPred,
                                                 mNumSpectroCols,
@@ -175,6 +176,9 @@ RebalanceProcessor2::Reset(BL_FLOAT sampleRate, int blockSize)
     
     if (mTargetFftObj != NULL)
         mTargetFftObj->Reset();
+
+    if (mNativeFftObj != NULL)
+        mNativeFftObj->Reset();
 }
 
 int
@@ -221,31 +225,39 @@ void
 RebalanceProcessor2::SetMasksContrast(BL_FLOAT contrast)
 {
     for (int i = 0; i < 2; i++)
-        mDetectProcessObjs[i]->SetMasksContrast(contrast);
+        mDetectProcessObjs[i]->SetContrast(contrast);
 }
 
 void
 RebalanceProcessor2::SetVocalSensitivity(BL_FLOAT vocalSensitivity)
 {
-    mMaskPred->SetVocalSensitivity(vocalSensitivity);
+    //mMaskPred->SetVocalSensitivity(vocalSensitivity);
+    for (int i = 0; i < 2; i++)
+        mDetectProcessObjs[i]->SetVocalSensitivity(vocalSensitivity);
 }
 
 void
 RebalanceProcessor2::SetBassSensitivity(BL_FLOAT bassSensitivity)
 {
-    mMaskPred->SetBassSensitivity(bassSensitivity);
+    //mMaskPred->SetBassSensitivity(bassSensitivity);
+    for (int i = 0; i < 2; i++)
+        mDetectProcessObjs[i]->SetBassSensitivity(bassSensitivity);
 }
 
 void
 RebalanceProcessor2::SetDrumsSensitivity(BL_FLOAT drumsSensitivity)
 {
-    mMaskPred->SetDrumsSensitivity(drumsSensitivity);
+    //mMaskPred->SetDrumsSensitivity(drumsSensitivity);
+    for (int i = 0; i < 2; i++)
+        mDetectProcessObjs[i]->SetDrumsSensitivity(drumsSensitivity);
 }
 
 void
 RebalanceProcessor2::SetOtherSensitivity(BL_FLOAT otherSensitivity)
 {
-    mMaskPred->SetOtherSensitivity(otherSensitivity);
+    //mMaskPred->SetOtherSensitivity(otherSensitivity);
+    for (int i = 0; i < 2; i++)
+        mDetectProcessObjs[i]->SetOtherSensitivity(otherSensitivity);
 }
 
 bool

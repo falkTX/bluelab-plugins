@@ -28,7 +28,7 @@ RebalanceProcessFftObjComp2::RebalanceProcessFftObjComp2(int bufferSize,
 {
     mMaskPred = maskPred;
     
-    mMode = RebalanceMode::SOFT;
+    //mMode = RebalanceMode::SOFT;
     
 #if FORCE_SAMPLE_RATE
     mSampleRate = SAMPLE_RATE;

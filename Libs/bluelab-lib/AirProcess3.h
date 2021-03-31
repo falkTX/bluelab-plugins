@@ -68,7 +68,6 @@ protected:
 
     bool mUseSoftMasks;
     
-    // First is noise masking, second is harmo masking
     SoftMaskingComp4 *mSoftMaskingComp;
     
     WDL_TypedBuf<BL_FLOAT> mNoise;

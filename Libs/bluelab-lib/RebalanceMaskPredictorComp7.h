@@ -61,7 +61,8 @@ public:
     
     void Reset();
     
-    void Reset(int bufferSize, int overlapping, int oversampling, BL_FLOAT sampleRate);
+    void Reset(int bufferSize, int overlapping,
+               int oversampling, BL_FLOAT sampleRate);
     
     void ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamples,
                          const vector<WDL_TypedBuf<WDL_FFT_COMPLEX> > *scBuffer);
@@ -177,7 +178,6 @@ protected:
     
     int mNumSpectroCols;
     
-    //
     MelScale *mMelScale;
 };
 

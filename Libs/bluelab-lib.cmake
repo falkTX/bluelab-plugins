@@ -563,6 +563,10 @@ set(_bluelab-lib_src
   RebalanceMaskPredictorComp6.h
   RebalanceMaskPredictorComp7.cpp
   RebalanceMaskPredictorComp7.h
+  RebalanceMaskPredictor8.cpp
+  RebalanceMaskPredictor8.h
+  RebalanceMaskProcessor.cpp
+  RebalanceMaskProcessor.h
   RebalanceMaskStack2.cpp
   RebalanceMaskStack2.h
   RebalanceMaskStack.cpp

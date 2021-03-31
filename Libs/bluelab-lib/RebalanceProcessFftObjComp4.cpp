@@ -6,8 +6,9 @@
 //
 //
 
-#include <RebalanceMaskPredictorComp7.h>
-#include <SoftMaskingNComp.h>
+#include <RebalanceMaskPredictor8.h>
+//#include <SoftMaskingNComp.h>
+#include <RebalanceMaskProcessor.h>
 
 #include <BLUtils.h>
 #include <BLUtilsComp.h>
@@ -16,6 +17,8 @@
 
 #include <BLDebug.h>
 #include <Scale.h>
+
+#include <SoftMaskingComp4.h>
 
 #include <BLSpectrogram4.h>
 #include <SpectrogramDisplayScroll3.h>
@@ -29,9 +32,12 @@
 
 #define SPECTRO_NUM_COLS 2048/4 //64
 
+#define SOFT_MASKING_HISTO_SIZE 8
+
 RebalanceProcessFftObjComp4::
-RebalanceProcessFftObjComp4(int bufferSize, BL_FLOAT sampleRate,
-                            RebalanceMaskPredictorComp7 *maskPred,
+RebalanceProcessFftObjComp4(int bufferSize, int oversampling,
+                            BL_FLOAT sampleRate,
+                            RebalanceMaskPredictor8 *maskPred,
                             int numInputCols,
                             int softMaskHistoSize)
 : ProcessObj(bufferSize)
@@ -40,7 +46,7 @@ RebalanceProcessFftObjComp4(int bufferSize, BL_FLOAT sampleRate,
     
     mMaskPred = maskPred;
     
-    mMode = RebalanceMode::SOFT;
+    //mMode = RebalanceMode::SOFT;
     
     mNumInputCols = numInputCols;
 
@@ -53,24 +59,33 @@ RebalanceProcessFftObjComp4(int bufferSize, BL_FLOAT sampleRate,
     ResetSamplesHistory();
     
     // Soft masks
-    mSoftMasking = new SoftMaskingNComp(softMaskHistoSize);
+    //mSoftMasking = new SoftMaskingNComp(softMaskHistoSize);
+    mSoftMasking = new SoftMaskingComp4(bufferSize, oversampling,
+                                        SOFT_MASKING_HISTO_SIZE);
+
+    mMaskProcessor = new RebalanceMaskProcessor();
     
-#if USE_SOFT_MASKS
+    /*#if USE_SOFT_MASKS
     mUseSoftMasks = true;
 #else
     mUseSoftMasks = false;
-#endif
+    #endif*/
     
     ResetMixColsComp();
     
     // Mix parameters
-    for (int i = 0; i < NUM_STEM_SOURCES; i++)
-        mMixes[i] = 0.0;
+    //for (int i = 0; i < NUM_STEM_SOURCES; i++)
+    //    mMixes[i] = 0.0;
 }
 
 RebalanceProcessFftObjComp4::~RebalanceProcessFftObjComp4()
 {
-    delete mSoftMasking;
+    //delete mSoftMasking;
+    if (mSoftMasking != NULL)
+        delete mSoftMasking;
+
+    delete mMaskProcessor;
+    
     delete mScale;
     delete mSpectrogram;
 }
@@ -83,7 +98,9 @@ RebalanceProcessFftObjComp4::Reset(int bufferSize, int oversampling,
 
     mSampleRate = sampleRate;
     
-    mSoftMasking->Reset();
+    //mSoftMasking->Reset();
+    if (mSoftMasking != NULL)
+        mSoftMasking->Reset(bufferSize, oversampling);
     
     // NEW
     mMaskPred->Reset();
@@ -156,38 +173,71 @@ SetSpectrogramDisplay(SpectrogramDisplayScroll3 *spectroDisplay)
 void
 RebalanceProcessFftObjComp4::SetVocal(BL_FLOAT vocal)
 {
-    mMixes[0] = vocal;
+    //mMixes[0] = vocal;
+    mMaskProcessor->SetVocalMix(vocal);
 }
 
 void
 RebalanceProcessFftObjComp4::SetBass(BL_FLOAT bass)
 {
-    mMixes[1] = bass;
+    //mMixes[1] = bass;
+    mMaskProcessor->SetBassMix(bass);
 }
 
 void
 RebalanceProcessFftObjComp4::SetDrums(BL_FLOAT drums)
 {
-    mMixes[2] = drums;
+    //mMixes[2] = drums;
+    mMaskProcessor->SetDrumsMix(drums);
 }
 
 void
 RebalanceProcessFftObjComp4::SetOther(BL_FLOAT other)
 {
-    mMixes[3] = other;
+    //mMixes[3] = other;
+    mMaskProcessor->SetOtherMix(other);
 }
 
 void
-RebalanceProcessFftObjComp4::SetMasksContrast(BL_FLOAT contrast)
+RebalanceProcessFftObjComp4::SetVocalSensitivity(BL_FLOAT vocal)
 {
-    mMaskPred->SetMasksContrast(contrast);
+    //mMixes[0] = vocal;
+    mMaskProcessor->SetVocalSensitivity(vocal);
 }
 
 void
+RebalanceProcessFftObjComp4::SetBassSensitivity(BL_FLOAT bass)
+{
+    //mMixes[1] = bass;
+    mMaskProcessor->SetBassSensitivity(bass);
+}
+
+void
+RebalanceProcessFftObjComp4::SetDrumsSensitivity(BL_FLOAT drums)
+{
+    //mMixes[2] = drums;
+    mMaskProcessor->SetDrumsSensitivity(drums);
+}
+
+void
+RebalanceProcessFftObjComp4::SetOtherSensitivity(BL_FLOAT other)
+{
+    //mMixes[3] = other;
+    mMaskProcessor->SetOtherSensitivity(other);
+}
+
+void
+RebalanceProcessFftObjComp4::SetContrast(BL_FLOAT contrast)
+{
+    //mMaskPred->SetMasksContrast(contrast);
+    mMaskProcessor->SetContrast(contrast);
+}
+
+/*void
 RebalanceProcessFftObjComp4::SetMode(RebalanceMode mode)
 {
     mMode = mode;
-}
+    }*/
 
 void
 RebalanceProcessFftObjComp4::AddSpectrogramLine(const WDL_TypedBuf<BL_FLOAT> &magns,
@@ -238,16 +288,30 @@ ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     int histoIndex = mMaskPred->GetHistoryIndex();
     if (histoIndex < mSamplesHistory.size())
         mixBuffer = mSamplesHistory[histoIndex];
+
+    WDL_TypedBuf<BL_FLOAT> masks[NUM_STEM_SOURCES];
+    for (int i = 0; i < NUM_STEM_SOURCES; i++)
+        mMaskPred->GetMask(i, &masks[i]);
+
+    // Adjust and apply mask
+    WDL_TypedBuf<WDL_FFT_COMPLEX> result;
+    BLUtils::ResizeFillZeros(&result, mixBuffer.GetSize());
+    //Process(&result, mixBuffer, masks);
+
+    // TODO: use tmp buffer
+    WDL_TypedBuf<BL_FLOAT> mask;
+    mMaskProcessor->Process(masks, &mask);
     
-    // Interpolate between soft and hard
-    // TODO: smooth gamma between soft and hard
-    WDL_TypedBuf<WDL_FFT_COMPLEX> dataSoft;
-    ComputeMix(&dataSoft, mixBuffer);
+    //ApplyMask(mixBuffer, &result, mask);
+
+    // TODO: use tmp buffers
+    result = mixBuffer;
+    ApplySoftMasking(&result, mask);
     
 #if PROCESS_SIGNAL_DB
     WDL_TypedBuf<BL_FLOAT> magns1;
     WDL_TypedBuf<BL_FLOAT> phases1;
-    BLUtilsComp::ComplexToMagnPhase(&magns1, &phases1, dataSoft);
+    BLUtilsComp::ComplexToMagnPhase(&magns1, &phases1, result);
     
     for (int i = 0; i < magns1.GetSize(); i++)
     {
@@ -265,11 +329,13 @@ ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
 
     AddSpectrogramLine(magns1, phases1);
     
-    BLUtilsComp::MagnPhaseToComplex(&dataSoft, magns1, phases1);
+    BLUtilsComp::MagnPhaseToComplex(&result, magns1, phases1);
 #endif
+
+    // TODO: tmp buffers / memory optimization
     
     // Fill the result
-    WDL_TypedBuf<WDL_FFT_COMPLEX> fftSamples = dataSoft;
+    WDL_TypedBuf<WDL_FFT_COMPLEX> fftSamples = result;
     
     fftSamples.Resize(fftSamples.GetSize()*2);
     
@@ -279,48 +345,54 @@ ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     *ioBuffer = fftSamples;
 }
 
-void
-RebalanceProcessFftObjComp4::SetUseSoftMasks(bool flag)
-{
-    mUseSoftMasks = flag;
-    
-    Reset();
-}
+/*void
+  RebalanceProcessFftObjComp4::SetUseSoftMasks(bool flag)
+  {
+  mUseSoftMasks = flag;
+  
+  Reset();
+  }*/
 
-// Previously named ComputeMixSoft()
+#if 0
 void
-RebalanceProcessFftObjComp4::ComputeMix(WDL_TypedBuf<WDL_FFT_COMPLEX> *dataResult,
-                                        const WDL_TypedBuf<WDL_FFT_COMPLEX> &dataMix)
+RebalanceProcessFftObjComp4::
+Process(WDL_TypedBuf<WDL_FFT_COMPLEX> *dataResult,
+        const WDL_TypedBuf<WDL_FFT_COMPLEX> &dataMix,
+        const WDL_TypedBuf<BL_FLOAT> masks[NUM_STEM_SOURCES])
 {
     BLUtils::ResizeFillZeros(dataResult, dataMix.GetSize());
+
+    // TODO: use tmp buffer
+    WDL_TypedBuf<BL_FLOAT> mask;
+    mMaskProcessor->Process(masks, &mask);
     
-    if (mMaskPred == NULL)
-        return;
+    ApplyMask(dataMix, dataResult, mask);
     
-    if (!mMaskPred->IsMaskAvailable())
-        return;
+    //if (mMaskPred == NULL)
+    //    return;
     
-    WDL_TypedBuf<BL_FLOAT> masks0[NUM_STEM_SOURCES];
-    for (int i = 0; i < NUM_STEM_SOURCES; i++)
-        mMaskPred->GetMask(i, &masks0[i]);
+    //if (!mMaskPred->IsMaskAvailable())
+    //    return;
     
-    WDL_TypedBuf<WDL_FFT_COMPLEX> masks[NUM_STEM_SOURCES];
-    ApplySoftMasks(masks, masks0);
+    //WDL_TypedBuf<WDL_FFT_COMPLEX> masks[NUM_STEM_SOURCES];
+    //ApplySoftMasks(masks, masks0);
     
-#if POST_NORMALIZE
-    NormalizeMasks(masks);
-#endif
+    //#if POST_NORMALIZE
+    //NormalizeMasks(masks);
+    //#endif
     
     // Must apply mix after soft masks,
     // because if mix param is > 1,
     // soft masks will not manage well if mask is > 1
     // (mask will not have the same spectrogram "shape" at the end when > 1)
     //
-    ApplyMix(masks);
-    
-    ApplyMask(dataMix, dataResult, masks);
-}
+    //ApplyMix(masks);
 
+    // TODO: soft masks
+}
+#endif
+
+/*
 void
 RebalanceProcessFftObjComp4::
 ApplySoftMasks(WDL_TypedBuf<WDL_FFT_COMPLEX> masksResult[NUM_STEM_SOURCES],
@@ -370,8 +442,9 @@ ApplySoftMasks(WDL_TypedBuf<WDL_FFT_COMPLEX> masksResult[NUM_STEM_SOURCES],
     for (int i = 0; i < NUM_STEM_SOURCES; i++)
         masksResult[i] = softMasks[i];
 }
+*/
 
-void
+/*void
 RebalanceProcessFftObjComp4::CompDiv(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> > *estim,
                                      const WDL_TypedBuf<WDL_FFT_COMPLEX> &mix)
 {
@@ -390,7 +463,7 @@ RebalanceProcessFftObjComp4::CompDiv(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> > *est
         }
     }
 }
-
+*/
 void
 RebalanceProcessFftObjComp4::ResetSamplesHistory()
 {
@@ -403,6 +476,17 @@ RebalanceProcessFftObjComp4::ResetSamplesHistory()
         
         mSamplesHistory.push_back(samples);
     }
+}
+
+void
+RebalanceProcessFftObjComp4::
+ApplyMask(const WDL_TypedBuf<WDL_FFT_COMPLEX> &inData,
+          WDL_TypedBuf<WDL_FFT_COMPLEX> *outData,
+          const WDL_TypedBuf<BL_FLOAT> &mask)
+{
+    // TODO: implement method in BLUtils: multvalues(in, out, mask) in complex
+    *outData = inData;
+    BLUtils::MultValues(outData, mask);
 }
 
 void
@@ -419,6 +503,7 @@ RebalanceProcessFftObjComp4::ResetMixColsComp()
     }
 }
 
+/*
 void
 RebalanceProcessFftObjComp4::ApplyMix(WDL_FFT_COMPLEX masks[NUM_STEM_SOURCES])
 {
@@ -429,8 +514,9 @@ RebalanceProcessFftObjComp4::ApplyMix(WDL_FFT_COMPLEX masks[NUM_STEM_SOURCES])
         masks[j].im *= mMixes[j];
     }
 }
+*/
 
-void
+/*void
 RebalanceProcessFftObjComp4::
 ApplyMix(WDL_TypedBuf<WDL_FFT_COMPLEX> masks[NUM_STEM_SOURCES])
 {
@@ -446,8 +532,9 @@ ApplyMix(WDL_TypedBuf<WDL_FFT_COMPLEX> masks[NUM_STEM_SOURCES])
             masks[j].Get()[i] = vals[j];
     }
 }
+*/
 
-void
+/*void
 RebalanceProcessFftObjComp4::
 ApplyMask(const WDL_TypedBuf<WDL_FFT_COMPLEX> &inData,
           WDL_TypedBuf<WDL_FFT_COMPLEX> *outData,
@@ -499,8 +586,9 @@ ApplyMask(const WDL_TypedBuf<WDL_FFT_COMPLEX> &inData,
         outData->Get()[i] = res;
     }
 }
+*/
 
-void
+/*void
 RebalanceProcessFftObjComp4::
 NormalizeMasks(WDL_TypedBuf<WDL_FFT_COMPLEX> masks[NUM_STEM_SOURCES])
 {
@@ -520,8 +608,9 @@ NormalizeMasks(WDL_TypedBuf<WDL_FFT_COMPLEX> masks[NUM_STEM_SOURCES])
         }
     }
 }
+*/
 
-void
+/*void
 RebalanceProcessFftObjComp4::
 NormalizeMaskVals(WDL_FFT_COMPLEX maskVals[NUM_STEM_SOURCES])
 {
@@ -549,4 +638,17 @@ NormalizeMaskVals(WDL_FFT_COMPLEX maskVals[NUM_STEM_SOURCES])
         
         maskVals[k] = val;
     }
+}
+*/
+
+void
+RebalanceProcessFftObjComp4::ApplySoftMasking(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioData,
+                                              const WDL_TypedBuf<BL_FLOAT> &mask)
+{
+    // TODO: use tmp buffersd
+    WDL_TypedBuf<WDL_FFT_COMPLEX> softMaskedResult;
+    mSoftMasking->ProcessCentered(ioData, mask, &softMaskedResult);
+            
+    if (mSoftMasking->IsProcessingEnabled())
+        *ioData = softMaskedResult;
 }

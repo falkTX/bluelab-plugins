@@ -684,39 +684,13 @@ RebalanceMaskPredictorComp7::DownsampleHzToMel(WDL_TypedBuf<BL_FLOAT> *ioMagns)
     int numMelBins = REBALANCE_NUM_SPECTRO_FREQS;
     WDL_TypedBuf<BL_FLOAT> melMagnsFilters = *ioMagns;
     mMelScale->HzToMelFilter(&melMagnsFilters, *ioMagns, mSampleRate, numMelBins);
-    *ioMagns = melMagnsFilters;
+    *ioMagns = melMagnsFilters;            
 #else 
     // Quick method
     BLUtils::ResizeLinear(ioMagns, REBALANCE_NUM_SPECTRO_FREQS);
     WDL_TypedBuf<BL_FLOAT> melMagnsFilters = *ioMagns;
     MelScale::HzToMel(&melMagnsFilters, *ioMagns, mSampleRate);
     *ioMagns = melMagnsFilters;
-#endif
-    
-#if 0 // DEBUG
-    BLDebug::DumpData("hz0.txt", *ioMagns);
-    
-    WDL_TypedBuf<BL_FLOAT> melMagns = *ioMagns;
-    MelScale::HzToMel(&melMagns, *ioMagns, mSampleRate);
-    BLDebug::DumpData("mel0.txt", melMagns);
-    
-    WDL_TypedBuf<BL_FLOAT> hzMagns0;
-    MelScale::MelToHz(&hzMagns0, melMagns, mSampleRate);
-    BLDebug::DumpData("hz1.txt", hzMagns0);
-    
-    int numMelBins = ioMagns->GetSize();
-    WDL_TypedBuf<BL_FLOAT> melMagnsFilters = *ioMagns;
-    mMelScale->HzToMelFilter(&melMagnsFilters, *ioMagns, mSampleRate, numMelBins);
-    BLDebug::DumpData("mel1.txt", melMagnsFilters);
-    
-    // TEST
-    WDL_TypedBuf<BL_FLOAT> hzMagns1;
-    MelScale::MelToHz(&hzMagns1, melMagnsFilters, mSampleRate);
-    BLDebug::DumpData("hz2.txt", hzMagns1);
-    
-    WDL_TypedBuf<BL_FLOAT> hzMagns2;
-    mMelScale->MelToHzFilter(&hzMagns2, melMagnsFilters, mSampleRate, numMelBins);
-    BLDebug::DumpData("hz3.txt", hzMagns2);
 #endif
 }
 
@@ -728,7 +702,7 @@ RebalanceMaskPredictorComp7::UpsampleMelToHz(WDL_TypedBuf<BL_FLOAT> *ioMagns)
     int numFreqBins = mBufferSize/2;
     WDL_TypedBuf<BL_FLOAT> hzMagnsFilters = *ioMagns;
     mMelScale->MelToHzFilter(&hzMagnsFilters, *ioMagns, mSampleRate, numFreqBins);
-    *ioMagns = hzMagnsFilters;
+    *ioMagns = hzMagnsFilters;        
 #else
     // Quick method
     BLUtils::ResizeLinear(ioMagns, mBufferSize/2);
