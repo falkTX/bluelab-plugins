@@ -123,6 +123,27 @@ protected:
     // Keep masks history, so when chaging parameters, all the spectrogram changes
     deque<WDL_TypedBuf<BL_FLOAT> > mMasksHistory[NUM_STEM_SOURCES];
     deque<WDL_TypedBuf<WDL_FFT_COMPLEX> > mSignalHistory;
+
+private:
+    // Tmp buffers
+    WDL_TypedBuf<WDL_FFT_COMPLEX> mTmpBuf0;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf1;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf2;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf3[NUM_STEM_SOURCES];
+    WDL_TypedBuf<WDL_FFT_COMPLEX> mTmpBuf4;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf5;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf6;
+    WDL_TypedBuf<WDL_FFT_COMPLEX> mTmpBuf7;
+    WDL_TypedBuf<WDL_FFT_COMPLEX> mTmpBuf8;
+    WDL_TypedBuf<WDL_FFT_COMPLEX> mTmpBuf9;
+    WDL_TypedBuf<WDL_FFT_COMPLEX> mTmpBuf10;
+    vector<WDL_TypedBuf<BL_FLOAT> > mTmpBuf11;
+    vector<WDL_TypedBuf<BL_FLOAT> > mTmpBuf12;
+    WDL_TypedBuf<WDL_FFT_COMPLEX> mTmpBuf13;
+    WDL_TypedBuf<WDL_FFT_COMPLEX> mTmpBuf14;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf15;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf16;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf17;
 };
 
 #endif /* defined(__BL_Rebalance__RebalanceProcessFftObjComp4__) */

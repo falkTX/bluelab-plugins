@@ -209,9 +209,10 @@ DNNModelDarknet::Predict(const WDL_TypedBuf<BL_FLOAT> &input,
 {
 #define EPS 1e-15
     
-    WDL_TypedBuf<BL_FLOAT> input0 = input;
+    WDL_TypedBuf<BL_FLOAT> &input0 = mTmpBuf0;
+    input0 = input;
     
-    WDL_TypedBuf<float> X;
+    WDL_TypedBuf<float> &X = mTmpBuf1;
     X.Resize(input0.GetSize()*NUM_STEMS);
     for (int i = 0; i < X.GetSize(); i++)
     {

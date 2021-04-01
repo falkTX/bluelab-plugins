@@ -35,6 +35,8 @@
 
 #define SOFT_MASKING_HISTO_SIZE 8
 
+#define USE_SOFT_MASKING 1
+
 RebalanceProcessFftObjComp4::
 RebalanceProcessFftObjComp4(int bufferSize, int oversampling,
                             BL_FLOAT sampleRate,
@@ -61,7 +63,7 @@ RebalanceProcessFftObjComp4(int bufferSize, int oversampling,
     // Soft masks
     mSoftMasking = new SoftMaskingComp4(bufferSize, oversampling,
                                         SOFT_MASKING_HISTO_SIZE);
-
+    
     mMaskProcessor = new RebalanceMaskProcessor();
     
     ResetMixColsComp();
@@ -204,6 +206,10 @@ RebalanceProcessFftObjComp4::SetContrast(BL_FLOAT contrast)
 int
 RebalanceProcessFftObjComp4::GetLatency()
 {
+#if !USE_SOFT_MASKING
+    return 0;
+#endif
+    
     if (mSoftMasking == NULL)
         return 0;
 
@@ -238,12 +244,13 @@ ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
                  const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer)
 {
     // Mix
-    WDL_TypedBuf<WDL_FFT_COMPLEX> mixBuffer = *ioBuffer;
+    WDL_TypedBuf<WDL_FFT_COMPLEX> &mixBuffer = mTmpBuf0;
+    mixBuffer = *ioBuffer;
     BLUtils::TakeHalf(&mixBuffer);
     
 #if PROCESS_SIGNAL_DB
-    WDL_TypedBuf<BL_FLOAT> magns0;
-    WDL_TypedBuf<BL_FLOAT> phases0;
+    WDL_TypedBuf<BL_FLOAT> &magns0 = mTmpBuf1;
+    WDL_TypedBuf<BL_FLOAT> &phases0 = mTmpBuf2;
     
     BLUtilsComp::ComplexToMagnPhase(&magns0, &phases0, mixBuffer);
     
@@ -271,7 +278,8 @@ ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     if (histoIndex < mSamplesHistory.size())
         mixBuffer = mSamplesHistory[histoIndex];
 
-    WDL_TypedBuf<BL_FLOAT> masks[NUM_STEM_SOURCES];
+    //WDL_TypedBuf<BL_FLOAT> masks[NUM_STEM_SOURCES];
+    WDL_TypedBuf<BL_FLOAT> *masks = mTmpBuf3;
     for (int i = 0; i < NUM_STEM_SOURCES; i++)
         mMaskPred->GetMask(i, &masks[i]);
 
@@ -290,9 +298,9 @@ ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     }
     
     // Adjust and apply mask
-    WDL_TypedBuf<WDL_FFT_COMPLEX> result;
-    WDL_TypedBuf<BL_FLOAT> magns1;
-    WDL_TypedBuf<BL_FLOAT> phases1;
+    WDL_TypedBuf<WDL_FFT_COMPLEX> &result = mTmpBuf4;
+    WDL_TypedBuf<BL_FLOAT> &magns1 = mTmpBuf5;
+    WDL_TypedBuf<BL_FLOAT> &phases1 = mTmpBuf6;
     ComputeResult(mixBuffer, masks, &result, &magns1, &phases1);
 
     AddSpectrogramLine(magns1, phases1);
@@ -300,7 +308,8 @@ ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     // TODO: tmp buffers / memory optimization
     
     // Fill the result
-    WDL_TypedBuf<WDL_FFT_COMPLEX> fftSamples = result;
+    WDL_TypedBuf<WDL_FFT_COMPLEX> &fftSamples = mTmpBuf7;
+    fftSamples = result;
     
     fftSamples.Resize(fftSamples.GetSize()*2);
     
@@ -313,14 +322,16 @@ ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
 void
 RebalanceProcessFftObjComp4::ResetSamplesHistory()
 {
-    mSamplesHistory.clear();
+    //mSamplesHistory.clear();
+    mSamplesHistory.resize(mNumInputCols);
     
     for (int i = 0; i < mNumInputCols; i++)
     {
-        WDL_TypedBuf<WDL_FFT_COMPLEX> samples;
+        WDL_TypedBuf<WDL_FFT_COMPLEX> &samples = mTmpBuf8;
         BLUtils::ResizeFillZeros(&samples, mBufferSize/2);
         
-        mSamplesHistory.push_back(samples);
+        //mSamplesHistory.push_back(samples);
+        mSamplesHistory[i] = samples;
     }
 }
 
@@ -338,14 +349,16 @@ ApplyMask(const WDL_TypedBuf<WDL_FFT_COMPLEX> &inData,
 void
 RebalanceProcessFftObjComp4::ResetMixColsComp()
 {
-    mMixColsComp.clear();
+    //mMixColsComp.clear();
+    mMixColsComp.resize(mNumInputCols);
     
     for (int i = 0; i < mNumInputCols; i++)
     {
-        WDL_TypedBuf<WDL_FFT_COMPLEX> col;
+        WDL_TypedBuf<WDL_FFT_COMPLEX> &col = mTmpBuf9;
         BLUtils::ResizeFillZeros(&col, mBufferSize/2);
         
-        mMixColsComp.push_back(col);
+        //mMixColsComp.push_back(col);
+        mMixColsComp[i] = col;
     }
 }
 
@@ -353,8 +366,7 @@ void
 RebalanceProcessFftObjComp4::ApplySoftMasking(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioData,
                                               const WDL_TypedBuf<BL_FLOAT> &mask)
 {
-    // TODO: use tmp buffersd
-    WDL_TypedBuf<WDL_FFT_COMPLEX> softMaskedResult;
+    WDL_TypedBuf<WDL_FFT_COMPLEX> &softMaskedResult = mTmpBuf10;
     mSoftMasking->ProcessCentered(ioData, mask, &softMaskedResult);
             
     if (mSoftMasking->IsProcessingEnabled())
@@ -381,16 +393,18 @@ RebalanceProcessFftObjComp4::ComputeInverseDB(WDL_TypedBuf<BL_FLOAT> *magns)
 
 void
 RebalanceProcessFftObjComp4::RecomputeSpectrogram()
-{
-    // TODO: use tmp buffers
-    
+{    
     // Keep lines, and add them all at once at the end 
-    vector<WDL_TypedBuf<BL_FLOAT> > magnsVec;
-    vector<WDL_TypedBuf<BL_FLOAT> > phasesVec;
+    vector<WDL_TypedBuf<BL_FLOAT> > &magnsVec = mTmpBuf11;
+    vector<WDL_TypedBuf<BL_FLOAT> > &phasesVec = mTmpBuf12;
+
+    magnsVec.resize(mSignalHistory.size());
+    phasesVec.resize(mSignalHistory.size());
     
     for (int i = 0; i < mSignalHistory.size(); i++)
     {
-        WDL_TypedBuf<WDL_FFT_COMPLEX> signal = mSignalHistory[i];
+        WDL_TypedBuf<WDL_FFT_COMPLEX> &signal = mTmpBuf13;
+        signal = mSignalHistory[i];
 
         WDL_TypedBuf<BL_FLOAT> masks[NUM_STEM_SOURCES];
         for (int j = 0; j < NUM_STEM_SOURCES; j++)
@@ -398,14 +412,16 @@ RebalanceProcessFftObjComp4::RecomputeSpectrogram()
             masks[j] = mMasksHistory[j][i];
         }
 
-        WDL_TypedBuf<WDL_FFT_COMPLEX> result;
-        WDL_TypedBuf<BL_FLOAT> magns;
-        WDL_TypedBuf<BL_FLOAT> phases;
+        WDL_TypedBuf<WDL_FFT_COMPLEX> &result = mTmpBuf14;
+        WDL_TypedBuf<BL_FLOAT> &magns = mTmpBuf15;
+        WDL_TypedBuf<BL_FLOAT> &phases = mTmpBuf16;
         ComputeResult(signal, masks, &result, &magns, &phases);
 
         //AddSpectrogramLine(magns, phases);
-        magnsVec.push_back(magns);
-        phasesVec.push_back(phases);
+        //magnsVec.push_back(magns);
+        //phasesVec.push_back(phases);
+        magnsVec[i] = magns;
+        phasesVec[i] = phases;
     }
 
     // Add all lines at once at the end
@@ -425,16 +441,14 @@ ComputeResult(const WDL_TypedBuf<WDL_FFT_COMPLEX> &mixBuffer,
 {
     BLUtils::ResizeFillZeros(result, mixBuffer.GetSize());
 
-    // TODO: use tmp buffer
-    WDL_TypedBuf<BL_FLOAT> mask;
+    WDL_TypedBuf<BL_FLOAT> &mask = mTmpBuf17;
     mMaskProcessor->Process(masks, &mask);
     
-#if 0
+#if !USE_SOFT_MASKING
     ApplyMask(mixBuffer, result, mask);
 #endif
     
-#if 1
-    // TODO: use tmp buffers
+#if USE_SOFT_MASKING
     *result = mixBuffer;
     ApplySoftMasking(result, mask);
 #endif

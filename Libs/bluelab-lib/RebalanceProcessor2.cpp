@@ -324,12 +324,13 @@ ProcessSamplesBuffers(vector<WDL_TypedBuf<BL_FLOAT> > *ioBuffers,
     if (mDumpObj != NULL)
     // Dump mode
     {
-        vector<WDL_TypedBuf<BL_FLOAT> > monoBuffer = *ioResampBuffer;
+        vector<WDL_TypedBuf<BL_FLOAT> > &monoBuffer = mTmpBuf0;
+        monoBuffer = *ioResampBuffer;
         BLUtils::StereoToMono(&monoBuffer);
         monoBuffer.resize(1);
         
         // Here, we fill the dump obj with the spectrogram cols
-        vector<WDL_TypedBuf<BL_FLOAT> > scIn;
+        vector<WDL_TypedBuf<BL_FLOAT> > &scIn = mTmpBuf1;
         mTargetFftObj->Process(monoBuffer, scIn, NULL);
         
         return false;
@@ -337,18 +338,19 @@ ProcessSamplesBuffers(vector<WDL_TypedBuf<BL_FLOAT> > *ioBuffers,
     
     if (mDetectProcessObjs[0] != NULL)
     {
-        vector<WDL_TypedBuf<BL_FLOAT> > monoBuffer = *ioResampBuffer;
+        vector<WDL_TypedBuf<BL_FLOAT> > &monoBuffer = mTmpBuf2;
+        monoBuffer = *ioResampBuffer;
         BLUtils::StereoToMono(&monoBuffer);
         monoBuffer.resize(1);
         
         // Here, we detect mask
-        vector<WDL_TypedBuf<BL_FLOAT> > scIn0;
+        vector<WDL_TypedBuf<BL_FLOAT> > &scIn0 = mTmpBuf3;
         mTargetFftObj->Process(monoBuffer, scIn0, NULL);
         
         // Here, we apply the detected mask (after having scaled it)
-        vector<WDL_TypedBuf<BL_FLOAT> > scIn1;
+        vector<WDL_TypedBuf<BL_FLOAT> > &scIn1 = mTmpBuf4;
         
-        vector<WDL_TypedBuf<BL_FLOAT> > outResult;
+        vector<WDL_TypedBuf<BL_FLOAT> > &outResult = mTmpBuf5;
         outResult = *ioBuffers;
         BLUtils::FillAllZero(&outResult);
         

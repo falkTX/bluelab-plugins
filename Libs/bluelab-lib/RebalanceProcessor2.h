@@ -89,6 +89,15 @@ protected:
     RebalanceMaskPredictor8 *mMaskPred;
     
     RebalanceProcessFftObjComp4 *mDetectProcessObjs[2];
+
+private:
+    // Tmp buffers
+    vector<WDL_TypedBuf<BL_FLOAT> > mTmpBuf0;
+    vector<WDL_TypedBuf<BL_FLOAT> > mTmpBuf1;
+    vector<WDL_TypedBuf<BL_FLOAT> > mTmpBuf2;
+    vector<WDL_TypedBuf<BL_FLOAT> > mTmpBuf3;
+    vector<WDL_TypedBuf<BL_FLOAT> > mTmpBuf4;
+    vector<WDL_TypedBuf<BL_FLOAT> > mTmpBuf5;
 };
 
 #endif /* RebalanceProcessor2_hpp */

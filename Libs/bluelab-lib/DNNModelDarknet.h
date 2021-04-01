@@ -53,6 +53,11 @@ protected:
     BL_FLOAT mMaskScales[NUM_STEM_SOURCES];
 
     Scale *mScale;
+
+private:
+    // Tmp buffers
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf0;
+    WDL_TypedBuf<float> mTmpBuf1;
 };
 
 #endif /* defined(__BL_Rebalance__DNNModelDarknet__) */
