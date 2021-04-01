@@ -267,12 +267,18 @@ ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     
     // For soft masks
     // mMixCols is filled with zeros at the origin
-    mMixColsComp.push_back(mixBuffer);
-    mMixColsComp.pop_front();
+
+    //mMixColsComp.push_back(mixBuffer);
+    //mMixColsComp.pop_front();
+    mMixColsComp.freeze();
+    mMixColsComp.push_pop(mixBuffer);
     
     // History, to stay synchronized between input signal and masks
-    mSamplesHistory.push_back(mixBuffer);
-    mSamplesHistory.pop_front();
+
+    //mSamplesHistory.push_back(mixBuffer);
+    //mSamplesHistory.pop_front();
+    mSamplesHistory.freeze();
+    mSamplesHistory.push_pop(mixBuffer);
     
     int histoIndex = mMaskPred->GetHistoryIndex();
     if (histoIndex < mSamplesHistory.size())
@@ -286,15 +292,28 @@ ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     int numCols = ComputeSpectroNumCols();
     
     // Keep mask and signal histories
-    mSignalHistory.push_back(mixBuffer);
-    if (mSignalHistory.size() >= numCols)
-        mSignalHistory.pop_front();
+    if (mSignalHistory.size() < numCols)
+        mSignalHistory.push_back(mixBuffer);
+    else
+    {
+        mSignalHistory.freeze();
+        mSignalHistory.push_pop(mixBuffer);
+    }
+    //if (mSignalHistory.size() >= numCols)
+    //    mSignalHistory.pop_front();
 
     for (int i = 0; i < NUM_STEM_SOURCES; i++)
     {
-        mMasksHistory[i].push_back(masks[i]);
-        if (mMasksHistory[i].size() >= numCols)
-            mMasksHistory[i].pop_front();
+        if (mMasksHistory[i].size() < numCols)
+            mMasksHistory[i].push_back(masks[i]);
+        else
+        {
+            mMasksHistory[i].freeze();
+            mMasksHistory[i].push_pop(masks[i]);
+        }
+        
+        //if (mMasksHistory[i].size() >= numCols)
+        //    mMasksHistory[i].pop_front();
     }
     
     // Adjust and apply mask

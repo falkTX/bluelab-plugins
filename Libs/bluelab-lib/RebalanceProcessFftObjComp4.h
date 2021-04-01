@@ -13,6 +13,7 @@
 
 #include "../../WDL/fft.h"
 
+#include <bl_queue.h>
 #include <FftProcessObj16.h>
 
 // RebalanceProcessFftObj
@@ -112,17 +113,18 @@ protected:
     
     // Keep the history of input data
     // So we can get exactly the same correponding the the correct location of the mask
-    deque<WDL_TypedBuf<WDL_FFT_COMPLEX> > mSamplesHistory;
+    //deque<WDL_TypedBuf<WDL_FFT_COMPLEX> > mSamplesHistory;
+    bl_queue<WDL_TypedBuf<WDL_FFT_COMPLEX> > mSamplesHistory;
     
     SoftMaskingComp4 *mSoftMasking;
     
-    deque<WDL_TypedBuf<WDL_FFT_COMPLEX> > mMixColsComp;
+    bl_queue<WDL_TypedBuf<WDL_FFT_COMPLEX> > mMixColsComp;
 
     Scale *mScale;
 
     // Keep masks history, so when chaging parameters, all the spectrogram changes
-    deque<WDL_TypedBuf<BL_FLOAT> > mMasksHistory[NUM_STEM_SOURCES];
-    deque<WDL_TypedBuf<WDL_FFT_COMPLEX> > mSignalHistory;
+    bl_queue<WDL_TypedBuf<BL_FLOAT> > mMasksHistory[NUM_STEM_SOURCES];
+    bl_queue<WDL_TypedBuf<WDL_FFT_COMPLEX> > mSignalHistory;
 
 private:
     // Tmp buffers
