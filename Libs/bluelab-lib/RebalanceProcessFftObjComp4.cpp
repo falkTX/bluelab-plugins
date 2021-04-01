@@ -212,10 +212,9 @@ RebalanceProcessFftObjComp4::AddSpectrogramLine(const WDL_TypedBuf<BL_FLOAT> &ma
     // Simple add
     if (mSpectroDisplay != NULL)
         mSpectroDisplay->AddSpectrogramLine(magns, phases);
-    else
 #endif
     
-     mSpectrogram->AddLine(magns, phases);
+    mSpectrogram->AddLine(magns, phases);
 
     // NEW: for updating whole spectrogram when param change
     if (mSpectroDisplay != NULL)
@@ -226,7 +225,7 @@ void
 RebalanceProcessFftObjComp4::
 ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
                  const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer)
-{   
+{
     // Mix
     WDL_TypedBuf<WDL_FFT_COMPLEX> mixBuffer = *ioBuffer;
     BLUtils::TakeHalf(&mixBuffer);
@@ -461,6 +460,6 @@ RebalanceProcessFftObjComp4::ComputeSpectroNumCols()
     BL_FLOAT srCoeff = mSampleRate/44100.0;
     srCoeff = bl_round(srCoeff);
     numCols *= srCoeff;
-
+    
     return numCols;
 }

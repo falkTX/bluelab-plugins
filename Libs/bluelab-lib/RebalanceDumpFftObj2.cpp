@@ -54,8 +54,9 @@ RebalanceDumpFftObj2::~RebalanceDumpFftObj2()
 }
 
 void
-RebalanceDumpFftObj2::ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamples,
-                                      const vector<WDL_TypedBuf<WDL_FFT_COMPLEX> > *scBuffer)
+RebalanceDumpFftObj2::
+ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamples,
+                const vector<WDL_TypedBuf<WDL_FFT_COMPLEX> > *scBuffer)
 {
     ProcessSpectrogramData(ioFftSamples, scBuffer);
     ProcessStereoData(ioFftSamples, scBuffer);
@@ -98,10 +99,11 @@ RebalanceDumpFftObj2::GetStereoData(WDL_TypedBuf<BL_FLOAT> cols[REBALANCE_NUM_SP
 }
 
 void
-RebalanceDumpFftObj2::ProcessSpectrogramData(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * >
-                                             *ioFftSamples,
-                                             const vector<WDL_TypedBuf<WDL_FFT_COMPLEX> >
-                                             *scBuffer)
+RebalanceDumpFftObj2::
+ProcessSpectrogramData(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * >
+                       *ioFftSamples,
+                       const vector<WDL_TypedBuf<WDL_FFT_COMPLEX> >
+                       *scBuffer)
 {
     // Stereo to mono
     vector<WDL_TypedBuf<WDL_FFT_COMPLEX> > monoFftSamples;

@@ -52,7 +52,7 @@
 #define USE_SOFT_MASKS 1
 
 #define PROCESS_SIGNAL_DB 1
-#define PROCESS_SIGNAL_MIN_DB -60.0
+#define PROCESS_SIGNAL_MIN_DB -120.0 //-60.0
 
 // Threshold the masks (debug..)
 #define USE_DBG_PREDICT_MASK_THRESHOLD 0 //1 // 0
