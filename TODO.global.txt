@@ -375,3 +375,9 @@ http://support.ircam.fr/docs/AudioSculpt/3.0/co/LPC.html
 
 TODO: for BLSpectrogram4, use the "closest" phase unwrapping (used in Ghost inpaint)
 for PArtialTracker5 too
+
+BUG: click and turn knob: the mouse pointer is captured
+-> but sometimes it is not released quickly! (on plugins that consumes lot of resources, like Rebalance)
+
+Design: gradient, use gradient in the corner? like https://canonical.com/
+(instead of from up to down)

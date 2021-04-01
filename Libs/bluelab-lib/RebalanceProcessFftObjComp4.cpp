@@ -29,7 +29,9 @@
 // Post normalize, so that when everything is set to default, the plugin is transparent
 #define POST_NORMALIZE 1
 
-#define SPECTRO_NUM_COLS 2048/4 //64
+//#define SPECTRO_NUM_COLS 2048/4 //64
+// Reduce a bit, since we have a small graph
+#define SPECTRO_HEIGHT 256 //2048/4
 
 #define SOFT_MASKING_HISTO_SIZE 8
 
@@ -48,7 +50,8 @@ RebalanceProcessFftObjComp4(int bufferSize, int oversampling,
     mNumInputCols = numInputCols;
 
     mSpectrogram = new BLSpectrogram4(sampleRate,
-                                      SPECTRO_NUM_COLS/*bufferSize/4*/, -1);
+                                      SPECTRO_HEIGHT/*bufferSize/4*/, -1);
+    
     mSpectroDisplay = NULL;
     
     mScale = new Scale();
@@ -90,20 +93,11 @@ RebalanceProcessFftObjComp4::Reset(int bufferSize, int oversampling,
     
     ResetSamplesHistory();
     ResetMixColsComp();
-    
-    // Prefer this, so the scroll speed won't be modified when
-    // the overlapping changes
-    int numCols = mBufferSize/(32/mOverlapping);
-    
-    // Adjust to the sample rate to avoid scrolling
-    // 2 times faster when we go from 44100 to 88200
-    //
-    BL_FLOAT srCoeff = sampleRate/44100.0;
-    srCoeff = bl_round(srCoeff);
-    numCols *= srCoeff;
+
+    int numCols = ComputeSpectroNumCols();
     
     mSpectrogram->Reset(sampleRate,
-                        SPECTRO_NUM_COLS/*bufferSize/4*/, numCols);
+                        SPECTRO_HEIGHT/*bufferSize/4*/, numCols);
 }
 
 void
@@ -115,20 +109,11 @@ RebalanceProcessFftObjComp4::Reset()
     
     ResetSamplesHistory();
     ResetMixColsComp();
-    
-    // Prefer this, so the scroll speed won't be modified when
-    // the overlapping changes
-    int numCols = mBufferSize/(32/mOverlapping);
-    
-    // Adjust to the sample rate to avoid scrolling
-    // 2 times faster when we go from 44100 to 88200
-    //
-    BL_FLOAT srCoeff = mSampleRate/44100.0;
-    srCoeff = bl_round(srCoeff);
-    numCols *= srCoeff;
+
+    int numCols = ComputeSpectroNumCols();
     
     mSpectrogram->Reset(mSampleRate,
-                        SPECTRO_NUM_COLS/*mBufferSize/4*/, numCols);
+                        SPECTRO_HEIGHT/*mBufferSize/4*/, numCols);
 }
 
 BLSpectrogram4 *
@@ -241,10 +226,21 @@ void
 RebalanceProcessFftObjComp4::
 ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
                  const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer)
-{
+{   
     // Mix
     WDL_TypedBuf<WDL_FFT_COMPLEX> mixBuffer = *ioBuffer;
     BLUtils::TakeHalf(&mixBuffer);
+
+#if 0 //1 // DEBUG
+    WDL_TypedBuf<BL_FLOAT> magns00;
+    WDL_TypedBuf<BL_FLOAT> phases00;
+    
+    BLUtilsComp::ComplexToMagnPhase(&magns00, &phases00, mixBuffer);
+
+    AddSpectrogramLine(magns00, phases00);
+
+    return;
+#endif
     
 #if PROCESS_SIGNAL_DB
     WDL_TypedBuf<BL_FLOAT> magns0;
@@ -280,15 +276,17 @@ ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     for (int i = 0; i < NUM_STEM_SOURCES; i++)
         mMaskPred->GetMask(i, &masks[i]);
 
+    int numCols = ComputeSpectroNumCols();
+    
     // Keep mask and signal histories
     mSignalHistory.push_back(mixBuffer);
-    if (mSignalHistory.size() >= SPECTRO_NUM_COLS)
+    if (mSignalHistory.size() >= numCols)
         mSignalHistory.pop_front();
 
     for (int i = 0; i < NUM_STEM_SOURCES; i++)
     {
         mMasksHistory[i].push_back(masks[i]);
-        if (mMasksHistory[i].size() >= SPECTRO_NUM_COLS)
+        if (mMasksHistory[i].size() >= numCols)
             mMasksHistory[i].pop_front();
     }
     
@@ -440,7 +438,7 @@ ComputeResult(const WDL_TypedBuf<WDL_FFT_COMPLEX> &mixBuffer,
     *result = mixBuffer;
     ApplySoftMasking(result, mask);
 #endif
-    
+
     BLUtilsComp::ComplexToMagnPhase(resMagns, resPhases, *result);
 
 #if PROCESS_SIGNAL_DB
@@ -448,4 +446,21 @@ ComputeResult(const WDL_TypedBuf<WDL_FFT_COMPLEX> &mixBuffer,
 #endif
     
     BLUtilsComp::MagnPhaseToComplex(result, *resMagns, *resPhases);
+}
+
+int
+RebalanceProcessFftObjComp4::ComputeSpectroNumCols()
+{
+    // Prefer this, so the scroll speed won't be modified when
+    // the overlapping changes
+    int numCols = mBufferSize/(32/mOverlapping);
+    
+    // Adjust to the sample rate to avoid scrolling
+    // 2 times faster when we go from 44100 to 88200
+    //
+    BL_FLOAT srCoeff = mSampleRate/44100.0;
+    srCoeff = bl_round(srCoeff);
+    numCols *= srCoeff;
+
+    return numCols;
 }

@@ -93,7 +93,9 @@ protected:
                        WDL_TypedBuf<BL_FLOAT> *resPhases);
 
     void RecomputeSpectrogram();
-        
+
+    int ComputeSpectroNumCols();
+    
     //
     BL_FLOAT mSampleRate;
     
