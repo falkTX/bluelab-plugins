@@ -38,7 +38,8 @@ RebalanceMaskStack2::Reset()
 void
 RebalanceMaskStack2::AddMask(const WDL_TypedBuf<BL_FLOAT> &mask)
 {
-    deque<WDL_TypedBuf<BL_FLOAT> > q;
+    //deque<WDL_TypedBuf<BL_FLOAT> > q;
+    bl_queue<WDL_TypedBuf<BL_FLOAT> > q;
     BufferToQue(&q, mask, mWidth);
     
     AddMask(q);
@@ -47,7 +48,7 @@ RebalanceMaskStack2::AddMask(const WDL_TypedBuf<BL_FLOAT> &mask)
 void
 RebalanceMaskStack2::GetMaskAvg(WDL_TypedBuf<BL_FLOAT> *mask)
 {
-    deque<WDL_TypedBuf<BL_FLOAT> > q;
+    bl_queue<WDL_TypedBuf<BL_FLOAT> > q;
     GetMaskAvg(&q);
     QueToBuffer(mask, q);
 }
@@ -55,7 +56,7 @@ RebalanceMaskStack2::GetMaskAvg(WDL_TypedBuf<BL_FLOAT> *mask)
 void
 RebalanceMaskStack2::GetMaskVariance(WDL_TypedBuf<BL_FLOAT> *mask)
 {
-    deque<WDL_TypedBuf<BL_FLOAT> > q;
+    bl_queue<WDL_TypedBuf<BL_FLOAT> > q;
     GetMaskVariance(&q);
     QueToBuffer(mask, q);
 }
@@ -64,7 +65,7 @@ void
 RebalanceMaskStack2::GetMaskWeightedAvg(WDL_TypedBuf<BL_FLOAT> *mask,
                                         int index)
 {
-    deque<WDL_TypedBuf<BL_FLOAT> > q;
+    bl_queue<WDL_TypedBuf<BL_FLOAT> > q;
     GetMaskWeightedAvg(&q, index);
     QueToBuffer(mask, q);
 }
@@ -72,13 +73,13 @@ RebalanceMaskStack2::GetMaskWeightedAvg(WDL_TypedBuf<BL_FLOAT> *mask,
 void
 RebalanceMaskStack2::GetMaskVariance2(WDL_TypedBuf<BL_FLOAT> *mask)
 {
-    deque<WDL_TypedBuf<BL_FLOAT> > q;
+    bl_queue<WDL_TypedBuf<BL_FLOAT> > q;
     GetMaskVariance2(&q);
     QueToBuffer(mask, q);
 }
 
 void
-RebalanceMaskStack2::AddMask(const deque<WDL_TypedBuf<BL_FLOAT> > &mask)
+RebalanceMaskStack2::AddMask(const bl_queue<WDL_TypedBuf<BL_FLOAT> > &mask)
 {
     if (mask.empty())
         return;
@@ -91,19 +92,28 @@ RebalanceMaskStack2::AddMask(const deque<WDL_TypedBuf<BL_FLOAT> > &mask)
     // Scroll
     for (int i = 0; i < mStack.size(); i++)
     {
-        deque<WDL_TypedBuf<BL_FLOAT> > &stackLine = mStack[i];
-        stackLine.push_back(undefinedLine);
-        stackLine.pop_front();
+        bl_queue<WDL_TypedBuf<BL_FLOAT> > &stackLine = mStack[i];
+        //stackLine.push_back(undefinedLine);
+        //stackLine.pop_front();
+        stackLine.freeze();
+        stackLine.push_pop(undefinedLine);
     }
-    
+
     // ... then add the new mask
-    mStack.push_back(mask);
-    if (mStack.size() > mStackDepth)
-        mStack.pop_front();
+    if (mStack.size() < mStackDepth)
+        mStack.push_back(mask);
+    else
+    {
+        //if (mStack.size() >= mStackDepth)
+        mStack.freeze();
+        mStack.push_pop(mask);
+    }
+    //if (mStack.size() > mStackDepth)
+    //    mStack.pop_front();
 }
 
 void
-RebalanceMaskStack2::GetMaskAvg(deque<WDL_TypedBuf<BL_FLOAT> > *mask)
+RebalanceMaskStack2::GetMaskAvg(bl_queue<WDL_TypedBuf<BL_FLOAT> > *mask)
 {
     mask->resize(0);
     
@@ -129,7 +139,7 @@ RebalanceMaskStack2::GetMaskAvg(deque<WDL_TypedBuf<BL_FLOAT> > *mask)
         
             for (int k = 0; k < mStack.size(); k++)
             {
-                const deque<WDL_TypedBuf<BL_FLOAT> > &mask0 = mStack[k];
+                const bl_queue<WDL_TypedBuf<BL_FLOAT> > &mask0 = mStack[k];
                 const WDL_TypedBuf<BL_FLOAT> &line0 = mask0[i];
             
                 BL_FLOAT val = line0.Get()[j];
@@ -151,7 +161,7 @@ RebalanceMaskStack2::GetMaskAvg(deque<WDL_TypedBuf<BL_FLOAT> > *mask)
 }
 
 void
-RebalanceMaskStack2::GetMaskVariance(deque<WDL_TypedBuf<BL_FLOAT> > *mask)
+RebalanceMaskStack2::GetMaskVariance(bl_queue<WDL_TypedBuf<BL_FLOAT> > *mask)
 {
     mask->resize(0);
     
@@ -176,7 +186,7 @@ RebalanceMaskStack2::GetMaskVariance(deque<WDL_TypedBuf<BL_FLOAT> > *mask)
             vector<BL_FLOAT> col;
             for (int k = 0; k < mStack.size(); k++)
             {
-                const deque<WDL_TypedBuf<BL_FLOAT> > &mask0 = mStack[k];
+                const bl_queue<WDL_TypedBuf<BL_FLOAT> > &mask0 = mStack[k];
                 
                 const WDL_TypedBuf<BL_FLOAT> &line0 = mask0[i];
                 
@@ -256,7 +266,7 @@ RebalanceMaskStack2::GetMaskWeightedAvg(deque<WDL_TypedBuf<BL_FLOAT> > *mask)
 // OPTIM
 // Avoid many access to deque
 void
-RebalanceMaskStack2::GetMaskWeightedAvg(deque<WDL_TypedBuf<BL_FLOAT> > *mask,
+RebalanceMaskStack2::GetMaskWeightedAvg(bl_queue<WDL_TypedBuf<BL_FLOAT> > *mask,
                                         int index)
 {
     mask->resize(0);
@@ -287,7 +297,7 @@ RebalanceMaskStack2::GetMaskWeightedAvg(deque<WDL_TypedBuf<BL_FLOAT> > *mask,
     //
     for (int k = 0; k < mStack.size(); k++)
     {
-        const deque<WDL_TypedBuf<BL_FLOAT> > &mask0 = mStack[k];
+        const bl_queue<WDL_TypedBuf<BL_FLOAT> > &mask0 = mStack[k];
         
         BL_FLOAT w = 1.0;
         if (mStack.size() > 1)
@@ -345,7 +355,7 @@ RebalanceMaskStack2::GetMaskWeightedAvg(deque<WDL_TypedBuf<BL_FLOAT> > *mask,
 
 // Not so bad, but simple avg is better
 void
-RebalanceMaskStack2::GetMaskVariance2(deque<WDL_TypedBuf<BL_FLOAT> > *mask)
+RebalanceMaskStack2::GetMaskVariance2(bl_queue<WDL_TypedBuf<BL_FLOAT> > *mask)
 {    
 #define EPS 1e-15
     
@@ -361,10 +371,16 @@ RebalanceMaskStack2::GetMaskVariance2(deque<WDL_TypedBuf<BL_FLOAT> > *mask)
     // Last value
     WDL_TypedBuf<BL_FLOAT> mask0;
     QueToBuffer(&mask0, *mask);
-    
-    mLastHistory.push_back(mask0);
-    if (mLastHistory.size() > VARIANCE2_HISTORY_SIZE)
-        mLastHistory.pop_front();
+
+    if (mLastHistory.size() < VARIANCE2_HISTORY_SIZE)
+        mLastHistory.push_back(mask0);
+    else
+    {
+        mLastHistory.freeze();
+        mLastHistory.push_pop(mask0);
+    }
+    //if (mLastHistory.size() > VARIANCE2_HISTORY_SIZE)
+    //    mLastHistory.pop_front();
     
     // Avg
     WDL_TypedBuf<BL_FLOAT> avg0;
@@ -381,9 +397,15 @@ RebalanceMaskStack2::GetMaskVariance2(deque<WDL_TypedBuf<BL_FLOAT> > *mask)
     BLUtils::ClipMin(&avgSub, (BL_FLOAT)0.0);
     
     //
-    mAvgHistory.push_back(avgSub);
-    if (mAvgHistory.size() > VARIANCE2_HISTORY_SIZE)
-        mAvgHistory.pop_front();
+    if (mAvgHistory.size() < VARIANCE2_HISTORY_SIZE)
+        mAvgHistory.push_back(avgSub);
+    else
+    {
+        mAvgHistory.freeze();
+        mAvgHistory.push_pop(avgSub);
+    }
+    //if (mAvgHistory.size() > VARIANCE2_HISTORY_SIZE)
+    //    mAvgHistory.pop_front();
     
     for (int i = 0; i < mask0.GetSize(); i++)
     {
@@ -403,7 +425,8 @@ RebalanceMaskStack2::GetMaskVariance2(deque<WDL_TypedBuf<BL_FLOAT> > *mask)
 }
 
 BL_FLOAT
-RebalanceMaskStack2::ComputeVariance(const deque<WDL_TypedBuf<BL_FLOAT> > &history, int index)
+RebalanceMaskStack2::ComputeVariance(const bl_queue<WDL_TypedBuf<BL_FLOAT> > &history,
+                                     int index)
 {
     vector<BL_FLOAT> col;
     for (int k = 0; k < history.size(); k++)
@@ -445,7 +468,7 @@ RebalanceMaskStack2::GetLineAvg(WDL_TypedBuf<BL_FLOAT> *line, int lineNum)
         
         for (int j = 0; j < mStack.size(); j++)
         {
-            const deque<WDL_TypedBuf<BL_FLOAT> > &mask = mStack[j];
+            const bl_queue<WDL_TypedBuf<BL_FLOAT> > &mask = mStack[j];
             
             const WDL_TypedBuf<BL_FLOAT> &line = mask[lineNum];
                 
@@ -467,7 +490,7 @@ RebalanceMaskStack2::GetLineAvg(WDL_TypedBuf<BL_FLOAT> *line, int lineNum)
 }
 
 void
-RebalanceMaskStack2::BufferToQue(deque<WDL_TypedBuf<BL_FLOAT> > *que,
+RebalanceMaskStack2::BufferToQue(bl_queue<WDL_TypedBuf<BL_FLOAT> > *que,
                                  const WDL_TypedBuf<BL_FLOAT> &buffer,
                                  int width)
 {
@@ -484,7 +507,7 @@ RebalanceMaskStack2::BufferToQue(deque<WDL_TypedBuf<BL_FLOAT> > *que,
 
 void
 RebalanceMaskStack2::QueToBuffer(WDL_TypedBuf<BL_FLOAT> *buf,
-                                 const deque<WDL_TypedBuf<BL_FLOAT> > &cols)
+                                 const bl_queue<WDL_TypedBuf<BL_FLOAT> > &cols)
 {
     if (cols.empty())
         return;
