@@ -146,6 +146,7 @@ private:
     WDL_TypedBuf<BL_FLOAT> mTmpBuf15;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf16;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf17;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf18[NUM_STEM_SOURCES];
 };
 
 #endif /* defined(__BL_Rebalance__RebalanceProcessFftObjComp4__) */

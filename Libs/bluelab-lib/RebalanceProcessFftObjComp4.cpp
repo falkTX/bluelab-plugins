@@ -425,7 +425,8 @@ RebalanceProcessFftObjComp4::RecomputeSpectrogram()
         WDL_TypedBuf<WDL_FFT_COMPLEX> &signal = mTmpBuf13;
         signal = mSignalHistory[i];
 
-        WDL_TypedBuf<BL_FLOAT> masks[NUM_STEM_SOURCES];
+        //WDL_TypedBuf<BL_FLOAT> masks[NUM_STEM_SOURCES];
+        WDL_TypedBuf<BL_FLOAT> *masks = mTmpBuf18;
         for (int j = 0; j < NUM_STEM_SOURCES; j++)
         {
             masks[j] = mMasksHistory[j][i];
