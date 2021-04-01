@@ -73,6 +73,24 @@ protected:
     // For variance2
     bl_queue<WDL_TypedBuf<BL_FLOAT> > mLastHistory;
     bl_queue<WDL_TypedBuf<BL_FLOAT> > mAvgHistory;
+
+private:
+    // Tmp buffers
+    bl_queue<WDL_TypedBuf<BL_FLOAT> > mTmpBuf0;
+    bl_queue<WDL_TypedBuf<BL_FLOAT> > mTmpBuf1;
+    bl_queue<WDL_TypedBuf<BL_FLOAT> > mTmpBuf2;
+    bl_queue<WDL_TypedBuf<BL_FLOAT> > mTmpBuf3;
+    bl_queue<WDL_TypedBuf<BL_FLOAT> > mTmpBuf4;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf5;
+    vector<BL_FLOAT> mTmpBuf6;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf7;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf8;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf9;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf10;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf11;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf12;
+    vector<BL_FLOAT> mTmpBuf13;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf14;
 };
 
 #endif /* defined(__BL_Rebalance__RebalanceMaskStack2__) */

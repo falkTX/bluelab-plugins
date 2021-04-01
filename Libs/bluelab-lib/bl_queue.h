@@ -12,6 +12,14 @@ template<class T> class bl_queue
 public:
     bl_queue(int size) { mFixedSize = true; mData.resize(size); mCursor = 0; }
     bl_queue() { mFixedSize = false; mCursor = 0; }
+    bl_queue(const bl_queue &other)
+    {
+        mData = other.mData;
+        mCursor = other.mCursor;
+        mFixedSize = other.mFixedSize;
+        mNonFixedSizeData = other.mNonFixedSizeData;
+    }
+    
     ~bl_queue() { mData.clear(); mNonFixedSizeData.clear(); }
 
     bool empty() const
