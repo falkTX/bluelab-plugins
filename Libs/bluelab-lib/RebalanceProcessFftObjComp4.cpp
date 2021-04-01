@@ -245,8 +245,8 @@ ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
 {
     // Mix
     WDL_TypedBuf<WDL_FFT_COMPLEX> &mixBuffer = mTmpBuf0;
-    mixBuffer = *ioBuffer;
-    BLUtils::TakeHalf(&mixBuffer);
+    //mixBuffer = *ioBuffer;
+    BLUtils::TakeHalf(*ioBuffer, &mixBuffer);
     
 #if PROCESS_SIGNAL_DB
     WDL_TypedBuf<BL_FLOAT> &magns0 = mTmpBuf1;
@@ -330,12 +330,12 @@ ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     WDL_TypedBuf<WDL_FFT_COMPLEX> &fftSamples = mTmpBuf7;
     fftSamples = result;
     
-    fftSamples.Resize(fftSamples.GetSize()*2);
-    
-    BLUtilsFft::FillSecondFftHalf(&fftSamples);
+    //fftSamples.Resize(fftSamples.GetSize()*2);
+    //BLUtilsFft::FillSecondFftHalf(&fftSamples);
+    BLUtilsFft::FillSecondFftHalf(fftSamples, ioBuffer);
     
     // Result
-    *ioBuffer = fftSamples;
+    //*ioBuffer = fftSamples;
 }
 
 void
