@@ -102,6 +102,12 @@ protected:
     
     BL_FLOAT mSampleRate;
     BL_FLOAT mTargetSampleRate;
+
+private:
+    // Tmp buffers
+    vector<WDL_TypedBuf<BL_FLOAT> > mTmpBuf0;
+    vector<WDL_TypedBuf<BL_FLOAT> > mTmpBuf1;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf2;
 };
 
 #endif /* defined(__Saturate__ResampProcessObj__) */

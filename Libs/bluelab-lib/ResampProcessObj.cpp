@@ -153,13 +153,16 @@ ResampProcessObj::Process(vector<WDL_TypedBuf<BL_FLOAT> > *ioBuffers)
     if (std::fabs(mSampleRate - mTargetSampleRate) < BL_EPS)
     // Nothing to do
     {
-        vector<WDL_TypedBuf<BL_FLOAT> > copyBuffers = *ioBuffers;
+        vector<WDL_TypedBuf<BL_FLOAT> > &copyBuffers = mTmpBuf0;
+        copyBuffers = *ioBuffers;
         ProcessSamplesBuffers(ioBuffers, &copyBuffers);
         
         return;
     }
     
-    vector<WDL_TypedBuf<BL_FLOAT> > resampBuffers = *ioBuffers;
+    vector<WDL_TypedBuf<BL_FLOAT> > &resampBuffers = mTmpBuf1;
+    resampBuffers = *ioBuffers;
+    
     for (int i = 0; i < ioBuffers->size(); i++)
     {
         // Upsample
@@ -175,7 +178,7 @@ ResampProcessObj::Process(vector<WDL_TypedBuf<BL_FLOAT> > *ioBuffers)
             // Filter Nyquist ?
             if (mFilters[i] != NULL)
             {
-                WDL_TypedBuf<BL_FLOAT> filtBuffer;
+                WDL_TypedBuf<BL_FLOAT> &filtBuffer = mTmpBuf2;
                 mFilters[i]->Process(&filtBuffer, resampBuffers[i]);
         
                 resampBuffers[i] = filtBuffer;
