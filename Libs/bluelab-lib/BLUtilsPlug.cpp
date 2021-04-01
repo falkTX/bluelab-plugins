@@ -5,6 +5,8 @@
 #include <BLUtils.h>
 #include <BLUtilsMath.h>
 
+#include <ParamSmoother2.h>
+
 #include "IPlug_include_in_plug_hdr.h"
 
 #include "BLUtilsPlug.h"
@@ -869,4 +871,27 @@ BLUtilsPlug::GetFullPlugResourcesPath(const IPluginBase &plug, WDL_String *resPa
         resPath->SetLen(resPath->GetLength() - (strlen(DUMMY_RES_FILE) + 1));
     
     return true;
+}
+
+void
+BLUtilsPlug::ApplyGain(const vector<WDL_TypedBuf<BL_FLOAT> > &in,
+                       vector<WDL_TypedBuf<BL_FLOAT> > *out,
+                       ParamSmoother2 *smoother)
+{
+    if (in.empty())
+        return;
+    
+    for (int i = 0; i < in[0].GetSize(); i++)
+    {
+        BL_FLOAT gain = smoother->Process();
+
+        BL_FLOAT ls = in[0].Get()[i];
+        (*out)[0].Get()[i] = gain*ls;
+    
+        if ((in.size() > 1) && (out->size() > 1))
+        {
+            BL_FLOAT rs = in[1].Get()[i];
+            (*out)[1].Get()[i] = gain*rs;
+        }
+    }
 }

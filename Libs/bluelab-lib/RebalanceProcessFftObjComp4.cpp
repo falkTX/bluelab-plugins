@@ -201,6 +201,17 @@ RebalanceProcessFftObjComp4::SetContrast(BL_FLOAT contrast)
     RecomputeSpectrogram();
 }
 
+int
+RebalanceProcessFftObjComp4::GetLatency()
+{
+    if (mSoftMasking == NULL)
+        return 0;
+
+    int latency = mSoftMasking->GetLatency();
+
+    return latency;
+}
+    
 void
 RebalanceProcessFftObjComp4::AddSpectrogramLine(const WDL_TypedBuf<BL_FLOAT> &magns,
                                                 const WDL_TypedBuf<BL_FLOAT> &phases)
@@ -229,17 +240,6 @@ ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     // Mix
     WDL_TypedBuf<WDL_FFT_COMPLEX> mixBuffer = *ioBuffer;
     BLUtils::TakeHalf(&mixBuffer);
-
-#if 0 //1 // DEBUG
-    WDL_TypedBuf<BL_FLOAT> magns00;
-    WDL_TypedBuf<BL_FLOAT> phases00;
-    
-    BLUtilsComp::ComplexToMagnPhase(&magns00, &phases00, mixBuffer);
-
-    AddSpectrogramLine(magns00, phases00);
-
-    return;
-#endif
     
 #if PROCESS_SIGNAL_DB
     WDL_TypedBuf<BL_FLOAT> magns0;
@@ -428,10 +428,11 @@ ComputeResult(const WDL_TypedBuf<WDL_FFT_COMPLEX> &mixBuffer,
     // TODO: use tmp buffer
     WDL_TypedBuf<BL_FLOAT> mask;
     mMaskProcessor->Process(masks, &mask);
-
+    
 #if 0
     ApplyMask(mixBuffer, result, mask);
 #endif
+    
 #if 1
     // TODO: use tmp buffers
     *result = mixBuffer;

@@ -8,6 +8,7 @@ using namespace std;
 
 using namespace iplug;
 
+class ParamSmoother2;
 class BLUtilsPlug
 {
  public:
@@ -72,6 +73,10 @@ class BLUtilsPlug
 
     static bool GetFullPlugResourcesPath(const IPluginBase &plug,
                                          WDL_String *resPath);
+
+    static void ApplyGain(const vector<WDL_TypedBuf<BL_FLOAT> > &in,
+                          vector<WDL_TypedBuf<BL_FLOAT> > *out,
+                          ParamSmoother2 *smoother);
 };
 
 #endif
