@@ -186,8 +186,12 @@ RebalanceProcessor2::GetLatency()
     int lat0 = ResampProcessObj::GetLatency();
     int lat1 = mNativeFftObj->ComputeLatency(mBlockSize);
     int lat2 = mMaskPred->GetLatency();
-    
-    int latency = lat0 + lat1 + lat2;
+
+    int lat3 = 0;
+    if (mDetectProcessObjs[0] != NULL)
+        lat3 = mDetectProcessObjs[0]->GetLatency();
+        
+    int latency = lat0 + lat1 + lat2 + lat3;
     
     return latency;
 }

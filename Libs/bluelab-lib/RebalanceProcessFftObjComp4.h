@@ -69,6 +69,8 @@ public:
     
     // Global precision (previous soft/hard)
     void SetContrast(BL_FLOAT contrast);
+
+    int GetLatency();
     
 protected:
     void AddSpectrogramLine(const WDL_TypedBuf<BL_FLOAT> &magns,
