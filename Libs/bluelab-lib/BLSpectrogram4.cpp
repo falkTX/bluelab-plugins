@@ -30,6 +30,9 @@
 // Avoid recomputing the colormap each time.
 #define OPTIM_SPECTROGRAM 1
 
+// Will optimize, and give better results
+#define USE_FILTER_BANKS 1 // 0
+
 unsigned char BLSpectrogram4::mPhasesColor[4] = { 255, 255, 255, 255 };
 
 
@@ -309,6 +312,7 @@ BLSpectrogram4::AddLine(const WDL_TypedBuf<BL_FLOAT> &magns,
         return;
     }
     
+#if !USE_FILTER_BANKS
     WDL_TypedBuf<BL_FLOAT> &magns0 = mTmpBuf0;
     magns0 = magns;
     
@@ -339,6 +343,14 @@ BLSpectrogram4::AddLine(const WDL_TypedBuf<BL_FLOAT> &magns,
         BLUtilsDecim::DecimateSamples(&phases0, *origPhases,
                                       ((BL_FLOAT)mHeight)/phases0.GetSize());
     }
+#else
+    WDL_TypedBuf<BL_FLOAT> &magns0 = mTmpBuf0;    
+    WDL_TypedBuf<BL_FLOAT> &phases0 = mTmpBuf1;
+    
+    Scale::FilterBankType type = mScale->TypeToFilterBankType(mYScale);
+    mScale->ApplyScaleFilterBank(type, &magns0, magns, mSampleRate, mHeight);
+    mScale->ApplyScaleFilterBank(type, &phases0, phases, mSampleRate, mHeight);
+#endif
     
     // Convert amp to dB
     // (Works like a charm !)
