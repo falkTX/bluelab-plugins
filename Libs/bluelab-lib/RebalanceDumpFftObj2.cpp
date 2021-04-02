@@ -22,10 +22,12 @@
 
 RebalanceDumpFftObj2::RebalanceDumpFftObj2(int bufferSize,
                                            BL_FLOAT sampleRate,
-                                           int numInputCols)
+                                           int numInputCols,
+                                           int dumpOverlap)
 : MultichannelProcess()
 {
     mNumInputCols = numInputCols;
+    mDumpOverlap = dumpOverlap;
     
     // Fill with zeros at the beginning
     mSpectroCols.resize(mNumInputCols);
@@ -71,28 +73,32 @@ RebalanceDumpFftObj2::HasEnoughData()
 }
 
 void
-RebalanceDumpFftObj2::GetSpectrogramData(WDL_TypedBuf<BL_FLOAT> cols[REBALANCE_NUM_SPECTRO_COLS])
+RebalanceDumpFftObj2::
+GetSpectrogramData(WDL_TypedBuf<BL_FLOAT> cols[REBALANCE_NUM_SPECTRO_COLS])
 {
     for (int i = 0; i < mNumInputCols; i++)
     {
         cols[i] = mSpectroCols[i];
     }
-    
-    for (int i = 0; i < mNumInputCols; i++)
+
+    int numColsToPop = mNumInputCols/mDumpOverlap;
+    for (int i = 0; i < numColsToPop; i++)
     {
         mSpectroCols.pop_front();
     }
 }
 
 void
-RebalanceDumpFftObj2::GetStereoData(WDL_TypedBuf<BL_FLOAT> cols[REBALANCE_NUM_SPECTRO_COLS])
+RebalanceDumpFftObj2::
+GetStereoData(WDL_TypedBuf<BL_FLOAT> cols[REBALANCE_NUM_SPECTRO_COLS])
 {
     for (int i = 0; i < mNumInputCols; i++)
     {
         cols[i] = mStereoCols[i];
     }
-    
-    for (int i = 0; i < mNumInputCols; i++)
+
+    int numColsToPop = mNumInputCols/mDumpOverlap;
+    for (int i = 0; i < numColsToPop; i++)
     {
         mStereoCols.pop_front();
     }

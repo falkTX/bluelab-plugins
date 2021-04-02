@@ -32,7 +32,7 @@ public:
     void InitDetect(const IPluginBase &plug,
                     IGraphics& graphics);
     
-    void InitDump();
+    void InitDump(int dumpOverlap);
     
     // Must be called at least once
     void Reset(BL_FLOAT sampleRate);

@@ -225,14 +225,16 @@ RebalanceProcessFftObjComp4::AddSpectrogramLine(const WDL_TypedBuf<BL_FLOAT> &ma
     // Disabled: so the spectrogram display jitters less
     // even whn much resource is consumed
     // And also for updating whole spectrogram when param change
-#if 0
-    // Simple add
+#if 0 //1 // 0
+    // Add for smooth scroll
     if (mSpectroDisplay != NULL)
         mSpectroDisplay->AddSpectrogramLine(magns, phases);
 #endif
-    
+#if 1 //0 // 1
+    // Simple add
     mSpectrogram->AddLine(magns, phases);
-
+#endif
+    
     // NEW: for updating whole spectrogram when param change
     if (mSpectroDisplay != NULL)
         mSpectroDisplay->UpdateSpectrogram(true);

@@ -133,7 +133,7 @@ RebalanceProcessor2::InitDetect(const IPluginBase &plug,
 }
 
 void
-RebalanceProcessor2::InitDump()
+RebalanceProcessor2::InitDump(int dumpOverlap)
 {
     if (mTargetFftObj == NULL)
     {
@@ -157,7 +157,8 @@ RebalanceProcessor2::InitDump()
         // Dump stereo to mono signal
         mDumpObj = new RebalanceDumpFftObj2(mTargetBufferSize,
                                             mTargetSampleRate,
-                                            mNumSpectroCols);
+                                            mNumSpectroCols,
+                                            dumpOverlap);
         
         mTargetFftObj->AddMultichannelProcess(mDumpObj);
         
