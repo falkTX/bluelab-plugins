@@ -28,7 +28,7 @@ RebalanceDumpFftObj2::RebalanceDumpFftObj2(int bufferSize,
 {
     mNumInputCols = numInputCols;
     mDumpOverlap = dumpOverlap;
-    
+
     // Fill with zeros at the beginning
     mSpectroCols.resize(mNumInputCols);
     for (int i = 0; i < mSpectroCols.size(); i++)
@@ -66,7 +66,7 @@ ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamples,
 
 bool
 RebalanceDumpFftObj2::HasEnoughData()
-{
+{    
     bool hasEnoughData = (mSpectroCols.size() >= mNumInputCols);
     
     return hasEnoughData;
@@ -80,11 +80,12 @@ GetSpectrogramData(WDL_TypedBuf<BL_FLOAT> cols[REBALANCE_NUM_SPECTRO_COLS])
     {
         cols[i] = mSpectroCols[i];
     }
-
-    int numColsToPop = mNumInputCols/mDumpOverlap;
+            
+    int numColsToPop = mNumInputCols/mDumpOverlap;    
     for (int i = 0; i < numColsToPop; i++)
     {
-        mSpectroCols.pop_front();
+        if (!mSpectroCols.empty())
+            mSpectroCols.pop_front();
     }
 }
 
@@ -100,7 +101,8 @@ GetStereoData(WDL_TypedBuf<BL_FLOAT> cols[REBALANCE_NUM_SPECTRO_COLS])
     int numColsToPop = mNumInputCols/mDumpOverlap;
     for (int i = 0; i < numColsToPop; i++)
     {
-        mStereoCols.pop_front();
+        if (!mStereoCols.empty())
+            mStereoCols.pop_front();
     }
 }
 

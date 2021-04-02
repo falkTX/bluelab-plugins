@@ -381,3 +381,8 @@ BUG: click and turn knob: the mouse pointer is captured
 
 Design: gradient, use gradient in the corner? like https://canonical.com/
 (instead of from up to down)
+
+- TODO: check all plugins that they use Scale with FilterBank
+(e.g a freq curve, we can apply filter bank on x axis, to avoid calling log())
+(and we won't have to decimate curve, this is automatic)
+(maybe it will be necessary to add a Scale/FilterBank mode, for log "factor")
