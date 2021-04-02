@@ -76,7 +76,7 @@ DNNModelDarknet::DNNModelDarknet()
 }
 
 DNNModelDarknet::~DNNModelDarknet()
-{
+{   
     if (mNet != NULL)
         free_network(mNet);
 

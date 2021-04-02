@@ -58,6 +58,9 @@ RebalanceProcessor2::~RebalanceProcessor2()
         if (mDetectProcessObjs[i] != NULL)
             delete mDetectProcessObjs[i];
     }
+
+    if (mMaskPred != NULL)
+        delete mMaskPred;
 }
 
 void
