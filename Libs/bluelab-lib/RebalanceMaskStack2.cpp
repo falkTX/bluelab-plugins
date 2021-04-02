@@ -40,6 +40,7 @@ RebalanceMaskStack2::AddMask(const WDL_TypedBuf<BL_FLOAT> &mask)
 {
     //deque<WDL_TypedBuf<BL_FLOAT> > q;
     bl_queue<WDL_TypedBuf<BL_FLOAT> > &q = mTmpBuf0;
+    q.freeze(); // TEST
     BufferToQue(&q, mask, mWidth);
     
     AddMask(q);
@@ -49,6 +50,7 @@ void
 RebalanceMaskStack2::GetMaskAvg(WDL_TypedBuf<BL_FLOAT> *mask)
 {
     bl_queue<WDL_TypedBuf<BL_FLOAT> > &q = mTmpBuf1;
+    q.freeze(); // TEST
     GetMaskAvg(&q);
     QueToBuffer(mask, q);
 }
@@ -57,6 +59,7 @@ void
 RebalanceMaskStack2::GetMaskVariance(WDL_TypedBuf<BL_FLOAT> *mask)
 {
     bl_queue<WDL_TypedBuf<BL_FLOAT> > &q = mTmpBuf2;
+    q.freeze(); // TEST
     GetMaskVariance(&q);
     QueToBuffer(mask, q);
 }
@@ -66,6 +69,7 @@ RebalanceMaskStack2::GetMaskWeightedAvg(WDL_TypedBuf<BL_FLOAT> *mask,
                                         int index)
 {
     bl_queue<WDL_TypedBuf<BL_FLOAT> > &q = mTmpBuf3;
+    q.freeze(); // TEST
     GetMaskWeightedAvg(&q, index);
     QueToBuffer(mask, q);
 }
@@ -74,6 +78,7 @@ void
 RebalanceMaskStack2::GetMaskVariance2(WDL_TypedBuf<BL_FLOAT> *mask)
 {
     bl_queue<WDL_TypedBuf<BL_FLOAT> > &q = mTmpBuf4;
+    q.freeze(); // TEST
     GetMaskVariance2(&q);
     QueToBuffer(mask, q);
 }

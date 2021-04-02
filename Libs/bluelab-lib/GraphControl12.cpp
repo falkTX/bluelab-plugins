@@ -103,6 +103,9 @@
 // Aligne axis lines to integer pixels
 #define ALIGN_AXES_LINES_TO_PIX 1
 
+// DEBUG
+#define DBG_DISABLE_DRAW 0 //1
+
 GraphControl12::GraphControl12(Plugin *pPlug, IGraphics *graphics,
                                IRECT pR, int paramIdx,
                               const char *fontPath)
@@ -286,7 +289,7 @@ GraphControl12::SetBounds(BL_GUI_FLOAT x0, BL_GUI_FLOAT y0,
 // Added for StereoViz
 void
 GraphControl12::OnGUIIdle()
-{
+{    
     WDL_MutexLock lock(&mMutex);
     
     for (int i = 0; i < mCustomControls.size(); i++)
@@ -548,7 +551,8 @@ GraphControl12::OnMouseUp(float x, float y, const IMouseMod &mod)
 }
 
 void
-GraphControl12::OnMouseDrag(float x, float y, float dX, float dY, const IMouseMod &mod)
+GraphControl12::OnMouseDrag(float x, float y, float dX, float dY,
+                            const IMouseMod &mod)
 {
     WDL_MutexLock lock(&mMutex);
     
@@ -2509,6 +2513,10 @@ GraphControl12::Draw(IGraphics &graphics)
 void
 GraphControl12::Draw(IGraphics &graphics)
 {
+#if DBG_DISABLE_DRAW
+    return;
+#endif
+    
     WDL_MutexLock lock(&mMutex);
     
     // Checked: if we fall here, the graph is sure to have mIsEnabled = true!
@@ -2578,6 +2586,10 @@ GraphControl12::Draw(IGraphics &graphics)
 void
 GraphControl12::DoDraw(IGraphics &graphics)
 {
+#if DBG_DISABLE_DRAW
+    return;
+#endif
+    
     WDL_MutexLock lock(&mMutex);
     
     mVg = (NVGcontext *)graphics.GetDrawContext();
