@@ -359,16 +359,25 @@ RebalanceMaskStack2::GetMaskWeightedAvg(bl_queue<WDL_TypedBuf<BL_FLOAT> > *mask,
                 continue;
 #endif
             const WDL_TypedBuf<BL_FLOAT> &line0 = mask0[i];
+            int line0Size = line0.GetSize();
+            BL_FLOAT *line0Data = line0.Get();
+
+            int maskSize = mask->size();
+
+            BL_FLOAT *sumData = sum.Get();
+            BL_FLOAT *sumWeightsData = sumWeights.Get();
             
-            for (int j = 0; j < line0.GetSize(); j++)
+            for (int j = 0; j < line0Size; j++)
             {
-                int index = i + j*mask->size();
+                //int index = i + j*mask->size();
+                int index = i + j*maskSize;
                 
-                BL_FLOAT val = line0.Get()[j];
+                //BL_FLOAT val = line0.Get()[j];
+                BL_FLOAT val = line0Data[j];
                 if (val > 0.0)
                 {
-                    sum.Get()[index] += val*w;
-                    sumWeights.Get()[index] += w;
+                    sumData[index] += val*w;
+                    sumWeightsData[index] += w;
                 }
             }
         }
@@ -383,15 +392,23 @@ RebalanceMaskStack2::GetMaskWeightedAvg(bl_queue<WDL_TypedBuf<BL_FLOAT> > *mask,
 #endif
         
         WDL_TypedBuf<BL_FLOAT> &line0 = (*mask)[i];
+
+        int line0Size = line0.GetSize();
+        BL_FLOAT *line0Data = line0.Get();
+
+        int maskSize = mask->size();
+
+        BL_FLOAT *sumData = sum.Get();
+        BL_FLOAT *sumWeightsData = sumWeights.Get();
         
-        for (int j = 0; j < line0.GetSize(); j++)
+        for (int j = 0; j < line0Size; j++)
         {
-            int index = i + j*mask->size();
-            if (sumWeights.Get()[index] > 0.0)
+            int index = i + j*maskSize;
+            if (sumWeightsData[index] > 0.0)
             {
-                BL_FLOAT avg = sum.Get()[index]/sumWeights.Get()[index];
+                BL_FLOAT avg = sumData[index]/sumWeightsData[index];
         
-                line0.Get()[j] = avg;
+                line0Data[j] = avg;
             }
         }
     }
