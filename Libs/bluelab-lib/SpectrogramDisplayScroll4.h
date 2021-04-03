@@ -46,6 +46,8 @@ public:
     
     // For InfrasonicViewer
     void ResetScroll();
+
+    BL_FLOAT GetOffsetSec();
     
     bool NeedUpdateSpectrogram();
     bool DoUpdateSpectrogram();
@@ -82,14 +84,16 @@ public:
     BL_FLOAT GetScaleRatio();
     
 protected:
-    void AddSpectrogramLines(BL_FLOAT numLines);
+    void AddPendingSpectrogramLines();
     
-    BL_FLOAT ComputeScrollOffsetPixels(int width);
+    //BL_FLOAT ComputeScrollOffsetPixels(int width);
 
     void ResetQueues();
 
     void RecomputeParams();
-    
+
+    BL_FLOAT SecsToPixels(BL_FLOAT secs, BL_FLOAT width);
+        
     // NanoVG
     NVGcontext *mVg;
     
@@ -113,12 +117,12 @@ protected:
     int mBufferSize;
     int mOverlapping;
     BL_FLOAT mSampleRate;
-    unsigned long long mPrevSpectroLineNum;
+    //unsigned long long mPrevSpectroLineNum;
     
-    unsigned long long mPrevTimeMillis;
+    //unsigned long long mPrevTimeMillis;
     
     // Offset for scrolling in "line" units
-    BL_FLOAT mLinesOffset;
+    //BL_FLOAT mLinesOffset;
     
     // Add progressively spectrogram lines
     //
@@ -127,7 +131,7 @@ protected:
     deque<WDL_TypedBuf<BL_FLOAT> > mSpectroMagns;
     deque<WDL_TypedBuf<BL_FLOAT> > mSpectroPhases;
     
-    BL_FLOAT mAddLineRemainder;
+    //BL_FLOAT mAddLineRemainder;
     
     // Members to avoid jumps in scrolling when restarting playback
     //
@@ -135,7 +139,7 @@ protected:
     // Get reference to plug, to know if the plug is currently playing
     Plugin *mPlug;
     bool mPrevIsPlaying;
-    BL_FLOAT mPrevPixelOffset;
+    //BL_FLOAT mPrevPixelOffset;
     
     bool mIsPlaying;
     
@@ -144,13 +148,15 @@ protected:
 
     //
     BL_FLOAT mDelayPercent;
-    
-    //
-    BL_FLOAT mSpectroTime;
-    long int mStartTimeMillis;
+    BL_FLOAT mDelayTimeSec;
 
     BL_FLOAT mSpectroLineDurationSec;
     BL_FLOAT mSpectroTotalDurationSec;
+
+    //
+    BL_FLOAT mSpectroTimeSec;
+
+    long int mStartTimeMillis;
     
 private:
     WDL_TypedBuf<unsigned int> mTmpBuf0;

@@ -38,8 +38,8 @@
 
 #define DEBUG_DUMP 1
 
-SpectrogramDisplayScroll4::SpectrogramDisplayScroll(Plugin *plug,
-                                                    BL_FLOAT delayPercent)
+SpectrogramDisplayScroll4::SpectrogramDisplayScroll4(Plugin *plug,
+                                                     BL_FLOAT delayPercent)
 {
     mPlug = plug;
 
@@ -62,17 +62,17 @@ SpectrogramDisplayScroll4::SpectrogramDisplayScroll(Plugin *plug,
     mSampleRate = 44100.0;
     mOverlapping = 0;
     
-    mPrevSpectroLineNum = 0;
+    //mPrevSpectroLineNum = 0;
     
-    mPrevTimeMillis = UpTime::GetUpTime();
+    //mPrevTimeMillis = UpTime::GetUpTime();
     
-    mLinesOffset = 0.0;
+    //mLinesOffset = 0.0;
     
-    mAddLineRemainder = 0.0;
+    //mAddLineRemainder = 0.0;
     
     // Avoid jump when restarting playback
     mPrevIsPlaying = false;
-    mPrevPixelOffset = 0.0;
+    //mPrevPixelOffset = 0.0;
     
     mIsPlaying = false;
     
@@ -111,13 +111,13 @@ SpectrogramDisplayScroll4::Reset()
     
     mNeedUpdateColormapData = true;
     
-    mPrevSpectroLineNum = 0;
+    //mPrevSpectroLineNum = 0;
     
-    mPrevTimeMillis = UpTime::GetUpTime();
+    //mPrevTimeMillis = UpTime::GetUpTime();
     
-    mLinesOffset = 0.0;
+    //mLinesOffset = 0.0;
     
-    mAddLineRemainder = 0.0;
+    //mAddLineRemainder = 0.0;
 
     RecomputeParams();
     
@@ -131,7 +131,7 @@ SpectrogramDisplayScroll4::Reset()
 void
 SpectrogramDisplayScroll4::ResetScroll()
 {
-    mLinesOffset = 0;
+    //mLinesOffset = 0;
     
     mSpectroMagns.clear();
     mSpectroPhases.clear();
@@ -140,7 +140,7 @@ SpectrogramDisplayScroll4::ResetScroll()
     
     // Set to 0: no jump (but lag)
     // Set to mOverlapping: avoid very big lag
-    mAddLineRemainder = mOverlapping;
+    //mAddLineRemainder = mOverlapping;
 
     RecomputeParams();
     
@@ -149,6 +149,17 @@ SpectrogramDisplayScroll4::ResetScroll()
     BLDebug::ResetFile("spectro-time1.txt");
     BLDebug::ResetFile("time.txt");
 #endif
+}
+
+BL_FLOAT
+SpectrogramDisplayScroll4::GetOffsetSec()
+{
+    long int millis = BLUtils::GetTimeMillis();
+    BL_FLOAT currentTimeSec = (millis - mStartTimeMillis)*0.001;
+
+    BL_FLOAT offset = mSpectroTimeSec - currentTimeSec;
+
+    return offset;
 }
 
 bool
@@ -259,20 +270,24 @@ void
 SpectrogramDisplayScroll4::PreDraw(NVGcontext *vg, int width, int height)
 {
     mVg = vg;
+
+    AddPendingSpectrogramLines();
     
     DoUpdateSpectrogram();
     
     if (!mShowSpectrogram)
         return;
-    
+
     // Draw spectrogram first
     nvgSave(mVg);
     
     // New: set colormap only in the spectrogram state
     nvgSetColormap(mVg, mNvgColormapImage);
 
-    BL_FLOAT scrollOffsetPixels = ComputeScrollOffsetPixels(width);
-    
+    //BL_FLOAT scrollOffsetPixels = ComputeScrollOffsetPixels(width);
+
+    BL_FLOAT offsetSec = GetOffsetSec();
+    BL_FLOAT offsetPixels = SecsToPixels(offsetSec, width);
     //
     // Spectrogram image
     //
@@ -281,8 +296,7 @@ SpectrogramDisplayScroll4::PreDraw(NVGcontext *vg, int width, int height)
     BL_FLOAT alpha = 1.0;
     NVGpaint imgPaint =
         nvgImagePattern(mVg,
-                        mSpectrogramBounds[0]*width +
-                        scrollOffsetPixels,
+                        mSpectrogramBounds[0]*width + offsetPixels,
                         mSpectrogramBounds[1]*height,
                         (mSpectrogramBounds[2] - mSpectrogramBounds[0])*width,
                         (mSpectrogramBounds[3] - mSpectrogramBounds[1])*height,
@@ -296,7 +310,7 @@ SpectrogramDisplayScroll4::PreDraw(NVGcontext *vg, int width, int height)
     
     nvgBeginPath(mVg);
     nvgRect(mVg,
-            mSpectrogramBounds[0]*width + scrollOffsetPixels,
+            mSpectrogramBounds[0]*width + offsetPixels,
             b1f,
             (mSpectrogramBounds[2] - mSpectrogramBounds[0])*width, b3f);
     
@@ -307,15 +321,13 @@ SpectrogramDisplayScroll4::PreDraw(NVGcontext *vg, int width, int height)
     nvgRestore(mVg);
 
 #if DEBUG_DUMP // Debug 
-    BL_FLOAT pixelTimeDurationSec = mSpectroTotalDurationSec/width;
-    BL_FLOAT scrollOffsetTime = scrollOffsetPixels*pixelTimeDurationSec;
-    BLDebug::AppendValue("spectro-time0.txt", mSpectroTime);
-    BLDebug::AppendValue("spectro-time1.txt", mSpectroTime + scrollOffsetTime);
+    BLDebug::AppendValue("spectro-time0.txt", mSpectroTimeSec);
+    BLDebug::AppendValue("spectro-time1.txt", mSpectroTimeSec + offsetSec);
 
     long int millis = BLUtils::GetTimeMillis();
-    BL_FLOAT t = (millis - mStartTimeMillis)*0.001;
+    BL_FLOAT currentTimeSec = (millis - mStartTimeMillis)*0.001;
 
-    BLDebug::AppendValue("time.txt", t);
+    BLDebug::AppendValue("time.txt", currentTimeSec);
 #endif
 }
 
@@ -347,10 +359,10 @@ SpectrogramDisplayScroll4::SetSpectrogram(BLSpectrogram4 *spectro,
     
     // Avoid scrolling over time at launch
     // (until we get initial position)
-    mPrevSpectroLineNum = mSpectrogram->GetTotalLineNum();
+    //mPrevSpectroLineNum = mSpectrogram->GetTotalLineNum();
     // Must set a value at the beginning
     // (otherwise scrolling will be very slow with overlapping 4)
-    mAddLineRemainder = mOverlapping;
+    //mAddLineRemainder = mOverlapping;
     
     // Check that it will be updated well when displaying
     mSpectrogram->TouchData();
@@ -370,12 +382,12 @@ SpectrogramDisplayScroll4::SetFftParams(int bufferSize,
     mOverlapping = overlapping;
     mSampleRate = sampleRate;
     
-    if (overlappingChanged)
-    {
-        // Must set a value at the beginning
-        // (otherwise scrolling will be very slow with overlapping 4)
-        mAddLineRemainder = mOverlapping;
-    }
+    //if (overlappingChanged)
+    //{
+    // Must set a value at the beginning
+    // (otherwise scrolling will be very slow with overlapping 4)
+    //    mAddLineRemainder = mOverlapping;
+    //}
 
     RecomputeParams();
 }
@@ -392,10 +404,12 @@ SpectrogramDisplayScroll4::AddSpectrogramLine(const WDL_TypedBuf<BL_FLOAT> &magn
     return;
 #endif
 
-    // NOTE: the size is varying, so can't use bl_queue::freeze()
+    // Add the new line to pending lines
     mSpectroMagns.push_back(magns);
     mSpectroPhases.push_back(phases);
- 
+
+    // Remove some pending lines if there are too many available
+    //
     // FIX: If the plugin was hidden, and the host playing,
     // mSpectroMagns and mSpectroPhases continued to grow, without being ever flushed
     // (big memory leak)
@@ -463,18 +477,20 @@ SpectrogramDisplayScroll4::GetScaleRatio()
 }
 
 void
-SpectrogramDisplayScroll4::AddSpectrogramLines(BL_FLOAT numLines)
+SpectrogramDisplayScroll4::AddPendingSpectrogramLines()
 {
 #if DBG_BYPASS_SMOOTH_SCROLL
     return;
 #endif
-    
-    // Keep the remainder, to add back later
-    int numLines0 = numLines + mAddLineRemainder;
-    
-    int numLinesAdded = 0;
-    while(mSpectroMagns.size() > 0)
+        
+    long int millis = BLUtils::GetTimeMillis();
+    BL_FLOAT currentTimeSec = (millis - mStartTimeMillis)*0.001;
+        
+    while(mSpectroTimeSec + mSpectroLineDurationSec < currentTimeSec + mDelayTimeSec)
     {
+        if (mSpectroMagns.empty())
+            break;
+        
         const WDL_TypedBuf<BL_FLOAT> &magns = mSpectroMagns[0];
         const WDL_TypedBuf<BL_FLOAT> &phases = mSpectroPhases[0];
         
@@ -484,17 +500,11 @@ SpectrogramDisplayScroll4::AddSpectrogramLines(BL_FLOAT numLines)
         mSpectroPhases.pop_front();
 
         //
-        mSpectroTime += mSpectroLineDurationSec;
-        
-        numLinesAdded++;
-        
-        if (numLinesAdded >= numLines0)
-            break;
+        mSpectroTimeSec += mSpectroLineDurationSec;
     }
-        
-    mAddLineRemainder += numLines - (int)numLines;
 }
 
+#if 0
 BL_FLOAT
 SpectrogramDisplayScroll4::ComputeScrollOffsetPixels(int width)
 {
@@ -596,6 +606,7 @@ SpectrogramDisplayScroll4::ComputeScrollOffsetPixels(int width)
     
     return offsetPixels;
 }
+#endif
 
 void
 SpectrogramDisplayScroll4::ResetQueues()
@@ -630,10 +641,20 @@ SpectrogramDisplayScroll4::RecomputeParams()
 
     int numCols0 = mSpectrogram->GetNumCols();
     mSpectroTotalDurationSec = numCols0*mSpectroLineDurationSec;
-        
-    mSpectroTime = 0.0;
+
+    mDelayTimeSec = mSpectroTotalDurationSec*mDelayPercent*0.01;
+    
+    mSpectroTimeSec = 0.0;
     long int millis = BLUtils::GetTimeMillis();
     mStartTimeMillis = millis;
+}
+
+BL_FLOAT
+SpectrogramDisplayScroll4::SecsToPixels(BL_FLOAT secs, BL_FLOAT width)
+{
+    BL_FLOAT pix = (secs/mSpectroTotalDurationSec)*width;
+
+    return pix;
 }
 
 #endif // IGRAPHICS_NANOVG
