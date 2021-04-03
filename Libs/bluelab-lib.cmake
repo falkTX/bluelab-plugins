@@ -529,6 +529,8 @@ set(_bluelab-lib_src
   PitchShiftFftObj3.cpp
   PitchShiftFftObj3.h
   PlaySelectPluginInterface.h
+  PlugBypassDetector.cpp
+  PlugBypassDetector.h
   PolarViz.cpp
   PolarViz.h
   portable_endian.h

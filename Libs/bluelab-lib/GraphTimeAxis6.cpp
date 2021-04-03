@@ -55,8 +55,6 @@ GraphTimeAxis6::GraphTimeAxis6(bool displayLines,
     mDisplayLines = displayLines;
     
     mSqueezeBorderLabels = squeezeBorderLabels;
-    
-    mMustUpdate = true;
 
     mAxisDataAllocated = false;
 }
@@ -156,27 +154,16 @@ GraphTimeAxis6::Update()
     if (!mTransportIsPlaying)
         return;
     
-    if (!mMustUpdate)
-        return;
-    
     long int now = BLUtils::GetTimeMillis();
     BL_FLOAT elapsed = (now - mTransportTimeStamp)*0.001;
     
     Update(mCurrentTimeTransport + elapsed);
-    
-    mMustUpdate = false;
 }
 
 void
 GraphTimeAxis6::SetTransportPlaying(bool flag)
 {
     mTransportIsPlaying = flag;
-}
-
-void
-GraphTimeAxis6::SetMustUpdate()
-{
-    mMustUpdate = true;
 }
 
 void

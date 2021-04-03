@@ -36,7 +36,7 @@
 // Test: to have simple behavior, without smooth scrolling
 #define DBG_BYPASS_SMOOTH_SCROLL 0 //1
 
-#define DEBUG_DUMP 1
+#define DEBUG_DUMP 0 //1
 
 SpectrogramDisplayScroll4::SpectrogramDisplayScroll4(Plugin *plug,
                                                      BL_FLOAT delayPercent)
@@ -430,6 +430,8 @@ void
 SpectrogramDisplayScroll4::SetSpeedMod(int speedMod)
 {
     mSpeedMod = speedMod;
+
+    RecomputeParams();
 }
 
 int

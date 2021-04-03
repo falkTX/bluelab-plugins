@@ -51,10 +51,6 @@ public:
     void UpdateFromTransport(BL_FLOAT currentTime);
     void Update();
     void SetTransportPlaying(bool flag);
-    
-    // Must be called from ProcessBlock(), to indicate
-    // that the plugin is not bypassed
-    void SetMustUpdate();
 
     // Time in seconds
     void GetMinMaxTime(BL_FLOAT *minTimeSec, BL_FLOAT *maxTimeSec);
@@ -82,8 +78,6 @@ protected:
     long int mTransportTimeStamp;
     
     bool mDisplayLines;
-    
-    bool mMustUpdate;
     
     bool mSqueezeBorderLabels;
 
