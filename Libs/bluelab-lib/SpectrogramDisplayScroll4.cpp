@@ -62,18 +62,7 @@ SpectrogramDisplayScroll4::SpectrogramDisplayScroll4(Plugin *plug,
     mSampleRate = 44100.0;
     mOverlapping = 0;
     
-    //mPrevSpectroLineNum = 0;
-    
-    //mPrevTimeMillis = UpTime::GetUpTime();
-    
-    //mLinesOffset = 0.0;
-    
-    //mAddLineRemainder = 0.0;
-    
     // Avoid jump when restarting playback
-    mPrevIsPlaying = false;
-    //mPrevPixelOffset = 0.0;
-    
     mIsPlaying = false;
     
     // Variable speed
@@ -110,14 +99,6 @@ SpectrogramDisplayScroll4::Reset()
     mNeedUpdateSpectrogramData = true;
     
     mNeedUpdateColormapData = true;
-    
-    //mPrevSpectroLineNum = 0;
-    
-    //mPrevTimeMillis = UpTime::GetUpTime();
-    
-    //mLinesOffset = 0.0;
-    
-    //mAddLineRemainder = 0.0;
 
     RecomputeParams();
     
@@ -130,17 +111,11 @@ SpectrogramDisplayScroll4::Reset()
 
 void
 SpectrogramDisplayScroll4::ResetScroll()
-{
-    //mLinesOffset = 0;
-    
+{    
     mSpectroMagns.clear();
     mSpectroPhases.clear();
 
-    ResetQueues(); //
-    
-    // Set to 0: no jump (but lag)
-    // Set to mOverlapping: avoid very big lag
-    //mAddLineRemainder = mOverlapping;
+    ResetQueues();
 
     RecomputeParams();
     
@@ -176,7 +151,6 @@ SpectrogramDisplayScroll4::DoUpdateSpectrogram()
     
     // Update first, before displaying
     if (!mNeedUpdateSpectrogram)
-        //return false;
         // Must return true, because the spectrogram scrolls over time
         // (for smooth scrolling), even if the data is not changed
         return true;
@@ -284,10 +258,14 @@ SpectrogramDisplayScroll4::PreDraw(NVGcontext *vg, int width, int height)
     // New: set colormap only in the spectrogram state
     nvgSetColormap(mVg, mNvgColormapImage);
 
-    //BL_FLOAT scrollOffsetPixels = ComputeScrollOffsetPixels(width);
-
-    BL_FLOAT offsetSec = GetOffsetSec();
-    BL_FLOAT offsetPixels = SecsToPixels(offsetSec, width);
+    BL_FLOAT offsetSec = 0.0;
+    BL_FLOAT offsetPixels = 0.0;
+    if (mIsPlaying)
+    {
+        offsetSec = GetOffsetSec();
+        offsetPixels = SecsToPixels(offsetSec, width);
+    }
+    
     //
     // Spectrogram image
     //
@@ -322,7 +300,7 @@ SpectrogramDisplayScroll4::PreDraw(NVGcontext *vg, int width, int height)
 
 #if DEBUG_DUMP // Debug 
     BLDebug::AppendValue("spectro-time0.txt", mSpectroTimeSec);
-    BLDebug::AppendValue("spectro-time1.txt", mSpectroTimeSec + offsetSec);
+    BLDebug::AppendValue("spectro-time1.txt", mSpectroTimeSec - offsetSec);
 
     long int millis = BLUtils::GetTimeMillis();
     BL_FLOAT currentTimeSec = (millis - mStartTimeMillis)*0.001;
@@ -357,13 +335,6 @@ SpectrogramDisplayScroll4::SetSpectrogram(BLSpectrogram4 *spectro,
     // Be sure to create the texture image in the right thread
     UpdateSpectrogram(true);
     
-    // Avoid scrolling over time at launch
-    // (until we get initial position)
-    //mPrevSpectroLineNum = mSpectrogram->GetTotalLineNum();
-    // Must set a value at the beginning
-    // (otherwise scrolling will be very slow with overlapping 4)
-    //mAddLineRemainder = mOverlapping;
-    
     // Check that it will be updated well when displaying
     mSpectrogram->TouchData();
     mSpectrogram->TouchColorMap();
@@ -381,13 +352,6 @@ SpectrogramDisplayScroll4::SetFftParams(int bufferSize,
     mBufferSize = bufferSize; 
     mOverlapping = overlapping;
     mSampleRate = sampleRate;
-    
-    //if (overlappingChanged)
-    //{
-    // Must set a value at the beginning
-    // (otherwise scrolling will be very slow with overlapping 4)
-    //    mAddLineRemainder = mOverlapping;
-    //}
 
     RecomputeParams();
 }
@@ -451,7 +415,14 @@ SpectrogramDisplayScroll4::UpdateColormap(bool flag)
 void
 SpectrogramDisplayScroll4::SetIsPlaying(bool flag)
 {
+    bool prevPlaying = mIsPlaying;
+    
     mIsPlaying = flag;
+
+    if (mIsPlaying != prevPlaying)
+    {
+        RecomputeParams();
+    }
 }
 
 // Variable speed
@@ -503,110 +474,6 @@ SpectrogramDisplayScroll4::AddPendingSpectrogramLines()
         mSpectroTimeSec += mSpectroLineDurationSec;
     }
 }
-
-#if 0
-BL_FLOAT
-SpectrogramDisplayScroll4::ComputeScrollOffsetPixels(int width)
-{
-#if DBG_BYPASS_SMOOTH_SCROLL
-    return 0.0;
-#endif
-    
-    // Elapsed time since last time
-    unsigned long long currentTimeMillis = UpTime::GetUpTime();
-    long long elapsedMillis = currentTimeMillis - mPrevTimeMillis;
-    mPrevTimeMillis = currentTimeMillis;
-    
-    // Special case: playback stopped
-    //
-    // If not playing, stop do not make the scrolling process
-    bool isPlaying = mIsPlaying;
-    if (!isPlaying)
-    {
-        mPrevIsPlaying = false;
-        
-        return mPrevPixelOffset;
-    }
-    
-    // Special case: playback just restarted
-    //
-    // Reset some things to avoid jumps in scrolling when restarting playback
-    //
-    if (!mPrevIsPlaying && isPlaying)
-    {
-        mLinesOffset = 0;
-        
-        // GOOD !
-        // Flush the previous data if we stopped the playback and just restarted it
-        // Avoids a big jump when restarting
-        //mSpectroMagns.unfreeze();
-        //mSpectroMagns.clear();
-
-        //mSpectroPhases.unfreeze();
-        //mSpectroPhases.clear();
-        
-        // Set to 0: no jump (but lag)
-        // Set to mOverlapping: avoid very big lag
-        mAddLineRemainder = mOverlapping;
-    }
-    
-    // Update
-    mPrevIsPlaying = isPlaying;
-    
-    // Do compute the offset
-    //
-    
-    // How many lines by second ?
-    BL_FLOAT lineSpeed = mOverlapping*mSampleRate/mBufferSize;
-    
-    // Variable speed
-    lineSpeed /= mSpeedMod;
-    
-    // Compute the offset in units "line"
-    BL_FLOAT offsetLine = lineSpeed*(((BL_FLOAT)elapsedMillis)/1000.0);
-    mLinesOffset -= offsetLine;
-    
-    // How many lines added
-    unsigned long long currentLineNum = mSpectrogram->GetTotalLineNum();
-    long long diffLineNum = currentLineNum - mPrevSpectroLineNum;
-    mPrevSpectroLineNum = currentLineNum;
-    
-    mLinesOffset += diffLineNum;
-    if (mLinesOffset < 0.0)
-        mLinesOffset = 0.0;
-    
-    // Compute the offset in units "pixels"
-    int numCols = mSpectrogram->GetNumCols();
-    
-    BL_FLOAT lineNumPixels = 0.0;
-    if (numCols > 0)
-        lineNumPixels = ((BL_FLOAT)width)/numCols;
-    
-    BL_FLOAT offsetPixels = mLinesOffset*lineNumPixels;
-    
-    // Add new data if we are shifted enpough
-    AddSpectrogramLines(mLinesOffset + 1);
-    
-    // Special case: scrolled too much
-    //
-    // Avoid scrolling too much on the right
-    // (for example when keeping the spacebar pressed)
-    // 1 col (as the spectrogram is scalled on the left to hide the black colums)
-    //
-    // Avoids time scrolling at startup with samplerate 88200Hz too.
-    if (offsetPixels > MARGIN_COEFF*lineNumPixels)
-    {
-        // Reset
-        offsetPixels = 0;
-        mLinesOffset = 0;
-        mAddLineRemainder = mOverlapping;
-    }
-    
-    mPrevPixelOffset = offsetPixels;
-    
-    return offsetPixels;
-}
-#endif
 
 void
 SpectrogramDisplayScroll4::ResetQueues()

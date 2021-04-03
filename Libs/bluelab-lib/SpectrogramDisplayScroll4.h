@@ -55,8 +55,6 @@ public:
     void PreDraw(NVGcontext *vg, int width, int height) override;
     bool IsOwnedByGraph() override { return true; }
     
-    // NeedRedraw() => always redraw!
-    
     // Spectrogram
     void SetSpectrogram(BLSpectrogram4 *spectro,
                         BL_FLOAT left, BL_FLOAT top, BL_FLOAT right, BL_FLOAT bottom);
@@ -73,7 +71,6 @@ public:
     void UpdateSpectrogram(bool flag);
     void UpdateColormap(bool flag);
     
-    // For Logic
     void SetIsPlaying(bool flag);
     
     // Variable speed
@@ -85,8 +82,6 @@ public:
     
 protected:
     void AddPendingSpectrogramLines();
-    
-    //BL_FLOAT ComputeScrollOffsetPixels(int width);
 
     void ResetQueues();
 
@@ -117,12 +112,9 @@ protected:
     int mBufferSize;
     int mOverlapping;
     BL_FLOAT mSampleRate;
-    //unsigned long long mPrevSpectroLineNum;
-    
-    //unsigned long long mPrevTimeMillis;
-    
-    // Offset for scrolling in "line" units
-    //BL_FLOAT mLinesOffset;
+
+    // Variable speed
+    int mSpeedMod;
     
     // Add progressively spectrogram lines
     //
@@ -131,20 +123,10 @@ protected:
     deque<WDL_TypedBuf<BL_FLOAT> > mSpectroMagns;
     deque<WDL_TypedBuf<BL_FLOAT> > mSpectroPhases;
     
-    //BL_FLOAT mAddLineRemainder;
-    
-    // Members to avoid jumps in scrolling when restarting playback
-    //
-    
     // Get reference to plug, to know if the plug is currently playing
     Plugin *mPlug;
-    bool mPrevIsPlaying;
-    //BL_FLOAT mPrevPixelOffset;
     
     bool mIsPlaying;
-    
-    // Variable speed
-    int mSpeedMod;
 
     //
     BL_FLOAT mDelayPercent;
