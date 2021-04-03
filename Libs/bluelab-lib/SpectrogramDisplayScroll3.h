@@ -11,8 +11,8 @@
 
 #ifdef IGRAPHICS_NANOVG
 
-#include <deque>
-using namespace std;
+//#include <deque>
+//using namespace std;
 
 #include <bl_queue.h>
 

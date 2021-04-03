@@ -443,6 +443,11 @@ GraphTimeAxis6::Update(BL_FLOAT currentTime)
         if (timeDuration > BL_EPS)
             //t = (tm - startTime)/timeDuration;
             t = (tm - startTime)*timeDurationInv;
+
+        // Do not fill the labls if out of bounds
+        // (will be useful later to not display nvgText if not label)
+        if ((t < 0.0) || (t > 1.0))
+            continue;
         
         sprintf(mHAxisData[i][0], "%g", t);
         

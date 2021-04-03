@@ -399,7 +399,8 @@ GraphFreqAxis2::UpdateAxis(int numAxisData,
         
         // We are over the sample rate, make empty label
         if ((freqs[i] < minHzValue) || (freqs[i] > maxHzValue))
-            sprintf(axisData[i*2 + 1], " ");
+            //sprintf(axisData[i*2 + 1], " ");
+            sprintf(axisData[i*2 + 1], "");
     }
 
     if (mGraphAxis != NULL)

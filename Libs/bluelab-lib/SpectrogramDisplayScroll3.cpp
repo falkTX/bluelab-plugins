@@ -344,13 +344,12 @@ SpectrogramDisplayScroll3::AddSpectrogramLine(const WDL_TypedBuf<BL_FLOAT> &magn
     if (mSpectroMagns.size() != bufferLimit)
     {
         mSpectroMagns.push_back(magns);
-        mSpectroPhases.push_back(phases);
-    
         while (mSpectroMagns.size() > bufferLimit)
         {
             mSpectroMagns.pop_front();
         }
-        
+
+        mSpectroPhases.push_back(phases);
         while (mSpectroPhases.size() > bufferLimit)
         {
             mSpectroPhases.pop_front();

@@ -389,6 +389,11 @@ GraphControl12::DrawText(NVGcontext *vg,
                          const char *text, int color[4],
                          int halign, int valign, BL_GUI_FLOAT fontSizeCoeff)
 {
+    // Optimization
+    // (avoid displaying many empty texts)
+    if (strlen(text) == 0)
+        return;
+    
     // Static method -> no mutex!
     
     nvgSave(vg);
@@ -967,7 +972,7 @@ GraphControl12::DrawAxis(GraphAxis2 *axis, bool horizontal, bool lineLabelFlag)
                                  NVG_ALIGN_CENTER, NVG_ALIGN_BOTTOM,
                                  axis->mFontSizeCoeff);
                     }
-                    
+                        
                     DrawText(x,
                              textOffset + axis->mOffsetY*height,
                              FONT_SIZE, text, axis->mLabelColor,
@@ -990,7 +995,7 @@ GraphControl12::DrawAxis(GraphAxis2 *axis, bool horizontal, bool lineLabelFlag)
                                  NVG_ALIGN_LEFT, NVG_ALIGN_BOTTOM,
                                  axis->mFontSizeCoeff);
                     }
-                    
+
                     // First text: aligne left
                     DrawText(x + textOffset,
                              textOffset + axis->mOffsetY*height, FONT_SIZE,
@@ -1141,7 +1146,7 @@ GraphControl12::DrawAxis(GraphAxis2 *axis, bool horizontal, bool lineLabelFlag)
                                  NVG_ALIGN_LEFT, NVG_ALIGN_BOTTOM,
                                  axis->mFontSizeCoeff);
                     }
-                    
+
                     DrawText(textOffset + axis->mOffsetX*width,
                              y + FONT_SIZE*0.75, FONT_SIZE, text,
                              axis->mLabelColor, NVG_ALIGN_LEFT, NVG_ALIGN_BOTTOM,
