@@ -757,6 +757,8 @@ set(_bluelab-lib_src
   SpectrogramDisplayScroll3.h
   SpectrogramDisplayScroll.cpp
   SpectrogramDisplayScroll.h
+  SpectrogramDisplayScroll4.cpp
+  SpectrogramDisplayScroll4.h
   SpectrogramFftObjEXPE.cpp
   SpectrogramFftObjEXPE.h
   SpectrogramFftObj.cpp
