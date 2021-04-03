@@ -24,6 +24,8 @@
 
 using namespace iplug;
 
+#define SPS3_DEBUG 0
+
 // From SpectrogramDisplay
 //
 // Removed specificities that were for Ghost
@@ -129,10 +131,10 @@ protected:
     // NOTE: can't really benefit from bl_queue
     // (we really need to pop, to decrease the list) sometimes
     //
-    //deque<WDL_TypedBuf<BL_FLOAT> > mSpectroMagns;
-    //deque<WDL_TypedBuf<BL_FLOAT> > mSpectroPhases;
-    bl_queue<WDL_TypedBuf<BL_FLOAT> > mSpectroMagns;
-    bl_queue<WDL_TypedBuf<BL_FLOAT> > mSpectroPhases;
+    deque<WDL_TypedBuf<BL_FLOAT> > mSpectroMagns;
+    deque<WDL_TypedBuf<BL_FLOAT> > mSpectroPhases;
+    //bl_queue<WDL_TypedBuf<BL_FLOAT> > mSpectroMagns;
+    //bl_queue<WDL_TypedBuf<BL_FLOAT> > mSpectroPhases;
     
     BL_FLOAT mAddLineRemainder;
     
@@ -149,6 +151,12 @@ protected:
     // Variable speed
     int mSpeedMod;
 
+#if SPS3_DEBUG
+    // Debug
+    BL_FLOAT mDbgSpectroTime;
+    long int mDbgStartTimeMillis;
+#endif
+    
 private:
     WDL_TypedBuf<unsigned int> mTmpBuf0;
 };

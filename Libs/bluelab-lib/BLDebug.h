@@ -50,6 +50,8 @@ public:
     template <typename FLOAT_TYPE>
     static void DumpValue(const char *filename, FLOAT_TYPE value);
     
+    static void ResetFile(const char *filename);
+    
     template <typename FLOAT_TYPE>
     static void AppendData(const char *filename, const FLOAT_TYPE *data, int size);
     

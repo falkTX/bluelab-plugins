@@ -172,6 +172,17 @@ BLDebug::DumpValue(const char *filename, FLOAT_TYPE value)
 template void BLDebug::DumpValue(const char *filename, float value);
 template void BLDebug::DumpValue(const char *filename, double value);
 
+void
+BLDebug::ResetFile(const char *filename)
+{
+    char fullFilename[MAX_PATH];
+    sprintf(fullFilename, BASE_FILE"%s", filename);
+    
+    FILE *file = fopen(fullFilename, "w");
+        
+    fclose(file);
+}
+
 template <typename FLOAT_TYPE>
 void
 BLDebug::AppendData(const char *filename, const FLOAT_TYPE *data, int size)

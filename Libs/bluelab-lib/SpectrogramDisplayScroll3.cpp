@@ -33,6 +33,9 @@
 // (increase of 2 pixels on the right)
 #define RIGHT_OFFSET 0.0025
 
+// Test: to have simple behavior, without smooth scrolling
+#define DBG_BYPASS_SMOOTH_SCROLL 0 //1
+
 SpectrogramDisplayScroll3::SpectrogramDisplayScroll3(Plugin *plug)
 {
     mPlug = plug;
@@ -72,6 +75,16 @@ SpectrogramDisplayScroll3::SpectrogramDisplayScroll3(Plugin *plug)
     
     // Variable speed
     mSpeedMod = 1;
+
+#if SPS3_DEBUG
+    // Debug
+    mDbgSpectroTime = 0.0;
+    long int millis = BLUtils::GetTimeMillis();
+    mDbgStartTimeMillis = millis;
+    BLDebug::ResetFile("spectro-time0.txt");
+    BLDebug::ResetFile("spectro-time1.txt");
+    BLDebug::ResetFile("time.txt");
+#endif
 }
 
 SpectrogramDisplayScroll3::~SpectrogramDisplayScroll3()
@@ -104,6 +117,15 @@ SpectrogramDisplayScroll3::Reset()
     mLinesOffset = 0.0;
     
     mAddLineRemainder = 0.0;
+
+#if SPS3_DEBUG
+    mDbgSpectroTime = 0.0;
+    long int millis = BLUtils::GetTimeMillis();
+    mDbgStartTimeMillis = millis;
+    BLDebug::ResetFile("spectro-time0.txt");
+    BLDebug::ResetFile("spectro-time1.txt");
+    BLDebug::ResetFile("time.txt");
+#endif
 }
 
 void
@@ -119,6 +141,15 @@ SpectrogramDisplayScroll3::ResetScroll()
     // Set to 0: no jump (but lag)
     // Set to mOverlapping: avoid very big lag
     mAddLineRemainder = mOverlapping;
+
+#if SPS3_DEBUG
+    mDbgSpectroTime = 0.0;
+    long int millis = BLUtils::GetTimeMillis();
+    mDbgStartTimeMillis = millis;
+    BLDebug::ResetFile("spectro-time0.txt");
+    BLDebug::ResetFile("spectro-time1.txt");
+    BLDebug::ResetFile("time.txt");
+#endif
 }
 
 bool
@@ -249,7 +280,8 @@ SpectrogramDisplayScroll3::PreDraw(NVGcontext *vg, int width, int height)
     // Display the rightmost par in case of zoom
     BL_FLOAT alpha = 1.0;
     NVGpaint imgPaint = nvgImagePattern(mVg,
-                                        mSpectrogramBounds[0]*width + scrollOffsetPixels,
+                                        mSpectrogramBounds[0]*width +
+                                        scrollOffsetPixels,
                                         mSpectrogramBounds[1]*height,
                                         (mSpectrogramBounds[2] - mSpectrogramBounds[0])*width,
                                         (mSpectrogramBounds[3] - mSpectrogramBounds[1])*height,
@@ -272,6 +304,22 @@ SpectrogramDisplayScroll3::PreDraw(NVGcontext *vg, int width, int height)
     nvgFill(mVg);
     
     nvgRestore(mVg);
+
+#if SPS3_DEBUG // Debug
+    BL_FLOAT lineTimeDuration =
+        mSpeedMod*((BL_FLOAT)mBufferSize/mOverlapping)/mSampleRate;
+    int numCols0 = mSpectrogram->GetNumCols();
+    BL_FLOAT spectroDuration = numCols0*lineTimeDuration;
+    BL_FLOAT pixelTime = spectroDuration/width;
+    BL_FLOAT scrollOffsetTime = scrollOffsetPixels*pixelTime;
+    BLDebug::AppendValue("spectro-time0.txt", mDbgSpectroTime);
+    BLDebug::AppendValue("spectro-time1.txt", mDbgSpectroTime + scrollOffsetTime);
+
+    long int millis = BLUtils::GetTimeMillis();
+    BL_FLOAT t = (millis - mDbgStartTimeMillis)*0.001;
+
+    BLDebug::AppendValue("time.txt", t);
+#endif
 }
 
 void
@@ -335,37 +383,31 @@ void
 SpectrogramDisplayScroll3::AddSpectrogramLine(const WDL_TypedBuf<BL_FLOAT> &magns,
                                               const WDL_TypedBuf<BL_FLOAT> &phases)
 {
+#if DBG_BYPASS_SMOOTH_SCROLL
+    mSpectrogram->AddLine(magns, phases);
+
+    BL_FLOAT lineTimeDuration =
+        mSpeedMod*((BL_FLOAT)mBufferSize/mOverlapping)/mSampleRate;
+    
+    mDbgSpectroTime += lineTimeDuration;
+        
+    return;
+#endif
+
+    // NOTE: the size is varying, so can't use bl_queue::freeze()
+    mSpectroMagns.push_back(magns);
+    mSpectroPhases.push_back(phases);
+ 
     // FIX: If the plugin was hidden, and the host playing,
     // mSpectroMagns and mSpectroPhases continued to grow, without being ever flushed
     // (big memory leak)
     int maxCols = mSpectrogram->GetMaxNumCols();
     int bufferLimit = maxCols*2;
-
-    if (mSpectroMagns.size() != bufferLimit)
+    while (mSpectroMagns.size() > bufferLimit)
     {
-        mSpectroMagns.push_back(magns);
-        while (mSpectroMagns.size() > bufferLimit)
-        {
-            mSpectroMagns.pop_front();
-        }
-
-        mSpectroPhases.push_back(phases);
-        while (mSpectroPhases.size() > bufferLimit)
-        {
-            mSpectroPhases.pop_front();
-        }
+        mSpectroMagns.pop_front();
+        mSpectroPhases.pop_front();
     }
-    else
-    {
-        mSpectroMagns.freeze();
-        mSpectroMagns.push_pop(magns);
-
-        mSpectroMagns.freeze();
-        mSpectroPhases.push_pop(phases);
-    }
-
-    //mSpectroMagns.push_pop(magns);
-    //mSpectroPhases.push_pop(phases);
 }
 
 void
@@ -425,32 +467,47 @@ SpectrogramDisplayScroll3::GetScaleRatio()
 void
 SpectrogramDisplayScroll3::AddSpectrogramLines(BL_FLOAT numLines)
 {
+#if DBG_BYPASS_SMOOTH_SCROLL
+    return;
+#endif
+    
     // Keep the remainder, to add back later
     int numLines0 = numLines + mAddLineRemainder;
     
     int numLinesAdded = 0;
-    while (mSpectroMagns.size() > 0)
+    while(mSpectroMagns.size() > 0)
     {
         const WDL_TypedBuf<BL_FLOAT> &magns = mSpectroMagns[0];
         const WDL_TypedBuf<BL_FLOAT> &phases = mSpectroPhases[0];
         
         mSpectrogram->AddLine(magns, phases);
-        
+
         mSpectroMagns.pop_front();
         mSpectroPhases.pop_front();
+
+#if SPS3_DEBUG
+        // Debug
+        BL_FLOAT lineTimeDuration =
+            mSpeedMod*((BL_FLOAT)mBufferSize/mOverlapping)/mSampleRate;
+        mDbgSpectroTime += lineTimeDuration;
+#endif
         
         numLinesAdded++;
         
         if (numLinesAdded >= numLines0)
             break;
     }
-    
+        
     mAddLineRemainder += numLines - (int)numLines;
 }
 
 BL_FLOAT
 SpectrogramDisplayScroll3::ComputeScrollOffsetPixels(int width)
 {
+#if DBG_BYPASS_SMOOTH_SCROLL
+    return 0.0;
+#endif
+    
     // Elapsed time since last time
     unsigned long long currentTimeMillis = UpTime::GetUpTime();
     long long elapsedMillis = currentTimeMillis - mPrevTimeMillis;
@@ -478,11 +535,11 @@ SpectrogramDisplayScroll3::ComputeScrollOffsetPixels(int width)
         // GOOD !
         // Flush the previous data if we stopped the playback and just restarted it
         // Avoids a big jump when restarting
-        mSpectroMagns.unfreeze();
-        mSpectroMagns.clear();
+        //mSpectroMagns.unfreeze();
+        //mSpectroMagns.clear();
 
-        mSpectroPhases.unfreeze();
-        mSpectroPhases.clear();
+        //mSpectroPhases.unfreeze();
+        //mSpectroPhases.clear();
         
         // Set to 0: no jump (but lag)
         // Set to mOverlapping: avoid very big lag
@@ -561,11 +618,17 @@ SpectrogramDisplayScroll3::ResetQueues()
     zeroLine.Resize(mBufferSize/2);
     BLUtils::FillAllZero(&zeroLine);
 
-    mSpectroMagns.freeze();
-    mSpectroMagns.clear(zeroLine);
+    //mSpectroMagns.freeze();
+    //mSpectroMagns.clear(zeroLine);
 
-    mSpectroPhases.freeze();
-    mSpectroPhases.clear(zeroLine);
+    //mSpectroPhases.freeze();
+    //mSpectroPhases.clear(zeroLine);
+
+    for (int i = 0; i < bufferLimit; i++)
+    {
+        mSpectroMagns[i] = zeroLine;
+        mSpectroPhases[i] = zeroLine;
+    }
 #endif
 }
 
