@@ -104,7 +104,8 @@ SimpleInpaintPolar3::ProcessBothDir(WDL_TypedBuf<BL_FLOAT> *magns,
     ProcessPhasesVertCombined(magns1, &phases1, width, height);
 
     // Naive method: simply mix the two results
-    BLUtilsComp::InterpComp(magns0, phases0, magns1, phases1, 0.5, magns, phases);
+    BLUtilsComp::InterpComp(magns0, phases0, magns1, phases1,
+                            (BL_FLOAT)0.5, magns, phases);
 }
 
 void

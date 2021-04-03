@@ -363,8 +363,9 @@ WriteSpectroDataSlice(vector<WDL_TypedBuf<BL_FLOAT> > magns[2],
                 (leftFadeMax < (*mSamples)[i].GetSize()))
             {
                 BLUtilsFade::Fade2Left(dst, src, bufSize,
-                                       fadeStartPos, fadeEndPos, 1.0, 0.0,
-                                       SIGMO_A);
+                                       fadeStartPos, fadeEndPos,
+                                       (BL_FLOAT)1.0, (BL_FLOAT)0.0,
+                                       (BL_FLOAT)SIGMO_A);
             }
 
             // Right fade
@@ -374,8 +375,9 @@ WriteSpectroDataSlice(vector<WDL_TypedBuf<BL_FLOAT> > magns[2],
                 (rightFadeMax < (*mSamples)[i].GetSize()))
             {
                 BLUtilsFade::Fade2Right(dst, src, bufSize,
-                                        fadeStartPos, fadeEndPos, 1.0, 0.0,
-                                        SIGMO_A);
+                                        fadeStartPos, fadeEndPos,
+                                        (BL_FLOAT)1.0, (BL_FLOAT)0.0,
+                                        (BL_FLOAT)SIGMO_A);
             }
             
         }
