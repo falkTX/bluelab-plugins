@@ -65,7 +65,8 @@ GhostViewerFftObj::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer0,
 }
 
 void
-GhostViewerFftObj::Reset(int bufferSize, int oversampling, int freqRes, BL_FLOAT sampleRate)
+GhostViewerFftObj::Reset(int bufferSize, int oversampling,
+                         int freqRes, BL_FLOAT sampleRate)
 {
     ProcessObj::Reset(bufferSize, oversampling, freqRes, sampleRate);
     
@@ -128,9 +129,16 @@ GhostViewerFftObj::AddSpectrogramLine(const WDL_TypedBuf<BL_FLOAT> &magns,
         
     // Keep track of previous lines
     // For correctly display, with overlapping
-    mOverlapLines.push_back(magns);
+    /*mOverlapLines.push_back(magns);
     if (mOverlapLines.size() > maxLines)
-        mOverlapLines.pop_front();
+    mOverlapLines.pop_front();*/
+    if (mOverlapLines.size() < maxLines)
+        mOverlapLines.push_back(magns);
+    else
+    {
+        mOverlapLines.freeze();
+        mOverlapLines.push_pop(magns);
+    }
     
     // Simply make the average of the previous lines
     WDL_TypedBuf<BL_FLOAT> &line = mTmpBuf3;

@@ -9,6 +9,8 @@
 #ifndef __BL_GhostViewer__GhostViewerFftObj__
 #define __BL_GhostViewer__GhostViewerFftObj__
 
+#include <bl_queue.h>
+
 #include <BLTypes.h>
 
 #include <FftProcessObj16.h>
@@ -50,7 +52,8 @@ protected:
     
     long mLineCount;
     
-    deque<WDL_TypedBuf<BL_FLOAT> > mOverlapLines;
+    //deque<WDL_TypedBuf<BL_FLOAT> > mOverlapLines;
+    bl_queue<WDL_TypedBuf<BL_FLOAT> > mOverlapLines;
     
     int mSpeedMod;
 
