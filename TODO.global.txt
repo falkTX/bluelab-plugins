@@ -299,10 +299,14 @@ SmoothCurveDb => additional arg: sampleRate
 - TODO(all): should use BLUtils::Fades with sigmoid (see Ghost) => far better!
 - TODO(all): do not use DecimateSamples2() => use DecimateSamples() or DecimateSamples3(). (we use it at least in Graphcurve5)
 - TODO: check log scale (with many lines, w/ gamma = 1)
-
-- TODO: set bevel for all curves
+- TODO(all): check all plugins that they use Scale with FilterBank
+(e.g a freq curve, we can apply filter bank on x axis, to avoid calling log())
+(and we won't have to decimate curve, this is automatic)
+(maybe it will be necessary to add a Scale/FilterBank mode, for log "factor")
+- TODO(all): set bevel for all curves
 - TODO for all plugs at the end: pass thread sanitizer & undefined behavior sanitizer & address sanitizer
-
+- TODO: for BLSpectrogram4, use the "closest" phase unwrapping (used in Ghost inpaint)
+for PArtialTracker5 too
 - TODO: for all plugins, check that the display is not redisplayed every time (with debug blinking rectangles). check that is only displayed whn there is new data.
 
 ------- Design:
@@ -373,16 +377,8 @@ https://github.com/tne-lab/phase-calculator/tree/e7569499c49ba7dff7db2a7d93a1b89
 LPC (linear predictive coding):
 http://support.ircam.fr/docs/AudioSculpt/3.0/co/LPC.html
 
-TODO: for BLSpectrogram4, use the "closest" phase unwrapping (used in Ghost inpaint)
-for PArtialTracker5 too
-
 BUG: click and turn knob: the mouse pointer is captured
 -> but sometimes it is not released quickly! (on plugins that consumes lot of resources, like Rebalance)
 
 Design: gradient, use gradient in the corner? like https://canonical.com/
 (instead of from up to down)
-
-- TODO: check all plugins that they use Scale with FilterBank
-(e.g a freq curve, we can apply filter bank on x axis, to avoid calling log())
-(and we won't have to decimate curve, this is automatic)
-(maybe it will be necessary to add a Scale/FilterBank mode, for log "factor")

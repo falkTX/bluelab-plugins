@@ -21,7 +21,7 @@ BL-OnsetDetect	    :
 BL-Panogram	    :
 BL-PitchShift	    :
 BL-Precedence	    :
-BL-Rebalance	    :	todo
+BL-Rebalance	    :	wip: model is training
 BL-Reverb	    :
 BL-ReverbDepth	    :
 BL-SampleDelay	    :
