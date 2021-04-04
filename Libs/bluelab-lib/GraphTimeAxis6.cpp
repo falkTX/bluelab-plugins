@@ -14,6 +14,8 @@
 #include <BLUtils.h>
 #include <BLUtilsMath.h>
 
+#include <BLDebug.h>
+
 #include <Scale.h>
 
 #include <GraphControl12.h>
@@ -41,6 +43,9 @@
 
 #define ROUND_TO_INT_LABELS 1
 
+// Check scrolling smothness
+#define DEBUG_DUMP 0 //1
+
 GraphTimeAxis6::GraphTimeAxis6(bool displayLines,
                                bool squeezeBorderLabels)
 {
@@ -57,6 +62,12 @@ GraphTimeAxis6::GraphTimeAxis6(bool displayLines,
     mSqueezeBorderLabels = squeezeBorderLabels;
 
     mAxisDataAllocated = false;
+
+#if DEBUG_DUMP
+    mDbgStartTimeMillis = BLUtils::GetTimeMillis();
+    BLDebug::ResetFile("axis-time.txt");
+    BLDebug::ResetFile("time.txt");
+#endif
 }
 
 GraphTimeAxis6::~GraphTimeAxis6()
@@ -136,6 +147,12 @@ GraphTimeAxis6::Reset(int bufferSize, BL_FLOAT timeDuration,
     //Update(spacingSeconds*SS_COEFF);
     Update(oneLabelSeconds*SS_COEFF);
 #endif
+
+#if DEBUG_DUMP
+    mDbgStartTimeMillis = BLUtils::GetTimeMillis();
+    BLDebug::ResetFile("axis-time.txt");
+    BLDebug::ResetFile("time.txt");
+#endif
 }
 
 void
@@ -158,11 +175,29 @@ GraphTimeAxis6::Update()
     BL_FLOAT elapsed = (now - mTransportTimeStamp)*0.001;
     
     Update(mCurrentTimeTransport + elapsed);
+
+#if DEBUG_DUMP
+    BLDebug::AppendValue("axis-time.txt", mCurrentTimeTransport + elapsed);
+        
+    unsigned long millis = BLUtils::GetTimeMillis();
+    BL_FLOAT currentTimeSec = (millis - mDbgStartTimeMillis)*0.01;
+
+    BLDebug::AppendValue("time.txt", currentTimeSec);
+#endif
 }
 
 void
 GraphTimeAxis6::SetTransportPlaying(bool flag)
 {
+#if DEBUG_DUMP
+    if (mTransportIsPlaying != flag)
+    {
+        mDbgStartTimeMillis = BLUtils::GetTimeMillis();
+        BLDebug::ResetFile("axis-time.txt");
+        BLDebug::ResetFile("time.txt");
+    }
+#endif
+    
     mTransportIsPlaying = flag;
 }
 

@@ -83,6 +83,9 @@ protected:
 
     char *mHAxisData[MAX_NUM_LABELS][2];
     bool mAxisDataAllocated;
+
+    // Debug
+    long int mDbgStartTimeMillis;
 };
 
 #endif
