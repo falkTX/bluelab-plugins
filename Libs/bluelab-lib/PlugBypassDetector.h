@@ -12,12 +12,14 @@ class PlugBypassDetector
     virtual ~PlugBypassDetector();
 
     void Touch();
+    void SetTransportPlaying(bool flag);
     bool PlugIsBypassed();
 
  protected:
     int mDelayMs;
     
     long int mPrevTouchTime;
+    bool mIsPlaying;
 };
 
 #endif

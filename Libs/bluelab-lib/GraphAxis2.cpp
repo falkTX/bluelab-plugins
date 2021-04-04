@@ -58,6 +58,8 @@ GraphAxis2::GraphAxis2()
 
     // align by default
     mAlignToScreenPixels = true;
+
+    mOffsetPixels = 0.0;
 }
 
 GraphAxis2::~GraphAxis2()
@@ -199,6 +201,12 @@ void
 GraphAxis2::SetAlignToScreenPixels(bool flag)
 {
     mAlignToScreenPixels = flag;
+}
+
+void
+GraphAxis2::SetOffsetPixels(BL_FLOAT offsetPixels)
+{
+    mOffsetPixels = offsetPixels;
 }
 
 void

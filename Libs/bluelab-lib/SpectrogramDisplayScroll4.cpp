@@ -24,7 +24,7 @@
 // Test: to have simple behavior, without smooth scrolling
 #define DBG_BYPASS_SMOOTH_SCROLL 0 //1
 
-#define DEBUG_DUMP 0 //1
+#define DEBUG_DUMP 1 //0 //1
 
 SpectrogramDisplayScroll4::SpectrogramDisplayScroll4(Plugin *plug,
                                                      BL_FLOAT delayPercent)
@@ -61,7 +61,7 @@ SpectrogramDisplayScroll4::SpectrogramDisplayScroll4(Plugin *plug,
 #if DEBUG_DUMP
     BLDebug::ResetFile("spectro-time0.txt");
     BLDebug::ResetFile("spectro-time1.txt");
-    BLDebug::ResetFile("time.txt");
+    BLDebug::ResetFile("s-time.txt");
 #endif
 }
 
@@ -93,7 +93,7 @@ SpectrogramDisplayScroll4::Reset()
 #if DEBUG_DUMP
     BLDebug::ResetFile("spectro-time0.txt");
     BLDebug::ResetFile("spectro-time1.txt");
-    BLDebug::ResetFile("time.txt");
+    BLDebug::ResetFile("s-time.txt");
 #endif
 }
 
@@ -110,19 +110,44 @@ SpectrogramDisplayScroll4::ResetScroll()
 #if DEBUG_DUMP
     BLDebug::ResetFile("spectro-time0.txt");
     BLDebug::ResetFile("spectro-time1.txt");
-    BLDebug::ResetFile("time.txt");
+    BLDebug::ResetFile("s-time.txt");
 #endif
 }
 
 BL_FLOAT
 SpectrogramDisplayScroll4::GetOffsetSec()
 {
-    long int millis = BLUtils::GetTimeMillis();
-    BL_FLOAT currentTimeSec = (millis - mStartTimeMillis)*0.001;
+    BL_FLOAT currentTimeSec = (mCurrentTimeMillis - mStartTimeMillis)*0.001;
 
     BL_FLOAT offset = mSpectroTimeSec - currentTimeSec;
-
+    
     return offset;
+}
+
+void
+SpectrogramDisplayScroll4::UpdateCurrentTimeMillis()
+{
+    mCurrentTimeMillis = BLUtils::GetTimeMillis();
+}
+
+BL_FLOAT
+SpectrogramDisplayScroll4::GetOffsetPixels()
+{
+    if (mWidth < 0)
+        return 0.0;
+    
+    BL_FLOAT offsetSec = GetOffsetSec();
+    BL_FLOAT offsetPix = SecsToPixels(offsetSec, mWidth);
+
+    return offsetPix;
+}
+
+// Centralize the current time, to ping it only once
+// at each loop, just before draw
+long int
+SpectrogramDisplayScroll4::GetCurrentTimeMillis()
+{
+    return mCurrentTimeMillis;
 }
 
 bool
@@ -232,7 +257,10 @@ void
 SpectrogramDisplayScroll4::PreDraw(NVGcontext *vg, int width, int height)
 {
     mVg = vg;
+    mWidth = width;
 
+    UpdateCurrentTimeMillis();
+    
     AddPendingSpectrogramLines();
     
     DoUpdateSpectrogram();
@@ -293,7 +321,7 @@ SpectrogramDisplayScroll4::PreDraw(NVGcontext *vg, int width, int height)
     long int millis = BLUtils::GetTimeMillis();
     BL_FLOAT currentTimeSec = (millis - mStartTimeMillis)*0.001;
 
-    BLDebug::AppendValue("time.txt", currentTimeSec);
+    BLDebug::AppendValue("s-time.txt", currentTimeSec);
 #endif
 }
 
@@ -403,7 +431,7 @@ SpectrogramDisplayScroll4::UpdateColormap(bool flag)
 }
 
 void
-SpectrogramDisplayScroll4::SetIsPlaying(bool flag)
+SpectrogramDisplayScroll4::SetTransportPlaying(bool flag)
 {
     bool prevPlaying = mIsPlaying;
     
@@ -445,8 +473,8 @@ SpectrogramDisplayScroll4::AddPendingSpectrogramLines()
     return;
 #endif
         
-    long int millis = BLUtils::GetTimeMillis();
-    BL_FLOAT currentTimeSec = (millis - mStartTimeMillis)*0.001;
+    //long int millis = BLUtils::GetTimeMillis();
+    BL_FLOAT currentTimeSec = (mCurrentTimeMillis - mStartTimeMillis)*0.001;
         
     while(mSpectroTimeSec + mSpectroLineDurationSec < currentTimeSec + mDelayTimeSec)
     {
@@ -503,8 +531,19 @@ SpectrogramDisplayScroll4::RecomputeParams()
     mDelayTimeSec = mSpectroTotalDurationSec*mDelayPercent*0.01;
     
     mSpectroTimeSec = 0.0;
-    long int millis = BLUtils::GetTimeMillis();
-    mStartTimeMillis = millis;
+    //long int millis = BLUtils::GetTimeMillis();
+    //mStartTimeMillis = millis;
+    //mCurrentTimeMillis = millis;
+    UpdateCurrentTimeMillis();
+    mStartTimeMillis = mCurrentTimeMillis;
+    
+    mWidth = -1.0;
+
+#if DEBUG_DUMP
+    BLDebug::ResetFile("spectro-time0.txt");
+    BLDebug::ResetFile("spectro-time1.txt");
+    BLDebug::ResetFile("s-time.txt");
+#endif
 }
 
 BL_FLOAT

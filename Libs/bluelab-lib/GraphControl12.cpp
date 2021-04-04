@@ -905,7 +905,9 @@ GraphControl12::DrawAxis(GraphAxis2 *axis, bool horizontal, bool lineLabelFlag)
             // Do not scale to db or log here, this is done somewhere else!
             
             BL_GUI_FLOAT x = t*width;
-            BL_GUI_FLOAT xLabels = x;
+
+            BL_GUI_FLOAT xLabel = x;
+            xLabel += axis->mOffsetPixels;
             
             if ((i > 0) && (i < axis->mValues.size() - 1))
             {
@@ -931,7 +933,7 @@ GraphControl12::DrawAxis(GraphAxis2 *axis, bool horizontal, bool lineLabelFlag)
 
 #if ALIGN_AXES_LABELS_TO_PIX
                     if (axis->mAlignToScreenPixels)
-                        xLabels = (int)xLabels;
+                        xLabel = (int)xLabel;
 #endif
                     
                     nvgMoveTo(mVg, x, y0f);
@@ -975,7 +977,7 @@ GraphControl12::DrawAxis(GraphAxis2 *axis, bool horizontal, bool lineLabelFlag)
                     if (axis->mOverlay)
                     {
                         // Draw background text (for overlay)
-                        DrawText(xLabels + OVERLAY_OFFSET,
+                        DrawText(xLabel + OVERLAY_OFFSET,
                                  textOffset + axis->mOffsetY*height + OVERLAY_OFFSET,
                                  FONT_SIZE, text,
                                  axis->mLabelOverlayColor,
@@ -983,7 +985,7 @@ GraphControl12::DrawAxis(GraphAxis2 *axis, bool horizontal, bool lineLabelFlag)
                                  axis->mFontSizeCoeff);
                     }
                         
-                    DrawText(xLabels,
+                    DrawText(xLabel,
                              textOffset + axis->mOffsetY*height,
                              FONT_SIZE, text, axis->mLabelColor,
                              NVG_ALIGN_CENTER, NVG_ALIGN_BOTTOM,
@@ -998,7 +1000,7 @@ GraphControl12::DrawAxis(GraphAxis2 *axis, bool horizontal, bool lineLabelFlag)
                     if (axis->mOverlay)
                     {
                         // Draw background text (for overlay)
-                        DrawText(xLabels + textOffset + OVERLAY_OFFSET,
+                        DrawText(xLabel + textOffset + OVERLAY_OFFSET,
                                  textOffset + axis->mOffsetY*height + OVERLAY_OFFSET,
                                  FONT_SIZE, text,
                                  axis->mLabelOverlayColor,
@@ -1007,7 +1009,7 @@ GraphControl12::DrawAxis(GraphAxis2 *axis, bool horizontal, bool lineLabelFlag)
                     }
 
                     // First text: aligne left
-                    DrawText(xLabels + textOffset,
+                    DrawText(xLabel + textOffset,
                              textOffset + axis->mOffsetY*height, FONT_SIZE,
                              text, axis->mLabelColor,
                              NVG_ALIGN_LEFT, NVG_ALIGN_BOTTOM,
@@ -1019,7 +1021,7 @@ GraphControl12::DrawAxis(GraphAxis2 *axis, bool horizontal, bool lineLabelFlag)
                     if (axis->mOverlay)
                     {
                         // Draw background text (for overlay)
-                        DrawText(xLabels - textOffset + OVERLAY_OFFSET,
+                        DrawText(xLabel - textOffset + OVERLAY_OFFSET,
                                  textOffset + axis->mOffsetY*height + OVERLAY_OFFSET,
                                  FONT_SIZE, text,
                                  axis->mLabelOverlayColor,
@@ -1028,7 +1030,7 @@ GraphControl12::DrawAxis(GraphAxis2 *axis, bool horizontal, bool lineLabelFlag)
                     }
                     
                     // Last text: aligne right
-                    DrawText(xLabels - textOffset,
+                    DrawText(xLabel - textOffset,
                              textOffset + axis->mOffsetY*height,
                              FONT_SIZE, text, axis->mLabelColor,
                              NVG_ALIGN_RIGHT, NVG_ALIGN_BOTTOM,
@@ -1054,7 +1056,8 @@ GraphControl12::DrawAxis(GraphAxis2 *axis, bool horizontal, bool lineLabelFlag)
             //y += axis->mOffsetY; // For Ghost
             y += axis->mOffsetY*height; // For Ghost
 
-            BL_GUI_FLOAT yLabels = y;
+            BL_GUI_FLOAT yLabel = y;
+            yLabel += axis->mOffsetPixels;
             
             if ((i > 0) && (i < axis->mValues.size() - 1))
                 // First and last: don't draw axis line
@@ -1076,7 +1079,7 @@ GraphControl12::DrawAxis(GraphAxis2 *axis, bool horizontal, bool lineLabelFlag)
 
 #if ALIGN_AXES_LABELS_TO_PIX
                     if (axis->mAlignToScreenPixels)
-                        yLabels = (int)yLabels;
+                        yLabel = (int)yLabel;
 #endif
                     
                     BL_GUI_FLOAT yf = y;
@@ -1132,7 +1135,7 @@ GraphControl12::DrawAxis(GraphAxis2 *axis, bool horizontal, bool lineLabelFlag)
                         // Draw background text (for overlay)
                         //DrawText(textOffset + axis->mOffsetX + OVERLAY_OFFSET,
                         DrawText(textOffset + axis->mOffsetX*width + OVERLAY_OFFSET,
-                                 yLabels + OVERLAY_OFFSET,
+                                 yLabel + OVERLAY_OFFSET,
                                  FONT_SIZE, text, axis->mLabelOverlayColor,
                                  align | NVG_ALIGN_MIDDLE, NVG_ALIGN_BOTTOM,
                                  axis->mFontSizeCoeff);
@@ -1140,7 +1143,7 @@ GraphControl12::DrawAxis(GraphAxis2 *axis, bool horizontal, bool lineLabelFlag)
                     
                     //DrawText(textOffset + axis->mOffsetX,
                     DrawText(textOffset + axis->mOffsetX*width,
-                             yLabels, FONT_SIZE, text,
+                             yLabel, FONT_SIZE, text,
                              axis->mLabelColor,
                              align | NVG_ALIGN_MIDDLE,
                              NVG_ALIGN_BOTTOM,
@@ -1158,14 +1161,14 @@ GraphControl12::DrawAxis(GraphAxis2 *axis, bool horizontal, bool lineLabelFlag)
                         // Draw background text (for overlay)
                         //DrawText(textOffset + axis->mOffsetX + OVERLAY_OFFSET,
                         DrawText(textOffset + axis->mOffsetX*width + OVERLAY_OFFSET,
-                                 yLabels + FONT_SIZE*0.75 + OVERLAY_OFFSET,
+                                 yLabel + FONT_SIZE*0.75 + OVERLAY_OFFSET,
                                  FONT_SIZE, text, axis->mLabelOverlayColor,
                                  NVG_ALIGN_LEFT, NVG_ALIGN_BOTTOM,
                                  axis->mFontSizeCoeff);
                     }
 
                     DrawText(textOffset + axis->mOffsetX*width,
-                             yLabels + FONT_SIZE*0.75, FONT_SIZE, text,
+                             yLabel + FONT_SIZE*0.75, FONT_SIZE, text,
                              axis->mLabelColor, NVG_ALIGN_LEFT, NVG_ALIGN_BOTTOM,
                              axis->mFontSizeCoeff);
                 }
@@ -1177,14 +1180,14 @@ GraphControl12::DrawAxis(GraphAxis2 *axis, bool horizontal, bool lineLabelFlag)
                     {
                         // Draw background text (for overlay)
                         DrawText(textOffset + axis->mOffsetX*width + OVERLAY_OFFSET,
-                                 yLabels - FONT_SIZE*1.5 + OVERLAY_OFFSET,
+                                 yLabel - FONT_SIZE*1.5 + OVERLAY_OFFSET,
                                  FONT_SIZE, text, axis->mLabelOverlayColor,
                                  NVG_ALIGN_LEFT, NVG_ALIGN_BOTTOM,
                                  axis->mFontSizeCoeff);
                     }
                     
                     DrawText(textOffset + axis->mOffsetX*width,
-                             yLabels - FONT_SIZE*1.5, FONT_SIZE, text,
+                             yLabel - FONT_SIZE*1.5, FONT_SIZE, text,
                              axis->mLabelColor, NVG_ALIGN_LEFT, NVG_ALIGN_BOTTOM,
                              axis->mFontSizeCoeff);
                 }

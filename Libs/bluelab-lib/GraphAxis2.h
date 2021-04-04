@@ -55,6 +55,8 @@ public:
     void SetBounds(BL_FLOAT bounds[2]);
 
     void SetAlignToScreenPixels(bool flag);
+
+    void SetOffsetPixels(BL_FLOAT offsetPixels);
     
 protected:
     friend class GraphControl12;
@@ -115,6 +117,9 @@ protected:
     Scale *mScale;
 
     bool mAlignToScreenPixels;
+
+    // For time axis scroll
+    BL_FLOAT mOffsetPixels;
 };
 
 #endif

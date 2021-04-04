@@ -20,6 +20,8 @@
 
 #include <GraphControl12.h>
 
+#include <PixelOffsetProvider.h>
+
 #include "GraphTimeAxis6.h"
 
 // FIX: Clear the time axis if we change the time window
@@ -44,7 +46,7 @@
 #define ROUND_TO_INT_LABELS 1
 
 // Check scrolling smothness
-#define DEBUG_DUMP 0 //1
+#define DEBUG_DUMP 1 //0 //1
 
 GraphTimeAxis6::GraphTimeAxis6(bool displayLines,
                                bool squeezeBorderLabels)
@@ -55,7 +57,7 @@ GraphTimeAxis6::GraphTimeAxis6(bool displayLines,
     
     mTransportIsPlaying = false;
     mCurrentTimeTransport = 0.0;
-    mTransportTimeStamp = 0;
+    mLastTransportTimeMillis = 0;
     
     mDisplayLines = displayLines;
     
@@ -63,10 +65,13 @@ GraphTimeAxis6::GraphTimeAxis6(bool displayLines,
 
     mAxisDataAllocated = false;
 
+    mPixOffsetProvider = NULL;
+    
 #if DEBUG_DUMP
     mDbgStartTimeMillis = BLUtils::GetTimeMillis();
     BLDebug::ResetFile("axis-time.txt");
-    BLDebug::ResetFile("time.txt");
+    BLDebug::ResetFile("a-time.txt");
+    BLDebug::ResetFile("transport.txt");
 #endif
 }
 
@@ -80,6 +85,12 @@ GraphTimeAxis6::~GraphTimeAxis6()
             delete []mHAxisData[i][1];
         }
     }
+}
+
+void
+GraphTimeAxis6::SetPixelOffsetProvider(PixelOffsetProvider *provider)
+{
+    mPixOffsetProvider = provider;
 }
 
 void
@@ -123,6 +134,10 @@ GraphTimeAxis6::Init(GraphControl12 *graph,
                           //yOffset, 0.0,
                           0.0, yOffset,
                           axisLabelOverlayColor);
+
+#if DEBUG_DUMP
+    mDbgStartTimeMillis = BLUtils::GetTimeMillis();
+#endif
 }
 
 void
@@ -151,7 +166,8 @@ GraphTimeAxis6::Reset(int bufferSize, BL_FLOAT timeDuration,
 #if DEBUG_DUMP
     mDbgStartTimeMillis = BLUtils::GetTimeMillis();
     BLDebug::ResetFile("axis-time.txt");
-    BLDebug::ResetFile("time.txt");
+    BLDebug::ResetFile("a-time.txt");
+    BLDebug::ResetFile("transport.txt");
 #endif
 }
 
@@ -159,10 +175,17 @@ void
 GraphTimeAxis6::UpdateFromTransport(BL_FLOAT currentTime)
 {
     mCurrentTimeTransport = currentTime;
-    
-    mTransportTimeStamp = BLUtils::GetTimeMillis();
+
+    if (mPixOffsetProvider == NULL)
+        mLastTransportTimeMillis = BLUtils::GetTimeMillis();
+    else
+        mLastTransportTimeMillis = mPixOffsetProvider->GetCurrentTimeMillis();
     
     Update(mCurrentTimeTransport);
+
+#if DEBUG_DUMP
+    BLDebug::AppendValue("transport.txt", mCurrentTimeTransport);
+#endif
 }
 
 void
@@ -170,19 +193,29 @@ GraphTimeAxis6::Update()
 {
     if (!mTransportIsPlaying)
         return;
-    
-    long int now = BLUtils::GetTimeMillis();
-    BL_FLOAT elapsed = (now - mTransportTimeStamp)*0.001;
-    
-    Update(mCurrentTimeTransport + elapsed);
 
+    if (mPixOffsetProvider == NULL)
+    {
+        long int millis = BLUtils::GetTimeMillis();
+        BL_FLOAT elapsed = (millis - mLastTransportTimeMillis)*0.001;
+        Update(mCurrentTimeTransport + elapsed);
+
+        BLDebug::AppendValue("axis-time.txt", mCurrentTimeTransport + elapsed);
+    }
+    else
+    {
+        BL_FLOAT offsetPixels = mPixOffsetProvider->GetOffsetPixels();        
+        mGraphAxis->SetOffsetPixels(offsetPixels);
+
+        //long int millis = mPixOffsetProvider->GetCurrentTimeMillis();
+        //BL_FLOAT elapsed = (millis - mLastTransportTimeMillis)*0.001;
+        //Update(mCurrentTimeTransport + elapsed);
+    }
+    
 #if DEBUG_DUMP
-    BLDebug::AppendValue("axis-time.txt", mCurrentTimeTransport + elapsed);
-        
-    unsigned long millis = BLUtils::GetTimeMillis();
-    BL_FLOAT currentTimeSec = (millis - mDbgStartTimeMillis)*0.01;
-
-    BLDebug::AppendValue("time.txt", currentTimeSec);
+    long int millis = BLUtils::GetTimeMillis();
+    BL_FLOAT currentTimeSec = (millis - mDbgStartTimeMillis)*0.001;
+    BLDebug::AppendValue("a-time.txt", currentTimeSec);
 #endif
 }
 
@@ -194,7 +227,8 @@ GraphTimeAxis6::SetTransportPlaying(bool flag)
     {
         mDbgStartTimeMillis = BLUtils::GetTimeMillis();
         BLDebug::ResetFile("axis-time.txt");
-        BLDebug::ResetFile("time.txt");
+        BLDebug::ResetFile("a-time.txt");
+        BLDebug::ResetFile("transport.txt");
     }
 #endif
     
