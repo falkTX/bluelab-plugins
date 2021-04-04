@@ -45,9 +45,6 @@
 
 #define ROUND_TO_INT_LABELS 1
 
-// Check scrolling smothness
-#define DEBUG_DUMP 1 //0 //1
-
 GraphTimeAxis6::GraphTimeAxis6(bool displayLines,
                                bool squeezeBorderLabels)
 {
@@ -57,7 +54,7 @@ GraphTimeAxis6::GraphTimeAxis6(bool displayLines,
     
     mTransportIsPlaying = false;
     mCurrentTimeTransport = 0.0;
-    mLastTransportTimeMillis = 0;
+    mProcessTimeStamp = 0;
     
     mDisplayLines = displayLines;
     
@@ -66,13 +63,6 @@ GraphTimeAxis6::GraphTimeAxis6(bool displayLines,
     mAxisDataAllocated = false;
 
     mPixOffsetProvider = NULL;
-    
-#if DEBUG_DUMP
-    mDbgStartTimeMillis = BLUtils::GetTimeMillis();
-    BLDebug::ResetFile("axis-time.txt");
-    BLDebug::ResetFile("a-time.txt");
-    BLDebug::ResetFile("transport.txt");
-#endif
 }
 
 GraphTimeAxis6::~GraphTimeAxis6()
@@ -134,10 +124,6 @@ GraphTimeAxis6::Init(GraphControl12 *graph,
                           //yOffset, 0.0,
                           0.0, yOffset,
                           axisLabelOverlayColor);
-
-#if DEBUG_DUMP
-    mDbgStartTimeMillis = BLUtils::GetTimeMillis();
-#endif
 }
 
 void
@@ -159,15 +145,7 @@ GraphTimeAxis6::Reset(int bufferSize, BL_FLOAT timeDuration,
     // SS_COEFF => Hack, so that at starting,
     // there is no missing label on the left of the axis
     BL_FLOAT oneLabelSeconds = (1.0/mMaxNumLabels)*timeDuration;
-    //Update(spacingSeconds*SS_COEFF);
     Update(oneLabelSeconds*SS_COEFF);
-#endif
-
-#if DEBUG_DUMP
-    mDbgStartTimeMillis = BLUtils::GetTimeMillis();
-    BLDebug::ResetFile("axis-time.txt");
-    BLDebug::ResetFile("a-time.txt");
-    BLDebug::ResetFile("transport.txt");
 #endif
 }
 
@@ -177,15 +155,14 @@ GraphTimeAxis6::UpdateFromTransport(BL_FLOAT currentTime)
     mCurrentTimeTransport = currentTime;
 
     if (mPixOffsetProvider == NULL)
-        mLastTransportTimeMillis = BLUtils::GetTimeMillis();
+    {
+        mProcessTimeStamp = BLUtils::GetTimeMillis();
+        Update(mCurrentTimeTransport);
+    }
     else
-        mLastTransportTimeMillis = mPixOffsetProvider->GetCurrentTimeMillis();
-    
-    Update(mCurrentTimeTransport);
-
-#if DEBUG_DUMP
-    BLDebug::AppendValue("transport.txt", mCurrentTimeTransport);
-#endif
+    {
+        mProcessTimeStamp = mPixOffsetProvider->GetProcessTimeStamp();
+    }
 }
 
 void
@@ -197,41 +174,25 @@ GraphTimeAxis6::Update()
     if (mPixOffsetProvider == NULL)
     {
         long int millis = BLUtils::GetTimeMillis();
-        BL_FLOAT elapsed = (millis - mLastTransportTimeMillis)*0.001;
+        BL_FLOAT elapsed = (millis - mProcessTimeStamp)*0.001;
         Update(mCurrentTimeTransport + elapsed);
-
-        BLDebug::AppendValue("axis-time.txt", mCurrentTimeTransport + elapsed);
     }
     else
     {
         BL_FLOAT offsetPixels = mPixOffsetProvider->GetOffsetPixels();        
         mGraphAxis->SetOffsetPixels(offsetPixels);
 
-        //long int millis = mPixOffsetProvider->GetCurrentTimeMillis();
-        //BL_FLOAT elapsed = (millis - mLastTransportTimeMillis)*0.001;
+        Update(mCurrentTimeTransport);
+        
+        //long int drawTimeStamp = mPixOffsetProvider->GetProcessTimeStamp();
+        //BL_FLOAT elapsed = (drawTimeStamp - mProcessTimeStamp)*0.001;
         //Update(mCurrentTimeTransport + elapsed);
     }
-    
-#if DEBUG_DUMP
-    long int millis = BLUtils::GetTimeMillis();
-    BL_FLOAT currentTimeSec = (millis - mDbgStartTimeMillis)*0.001;
-    BLDebug::AppendValue("a-time.txt", currentTimeSec);
-#endif
 }
 
 void
 GraphTimeAxis6::SetTransportPlaying(bool flag)
-{
-#if DEBUG_DUMP
-    if (mTransportIsPlaying != flag)
-    {
-        mDbgStartTimeMillis = BLUtils::GetTimeMillis();
-        BLDebug::ResetFile("axis-time.txt");
-        BLDebug::ResetFile("a-time.txt");
-        BLDebug::ResetFile("transport.txt");
-    }
-#endif
-    
+{    
     mTransportIsPlaying = flag;
 }
 
@@ -241,172 +202,6 @@ GraphTimeAxis6::GetMinMaxTime(BL_FLOAT *minTimeSec, BL_FLOAT *maxTimeSec)
     *minTimeSec = mCurrentTime - mTimeDuration;
     *maxTimeSec = mCurrentTime;
 }
-
-#if 0 // ORIGIN
-void
-GraphTimeAxis6::Update(BL_FLOAT currentTime)
-{
-    // Just in case
-    if (mGraphAxis == NULL)
-        return;
-    
-    mCurrentTime = currentTime;
-    
-    // Make a cool axis, with values sliding as we zoom
-    // and units changing when necessary
-    // (the border values have decimals, the middle values are rounded and slide)
-#define EPS 1e-15
-    
-    BL_FLOAT startTime = currentTime - mTimeDuration;
-    BL_FLOAT endTime = currentTime;
-        
-    BL_FLOAT timeDuration = endTime - startTime;
-        
-    // Convert to milliseconds
-    startTime *= 1000.0;
-    timeDuration *= 1000.0;
-        
-    char *hAxisData[MAX_NUM_LABELS][2];
-        
-    // Allocate
-#define LABEL_MAX_SIZE 64
-    for (int i = 0; i < MAX_NUM_LABELS; i++)
-    {
-        hAxisData[i][0] = new char[LABEL_MAX_SIZE];
-        memset(hAxisData[i][0], '\0', LABEL_MAX_SIZE);
-            
-        hAxisData[i][1] = new char[LABEL_MAX_SIZE];
-        memset(hAxisData[i][1], '\0', LABEL_MAX_SIZE);
-    }
-    
-    BL_FLOAT tm = startTime;
-    
-    // Align to 0 seconds
-    BL_FLOAT oneLabelSeconds = (1.0/mMaxNumLabels)*timeDuration*0.001;
-    tm = tm - fmod(tm, oneLabelSeconds*1000.0);
-    
-    BL_FLOAT prevT = 0.0;
-    for (int i = 0; i < MAX_NUM_LABELS; i++)
-    {
-        // Parameter
-        BL_FLOAT t = (tm - startTime)/timeDuration;
-        
-#if ROUND_TO_INT_LABELS
-        // Choose labels with integer values
-        // (to avoid evenly spaced labels, but with various values)
-        if ((i > 0) && (i < MAX_NUM_LABELS - 1))
-            // Middle values
-        {
-            if (timeDuration >= 1000.0)
-            {
-                tm = ((int)(tm/(1000.0/mMaxNumLabels)))*(1000.0/mMaxNumLabels);
-            }
-            else if (timeDuration >= 100.0)
-            {
-                tm = ((int)(tm/(100.0/mMaxNumLabels)))*(100.0/mMaxNumLabels);
-            }
-            else if (timeDuration >= 10.0)
-            {
-                tm = ((int)(tm/(10.0/mMaxNumLabels)))*(10.0/mMaxNumLabels);
-            }
-            
-            t = (tm - startTime)/timeDuration;
-                
-            // Avoid repeating the same value
-            if (fabs(t - prevT) < BL_EPS)
-                continue;
-                
-            prevT = t;
-        }
-#endif
-        
-        sprintf(hAxisData[i][0], "%g", t);
-        
-#if FIX_ZERO_SECONDS_MILLIS
-        sprintf(hAxisData[i][1], "0s");
-#endif
-        
-        bool squeeze = (mSqueezeBorderLabels &&
-                        ((i == 0) || (i == MAX_NUM_LABELS - 1)));
-        
-        //if ((i > 0) && (i < MAX_NUM_LABELS - 1)) // Squeeze the borders
-        if (!squeeze)
-        {
-            int seconds = (int)tm/1000;
-            int millis = tm - seconds*1000;
-            bool negMillis = false;
-            if (millis < 0)
-            {
-                millis = -millis;
-                negMillis = true;
-            }
-            
-            int minutes = seconds/60;
-            seconds = seconds % 60;
-            
-            int hours = minutes/60;
-            minutes = minutes % 60;
-            
-            // Default
-            sprintf(hAxisData[i][1], "0s");
-            
-            // New formatting3: manage minutes and hours, formating like hh:mm:ss.ms
-            if (hours != 0)
-            {
-                sprintf(hAxisData[i][1], "%d:%02d:%d.%d", hours, minutes, seconds, millis/100);
-            }
-            else if (minutes != 0)
-            {
-                sprintf(hAxisData[i][1], "%d:%02d.%d", minutes, seconds, millis/100);
-            }
-            else if (seconds != 0)
-            {
-                // Check the number of digits to display
-                BL_FLOAT oneLabelSeconds = (1.0/mMaxNumLabels)*timeDuration*0.001;
-                if (oneLabelSeconds > 0.1)
-                    sprintf(hAxisData[i][1], "%d.%ds", seconds, millis/100);
-                else if (oneLabelSeconds > 0.01)
-                    sprintf(hAxisData[i][1], "%d.%ds", seconds, millis/10);
-                else
-                    sprintf(hAxisData[i][1], "%d.%ds", seconds, millis);
-            }
-#if FIX_DISPLAY_MS
-            else if (millis != 0)
-            {
-                if (negMillis)
-                    millis = -millis;
-                
-                sprintf(hAxisData[i][1], "%dms", millis);
-            }
-#endif
-        }
-        
-#if SQUEEZE_LAST_CROPPED_LABEL
-        BL_FLOAT normSpacing = mSpacingSeconds/mTimeDuration;
-        if (t > 1.0 - normSpacing)
-        {
-            sprintf(hAxisData[i][1], "");
-        }
-#endif
-        
-        BL_FLOAT oneLabelSeconds = (1.0/mMaxNumLabels)*timeDuration*0.001;
-        
-        tm += oneLabelSeconds*1000.0;
-        
-        if (tm > startTime + timeDuration)
-            break;
-    }
-    
-    mGraphAxis->SetData(hAxisData, MAX_NUM_LABELS);
-    
-    // Free
-    for (int i = 0; i < MAX_NUM_LABELS; i++)
-    {
-        delete []hAxisData[i][0];
-        delete []hAxisData[i][1];
-    }
-}
-#endif
 
 void
 GraphTimeAxis6::Update(BL_FLOAT currentTime)
@@ -552,15 +347,6 @@ GraphTimeAxis6::Update(BL_FLOAT currentTime)
             }
             else if (seconds != 0)
             {
-                // Check the number of digits to display
-                /*BL_FLOAT oneLabelSeconds = (1.0/mMaxNumLabels)*timeDuration*0.001;
-                if (oneLabelSeconds > 0.1)
-                    sprintf(hAxisData[i][1], "%d.%ds", seconds, millis);
-                else if (oneLabelSeconds > 0.01)
-                    sprintf(hAxisData[i][1], "%d.%ds", seconds, millis);
-                else
-                    sprintf(hAxisData[i][1], "%d.%ds", seconds, millis);*/
-                
                 BL_FLOAT oneLabelSeconds = (1.0/mMaxNumLabels)*timeDuration*0.001;
                 int div = 1;
                 if (oneLabelSeconds >= 0.1)
@@ -584,11 +370,9 @@ GraphTimeAxis6::Update(BL_FLOAT currentTime)
                     if ((millis > 0) && (millis < 10))
                         sprintf(mHAxisData[i][1], "%d.00%ds", seconds, millis/div);
                 
-                    //if ((millis > 0) && (millis < 100))
                     if ((millis >= 10) && (millis < 100))
                         sprintf(mHAxisData[i][1], "%d.0%ds", seconds, millis/div);
                     
-                    //if ((millis > 0) && (millis >= 100))
                     if (millis >= 100)
                         sprintf(mHAxisData[i][1], "%d.%ds", seconds, millis/div);
                 }

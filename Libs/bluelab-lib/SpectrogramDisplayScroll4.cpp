@@ -24,8 +24,6 @@
 // Test: to have simple behavior, without smooth scrolling
 #define DBG_BYPASS_SMOOTH_SCROLL 0 //1
 
-#define DEBUG_DUMP 1 //0 //1
-
 SpectrogramDisplayScroll4::SpectrogramDisplayScroll4(Plugin *plug,
                                                      BL_FLOAT delayPercent)
 {
@@ -57,12 +55,6 @@ SpectrogramDisplayScroll4::SpectrogramDisplayScroll4(Plugin *plug,
     mSpeedMod = 1;
 
     RecomputeParams();
-        
-#if DEBUG_DUMP
-    BLDebug::ResetFile("spectro-time0.txt");
-    BLDebug::ResetFile("spectro-time1.txt");
-    BLDebug::ResetFile("s-time.txt");
-#endif
 }
 
 SpectrogramDisplayScroll4::~SpectrogramDisplayScroll4()
@@ -89,12 +81,6 @@ SpectrogramDisplayScroll4::Reset()
     mNeedUpdateColormapData = true;
 
     RecomputeParams();
-    
-#if DEBUG_DUMP
-    BLDebug::ResetFile("spectro-time0.txt");
-    BLDebug::ResetFile("spectro-time1.txt");
-    BLDebug::ResetFile("s-time.txt");
-#endif
 }
 
 void
@@ -106,18 +92,12 @@ SpectrogramDisplayScroll4::ResetScroll()
     ResetQueues();
 
     RecomputeParams();
-    
-#if DEBUG_DUMP
-    BLDebug::ResetFile("spectro-time0.txt");
-    BLDebug::ResetFile("spectro-time1.txt");
-    BLDebug::ResetFile("s-time.txt");
-#endif
 }
 
 BL_FLOAT
 SpectrogramDisplayScroll4::GetOffsetSec()
 {
-    BL_FLOAT currentTimeSec = (mCurrentTimeMillis - mStartTimeMillis)*0.001;
+    BL_FLOAT currentTimeSec = (mDrawTimeStamp - mStartProcessTimeStamp)*0.001;
 
     BL_FLOAT offset = mSpectroTimeSec - currentTimeSec;
     
@@ -125,9 +105,15 @@ SpectrogramDisplayScroll4::GetOffsetSec()
 }
 
 void
-SpectrogramDisplayScroll4::UpdateCurrentTimeMillis()
+SpectrogramDisplayScroll4::UpdateDrawTimeStamp()
 {
-    mCurrentTimeMillis = BLUtils::GetTimeMillis();
+    mDrawTimeStamp = BLUtils::GetTimeMillis();
+}
+
+void
+SpectrogramDisplayScroll4::UpdateProcessTimeStamp()
+{
+    mProcessTimeStamp = BLUtils::GetTimeMillis();
 }
 
 BL_FLOAT
@@ -145,9 +131,15 @@ SpectrogramDisplayScroll4::GetOffsetPixels()
 // Centralize the current time, to ping it only once
 // at each loop, just before draw
 long int
-SpectrogramDisplayScroll4::GetCurrentTimeMillis()
+SpectrogramDisplayScroll4::GetProcessTimeStamp()
 {
-    return mCurrentTimeMillis;
+    return mProcessTimeStamp;
+}
+
+long int
+SpectrogramDisplayScroll4::GetDrawTimeStamp()
+{
+    return mDrawTimeStamp;
 }
 
 bool
@@ -259,7 +251,7 @@ SpectrogramDisplayScroll4::PreDraw(NVGcontext *vg, int width, int height)
     mVg = vg;
     mWidth = width;
 
-    UpdateCurrentTimeMillis();
+    UpdateDrawTimeStamp();
     
     AddPendingSpectrogramLines();
     
@@ -313,16 +305,6 @@ SpectrogramDisplayScroll4::PreDraw(NVGcontext *vg, int width, int height)
     nvgFill(mVg);
     
     nvgRestore(mVg);
-
-#if DEBUG_DUMP // Debug 
-    BLDebug::AppendValue("spectro-time0.txt", mSpectroTimeSec);
-    BLDebug::AppendValue("spectro-time1.txt", mSpectroTimeSec - offsetSec);
-
-    long int millis = BLUtils::GetTimeMillis();
-    BL_FLOAT currentTimeSec = (millis - mStartTimeMillis)*0.001;
-
-    BLDebug::AppendValue("s-time.txt", currentTimeSec);
-#endif
 }
 
 void
@@ -474,7 +456,7 @@ SpectrogramDisplayScroll4::AddPendingSpectrogramLines()
 #endif
         
     //long int millis = BLUtils::GetTimeMillis();
-    BL_FLOAT currentTimeSec = (mCurrentTimeMillis - mStartTimeMillis)*0.001;
+    BL_FLOAT currentTimeSec = (mDrawTimeStamp - mStartProcessTimeStamp)*0.001;
         
     while(mSpectroTimeSec + mSpectroLineDurationSec < currentTimeSec + mDelayTimeSec)
     {
@@ -533,17 +515,11 @@ SpectrogramDisplayScroll4::RecomputeParams()
     mSpectroTimeSec = 0.0;
     //long int millis = BLUtils::GetTimeMillis();
     //mStartTimeMillis = millis;
-    //mCurrentTimeMillis = millis;
-    UpdateCurrentTimeMillis();
-    mStartTimeMillis = mCurrentTimeMillis;
+    //mDrawTimeMillis = millis;
+    UpdateProcessTimeStamp();
+    mStartProcessTimeStamp = mProcessTimeStamp;
     
     mWidth = -1.0;
-
-#if DEBUG_DUMP
-    BLDebug::ResetFile("spectro-time0.txt");
-    BLDebug::ResetFile("spectro-time1.txt");
-    BLDebug::ResetFile("s-time.txt");
-#endif
 }
 
 BL_FLOAT

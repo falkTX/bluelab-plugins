@@ -78,7 +78,7 @@ protected:
     //
     bool mTransportIsPlaying;
     BL_FLOAT mCurrentTimeTransport;
-    long int mLastTransportTimeMillis;
+    long int mProcessTimeStamp;
     
     bool mDisplayLines;
     
@@ -90,7 +90,7 @@ protected:
     PixelOffsetProvider *mPixOffsetProvider;
     
     // Debug
-    long int mDbgStartTimeMillis;
+    //long int mDbgStartTimeMillis;
 };
 
 #endif

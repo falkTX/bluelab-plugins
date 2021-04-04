@@ -50,8 +50,9 @@ public:
     // For InfrasonicViewer
     void ResetScroll();
 
+    long int GetProcessTimeStamp() override;
+    long int GetDrawTimeStamp() override;
     BL_FLOAT GetOffsetPixels() override;
-    long int GetCurrentTimeMillis() override;
     
     bool NeedUpdateSpectrogram();
     bool DoUpdateSpectrogram();
@@ -80,6 +81,9 @@ public:
     // Variable speed
     void SetSpeedMod(int speedMod);
     int GetSpeedMod();
+
+    // Last ProcessBlock() time
+    void UpdateProcessTimeStamp();
     
     // We scale up a bit, to hide the borders
     BL_FLOAT GetScaleRatio();
@@ -95,7 +99,7 @@ protected:
 
     BL_FLOAT SecsToPixels(BL_FLOAT secs, BL_FLOAT width);
 
-    void UpdateCurrentTimeMillis();
+    void UpdateDrawTimeStamp();
     
     // NanoVG
     NVGcontext *mVg;
@@ -146,8 +150,10 @@ protected:
     //
     BL_FLOAT mSpectroTimeSec;
 
-    long int mStartTimeMillis;
-    long int mCurrentTimeMillis;
+    long int mProcessTimeStamp;
+    long int mDrawTimeStamp;
+    
+    long int mStartProcessTimeStamp;
     
     BL_FLOAT mWidth;
     
