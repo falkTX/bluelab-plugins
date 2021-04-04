@@ -77,6 +77,8 @@ class BLUtilsPlug
     static void ApplyGain(const vector<WDL_TypedBuf<BL_FLOAT> > &in,
                           vector<WDL_TypedBuf<BL_FLOAT> > *out,
                           ParamSmoother2 *smoother);
+
+    static int GetPlugFPS(int defaultFPS);
 };
 
 #endif

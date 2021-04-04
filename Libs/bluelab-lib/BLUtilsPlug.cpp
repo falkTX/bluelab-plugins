@@ -1,9 +1,13 @@
+#define INI_IMPLEMENTATION
+#include <ini.h>
+
 #include <IPlugPaths.h>
 
 #include <BLTypes.h>
 
 #include <BLUtils.h>
 #include <BLUtilsMath.h>
+#include <BLUtilsFile.h>
 
 #include <ParamSmoother2.h>
 
@@ -894,4 +898,60 @@ BLUtilsPlug::ApplyGain(const vector<WDL_TypedBuf<BL_FLOAT> > &in,
             (*out)[1].Get()[i] = gain*rs;
         }
     }
+}
+
+// Find fps in global config file if any
+int
+BLUtilsPlug::GetPlugFPS(int defaultFPS)
+{
+    // The file is in th form:
+    //
+    // [BlueLab]
+    // fps=30
+
+        
+#ifdef __linux__
+    char fileName[FILENAME_SIZE];
+    sprintf(fileName, "%s/.config/BlueLab.ini", getenv("HOME"));
+        
+    FILE *file = fopen(fileName, "r");
+    if (file == NULL)
+        return defaultFPS;
+    
+    fseek(file, 0, SEEK_END);
+	int size = ftell(file);
+	fseek(file, 0, SEEK_SET);
+	char *data = (char*)malloc(size + 1);
+	fread(data, 1, size, file);
+	data[size] = '\0';
+    
+    fclose(file);
+
+    ini_t *ini = ini_load(data, NULL);
+	free(data);
+    
+    int section = ini_find_section(ini, "BlueLab", 0);
+    int fps_index = ini_find_property(ini, section, "fps", strlen("fps"));
+	char const *fpsStr = ini_property_value(ini, section, fps_index);
+    
+    if (fpsStr == NULL)
+    {
+        ini_destroy(ini);
+
+        return defaultFPS;
+    }
+    
+    int fps = atoi(fpsStr);
+
+    if ((fps > 0) && (fps <= 120))
+    {
+        ini_destroy(ini);
+        
+        return fps;
+    }
+    
+    ini_destroy(ini);
+#endif
+
+    return defaultFPS;
 }

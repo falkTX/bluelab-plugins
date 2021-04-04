@@ -307,6 +307,7 @@ SmoothCurveDb => additional arg: sampleRate
 - TODO: for BLSpectrogram4, use the "closest" phase unwrapping (used in Ghost inpaint)
 for PartialTracker5 too
 - TODO: for all plugins, check that the display is not redisplayed every time (with debug blinking rectangles). check that is only displayed whn there is new data.
+TODO(all): pass all the plugins at 30fps? (or even 60?)
 
 ------- Design:
 GUI kits
