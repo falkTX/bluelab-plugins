@@ -17,18 +17,6 @@
 
 #define USE_SPECTRO_NEAREST 0
 
-// NEW: InfrasonicViewer port to iPlug2
-#define FIX_JITTER_INFRASONIC_VIEWER 1
-
-// Number of columns we hide on the left
-#if !FIX_JITTER_INFRASONIC_VIEWER
-// Do we need it for GhostVeiwer etc... ?
-#define MARGIN_COEFF 8
-#else
-// Must be set to 1 for InfrasonicViewer!
-#define MARGIN_COEFF 1
-#endif
-
 // Avoids black column of 1 pixel on the right
 // (increase of 2 pixels on the right)
 #define RIGHT_OFFSET 0.0025
@@ -324,8 +312,10 @@ SpectrogramDisplayScroll4::SetSpectrogram(BLSpectrogram4 *spectro,
     
     if (numCols > 0)
         normLineSize = 1.0/((BL_FLOAT)numCols);
-    
-    mSpectrogramBounds[0] = left - MARGIN_COEFF*normLineSize;
+
+    BL_FLOAT leftOffset = mDelayPercent*0.01;
+        
+    mSpectrogramBounds[0] = left - leftOffset;
     mSpectrogramBounds[1] = top;
     mSpectrogramBounds[2] = right + RIGHT_OFFSET; // Avoids black column of 1 pixel on the right
     mSpectrogramBounds[3] = bottom;
@@ -443,9 +433,8 @@ SpectrogramDisplayScroll4::GetSpeedMod()
 BL_FLOAT
 SpectrogramDisplayScroll4::GetScaleRatio()
 {
-    int maxCols = mSpectrogram->GetMaxNumCols();
-    BL_FLOAT ratio = ((BL_FLOAT)(maxCols - MARGIN_COEFF))/maxCols;
-    
+    BL_FLOAT ratio = 1.0 - mDelayPercent*0.01;
+
     return ratio;
 }
 
