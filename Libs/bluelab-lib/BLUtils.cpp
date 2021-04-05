@@ -31,6 +31,8 @@ extern "C" {
 #include "GetTimeOfDay.h"
 #endif
 
+#include <UpTime.h>
+
 #include "CMA2Smoother.h"
 
 // For AmpToDB
@@ -8698,6 +8700,14 @@ BLUtils::GetTimeMillis()
     struct timeval tp;
     gettimeofday(&tp, NULL);
     long int ms = tp.tv_sec * 1000 + tp.tv_usec / 1000;
+    
+    return ms;
+}
+
+double
+BLUtils::GetTimeMillisF()
+{
+    double ms = UpTime::GetUpTimeF();
     
     return ms;
 }

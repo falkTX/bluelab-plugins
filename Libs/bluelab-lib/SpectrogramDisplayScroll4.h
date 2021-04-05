@@ -50,9 +50,11 @@ public:
     // For InfrasonicViewer
     void ResetScroll();
 
-    long int GetProcessTimeStamp() override;
-    long int GetDrawTimeStamp() override;
-    BL_FLOAT GetOffsetPixels() override;
+    double GetProcessTimeStamp() override;
+    double GetDrawTimeStamp() override;
+    double GetStartTransportTimeStamp() override;
+    
+    BL_FLOAT GetOffsetSec();
     
     bool NeedUpdateSpectrogram();
     bool DoUpdateSpectrogram();
@@ -89,8 +91,6 @@ public:
     BL_FLOAT GetScaleRatio();
     
 protected:
-    BL_FLOAT GetOffsetSec();
-    
     void AddPendingSpectrogramLines();
 
     void ResetQueues();
@@ -150,10 +150,14 @@ protected:
     //
     BL_FLOAT mSpectroTimeSec;
 
-    long int mProcessTimeStamp;
-    long int mDrawTimeStamp;
+    double mProcessTimeStamp;
+    double mDrawTimeStamp;
     
-    long int mStartProcessTimeStamp;
+    double mStartTransportTimeStamp;
+
+    // For synchro
+    double mStartTransportPlayTimeStamp;
+    bool mMustUpdateProcessTime;
     
     BL_FLOAT mWidth;
     

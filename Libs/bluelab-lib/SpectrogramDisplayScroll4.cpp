@@ -54,6 +54,13 @@ SpectrogramDisplayScroll4::SpectrogramDisplayScroll4(Plugin *plug,
     // Variable speed
     mSpeedMod = 1;
 
+    mProcessTimeStamp = -1.0;
+    mDrawTimeStamp = -1.0;
+    mStartTransportTimeStamp = -1.0;
+    mStartTransportPlayTimeStamp = -1.0;
+
+    mMustUpdateProcessTime = true;
+    
     RecomputeParams();
 }
 
@@ -79,7 +86,7 @@ SpectrogramDisplayScroll4::Reset()
     mNeedUpdateSpectrogramData = true;
     
     mNeedUpdateColormapData = true;
-
+    
     RecomputeParams();
 }
 
@@ -90,15 +97,18 @@ SpectrogramDisplayScroll4::ResetScroll()
     mSpectroPhases.clear();
 
     ResetQueues();
-
+    
     RecomputeParams();
 }
 
 BL_FLOAT
 SpectrogramDisplayScroll4::GetOffsetSec()
 {
-    BL_FLOAT currentTimeSec = (mDrawTimeStamp - mStartProcessTimeStamp)*0.001;
-
+    if ((mStartTransportTimeStamp < 0.0) ||
+        (mDrawTimeStamp < 0.0))
+        return 0.0;
+    
+    BL_FLOAT currentTimeSec = (mDrawTimeStamp - mStartTransportTimeStamp)*0.001;
     BL_FLOAT offset = mSpectroTimeSec - currentTimeSec;
     
     return offset;
@@ -107,39 +117,40 @@ SpectrogramDisplayScroll4::GetOffsetSec()
 void
 SpectrogramDisplayScroll4::UpdateDrawTimeStamp()
 {
-    mDrawTimeStamp = BLUtils::GetTimeMillis();
+    mDrawTimeStamp = BLUtils::GetTimeMillisF();
 }
 
 void
 SpectrogramDisplayScroll4::UpdateProcessTimeStamp()
 {
-    mProcessTimeStamp = BLUtils::GetTimeMillis();
-}
+    // Manage the case of ProcessBlocks() called several time
+    // with Draw() not yet called
+    if (mMustUpdateProcessTime)
+    {
+        mProcessTimeStamp = BLUtils::GetTimeMillisF();
+    }
 
-BL_FLOAT
-SpectrogramDisplayScroll4::GetOffsetPixels()
-{
-    if (mWidth < 0)
-        return 0.0;
-    
-    BL_FLOAT offsetSec = GetOffsetSec();
-    BL_FLOAT offsetPix = SecsToPixels(offsetSec, mWidth);
-
-    return offsetPix;
+    mMustUpdateProcessTime = false;
 }
 
 // Centralize the current time, to ping it only once
 // at each loop, just before draw
-long int
+double
 SpectrogramDisplayScroll4::GetProcessTimeStamp()
 {
     return mProcessTimeStamp;
 }
 
-long int
+double
 SpectrogramDisplayScroll4::GetDrawTimeStamp()
 {
     return mDrawTimeStamp;
+}
+
+double
+SpectrogramDisplayScroll4::GetStartTransportTimeStamp()
+{
+    return mStartTransportTimeStamp;
 }
 
 bool
@@ -247,13 +258,14 @@ SpectrogramDisplayScroll4::DoUpdateSpectrogram()
 
 void
 SpectrogramDisplayScroll4::PreDraw(NVGcontext *vg, int width, int height)
-{
+{   
     mVg = vg;
     mWidth = width;
 
     UpdateDrawTimeStamp();
-    
     AddPendingSpectrogramLines();
+    
+    mMustUpdateProcessTime = true;
     
     DoUpdateSpectrogram();
     
@@ -265,7 +277,7 @@ SpectrogramDisplayScroll4::PreDraw(NVGcontext *vg, int width, int height)
     
     // New: set colormap only in the spectrogram state
     nvgSetColormap(mVg, mNvgColormapImage);
-
+    
     BL_FLOAT offsetSec = 0.0;
     BL_FLOAT offsetPixels = 0.0;
     if (mIsPlaying)
@@ -338,7 +350,7 @@ SpectrogramDisplayScroll4::SetSpectrogram(BLSpectrogram4 *spectro,
     // Check that it will be updated well when displaying
     mSpectrogram->TouchData();
     mSpectrogram->TouchColorMap();
-
+    
     RecomputeParams();
 }
 
@@ -352,7 +364,7 @@ SpectrogramDisplayScroll4::SetFftParams(int bufferSize,
     mBufferSize = bufferSize; 
     mOverlapping = overlapping;
     mSampleRate = sampleRate;
-
+    
     RecomputeParams();
 }
 
@@ -363,11 +375,11 @@ SpectrogramDisplayScroll4::AddSpectrogramLine(const WDL_TypedBuf<BL_FLOAT> &magn
 #if DBG_BYPASS_SMOOTH_SCROLL
     mSpectrogram->AddLine(magns, phases);
     
-    mSpectroTime += mSpectroLineDurationSec;
+    mSpectroTimeSec += mSpectroLineDurationSec;
         
     return;
 #endif
-
+    
     // Add the new line to pending lines
     mSpectroMagns.push_back(magns);
     mSpectroPhases.push_back(phases);
@@ -420,8 +432,10 @@ SpectrogramDisplayScroll4::SetTransportPlaying(bool flag)
     mIsPlaying = flag;
 
     if (mIsPlaying != prevPlaying)
-    {
+    {        
         RecomputeParams();
+
+        mStartTransportTimeStamp = mProcessTimeStamp;
     }
 }
 
@@ -430,7 +444,7 @@ void
 SpectrogramDisplayScroll4::SetSpeedMod(int speedMod)
 {
     mSpeedMod = speedMod;
-
+    
     RecomputeParams();
 }
 
@@ -454,9 +468,15 @@ SpectrogramDisplayScroll4::AddPendingSpectrogramLines()
 #if DBG_BYPASS_SMOOTH_SCROLL
     return;
 #endif
-        
-    //long int millis = BLUtils::GetTimeMillis();
-    BL_FLOAT currentTimeSec = (mDrawTimeStamp - mStartProcessTimeStamp)*0.001;
+
+    if (mSpectroMagns.empty())
+        return;
+
+    if ((mDrawTimeStamp < 0.0) ||
+        (mStartTransportTimeStamp < 0.0))
+        return;
+    
+    BL_FLOAT currentTimeSec = (mDrawTimeStamp - mStartTransportTimeStamp)*0.001;
         
     while(mSpectroTimeSec + mSpectroLineDurationSec < currentTimeSec + mDelayTimeSec)
     {
@@ -513,11 +533,6 @@ SpectrogramDisplayScroll4::RecomputeParams()
     mDelayTimeSec = mSpectroTotalDurationSec*mDelayPercent*0.01;
     
     mSpectroTimeSec = 0.0;
-    //long int millis = BLUtils::GetTimeMillis();
-    //mStartTimeMillis = millis;
-    //mDrawTimeMillis = millis;
-    UpdateProcessTimeStamp();
-    mStartProcessTimeStamp = mProcessTimeStamp;
     
     mWidth = -1.0;
 }

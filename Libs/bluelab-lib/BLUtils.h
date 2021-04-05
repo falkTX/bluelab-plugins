@@ -1125,6 +1125,7 @@ public:
                                       WDL_TypedBuf<BL_FLOAT> *newY);
     
     static long int GetTimeMillis();
+    static double GetTimeMillisF();
     
     //
     template <typename FLOAT_TYPE>

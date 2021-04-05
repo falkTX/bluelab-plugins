@@ -52,7 +52,7 @@ public:
     void Reset(int bufferSize, BL_FLOAT timeDuration, int maxNumLabels);
     
     void UpdateFromTransport(BL_FLOAT currentTime);
-    void Update();
+    void UpdateFromDraw();
     void SetTransportPlaying(bool flag);
 
     // Time in seconds
@@ -65,6 +65,8 @@ protected:
     void Update(BL_FLOAT currentTime);
     
     //
+    GraphControl12 *mGraph;
+    
     GraphAxis2 *mGraphAxis;
     
     int mBufferSize;
@@ -77,8 +79,11 @@ protected:
     
     //
     bool mTransportIsPlaying;
-    BL_FLOAT mCurrentTimeTransport;
-    long int mProcessTimeStamp;
+
+    BL_FLOAT mTransportValueSec;
+    double mProcessTimeStamp;
+    double mStartTransportPlayTimeStamp;
+    bool mMustUpdateTransportTime;
     
     bool mDisplayLines;
     
@@ -88,9 +93,6 @@ protected:
     bool mAxisDataAllocated;
 
     PixelOffsetProvider *mPixOffsetProvider;
-    
-    // Debug
-    //long int mDbgStartTimeMillis;
 };
 
 #endif

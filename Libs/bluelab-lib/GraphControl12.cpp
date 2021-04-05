@@ -392,6 +392,14 @@ GraphControl12::DrawText(NVGcontext *vg,
                          const char *text, int color[4],
                          int halign, int valign, BL_GUI_FLOAT fontSizeCoeff)
 {
+#if 0
+    if (strcmp(text, "0s") == 0)
+    {
+        if (color[1] == 48) // Warn overlay
+            BLDebug::AppendValue("x.txt", x);
+    }
+#endif
+    
     // Optimization
     // (avoid displaying many empty texts)
     if (strlen(text) == 0)
@@ -400,7 +408,7 @@ GraphControl12::DrawText(NVGcontext *vg,
     // Static method -> no mutex!
     
     nvgSave(vg);
-    
+        
     nvgFontSize(vg, fontSize*fontSizeCoeff);
 	nvgFontFace(vg, GRAPH_FONT);
     nvgFontBlur(vg, 0);
@@ -984,7 +992,7 @@ GraphControl12::DrawAxis(GraphAxis2 *axis, bool horizontal, bool lineLabelFlag)
                                  NVG_ALIGN_CENTER, NVG_ALIGN_BOTTOM,
                                  axis->mFontSizeCoeff);
                     }
-                        
+                 
                     DrawText(xLabel,
                              textOffset + axis->mOffsetY*height,
                              FONT_SIZE, text, axis->mLabelColor,
@@ -2651,7 +2659,7 @@ GraphControl12::DoDraw(IGraphics &graphics)
     
     // Update the time axis, so we are very accurate at each Draw() call
     if (mGraphTimeAxis != NULL)
-        mGraphTimeAxis->Update();
+        mGraphTimeAxis->UpdateFromDraw();
     
     DrawAxis(true);
     

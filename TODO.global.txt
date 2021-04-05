@@ -80,7 +80,7 @@ M-. to go to defintion
 
 (magit-log-current)
 
-valgrind --vgdb=yes --vgdb-error=0 ./reaper
+valgrind --vgdb=yes --vgdb-error=0 ~/Documents/Apps/reaper_linux_x86_64/REAPER/reaper
 gdb -i=mi ~/Documents/Apps/reaper_linux_x86_64/REAPER/reaper
 *gdb* target remote | vgdb
 

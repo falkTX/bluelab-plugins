@@ -48,13 +48,16 @@
 GraphTimeAxis6::GraphTimeAxis6(bool displayLines,
                                bool squeezeBorderLabels)
 {
+    mGraph = NULL;
+    
     mGraphAxis = NULL;
     
     mCurrentTime = 0.0;
     
     mTransportIsPlaying = false;
-    mCurrentTimeTransport = 0.0;
-    mProcessTimeStamp = 0;
+
+    mTransportValueSec = 0.0;
+    mProcessTimeStamp = -1.0;
     
     mDisplayLines = displayLines;
     
@@ -63,6 +66,8 @@ GraphTimeAxis6::GraphTimeAxis6(bool displayLines,
     mAxisDataAllocated = false;
 
     mPixOffsetProvider = NULL;
+
+    mMustUpdateTransportTime = true;
 }
 
 GraphTimeAxis6::~GraphTimeAxis6()
@@ -92,6 +97,8 @@ GraphTimeAxis6::Init(GraphControl12 *graph,
                      int maxNumLabels,
                      BL_FLOAT yOffset)
 {
+    mGraph = graph;
+    
     graph->SetGraphTimeAxis(this);
     
     mGraphAxis = graphAxis;
@@ -152,47 +159,48 @@ GraphTimeAxis6::Reset(int bufferSize, BL_FLOAT timeDuration,
 void
 GraphTimeAxis6::UpdateFromTransport(BL_FLOAT currentTime)
 {
-    mCurrentTimeTransport = currentTime;
+    // Manage the case of ProcessBlocks() called several time
+    // with Draw() not yet called
+    if (mMustUpdateTransportTime)
+    {
+        mTransportValueSec = currentTime;
+    
+        if (mPixOffsetProvider == NULL)
+            mProcessTimeStamp = BLUtils::GetTimeMillisF();
 
-    if (mPixOffsetProvider == NULL)
-    {
-        mProcessTimeStamp = BLUtils::GetTimeMillis();
-        Update(mCurrentTimeTransport);
-    }
-    else
-    {
-        mProcessTimeStamp = mPixOffsetProvider->GetProcessTimeStamp();
+        mMustUpdateTransportTime = false;
     }
 }
 
 void
-GraphTimeAxis6::Update()
+GraphTimeAxis6::UpdateFromDraw()
 {
     if (!mTransportIsPlaying)
         return;
 
+    double drawTimeStamp;
     if (mPixOffsetProvider == NULL)
-    {
-        long int millis = BLUtils::GetTimeMillis();
-        BL_FLOAT elapsed = (millis - mProcessTimeStamp)*0.001;
-        Update(mCurrentTimeTransport + elapsed);
-    }
+        drawTimeStamp = BLUtils::GetTimeMillisF();
     else
     {
-        BL_FLOAT offsetPixels = mPixOffsetProvider->GetOffsetPixels();        
-        mGraphAxis->SetOffsetPixels(offsetPixels);
-
-        Update(mCurrentTimeTransport);
-        
-        //long int drawTimeStamp = mPixOffsetProvider->GetProcessTimeStamp();
-        //BL_FLOAT elapsed = (drawTimeStamp - mProcessTimeStamp)*0.001;
-        //Update(mCurrentTimeTransport + elapsed);
+        mProcessTimeStamp = mPixOffsetProvider->GetProcessTimeStamp();
+        drawTimeStamp = mPixOffsetProvider->GetDrawTimeStamp();
     }
+    
+    BL_FLOAT elapsed = (drawTimeStamp - mProcessTimeStamp)*0.001;
+    if ((drawTimeStamp < 0.0) || (mProcessTimeStamp < 0.0))
+        elapsed = 0.0;
+    
+    double startTransportTimeStamp = mPixOffsetProvider->GetStartTransportTimeStamp();
+    BL_FLOAT currentTime = (drawTimeStamp - startTransportTimeStamp)*0.001;
+    Update(currentTime);
+    
+    mMustUpdateTransportTime = true;
 }
 
 void
 GraphTimeAxis6::SetTransportPlaying(bool flag)
-{    
+{
     mTransportIsPlaying = flag;
 }
 
@@ -246,7 +254,7 @@ GraphTimeAxis6::Update(BL_FLOAT currentTime)
     }
     
     BL_FLOAT tm = startTime;
-    
+
     BL_FLOAT step = timeDuration/mMaxNumLabels;
     int mod = 1;
     if (timeDuration > 1000)
@@ -274,7 +282,6 @@ GraphTimeAxis6::Update(BL_FLOAT currentTime)
     step *= 2.0;
     
     // Start label
-    //tm = 0.0;
     if (mod > 0) // Test for big zoom ????
     {
         if (step > BL_EPS)
@@ -285,14 +292,13 @@ GraphTimeAxis6::Update(BL_FLOAT currentTime)
         if (step > BL_EPS)
             tm = ((int)(tm/step))*step;
     }
-    
+        
     BL_FLOAT timeDurationInv = 1.0/timeDuration;
     for (int i = 0; i < MAX_NUM_LABELS; i++)
     {
         // Parameter
         BL_FLOAT t = 0.0;
         if (timeDuration > BL_EPS)
-            //t = (tm - startTime)/timeDuration;
             t = (tm - startTime)*timeDurationInv;
 
         // Do not fill the labls if out of bounds
@@ -433,7 +439,7 @@ GraphTimeAxis6::Update(BL_FLOAT currentTime)
             sprintf(mHAxisData[i][1], "");
         }
 #endif
-        
+
         tm += step;
     }
     
