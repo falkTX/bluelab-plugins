@@ -298,7 +298,11 @@ GraphTimeAxis6::Update(BL_FLOAT currentTime)
         // Do not fill the labls if out of bounds
         // (will be useful later to not display nvgText if not label)
         if ((t < 0.0) || (t > 1.0))
+        {
+            tm += step;
+            
             continue;
+        }
         
         sprintf(mHAxisData[i][0], "%g", t);
         
