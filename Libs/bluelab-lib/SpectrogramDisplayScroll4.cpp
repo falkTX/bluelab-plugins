@@ -404,10 +404,12 @@ SpectrogramDisplayScroll4::SetSpeedMod(int speedMod)
 {
     mSpeedMod = speedMod;
 
-    // NEW
-    Reset();
+    if (mIsTransportPlaying || mIsMonitorOn)
+    {
+        Reset();
     
-    RecomputeParams();
+        RecomputeParams();
+    }
 }
 
 int
