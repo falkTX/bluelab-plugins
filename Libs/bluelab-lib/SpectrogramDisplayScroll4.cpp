@@ -17,24 +17,11 @@
 
 #define USE_SPECTRO_NEAREST 0
 
-// Avoids black column of 1 pixel on the right
-// (increase of 2 pixels on the right)
-#define RIGHT_OFFSET 0.0 //0.0025
-
-// NOTE: this seems to change nothing...
-// Test: to have simple behavior, without smooth scrolling
-#define DBG_BYPASS_SMOOTH_SCROLL 1 //0 //1
-
-#define DBG_VIEW 1 //0 //1
-
 SpectrogramDisplayScroll4::SpectrogramDisplayScroll4(Plugin *plug,
                                                      BL_FLOAT delayPercent)
 {
     mPlug = plug;
 
-    // DEBUG
-    //delayPercent = 0.0;
-    
     mDelayPercent = delayPercent;
     
     mVg = NULL;
@@ -91,7 +78,6 @@ SpectrogramDisplayScroll4::Reset()
     
     mNeedUpdateColormapData = true;
 
-    // NEW
     mStartTransportTimeStamp = BLUtils::GetTimeMillisF();
     
     RecomputeParams();
@@ -100,11 +86,6 @@ SpectrogramDisplayScroll4::Reset()
 void
 SpectrogramDisplayScroll4::ResetScroll()
 {    
-    mSpectroMagns.clear();
-    mSpectroPhases.clear();
-
-    ResetQueues();
-    
     RecomputeParams();
 }
 
@@ -228,11 +209,9 @@ SpectrogramDisplayScroll4::PreDraw(NVGcontext *vg, int width, int height)
 {   
     mVg = vg;
 
-    // Anti)jitter (lines)
+    // Anti-jitter (offset)
     double drawTimeStamp = BLUtils::GetTimeMillisF();
-    AddPendingSpectrogramLines(drawTimeStamp);
-
-    // Anti)jitter (offset)
+    
     BL_FLOAT offsetSec = mPrevOffsetSec;
     if (mIsTransportPlaying || mIsMonitorOn)
     {
@@ -274,17 +253,16 @@ SpectrogramDisplayScroll4::PreDraw(NVGcontext *vg, int width, int height)
     // If ever we flip here (with GRAPH_CONTROL_FLIP_Y),
     // the spectrogram won't be displayed.
 
-#if DBG_VIEW
-    //nvgTranslate(mVg, 0.25*width, 1.0);
-    //nvgScale(mVg, 0.5, 1.0);
 
+    // Scale and translate the spectrogram image
+    // in order to hide the borders (that are blinking black as data arrives)
     BL_FLOAT leftDelayPix = SecsToPixels(mDelayTimeSecLeft, width);
     BL_FLOAT rightDelayPix = SecsToPixels(mDelayTimeSecRight, width);
     BL_FLOAT scale = ((BL_FLOAT)(width + leftDelayPix + rightDelayPix))/width;
 
     nvgTranslate(mVg, -leftDelayPix, 1.0);
     nvgScale(mVg, scale, 1.0);
-#endif
+
     
     nvgBeginPath(mVg);
     nvgRect(mVg,
@@ -314,15 +292,11 @@ SpectrogramDisplayScroll4::SetSpectrogram(BLSpectrogram4 *spectro,
     
     if (numCols > 0)
         normLineSize = 1.0/((BL_FLOAT)numCols);
-
-    // TEST: without, no label drift, but black column on the left
-    BL_FLOAT leftOffset = 0.0; //mDelayPercent*0.01;
-    //BL_FLOAT leftOffset = mDelayPercent*0.01;
         
-    mSpectrogramBounds[0] = left - leftOffset;
+    mSpectrogramBounds[0] = left;
     mSpectrogramBounds[1] = top;
      // Avoids black column of 1 pixel on the right
-    mSpectrogramBounds[2] = right + RIGHT_OFFSET;
+    mSpectrogramBounds[2] = right;
     mSpectrogramBounds[3] = bottom;
     
     mShowSpectrogram = true;
@@ -355,30 +329,9 @@ void
 SpectrogramDisplayScroll4::AddSpectrogramLine(const WDL_TypedBuf<BL_FLOAT> &magns,
                                               const WDL_TypedBuf<BL_FLOAT> &phases)
 {
-#if DBG_BYPASS_SMOOTH_SCROLL
     mSpectrogram->AddLine(magns, phases);
     
     mSpectroTimeSec += mSpectroLineDurationSec;
-        
-    return;
-#endif
-    
-    // Add the new line to pending lines
-    mSpectroMagns.push_back(magns);
-    mSpectroPhases.push_back(phases);
-
-    // Remove some pending lines if there are too many available
-    //
-    // FIX: If the plugin was hidden, and the host playing,
-    // mSpectroMagns and mSpectroPhases continued to grow, without being ever flushed
-    // (big memory leak)
-    int maxCols = mSpectrogram->GetMaxNumCols();
-    int bufferLimit = maxCols*2;
-    while (mSpectroMagns.size() > bufferLimit)
-    {
-        mSpectroMagns.pop_front();
-        mSpectroPhases.pop_front();
-    }
 }
 
 void
@@ -446,14 +399,6 @@ SpectrogramDisplayScroll4::GetSpeedMod()
     return mSpeedMod;
 }
 
-/*BL_FLOAT
-  SpectrogramDisplayScroll4::GetScaleRatio()
-  {
-  BL_FLOAT ratio = 1.0 - mDelayPercent*0.01;
-  
-  return ratio;
-  }*/
-
 void
 SpectrogramDisplayScroll4::GetTimeTransform(BL_FLOAT *timeOffsetSec,
                                             BL_FLOAT *timeScale)
@@ -463,62 +408,6 @@ SpectrogramDisplayScroll4::GetTimeTransform(BL_FLOAT *timeOffsetSec,
     *timeScale = mSpectroTotalDurationSec/(mSpectroTotalDurationSec +
                                            mDelayTimeSecLeft +
                                            mDelayTimeSecRight);
-}
-
-void
-SpectrogramDisplayScroll4::AddPendingSpectrogramLines(double drawTimeStamp)
-{
-#if DBG_BYPASS_SMOOTH_SCROLL
-    return;
-#endif
-
-    if (mSpectroMagns.empty())
-        return;
-
-    if ((drawTimeStamp < 0.0) || (mStartTransportTimeStamp < 0.0))
-        return;
-    
-    BL_FLOAT currentTimeSec = (drawTimeStamp - mStartTransportTimeStamp)*0.001;
-        
-    while(mSpectroTimeSec + mSpectroLineDurationSec <
-          currentTimeSec + mDelayTimeSecRight)
-    {
-        if (mSpectroMagns.empty())
-            break;
-        
-        const WDL_TypedBuf<BL_FLOAT> &magns = mSpectroMagns[0];
-        const WDL_TypedBuf<BL_FLOAT> &phases = mSpectroPhases[0];
-        
-        mSpectrogram->AddLine(magns, phases);
-
-        mSpectroMagns.pop_front();
-        mSpectroPhases.pop_front();
-
-        //
-        mSpectroTimeSec += mSpectroLineDurationSec;
-    }
-}
-
-void
-SpectrogramDisplayScroll4::ResetQueues()
-{
-    // Resize
-    int maxCols = mSpectrogram->GetMaxNumCols();
-    int bufferLimit = maxCols*2;
-
-    mSpectroMagns.resize(bufferLimit);
-    mSpectroPhases.resize(bufferLimit);
-
-    // Set zero value
-    WDL_TypedBuf<BL_FLOAT> zeroLine;
-    zeroLine.Resize(mBufferSize/2);
-    BLUtils::FillAllZero(&zeroLine);
-
-    for (int i = 0; i < bufferLimit; i++)
-    {
-        mSpectroMagns[i] = zeroLine;
-        mSpectroPhases[i] = zeroLine;
-    }
 }
 
 void
@@ -535,7 +424,7 @@ SpectrogramDisplayScroll4::RecomputeParams()
     mSpectroTotalDurationSec = spectroNumCols*mSpectroLineDurationSec;
 
     mDelayTimeSecRight = mSpectroTotalDurationSec*mDelayPercent*0.01;
-    // 1 single row => sometimes fails...
+    // 1 single row => sometimes fails... (in debug only?)
     //mDelayTimeSecLeft = mSpectroLineDurationSec;
     // Bigger offset
     mDelayTimeSecLeft = mDelayTimeSecRight;

@@ -75,17 +75,13 @@ public:
     void SetSpeedMod(int speedMod);
     int GetSpeedMod();
 
+    // SpectrogramDisplayScroll4 upscale a bit the image, for hiding the borders.
+    // We can get this scale to adapt some other objects, so they will scroll
+    // exactly like the SpectrogramDisplayScroll4
     void GetTimeTransform(BL_FLOAT *timeOffsetSec, BL_FLOAT *timeScale);
-    
-    // We scale up a bit, to hide the borders
-    //BL_FLOAT GetScaleRatio();
     
 protected:
     BL_FLOAT GetOffsetSec(double drawTimeStamp);
-    
-    void AddPendingSpectrogramLines(double drawTimeStamp);
-
-    void ResetQueues();
 
     void RecomputeParams();
 
@@ -122,8 +118,8 @@ protected:
     //
     // NOTE: can't really benefit from bl_queue
     // (we really need to pop, to decrease the list) sometimes
-    deque<WDL_TypedBuf<BL_FLOAT> > mSpectroMagns;
-    deque<WDL_TypedBuf<BL_FLOAT> > mSpectroPhases;
+    //deque<WDL_TypedBuf<BL_FLOAT> > mSpectroMagns;
+    //deque<WDL_TypedBuf<BL_FLOAT> > mSpectroPhases;
     
     // Get reference to plug, to know if the plug is currently playing
     Plugin *mPlug;
@@ -133,7 +129,7 @@ protected:
     //
     BL_FLOAT mDelayPercent;
     BL_FLOAT mDelayTimeSecRight; // From delay percent
-    BL_FLOAT mDelayTimeSecLeft;  // 1 single col
+    BL_FLOAT mDelayTimeSecLeft;  // 1 single col, or more...
 
     BL_FLOAT mSpectroLineDurationSec;
     BL_FLOAT mSpectroTotalDurationSec;
