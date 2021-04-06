@@ -136,9 +136,10 @@ protected:
     BL_FLOAT mSpectroTotalDurationSec;
 
     //
-    BL_FLOAT mSpectroTimeSec;
-    
+    BL_FLOAT mSpectroTimeSec;    
     double mStartTransportTimeStamp;
+
+    BL_FLOAT mPrevOffsetSec;
     
 private:
     WDL_TypedBuf<unsigned int> mTmpBuf0;

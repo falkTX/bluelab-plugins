@@ -19,10 +19,13 @@
 
 // Avoids black column of 1 pixel on the right
 // (increase of 2 pixels on the right)
-#define RIGHT_OFFSET 0.0025
+#define RIGHT_OFFSET 0.0 //0.0025
 
+// NOTE: this seems to change nothing...
 // Test: to have simple behavior, without smooth scrolling
-#define DBG_BYPASS_SMOOTH_SCROLL 0 //1
+#define DBG_BYPASS_SMOOTH_SCROLL 1 //0 //1
+
+#define DBG_VIEW 1
 
 SpectrogramDisplayScroll4::SpectrogramDisplayScroll4(Plugin *plug,
                                                      BL_FLOAT delayPercent)
@@ -56,6 +59,8 @@ SpectrogramDisplayScroll4::SpectrogramDisplayScroll4(Plugin *plug,
     mSpeedMod = 1;
 
     mStartTransportTimeStamp = -1.0;
+
+    mPrevOffsetSec = 0.0;
     
     RecomputeParams();
 }
@@ -220,27 +225,36 @@ SpectrogramDisplayScroll4::PreDraw(NVGcontext *vg, int width, int height)
 {   
     mVg = vg;
 
+    // Anti)jitter (lines)
     double drawTimeStamp = BLUtils::GetTimeMillisF();
     AddPendingSpectrogramLines(drawTimeStamp);
-    
-    DoUpdateSpectrogram();
-    
-    if (!mShowSpectrogram)
-        return;
 
-    // Draw spectrogram first
-    nvgSave(mVg);
-    
-    // New: set colormap only in the spectrogram state
-    nvgSetColormap(mVg, mNvgColormapImage);
-    
-    BL_FLOAT offsetSec = 0.0;
-    BL_FLOAT offsetPixels = 0.0;
+    // Anti)jitter (offset)
+    BL_FLOAT offsetSec = mPrevOffsetSec;
     if (mIsTransportPlaying || mIsMonitorOn)
     {
         offsetSec = GetOffsetSec(drawTimeStamp);
-        offsetPixels = SecsToPixels(offsetSec, width);
+        mPrevOffsetSec = offsetSec;
     }
+
+    BL_FLOAT offsetPixels = SecsToPixels(offsetSec, width);
+
+    //
+    DoUpdateSpectrogram();
+
+    if (!mShowSpectrogram)
+        return;
+    
+    // Draw spectrogram first
+    nvgSave(mVg);
+
+#if DBG_VIEW
+    nvgTranslate(mVg, 0.25*width, 1.0);
+    nvgScale(mVg, 0.5, 1.0);
+#endif
+    
+    // New: set colormap only in the spectrogram state
+    nvgSetColormap(mVg, mNvgColormapImage);
     
     //
     // Spectrogram image
@@ -388,10 +402,12 @@ SpectrogramDisplayScroll4::SetTransportPlaying(bool transportPlaying,
     if ((transportPlaying != mIsTransportPlaying) ||
         (monitorOn != mIsMonitorOn))
         
-    {        
-        RecomputeParams();
-
-        mStartTransportTimeStamp = BLUtils::GetTimeMillisF();
+    {
+        if (transportPlaying || monitorOn)
+        {
+            RecomputeParams();
+            mStartTransportTimeStamp = BLUtils::GetTimeMillisF();
+        }
     }
 
     mIsTransportPlaying = transportPlaying;
@@ -496,6 +512,7 @@ SpectrogramDisplayScroll4::RecomputeParams()
     mDelayTimeSec = mSpectroTotalDurationSec*mDelayPercent*0.01;
     
     mSpectroTimeSec = 0.0;
+    mPrevOffsetSec = 0.0;
 }
 
 BL_FLOAT
