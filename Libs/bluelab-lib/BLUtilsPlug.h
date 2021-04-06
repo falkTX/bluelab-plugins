@@ -79,6 +79,8 @@ class BLUtilsPlug
                           ParamSmoother2 *smoother);
 
     static int GetPlugFPS(int defaultFPS);
+
+    static BL_FLOAT GetTransportTime(Plugin *plug);
 };
 
 #endif

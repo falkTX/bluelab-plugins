@@ -51,9 +51,9 @@ public:
     
     void Reset(int bufferSize, BL_FLOAT timeDuration, int maxNumLabels);
     
-    void UpdateFromTransport(BL_FLOAT currentTime);
+    void UpdateFromTransport(BL_FLOAT transportTime);
     void UpdateFromDraw();
-    void SetTransportPlaying(bool flag);
+    void SetTransportPlaying(bool flag, BL_FLOAT transportTime = -1.0);
 
     // Time in seconds
     void GetMinMaxTime(BL_FLOAT *minTimeSec, BL_FLOAT *maxTimeSec);

@@ -540,7 +540,10 @@ SpectrogramDisplayScroll4::RecomputeParams()
 BL_FLOAT
 SpectrogramDisplayScroll4::SecsToPixels(BL_FLOAT secs, BL_FLOAT width)
 {
-    BL_FLOAT pix = (secs/mSpectroTotalDurationSec)*width;
+    // NOTE: this coeff improves a small jittering!
+    BL_FLOAT coeff = 1.0/(1.0 - mDelayPercent*0.01);
+    
+    BL_FLOAT pix = (secs/mSpectroTotalDurationSec)*width*coeff;
 
     return pix;
 }

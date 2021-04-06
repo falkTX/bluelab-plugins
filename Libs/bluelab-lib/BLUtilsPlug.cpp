@@ -955,3 +955,16 @@ BLUtilsPlug::GetPlugFPS(int defaultFPS)
 
     return defaultFPS;
 }
+
+BL_FLOAT
+BLUtilsPlug::GetTransportTime(Plugin *plug)
+{
+    BL_FLOAT sampleRate = plug->GetSampleRate();
+    BL_FLOAT samplePos = plug->GetTransportSamplePos();
+    if (samplePos < 0.0)
+        return 0.0;
+    
+    BL_FLOAT transportTime = samplePos/sampleRate;
+
+    return transportTime;
+}

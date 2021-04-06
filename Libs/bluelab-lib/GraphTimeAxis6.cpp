@@ -85,7 +85,7 @@ GraphTimeAxis6::~GraphTimeAxis6()
 void
 GraphTimeAxis6::SetPixelOffsetProvider(PixelOffsetProvider *provider)
 {
-    mPixOffsetProvider = provider;
+    mPixOffsetProvider = NULL; //provider;
 }
 
 void
@@ -156,19 +156,19 @@ GraphTimeAxis6::Reset(int bufferSize, BL_FLOAT timeDuration,
 #endif
 }
 
+// Change only the transport value when start playing or reseting a loop
+// Otherwise process smoothly
+// NOTE: must do this because the transport value from the daw can vary
+// a lot, and avoid jitter would be impossible if we follow strictly
+// the daw transport pos.
 void
-GraphTimeAxis6::UpdateFromTransport(BL_FLOAT currentTime)
+GraphTimeAxis6::UpdateFromTransport(BL_FLOAT transportTime)
 {
-    // Manage the case of ProcessBlocks() called several time
-    // with Draw() not yet called
-    if (mMustUpdateTransportTime)
+    if (transportTime <= mTransportValueSec)
     {
-        mTransportValueSec = currentTime;
-    
-        if (mPixOffsetProvider == NULL)
-            mProcessTimeStamp = BLUtils::GetTimeMillisF();
-
-        mMustUpdateTransportTime = false;
+        mProcessTimeStamp = BLUtils::GetTimeMillisF();
+        
+        mTransportValueSec = transportTime;
     }
 }
 
@@ -191,16 +191,27 @@ GraphTimeAxis6::UpdateFromDraw()
     if ((drawTimeStamp < 0.0) || (mProcessTimeStamp < 0.0))
         elapsed = 0.0;
     
-    double startTransportTimeStamp = mPixOffsetProvider->GetStartTransportTimeStamp();
+    /*double startTransportTimeStamp =
+        mPixOffsetProvider->GetStartTransportTimeStamp();
     BL_FLOAT currentTime = (drawTimeStamp - startTransportTimeStamp)*0.001;
-    Update(currentTime);
-    
+    Update(currentTime);*/
+
+    Update(mTransportValueSec + elapsed);
+                        
     mMustUpdateTransportTime = true;
 }
 
 void
-GraphTimeAxis6::SetTransportPlaying(bool flag)
+GraphTimeAxis6::SetTransportPlaying(bool flag, BL_FLOAT transportTime)
 {
+    if (flag && !mTransportIsPlaying)
+        // Play just started
+    {
+        mProcessTimeStamp = BLUtils::GetTimeMillisF();
+        
+        mTransportValueSec = transportTime;
+    }
+    
     mTransportIsPlaying = flag;
 }
 
@@ -465,4 +476,3 @@ GraphTimeAxis6::ComputeTimeDuration(int numBuffers, int bufferSize,
 }
 
 #endif
-
