@@ -69,7 +69,7 @@ public:
     void UpdateSpectrogram(bool flag);
     void UpdateColormap(bool flag);
     
-    void SetTransportPlaying(bool flag);
+    void SetTransportPlaying(bool transportPlaying, bool monitorOn = false);
     
     // Variable speed
     void SetSpeedMod(int speedMod);
@@ -126,8 +126,8 @@ protected:
     // Get reference to plug, to know if the plug is currently playing
     Plugin *mPlug;
     
-    bool mIsPlaying;
-
+    bool mIsTransportPlaying;
+    bool mIsMonitorOn;
     //
     BL_FLOAT mDelayPercent;
     BL_FLOAT mDelayTimeSec;

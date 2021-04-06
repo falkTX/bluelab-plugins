@@ -49,7 +49,8 @@ SpectrogramDisplayScroll4::SpectrogramDisplayScroll4(Plugin *plug,
     mOverlapping = 0;
     
     // Avoid jump when restarting playback
-    mIsPlaying = false;
+    mIsTransportPlaying = false;
+    mIsMonitorOn = false;
     
     // Variable speed
     mSpeedMod = 1;
@@ -232,7 +233,7 @@ SpectrogramDisplayScroll4::PreDraw(NVGcontext *vg, int width, int height)
     
     BL_FLOAT offsetSec = 0.0;
     BL_FLOAT offsetPixels = 0.0;
-    if (mIsPlaying)
+    if (mIsTransportPlaying || mIsMonitorOn)
     {
         offsetSec = GetOffsetSec(drawTimeStamp);
         offsetPixels = SecsToPixels(offsetSec, width);
@@ -378,18 +379,20 @@ SpectrogramDisplayScroll4::UpdateColormap(bool flag)
 }
 
 void
-SpectrogramDisplayScroll4::SetTransportPlaying(bool flag)
+SpectrogramDisplayScroll4::SetTransportPlaying(bool transportPlaying,
+                                               bool monitorOn)
 {
-    bool prevPlaying = mIsPlaying;
-    
-    mIsPlaying = flag;
-
-    if (mIsPlaying != prevPlaying)
+    if ((transportPlaying != mIsTransportPlaying) ||
+        (monitorOn != mIsMonitorOn))
+        
     {        
         RecomputeParams();
 
         mStartTransportTimeStamp = BLUtils::GetTimeMillisF();
     }
+
+    mIsTransportPlaying = transportPlaying;
+    mIsMonitorOn = monitorOn;
 }
 
 // Variable speed

@@ -52,8 +52,9 @@ GraphTimeAxis6::GraphTimeAxis6(bool displayLines,
     
     mCurrentTime = 0.0;
     
-    mTransportIsPlaying = false;
-
+    mIsTransportPlaying = false;
+    mIsMonitorOn = false;
+    
     mTransportValueSec = 0.0;
     
     mStartTransportTimeStamp = -1.0;
@@ -164,7 +165,7 @@ GraphTimeAxis6::UpdateFromTransport(BL_FLOAT transportTime)
 void
 GraphTimeAxis6::UpdateFromDraw()
 {
-    if (!mTransportIsPlaying)
+    if (!mIsTransportPlaying && !mIsMonitorOn)
         return;
 
     double drawTimeStamp = BLUtils::GetTimeMillisF();
@@ -177,9 +178,12 @@ GraphTimeAxis6::UpdateFromDraw()
 }
 
 void
-GraphTimeAxis6::SetTransportPlaying(bool flag, BL_FLOAT transportTime)
+GraphTimeAxis6::SetTransportPlaying(bool transportPlaying,
+                                    bool monitorOn,
+                                    BL_FLOAT transportTime)
 {
-    if (flag && !mTransportIsPlaying)
+    if ((transportPlaying && !mIsTransportPlaying) ||
+        (monitorOn && !mIsMonitorOn))
         // Play just started
     {
         mStartTransportTimeStamp = BLUtils::GetTimeMillisF();
@@ -187,7 +191,8 @@ GraphTimeAxis6::SetTransportPlaying(bool flag, BL_FLOAT transportTime)
         mTransportValueSec = transportTime;
     }
     
-    mTransportIsPlaying = flag;
+    mIsTransportPlaying = transportPlaying;
+    mIsMonitorOn = monitorOn;
 }
 
 void

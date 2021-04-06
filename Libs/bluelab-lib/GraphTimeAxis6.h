@@ -50,7 +50,8 @@ public:
     
     void UpdateFromTransport(BL_FLOAT transportTime);
     void UpdateFromDraw();
-    void SetTransportPlaying(bool flag, BL_FLOAT transportTime = -1.0);
+    void SetTransportPlaying(bool transportPlaying, bool monitorOn,
+                             BL_FLOAT transportTime = -1.0);
 
     // Time in seconds
     void GetMinMaxTime(BL_FLOAT *minTimeSec, BL_FLOAT *maxTimeSec);
@@ -75,8 +76,9 @@ protected:
     BL_FLOAT mCurrentTime;
     
     //
-    bool mTransportIsPlaying;
-
+    bool mIsTransportPlaying;
+    bool mIsMonitorOn;
+    
     BL_FLOAT mTransportValueSec;
     double mStartTransportTimeStamp;
     
