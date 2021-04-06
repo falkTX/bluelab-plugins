@@ -25,13 +25,16 @@
 // Test: to have simple behavior, without smooth scrolling
 #define DBG_BYPASS_SMOOTH_SCROLL 1 //0 //1
 
-#define DBG_VIEW 1
+#define DBG_VIEW 0 //1
 
 SpectrogramDisplayScroll4::SpectrogramDisplayScroll4(Plugin *plug,
                                                      BL_FLOAT delayPercent)
 {
     mPlug = plug;
 
+    // DEBUG
+    delayPercent = 0.0;
+    
     mDelayPercent = delayPercent;
     
     mVg = NULL;
