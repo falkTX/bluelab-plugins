@@ -82,6 +82,9 @@ SpectrogramDisplayScroll4::Reset()
     mNeedUpdateSpectrogramData = true;
     
     mNeedUpdateColormapData = true;
+
+    // NEW
+    mStartTransportTimeStamp = BLUtils::GetTimeMillisF();
     
     RecomputeParams();
 }
@@ -400,6 +403,9 @@ void
 SpectrogramDisplayScroll4::SetSpeedMod(int speedMod)
 {
     mSpeedMod = speedMod;
+
+    // NEW
+    Reset();
     
     RecomputeParams();
 }
