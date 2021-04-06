@@ -392,14 +392,6 @@ GraphControl12::DrawText(NVGcontext *vg,
                          const char *text, int color[4],
                          int halign, int valign, BL_GUI_FLOAT fontSizeCoeff)
 {
-#if 0
-    if (strcmp(text, "0s") == 0)
-    {
-        if (color[1] == 48) // Warn overlay
-            BLDebug::AppendValue("x.txt", x);
-    }
-#endif
-    
     // Optimization
     // (avoid displaying many empty texts)
     if (strlen(text) == 0)

@@ -17,8 +17,6 @@ using namespace std;
 #include <BLTypes.h>
 #include <GraphControl12.h>
 
-#include <PixelOffsetProvider.h>
-
 #include "IPlug_include_in_plug_hdr.h"
 
 
@@ -35,8 +33,7 @@ using namespace iplug;
 
 class BLSpectrogram4;
 class NVGcontext;
-class SpectrogramDisplayScroll4 : public GraphCustomDrawer,
-                                  public PixelOffsetProvider
+class SpectrogramDisplayScroll4 : public GraphCustomDrawer
 {
 public:
     // delayPercent: delay that we bufferize, to fix when the data is a bit late
@@ -49,12 +46,6 @@ public:
     
     // For InfrasonicViewer
     void ResetScroll();
-
-    double GetProcessTimeStamp() override;
-    double GetDrawTimeStamp() override;
-    double GetStartTransportTimeStamp() override;
-    
-    BL_FLOAT GetOffsetSec();
     
     bool NeedUpdateSpectrogram();
     bool DoUpdateSpectrogram();
@@ -83,23 +74,20 @@ public:
     // Variable speed
     void SetSpeedMod(int speedMod);
     int GetSpeedMod();
-
-    // Last ProcessBlock() time
-    void UpdateProcessTimeStamp();
     
     // We scale up a bit, to hide the borders
     BL_FLOAT GetScaleRatio();
     
 protected:
-    void AddPendingSpectrogramLines();
+    BL_FLOAT GetOffsetSec(double drawTimeStamp);
+    
+    void AddPendingSpectrogramLines(double drawTimeStamp);
 
     void ResetQueues();
 
     void RecomputeParams();
 
     BL_FLOAT SecsToPixels(BL_FLOAT secs, BL_FLOAT width);
-
-    void UpdateDrawTimeStamp();
     
     // NanoVG
     NVGcontext *mVg;
@@ -149,17 +137,8 @@ protected:
 
     //
     BL_FLOAT mSpectroTimeSec;
-
-    double mProcessTimeStamp;
-    double mDrawTimeStamp;
     
     double mStartTransportTimeStamp;
-
-    // For synchro
-    double mStartTransportPlayTimeStamp;
-    bool mMustUpdateProcessTime;
-    
-    BL_FLOAT mWidth;
     
 private:
     WDL_TypedBuf<unsigned int> mTmpBuf0;

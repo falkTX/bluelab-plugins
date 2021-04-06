@@ -33,15 +33,12 @@
 
 class GUIHelper12;
 class GraphControl12;
-class PixelOffsetProvider;
 class GraphTimeAxis6
 {
 public:
     GraphTimeAxis6(bool displayLines = true, bool squeezeBorderLabels = true);
     
     virtual ~GraphTimeAxis6();
-
-    void SetPixelOffsetProvider(PixelOffsetProvider *provider);
     
     void Init(GraphControl12 *graph,
               GraphAxis2 *graphAxis, GUIHelper12 *guiHelper,
@@ -81,9 +78,7 @@ protected:
     bool mTransportIsPlaying;
 
     BL_FLOAT mTransportValueSec;
-    double mProcessTimeStamp;
-    double mStartTransportPlayTimeStamp;
-    bool mMustUpdateTransportTime;
+    double mStartTransportTimeStamp;
     
     bool mDisplayLines;
     
@@ -91,8 +86,6 @@ protected:
 
     char *mHAxisData[MAX_NUM_LABELS][2];
     bool mAxisDataAllocated;
-
-    PixelOffsetProvider *mPixOffsetProvider;
 };
 
 #endif

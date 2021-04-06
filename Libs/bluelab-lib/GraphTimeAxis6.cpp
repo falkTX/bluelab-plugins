@@ -20,8 +20,6 @@
 
 #include <GraphControl12.h>
 
-#include <PixelOffsetProvider.h>
-
 #include "GraphTimeAxis6.h"
 
 // FIX: Clear the time axis if we change the time window
@@ -57,17 +55,14 @@ GraphTimeAxis6::GraphTimeAxis6(bool displayLines,
     mTransportIsPlaying = false;
 
     mTransportValueSec = 0.0;
-    mProcessTimeStamp = -1.0;
+    
+    mStartTransportTimeStamp = -1.0;
     
     mDisplayLines = displayLines;
     
     mSqueezeBorderLabels = squeezeBorderLabels;
 
     mAxisDataAllocated = false;
-
-    mPixOffsetProvider = NULL;
-
-    mMustUpdateTransportTime = true;
 }
 
 GraphTimeAxis6::~GraphTimeAxis6()
@@ -80,12 +75,6 @@ GraphTimeAxis6::~GraphTimeAxis6()
             delete []mHAxisData[i][1];
         }
     }
-}
-
-void
-GraphTimeAxis6::SetPixelOffsetProvider(PixelOffsetProvider *provider)
-{
-    mPixOffsetProvider = NULL; //provider;
 }
 
 void
@@ -166,7 +155,7 @@ GraphTimeAxis6::UpdateFromTransport(BL_FLOAT transportTime)
 {
     if (transportTime <= mTransportValueSec)
     {
-        mProcessTimeStamp = BLUtils::GetTimeMillisF();
+        mStartTransportTimeStamp = BLUtils::GetTimeMillisF();
         
         mTransportValueSec = transportTime;
     }
@@ -178,27 +167,13 @@ GraphTimeAxis6::UpdateFromDraw()
     if (!mTransportIsPlaying)
         return;
 
-    double drawTimeStamp;
-    if (mPixOffsetProvider == NULL)
-        drawTimeStamp = BLUtils::GetTimeMillisF();
-    else
-    {
-        mProcessTimeStamp = mPixOffsetProvider->GetProcessTimeStamp();
-        drawTimeStamp = mPixOffsetProvider->GetDrawTimeStamp();
-    }
+    double drawTimeStamp = BLUtils::GetTimeMillisF();
     
-    BL_FLOAT elapsed = (drawTimeStamp - mProcessTimeStamp)*0.001;
-    if ((drawTimeStamp < 0.0) || (mProcessTimeStamp < 0.0))
+    BL_FLOAT elapsed = (drawTimeStamp - mStartTransportTimeStamp)*0.001;
+    if ((drawTimeStamp < 0.0) || (mStartTransportTimeStamp < 0.0))
         elapsed = 0.0;
-    
-    /*double startTransportTimeStamp =
-        mPixOffsetProvider->GetStartTransportTimeStamp();
-    BL_FLOAT currentTime = (drawTimeStamp - startTransportTimeStamp)*0.001;
-    Update(currentTime);*/
 
     Update(mTransportValueSec + elapsed);
-                        
-    mMustUpdateTransportTime = true;
 }
 
 void
@@ -207,7 +182,7 @@ GraphTimeAxis6::SetTransportPlaying(bool flag, BL_FLOAT transportTime)
     if (flag && !mTransportIsPlaying)
         // Play just started
     {
-        mProcessTimeStamp = BLUtils::GetTimeMillisF();
+        mStartTransportTimeStamp = BLUtils::GetTimeMillisF();
         
         mTransportValueSec = transportTime;
     }

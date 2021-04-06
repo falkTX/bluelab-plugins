@@ -54,12 +54,7 @@ SpectrogramDisplayScroll4::SpectrogramDisplayScroll4(Plugin *plug,
     // Variable speed
     mSpeedMod = 1;
 
-    mProcessTimeStamp = -1.0;
-    mDrawTimeStamp = -1.0;
     mStartTransportTimeStamp = -1.0;
-    mStartTransportPlayTimeStamp = -1.0;
-
-    mMustUpdateProcessTime = true;
     
     RecomputeParams();
 }
@@ -102,55 +97,15 @@ SpectrogramDisplayScroll4::ResetScroll()
 }
 
 BL_FLOAT
-SpectrogramDisplayScroll4::GetOffsetSec()
+SpectrogramDisplayScroll4::GetOffsetSec(double drawTimeStamp)
 {
-    if ((mStartTransportTimeStamp < 0.0) ||
-        (mDrawTimeStamp < 0.0))
+    if ((mStartTransportTimeStamp < 0.0) || (drawTimeStamp < 0.0))
         return 0.0;
     
-    BL_FLOAT currentTimeSec = (mDrawTimeStamp - mStartTransportTimeStamp)*0.001;
+    BL_FLOAT currentTimeSec = (drawTimeStamp - mStartTransportTimeStamp)*0.001;
     BL_FLOAT offset = mSpectroTimeSec - currentTimeSec;
     
     return offset;
-}
-
-void
-SpectrogramDisplayScroll4::UpdateDrawTimeStamp()
-{
-    mDrawTimeStamp = BLUtils::GetTimeMillisF();
-}
-
-void
-SpectrogramDisplayScroll4::UpdateProcessTimeStamp()
-{
-    // Manage the case of ProcessBlocks() called several time
-    // with Draw() not yet called
-    if (mMustUpdateProcessTime)
-    {
-        mProcessTimeStamp = BLUtils::GetTimeMillisF();
-    }
-
-    mMustUpdateProcessTime = false;
-}
-
-// Centralize the current time, to ping it only once
-// at each loop, just before draw
-double
-SpectrogramDisplayScroll4::GetProcessTimeStamp()
-{
-    return mProcessTimeStamp;
-}
-
-double
-SpectrogramDisplayScroll4::GetDrawTimeStamp()
-{
-    return mDrawTimeStamp;
-}
-
-double
-SpectrogramDisplayScroll4::GetStartTransportTimeStamp()
-{
-    return mStartTransportTimeStamp;
 }
 
 bool
@@ -260,12 +215,9 @@ void
 SpectrogramDisplayScroll4::PreDraw(NVGcontext *vg, int width, int height)
 {   
     mVg = vg;
-    mWidth = width;
 
-    UpdateDrawTimeStamp();
-    AddPendingSpectrogramLines();
-    
-    mMustUpdateProcessTime = true;
+    double drawTimeStamp = BLUtils::GetTimeMillisF();
+    AddPendingSpectrogramLines(drawTimeStamp);
     
     DoUpdateSpectrogram();
     
@@ -282,7 +234,7 @@ SpectrogramDisplayScroll4::PreDraw(NVGcontext *vg, int width, int height)
     BL_FLOAT offsetPixels = 0.0;
     if (mIsPlaying)
     {
-        offsetSec = GetOffsetSec();
+        offsetSec = GetOffsetSec(drawTimeStamp);
         offsetPixels = SecsToPixels(offsetSec, width);
     }
     
@@ -339,7 +291,8 @@ SpectrogramDisplayScroll4::SetSpectrogram(BLSpectrogram4 *spectro,
         
     mSpectrogramBounds[0] = left - leftOffset;
     mSpectrogramBounds[1] = top;
-    mSpectrogramBounds[2] = right + RIGHT_OFFSET; // Avoids black column of 1 pixel on the right
+     // Avoids black column of 1 pixel on the right
+    mSpectrogramBounds[2] = right + RIGHT_OFFSET;
     mSpectrogramBounds[3] = bottom;
     
     mShowSpectrogram = true;
@@ -435,7 +388,7 @@ SpectrogramDisplayScroll4::SetTransportPlaying(bool flag)
     {        
         RecomputeParams();
 
-        mStartTransportTimeStamp = mProcessTimeStamp;
+        mStartTransportTimeStamp = BLUtils::GetTimeMillisF();
     }
 }
 
@@ -463,7 +416,7 @@ SpectrogramDisplayScroll4::GetScaleRatio()
 }
 
 void
-SpectrogramDisplayScroll4::AddPendingSpectrogramLines()
+SpectrogramDisplayScroll4::AddPendingSpectrogramLines(double drawTimeStamp)
 {
 #if DBG_BYPASS_SMOOTH_SCROLL
     return;
@@ -472,11 +425,10 @@ SpectrogramDisplayScroll4::AddPendingSpectrogramLines()
     if (mSpectroMagns.empty())
         return;
 
-    if ((mDrawTimeStamp < 0.0) ||
-        (mStartTransportTimeStamp < 0.0))
+    if ((drawTimeStamp < 0.0) || (mStartTransportTimeStamp < 0.0))
         return;
     
-    BL_FLOAT currentTimeSec = (mDrawTimeStamp - mStartTransportTimeStamp)*0.001;
+    BL_FLOAT currentTimeSec = (drawTimeStamp - mStartTransportTimeStamp)*0.001;
         
     while(mSpectroTimeSec + mSpectroLineDurationSec < currentTimeSec + mDelayTimeSec)
     {
@@ -533,8 +485,6 @@ SpectrogramDisplayScroll4::RecomputeParams()
     mDelayTimeSec = mSpectroTotalDurationSec*mDelayPercent*0.01;
     
     mSpectroTimeSec = 0.0;
-    
-    mWidth = -1.0;
 }
 
 BL_FLOAT
