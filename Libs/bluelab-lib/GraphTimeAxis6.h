@@ -46,7 +46,8 @@ public:
               BL_FLOAT timeDuration, int maxNumLabels,
               BL_FLOAT yOffset = 0);
     
-    void Reset(int bufferSize, BL_FLOAT timeDuration, int maxNumLabels);
+    void Reset(int bufferSize, BL_FLOAT timeDuration,
+               int maxNumLabels, BL_FLOAT timeOffsetSec = 0.0);
     
     void UpdateFromTransport(BL_FLOAT transportTime);
     void UpdateFromDraw();
@@ -68,10 +69,9 @@ protected:
     GraphAxis2 *mGraphAxis;
     
     int mBufferSize;
-    
     BL_FLOAT mTimeDuration;
-    
     int mMaxNumLabels;
+    BL_FLOAT mTimeOffsetSec;
     
     BL_FLOAT mCurrentTime;
     

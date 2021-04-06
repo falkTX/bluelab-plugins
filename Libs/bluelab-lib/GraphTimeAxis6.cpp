@@ -125,12 +125,14 @@ GraphTimeAxis6::Init(GraphControl12 *graph,
 
 void
 GraphTimeAxis6::Reset(int bufferSize, BL_FLOAT timeDuration,
-                      int maxNumLabels)
+                      int maxNumLabels, BL_FLOAT timeOffsetSec)
 {
     mBufferSize = bufferSize;
     mTimeDuration = timeDuration;
     
     mMaxNumLabels = maxNumLabels;
+
+    mTimeOffsetSec = timeOffsetSec;
     
 #if FIX_RESET_TIME_AXIS
     // Reset the labels
@@ -198,8 +200,8 @@ GraphTimeAxis6::SetTransportPlaying(bool transportPlaying,
 void
 GraphTimeAxis6::GetMinMaxTime(BL_FLOAT *minTimeSec, BL_FLOAT *maxTimeSec)
 {
-    *minTimeSec = mCurrentTime - mTimeDuration;
-    *maxTimeSec = mCurrentTime;
+    *minTimeSec = mCurrentTime - mTimeDuration + mTimeOffsetSec;
+    *maxTimeSec = mCurrentTime + mTimeOffsetSec;
 }
 
 void
@@ -208,6 +210,8 @@ GraphTimeAxis6::Update(BL_FLOAT currentTime)
     // Just in case
     if (mGraphAxis == NULL)
         return;
+
+    currentTime += mTimeOffsetSec;
     
     mCurrentTime = currentTime;
     

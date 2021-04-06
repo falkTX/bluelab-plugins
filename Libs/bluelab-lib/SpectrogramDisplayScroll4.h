@@ -38,7 +38,7 @@ class SpectrogramDisplayScroll4 : public GraphCustomDrawer
 public:
     // delayPercent: delay that we bufferize, to fix when the data is a bit late
     // It is a percent of the spectrogram full width
-    SpectrogramDisplayScroll4(Plugin *plug, BL_FLOAT delayPercent = 25.0);
+    SpectrogramDisplayScroll4(Plugin *plug, BL_FLOAT delayPercent = 3.125/*25.0*/);
     
     virtual ~SpectrogramDisplayScroll4();
     
@@ -74,9 +74,11 @@ public:
     // Variable speed
     void SetSpeedMod(int speedMod);
     int GetSpeedMod();
+
+    void GetTimeTransform(BL_FLOAT *timeOffsetSec, BL_FLOAT *timeScale);
     
     // We scale up a bit, to hide the borders
-    BL_FLOAT GetScaleRatio();
+    //BL_FLOAT GetScaleRatio();
     
 protected:
     BL_FLOAT GetOffsetSec(double drawTimeStamp);
@@ -130,7 +132,8 @@ protected:
     bool mIsMonitorOn;
     //
     BL_FLOAT mDelayPercent;
-    BL_FLOAT mDelayTimeSec;
+    BL_FLOAT mDelayTimeSecRight; // From delay percent
+    BL_FLOAT mDelayTimeSecLeft;  // 1 single col
 
     BL_FLOAT mSpectroLineDurationSec;
     BL_FLOAT mSpectroTotalDurationSec;
