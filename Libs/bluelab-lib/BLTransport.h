@@ -6,14 +6,15 @@
 // Get current accurate transport value at any time.
 // Because the daw transport value can be very hacked.
 // Well suitable for smooth animations depending on transport
-
+class ParamSmoother2;
 class BLTransport
 {
  public:
-    BLTransport();
+    BLTransport(BL_FLOAT sampleRate);
     virtual ~BLTransport();
 
     void Reset();
+    void Reset(BL_FLOAT sampleRate);
     
     // From daw
     // Return true if dependent object update is needed
@@ -38,6 +39,11 @@ class BLTransport
     // Reset the extimated transport value
     // Resynch directly to the DAW transport value
     void HardResynch();
+
+    // Resynch progressively the estimated transport value
+    // to the host transport value
+    // This method must be called continuously
+    void SoftResynch();
     
  protected:
     bool mIsTransportPlaying;
@@ -59,6 +65,10 @@ class BLTransport
 
     // Offset used for hard or soft resynch
     BL_FLOAT mResynchOffsetSec;
+
+    // Soft resynth
+    ParamSmoother2 *mDiffSmoother;
+    bool mMustResetDiffSmoother;
 };
 
 #endif

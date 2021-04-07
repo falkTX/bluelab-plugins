@@ -436,9 +436,12 @@ SpectrogramDisplayScroll4::SecsToPixels(BL_FLOAT secs, BL_FLOAT width)
 void
 SpectrogramDisplayScroll4::ResynchTransport()
 {
-    // DEBUG
-    //mTransport->HardResynch();
+    // No resynch
     //return;
+    
+    // Soft
+    mTransport->SoftResynch();
+    return;
     
     BL_FLOAT offsetSec = GetOffsetSec();
 
