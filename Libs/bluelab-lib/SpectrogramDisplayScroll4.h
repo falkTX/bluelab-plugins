@@ -90,6 +90,8 @@ protected:
     void RecomputeParams();
 
     BL_FLOAT SecsToPixels(BL_FLOAT secs, BL_FLOAT width);
+
+    void ResynchTransport();
     
     // NanoVG
     NVGcontext *mVg;

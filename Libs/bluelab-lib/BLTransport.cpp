@@ -17,6 +17,8 @@ BLTransport::BLTransport()
 
     mDAWStartTransportValueSecLoop = 0.0;
     mDAWCurrentTransportValueSecLoop = 0.0;
+
+    mResynchOffsetSec = 0.0;
 }
 
 BLTransport::~BLTransport() {}
@@ -26,6 +28,8 @@ BLTransport::Reset()
 {
     mStartTransportTimeStampTotal = BLUtils::GetTimeMillisF();
     mStartTransportTimeStampLoop = BLUtils::GetTimeMillisF();
+
+    mResynchOffsetSec = 0.0;
 }
 
 bool
@@ -48,6 +52,8 @@ BLTransport::SetTransportPlaying(bool transportPlaying,
         mStartTransportTimeStampLoop = BLUtils::GetTimeMillisF();
         
         mDAWStartTransportValueSecLoop = dawTransportValueSec;
+
+        mResynchOffsetSec = 0.0;
         
         result = true;
     }
@@ -80,10 +86,13 @@ void
 BLTransport::SetDAWTransportValueSec(BL_FLOAT dawTransportValueSec)
 {
     if (dawTransportValueSec <= mDAWStartTransportValueSecLoop)
+        // Just restarted a loop
     {
         mStartTransportTimeStampLoop = BLUtils::GetTimeMillisF();
         
         mDAWStartTransportValueSecLoop = dawTransportValueSec;
+
+        mResynchOffsetSec = 0.0;
     }
 
     mDAWCurrentTransportValueSecLoop = dawTransportValueSec;
@@ -96,7 +105,8 @@ BLTransport::GetTransportElapsedSecTotal()
         (mNow < 0.0))
         return -1;
 
-    double elapsed = (mNow - mStartTransportTimeStampTotal)*0.001;
+    double elapsed =
+        (mNow - mStartTransportTimeStampTotal)*0.001 + mResynchOffsetSec;
 
     return elapsed;
 }
@@ -108,7 +118,8 @@ BLTransport::GetTransportElapsedSecLoop()
         (mNow < 0.0))
         return -1;
 
-    double elapsed = (mNow - mStartTransportTimeStampLoop)*0.001;
+    double elapsed =
+        (mNow - mStartTransportTimeStampLoop)*0.001 + mResynchOffsetSec;
 
     return elapsed;
 }
@@ -121,12 +132,28 @@ BLTransport::GetTransportValueSecLoop()
     if (elapsed < 0.0)
         elapsed = 0.0;
 
-    BL_FLOAT result = mDAWStartTransportValueSecLoop + elapsed;
+    BL_FLOAT result =
+        mDAWStartTransportValueSecLoop + elapsed;
 
 #ifdef DEBUG_DUMP
-    BLDebug::AppendValue("real.txt", mDAWStartTransportValueSecLoop);
+    BLDebug::AppendValue("real.txt", mDAWCurrentTransportValueSecLoop);
     BLDebug::AppendValue("smooth.txt", result);
 #endif
     
     return result;
+}
+
+void
+BLTransport::HardResynch()
+{
+    // 
+    mResynchOffsetSec = 0.0;
+    
+    BL_FLOAT estimTransport =
+        mDAWStartTransportValueSecLoop + GetTransportElapsedSecLoop();
+    
+    BL_FLOAT diff = estimTransport - mDAWCurrentTransportValueSecLoop;
+
+    mResynchOffsetSec = -diff;
+    //mResynchOffsetSec -= diff;
 }

@@ -34,6 +34,10 @@ class BLTransport
     BL_FLOAT GetTransportElapsedSecLoop();
     // Get smoothed transport value, based on DAW transport value 
     BL_FLOAT GetTransportValueSecLoop();
+
+    // Reset the extimated transport value
+    // Resynch directly to the DAW transport value
+    void HardResynch();
     
  protected:
     bool mIsTransportPlaying;
@@ -52,6 +56,9 @@ class BLTransport
     // DAW current transport time
     // NOTE: Not used for the moment
     BL_FLOAT mDAWCurrentTransportValueSecLoop;
+
+    // Offset used for hard or soft resynch
+    BL_FLOAT mResynchOffsetSec;
 };
 
 #endif
