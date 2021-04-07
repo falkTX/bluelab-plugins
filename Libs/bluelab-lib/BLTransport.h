@@ -18,14 +18,14 @@ class BLTransport
     // From daw
     // Return true if dependent object update is needed
     bool SetTransportPlaying(bool transportPlaying, bool monitorOn = false,
-                             BL_FLOAT transportTime = -1.0);
+                             BL_FLOAT dawTransportValueSec = -1.0);
     bool IsTransportPlaying();
     
     // Update the current smooth transport value
     void Update();
 
     // Real transport value from daw
-    void SetDAWTransportValueSec(BL_FLOAT transportTime);
+    void SetDAWTransportValueSec(BL_FLOAT dawTransportValueSec);
     
     // Smooth value
     // Total time elapsed since start playing
@@ -46,7 +46,12 @@ class BLTransport
     
     double mNow;
 
-    BL_FLOAT mDAWTransportValueSec;
+    // DAW transport time when start playing, or re-starting a loop
+    BL_FLOAT mDAWStartTransportValueSecLoop;
+
+    // DAW current transport time
+    // NOTE: Not used for the moment
+    BL_FLOAT mDAWCurrentTransportValueSecLoop;
 };
 
 #endif

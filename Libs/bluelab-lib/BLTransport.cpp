@@ -1,6 +1,9 @@
 #include <BLUtils.h>
+#include <BLDebug.h>
 
 #include "BLTransport.h"
+
+#define DEBUG_DUMP 0 //1
 
 BLTransport::BLTransport()
 {
@@ -12,7 +15,8 @@ BLTransport::BLTransport()
     mStartTransportTimeStampLoop = -1.0;
     mNow = -1.0;
 
-    mDAWTransportValueSec = 0.0;
+    mDAWStartTransportValueSecLoop = 0.0;
+    mDAWCurrentTransportValueSecLoop = 0.0;
 }
 
 BLTransport::~BLTransport() {}
@@ -27,18 +31,23 @@ BLTransport::Reset()
 bool
 BLTransport::SetTransportPlaying(bool transportPlaying,
                                  bool monitorOn,
-                                 BL_FLOAT transportTime)
-{
+                                 BL_FLOAT dawTransportValueSec)
+{    
     bool result = false;
     
     if ((transportPlaying && !mIsTransportPlaying) ||
         (monitorOn && !mIsMonitorOn))
         // Play just started  
     {
+#ifdef DEBUG_DUMP
+    BLDebug::ResetFile("real.txt");
+    BLDebug::ResetFile("smooth.txt");
+#endif
+    
         mStartTransportTimeStampTotal = BLUtils::GetTimeMillisF();
         mStartTransportTimeStampLoop = BLUtils::GetTimeMillisF();
         
-        mDAWTransportValueSec = transportTime;
+        mDAWStartTransportValueSecLoop = dawTransportValueSec;
         
         result = true;
     }
@@ -46,6 +55,8 @@ BLTransport::SetTransportPlaying(bool transportPlaying,
     mIsTransportPlaying = transportPlaying;
     mIsMonitorOn = monitorOn;
 
+    mDAWCurrentTransportValueSecLoop = dawTransportValueSec;
+    
     return result;
 }
 
@@ -66,14 +77,16 @@ BLTransport::Update()
 // Change only the transport value when start playing or reseting a loop
 // Otherwise process smoothly
 void
-BLTransport::SetDAWTransportValueSec(BL_FLOAT transportTime)
+BLTransport::SetDAWTransportValueSec(BL_FLOAT dawTransportValueSec)
 {
-    if (transportTime <= mDAWTransportValueSec)
+    if (dawTransportValueSec <= mDAWStartTransportValueSecLoop)
     {
         mStartTransportTimeStampLoop = BLUtils::GetTimeMillisF();
         
-        mDAWTransportValueSec = transportTime;
+        mDAWStartTransportValueSecLoop = dawTransportValueSec;
     }
+
+    mDAWCurrentTransportValueSecLoop = dawTransportValueSec;
 }
 
 BL_FLOAT
@@ -108,7 +121,12 @@ BLTransport::GetTransportValueSecLoop()
     if (elapsed < 0.0)
         elapsed = 0.0;
 
-    BL_FLOAT result = mDAWTransportValueSec + elapsed;
+    BL_FLOAT result = mDAWStartTransportValueSecLoop + elapsed;
 
+#ifdef DEBUG_DUMP
+    BLDebug::AppendValue("real.txt", mDAWStartTransportValueSecLoop);
+    BLDebug::AppendValue("smooth.txt", result);
+#endif
+    
     return result;
 }
