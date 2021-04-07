@@ -33,12 +33,15 @@
 
 class GUIHelper12;
 class GraphControl12;
+class BLTransport;
 class GraphTimeAxis6
 {
 public:
     GraphTimeAxis6(bool displayLines = true, bool squeezeBorderLabels = true);
     
     virtual ~GraphTimeAxis6();
+
+    void SetTransport(BLTransport *transport);
     
     void Init(GraphControl12 *graph,
               GraphAxis2 *graphAxis, GUIHelper12 *guiHelper,
@@ -48,12 +51,12 @@ public:
     
     void Reset(int bufferSize, BL_FLOAT timeDuration,
                int maxNumLabels, BL_FLOAT timeOffsetSec = 0.0);
-    
-    void UpdateFromTransport(BL_FLOAT transportTime);
-    void UpdateFromDraw();
-    void SetTransportPlaying(bool transportPlaying, bool monitorOn,
-                             BL_FLOAT transportTime = -1.0);
 
+    // Update directly from DAW transport
+    void Update(BL_FLOAT currentTime);
+
+    void UpdateFromDraw();
+    
     // Time in seconds
     void GetMinMaxTime(BL_FLOAT *minTimeSec, BL_FLOAT *maxTimeSec);
     
@@ -61,8 +64,6 @@ public:
                                         int oversampling, BL_FLOAT sampleRate);
     
 protected:
-    void Update(BL_FLOAT currentTime);
-    
     //
     GraphControl12 *mGraph;
     
@@ -74,13 +75,8 @@ protected:
     BL_FLOAT mTimeOffsetSec;
     
     BL_FLOAT mCurrentTime;
-    
-    //
-    bool mIsTransportPlaying;
-    bool mIsMonitorOn;
-    
-    BL_FLOAT mTransportValueSec;
-    double mStartTransportTimeStamp;
+
+    BLTransport *mTransport;
     
     bool mDisplayLines;
     

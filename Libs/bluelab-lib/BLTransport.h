@@ -17,21 +17,36 @@ class BLTransport
     
     // From daw
     // Return true if dependent object update is needed
-    bool SetTransportPlaying(bool transportPlaying, bool monitorOn = false);
+    bool SetTransportPlaying(bool transportPlaying, bool monitorOn = false,
+                             BL_FLOAT transportTime = -1.0);
     bool IsTransportPlaying();
     
     // Update the current smooth transport value
     void Update();
+
+    // Real transport value from daw
+    void SetDAWTransportValueSec(BL_FLOAT transportTime);
     
     // Smooth value
-    BL_FLOAT GetTransportValueSec();
+    // Total time elapsed since start playing
+    BL_FLOAT GetTransportElapsedSecTotal();
+    // Time stamp elapsed since the last loop
+    BL_FLOAT GetTransportElapsedSecLoop();
+    // Get smoothed transport value, based on DAW transport value 
+    BL_FLOAT GetTransportValueSecLoop();
     
  protected:
     bool mIsTransportPlaying;
     bool mIsMonitorOn;
 
-    double mStartTransportTimeStamp;
+    // Total, do not manage transport looping 
+    double mStartTransportTimeStampTotal;
+    // Manage transport looping
+    double mStartTransportTimeStampLoop;
+    
     double mNow;
+
+    BL_FLOAT mDAWTransportValueSec;
 };
 
 #endif

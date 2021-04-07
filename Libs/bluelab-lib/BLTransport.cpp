@@ -8,8 +8,11 @@ BLTransport::BLTransport()
     mIsTransportPlaying = false;
     mIsMonitorOn = false;
 
-    mStartTransportTimeStamp = -1.0;
+    mStartTransportTimeStampTotal = -1.0;
+    mStartTransportTimeStampLoop = -1.0;
     mNow = -1.0;
+
+    mDAWTransportValueSec = 0.0;
 }
 
 BLTransport::~BLTransport() {}
@@ -17,25 +20,27 @@ BLTransport::~BLTransport() {}
 void
 BLTransport::Reset()
 {
-    mStartTransportTimeStamp = BLUtils::GetTimeMillisF();
+    mStartTransportTimeStampTotal = BLUtils::GetTimeMillisF();
+    mStartTransportTimeStampLoop = BLUtils::GetTimeMillisF();
 }
 
 bool
 BLTransport::SetTransportPlaying(bool transportPlaying,
-                                 bool monitorOn)
+                                 bool monitorOn,
+                                 BL_FLOAT transportTime)
 {
     bool result = false;
     
-    if ((transportPlaying != mIsTransportPlaying) ||
-        (monitorOn != mIsMonitorOn))
-        
+    if ((transportPlaying && !mIsTransportPlaying) ||
+        (monitorOn && !mIsMonitorOn))
+        // Play just started  
     {
-        if (transportPlaying || monitorOn)
-        {
-            mStartTransportTimeStamp = BLUtils::GetTimeMillisF();
-
-            result = true;
-        }
+        mStartTransportTimeStampTotal = BLUtils::GetTimeMillisF();
+        mStartTransportTimeStampLoop = BLUtils::GetTimeMillisF();
+        
+        mDAWTransportValueSec = transportTime;
+        
+        result = true;
     }
 
     mIsTransportPlaying = transportPlaying;
@@ -57,17 +62,53 @@ BLTransport::Update()
 {
     mNow = BLUtils::GetTimeMillisF();
 }
-    
-BL_FLOAT
-BLTransport::GetTransportValueSec()
+
+// Change only the transport value when start playing or reseting a loop
+// Otherwise process smoothly
+void
+BLTransport::SetDAWTransportValueSec(BL_FLOAT transportTime)
 {
-    if ((mStartTransportTimeStamp < 0.0) ||
+    if (transportTime <= mDAWTransportValueSec)
+    {
+        mStartTransportTimeStampLoop = BLUtils::GetTimeMillisF();
+        
+        mDAWTransportValueSec = transportTime;
+    }
+}
+
+BL_FLOAT
+BLTransport::GetTransportElapsedSecTotal()
+{
+    if ((mStartTransportTimeStampTotal < 0.0) ||
         (mNow < 0.0))
         return -1;
 
-    double elapsed = (mNow - mStartTransportTimeStamp)*0.001;
+    double elapsed = (mNow - mStartTransportTimeStampTotal)*0.001;
 
     return elapsed;
 }
 
+BL_FLOAT
+BLTransport::GetTransportElapsedSecLoop()
+{
+    if ((mStartTransportTimeStampLoop < 0.0) ||
+        (mNow < 0.0))
+        return -1;
 
+    double elapsed = (mNow - mStartTransportTimeStampLoop)*0.001;
+
+    return elapsed;
+}
+
+BL_FLOAT
+BLTransport::GetTransportValueSecLoop()
+{
+    BL_FLOAT elapsed = GetTransportElapsedSecLoop();
+
+    if (elapsed < 0.0)
+        elapsed = 0.0;
+
+    BL_FLOAT result = mDAWTransportValueSec + elapsed;
+
+    return result;
+}

@@ -20,6 +20,8 @@
 
 #include <GraphControl12.h>
 
+#include <BLTransport.h>
+
 #include "GraphTimeAxis6.h"
 
 // FIX: Clear the time axis if we change the time window
@@ -52,18 +54,13 @@ GraphTimeAxis6::GraphTimeAxis6(bool displayLines,
     
     mCurrentTime = 0.0;
     
-    mIsTransportPlaying = false;
-    mIsMonitorOn = false;
-    
-    mTransportValueSec = 0.0;
-    
-    mStartTransportTimeStamp = -1.0;
-    
     mDisplayLines = displayLines;
     
     mSqueezeBorderLabels = squeezeBorderLabels;
 
     mAxisDataAllocated = false;
+
+    mTransport = NULL;
 }
 
 GraphTimeAxis6::~GraphTimeAxis6()
@@ -76,6 +73,12 @@ GraphTimeAxis6::~GraphTimeAxis6()
             delete []mHAxisData[i][1];
         }
     }
+}
+
+void
+GraphTimeAxis6::SetTransport(BLTransport *transport)
+{
+    mTransport = transport;
 }
 
 void
@@ -148,53 +151,14 @@ GraphTimeAxis6::Reset(int bufferSize, BL_FLOAT timeDuration,
 #endif
 }
 
-// Change only the transport value when start playing or reseting a loop
-// Otherwise process smoothly
-// NOTE: must do this because the transport value from the daw can vary
-// a lot, and avoid jitter would be impossible if we follow strictly
-// the daw transport pos.
-void
-GraphTimeAxis6::UpdateFromTransport(BL_FLOAT transportTime)
-{
-    if (transportTime <= mTransportValueSec)
-    {
-        mStartTransportTimeStamp = BLUtils::GetTimeMillisF();
-        
-        mTransportValueSec = transportTime;
-    }
-}
-
 void
 GraphTimeAxis6::UpdateFromDraw()
 {
-    if (!mIsTransportPlaying && !mIsMonitorOn)
+    if ((mTransport == NULL) || !mTransport->IsTransportPlaying())
         return;
 
-    double drawTimeStamp = BLUtils::GetTimeMillisF();
-    
-    BL_FLOAT elapsed = (drawTimeStamp - mStartTransportTimeStamp)*0.001;
-    if ((drawTimeStamp < 0.0) || (mStartTransportTimeStamp < 0.0))
-        elapsed = 0.0;
-
-    Update(mTransportValueSec + elapsed);
-}
-
-void
-GraphTimeAxis6::SetTransportPlaying(bool transportPlaying,
-                                    bool monitorOn,
-                                    BL_FLOAT transportTime)
-{
-    if ((transportPlaying && !mIsTransportPlaying) ||
-        (monitorOn && !mIsMonitorOn))
-        // Play just started
-    {
-        mStartTransportTimeStamp = BLUtils::GetTimeMillisF();
-        
-        mTransportValueSec = transportTime;
-    }
-    
-    mIsTransportPlaying = transportPlaying;
-    mIsMonitorOn = monitorOn;
+    BL_FLOAT transportValue = mTransport->GetTransportValueSecLoop();
+    Update(transportValue);
 }
 
 void

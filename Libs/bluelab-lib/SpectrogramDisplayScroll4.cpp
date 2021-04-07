@@ -91,12 +91,12 @@ SpectrogramDisplayScroll4::ResetScroll()
 }
 
 BL_FLOAT
-SpectrogramDisplayScroll4::GetOffsetSec(double drawTimeStamp)
+SpectrogramDisplayScroll4::GetOffsetSec()
 {
     if (mTransport == NULL)
         return 0.0;
     
-    BL_FLOAT currentTimeSec = mTransport->GetTransportValueSec();
+    BL_FLOAT currentTimeSec = mTransport->GetTransportElapsedSecTotal();
     if (currentTimeSec < 0.0)
         return 0.0;
     
@@ -213,13 +213,11 @@ SpectrogramDisplayScroll4::PreDraw(NVGcontext *vg, int width, int height)
 {   
     mVg = vg;
 
-    // Anti-jitter (offset)
-    double drawTimeStamp = BLUtils::GetTimeMillisF();
-    
+    // Anti-jitter (offset)    
     BL_FLOAT offsetSec = mPrevOffsetSec;
-    if ((mTransport != NULL) && (mTransport->IsTransportPlaying()))
+    if ((mTransport != NULL) && mTransport->IsTransportPlaying())
     {
-        offsetSec = GetOffsetSec(drawTimeStamp);
+        offsetSec = GetOffsetSec();
         mPrevOffsetSec = offsetSec;
     }
 

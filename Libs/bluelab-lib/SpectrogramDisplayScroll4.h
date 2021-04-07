@@ -85,7 +85,7 @@ public:
     void GetTimeTransform(BL_FLOAT *timeOffsetSec, BL_FLOAT *timeScale);
     
 protected:
-    BL_FLOAT GetOffsetSec(double drawTimeStamp);
+    BL_FLOAT GetOffsetSec();
 
     void RecomputeParams();
 
