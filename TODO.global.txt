@@ -90,7 +90,7 @@ export CMAKE_BUILD_PARALLEL_LEVEL=2
 make vst2 BUILD_CONFIG=Release
 
 
-emacs:
+emsacs:
 M-x customize-group auto-complete
 
 TODO(later): use "param groups" (Mickael)

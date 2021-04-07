@@ -25,6 +25,8 @@
 #include <GraphAxis2.h>
 #include <GraphTimeAxis6.h>
 
+#include <BLTransport.h>
+
 #include <BLDebug.h>
 
 #include "GraphControl12.h"
@@ -170,6 +172,7 @@ GraphControl12::GraphControl12(Plugin *pPlug, IGraphics *graphics,
 #endif
     
     mGraphTimeAxis = NULL;
+    mTransport = NULL;
 }
 
 GraphControl12::~GraphControl12()
@@ -746,6 +749,12 @@ void
 GraphControl12::SetGraphTimeAxis(GraphTimeAxis6 *timeAxis)
 {
     mGraphTimeAxis = timeAxis;
+}
+
+void
+GraphControl12::SetTransport(BLTransport *transport)
+{
+    mTransport = transport;
 }
 
 void
@@ -2616,6 +2625,9 @@ GraphControl12::DoDraw(IGraphics &graphics)
 #endif
     
     WDL_MutexLock lock(&mMutex);
+
+    if (mTransport != NULL)
+        mTransport->Update();
     
     mVg = (NVGcontext *)graphics.GetDrawContext();
     

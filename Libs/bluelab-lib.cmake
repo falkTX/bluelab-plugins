@@ -64,6 +64,8 @@ set(_bluelab-lib_src
   BLReverbViewer.h
   BLSpectrogram4.cpp
   BLSpectrogram4.h
+  BLTransport.h
+  BLTransport.cpp
   BLTypes.h
   BLUpmixGraphDrawer.cpp
   BLUpmixGraphDrawer.h

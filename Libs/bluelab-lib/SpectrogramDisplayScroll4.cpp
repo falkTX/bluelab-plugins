@@ -12,6 +12,7 @@
 #include <UpTime.h>
 #include <BLDebug.h>
 #include <BLUtils.h>
+#include <BLTransport.h>
 
 #include "SpectrogramDisplayScroll4.h"
 
@@ -41,16 +42,12 @@ SpectrogramDisplayScroll4::SpectrogramDisplayScroll4(Plugin *plug,
     mSampleRate = 44100.0;
     mOverlapping = 0;
     
-    // Avoid jump when restarting playback
-    mIsTransportPlaying = false;
-    mIsMonitorOn = false;
-    
     // Variable speed
     mSpeedMod = 1;
 
-    mStartTransportTimeStamp = -1.0;
-
     mPrevOffsetSec = 0.0;
+
+    mTransport = NULL;
     
     RecomputeParams();
 }
@@ -68,6 +65,12 @@ SpectrogramDisplayScroll4::~SpectrogramDisplayScroll4()
 }
 
 void
+SpectrogramDisplayScroll4::SetTransport(BLTransport *transport)
+{
+    mTransport = transport;
+}
+
+void
 SpectrogramDisplayScroll4::Reset()
 {
     mSpectroImageData.Resize(0);
@@ -77,8 +80,6 @@ SpectrogramDisplayScroll4::Reset()
     mNeedUpdateSpectrogramData = true;
     
     mNeedUpdateColormapData = true;
-
-    mStartTransportTimeStamp = BLUtils::GetTimeMillisF();
     
     RecomputeParams();
 }
@@ -92,10 +93,13 @@ SpectrogramDisplayScroll4::ResetScroll()
 BL_FLOAT
 SpectrogramDisplayScroll4::GetOffsetSec(double drawTimeStamp)
 {
-    if ((mStartTransportTimeStamp < 0.0) || (drawTimeStamp < 0.0))
+    if (mTransport == NULL)
         return 0.0;
     
-    BL_FLOAT currentTimeSec = (drawTimeStamp - mStartTransportTimeStamp)*0.001;
+    BL_FLOAT currentTimeSec = mTransport->GetTransportValueSec();
+    if (currentTimeSec < 0.0)
+        return 0.0;
+    
     BL_FLOAT offset = mSpectroTimeSec - currentTimeSec;
     
     return offset;
@@ -213,7 +217,7 @@ SpectrogramDisplayScroll4::PreDraw(NVGcontext *vg, int width, int height)
     double drawTimeStamp = BLUtils::GetTimeMillisF();
     
     BL_FLOAT offsetSec = mPrevOffsetSec;
-    if (mIsTransportPlaying || mIsMonitorOn)
+    if ((mTransport != NULL) && (mTransport->IsTransportPlaying()))
     {
         offsetSec = GetOffsetSec(drawTimeStamp);
         mPrevOffsetSec = offsetSec;
@@ -269,7 +273,6 @@ SpectrogramDisplayScroll4::PreDraw(NVGcontext *vg, int width, int height)
             mSpectrogramBounds[0]*width + offsetPixels,
             b1f,
             (mSpectrogramBounds[2] - mSpectrogramBounds[0])*width, b3f);
-    
     
     nvgFillPaint(mVg, imgPaint);
     nvgFill(mVg);
@@ -361,22 +364,9 @@ SpectrogramDisplayScroll4::UpdateColormap(bool flag)
 }
 
 void
-SpectrogramDisplayScroll4::SetTransportPlaying(bool transportPlaying,
-                                               bool monitorOn)
+SpectrogramDisplayScroll4::TransportPlayingChanged()
 {
-    if ((transportPlaying != mIsTransportPlaying) ||
-        (monitorOn != mIsMonitorOn))
-        
-    {
-        if (transportPlaying || monitorOn)
-        {
-            RecomputeParams();
-            mStartTransportTimeStamp = BLUtils::GetTimeMillisF();
-        }
-    }
-
-    mIsTransportPlaying = transportPlaying;
-    mIsMonitorOn = monitorOn;
+    RecomputeParams();
 }
 
 // Variable speed
@@ -385,7 +375,7 @@ SpectrogramDisplayScroll4::SetSpeedMod(int speedMod)
 {
     mSpeedMod = speedMod;
 
-    if (mIsTransportPlaying || mIsMonitorOn)
+    if ((mTransport != NULL) && (mTransport->IsTransportPlaying()))
     {
         Reset();
     

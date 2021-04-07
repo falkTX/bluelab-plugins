@@ -33,6 +33,7 @@ using namespace iplug;
 
 class BLSpectrogram4;
 class NVGcontext;
+class BLTransport;
 class SpectrogramDisplayScroll4 : public GraphCustomDrawer
 {
 public:
@@ -41,6 +42,8 @@ public:
     SpectrogramDisplayScroll4(Plugin *plug, BL_FLOAT delayPercent = 3.125/*25.0*/);
     
     virtual ~SpectrogramDisplayScroll4();
+
+    void SetTransport(BLTransport *transport);
     
     void Reset();
     
@@ -68,8 +71,9 @@ public:
     void ShowSpectrogram(bool flag);
     void UpdateSpectrogram(bool flag);
     void UpdateColormap(bool flag);
-    
-    void SetTransportPlaying(bool transportPlaying, bool monitorOn = false);
+
+    // Hack
+    void TransportPlayingChanged();
     
     // Variable speed
     void SetSpeedMod(int speedMod);
@@ -114,18 +118,11 @@ protected:
     // Variable speed
     int mSpeedMod;
     
-    // Add progressively spectrogram lines
-    //
-    // NOTE: can't really benefit from bl_queue
-    // (we really need to pop, to decrease the list) sometimes
-    //deque<WDL_TypedBuf<BL_FLOAT> > mSpectroMagns;
-    //deque<WDL_TypedBuf<BL_FLOAT> > mSpectroPhases;
-    
     // Get reference to plug, to know if the plug is currently playing
     Plugin *mPlug;
     
-    bool mIsTransportPlaying;
-    bool mIsMonitorOn;
+    BLTransport *mTransport;
+    
     //
     BL_FLOAT mDelayPercent;
     BL_FLOAT mDelayTimeSecRight; // From delay percent
@@ -136,7 +133,6 @@ protected:
 
     //
     BL_FLOAT mSpectroTimeSec;    
-    double mStartTransportTimeStamp;
 
     BL_FLOAT mPrevOffsetSec;
     

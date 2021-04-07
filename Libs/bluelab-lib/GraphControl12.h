@@ -25,6 +25,7 @@ using namespace std;
 #include <GraphCurve5.h>
 #include <ParamSmoother.h>
 
+
 #define PROFILE_GRAPH 0
 
 #if PROFILE_GRAPH
@@ -138,6 +139,7 @@ public:
     virtual void OnGUIIdle() {}
 };
 
+class BLTransport;
 // WARNING: Since GraphControl4 width must be a multiple of 4 !
 class GraphControl12 : public IControl
 {
@@ -160,7 +162,6 @@ public:
     void Draw(IGraphics &graphics) override;
     
     void OnGUIIdle() override;
-    
     
     // Set a separator line at the bottom
     void SetSeparatorY0(BL_GUI_FLOAT lineWidth, int color[4]);
@@ -227,6 +228,7 @@ public:
     void SetRecreateWhiteImageHack(bool flag);
     
     void SetGraphTimeAxis(GraphTimeAxis6 *timeAxis);
+    void SetTransport(BLTransport *transport);
     
     void SetDataChanged();
     
@@ -382,6 +384,8 @@ protected:
     bool mRecreateWhiteImageHack;
     
     GraphTimeAxis6 *mGraphTimeAxis;
+
+    BLTransport *mTransport;
     
 private:    
 	bool mFontInitialized;
