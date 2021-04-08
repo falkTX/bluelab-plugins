@@ -2627,7 +2627,7 @@ GraphControl12::DoDraw(IGraphics &graphics)
 #endif
     
     WDL_MutexLock lock(&mMutex);
-
+    
     if (mTransport != NULL)
         mTransport->Update();
     
