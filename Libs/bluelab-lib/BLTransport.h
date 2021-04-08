@@ -58,17 +58,30 @@ class BLTransport
 
     // DAW transport time when start playing, or re-starting a loop
     BL_FLOAT mDAWStartTransportValueSecLoop;
-
+    
     // DAW current transport time
     // NOTE: Not used for the moment
     BL_FLOAT mDAWCurrentTransportValueSecLoop;
 
+    // DAW transport time since start playing (accumulated)
+    BL_FLOAT mDAWTransportValueSecTotal;
+    
+    // Used for loop
+    //
+    
     // Offset used for hard or soft resynch
-    BL_FLOAT mResynchOffsetSec;
+    BL_FLOAT mResynchOffsetSecLoop;
 
     // Soft resynth
-    ParamSmoother2 *mDiffSmoother;
-    bool mMustResetDiffSmoother;
+    ParamSmoother2 *mDiffSmootherLoop;
+
+    // Used for total
+    
+    // Offset used for hard or soft resynch
+    BL_FLOAT mResynchOffsetSecTotal;
+
+    // Soft resynth
+    ParamSmoother2 *mDiffSmootherTotal;
 };
 
 #endif

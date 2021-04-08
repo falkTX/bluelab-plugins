@@ -222,7 +222,7 @@ SpectrogramDisplayScroll4::PreDraw(NVGcontext *vg, int width, int height)
         offsetSec = GetOffsetSec();
         mPrevOffsetSec = offsetSec;
     }
-
+    
     BL_FLOAT offsetPixels = SecsToPixels(offsetSec, width);
 
     //
