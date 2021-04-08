@@ -124,6 +124,9 @@ GraphTimeAxis6::Init(GraphControl12 *graph,
                           //yOffset, 0.0,
                           0.0, yOffset,
                           axisLabelOverlayColor);
+
+    // Be sure to not align the first and last labels to the borders of the graph
+    mGraphAxis->SetAlignBorderLabels(false);
 }
 
 void

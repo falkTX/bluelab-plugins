@@ -62,6 +62,8 @@ GraphAxis2::GraphAxis2()
     mAlignToScreenPixels = true;
 
     mOffsetPixels = 0.0;
+
+    mAlignBorderLabels = true;
 }
 
 GraphAxis2::~GraphAxis2()
@@ -172,11 +174,6 @@ GraphAxis2::SetData(char *data[][2], int numData)
         BL_GUI_FLOAT t = (val - mMinVal)*rangeInv;
         
         t = mScale->ApplyScale(mScaleType, t, mMinVal, mMaxVal);
-
-        if (strcmp(data[i][1], "-6.6s") == 0)
-        {
-            BLDebug::AppendValue("t2.txt", t);
-        }
         
         //string text(cData[1]);
         
@@ -214,6 +211,12 @@ void
 GraphAxis2::SetOffsetPixels(BL_FLOAT offsetPixels)
 {
     mOffsetPixels = offsetPixels;
+}
+
+void
+GraphAxis2::SetAlignBorderLabels(bool flag)
+{
+    mAlignBorderLabels = flag;
 }
 
 void

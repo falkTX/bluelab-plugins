@@ -57,6 +57,9 @@ public:
     void SetAlignToScreenPixels(bool flag);
 
     void SetOffsetPixels(BL_FLOAT offsetPixels);
+
+    // Align the first and last labels to the borders of the graph?
+    void SetAlignBorderLabels(bool flag);
     
 protected:
     friend class GraphControl12;
@@ -120,6 +123,8 @@ protected:
 
     // For time axis scroll
     BL_FLOAT mOffsetPixels;
+
+    bool mAlignBorderLabels;
 };
 
 #endif

@@ -918,7 +918,8 @@ GraphControl12::DrawAxis(GraphAxis2 *axis, bool horizontal, bool lineLabelFlag)
             BL_GUI_FLOAT xLabel = x;
             xLabel += axis->mOffsetPixels;
             
-            if ((i > 0) && (i < axis->mValues.size() - 1))
+            if (((i > 0) && (i < axis->mValues.size() - 1)) ||
+                !axis->mAlignBorderLabels)
             {
                 if (lineLabelFlag)
                 {
@@ -1001,8 +1002,8 @@ GraphControl12::DrawAxis(GraphAxis2 *axis, bool horizontal, bool lineLabelFlag)
                              axis->mFontSizeCoeff);
                 }
             }
-     
-            if (!lineLabelFlag)
+
+            if (!lineLabelFlag && axis->mAlignBorderLabels)
             {
                 if (i == 0)
                 {
@@ -1068,7 +1069,8 @@ GraphControl12::DrawAxis(GraphAxis2 *axis, bool horizontal, bool lineLabelFlag)
             BL_GUI_FLOAT yLabel = y;
             yLabel += axis->mOffsetPixels;
             
-            if ((i > 0) && (i < axis->mValues.size() - 1))
+            if (((i > 0) && (i < axis->mValues.size() - 1)) ||
+                !axis->mAlignBorderLabels)
                 // First and last: don't draw axis line
             {
                 if (lineLabelFlag)
@@ -1160,7 +1162,7 @@ GraphControl12::DrawAxis(GraphAxis2 *axis, bool horizontal, bool lineLabelFlag)
                 }
             }
             
-            if (!lineLabelFlag)
+            if (!lineLabelFlag && axis->mAlignBorderLabels)
             {
                 if (i == 0)
                     // First text: align "top"
