@@ -23,6 +23,8 @@ class BLTransport
     bool SetTransportPlaying(bool transportPlaying, bool monitorOn = false,
                              BL_FLOAT dawTransportValueSec = -1.0);
     bool IsTransportPlaying();
+
+    void SetBypassed(bool flag);
     
     // Update the current smooth transport value
     void Update();
@@ -52,6 +54,8 @@ class BLTransport
     bool mIsTransportPlaying;
     bool mIsMonitorOn;
 
+    bool mIsBypassed;
+    
     // Total, do not manage transport looping 
     double mStartTransportTimeStampTotal;
     // Manage transport looping

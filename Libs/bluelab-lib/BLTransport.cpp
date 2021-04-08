@@ -31,6 +31,8 @@ BLTransport::BLTransport(BL_FLOAT sampleRate)
 
     mResynchOffsetSecTotal = 0.0;
     mDiffSmootherTotal = new ParamSmoother2(sampleRate, 0.0, DELAY_MS);
+
+    mIsBypassed = false;
 }
 
 BLTransport::~BLTransport()
@@ -81,7 +83,10 @@ bool
 BLTransport::SetTransportPlaying(bool transportPlaying,
                                  bool monitorOn,
                                  BL_FLOAT dawTransportValueSec)
-{    
+{
+    if (mIsBypassed)
+        return false;
+    
     bool transportJustStarted = ((transportPlaying && !mIsTransportPlaying) ||
                                  (monitorOn && !mIsMonitorOn));
 
@@ -138,6 +143,18 @@ BLTransport::SetTransportPlaying(bool transportPlaying,
     return transportJustStarted;
 }
 
+void
+BLTransport::SetBypassed(bool flag)
+{
+    mIsBypassed = flag;
+
+    if (mIsBypassed)
+    {
+        mIsTransportPlaying = false;
+        mIsMonitorOn = false;
+    }
+}
+
 bool
 BLTransport::IsTransportPlaying()
 {
@@ -149,6 +166,9 @@ BLTransport::IsTransportPlaying()
 void
 BLTransport::Update()
 {
+    if (mIsBypassed)
+        return;
+    
     if (mIsTransportPlaying || mIsMonitorOn)
         // Enabled the possibility to fine adjust the transport
         // after play stopping (soft resynch).
@@ -166,7 +186,10 @@ BLTransport::Update()
 // Otherwise process smoothly
 void
 BLTransport::SetDAWTransportValueSec(BL_FLOAT dawTransportValueSec)
-{    
+{
+    if (mIsBypassed)
+        return;
+    
     bool loopDetected = false;
     if (dawTransportValueSec < mDAWCurrentTransportValueSecLoop)
         // Just restarted a loop

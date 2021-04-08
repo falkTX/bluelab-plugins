@@ -8,17 +8,24 @@ class PlugBypassDetector
 {
  public:
     // 200 ms should be ok for 22050Hz, buffer size 2048
-    PlugBypassDetector(int delayMs = 200);
+    // NOTE: 200ms is not enough, we have false positives
+    PlugBypassDetector(int delayMs = 500/*200*/);
     virtual ~PlugBypassDetector();
 
-    void Touch();
+    void TouchFromAudioThread();
     void SetTransportPlaying(bool flag);
+
+    // Detects if OnIdle() is called lately
+    // as the audio thread is still processing
+    void TouchFromIdleThread();
     bool PlugIsBypassed();
 
  protected:
     int mDelayMs;
     
-    long int mPrevTouchTime;
+    long int mPrevAudioTouchTimeStamp;
+    long int mPrevIdleTouchTimeStamp;
+    
     bool mIsPlaying;
 };
 
