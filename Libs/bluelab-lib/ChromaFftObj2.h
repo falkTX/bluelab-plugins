@@ -30,7 +30,7 @@
 //
 
 class BLSpectrogram4;
-class SpectrogramDisplayScroll3;
+class SpectrogramDisplayScroll4;
 class HistoMaskLine2;
 
 #if USE_FREQ_OBJ
@@ -52,7 +52,7 @@ public:
     
     BLSpectrogram4 *GetSpectrogram();
     
-    void SetSpectrogramDisplay(SpectrogramDisplayScroll3 *spectroDisplay);
+    void SetSpectrogramDisplay(SpectrogramDisplayScroll4 *spectroDisplay);
     
     void SetATune(BL_FLOAT aTune);
     
@@ -87,7 +87,7 @@ protected:
 
     //
     BLSpectrogram4 *mSpectrogram;
-    SpectrogramDisplayScroll3 *mSpectroDisplay;
+    SpectrogramDisplayScroll4 *mSpectroDisplay;
     
     long mLineCount;
     

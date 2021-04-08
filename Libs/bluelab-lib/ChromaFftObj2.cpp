@@ -15,7 +15,7 @@
 #include <BLUtilsComp.h>
 #include <BLUtilsMath.h>
 
-#include <SpectrogramDisplayScroll3.h>
+#include <SpectrogramDisplayScroll4.h>
 #include <HistoMaskLine2.h>
 
 #include "ChromaFftObj2.h"
@@ -148,7 +148,7 @@ ChromaFftObj2::GetSpectrogram()
 }
 
 void
-ChromaFftObj2::SetSpectrogramDisplay(SpectrogramDisplayScroll3 *spectroDisplay)
+ChromaFftObj2::SetSpectrogramDisplay(SpectrogramDisplayScroll4 *spectroDisplay)
 {
     mSpectroDisplay = spectroDisplay;
 }
