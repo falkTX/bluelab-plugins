@@ -217,11 +217,14 @@ SpectrogramDisplayScroll4::PreDraw(NVGcontext *vg, int width, int height)
     ResynchTransport();
     
     BL_FLOAT offsetSec = mPrevOffsetSec;
-    if ((mTransport != NULL) && mTransport->IsTransportPlaying())
-    {
-        offsetSec = GetOffsetSec();
-        mPrevOffsetSec = offsetSec;
-    }
+    // Must update anyway, even if the transport is not playing
+    // (for fine adjusting soft resynch.
+    // FIX: GhostViewer: play, stop => small jump just after having stopped
+    //if ((mTransport != NULL) && mTransport->IsTransportPlaying())
+    //{
+    offsetSec = GetOffsetSec();
+    mPrevOffsetSec = offsetSec;
+    //}
     
     BL_FLOAT offsetPixels = SecsToPixels(offsetSec, width);
 

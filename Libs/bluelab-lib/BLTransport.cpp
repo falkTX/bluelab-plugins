@@ -5,7 +5,7 @@
 
 #include "BLTransport.h"
 
-#define DEBUG_DUMP 1 //0 //1
+#define DEBUG_DUMP 0 //1
 
 BLTransport::BLTransport(BL_FLOAT sampleRate)
 {
@@ -48,6 +48,12 @@ BLTransport::SetSoftResynchEnabled(bool flag)
 void
 BLTransport::Reset()
 {
+    // Reset only if the spectrogram is moving
+    // FIX: GhostViewer: play, stop, then change the spectro speed
+    // => there was a jump in the spectrogram
+    if (!mIsTransportPlaying && !mIsMonitorOn)
+        return;
+    
     mStartTransportTimeStampTotal = BLUtils::GetTimeMillisF();
     mStartTransportTimeStampLoop = BLUtils::GetTimeMillisF();
 
@@ -143,10 +149,17 @@ BLTransport::IsTransportPlaying()
 void
 BLTransport::Update()
 {
-    mNow = BLUtils::GetTimeMillisF();
+    if (mIsTransportPlaying || mIsMonitorOn)
+        // Enabled the possibility to fine adjust the transport
+        // after play stopping (soft resynch).
+        // FIX: GhostViewer: play, stop => there was a small jump of
+        // ths spectrogram just after having stopped
+    {
+        mNow = BLUtils::GetTimeMillisF();
 
-    if (mSoftResynchEnabled)
-        SoftResynch();
+        if (mSoftResynchEnabled)
+            SoftResynch();
+    }
 }
 
 // Change only the transport value when start playing or reseting a loop
@@ -184,10 +197,18 @@ BLTransport::GetTransportElapsedSecTotal()
         (mNow < 0.0))
         return -1;
 
-    double elapsed =
+    double result =
         (mNow - mStartTransportTimeStampTotal)*0.001 + mResynchOffsetSecTotal;
+
+#if 0 //DEBUG_DUMP
+    BLDebug::AppendValue("real.txt", mDAWCurrentTransportValueSecLoop);
+    BLDebug::AppendValue("total.txt", result);
+
+    BL_FLOAT loop = GetTransportValueSecLoop();
+    BLDebug::AppendValue("smooth.txt", loop);
+#endif
     
-    return elapsed;
+    return result;
 }
 
 BL_FLOAT
