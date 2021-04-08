@@ -51,8 +51,8 @@ BLTransport::Reset()
     // Reset only if the spectrogram is moving
     // FIX: GhostViewer: play, stop, then change the spectro speed
     // => there was a jump in the spectrogram
-    if (!mIsTransportPlaying && !mIsMonitorOn)
-        return;
+    //if (!mIsTransportPlaying && !mIsMonitorOn)
+    //    return;
     
     mStartTransportTimeStampTotal = BLUtils::GetTimeMillisF();
     mStartTransportTimeStampLoop = BLUtils::GetTimeMillisF();
