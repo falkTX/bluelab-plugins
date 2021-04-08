@@ -5,7 +5,7 @@
 
 #include "BLTransport.h"
 
-#define DEBUG_DUMP 0 //1
+#define DEBUG_DUMP 1 //0 //1
 
 BLTransport::BLTransport(BL_FLOAT sampleRate)
 {
@@ -21,7 +21,9 @@ BLTransport::BLTransport(BL_FLOAT sampleRate)
     mDAWCurrentTransportValueSecLoop = 0.0;
 
     mDAWTransportValueSecTotal = 0.0;
-        
+
+    mSoftResynchEnabled = false;
+    
     // Hak delay value
 #define DELAY_MS 2.0 //1.0
     mResynchOffsetSecLoop = 0.0;
@@ -35,6 +37,12 @@ BLTransport::~BLTransport()
 {
     delete mDiffSmootherLoop;
     delete mDiffSmootherTotal;
+}
+
+void
+BLTransport::SetSoftResynchEnabled(bool flag)
+{
+    mSoftResynchEnabled = flag;
 }
 
 void
@@ -67,13 +75,16 @@ bool
 BLTransport::SetTransportPlaying(bool transportPlaying,
                                  bool monitorOn,
                                  BL_FLOAT dawTransportValueSec)
-{
-    bool transportJustStarted = false;
+{    
+    bool transportJustStarted = ((transportPlaying && !mIsTransportPlaying) ||
+                                 (monitorOn && !mIsMonitorOn));
 
+    bool transportJustStopped = ((mIsTransportPlaying || mIsMonitorOn) &&
+                                 (!transportPlaying && !monitorOn));
+    
     bool loopDetected = (dawTransportValueSec < mDAWCurrentTransportValueSecLoop);
 
-    if ((transportPlaying && !mIsTransportPlaying) ||
-        (monitorOn && !mIsMonitorOn))
+    if (transportJustStarted)
         // Play just started  
     {
 #if DEBUG_DUMP
@@ -115,7 +126,7 @@ BLTransport::SetTransportPlaying(bool transportPlaying,
         mDAWTransportValueSecTotal +=
             dawTransportValueSec - mDAWCurrentTransportValueSecLoop;
     }
-    
+        
     mDAWCurrentTransportValueSecLoop = dawTransportValueSec;
     
     return transportJustStarted;
@@ -133,13 +144,16 @@ void
 BLTransport::Update()
 {
     mNow = BLUtils::GetTimeMillisF();
+
+    if (mSoftResynchEnabled)
+        SoftResynch();
 }
 
 // Change only the transport value when start playing or reseting a loop
 // Otherwise process smoothly
 void
 BLTransport::SetDAWTransportValueSec(BL_FLOAT dawTransportValueSec)
-{
+{    
     bool loopDetected = false;
     if (dawTransportValueSec < mDAWCurrentTransportValueSecLoop)
         // Just restarted a loop

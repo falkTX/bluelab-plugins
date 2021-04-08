@@ -13,6 +13,8 @@ class BLTransport
     BLTransport(BL_FLOAT sampleRate);
     virtual ~BLTransport();
 
+    void SetSoftResynchEnabled(bool flag);
+    
     void Reset();
     void Reset(BL_FLOAT sampleRate);
     
@@ -39,13 +41,14 @@ class BLTransport
     // Reset the extimated transport value
     // Resynch directly to the DAW transport value
     void HardResynch();
-
+    
+ protected:
     // Resynch progressively the estimated transport value
     // to the host transport value
     // This method must be called continuously
     void SoftResynch();
-    
- protected:
+
+    //
     bool mIsTransportPlaying;
     bool mIsMonitorOn;
 
@@ -68,7 +71,9 @@ class BLTransport
     
     // Used for loop
     //
-    
+
+    bool mSoftResynchEnabled;
+        
     // Offset used for hard or soft resynch
     BL_FLOAT mResynchOffsetSecLoop;
 

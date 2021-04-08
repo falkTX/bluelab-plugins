@@ -48,7 +48,7 @@ SpectrogramDisplayScroll4::SpectrogramDisplayScroll4(Plugin *plug,
     mPrevOffsetSec = 0.0;
 
     mTransport = NULL;
-    
+
     RecomputeParams();
 }
 
@@ -437,11 +437,9 @@ void
 SpectrogramDisplayScroll4::ResynchTransport()
 {
     // No resynch
-    //return;
-    
-    // Soft
-    mTransport->SoftResynch();
     return;
+
+    // Hard resynch
     
     BL_FLOAT offsetSec = GetOffsetSec();
 
