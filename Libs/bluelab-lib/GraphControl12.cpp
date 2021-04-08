@@ -906,7 +906,7 @@ GraphControl12::DrawAxis(GraphAxis2 *axis, bool horizontal, bool lineLabelFlag)
         
         BL_GUI_FLOAT t = data.mT;
         const char *text = data.mText.c_str();
-
+        
         if (horizontal)
         {
             BL_GUI_FLOAT textOffset = FONT_SIZE*0.2;
@@ -993,7 +993,7 @@ GraphControl12::DrawAxis(GraphAxis2 *axis, bool horizontal, bool lineLabelFlag)
                                  NVG_ALIGN_CENTER, NVG_ALIGN_BOTTOM,
                                  axis->mFontSizeCoeff);
                     }
-                 
+                    
                     DrawText(xLabel,
                              textOffset + axis->mOffsetY*height,
                              FONT_SIZE, text, axis->mLabelColor,
@@ -1038,7 +1038,7 @@ GraphControl12::DrawAxis(GraphAxis2 *axis, bool horizontal, bool lineLabelFlag)
                                  axis->mFontSizeCoeff);
                     }
                     
-                    // Last text: aligne right
+                    // Last text: align right
                     DrawText(xLabel - textOffset,
                              textOffset + axis->mOffsetY*height,
                              FONT_SIZE, text, axis->mLabelColor,

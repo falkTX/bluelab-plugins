@@ -251,7 +251,11 @@ GraphTimeAxis6::Update(BL_FLOAT currentTime)
         if (step > BL_EPS)
             tm = ((int)(tm/step))*step;
     }
-        
+
+    // Count exactly the right number of labels to send to the graph
+    // Will avoid many empty values
+    int labelNum = 0;
+    
     BL_FLOAT timeDurationInv = 1.0/timeDuration;
     for (int i = 0; i < MAX_NUM_LABELS; i++)
     {
@@ -260,7 +264,7 @@ GraphTimeAxis6::Update(BL_FLOAT currentTime)
         if (timeDuration > BL_EPS)
             t = (tm - startTime)*timeDurationInv;
 
-        // Do not fill the labls if out of bounds
+        // Do not fill the labels if out of bounds
         // (will be useful later to not display nvgText if not label)
         if ((t < 0.0) || (t > 1.0))
         {
@@ -269,14 +273,16 @@ GraphTimeAxis6::Update(BL_FLOAT currentTime)
             continue;
         }
         
-        sprintf(mHAxisData[i][0], "%g", t);
+        sprintf(mHAxisData[labelNum][0], "%g", t);
         
 #if FIX_ZERO_SECONDS_MILLIS
-        sprintf(mHAxisData[i][1], "0s");
+        sprintf(mHAxisData[labelNum][1], "0s");
 #endif
         
         bool squeeze = (mSqueezeBorderLabels &&
-                        ((i == 0) || (i == MAX_NUM_LABELS - 1)));
+                        ((labelNum == 0) ||
+                         // Uper bound is incorrect
+                         (labelNum == MAX_NUM_LABELS - 1))); 
         
         //if ((i > 0) && (i < MAX_NUM_LABELS - 1)) // Squeeze the borders
         if (!squeeze)
@@ -289,6 +295,7 @@ GraphTimeAxis6::Update(BL_FLOAT currentTime)
             if (millis < 0)
             {
                 millis = -millis;
+
                 //decMillis = -decMillis;
                 
                 negMillis = true;
@@ -301,17 +308,17 @@ GraphTimeAxis6::Update(BL_FLOAT currentTime)
             minutes = minutes % 60;
             
             // Default
-            sprintf(mHAxisData[i][1], "0s");
+            sprintf(mHAxisData[labelNum][1], "0s");
             
             // New formatting3: manage minutes and hours, formating like hh:mm:ss.ms
             if (hours != 0)
             {
-                sprintf(mHAxisData[i][1], "%d:%02d:%d.%d",
+                sprintf(mHAxisData[labelNum][1], "%d:%02d:%d.%d",
                         hours, minutes, seconds, millis/100);
             }
             else if (minutes != 0)
             {
-                sprintf(mHAxisData[i][1], "%d:%02d.%d",
+                sprintf(mHAxisData[labelNum][1], "%d:%02d.%d",
                         minutes, seconds, millis/100);
             }
             else if (seconds != 0)
@@ -334,16 +341,19 @@ GraphTimeAxis6::Update(BL_FLOAT currentTime)
                 if (step >= 1)
                 {
                     if (millis == 0)
-                        sprintf(mHAxisData[i][1], "%ds", seconds);
+                        sprintf(mHAxisData[labelNum][1], "%ds", seconds);
                 
                     if ((millis > 0) && (millis < 10))
-                        sprintf(mHAxisData[i][1], "%d.00%ds", seconds, millis/div);
+                        sprintf(mHAxisData[labelNum][1], "%d.00%ds",
+                                seconds, millis/div);
                 
                     if ((millis >= 10) && (millis < 100))
-                        sprintf(mHAxisData[i][1], "%d.0%ds", seconds, millis/div);
+                        sprintf(mHAxisData[labelNum][1], "%d.0%ds",
+                                seconds, millis/div);
                     
                     if (millis >= 100)
-                        sprintf(mHAxisData[i][1], "%d.%ds", seconds, millis/div);
+                        sprintf(mHAxisData[labelNum][1], "%d.%ds",
+                                seconds, millis/div);
                 }
                 else
                 {
@@ -351,19 +361,23 @@ GraphTimeAxis6::Update(BL_FLOAT currentTime)
                     int decMillis0 = millis*10 + decMillis;
                     
                     if (decMillis0 == 0)
-                        sprintf(mHAxisData[i][1], "%ds", seconds);
+                        sprintf(mHAxisData[labelNum][1], "%ds", seconds);
                 
                     if ((decMillis0 > 0) && (decMillis0 < 10))
-                        sprintf(mHAxisData[i][1], "%d.000%ds", seconds, decMillis0);
+                        sprintf(mHAxisData[labelNum][1], "%d.000%ds",
+                                seconds, decMillis0);
                 
                     if ((decMillis0 >= 10) && (decMillis0 < 100))
-                        sprintf(mHAxisData[i][1], "%d.00%ds", seconds, decMillis0);
+                        sprintf(mHAxisData[labelNum][1], "%d.00%ds",
+                                seconds, decMillis0);
                     
                     if ((decMillis0 >= 100) && (decMillis0 < 1000))
-                        sprintf(mHAxisData[i][1], "%d.0%ds", seconds, decMillis0);
+                        sprintf(mHAxisData[labelNum][1], "%d.0%ds",
+                                seconds, decMillis0);
 
                     if (decMillis0 >= 1000)
-                        sprintf(mHAxisData[i][1], "%d.%ds", seconds, decMillis0);
+                        sprintf(mHAxisData[labelNum][1], "%d.%ds",
+                                seconds, decMillis0);
                 }
             }
 #if FIX_DISPLAY_MS
@@ -377,17 +391,17 @@ GraphTimeAxis6::Update(BL_FLOAT currentTime)
 
                 if (timeDuration >= 5.0)
                     // Origin
-                    sprintf(mHAxisData[i][1], "%dms", millis);
+                    sprintf(mHAxisData[labelNum][1], "%dms", millis);
                 else
-                    sprintf(mHAxisData[i][1], "%d.%dms", millis, decMillis);
+                    sprintf(mHAxisData[labelNum][1], "%d.%dms", millis, decMillis);
             }
 #endif
             else if (decMillis != 0)
             {
                 if (decMillis >= 0)
-                    sprintf(mHAxisData[i][1], "0.%dms", decMillis);
+                    sprintf(mHAxisData[labelNum][1], "0.%dms", decMillis);
                 else
-                    sprintf(mHAxisData[i][1], "-0.%dms", -decMillis);
+                    sprintf(mHAxisData[labelNum][1], "-0.%dms", -decMillis);
             }
         }
         
@@ -395,14 +409,18 @@ GraphTimeAxis6::Update(BL_FLOAT currentTime)
         BL_FLOAT normSpacing = mSpacingSeconds/mTimeDuration;
         if (t > 1.0 - normSpacing)
         {
-            sprintf(mHAxisData[i][1], "");
+            sprintf(mHAxisData[labelNum][1], "");
         }
 #endif
 
         tm += step;
+
+        labelNum++;
     }
-    
-    mGraphAxis->SetData(mHAxisData, MAX_NUM_LABELS);
+
+    // Send exactly the right number of labels to send to the graph
+    // (and not many additional dummy labels)
+    mGraphAxis->SetData(mHAxisData, labelNum/*MAX_NUM_LABELS*/);
     
     // Free
     /*for (int i = 0; i < MAX_NUM_LABELS; i++)

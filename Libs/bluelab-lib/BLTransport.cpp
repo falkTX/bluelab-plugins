@@ -76,7 +76,7 @@ BLTransport::SetTransportPlaying(bool transportPlaying,
         (monitorOn && !mIsMonitorOn))
         // Play just started  
     {
-#ifdef DEBUG_DUMP
+#if DEBUG_DUMP
     BLDebug::ResetFile("real.txt");
     BLDebug::ResetFile("smooth.txt");
     BLDebug::ResetFile("total.txt");
@@ -199,7 +199,7 @@ BLTransport::GetTransportValueSecLoop()
 
     BL_FLOAT result = mDAWStartTransportValueSecLoop + elapsed;
 
-#ifdef DEBUG_DUMP
+#if DEBUG_DUMP
     BLDebug::AppendValue("real.txt", mDAWCurrentTransportValueSecLoop);
     BLDebug::AppendValue("smooth.txt", result);
 

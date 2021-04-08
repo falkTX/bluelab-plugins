@@ -7,6 +7,8 @@
 //
 
 #include <BLUtils.h>
+#include <BLDebug.h>
+
 #include <GraphSwapColor.h>
 #include <Scale.h>
 
@@ -168,15 +170,13 @@ GraphAxis2::SetData(char *data[][2], int numData)
         BL_GUI_FLOAT val = atof(data[i][0]);
         //BL_GUI_FLOAT t = (val - mMinVal)/(mMaxVal - mMinVal);
         BL_GUI_FLOAT t = (val - mMinVal)*rangeInv;
-
-        if (strcmp(data[i][1], "0s") == 0)
-        {
-            //fprintf(stderr, "#1 str: %s\n", data[i][0]);
-            //fprintf(stderr, "#1 flt: %f\n", val);
-            //fprintf(stderr, "\n");
-        }
         
         t = mScale->ApplyScale(mScaleType, t, mMinVal, mMaxVal);
+
+        if (strcmp(data[i][1], "-6.6s") == 0)
+        {
+            BLDebug::AppendValue("t2.txt", t);
+        }
         
         //string text(cData[1]);
         
