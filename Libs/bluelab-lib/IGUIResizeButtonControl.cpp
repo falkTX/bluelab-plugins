@@ -49,10 +49,14 @@ IGUIResizeButtonControl::OnMouseDown(float x, float y, const IMouseMod &mod)
     double prevValue = GetValue();
     
     IRolloverButtonControl::OnMouseDown(x, y, mod);
+
+#if 0 // No need; since the param change will do it automatically
+      // NOTE: will avoid to call ApplyGUIResize() 2 times
     
     // Check to not resize to identity if we re-clicked on the button already active
     if (std::fabs(GetValue() - prevValue) > BL_EPS)
     {
         mPlug->ApplyGUIResize(mGuiSizeIdx);
     }
+#endif
 }
