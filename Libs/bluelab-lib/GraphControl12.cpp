@@ -177,7 +177,7 @@ GraphControl12::GraphControl12(Plugin *pPlug, IGraphics *graphics,
 
 GraphControl12::~GraphControl12()
 {
-    // Keep this lock
+    // ??
     //WDL_MutexLock lock(&mMutex);
     
     for (int i = 0; i < mCurves.size(); i++)
@@ -211,19 +211,6 @@ GraphControl12::~GraphControl12()
 #endif
 }
 
-/*void
-  GraphControl12::Lock()
-  {
-  mMutex.Enter();
-  }
-
-  void
-  GraphControl12::Unlock()
-  {
-  mMutex.Leave();
-  }
-*/
-
 void
 GraphControl12::SetEnabled(bool flag)
 {
@@ -239,9 +226,7 @@ GraphControl12::GetSize(int *width, int *height)
 
 void
 GraphControl12::Resize(int width, int height)
-{
-    //WDL_MutexLock lock(&mMutex);
-    
+{    
     // BL-Waves debug: add a mutex here ?
     
     // We must have width and height multiple of 4
@@ -283,9 +268,7 @@ GraphControl12::Resize(int width, int height)
 void
 GraphControl12::SetBounds(BL_GUI_FLOAT x0, BL_GUI_FLOAT y0,
                           BL_GUI_FLOAT x1, BL_GUI_FLOAT y1)
-{
-    //WDL_MutexLock lock(&mMutex);
-    
+{   
     mBounds[0] = x0;
     mBounds[1] = y0;
     mBounds[2] = x1;
@@ -297,9 +280,7 @@ GraphControl12::SetBounds(BL_GUI_FLOAT x0, BL_GUI_FLOAT y0,
 // Added for StereoViz
 void
 GraphControl12::OnGUIIdle()
-{    
-    //WDL_MutexLock lock(&mMutex);
-    
+{        
     for (int i = 0; i < mCustomControls.size(); i++)
     {
         GraphCustomControl *control = mCustomControls[i];
@@ -310,9 +291,7 @@ GraphControl12::OnGUIIdle()
 
 void
 GraphControl12::SetSeparatorY0(BL_GUI_FLOAT lineWidth, int color[4])
-{
-    //WDL_MutexLock lock(&mMutex);
-    
+{    
     mSeparatorY0 = true;
     mSepY0LineWidth = lineWidth;
     
@@ -528,6 +507,7 @@ GraphControl12::AddCustomControl(GraphCustomControl *customControl)
 void
 GraphControl12::OnMouseDown(float x, float y, const IMouseMod &mod)
 {
+    // ??
     //WDL_MutexLock lock(&mMutex);
     
     IControl::OnMouseDown(x, y, mod);
@@ -546,9 +526,7 @@ GraphControl12::OnMouseDown(float x, float y, const IMouseMod &mod)
 
 void
 GraphControl12::OnMouseUp(float x, float y, const IMouseMod &mod)
-{
-    //WDL_MutexLock lock(&mMutex);
-    
+{   
     IControl::OnMouseUp(x, y, mod);
     
 #if CUSTOM_CONTROL_FIX
@@ -566,9 +544,7 @@ GraphControl12::OnMouseUp(float x, float y, const IMouseMod &mod)
 void
 GraphControl12::OnMouseDrag(float x, float y, float dX, float dY,
                             const IMouseMod &mod)
-{
-    //WDL_MutexLock lock(&mMutex);
-    
+{   
     IControl::OnMouseDrag(x, y, dX, dY, mod);
     
 #if CUSTOM_CONTROL_FIX
@@ -585,9 +561,7 @@ GraphControl12::OnMouseDrag(float x, float y, float dX, float dY,
 
 void
 GraphControl12::OnMouseDblClick(float x, float y, const IMouseMod &mod)
-{
-    //WDL_MutexLock lock(&mMutex);
-    
+{    
     IControl::OnMouseDblClick(x, y, mod);
     
     // #bl-iplug2
@@ -608,9 +582,7 @@ GraphControl12::OnMouseDblClick(float x, float y, const IMouseMod &mod)
 
 void
 GraphControl12::OnMouseWheel(float x, float y, const IMouseMod &mod, float d)
-{
-    //WDL_MutexLock lock(&mMutex);
-    
+{    
     IControl::OnMouseWheel(x, y, mod, d);
     
 #if CUSTOM_CONTROL_FIX
@@ -627,9 +599,7 @@ GraphControl12::OnMouseWheel(float x, float y, const IMouseMod &mod, float d)
 
 bool
 GraphControl12::OnKeyDown(float x, float y, const IKeyPress& key)
-{
-    //WDL_MutexLock lock(&mMutex);
-    
+{   
     // #bl-iplug2
     IControl::OnKeyDown(x, y, key);
     
@@ -650,9 +620,7 @@ GraphControl12::OnKeyDown(float x, float y, const IKeyPress& key)
 
 bool
 GraphControl12::OnKeyUp(float x, float y, const IKeyPress& key)
-{
-    //WDL_MutexLock lock(&mMutex);
-    
+{    
     // #bl-iplug2
     IControl::OnKeyUp(x, y, key);
     
@@ -674,8 +642,6 @@ GraphControl12::OnKeyUp(float x, float y, const IKeyPress& key)
 void
 GraphControl12::OnMouseOver(float x, float y, const IMouseMod &mod)
 {
-    //WDL_MutexLock lock(&mMutex);
-    
     IControl::OnMouseOver(x, y, mod);
     
 #if CUSTOM_CONTROL_FIX
@@ -692,9 +658,7 @@ GraphControl12::OnMouseOver(float x, float y, const IMouseMod &mod)
 
 void
 GraphControl12::OnMouseOut()
-{
-    //WDL_MutexLock lock(&mMutex);
-    
+{    
     IControl::OnMouseOut();
     
     for (int i = 0; i < mCustomControls.size(); i++)
@@ -2559,8 +2523,6 @@ GraphControl12::Draw(IGraphics &graphics)
     return;
 #endif
     
-    //WDL_MutexLock lock(&mMutex);
-    
     // Checked: if we fall here, the graph is sure to have mIsEnabled = true!
     if (!mIsEnabled)
         return;
@@ -2671,8 +2633,6 @@ GraphControl12::DoDraw(IGraphics &graphics)
 #if DBG_DISABLE_DRAW
     return;
 #endif
-    
-    //WDL_MutexLock lock(&mMutex);
     
     if (mTransport != NULL)
         mTransport->Update();

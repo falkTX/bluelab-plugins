@@ -82,17 +82,7 @@ struct NVGLUframebuffer;
 class GraphAxis2;
 class GraphTimeAxis6;
 
-// Added this test to avoid redraw everything each time
-// NOTE: added for StereoWidth
-//
-// With this flag, everything is redrawn only if the lements changes
-// (not at each call to DrawGraph)
-//
-// => real optimization when nothing changes !
-//
-//#define DIRTY_OPTIM 1
-
-// Class to add special drawing, depending on the plugins
+// Add special drawing, depending on the plugins
 class GraphCustomDrawer : public LockFreeObj
 {
 public:
@@ -150,15 +140,13 @@ public:
     
     virtual ~GraphControl12();
     
-    //void Lock();
-    //void Unlock();
-    
     void SetEnabled(bool flag);
     
     void GetSize(int *width, int *height);
     void Resize(int width, int height);
     
-    void SetBounds(BL_GUI_FLOAT x0, BL_GUI_FLOAT y0, BL_GUI_FLOAT x1, BL_GUI_FLOAT y1);
+    void SetBounds(BL_GUI_FLOAT x0, BL_GUI_FLOAT y0,
+                   BL_GUI_FLOAT x1, BL_GUI_FLOAT y1);
     
     void Draw(IGraphics &graphics) override;
     
@@ -171,8 +159,6 @@ public:
     
     void SetHAxis(GraphAxis2 *axis);
     void SetVAxis(GraphAxis2 *axis);
-    
-    //void SetXScale(bool dBFlag, BL_GUI_FLOAT minX = 0.0, BL_GUI_FLOAT maxX = 1.0);
     
     void SetAutoAdjust(bool flag, BL_GUI_FLOAT smoothCoeff);
     
@@ -202,7 +188,8 @@ public:
     
     void OnMouseDown(float x, float y, const IMouseMod &mod) override;
     void OnMouseUp(float x, float y, const IMouseMod &mod) override;
-    void OnMouseDrag(float x, float y, float dX, float dY, const IMouseMod &mod) override;
+    void OnMouseDrag(float x, float y, float dX, float dY,
+                     const IMouseMod &mod) override;
     void OnMouseDblClick(float x, float y, const IMouseMod &mod) override;
     void OnMouseWheel(float x, float y, const IMouseMod &mod, float d) override;
     bool OnKeyDown(float x, float y, const IKeyPress& key) override;
@@ -220,8 +207,10 @@ public:
     // For UST
     void SetDisablePointOffsetHack(bool flag);
     
-    // BUG: StereoWidth2, Reaper, Mac. Choose a mode using point rendering with quads (e.g POLAR_SAMPLE)
-    // Save and quit. When we restart, this given mode doesn't display points (only the circle graph drawer)
+    // BUG: StereoWidth2, Reaper, Mac. Choose a mode using point rendering
+    // with quads (e.g POLAR_SAMPLE)
+    // Save and quit. When we restart, this given mode doesn't display points
+    // (only the circle graph drawer)
     // This is because the mWhitePixImg image seems not correct
     // If we re-create it at the beginning of each loop, we don't have the problem.
     //
@@ -350,12 +339,8 @@ protected:
     bool mSeparatorY0;
     BL_GUI_FLOAT mSepY0LineWidth;
     int mSepY0Color[4];
-    
-    // X dB scale
-    //bool mXdBScale;
-    //BL_GUI_FLOAT mMinX;
-    //BL_GUI_FLOAT mMaxX;
 
+    //
     GraphAxis2 *mHAxis;
     GraphAxis2 *mVAxis;
     
