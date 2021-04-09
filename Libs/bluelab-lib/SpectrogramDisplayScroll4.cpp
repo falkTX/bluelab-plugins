@@ -285,14 +285,14 @@ SpectrogramDisplayScroll4::PreDraw(NVGcontext *vg, int width, int height)
 
 void
 SpectrogramDisplayScroll4::PushData()
-{        
+{    
     mLockFreeQueues[1].push(mLockFreeQueues[0]);
     mLockFreeQueues[0].clear();
 }
 
 void
 SpectrogramDisplayScroll4::PullData()
-{       
+{   
     mLockFreeQueues[2].push(mLockFreeQueues[1]);
     mLockFreeQueues[1].clear();
 }
@@ -363,7 +363,6 @@ void
 SpectrogramDisplayScroll4::AddSpectrogramLine(const WDL_TypedBuf<BL_FLOAT> &magns,
                                               const WDL_TypedBuf<BL_FLOAT> &phases)
 {
-    // TODO: manage memory better
     SpectrogramLine &line = mTmpBuf2;
     line.mMagns = magns;
     line.mPhases = phases;
