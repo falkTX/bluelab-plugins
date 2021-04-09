@@ -223,7 +223,7 @@ BLTransport::GetTransportElapsedSecTotal()
     double result =
         (mNow - mStartTransportTimeStampTotal)*0.001 + mResynchOffsetSecTotal;
 
-#if 0 //DEBUG_DUMP
+#if DEBUG_DUMP // 0
     BLDebug::AppendValue("real.txt", mDAWCurrentTransportValueSecLoop);
     BLDebug::AppendValue("total.txt", result);
 
@@ -257,7 +257,7 @@ BLTransport::GetTransportValueSecLoop()
 
     BL_FLOAT result = mDAWStartTransportValueSecLoop + elapsed;
 
-#if DEBUG_DUMP
+#if 0 //DEBUG_DUMP
     BLDebug::AppendValue("real.txt", mDAWCurrentTransportValueSecLoop);
     BLDebug::AppendValue("smooth.txt", result);
 
