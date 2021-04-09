@@ -364,7 +364,7 @@ SpectrogramDisplayScroll4::AddSpectrogramLine(const WDL_TypedBuf<BL_FLOAT> &magn
                                               const WDL_TypedBuf<BL_FLOAT> &phases)
 {
     // TODO: manage memory better
-    SpectrogramLine line;
+    SpectrogramLine &line = mTmpBuf2;
     line.mMagns = magns;
     line.mPhases = phases;
     

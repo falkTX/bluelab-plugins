@@ -4,7 +4,9 @@
 #include <vector>
 using namespace std;
 
-// TODO: make it more memory optimized (re-unse memory)
+// NOTE: not totally memory optimized
+// (we will clear() often, then re-push().
+// Memory is not re-used
 template<typename T>
 class LockFreeQueue
 {

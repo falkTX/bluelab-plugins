@@ -17,7 +17,7 @@ using namespace std;
 #include <BLTypes.h>
 #include <GraphControl12.h>
 
-#include <LockFreeQueue.h>
+#include <LockFreeQueue2.h>
 
 #include "IPlug_include_in_plug_hdr.h"
 
@@ -156,11 +156,12 @@ protected:
         WDL_TypedBuf<BL_FLOAT> mPhases;
     };
     
-    LockFreeQueue<SpectrogramLine> mLockFreeQueues[LOCK_FREE_NUM_BUFFERS];
+    LockFreeQueue2<SpectrogramLine> mLockFreeQueues[LOCK_FREE_NUM_BUFFERS];
     
 private:
     WDL_TypedBuf<unsigned int> mTmpBuf0;
     SpectrogramLine mTmpBuf1;
+    SpectrogramLine mTmpBuf2;
 };
 
 #endif // IGRAPHICS_NANOVG
