@@ -111,6 +111,12 @@
 // DEBUG
 #define DBG_DISABLE_DRAW 0 //1
 
+// Does not improve
+// The audio thread lock time is similar, even sometimes
+// bigger than with normal lock
+// (maybe we bufferize too much with trylock, and it takes time to un-bufferize)
+#define LOCK_FREE_USE_TRYLOCK 0 //1
+
 GraphControl12::GraphControl12(Plugin *pPlug, IGraphics *graphics,
                                IRECT pR, int paramIdx,
                               const char *fontPath)
@@ -2590,9 +2596,14 @@ GraphControl12::Draw(IGraphics &graphics)
 void
 GraphControl12::PushAllData()
 {
-    // TODO: implemented and test Mutex::TryEnter()
+#if !LOCK_FREE_USE_TRYLOCK
     mMutex.Enter();
-
+#else
+    bool entered = mMutex.TryEnter();
+    if (!entered)
+        return;
+#endif
+    
     // Copy from buffer 0 to buffer 1
     for (int i = 0; i < mCustomDrawers.size(); i++)
     {
@@ -2606,8 +2617,13 @@ GraphControl12::PushAllData()
 void
 GraphControl12::PullAllData()
 {
-    // TODO: implemented and test Mutex::TryEnter()
+#if !LOCK_FREE_USE_TRYLOCK
     mMutex.Enter();
+#else
+    bool entered = mMutex.TryEnter();
+    if (!entered)
+        return;
+#endif
 
     // Copy from buffer 1 to buffer 2
     for (int i = 0; i < mCustomDrawers.size(); i++)
