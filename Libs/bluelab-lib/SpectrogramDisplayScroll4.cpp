@@ -284,6 +284,34 @@ SpectrogramDisplayScroll4::PreDraw(NVGcontext *vg, int width, int height)
 }
 
 void
+SpectrogramDisplayScroll4::PushData()
+{        
+    mLockFreeQueues[1].push(mLockFreeQueues[0]);
+    mLockFreeQueues[0].clear();
+}
+
+void
+SpectrogramDisplayScroll4::PullData()
+{       
+    mLockFreeQueues[2].push(mLockFreeQueues[1]);
+    mLockFreeQueues[1].clear();
+}
+
+void
+SpectrogramDisplayScroll4::ApplyData()
+{   
+    while(!mLockFreeQueues[2].empty())
+    {
+        SpectrogramLine line;
+        mLockFreeQueues[2].peek(line);
+
+        LFAddSpectrogramLine(line.mMagns, line.mPhases);
+
+        mLockFreeQueues[2].pop();
+    }
+}
+
+void
 SpectrogramDisplayScroll4::SetSpectrogram(BLSpectrogram4 *spectro,
                                           BL_FLOAT left, BL_FLOAT top,
                                           BL_FLOAT right, BL_FLOAT bottom)
@@ -335,6 +363,18 @@ void
 SpectrogramDisplayScroll4::AddSpectrogramLine(const WDL_TypedBuf<BL_FLOAT> &magns,
                                               const WDL_TypedBuf<BL_FLOAT> &phases)
 {
+    // TODO: manage memory better
+    SpectrogramLine line;
+    line.mMagns = magns;
+    line.mPhases = phases;
+    
+    mLockFreeQueues[0].push(line);
+}
+    
+void
+SpectrogramDisplayScroll4::LFAddSpectrogramLine(const WDL_TypedBuf<BL_FLOAT> &magns,
+                                                const WDL_TypedBuf<BL_FLOAT> &phases)
+{    
     mSpectrogram->AddLine(magns, phases);
     
     mSpectroTimeSec += mSpectroLineDurationSec;

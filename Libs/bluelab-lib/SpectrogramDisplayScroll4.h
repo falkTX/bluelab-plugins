@@ -17,6 +17,8 @@ using namespace std;
 #include <BLTypes.h>
 #include <GraphControl12.h>
 
+#include <LockFreeQueue.h>
+
 #include "IPlug_include_in_plug_hdr.h"
 
 
@@ -52,9 +54,15 @@ public:
     
     bool NeedUpdateSpectrogram();
     bool DoUpdateSpectrogram();
-    
+
+    // CustomDrawer
     void PreDraw(NVGcontext *vg, int width, int height) override;
     bool IsOwnedByGraph() override { return true; }
+
+    // LockFreeObj
+    void PushData() override;
+    void PullData() override;
+    void ApplyData() override;
     
     // Spectrogram
     void SetSpectrogram(BLSpectrogram4 *spectro,
@@ -92,6 +100,9 @@ protected:
     BL_FLOAT SecsToPixels(BL_FLOAT secs, BL_FLOAT width);
 
     void ResynchTransport();
+
+    void LFAddSpectrogramLine(const WDL_TypedBuf<BL_FLOAT> &magns,
+                              const WDL_TypedBuf<BL_FLOAT> &phases);
     
     // NanoVG
     NVGcontext *mVg;
@@ -137,6 +148,15 @@ protected:
     BL_FLOAT mSpectroTimeSec;    
 
     BL_FLOAT mPrevOffsetSec;
+
+    // Lock free
+    struct SpectrogramLine
+    {
+        WDL_TypedBuf<BL_FLOAT> mMagns;
+        WDL_TypedBuf<BL_FLOAT> mPhases;
+    };
+    
+    LockFreeQueue<SpectrogramLine> mLockFreeQueues[LOCK_FREE_NUM_BUFFERS];
     
 private:
     WDL_TypedBuf<unsigned int> mTmpBuf0;

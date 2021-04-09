@@ -177,7 +177,8 @@ GraphControl12::GraphControl12(Plugin *pPlug, IGraphics *graphics,
 
 GraphControl12::~GraphControl12()
 {
-    WDL_MutexLock lock(&mMutex);
+    // Keep this lock
+    //WDL_MutexLock lock(&mMutex);
     
     for (int i = 0; i < mCurves.size(); i++)
     {
@@ -210,17 +211,18 @@ GraphControl12::~GraphControl12()
 #endif
 }
 
-void
-GraphControl12::Lock()
-{
-    mMutex.Enter();
-}
+/*void
+  GraphControl12::Lock()
+  {
+  mMutex.Enter();
+  }
 
-void
-GraphControl12::Unlock()
-{
-    mMutex.Leave();
-}
+  void
+  GraphControl12::Unlock()
+  {
+  mMutex.Leave();
+  }
+*/
 
 void
 GraphControl12::SetEnabled(bool flag)
@@ -238,7 +240,7 @@ GraphControl12::GetSize(int *width, int *height)
 void
 GraphControl12::Resize(int width, int height)
 {
-    WDL_MutexLock lock(&mMutex);
+    //WDL_MutexLock lock(&mMutex);
     
     // BL-Waves debug: add a mutex here ?
     
@@ -282,7 +284,7 @@ void
 GraphControl12::SetBounds(BL_GUI_FLOAT x0, BL_GUI_FLOAT y0,
                           BL_GUI_FLOAT x1, BL_GUI_FLOAT y1)
 {
-    WDL_MutexLock lock(&mMutex);
+    //WDL_MutexLock lock(&mMutex);
     
     mBounds[0] = x0;
     mBounds[1] = y0;
@@ -296,7 +298,7 @@ GraphControl12::SetBounds(BL_GUI_FLOAT x0, BL_GUI_FLOAT y0,
 void
 GraphControl12::OnGUIIdle()
 {    
-    WDL_MutexLock lock(&mMutex);
+    //WDL_MutexLock lock(&mMutex);
     
     for (int i = 0; i < mCustomControls.size(); i++)
     {
@@ -309,7 +311,7 @@ GraphControl12::OnGUIIdle()
 void
 GraphControl12::SetSeparatorY0(BL_GUI_FLOAT lineWidth, int color[4])
 {
-    WDL_MutexLock lock(&mMutex);
+    //WDL_MutexLock lock(&mMutex);
     
     mSeparatorY0 = true;
     mSepY0LineWidth = lineWidth;
@@ -526,7 +528,7 @@ GraphControl12::AddCustomControl(GraphCustomControl *customControl)
 void
 GraphControl12::OnMouseDown(float x, float y, const IMouseMod &mod)
 {
-    WDL_MutexLock lock(&mMutex);
+    //WDL_MutexLock lock(&mMutex);
     
     IControl::OnMouseDown(x, y, mod);
     
@@ -545,7 +547,7 @@ GraphControl12::OnMouseDown(float x, float y, const IMouseMod &mod)
 void
 GraphControl12::OnMouseUp(float x, float y, const IMouseMod &mod)
 {
-    WDL_MutexLock lock(&mMutex);
+    //WDL_MutexLock lock(&mMutex);
     
     IControl::OnMouseUp(x, y, mod);
     
@@ -565,7 +567,7 @@ void
 GraphControl12::OnMouseDrag(float x, float y, float dX, float dY,
                             const IMouseMod &mod)
 {
-    WDL_MutexLock lock(&mMutex);
+    //WDL_MutexLock lock(&mMutex);
     
     IControl::OnMouseDrag(x, y, dX, dY, mod);
     
@@ -584,7 +586,7 @@ GraphControl12::OnMouseDrag(float x, float y, float dX, float dY,
 void
 GraphControl12::OnMouseDblClick(float x, float y, const IMouseMod &mod)
 {
-    WDL_MutexLock lock(&mMutex);
+    //WDL_MutexLock lock(&mMutex);
     
     IControl::OnMouseDblClick(x, y, mod);
     
@@ -607,7 +609,7 @@ GraphControl12::OnMouseDblClick(float x, float y, const IMouseMod &mod)
 void
 GraphControl12::OnMouseWheel(float x, float y, const IMouseMod &mod, float d)
 {
-    WDL_MutexLock lock(&mMutex);
+    //WDL_MutexLock lock(&mMutex);
     
     IControl::OnMouseWheel(x, y, mod, d);
     
@@ -626,7 +628,7 @@ GraphControl12::OnMouseWheel(float x, float y, const IMouseMod &mod, float d)
 bool
 GraphControl12::OnKeyDown(float x, float y, const IKeyPress& key)
 {
-    WDL_MutexLock lock(&mMutex);
+    //WDL_MutexLock lock(&mMutex);
     
     // #bl-iplug2
     IControl::OnKeyDown(x, y, key);
@@ -649,7 +651,7 @@ GraphControl12::OnKeyDown(float x, float y, const IKeyPress& key)
 bool
 GraphControl12::OnKeyUp(float x, float y, const IKeyPress& key)
 {
-    WDL_MutexLock lock(&mMutex);
+    //WDL_MutexLock lock(&mMutex);
     
     // #bl-iplug2
     IControl::OnKeyUp(x, y, key);
@@ -672,7 +674,7 @@ GraphControl12::OnKeyUp(float x, float y, const IKeyPress& key)
 void
 GraphControl12::OnMouseOver(float x, float y, const IMouseMod &mod)
 {
-    WDL_MutexLock lock(&mMutex);
+    //WDL_MutexLock lock(&mMutex);
     
     IControl::OnMouseOver(x, y, mod);
     
@@ -691,7 +693,7 @@ GraphControl12::OnMouseOver(float x, float y, const IMouseMod &mod)
 void
 GraphControl12::OnMouseOut()
 {
-    WDL_MutexLock lock(&mMutex);
+    //WDL_MutexLock lock(&mMutex);
     
     IControl::OnMouseOut();
     
@@ -2536,6 +2538,8 @@ GraphControl12::DrawText(BL_GUI_FLOAT x, BL_GUI_FLOAT y, BL_GUI_FLOAT fontSize,
 void
 GraphControl12::Draw(IGraphics &graphics)
 {
+    PullAllData();
+    
     mVg = (NVGcontext *)graphics.GetDrawContext();
     
     DoDraw(graphics);
@@ -2549,11 +2553,13 @@ GraphControl12::Draw(IGraphics &graphics)
 void
 GraphControl12::Draw(IGraphics &graphics)
 {
+    PullAllData();
+    
 #if DBG_DISABLE_DRAW
     return;
 #endif
     
-    WDL_MutexLock lock(&mMutex);
+    //WDL_MutexLock lock(&mMutex);
     
     // Checked: if we fall here, the graph is sure to have mIsEnabled = true!
     if (!mIsEnabled)
@@ -2620,13 +2626,53 @@ GraphControl12::Draw(IGraphics &graphics)
 #endif
 
 void
+GraphControl12::PushAllData()
+{
+    // TODO: implemented and test Mutex::TryEnter()
+    mMutex.Enter();
+
+    // Copy from buffer 0 to buffer 1
+    for (int i = 0; i < mCustomDrawers.size(); i++)
+    {
+        GraphCustomDrawer *drawer = mCustomDrawers[i];
+        drawer->PushData();
+    }
+    
+    mMutex.Leave();
+}
+
+void
+GraphControl12::PullAllData()
+{
+    // TODO: implemented and test Mutex::TryEnter()
+    mMutex.Enter();
+
+    // Copy from buffer 1 to buffer 2
+    for (int i = 0; i < mCustomDrawers.size(); i++)
+    {
+        GraphCustomDrawer *drawer = mCustomDrawers[i];
+        drawer->PullData();
+    }
+
+    // Leave mutex here, we have finished with critical section
+    mMutex.Leave();
+
+    // Apply data without locking (this can be a bit long
+    for (int i = 0; i < mCustomDrawers.size(); i++)
+    {
+        GraphCustomDrawer *drawer = mCustomDrawers[i];
+        drawer->ApplyData();
+    }
+}
+
+void
 GraphControl12::DoDraw(IGraphics &graphics)
 {
 #if DBG_DISABLE_DRAW
     return;
 #endif
     
-    WDL_MutexLock lock(&mMutex);
+    //WDL_MutexLock lock(&mMutex);
     
     if (mTransport != NULL)
         mTransport->Update();

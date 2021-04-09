@@ -25,6 +25,7 @@ using namespace std;
 #include <GraphCurve5.h>
 #include <ParamSmoother.h>
 
+#include <LockFreeObj.h>
 
 #define PROFILE_GRAPH 0
 
@@ -92,7 +93,7 @@ class GraphTimeAxis6;
 //#define DIRTY_OPTIM 1
 
 // Class to add special drawing, depending on the plugins
-class GraphCustomDrawer
+class GraphCustomDrawer : public LockFreeObj
 {
 public:
     GraphCustomDrawer() {}
@@ -149,8 +150,8 @@ public:
     
     virtual ~GraphControl12();
     
-    void Lock();
-    void Unlock();
+    //void Lock();
+    //void Unlock();
     
     void SetEnabled(bool flag);
     
@@ -240,7 +241,11 @@ public:
 
     // Hack
     void SetValueToDefault(int valIdx) override;
-        
+
+    // Lock free
+    void PushAllData();
+    void PullAllData();
+    
 protected:
     void DoDraw(IGraphics &graphics);
     
