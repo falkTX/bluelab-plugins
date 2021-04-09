@@ -18,8 +18,9 @@ class LockFreeQueue
     void clear() { mQueue.clear(); }
 
     void push(const T &value) { mQueue.push_back(value); }
-    void peek(T &value) { if (!mQueue.empty()) value = mQueue[0]; }
-    void pop() { mQueue.pop_front(); }
+    
+    void get(long index, T &value)
+    { if (index < mQueue.size()) value = mQueue[index]; }
 
     void push(const LockFreeQueue<T> &q)
     { for (int i = 0; i < q.mQueue.size(); i++) mQueue.push_back(q.mQueue[i]); }

@@ -299,16 +299,16 @@ SpectrogramDisplayScroll4::PullData()
 
 void
 SpectrogramDisplayScroll4::ApplyData()
-{   
-    while(!mLockFreeQueues[2].empty())
+{
+    for (int i = 0; i < mLockFreeQueues[2].size(); i++)
     {
-        SpectrogramLine line;
-        mLockFreeQueues[2].peek(line);
+        SpectrogramLine &line = mTmpBuf1;
+        mLockFreeQueues[2].get(i, line);
 
         LFAddSpectrogramLine(line.mMagns, line.mPhases);
-
-        mLockFreeQueues[2].pop();
     }
+
+    mLockFreeQueues[2].clear();
 }
 
 void

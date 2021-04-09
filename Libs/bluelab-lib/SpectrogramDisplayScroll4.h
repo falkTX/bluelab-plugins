@@ -160,6 +160,7 @@ protected:
     
 private:
     WDL_TypedBuf<unsigned int> mTmpBuf0;
+    SpectrogramLine mTmpBuf1;
 };
 
 #endif // IGRAPHICS_NANOVG
