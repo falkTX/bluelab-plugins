@@ -1,7 +1,7 @@
 #ifndef LOCK_FREE_QUEUE_H
 #define LOCK_FREE_QUEUE_H
 
-#include <deque>
+#include <vector>
 using namespace std;
 
 // TODO: make it more memory optimized (re-unse memory)
@@ -26,7 +26,7 @@ class LockFreeQueue
     { for (int i = 0; i < q.mQueue.size(); i++) mQueue.push_back(q.mQueue[i]); }
     
  protected:
-    deque<T> mQueue;
+    vector<T> mQueue;
 };
 
 #endif
