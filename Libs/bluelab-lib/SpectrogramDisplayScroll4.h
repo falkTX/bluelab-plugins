@@ -19,6 +19,8 @@ using namespace std;
 
 #include <LockFreeQueue2.h>
 
+#include <TransportListener.h>
+
 #include "IPlug_include_in_plug_hdr.h"
 
 
@@ -36,7 +38,8 @@ using namespace iplug;
 class BLSpectrogram4;
 class NVGcontext;
 class BLTransport;
-class SpectrogramDisplayScroll4 : public GraphCustomDrawer
+class SpectrogramDisplayScroll4 : public GraphCustomDrawer,
+                                  public TransportListener
 {
 public:
     // delayPercent: delay that we bufferize, to fix when the data is a bit late
@@ -81,7 +84,7 @@ public:
     void UpdateColormap(bool flag);
 
     // Hack
-    void TransportPlayingChanged();
+    void TransportPlayingChanged() override;
     
     // Variable speed
     void SetSpeedMod(int speedMod);

@@ -12,6 +12,7 @@
 // Because the daw transport value can be very hacked.
 // Well suitable for smooth animations depending on transport
 class ParamSmoother2;
+class TransportListener;
 class BLTransport
 {
  public:
@@ -53,6 +54,8 @@ class BLTransport
     // Reset the estimated transport value
     // Resynch directly to the DAW transport value
     bool HardResynch();
+
+    void SetListener(TransportListener *listener);
     
 protected:
     // Resynch progressively the estimated transport value
@@ -114,6 +117,9 @@ protected:
 #if USE_AUTO_HARD_RESYNCH
     BL_FLOAT mAutoHardResynchThreshold;
 #endif
+
+    // Later, add more if necessary
+    TransportListener *mListener;
 };
 
 #endif

@@ -3,6 +3,8 @@
 
 #include <ParamSmoother2.h>
 
+#include <TransportListener.h>
+
 #include "BLTransport.h"
 
 BLTransport::BLTransport(BL_FLOAT sampleRate)
@@ -38,6 +40,8 @@ BLTransport::BLTransport(BL_FLOAT sampleRate)
 #if USE_AUTO_HARD_RESYNCH
     mHardResynchThreshold = BL_INF;
 #endif
+
+    mListener = NULL;
 }
 
 BLTransport::~BLTransport()
@@ -148,7 +152,13 @@ BLTransport::SetTransportPlaying(bool transportPlaying,
     if (hardResynch)
         transportJustStarted = true;
 #endif
-    
+
+    if (mListener != NULL)
+    {
+        if (transportJustStarted)
+            mListener->TransportPlayingChanged();
+    }
+            
     return transportJustStarted;
 }
 
@@ -275,6 +285,12 @@ BLTransport::HardResynch()
     SetupTransportJustStarted(mDAWCurrentTransportValueSecLoop);
     
     return true;
+}
+
+void
+BLTransport::SetListener(TransportListener *listener)
+{
+    mListener = listener;
 }
 
 void

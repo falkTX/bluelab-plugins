@@ -60,6 +60,9 @@ SpectrogramDisplayScroll4::SpectrogramDisplayScroll4(Plugin *plug,
 
 SpectrogramDisplayScroll4::~SpectrogramDisplayScroll4()
 {
+    if (mTransport != NULL)
+        mTransport->SetListener(NULL);
+    
     if (mVg == NULL)
         return;
     
@@ -74,6 +77,8 @@ void
 SpectrogramDisplayScroll4::SetTransport(BLTransport *transport)
 {
     mTransport = transport;
+    
+    mTransport->SetListener(this);
 }
 
 void
