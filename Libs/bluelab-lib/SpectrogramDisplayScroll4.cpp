@@ -212,9 +212,6 @@ void
 SpectrogramDisplayScroll4::PreDraw(NVGcontext *vg, int width, int height)
 {   
     mVg = vg;
-
-    // Anti-jitter (offset)
-    ResynchTransport();
     
     BL_FLOAT offsetSec = mPrevOffsetSec;
     // Must update anyway, even if the transport is not playing
@@ -473,28 +470,6 @@ SpectrogramDisplayScroll4::SecsToPixels(BL_FLOAT secs, BL_FLOAT width)
     BL_FLOAT pix = (secs/mSpectroTotalDurationSec)*width*coeff;
     
     return pix;
-}
-
-void
-SpectrogramDisplayScroll4::ResynchTransport()
-{
-    // No resynch
-    return;
-
-    // Hard resynch
-    
-    BL_FLOAT offsetSec = GetOffsetSec();
-
-    // 1.0: we don't see black lines at all
-    // but it is too sensitive (in debug), it resynchs too often and it jitters
-    //BL_FLOAT marginCoeff = 1.0;
-
-    // 2.0: it resynchs only when necessary, but we can see the black lines sometimes
-    BL_FLOAT marginCoeff = 2.0;
-    
-    if ((offsetSec < -mDelayTimeSecLeft*marginCoeff) ||
-        (offsetSec > mDelayTimeSecRight*marginCoeff))
-        mTransport->HardResynch();
 }
 
 #endif // IGRAPHICS_NANOVG

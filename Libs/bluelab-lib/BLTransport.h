@@ -3,6 +3,11 @@
 
 #include <BLTypes.h>
 
+// Not working well; because when we start transport,
+// there is a longer delay
+// => so it jitters when starting play
+#define USE_AUTO_HARD_RESYNCH 0
+
 // Get current accurate transport value at any time.
 // Because the daw transport value can be very hacked.
 // Well suitable for smooth animations depending on transport
@@ -15,20 +20,25 @@ class BLTransport
 
     void SetSoftResynchEnabled(bool flag);
     
+#if USE_AUTO_HARD_RESYNCH
+    void SetAutoHardResynchThreshold(BL_FLOAT threshold = 0.1);
+#endif
+    
     void Reset();
     void Reset(BL_FLOAT sampleRate);
     
     // From daw
     // Return true if dependent object update is needed
-    bool SetTransportPlaying(bool transportPlaying, bool monitorOn = false,
-                             BL_FLOAT dawTransportValueSec = -1.0);
+    bool SetTransportPlaying(bool transportPlaying, bool monitorOn,
+                             BL_FLOAT dawTransportValueSec,
+                             int blockSize);
     bool IsTransportPlaying();
-
+    
     void SetBypassed(bool flag);
     
     // Update the current smooth transport value
     void Update();
-
+    
     // Real transport value from daw
     void SetDAWTransportValueSec(BL_FLOAT dawTransportValueSec);
     
@@ -39,22 +49,31 @@ class BLTransport
     BL_FLOAT GetTransportElapsedSecLoop();
     // Get smoothed transport value, based on DAW transport value 
     BL_FLOAT GetTransportValueSecLoop();
-
-    // Reset the extimated transport value
-    // Resynch directly to the DAW transport value
-    void HardResynch();
     
- protected:
+    // Reset the estimated transport value
+    // Resynch directly to the DAW transport value
+    bool HardResynch();
+    
+protected:
     // Resynch progressively the estimated transport value
     // to the host transport value
     // This method must be called continuously
     void SoftResynch();
 
+    // Update current time stamp
+    void UpdateNow();
+    
+    void SetupTransportJustStarted(BL_FLOAT dawTransportValueSec);
+
     //
+    BL_FLOAT mSampleRate;
+    
     bool mIsTransportPlaying;
     bool mIsMonitorOn;
 
     bool mIsBypassed;
+
+    // NOTE: use double, otherwise we have drift due to float imprecision
     
     // Total, do not manage transport looping 
     double mStartTransportTimeStampTotal;
@@ -64,14 +83,14 @@ class BLTransport
     double mNow;
 
     // DAW transport time when start playing, or re-starting a loop
-    BL_FLOAT mDAWStartTransportValueSecLoop;
+    double mDAWStartTransportValueSecLoop;
     
     // DAW current transport time
     // NOTE: Not used for the moment
-    BL_FLOAT mDAWCurrentTransportValueSecLoop;
+    double mDAWCurrentTransportValueSecLoop;
 
     // DAW transport time since start playing (accumulated)
-    BL_FLOAT mDAWTransportValueSecTotal;
+    double mDAWTransportValueSecTotal;
     
     // Used for loop
     //
@@ -79,7 +98,7 @@ class BLTransport
     bool mSoftResynchEnabled;
         
     // Offset used for hard or soft resynch
-    BL_FLOAT mResynchOffsetSecLoop;
+    double mResynchOffsetSecLoop;
 
     // Soft resynth
     ParamSmoother2 *mDiffSmootherLoop;
@@ -87,10 +106,14 @@ class BLTransport
     // Used for total
     
     // Offset used for hard or soft resynch
-    BL_FLOAT mResynchOffsetSecTotal;
+    double mResynchOffsetSecTotal;
 
     // Soft resynth
     ParamSmoother2 *mDiffSmootherTotal;
+
+#if USE_AUTO_HARD_RESYNCH
+    BL_FLOAT mAutoHardResynchThreshold;
+#endif
 };
 
 #endif

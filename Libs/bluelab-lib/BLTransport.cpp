@@ -5,10 +5,10 @@
 
 #include "BLTransport.h"
 
-#define DEBUG_DUMP 0 //1
-
 BLTransport::BLTransport(BL_FLOAT sampleRate)
 {
+    mSampleRate = sampleRate;
+    
     // Avoid jump when restarting playback
     mIsTransportPlaying = false;
     mIsMonitorOn = false;
@@ -33,6 +33,10 @@ BLTransport::BLTransport(BL_FLOAT sampleRate)
     mDiffSmootherTotal = new ParamSmoother2(sampleRate, 0.0, DELAY_MS);
 
     mIsBypassed = false;
+
+#if USE_AUTO_HARD_RESYNCH
+    mHardResynchThreshold = BL_INF;
+#endif
 }
 
 BLTransport::~BLTransport()
@@ -47,15 +51,17 @@ BLTransport::SetSoftResynchEnabled(bool flag)
     mSoftResynchEnabled = flag;
 }
 
+#if USE_AUTO_HARD_RESYNCH
+void
+BLTransport::SetAutoHardResynchThreshold(BL_FLOAT threshold)
+{
+    mAutoHardResynchThreshold = threshold;
+}
+#endif
+
 void
 BLTransport::Reset()
 {
-    // Reset only if the spectrogram is moving
-    // FIX: GhostViewer: play, stop, then change the spectro speed
-    // => there was a jump in the spectrogram
-    //if (!mIsTransportPlaying && !mIsMonitorOn)
-    //    return;
-    
     mStartTransportTimeStampTotal = BLUtils::GetTimeMillisF();
     mStartTransportTimeStampLoop = BLUtils::GetTimeMillisF();
 
@@ -73,6 +79,8 @@ BLTransport::Reset()
 void
 BLTransport::Reset(BL_FLOAT sampleRate)
 {
+    mSampleRate = sampleRate;
+    
     mDiffSmootherLoop->Reset(sampleRate);
     mDiffSmootherTotal->Reset(sampleRate);
 
@@ -82,11 +90,12 @@ BLTransport::Reset(BL_FLOAT sampleRate)
 bool
 BLTransport::SetTransportPlaying(bool transportPlaying,
                                  bool monitorOn,
-                                 BL_FLOAT dawTransportValueSec)
+                                 BL_FLOAT dawTransportValueSec,
+                                 int blockSize)
 {
     if (mIsBypassed)
         return false;
-    
+
     bool transportJustStarted = ((transportPlaying && !mIsTransportPlaying) ||
                                  (monitorOn && !mIsMonitorOn));
 
@@ -94,29 +103,12 @@ BLTransport::SetTransportPlaying(bool transportPlaying,
                                  (!transportPlaying && !monitorOn));
     
     bool loopDetected = (dawTransportValueSec < mDAWCurrentTransportValueSecLoop);
-
+    
     if (transportJustStarted)
         // Play just started  
-    {
-#if DEBUG_DUMP
-    BLDebug::ResetFile("real.txt");
-    BLDebug::ResetFile("smooth.txt");
-    BLDebug::ResetFile("total.txt");
-#endif
-    
-        mStartTransportTimeStampTotal = BLUtils::GetTimeMillisF();
-        mStartTransportTimeStampLoop = BLUtils::GetTimeMillisF();
+    {    
+        SetupTransportJustStarted(dawTransportValueSec);
         
-        mDAWStartTransportValueSecLoop = dawTransportValueSec;
-
-        mDAWTransportValueSecTotal = 0.0;
-        
-        mResynchOffsetSecLoop = 0.0;
-        mDiffSmootherLoop->ResetToTargetValue(0.0);
-
-        mResynchOffsetSecTotal = 0.0;
-        mDiffSmootherTotal->ResetToTargetValue(0.0);
-
         transportJustStarted = true;
     }
 
@@ -132,13 +124,29 @@ BLTransport::SetTransportPlaying(bool transportPlaying,
     mIsTransportPlaying = transportPlaying;
     mIsMonitorOn = monitorOn;
 
+#if 0 // ORIGIN: Trust the transport
     if (!transportJustStarted && !loopDetected)
     {
         mDAWTransportValueSecTotal +=
             dawTransportValueSec - mDAWCurrentTransportValueSecLoop;
     }
-        
+#endif
+
+#if 1 // NEW: Trust the number of samples added (should be more accurate)
+    if (!transportJustStarted)
+    {
+        double samplesElapsedSec = ((double)blockSize)/mSampleRate;
+        mDAWTransportValueSecTotal += samplesElapsedSec;
+    }
+#endif
+    
     mDAWCurrentTransportValueSecLoop = dawTransportValueSec;
+
+#if USE_AUTO_HARD_RESYNCH
+    bool hardResynch = HardResynch();
+    if (hardResynch)
+        transportJustStarted = true;
+#endif
     
     return transportJustStarted;
 }
@@ -168,15 +176,15 @@ BLTransport::Update()
 {
     if (mIsBypassed)
         return;
+
+    UpdateNow();
     
     if (mIsTransportPlaying || mIsMonitorOn)
         // Enabled the possibility to fine adjust the transport
         // after play stopping (soft resynch).
         // FIX: GhostViewer: play, stop => there was a small jump of
-        // ths spectrogram just after having stopped
+        // the spectrogram just after having stopped
     {
-        mNow = BLUtils::GetTimeMillisF();
-
         if (mSoftResynchEnabled)
             SoftResynch();
     }
@@ -184,6 +192,8 @@ BLTransport::Update()
 
 // Change only the transport value when start playing or reseting a loop
 // Otherwise process smoothly
+//
+// NOTE: for the moment it is only called for resetting the transport to 0
 void
 BLTransport::SetDAWTransportValueSec(BL_FLOAT dawTransportValueSec)
 {
@@ -222,15 +232,7 @@ BLTransport::GetTransportElapsedSecTotal()
 
     double result =
         (mNow - mStartTransportTimeStampTotal)*0.001 + mResynchOffsetSecTotal;
-
-#if DEBUG_DUMP // 0
-    BLDebug::AppendValue("real.txt", mDAWCurrentTransportValueSecLoop);
-    BLDebug::AppendValue("total.txt", result);
-
-    BL_FLOAT loop = GetTransportValueSecLoop();
-    BLDebug::AppendValue("smooth.txt", loop);
-#endif
-    
+        
     return result;
 }
 
@@ -240,7 +242,7 @@ BLTransport::GetTransportElapsedSecLoop()
     if ((mStartTransportTimeStampLoop < 0.0) ||
         (mNow < 0.0))
         return -1;
-
+    
     double elapsed =
         (mNow - mStartTransportTimeStampLoop)*0.001 + mResynchOffsetSecLoop;
 
@@ -256,32 +258,22 @@ BLTransport::GetTransportValueSecLoop()
         elapsed = 0.0;
 
     BL_FLOAT result = mDAWStartTransportValueSecLoop + elapsed;
-
-#if 0 //DEBUG_DUMP
-    BLDebug::AppendValue("real.txt", mDAWCurrentTransportValueSecLoop);
-    BLDebug::AppendValue("smooth.txt", result);
-
-    BL_FLOAT total = GetTransportElapsedSecTotal();
-    BLDebug::AppendValue("total.txt", total);
-#endif
     
     return result;
 }
 
-void
+bool
 BLTransport::HardResynch()
 {
-    // Loop
-    mResynchOffsetSecLoop = 0.0;
-    BL_FLOAT estimTransportLoop =
-        mDAWStartTransportValueSecLoop + GetTransportElapsedSecLoop();
-    BL_FLOAT diffLoop = mDAWCurrentTransportValueSecLoop - estimTransportLoop;
-    mResynchOffsetSecLoop = diffLoop;
-
-    // Total
-    mResynchOffsetSecTotal = 0.0;
-    BL_FLOAT diffTotal = mDAWTransportValueSecTotal - GetTransportElapsedSecTotal();
-    mResynchOffsetSecTotal = diffTotal;
+#if USE_AUTO_HARD_RESYNCH
+    // If we auto hard resynch, to as if we just start playing 
+    if (std::fabs(mResynchOffsetSecTotal) < mHardResynchThreshold)
+        return false;
+#endif
+    
+    SetupTransportJustStarted(mDAWCurrentTransportValueSecLoop);
+    
+    return true;
 }
 
 void
@@ -292,19 +284,46 @@ BLTransport::SoftResynch()
     {
         // Loop
         mResynchOffsetSecLoop = 0.0;
-        BL_FLOAT estimTransportLoop =
-            mDAWStartTransportValueSecLoop + GetTransportElapsedSecLoop();
-        BL_FLOAT diffLoop = mDAWCurrentTransportValueSecLoop - estimTransportLoop;
+        double estimTransportLoop = mDAWStartTransportValueSecLoop +
+            (mNow - mStartTransportTimeStampLoop)*0.001;
+        double diffLoop = mDAWCurrentTransportValueSecLoop - estimTransportLoop;
         mDiffSmootherLoop->SetTargetValue(diffLoop);
-        BL_FLOAT diffSmoothLoop = mDiffSmootherLoop->Process();
+        double diffSmoothLoop = mDiffSmootherLoop->Process();
         mResynchOffsetSecLoop = diffSmoothLoop;
 
         // Total
         mResynchOffsetSecTotal = 0.0;
-        BL_FLOAT diffTotal =
-            mDAWTransportValueSecTotal - GetTransportElapsedSecTotal();
+        double diffTotal = mDAWTransportValueSecTotal -
+            (mNow - mStartTransportTimeStampTotal)*0.001;
         mDiffSmootherTotal->SetTargetValue(diffTotal);
-        BL_FLOAT diffSmoothTotal = mDiffSmootherTotal->Process();
+        double diffSmoothTotal = mDiffSmootherTotal->Process();
         mResynchOffsetSecTotal = diffSmoothTotal;
     }
+}
+
+void
+BLTransport::UpdateNow()
+{
+    if (!mIsBypassed)
+    {
+        if (mIsTransportPlaying || mIsMonitorOn)
+            mNow = BLUtils::GetTimeMillisF();
+    }
+}
+
+void
+BLTransport::SetupTransportJustStarted(BL_FLOAT dawTransportValueSec)
+{
+    mStartTransportTimeStampTotal = BLUtils::GetTimeMillisF();
+    mStartTransportTimeStampLoop = BLUtils::GetTimeMillisF();
+    
+    mDAWStartTransportValueSecLoop = dawTransportValueSec;
+    
+    mDAWTransportValueSecTotal = 0.0;
+    
+    mResynchOffsetSecLoop = 0.0;
+    mDiffSmootherLoop->ResetToTargetValue(0.0);
+    
+    mResynchOffsetSecTotal = 0.0;
+    mDiffSmootherTotal->ResetToTargetValue(0.0);
 }

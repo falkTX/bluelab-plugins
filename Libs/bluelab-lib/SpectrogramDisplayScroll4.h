@@ -99,8 +99,6 @@ protected:
 
     BL_FLOAT SecsToPixels(BL_FLOAT secs, BL_FLOAT width);
 
-    void ResynchTransport();
-
     void LFAddSpectrogramLine(const WDL_TypedBuf<BL_FLOAT> &magns,
                               const WDL_TypedBuf<BL_FLOAT> &phases);
     
