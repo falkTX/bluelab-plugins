@@ -92,7 +92,8 @@ BLTransport::Reset(BL_FLOAT sampleRate)
     Reset();
 }
 
-bool
+/*bool*/
+void
 BLTransport::SetTransportPlaying(bool transportPlaying,
                                  bool monitorOn,
                                  BL_FLOAT dawTransportValueSec,

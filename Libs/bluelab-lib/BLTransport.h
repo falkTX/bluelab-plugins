@@ -33,9 +33,9 @@ public:
     
     // From daw
     // Return true if dependent object update is needed
-    bool SetTransportPlaying(bool transportPlaying, bool monitorOn,
-                             BL_FLOAT dawTransportValueSec,
-                             int blockSize);
+    /*bool*/ void SetTransportPlaying(bool transportPlaying, bool monitorOn,
+                                      BL_FLOAT dawTransportValueSec,
+                                      int blockSize);
     bool IsTransportPlaying();
     
     void SetBypassed(bool flag);
