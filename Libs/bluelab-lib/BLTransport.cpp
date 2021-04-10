@@ -98,6 +98,24 @@ BLTransport::SetTransportPlaying(bool transportPlaying,
                                  BL_FLOAT dawTransportValueSec,
                                  int blockSize)
 {
+    Command &cmd = mTmpBuf1;
+
+    cmd.mType = Command::SET_TRANSPORT_PLAYING;
+    cmd.mIsPlaying = transportPlaying;
+    cmd.mMonitorEnabled = monitorOn;
+    cmd.mBlockSize = blockSize;
+    
+    cmd.mTransportTime = dawTransportValueSec;
+
+    mLockFreeQueues[0].push(cmd);
+}
+
+bool
+BLTransport::SetTransportPlayingLF(bool transportPlaying,
+                                   bool monitorOn,
+                                   BL_FLOAT dawTransportValueSec,
+                                   int blockSize)
+{
     if (mIsBypassed)
         return false;
 
@@ -201,12 +219,24 @@ BLTransport::Update()
     }
 }
 
+void
+BLTransport::SetDAWTransportValueSec(BL_FLOAT dawTransportValueSec)
+{
+    Command &cmd = mTmpBuf2;
+
+    cmd.mType = Command::SET_DAW_TRANSPORT_VALUE;
+    
+    cmd.mTransportTime = dawTransportValueSec;
+
+    mLockFreeQueues[0].push(cmd);
+}
+    
 // Change only the transport value when start playing or reseting a loop
 // Otherwise process smoothly
 //
 // NOTE: for the moment it is only called for resetting the transport to 0
 void
-BLTransport::SetDAWTransportValueSec(BL_FLOAT dawTransportValueSec)
+BLTransport::SetDAWTransportValueSecLF(BL_FLOAT dawTransportValueSec)
 {
     if (mIsBypassed)
         return;
@@ -343,4 +373,40 @@ BLTransport::SetupTransportJustStarted(BL_FLOAT dawTransportValueSec)
     
     mResynchOffsetSecTotal = 0.0;
     mDiffSmootherTotal->ResetToTargetValue(0.0);
+}
+
+void
+BLTransport::PushData()
+{
+    mLockFreeQueues[1].push(mLockFreeQueues[0]);
+    mLockFreeQueues[0].clear();
+}
+
+void
+BLTransport::PullData()
+{
+    mLockFreeQueues[2].push(mLockFreeQueues[1]);
+    mLockFreeQueues[1].clear();
+}
+
+void
+BLTransport::ApplyData()
+{
+    for (int i = 0; i < mLockFreeQueues[2].size(); i++)
+    {
+        Command &cmd = mTmpBuf0;
+        mLockFreeQueues[2].get(i, cmd);
+
+        if (cmd.mType == Command::SET_TRANSPORT_PLAYING)
+        {
+            SetTransportPlayingLF(cmd.mIsPlaying, cmd.mMonitorEnabled,
+                                  cmd.mTransportTime, cmd.mBlockSize);
+        }
+        else if (cmd.mType == Command::SET_DAW_TRANSPORT_VALUE)
+        {
+            SetDAWTransportValueSecLF(cmd.mTransportTime);
+        }
+    }
+
+    mLockFreeQueues[2].clear();
 }

@@ -3,6 +3,9 @@
 
 #include <BLTypes.h>
 
+#include <LockFreeObj.h>
+#include <LockFreeQueue2.h>
+
 // Not working well; because when we start transport,
 // there is a longer delay
 // => so it jitters when starting play
@@ -13,12 +16,12 @@
 // Well suitable for smooth animations depending on transport
 class ParamSmoother2;
 class TransportListener;
-class BLTransport
+class BLTransport : public LockFreeObj
 {
- public:
+public:
     BLTransport(BL_FLOAT sampleRate);
     virtual ~BLTransport();
-
+    
     void SetSoftResynchEnabled(bool flag);
     
 #if USE_AUTO_HARD_RESYNCH
@@ -56,6 +59,11 @@ class BLTransport
     bool HardResynch();
 
     void SetListener(TransportListener *listener);
+
+    // LockFreeObj
+    void PushData() override;
+    void PullData() override;
+    void ApplyData() override;
     
 protected:
     // Resynch progressively the estimated transport value
@@ -68,6 +76,12 @@ protected:
     
     void SetupTransportJustStarted(BL_FLOAT dawTransportValueSec);
 
+    bool SetTransportPlayingLF(bool transportPlaying, bool monitorOn,
+                               BL_FLOAT dawTransportValueSec,
+                               int blockSize);
+
+    void SetDAWTransportValueSecLF(BL_FLOAT dawTransportValueSec);
+    
     //
     BL_FLOAT mSampleRate;
     
@@ -120,6 +134,36 @@ protected:
 
     // Later, add more if necessary
     TransportListener *mListener;
+
+    // Lock free
+    struct Command
+    {
+        enum Type
+        {
+            SET_TRANSPORT_PLAYING = 0,
+            SET_DAW_TRANSPORT_VALUE
+        };
+
+        Type mType;
+        
+        // Args
+        
+        // SET_TRANSPORT_PLAYING
+        bool mIsPlaying;
+        bool mMonitorEnabled;
+        int mBlockSize;
+
+        // SET_TRANSPORT_PLAYING and SET_DAW_TRANSPORT_VALUE
+        BL_FLOAT mTransportTime;
+    };
+    
+    LockFreeQueue2<Command> mLockFreeQueues[LOCK_FREE_NUM_BUFFERS];
+    
+private:
+    // Tmp buffers
+    Command mTmpBuf0;
+    Command mTmpBuf1;
+    Command mTmpBuf2;
 };
 
 #endif

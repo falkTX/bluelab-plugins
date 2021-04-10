@@ -2610,6 +2610,9 @@ GraphControl12::PushAllData()
         GraphCustomDrawer *drawer = mCustomDrawers[i];
         drawer->PushData();
     }
+
+    if (mTransport != NULL)
+        mTransport->PushData();
     
     mMutex.Leave();
 }
@@ -2632,6 +2635,11 @@ GraphControl12::PullAllData()
         drawer->PullData();
     }
 
+    if (mTransport != NULL)
+    {
+        mTransport->PullData();
+    }
+    
     // Leave mutex here, we have finished with critical section
     mMutex.Leave();
 
@@ -2640,6 +2648,11 @@ GraphControl12::PullAllData()
     {
         GraphCustomDrawer *drawer = mCustomDrawers[i];
         drawer->ApplyData();
+    }
+
+    if (mTransport != NULL)
+    {
+        mTransport->ApplyData();
     }
 }
 

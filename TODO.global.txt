@@ -84,6 +84,10 @@ valgrind --vgdb=yes --vgdb-error=0 ~/Documents/Apps/reaper_linux_x86_64/REAPER/r
 gdb -i=mi ~/Documents/Apps/reaper_linux_x86_64/REAPER/reaper
 *gdb* target remote | vgdb
 
+valgrind for detecting Threads data race:
+
+valgrind --tool=helgrind --track-lockorders=no --history-level=none --check-stack-refs=no --ignore-thread-creation=yes ~/Documents/Apps/reaper_linux_x86_64/REAPER/reaper
+
 -j3
 export CMAKE_BUILD_PARALLEL_LEVEL=2
 
