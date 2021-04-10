@@ -18,6 +18,8 @@
 
 #define USE_SPECTRO_NEAREST 0
 
+#define DEBUG_DUMP 0 //1
+
 SpectrogramDisplayScroll4::SpectrogramDisplayScroll4(Plugin *plug,
                                                      BL_FLOAT delayPercent)
 {
@@ -50,6 +52,10 @@ SpectrogramDisplayScroll4::SpectrogramDisplayScroll4(Plugin *plug,
     mTransport = NULL;
 
     RecomputeParams();
+
+#if DEBUG_DUMP
+    BLDebug::ResetFile("offset.txt");
+#endif
 }
 
 SpectrogramDisplayScroll4::~SpectrogramDisplayScroll4()
@@ -101,6 +107,10 @@ SpectrogramDisplayScroll4::GetOffsetSec()
         return 0.0;
     
     BL_FLOAT offset = mSpectroTimeSec - currentTimeSec;
+
+#if DEBUG_DUMP
+    BLDebug::AppendValue("offset.txt", offset);
+#endif
     
     return offset;
 }
@@ -213,15 +223,8 @@ SpectrogramDisplayScroll4::PreDraw(NVGcontext *vg, int width, int height)
 {   
     mVg = vg;
     
-    BL_FLOAT offsetSec = mPrevOffsetSec;
-    // Must update anyway, even if the transport is not playing
-    // (for fine adjusting soft resynch.
-    // FIX: GhostViewer: play, stop => small jump just after having stopped
-    //if ((mTransport != NULL) && mTransport->IsTransportPlaying())
-    //{
-    offsetSec = GetOffsetSec();
+    BL_FLOAT offsetSec = GetOffsetSec();
     mPrevOffsetSec = offsetSec;
-    //}
     
     BL_FLOAT offsetPixels = SecsToPixels(offsetSec, width);
 
@@ -448,7 +451,7 @@ SpectrogramDisplayScroll4::RecomputeParams()
     int spectroNumCols = mSpectrogram->GetNumCols();
     
     mSpectroLineDurationSec =
-        mSpeedMod*((BL_FLOAT)mBufferSize/mOverlapping)/mSampleRate;
+        mSpeedMod*((double)mBufferSize/mOverlapping)/mSampleRate;
 
     mSpectroTotalDurationSec = spectroNumCols*mSpectroLineDurationSec;
 

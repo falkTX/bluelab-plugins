@@ -25,7 +25,8 @@ BLTransport::BLTransport(BL_FLOAT sampleRate)
     mSoftResynchEnabled = false;
     
     // Hak delay value
-#define DELAY_MS 2.0 //1.0
+    // 2.0 is too slow, we have black lines, and re-center spectro is too slow
+#define DELAY_MS 0.5 //2.0 //1.0
     mResynchOffsetSecLoop = 0.0;
     mDiffSmootherLoop = new ParamSmoother2(sampleRate, 0.0, DELAY_MS);
 
@@ -266,7 +267,7 @@ bool
 BLTransport::HardResynch()
 {
 #if USE_AUTO_HARD_RESYNCH
-    // If we auto hard resynch, to as if we just start playing 
+    // If we auto hard resynch, do as if we just start playing 
     if (std::fabs(mResynchOffsetSecTotal) < mHardResynchThreshold)
         return false;
 #endif

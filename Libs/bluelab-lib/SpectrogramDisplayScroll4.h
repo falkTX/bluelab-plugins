@@ -139,11 +139,11 @@ protected:
     BL_FLOAT mDelayTimeSecRight; // From delay percent
     BL_FLOAT mDelayTimeSecLeft;  // 1 single col, or more...
 
-    BL_FLOAT mSpectroLineDurationSec;
-    BL_FLOAT mSpectroTotalDurationSec;
+    double mSpectroLineDurationSec;
+    double mSpectroTotalDurationSec;
 
     //
-    BL_FLOAT mSpectroTimeSec;    
+    double mSpectroTimeSec;    
 
     BL_FLOAT mPrevOffsetSec;
 
