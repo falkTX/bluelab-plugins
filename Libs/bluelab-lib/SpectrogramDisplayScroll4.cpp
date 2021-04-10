@@ -465,7 +465,11 @@ SpectrogramDisplayScroll4::RecomputeParams()
     //mDelayTimeSecLeft = mSpectroLineDurationSec;
     // Bigger offset
     mDelayTimeSecLeft = mDelayTimeSecRight;
-        
+
+    // HACK! So we are sure to avoid black line on the right
+    // (and not to have too much delay when speed is slow)
+    mDelayTimeSecRight *= 4.0/mSpeedMod;
+    
     mSpectroTimeSec = 0.0;
     mPrevOffsetSec = 0.0;
 }
