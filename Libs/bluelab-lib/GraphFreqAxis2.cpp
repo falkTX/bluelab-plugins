@@ -179,6 +179,8 @@ GraphFreqAxis2::GraphFreqAxis2(bool displayLines,
     mMaxFreq = -1.0;
     
     mDisplayLines = displayLines;
+
+    mMustReset = false;
 }
 
 GraphFreqAxis2::~GraphFreqAxis2() {}
@@ -304,6 +306,29 @@ GraphFreqAxis2::SetMaxFreq(BL_FLOAT maxFreq)
         mGraphAxis->SetMinMaxValues(0.0, mMaxFreq);
     
     Update();
+}
+
+void
+GraphFreqAxis2::SetResetParams(int bufferSize, BL_FLOAT sampleRate)
+{
+    mBufferSize = bufferSize;
+    mSampleRate = sampleRate;
+
+    mMustReset = true;
+}
+
+bool
+GraphFreqAxis2::MustReset()
+{
+    return mMustReset;
+}
+
+void
+GraphFreqAxis2::Reset()
+{
+    Reset(mBufferSize, mSampleRate);
+
+    mMustReset = false;
 }
 
 void

@@ -51,6 +51,15 @@ SmoothCurveDB::Reset(BL_FLOAT sampleRate)
 void
 SmoothCurveDB::ClearValues()
 {
+    LockFreeCurve &curve = mTmpBuf6;
+    curve.mCommand = LockFreeCurve::CLEAR_VALUES;
+
+    mLockFreeQueues[0].push(curve);
+}
+
+void
+SmoothCurveDB::ClearValuesLF()
+{
     mHistogram->Reset();
     
     mCurve->ClearValues();
@@ -60,6 +69,7 @@ void
 SmoothCurveDB::SetValues(const WDL_TypedBuf<BL_FLOAT> &values, bool reset)
 {
     LockFreeCurve &curve = mTmpBuf4;
+    curve.mCommand = LockFreeCurve::SET_VALUES;
     curve.mValues = values;
     curve.mReset = reset;
 
@@ -190,7 +200,10 @@ SmoothCurveDB::ApplyData()
         LockFreeCurve &curve = mTmpBuf5;
         mLockFreeQueues[2].get(i, curve);
 
-        SetValuesLF(curve.mValues, curve.mReset);
+        if (curve.mCommand == LockFreeCurve::SET_VALUES)
+            SetValuesLF(curve.mValues, curve.mReset);
+        else if (curve.mCommand == LockFreeCurve::CLEAR_VALUES)
+            ClearValuesLF();
     }
 
     mLockFreeQueues[2].clear();

@@ -32,6 +32,7 @@ public:
     
     void Reset(BL_FLOAT sampleRate);
     void ClearValues();
+    void ClearValuesLF();
     
     void SetValues(const WDL_TypedBuf<BL_FLOAT> &values, bool reset = false);
     void SetValuesLF(const WDL_TypedBuf<BL_FLOAT> &values, bool reset = false);
@@ -57,8 +58,16 @@ protected:
     // Lock Free
     struct LockFreeCurve
     {
+        enum Command
+        {
+            SET_VALUES = 0,
+            CLEAR_VALUES
+        };
+        
         WDL_TypedBuf<BL_FLOAT> mValues;
         bool mReset;
+
+        Command mCommand;
     };
 
     LockFreeQueue2<LockFreeCurve> mLockFreeQueues[LOCK_FREE_NUM_BUFFERS];
@@ -71,6 +80,7 @@ private:
     WDL_TypedBuf<BL_FLOAT> mTmpBuf3;
     LockFreeCurve mTmpBuf4;
     LockFreeCurve mTmpBuf5;
+    LockFreeCurve mTmpBuf6;
 };
 
 #endif

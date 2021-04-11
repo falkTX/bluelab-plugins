@@ -34,6 +34,13 @@ public:
     
     void Reset(int bufferSize, BL_FLOAT sampleRate);
     void SetMaxFreq(BL_FLOAT maxFreq);
+
+    // To avoid data race in some cases
+    // Use this mechanism to postpone reset in the GUI thread, e.g in OnIdle()
+    // If called from plug OnReset(), this mechanism is not necessary
+    void SetResetParams(int bufferSize, BL_FLOAT sampleRate);
+    bool MustReset();
+    void Reset();
     
 protected:
     void Update();
@@ -54,6 +61,8 @@ protected:
     Scale::Type mScale;
 
     BL_FLOAT mMaxFreq;
+
+    bool mMustReset;
 };
 
 #endif /* defined(__BL_InfrasonicViewer__GraphFreqAxis2__) */
