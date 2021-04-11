@@ -179,12 +179,15 @@ GraphControl12::GraphControl12(Plugin *pPlug, IGraphics *graphics,
     
     mGraphTimeAxis = NULL;
     mTransport = NULL;
+
+    mUseLegacyLock = false;
 }
 
 GraphControl12::~GraphControl12()
 {
-    // ??
-    //WDL_MutexLock lock(&mMutex);
+    // NOTE: re-enabled e.g for Ghost
+    if (mUseLegacyLock)
+        mMutex.Enter();
     
     for (int i = 0; i < mCurves.size(); i++)
     {
@@ -215,6 +218,9 @@ GraphControl12::~GraphControl12()
         graphics->DeleteFBO(mFBO);
     }
 #endif
+
+    if (mUseLegacyLock)
+        mMutex.Leave();
 }
 
 void
@@ -232,7 +238,10 @@ GraphControl12::GetSize(int *width, int *height)
 
 void
 GraphControl12::Resize(int width, int height)
-{    
+{
+    if (mUseLegacyLock)
+        mMutex.Enter();
+    
     // BL-Waves debug: add a mutex here ?
     
     // We must have width and height multiple of 4
@@ -269,35 +278,53 @@ GraphControl12::Resize(int width, int height)
     mNeedResizeGraph = true;
 
     mDataChanged = true;
+
+    if (mUseLegacyLock)
+        mMutex.Leave();
 }
 
 void
 GraphControl12::SetBounds(BL_GUI_FLOAT x0, BL_GUI_FLOAT y0,
                           BL_GUI_FLOAT x1, BL_GUI_FLOAT y1)
-{   
+{
+    if (mUseLegacyLock)
+        mMutex.Enter();
+    
     mBounds[0] = x0;
     mBounds[1] = y0;
     mBounds[2] = x1;
     mBounds[3] = y1;
     
     mDataChanged = true;
+
+    if (mUseLegacyLock)
+        mMutex.Leave();
 }
 
 // Added for StereoViz
 void
 GraphControl12::OnGUIIdle()
-{        
+{
+    if (mUseLegacyLock)
+        mMutex.Enter();
+    
     for (int i = 0; i < mCustomControls.size(); i++)
     {
         GraphCustomControl *control = mCustomControls[i];
         
         control->OnGUIIdle();
     }
+
+    if (mUseLegacyLock)
+        mMutex.Leave();
 }
 
 void
 GraphControl12::SetSeparatorY0(BL_GUI_FLOAT lineWidth, int color[4])
-{    
+{
+    if (mUseLegacyLock)
+        mMutex.Enter();
+    
     mSeparatorY0 = true;
     mSepY0LineWidth = lineWidth;
     
@@ -305,6 +332,9 @@ GraphControl12::SetSeparatorY0(BL_GUI_FLOAT lineWidth, int color[4])
         mSepY0Color[i] = color[i];
     
     mDataChanged = true;
+
+    if (mUseLegacyLock)
+        mMutex.Leave();
 }
 
 void
@@ -513,8 +543,9 @@ GraphControl12::AddCustomControl(GraphCustomControl *customControl)
 void
 GraphControl12::OnMouseDown(float x, float y, const IMouseMod &mod)
 {
-    // ??
-    //WDL_MutexLock lock(&mMutex);
+    // NOTE: re-enabled e.g Ghost
+    if (mUseLegacyLock) // Is it necessary?
+        mMutex.Enter();
     
     IControl::OnMouseDown(x, y, mod);
     
@@ -528,11 +559,17 @@ GraphControl12::OnMouseDown(float x, float y, const IMouseMod &mod)
         GraphCustomControl *control = mCustomControls[i];
         control->OnMouseDown(x, y, mod);
     }
+
+    if (mUseLegacyLock)
+        mMutex.Leave();
 }
 
 void
 GraphControl12::OnMouseUp(float x, float y, const IMouseMod &mod)
-{   
+{
+    if (mUseLegacyLock)
+        mMutex.Enter();
+    
     IControl::OnMouseUp(x, y, mod);
     
 #if CUSTOM_CONTROL_FIX
@@ -545,12 +582,18 @@ GraphControl12::OnMouseUp(float x, float y, const IMouseMod &mod)
         GraphCustomControl *control = mCustomControls[i];
         control->OnMouseUp(x, y, mod);
     }
+
+    if (mUseLegacyLock)
+        mMutex.Leave();
 }
 
 void
 GraphControl12::OnMouseDrag(float x, float y, float dX, float dY,
                             const IMouseMod &mod)
-{   
+{
+    if (mUseLegacyLock)
+        mMutex.Enter();
+    
     IControl::OnMouseDrag(x, y, dX, dY, mod);
     
 #if CUSTOM_CONTROL_FIX
@@ -563,11 +606,17 @@ GraphControl12::OnMouseDrag(float x, float y, float dX, float dY,
         GraphCustomControl *control = mCustomControls[i];
         control->OnMouseDrag(x, y, dX, dY, mod);
     }
+
+    if (mUseLegacyLock)
+        mMutex.Leave();
 }
 
 void
 GraphControl12::OnMouseDblClick(float x, float y, const IMouseMod &mod)
-{    
+{
+    if (mUseLegacyLock)
+        mMutex.Enter();
+    
     IControl::OnMouseDblClick(x, y, mod);
     
     // #bl-iplug2
@@ -584,11 +633,17 @@ GraphControl12::OnMouseDblClick(float x, float y, const IMouseMod &mod)
         GraphCustomControl *control = mCustomControls[i];
         control->OnMouseDblClick(x, y, mod);
     }
+
+    if (mUseLegacyLock)
+        mMutex.Leave();
 }
 
 void
 GraphControl12::OnMouseWheel(float x, float y, const IMouseMod &mod, float d)
-{    
+{
+    if (mUseLegacyLock)
+        mMutex.Enter();
+    
     IControl::OnMouseWheel(x, y, mod, d);
     
 #if CUSTOM_CONTROL_FIX
@@ -601,11 +656,17 @@ GraphControl12::OnMouseWheel(float x, float y, const IMouseMod &mod, float d)
         GraphCustomControl *control = mCustomControls[i];
         control->OnMouseWheel(x, y, mod, d);
     }
+
+    if (mUseLegacyLock)
+        mMutex.Leave();
 }
 
 bool
 GraphControl12::OnKeyDown(float x, float y, const IKeyPress& key)
-{   
+{
+    if (mUseLegacyLock)
+        mMutex.Enter();
+    
     // #bl-iplug2
     IControl::OnKeyDown(x, y, key);
     
@@ -620,13 +681,19 @@ GraphControl12::OnKeyDown(float x, float y, const IKeyPress& key)
         GraphCustomControl *control = mCustomControls[i];
         res = control->OnKeyDown(x, y, key);
     }
+
+    if (mUseLegacyLock)
+        mMutex.Leave();
     
     return res;
 }
 
 bool
 GraphControl12::OnKeyUp(float x, float y, const IKeyPress& key)
-{    
+{
+    if (mUseLegacyLock)
+        mMutex.Enter();
+    
     // #bl-iplug2
     IControl::OnKeyUp(x, y, key);
     
@@ -641,6 +708,9 @@ GraphControl12::OnKeyUp(float x, float y, const IKeyPress& key)
         GraphCustomControl *control = mCustomControls[i];
         res = control->OnKeyUp(x, y, key);
     }
+
+    if (mUseLegacyLock)
+        mMutex.Leave();
     
     return res;
 }
@@ -648,6 +718,9 @@ GraphControl12::OnKeyUp(float x, float y, const IKeyPress& key)
 void
 GraphControl12::OnMouseOver(float x, float y, const IMouseMod &mod)
 {
+    if (mUseLegacyLock)
+        mMutex.Enter();
+    
     IControl::OnMouseOver(x, y, mod);
     
 #if CUSTOM_CONTROL_FIX
@@ -660,11 +733,17 @@ GraphControl12::OnMouseOver(float x, float y, const IMouseMod &mod)
         GraphCustomControl *control = mCustomControls[i];
         control->OnMouseOver(x, y, mod);
     }
+
+    if (mUseLegacyLock)
+        mMutex.Leave();
 }
 
 void
 GraphControl12::OnMouseOut()
-{    
+{
+    if (mUseLegacyLock)
+        mMutex.Enter();
+    
     IControl::OnMouseOut();
     
     for (int i = 0; i < mCustomControls.size(); i++)
@@ -672,6 +751,9 @@ GraphControl12::OnMouseOut()
         GraphCustomControl *control = mCustomControls[i];
         control->OnMouseOut();
     }
+
+    if (mUseLegacyLock)
+        mMutex.Leave();
 }
 
 void
@@ -2509,12 +2591,18 @@ void
 GraphControl12::Draw(IGraphics &graphics)
 {
     PullAllData();
-    
+
+    if (mUseLegacyLock)
+        mMutex.Enter();
+        
     mVg = (NVGcontext *)graphics.GetDrawContext();
     
     DoDraw(graphics);
     
     mVg = NULL;
+
+    if (mUseLegacyLock)
+        mMutex.Leave();
 }
 #endif
 
@@ -2532,6 +2620,9 @@ GraphControl12::Draw(IGraphics &graphics)
     // Checked: if we fall here, the graph is sure to have mIsEnabled = true!
     if (!mIsEnabled)
         return;
+
+    if (mUseLegacyLock)
+        mMutex.Enter();
     
     mVg = (NVGcontext *)graphics.GetDrawContext();
     
@@ -2590,8 +2681,35 @@ GraphControl12::Draw(IGraphics &graphics)
     graphics.DrawBitmap(bmp, mRECT);
     
     mVg = NULL;
+
+    if (mUseLegacyLock)
+        mMutex.Leave();
 }
 #endif
+
+void
+GraphControl12::SetUseLegacyLock(bool flag)
+{
+    mUseLegacyLock = flag;
+}
+
+void
+GraphControl12::Lock()
+{
+    if (!mUseLegacyLock)
+        return;
+    
+    mMutex.Enter();
+}
+
+void
+GraphControl12::Unlock()
+{
+    if (!mUseLegacyLock)
+        return;
+    
+    mMutex.Leave();
+}
 
 void
 GraphControl12::PushAllData()

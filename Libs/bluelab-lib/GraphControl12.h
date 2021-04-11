@@ -231,6 +231,12 @@ public:
     // Hack
     void SetValueToDefault(int valIdx) override;
 
+    // Legacy mechanism
+    // NOTE: still used sometimes e.g in Ghost
+    void SetUseLegacyLock(bool flag);
+    void Lock();
+    void Unlock();
+    
     // Lock free
     void PushAllData();
     void PullAllData();
@@ -396,7 +402,8 @@ private:
     BlaTimer mDebugTimer;
     int mDebugCount;
 #endif
-    
+
+    bool mUseLegacyLock;
     WDL_Mutex mMutex;
 };
 
