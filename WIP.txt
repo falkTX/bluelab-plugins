@@ -1,7 +1,7 @@
 BL-Air		    :	features+, optim, mem, bugs
 BL-AutoGain	    :	features+, optim, mem, bugs
 BL-Bat		    :
-BL-Chroma	    :	features+, optim, mem, bugs
+BL-Chroma	    :	features+, optim, mem, bugs , LockFree
 BL-Denoiser	    :	features+, optim, mem, bugs
 BL-DUET		    :
 BL-Envelope	    :	features+, optim, mem, bugs

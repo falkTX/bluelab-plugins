@@ -59,6 +59,16 @@ SmoothCurveDB::ClearValues()
 void
 SmoothCurveDB::SetValues(const WDL_TypedBuf<BL_FLOAT> &values, bool reset)
 {
+    LockFreeCurve &curve = mTmpBuf4;
+    curve.mValues = values;
+    curve.mReset = reset;
+
+    mLockFreeQueues[0].push(curve);
+}
+    
+void
+SmoothCurveDB::SetValuesLF(const WDL_TypedBuf<BL_FLOAT> &values, bool reset)
+{
     // Add the values
     int histoNumValues = mHistogram->GetNumValues();
     
@@ -157,4 +167,33 @@ SmoothCurveDB::GetHistogramValuesDB(WDL_TypedBuf<BL_FLOAT> *values)
 {
     mHistogram->GetValuesDB(values);
 }
+
+void
+SmoothCurveDB::PushData()
+{
+    mLockFreeQueues[1].push(mLockFreeQueues[0]);
+    mLockFreeQueues[0].clear();
+}
+
+void
+SmoothCurveDB::PullData()
+{
+    mLockFreeQueues[2].push(mLockFreeQueues[1]);
+    mLockFreeQueues[1].clear();
+}
+
+void
+SmoothCurveDB::ApplyData()
+{
+    for (int i = 0; i < mLockFreeQueues[2].size(); i++)
+    {
+        LockFreeCurve &curve = mTmpBuf5;
+        mLockFreeQueues[2].get(i, curve);
+
+        SetValuesLF(curve.mValues, curve.mReset);
+    }
+
+    mLockFreeQueues[2].clear();
+}
+
 #endif

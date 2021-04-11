@@ -12,11 +12,14 @@
 
 #include <BLTypes.h>
 
+#include <LockFreeObj.h>
+#include <LockFreeQueue2.h>
+
 #include "IPlug_include_in_plug_hdr.h"
 
 class SmoothAvgHistogramDB;
 class GraphCurve5;
-class SmoothCurveDB
+class SmoothCurveDB : public LockFreeObj
 {
 public:
     SmoothCurveDB(GraphCurve5 *curve,
@@ -31,10 +34,16 @@ public:
     void ClearValues();
     
     void SetValues(const WDL_TypedBuf<BL_FLOAT> &values, bool reset = false);
+    void SetValuesLF(const WDL_TypedBuf<BL_FLOAT> &values, bool reset = false);
     
     void GetHistogramValues(WDL_TypedBuf<BL_FLOAT> *values);
     void GetHistogramValuesDB(WDL_TypedBuf<BL_FLOAT> *values);
-        
+
+    // LockFreeObj
+    void PushData() override;
+    void PullData() override;
+    void ApplyData() override;
+    
 protected:
     SmoothAvgHistogramDB *mHistogram;
     
@@ -44,6 +53,15 @@ protected:
     BL_FLOAT mMaxDB;
 
     BL_FLOAT mSampleRate;
+
+    // Lock Free
+    struct LockFreeCurve
+    {
+        WDL_TypedBuf<BL_FLOAT> mValues;
+        bool mReset;
+    };
+
+    LockFreeQueue2<LockFreeCurve> mLockFreeQueues[LOCK_FREE_NUM_BUFFERS];
     
 private:
     // Tmp Buffers
@@ -51,6 +69,8 @@ private:
     WDL_TypedBuf<BL_FLOAT> mTmpBuf1;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf2;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf3;
+    LockFreeCurve mTmpBuf4;
+    LockFreeCurve mTmpBuf5;
 };
 
 #endif
