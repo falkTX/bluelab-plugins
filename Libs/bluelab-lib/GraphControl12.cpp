@@ -2731,6 +2731,12 @@ GraphControl12::PushAllData()
 
     if (mTransport != NULL)
         mTransport->PushData();
+
+    for (int i = 0; i < mCurves.size(); i++)
+    {
+        GraphCurve5 *curve = mCurves[i];
+        curve->PushData();
+    }
     
     mMutex.Leave();
 }
@@ -2757,6 +2763,12 @@ GraphControl12::PullAllData()
     {
         mTransport->PullData();
     }
+
+    for (int i = 0; i < mCurves.size(); i++)
+    {
+        GraphCurve5 *curve = mCurves[i];
+        curve->PullData();
+    }
     
     // Leave mutex here, we have finished with critical section
     mMutex.Leave();
@@ -2771,6 +2783,12 @@ GraphControl12::PullAllData()
     if (mTransport != NULL)
     {
         mTransport->ApplyData();
+    }
+
+    for (int i = 0; i < mCurves.size(); i++)
+    {
+        GraphCurve5 *curve = mCurves[i];
+        curve->ApplyData();
     }
 }
 
