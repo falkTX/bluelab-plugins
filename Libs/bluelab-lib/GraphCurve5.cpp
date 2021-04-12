@@ -794,13 +794,26 @@ GraphCurve5::SetValues4(const WDL_TypedBuf<BL_GUI_FLOAT> &values,
     NotifyGraph();
 }
 
+void
+GraphCurve5::SetValues5(const WDL_TypedBuf<BL_GUI_FLOAT> &values,
+                        bool applyXScale, bool applyYScale)
+{
+    Command &cmd = mTmpBuf9;
+    cmd.mType = Command::SET_VALUES5;
+    cmd.mValues = values;
+    cmd.mApplyXScale = applyXScale;
+    cmd.mApplyYScale = applyYScale;
+
+    mLockFreeQueues[0].push(cmd);
+}
+
 // Avoid having undefined values
 // values (y) must be in amp units
 //
 // And unroll some code
 void
-GraphCurve5::SetValues5(const WDL_TypedBuf<BL_GUI_FLOAT> &values,
-                        bool applyXScale, bool applyYScale)
+GraphCurve5::SetValues5LF(const WDL_TypedBuf<BL_GUI_FLOAT> &values,
+                          bool applyXScale, bool applyYScale)
 {
     // Normalize, then adapt to the graph
     int width = mViewSize[0];
@@ -1273,6 +1286,36 @@ GraphCurve5::NotifyGraph()
     if (mGraph != NULL)
         // Notify the graph
         mGraph->SetDataChanged();
+}
+
+void
+GraphCurve5::PushData()
+{
+    mLockFreeQueues[1].push(mLockFreeQueues[0]);
+    mLockFreeQueues[0].clear();
+}
+
+void
+GraphCurve5::PullData()
+{
+    mLockFreeQueues[2].push(mLockFreeQueues[1]);
+    mLockFreeQueues[1].clear();
+}
+
+void
+GraphCurve5::ApplyData()
+{
+    for (int i = 0; i < mLockFreeQueues[2].size(); i++)
+    {
+        Command &cmd = mTmpBuf10;
+        mLockFreeQueues[2].get(i, cmd);
+
+        if (cmd.mType == Command::SET_VALUES5)
+            SetValues5LF(cmd.mValues, cmd.mApplyXScale, cmd.mApplyYScale);
+        
+    }
+
+    mLockFreeQueues[2].clear();
 }
 
 #endif

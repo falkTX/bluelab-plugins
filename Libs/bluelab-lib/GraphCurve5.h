@@ -17,6 +17,9 @@
 
 #include "IPlug_include_in_plug_hdr.h"
 
+#include <LockFreeObj.h>
+#include <LockFreeQueue2.h>
+
 #define FILL_CURVE_ALPHA 0.125
 
 #define CURVE_VALUE_UNDEFINED 1e16
@@ -26,7 +29,7 @@ typedef float CurveColor [4];
 using namespace iplug::igraphics;
 
 class GraphControl12;
-class GraphCurve5
+class GraphCurve5 : public LockFreeObj
 {
 public:
     GraphCurve5(int numValues);
@@ -151,6 +154,8 @@ public:
     // OPTIM: unroll the code inside, to avoid too many computation
     void SetValues5(const WDL_TypedBuf<BL_GUI_FLOAT> &values,
                     bool applyXScale = true, bool applyYScale = true);
+    void SetValues5LF(const WDL_TypedBuf<BL_GUI_FLOAT> &values,
+                      bool applyXScale = true, bool applyYScale = true);
     
     // Use simple decimation
     void SetValuesDecimateSimple(const WDL_TypedBuf<BL_GUI_FLOAT> *values);
@@ -200,6 +205,11 @@ public:
     void SetSingleValueV(bool flag);
     
     void SetOptimSameColor(bool flag);
+
+    // LockFreeObj
+    void PushData() override;
+    void PullData() override;
+    void ApplyData() override;
     
 protected:
     friend class GraphControl12;
@@ -303,6 +313,23 @@ protected:
 
     friend class SmoothCurveDB;
     Scale *mScale;
+
+    struct Command
+    {
+        enum Type
+        {
+            SET_VALUES5 = 0
+        };
+
+        Type mType;
+
+        // For SET_VALUES5
+        WDL_TypedBuf<BL_GUI_FLOAT> mValues;
+        bool mApplyXScale;
+        bool mApplyYScale;
+    };
+    
+    LockFreeQueue2<Command> mLockFreeQueues[LOCK_FREE_NUM_BUFFERS];
     
 private:
     // Tmp buffers
@@ -314,6 +341,8 @@ private:
     WDL_TypedBuf<BL_GUI_FLOAT> mTmpBuf6;
     WDL_TypedBuf<BL_GUI_FLOAT> mTmpBuf7;
     WDL_TypedBuf<BL_GUI_FLOAT> mTmpBuf8;
+    Command mTmpBuf9;
+    Command mTmpBuf10;
 };
 
 #endif

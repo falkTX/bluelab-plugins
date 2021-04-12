@@ -162,7 +162,7 @@ SmoothCurveDB::SetValuesLF(const WDL_TypedBuf<BL_FLOAT> &values, bool reset)
 #endif
 
 #if 1 // New version: optimized in GraphCurve5 and Scale
-    mCurve->SetValues5(avgValues, !useFilterBank, !sameScale);
+    mCurve->SetValues5LF(avgValues, !useFilterBank, !sameScale);
 #endif
 }
 
