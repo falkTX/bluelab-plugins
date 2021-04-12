@@ -726,15 +726,20 @@ ImpulseResponseSet::FindMaxValIndex(const WDL_TypedBuf<BL_FLOAT> &buf,
     // Compute max position
     long maxIndex = 0;
     BL_FLOAT maxVal = 0.0;
-  
+
+    int bufSize = buf.GetSize();
+    BL_FLOAT *bufData = buf.Get();
+    
     for (int i = 0; i < maxLengthSearch; i++)
     {
-        if (i >= buf.GetSize())
+        if (i >= bufSize)
             break;
     
-        BL_FLOAT val = buf.Get()[i];
-        val = fabs(val);
-  
+        BL_FLOAT val = bufData[i];
+        //val = std::fabs(val);
+        if (val < 0.0)
+            val = -val;
+        
         if (val > maxVal)
         {
             maxVal = val;

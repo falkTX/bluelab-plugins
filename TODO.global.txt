@@ -269,6 +269,8 @@ perf record -g -e L1-dcache-load-misses ../plugs-dev/bluelab/BL-Plugins/BL-Air/b
 
 perf record -g -e instructions ../plugs-dev/bluelab/BL-Plugins/BL-Air/build-linux/BL-Air-app/BL-Air
 
+perf record -g -e instructions ~/Documents/Apps/reaper_linux_x86_64/REAPER/reaper
+
 3 -
 perf report -g -i perf.data
 
