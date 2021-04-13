@@ -19,6 +19,8 @@ using namespace std;
 #include <sndfile.h>
 #endif
 
+#include <BLTypes.h>
+
 #define AUDIOFILE_USE_FLAC 1
 
 #include "IPlug_include_in_plug_hdr.h"

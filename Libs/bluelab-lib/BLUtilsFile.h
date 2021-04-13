@@ -56,6 +56,24 @@ class BLUtilsFile
                                          const WDL_TypedBuf<FLOAT_TYPE> &values);
     
     static void AppendValuesFileBinFloatShutdown(void *cookie);
+
+    // Prompt for file
+    static bool PromptForFileOpenAudio(Plugin *plug,
+                                       const char currentLoadPath[FILENAME_SIZE],
+                                       WDL_String *resultFileName);
+
+    static bool PromptForFileSaveAsAudio(Plugin *plug,
+                                         const char currentLoadPath[FILENAME_SIZE],
+                                         const char currentSavePath[FILENAME_SIZE],
+                                         const char *currentFileName,
+                                         WDL_String *resultFileName);
+
+    //static bool PromptForFileSaveNoDirAudio(Plugin *plug,
+    //                                        WDL_String *resultFileName);
+
+    static bool PromptForFileOpenImage(Plugin *plug,
+                                       const char currentLoadPath[FILENAME_SIZE],
+                                       WDL_String *resultFileName);
 };
 
 #endif

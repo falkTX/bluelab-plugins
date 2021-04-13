@@ -1,4 +1,6 @@
 #include <IPlugPaths.h>
+#include <GUIHelper12.h>
+#include <AudioFile.h>
 
 #include "BLUtilsFile.h"
 
@@ -230,4 +232,193 @@ void
 BLUtilsFile::AppendValuesFileBinFloatShutdown(void *cookie)
 {
     fclose((FILE *)cookie);
+}
+
+bool
+BLUtilsFile::PromptForFileOpenAudio(Plugin *plug,
+                                    const char currentLoadPath[FILENAME_SIZE],
+                                    WDL_String *resultFileName)
+{
+    // Get the location where we will open the file selector
+    char *dir = "";
+
+#ifdef __linux__
+    // By default, open the desktop
+    // (necessary to set "~" to open on the Desktop,
+    // in addition to "cd" just before zenity)
+    dir = "~";
+#endif
+    
+    if (strlen(currentLoadPath) > 0)
+        dir = (char *)currentLoadPath;
+
+    // Open the file selector
+    //
+    
+    bool fileOk = GUIHelper12::PromptForFile(plug, EFileAction::Open,
+                                             resultFileName,
+                                             //"",
+                                             dir,
+#ifndef __linux__
+                                                   
+#if AUDIOFILE_USE_FLAC
+                                             "wav aif aiff flac"
+#else
+                                             "wav aif aiff"
+#endif
+                                                   
+#else // __linux__
+                                                   
+#if AUDIOFILE_USE_FLAC
+                                             "*.wav *.aif *.aiff *.flac"
+#else
+                                             "*.wav *.aif *.aiff"
+#endif
+                                                   
+#endif
+                                             );
+
+    return fileOk;
+}
+
+bool
+BLUtilsFile::PromptForFileSaveAsAudio(Plugin *plug,
+                                      const char currentLoadPath[FILENAME_SIZE],
+                                      const char currentSavePath[FILENAME_SIZE],
+                                      const char *currentFileName,
+                                      WDL_String *resultFileName)
+{
+    // Get the location we will open
+    //
+    
+    char fullDir[FILENAME_SIZE];
+    memset(fullDir, '\0', FILENAME_SIZE);
+    
+    char *dir = NULL;
+    if (strlen(currentSavePath) > 0)
+        // Save path is defined => use it
+    {
+        dir = (char *)currentSavePath;
+    }
+    else
+        // Save path is not defined
+        // => use load path if possible
+    {
+        if (strlen(currentLoadPath) > 0)
+        {
+            dir = (char *)currentLoadPath;
+        }
+    }
+
+    // Append the current file name
+    // So e.g when "save as", we will have the current file name already filled
+    if (dir != NULL)
+    {
+        if (currentFileName != NULL)
+            sprintf(fullDir, "%s%s", dir, currentFileName);
+        else
+            strcpy(fullDir, dir);
+    }
+
+#ifdef __linux__
+    // By default, open the desktop
+    // (necessary to set "~" to open on the Desktop,
+    // in addition to "cd" just before zenity)
+    if (dir == NULL)
+        dir = "~";
+#endif
+
+    // Open file selector
+    //
+    
+    bool fileOk = GUIHelper12::PromptForFile(plug, EFileAction::Save,
+                                             resultFileName,
+                                             //"",
+                                             fullDir,
+#ifndef __linux__
+                                                   
+#if AUDIOFILE_USE_FLAC
+                                             "wav aif aiff flac"
+#else
+                                             "wav aif aiff"
+#endif
+
+#else // __linux__
+
+#if AUDIOFILE_USE_FLAC
+                                             "*.wav *.aif *.aiff *.flac"
+#else
+                                             "*.wav *.aif *.aiff"
+#endif
+                                                   
+#endif
+                                                   
+                                             );
+
+    return fileOk;
+}
+
+#if 0
+bool
+BLUtilsFile::PromptForFileSaveNoDirAudio(Plugin *plug,
+                                         WDL_String *resultFileName)
+{
+    bool fileOk = GUIHelper12::PromptForFile(plug, EFileAction::Save,
+                                             resultFileName, "",
+#ifndef __linux__
+                                                   
+#if AUDIOFILE_USE_FLAC
+                                             "wav aif aiff flac"
+#else
+                                             "wav aif aiff"
+#endif
+
+#else // __linux__
+                                                   
+#if AUDIOFILE_USE_FLAC
+                                             "*.wav *.aif *.aiff *.flac"
+#else
+                                             "*.wav *.aif *.aiff"
+#endif
+                                                   
+#endif
+                                             );
+
+    return fileOk;
+}
+#endif
+
+bool
+BLUtilsFile::PromptForFileOpenImage(Plugin *plug,
+                                    const char currentLoadPath[FILENAME_SIZE],
+                                    WDL_String *resultFileName)
+{
+    // Get the location where we will open the file selector
+    char *dir = "";
+
+#ifdef __linux__
+    // By default, open the desktop
+    // (necessary to set "~" to open on the Desktop,
+    // in addition to "cd" just before zenity)
+    dir = "~";
+#endif
+    
+    if (strlen(currentLoadPath) > 0)
+        dir = (char *)currentLoadPath;
+
+    // Open the file selector
+    //
+    
+    bool fileOk = GUIHelper12::PromptForFile(plug, EFileAction::Open,
+                                             resultFileName,
+                                             //"",
+                                             dir,
+#ifndef __linux__                                                  
+                                             "png jpg jpeg"
+#else // __linux__
+                                             "*.png *.jpg *.jpeg"
+#endif
+                                             );
+
+    return fileOk;
 }
