@@ -119,7 +119,7 @@ AudioFile::Save(const char *fileName)
 {
 #if !DISABLE_LIBSNDFILE
 
-#define USE_BL_FLOAT 0
+#define USE_DOUBLE 0
 	SF_INFO	sfinfo;
     
     memset(&sfinfo, 0, sizeof (sfinfo));
@@ -129,40 +129,84 @@ AudioFile::Save(const char *fileName)
 	sfinfo.channels	= mNumChannels;
     
     char *ext = BLUtilsFile::GetFileExtension(fileName);
+    
     if (ext == NULL)
         ext = "wav";
     
     // Set the format to a default format
     
-#if USE_BL_FLOAT // For 64 bit (not supported everywhere)
+#if USE_DOUBLE // For 64 bit (not supported everywhere)
     if (strcmp(ext, "wav") == 0)
+    {
         sfinfo.format = (SF_FORMAT_WAV | SF_FORMAT_BL_FLOAT/*SF_FORMAT_PCM_24*/);
+
+        if ((mInternalFormat & SF_FORMAT_WAV) != SF_FORMAT_WAV)
+            // We use a different save extension than the one when loaded
+            // => do not reuse loading format
+            mInternalFormat = -1;
+    }
     
     if ((strcmp(ext, "aif") == 0) || (strcmp(ext, "aiff") == 0))
+    {
         sfinfo.format = (SF_FORMAT_AIFF | SF_FORMAT_BL_FLOAT/*SF_FORMAT_PCM_24*/);
+
+        if ((mInternalFormat & SF_FORMAT_AIFF) != SF_FORMAT_AIFF)
+            // We use a different save extension than the one when loaded
+            // => do not reuse loading format
+            mInternalFormat = -1;
+    }
     
 #if AUDIOFILE_USE_FLAC
     if (strcmp(ext, "flac") == 0)
+    {
         sfinfo.format = (SF_FORMAT_FLAC | SF_FORMAT_BL_FLOAT/*SF_FORMAT_PCM_24*/);
+
+        if ((mInternalFormat & SF_FORMAT_FLAC) != SF_FORMAT_FLAC)
+            // We use a different save extension than the one when loaded
+            // => do not reuse loading format
+            mInternalFormat = -1;
+    }
 #endif
     
 #else // More standard bit depth
     if (strcmp(ext, "wav") == 0)
+    {
         sfinfo.format = (SF_FORMAT_WAV | SF_FORMAT_FLOAT/*SF_FORMAT_PCM_24*/);
+
+        if ((mInternalFormat & SF_FORMAT_WAV) != SF_FORMAT_WAV)
+            // We use a different save extension than the one when loaded
+            // => do not reuse loading format
+            mInternalFormat = -1;
+    }
     
     if ((strcmp(ext, "aif") == 0) || (strcmp(ext, "aiff") == 0))
+    {
         sfinfo.format = (SF_FORMAT_AIFF | SF_FORMAT_FLOAT/*SF_FORMAT_PCM_24*/);
+
+        if ((mInternalFormat & SF_FORMAT_AIFF) != SF_FORMAT_AIFF)
+            // We use a different save extension than the one when loaded
+            // => do not reuse loading format
+            mInternalFormat = -1;
+    }
     
 #if AUDIOFILE_USE_FLAC
     if (strcmp(ext, "flac") == 0)
+    {
         //sfinfo.format = (SF_FORMAT_FLAC | SF_FORMAT_FLOAT/*SF_FORMAT_PCM_24*/);
         sfinfo.format = (SF_FORMAT_FLAC | SF_FORMAT_PCM_24);
+
+        if ((mInternalFormat & SF_FORMAT_FLAC) != SF_FORMAT_FLAC)
+            // We use a different save extension than the one when loaded
+            // => do not reuse loading format
+            mInternalFormat = -1;
+    }
 #endif
     
 #endif
     
     if (mInternalFormat != -1)
-        // Internal format is defined, overwrite the default with it
+        // Internal format is defined, and we are saving the same format
+        // as the one that was loaded => overwrite the default with it
         sfinfo.format = mInternalFormat;
     
     SNDFILE *file = sf_open(fileName, SFM_WRITE, &sfinfo);
@@ -171,7 +215,7 @@ AudioFile::Save(const char *fileName)
     
     int numData = (mData->size() > 0) ? mNumChannels*(*mData)[0].GetSize() : 0;
     
-#if USE_BL_FLOAT
+#if USE_DOUBLE
     BL_FLOAT *buffer = (BL_FLOAT *)malloc(numData*sizeof(BL_FLOAT));
 #else
     float *buffer = (float *)malloc(numData*sizeof(float));
@@ -187,8 +231,8 @@ AudioFile::Save(const char *fileName)
             }
         }
     
-#if USE_BL_FLOAT
-        sf_write_BL_FLOAT(file, buffer, numData);
+#if USE_DOUBLE
+        sf_write_double(file, buffer, numData);
 #else
         sf_write_float(file, buffer, numData);
 #endif
