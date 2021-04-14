@@ -31,7 +31,7 @@ BLBitmap::BLBitmap(int width, int height, int bpp,
         //mData = new unsigned char[width*height*bpp];
         // stbi uses malloc ?
         mData = (unsigned char *)malloc(width*height*bpp*sizeof(unsigned char));
-        memset(mData, 0, width*height*bpp);
+        Clear();
     }
 }
 
@@ -56,6 +56,13 @@ BLBitmap::~BLBitmap()
     // stbi uses malloc ?
     //delete mData;
     free(mData);
+}
+
+void
+BLBitmap::Clear()
+{
+    if (mData != NULL)
+        memset(mData, 0, mWidth*mHeight*mBpp);
 }
 
 int

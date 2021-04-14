@@ -88,7 +88,7 @@ valgrind for detecting Threads data race:
 
 valgrind --tool=helgrind --track-lockorders=no --history-level=none --check-stack-refs=no --ignore-thread-creation=yes ~/Documents/Apps/reaper_linux_x86_64/REAPER/reaper
 
--j3
+-j2
 export CMAKE_BUILD_PARALLEL_LEVEL=2
 
 make vst2 BUILD_CONFIG=Release

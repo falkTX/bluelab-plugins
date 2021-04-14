@@ -772,8 +772,15 @@ GraphControl12::DBG_PrintCoords(int x, int y)
 }
 
 void
-GraphControl12::SetBackgroundImage(IBitmap bmp)
+GraphControl12::SetBackgroundImage(IGraphics *graphics, IBitmap bmp)
 {
+    // Release the previous bitmap if any
+    if (mBgImage.GetAPIBitmap() != NULL)
+    {
+        if (graphics != NULL)
+            graphics->ReleaseBitmap(mBgImage);
+    }
+    
     mBgImage = bmp;
     
     mDataChanged = true;

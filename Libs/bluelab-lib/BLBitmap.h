@@ -16,6 +16,8 @@ public:
     BLBitmap(const BLBitmap &other);
     
     virtual ~BLBitmap();
+
+    void Clear();
     
     int GetWidth() const;
     int GetHeight() const;

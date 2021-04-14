@@ -201,7 +201,7 @@ public:
     
     void DBG_PrintCoords(int x, int y);
 
-    void SetBackgroundImage(IBitmap bmp);
+    void SetBackgroundImage(IGraphics *graphics, IBitmap bmp);
     void SetOverlayImage(IBitmap bmp);
     
     // For UST
