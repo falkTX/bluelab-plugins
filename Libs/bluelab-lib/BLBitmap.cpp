@@ -5,10 +5,15 @@
 //#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+// From IGraphics dependencies
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include <stb_image_write.h>
+
 #include <BLBitmap.h>
 
 #include <BLUtils.h>
 #include <BLUtilsMath.h>
+#include <BLUtilsFile.h>
 
 #if 0
 TODO: for resizing think about using https://raw.githubusercontent.com/nothings/stb/master/stb_image_resize.h
@@ -109,6 +114,35 @@ BLBitmap::Load(const char *fileName)
     
     BLBitmap *bmp = new BLBitmap(w, h, reqComp, data);
     return bmp;
+}
+
+void
+BLBitmap::Save(const BLBitmap *bmp, const char *fileName)
+{
+    int w = bmp->GetWidth();
+    int h = bmp->GetHeight();
+    int comp = bmp->GetBpp();
+    const void *data = bmp->GetData();
+    
+    char *ext = BLUtilsFile::GetFileExtension(fileName);
+    if (strcmp(ext, "png") == 0)
+    {
+        int stride_in_bytes = comp*w;
+        stbi_write_png(fileName, w, h, comp, data, stride_in_bytes);
+    }
+    else if (strcmp(ext, "bmp") == 0)
+    {
+        stbi_write_bmp(fileName, w, h, comp, data);
+    }
+    else if (strcmp(ext, "tga") == 0)
+    {
+        stbi_write_tga(fileName, w, h, comp, data);
+    }
+    else if (strcmp(ext, "jpg") == 0)
+    {
+        int quality = 90;
+        stbi_write_jpg(fileName, w, h, comp, data, quality);
+    }
 }
 
 void

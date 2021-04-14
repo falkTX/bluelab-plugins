@@ -27,7 +27,9 @@ public:
     
     // Load from file
     static BLBitmap *Load(const char *fileName);
-  
+    // Save
+    static void Save(const BLBitmap *bmp, const char *fileName);
+    
     static void FillAlpha(BLBitmap *bmp, unsigned char val);
     
     static void Blit(BLBitmap *dst, const BLBitmap *src);
