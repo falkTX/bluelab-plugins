@@ -49,8 +49,6 @@ set(_darknet_src
   demo.h
   detection_layer.c
   detection_layer.h
-  dk_stb_image.h
-  dk_stb_image_write.h
   dk_utils.c
   dk_utils.h
   dropout_layer.c
