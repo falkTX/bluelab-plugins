@@ -202,7 +202,7 @@ public:
     void DBG_PrintCoords(int x, int y);
 
     void SetBackgroundImage(IGraphics *graphics, IBitmap bmp);
-    void SetOverlayImage(IBitmap bmp);
+    void SetOverlayImage(IGraphics *graphics, IBitmap bmp);
     
     // For UST
     void SetDisablePointOffsetHack(bool flag);

@@ -787,8 +787,15 @@ GraphControl12::SetBackgroundImage(IGraphics *graphics, IBitmap bmp)
 }
 
 void
-GraphControl12::SetOverlayImage(IBitmap bmp)
+GraphControl12::SetOverlayImage(IGraphics *graphics, IBitmap bmp)
 {
+    // Release the previous bitmap if any
+    if (mOverlayImage.GetAPIBitmap() != NULL)
+    {
+        if (graphics != NULL)
+            graphics->ReleaseBitmap(mOverlayImage);
+    }
+    
     mOverlayImage = bmp;
     
     mDataChanged = true;

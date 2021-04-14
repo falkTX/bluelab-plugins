@@ -376,10 +376,11 @@ GUIHelper12::CreateGraph(Plugin *plug, IGraphics *graphics,
     IBitmap bitmap = graphics->LoadBitmap(bitmapFname);
     
     IRECT rect(x, y, x + bitmap.W(), y + bitmap.H());
-    GraphControl12 *graph = new GraphControl12(plug, graphics, rect, paramIdx, fontPath);
+    GraphControl12 *graph = new GraphControl12(plug, graphics, rect,
+                                               paramIdx, fontPath);
     
 #if !FIX_RESIZE_GRAPH
-    graph->SetBackgroundImage(bitmap);
+    graph->SetBackgroundImage(graphics, bitmap);
 #endif
     
     if (overlayFname != NULL)
@@ -391,7 +392,7 @@ GUIHelper12::CreateGraph(Plugin *plug, IGraphics *graphics,
         
         IBitmap overlayBitmap = graphics->LoadBitmap(bmpPath);
         
-        graph->SetOverlayImage(overlayBitmap);
+        graph->SetOverlayImage(graphics, overlayBitmap);
     }
     
     graphics->AttachControl(graph);
