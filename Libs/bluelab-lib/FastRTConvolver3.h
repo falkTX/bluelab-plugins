@@ -64,6 +64,17 @@ public:
     
     void Process(const WDL_TypedBuf<BL_FLOAT> &samples,
                  WDL_TypedBuf<BL_FLOAT> *result);
+
+    // Utils
+    static void ResampleImpulse(WDL_TypedBuf<BL_FLOAT> *impulseResponse,
+                                BL_FLOAT sampleRate, BL_FLOAT respSampleRate);
+    
+    // For Spatializer
+    static void ResampleImpulse2(WDL_TypedBuf<BL_FLOAT> *impulseResponse,
+                                 BL_FLOAT sampleRate, BL_FLOAT respSampleRate,
+                                 bool resizeToNextPowerOfTwo = true);
+    
+    static void ResizeImpulse(WDL_TypedBuf<BL_FLOAT> *impulseResponse);
     
 protected:
     void ComputeBufferSize(int blockSize);

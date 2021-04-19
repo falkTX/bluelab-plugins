@@ -9,6 +9,8 @@
 #include <BLUtils.h>
 #include <BLUtilsMath.h>
 
+#include <Resampler2.h>
+
 #include "FastRTConvolver3.h"
 
 #if !USE_WDL_CONVOLVER
@@ -16,6 +18,7 @@
 #else
 #include "convoengine.h"
 #endif
+
 
 // NOTE: bad, too slow to change buffer size on the fly
 //
@@ -346,6 +349,78 @@ FastRTConvolver3::Process(const WDL_TypedBuf<BL_FLOAT> &samples,
     
     //
     mSampleNum += samples.GetSize();
+}
+
+void
+FastRTConvolver3::ResampleImpulse(WDL_TypedBuf<BL_FLOAT> *impulseResponse,
+                                  BL_FLOAT sampleRate, BL_FLOAT respSampleRate)
+{
+    if (impulseResponse->GetSize() == 0)
+        return;
+    
+    if (respSampleRate != sampleRate)
+        // We have to resample the impulse
+    {
+        if (impulseResponse->GetSize() > 0)
+        {
+            Resampler2 resampler(sampleRate, respSampleRate);
+
+            WDL_TypedBuf<BL_FLOAT> newImpulse;
+            resampler.Resample(impulseResponse, &newImpulse);
+            
+            ResizeImpulse(&newImpulse);
+            
+            *impulseResponse = newImpulse;
+        }
+    }
+}
+
+void
+FastRTConvolver3::ResampleImpulse2(WDL_TypedBuf<BL_FLOAT> *impulseResponse,
+                                   BL_FLOAT sampleRate, BL_FLOAT respSampleRate,
+                                   bool resizeToNextPowerOfTwo)
+{
+    if (impulseResponse->GetSize() == 0)
+        return;
+    
+    if (respSampleRate != sampleRate)
+        // We have to resample the impulse
+    {
+        if (impulseResponse->GetSize() > 0)
+        {
+            Resampler2 resampler(sampleRate, respSampleRate);
+            
+            WDL_TypedBuf<BL_FLOAT> newImpulse;
+            resampler.Resample2(impulseResponse, &newImpulse);
+            
+            if (resizeToNextPowerOfTwo)
+                ResizeImpulse(&newImpulse);
+            
+            *impulseResponse = newImpulse;
+        }
+    }
+}
+
+void
+FastRTConvolver3::ResizeImpulse(WDL_TypedBuf<BL_FLOAT> *impulseResponse)
+{
+    int respSize = impulseResponse->GetSize();
+    int newSize = BLUtilsMath::NextPowerOfTwo(respSize);
+    int diff = newSize - impulseResponse->GetSize();
+        
+    impulseResponse->Resize(newSize);
+        
+    // Fill with zeros if we have grown
+    for (int j = 0; j < diff; j++)
+    {
+        int index = newSize - j - 1;
+        if (index < 0)
+            continue;
+        if (index > impulseResponse->GetSize())
+            continue;
+        
+        impulseResponse->Get()[index] = 0.0;
+    }
 }
 
 void
