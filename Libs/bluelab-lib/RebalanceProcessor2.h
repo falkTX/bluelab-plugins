@@ -62,7 +62,7 @@ public:
     void GetStereoData(WDL_TypedBuf<BL_FLOAT> data[REBALANCE_NUM_SPECTRO_COLS]);
 
     BLSpectrogram4 *GetSpectrogram();
-    void SetSpectrogramDisplay(SpectrogramDisplayScroll3 *spectroDisplay);
+    void SetSpectrogramDisplay(SpectrogramDisplayScroll4 *spectroDisplay);
     
     // Debug
     void SetDbgThreshold(BL_FLOAT thrs);

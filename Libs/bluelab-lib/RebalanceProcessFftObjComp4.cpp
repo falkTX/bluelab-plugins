@@ -20,7 +20,7 @@
 #include <SoftMaskingComp4.h>
 
 #include <BLSpectrogram4.h>
-#include <SpectrogramDisplayScroll3.h>
+#include <SpectrogramDisplayScroll4.h>
 
 #include <Rebalance_defs.h>
 
@@ -35,7 +35,7 @@
 
 #define SOFT_MASKING_HISTO_SIZE 8
 
-#define USE_SOFT_MASKING 1
+#define USE_SOFT_MASKING 1 //0
 
 RebalanceProcessFftObjComp4::
 RebalanceProcessFftObjComp4(int bufferSize, int oversampling,
@@ -126,7 +126,7 @@ RebalanceProcessFftObjComp4::GetSpectrogram()
 
 void
 RebalanceProcessFftObjComp4::
-SetSpectrogramDisplay(SpectrogramDisplayScroll3 *spectroDisplay)
+SetSpectrogramDisplay(SpectrogramDisplayScroll4 *spectroDisplay)
 {
     mSpectroDisplay = spectroDisplay;
 }

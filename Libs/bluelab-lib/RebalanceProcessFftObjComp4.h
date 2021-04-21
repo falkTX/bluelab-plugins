@@ -37,7 +37,7 @@ class RebalanceMaskProcessor;
 class Scale;
 class SoftMaskingComp4;
 class BLSpectrogram4;
-class SpectrogramDisplayScroll3;
+class SpectrogramDisplayScroll4;
 class RebalanceProcessFftObjComp4 : public ProcessObj
 {
 public:
@@ -53,7 +53,7 @@ public:
     void Reset();
 
     BLSpectrogram4 *GetSpectrogram();
-    void SetSpectrogramDisplay(SpectrogramDisplayScroll3 *spectroDisplay);
+    void SetSpectrogramDisplay(SpectrogramDisplayScroll4 *spectroDisplay);
     
     virtual void ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
                                   const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer);
@@ -103,7 +103,7 @@ protected:
     BL_FLOAT mSampleRate;
     
     BLSpectrogram4 *mSpectrogram;
-    SpectrogramDisplayScroll3 *mSpectroDisplay;
+    SpectrogramDisplayScroll4 *mSpectroDisplay;
     
     //
     RebalanceMaskPredictor8 *mMaskPred;

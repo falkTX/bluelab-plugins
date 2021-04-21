@@ -10,6 +10,8 @@
 #include <RebalanceDumpFftObj2.h>
 #include <RebalanceMaskPredictor8.h>
 #include <RebalanceProcessFftObjComp4.h>
+#include <SpectrogramDisplayScroll4.h>
+
 #include <BLUtils.h>
 #include <BLDebug.h>
 
@@ -306,7 +308,7 @@ RebalanceProcessor2::GetSpectrogram()
 
 void
 RebalanceProcessor2::
-SetSpectrogramDisplay(SpectrogramDisplayScroll3 *spectroDisplay)
+SetSpectrogramDisplay(SpectrogramDisplayScroll4 *spectroDisplay)
 {
     if (mDetectProcessObjs[0] != NULL)
         mDetectProcessObjs[0]->SetSpectrogramDisplay(spectroDisplay);
