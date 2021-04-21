@@ -10,6 +10,8 @@
 
 extern "C" {
 #include <bl_utils.h>
+    // From darknet
+#include "../darknet/src/denormal.h"
 }
 
 extern "C" {
@@ -39,6 +41,8 @@ extern "C" {
 
 #define IMAGE_WIDTH REBALANCE_NUM_SPECTRO_FREQS
 #define IMAGE_HEIGHT REBALANCE_NUM_SPECTRO_COLS
+
+#define DENORMAL_FLUSH_TO_ZERO 1 //0 //1
 
 // Use debug loaded data, just for testing?
 #define DEBUG_DATA 0 //1
@@ -73,6 +77,10 @@ DNNModelDarknet::DNNModelDarknet()
         mMaskScales[i] = 1.0;
 
     mScale = new Scale();
+
+#if DENORMAL_FLUSH_TO_ZERO
+    denormal_flushtozero();
+#endif
 }
 
 DNNModelDarknet::~DNNModelDarknet()
@@ -81,6 +89,10 @@ DNNModelDarknet::~DNNModelDarknet()
         free_network(mNet);
 
     delete mScale;
+
+#if DENORMAL_FLUSH_TO_ZERO
+    denormal_reset();
+#endif
 }
 
 bool
@@ -244,12 +256,20 @@ DNNModelDarknet::Predict(const WDL_TypedBuf<BL_FLOAT> &input,
     my_normalize(X.Get(), X.GetSize());
     amp_to_db(X.Get(), X.GetSize());
     my_normalize(X.Get(), X.GetSize());
+
+    //#if DENORMAL_FLUSH_TO_ZERO
+    //denormal_flushtozero();
+    //#endif
     
      // ?
     srand(2222222);
     // Prediction
     float *pred = network_predict(mNet, X.Get());
 
+    //#if DENORMAL_FLUSH_TO_ZERO
+    //denormal_reset();
+    //#endif
+    
 #if DEBUG_DATA
 #define SAVE_IMG_FNAME "/home/niko/Documents/BlueLabAudio-Debug/X"
     //my_save_image(IMAGE_WIDTH, IMAGE_HEIGHT, 1, X.Get(), SAVE_IMG_FNAME, 1);

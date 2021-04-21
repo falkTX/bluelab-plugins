@@ -47,6 +47,8 @@ set(_darknet_src
   deconvolutional_layer.h
   demo.c
   demo.h
+  denormal.c
+  denormal.h
   detection_layer.c
   detection_layer.h
   dk_utils.c
