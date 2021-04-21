@@ -282,7 +282,7 @@ DNNModelDarknet::Predict(const WDL_TypedBuf<BL_FLOAT> &input,
  
     exit(0);
 #endif
-        
+    
     masks->resize(NUM_STEMS);
     for (int i = 0; i < NUM_STEMS; i++)
     {

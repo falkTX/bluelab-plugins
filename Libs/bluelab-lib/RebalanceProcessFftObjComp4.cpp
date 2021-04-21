@@ -323,7 +323,7 @@ ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     WDL_TypedBuf<BL_FLOAT> &magns1 = mTmpBuf5;
     WDL_TypedBuf<BL_FLOAT> &phases1 = mTmpBuf6;
     ComputeResult(mixBuffer, masks, &result, &magns1, &phases1);
-
+    
     AddSpectrogramLine(magns1, phases1);
     
     // TODO: tmp buffers / memory optimization
@@ -462,7 +462,7 @@ ComputeResult(const WDL_TypedBuf<WDL_FFT_COMPLEX> &mixBuffer,
               WDL_TypedBuf<BL_FLOAT> *resPhases)
 {
     BLUtils::ResizeFillZeros(result, mixBuffer.GetSize());
-
+    
     WDL_TypedBuf<BL_FLOAT> &mask = mTmpBuf17;
     mMaskProcessor->Process(masks, &mask);
     
@@ -474,7 +474,7 @@ ComputeResult(const WDL_TypedBuf<WDL_FFT_COMPLEX> &mixBuffer,
     *result = mixBuffer;
     ApplySoftMasking(result, mask);
 #endif
-
+    
     BLUtilsComp::ComplexToMagnPhase(resMagns, resPhases, *result);
 
 #if PROCESS_SIGNAL_DB

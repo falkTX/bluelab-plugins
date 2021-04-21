@@ -52,6 +52,9 @@ BLSpectrogram4::BLSpectrogram4(BL_FLOAT sampleRate,
     mScale = new Scale();
     
     mValueScale = Scale::DB;
+    mMinValueScale = -120.0;
+    mMaxValueScale = 0.0;
+    
     //mYLogScale = false;
     mYScale = Scale::MEL;
     
@@ -133,9 +136,13 @@ BLSpectrogram4::SetDisplayMagns(bool flag)
 }
 
 void
-BLSpectrogram4::SetValueScale(Scale::Type scale)
+BLSpectrogram4::SetValueScale(Scale::Type scale,
+                              BL_FLOAT minValue, BL_FLOAT maxValue)
 {
     mValueScale = scale;
+    
+    mMinValueScale = minValue;
+    mMaxValueScale = maxValue;
 }
 
 void
@@ -365,7 +372,9 @@ BLSpectrogram4::AddLine(const WDL_TypedBuf<BL_FLOAT> &magns,
         {
             BL_FLOAT val = magns0.Get()[i];
             val = mScale->ApplyScale(mValueScale, val,
-                                     (BL_FLOAT)-120.0, (BL_FLOAT)0.0);
+                                     //(BL_FLOAT)-120.0, (BL_FLOAT)0.0);
+                                     mMinValueScale, mMaxValueScale);
+                  
             dbMagns.Get()[i] = val;
         }
     }

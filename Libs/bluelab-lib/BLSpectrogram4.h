@@ -47,7 +47,8 @@ public:
     void TouchColorMap();
     void TouchData();
     
-    void SetValueScale(Scale::Type scale);
+    void SetValueScale(Scale::Type scale,
+                       BL_FLOAT minValue = -120.0, BL_FLOAT maxValue = 0.0);
     void SetYScale(Scale::Type yScale);
     
     void SetDisplayMagns(bool flag);
@@ -164,6 +165,8 @@ protected:
     //bool mYLogScale;
     Scale::Type mYScale;
     Scale::Type mValueScale;
+    BL_FLOAT mMinValueScale;
+    BL_FLOAT mMaxValueScale;
     
     bool mDisplayMagns;
     
