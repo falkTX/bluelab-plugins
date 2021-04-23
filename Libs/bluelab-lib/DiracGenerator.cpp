@@ -8,7 +8,12 @@
 
 #include "DiracGenerator.h"
 
-DiracGenerator::DiracGenerator(BL_FLOAT sampleRate, BL_FLOAT frequency, BL_FLOAT value,
+// Generate the first dirac just at the beginning,
+// or after having waited for the first interval?
+#define FIRST_SAMPLE_IS_DIRAC 1
+
+DiracGenerator::DiracGenerator(BL_FLOAT sampleRate, BL_FLOAT frequency,
+                               BL_FLOAT value,
                                long sampleLatency)
 {
     mSampleRate = sampleRate;
@@ -33,7 +38,8 @@ DiracGenerator::Process(BL_FLOAT *outSamples, int numSamples)
     for (int i = 0; i < numSamples; i++)
     {
         outSamples[i] = 0.0;
-        
+
+#if !FIRST_SAMPLE_IS_DIRAC
         if (mSampleNum >= mSampleRate/mFrequency)
         {
             mSampleNum = 0;
@@ -45,6 +51,20 @@ DiracGenerator::Process(BL_FLOAT *outSamples, int numSamples)
             
             mFirstDiracGenerated = true;
         }
+#else
+        if (mSampleNum >= mSampleRate/mFrequency)
+            mSampleNum = 0;
+
+        if (mSampleNum == 0)
+        {
+            // Dirac !
+            outSamples[i] = mValue;
+            
+            res = i;
+            
+            mFirstDiracGenerated = true;
+        }
+#endif
         
         mSampleNum++;
     }
