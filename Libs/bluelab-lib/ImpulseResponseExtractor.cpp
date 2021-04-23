@@ -45,12 +45,15 @@ void
 ImpulseResponseExtractor::AddSamples(const BL_FLOAT *samples, int nFrames,
                                      WDL_TypedBuf<BL_FLOAT> *outResponse)
 {
-    if (outResponse != NULL)
-        outResponse->Resize(0);
+    //if (outResponse != NULL)
+    //    outResponse->Resize(0);
   
-    WDL_TypedBuf<BL_FLOAT> samp;
-    samp.Add(samples, nFrames);
-  
+    //WDL_TypedBuf<BL_FLOAT> samp;
+    //samp.Add(samples, nFrames);
+    WDL_TypedBuf<BL_FLOAT> &samp = mTmpBuf2;
+    samp.Resize(nFrames);
+    memcpy(samp.Get(), samples, sizeof(BL_FLOAT)*nFrames);
+        
     AddWithDecimation(samp, mDecimationFactor, &mSamples);
   
     if (mSamples.GetSize() >= mResponseSize)
@@ -79,11 +82,20 @@ ImpulseResponseExtractor::AddSamples(const BL_FLOAT *samples, int nFrames,
                 // Ok, we have enough samples
             {
                 if (outResponse != NULL)
-                    outResponse->Add(&mSamples.Get()[startIndex], mResponseSize);
-      
+                {
+                    BLUtils::SetBufResize(outResponse, mSamples,
+                                          startIndex, mResponseSize);
+                    //outResponse->Add(&mSamples.Get()[startIndex], mResponseSize);
+                }
+                
                 BLUtils::ConsumeLeft(&mSamples, startIndex + mResponseSize);
             }
         }
+    }
+    else
+    {
+        if (outResponse != NULL)
+            outResponse->Resize(0);
     }
 }
 
@@ -92,8 +104,11 @@ ImpulseResponseExtractor::AddSamples(const BL_FLOAT *samples, int nFrames)
 {
     if (mDecimationFactor > 0.0)
     {
-        WDL_TypedBuf<BL_FLOAT> samp;
-        samp.Add(samples, nFrames);
+        WDL_TypedBuf<BL_FLOAT> &samp = mTmpBuf0;
+        //samp.Add(samplesw, nFrames);
+        samp.Resize(nFrames);
+        memcpy(samp.Get(), samples, sizeof(BL_FLOAT)*nFrames);
+              
         AddWithDecimation(samp, mDecimationFactor, &mSamples);
     }
 }
@@ -130,7 +145,8 @@ ImpulseResponseExtractor::DetectResponseStartIndex()
 }
 
 void
-ImpulseResponseExtractor::ExtractResponse(long startIndex, WDL_TypedBuf<BL_FLOAT> *outResponse)
+ImpulseResponseExtractor::ExtractResponse(long startIndex,
+                                          WDL_TypedBuf<BL_FLOAT> *outResponse)
 {
     // Check if we have enought samples to extract the response
     if (mSamples.GetSize() - startIndex > mResponseSize)
@@ -192,7 +208,7 @@ ImpulseResponseExtractor::AddWithDecimation(const WDL_TypedBuf<BL_FLOAT> &sample
 {
     if (decFactor > 0.0)
     {
-        WDL_TypedBuf<BL_FLOAT> decimSamples;
+        WDL_TypedBuf<BL_FLOAT> &decimSamples = mTmpBuf1;
     
         // In Utils, decimation factor is inverted
         BLUtilsDecim::DecimateSamples(&decimSamples, samples,

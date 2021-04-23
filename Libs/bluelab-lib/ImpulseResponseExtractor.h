@@ -31,9 +31,9 @@ class ImpulseResponseExtractor
                             WDL_TypedBuf<BL_FLOAT> *outResponse0,
                             WDL_TypedBuf<BL_FLOAT> *outResponse1);
   
-    static void AddWithDecimation(const WDL_TypedBuf<BL_FLOAT> &samples,
-                                  BL_FLOAT decFactor,
-                                  WDL_TypedBuf<BL_FLOAT> *outSamples);
+    /*static*/ void AddWithDecimation(const WDL_TypedBuf<BL_FLOAT> &samples,
+                                      BL_FLOAT decFactor,
+                                      WDL_TypedBuf<BL_FLOAT> *outSamples);
   
  protected:
     static long DetectImpulseResponsePeak(const WDL_TypedBuf<BL_FLOAT> &samples);
@@ -50,6 +50,11 @@ class ImpulseResponseExtractor
     WDL_TypedBuf<BL_FLOAT> mSamples;
   
     BL_FLOAT mSampleRate;
+
+private:
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf0;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf1;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf2;
 };
 
 #endif
