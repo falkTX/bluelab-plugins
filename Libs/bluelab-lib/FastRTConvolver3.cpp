@@ -266,14 +266,15 @@ FastRTConvolver3::Process(const WDL_TypedBuf<BL_FLOAT> &samples,
             inBuffer[0] = inBuf.Get();
             mConvEngine->Add(inBuffer, inBuf.GetSize(), 1);
             
-            int nAvail = IPMIN(mConvEngine->Avail(inBuf.GetSize()), inBuf.GetSize());
+            int nAvail = MIN(mConvEngine->Avail(inBuf.GetSize()), inBuf.GetSize());
             WDL_FFT_REAL *convo = mConvEngine->Get()[0];
             
             if (nAvail < outBuf.GetSize())
                 memset(outBuf.Get(), 0, outBuf.GetSize() - nAvail);
             
-            if ((nAvail > 0) && (outBuf.GetSize() > 0))
-                memcpy(&outBuf.Get()[outBuf.GetSize() - nAvail - 1],
+            if ((nAvail > 0) && (outBuf.GetSize() > 0) &&
+                (nAvail <= outBuf.GetSize()))
+                memcpy(&outBuf.Get()[outBuf.GetSize() - nAvail],
                        convo, nAvail*sizeof(BL_FLOAT));
             
             mConvEngine->Advance(nAvail);

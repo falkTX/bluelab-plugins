@@ -27,8 +27,7 @@
 //
 // NOTE: almost the same performances (seem to be no real gain...)
 //
-// TODO: need to be well tested
-#define USE_WDL_CONVOLVER 0 //1
+#define USE_WDL_CONVOLVER 1 //0
 
 // Zero latency and fast convolver
 class ConvolutionManager;
