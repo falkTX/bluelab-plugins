@@ -55,7 +55,8 @@ DiracGenerator::Process(BL_FLOAT *outSamples, int numSamples)
         if (mSampleNum >= mSampleRate/mFrequency)
             mSampleNum = 0;
 
-        if (mSampleNum == 0)
+        //if (mSampleNum == 0)
+        if (mSampleNum == 1) // Put a zero at begin, then dirat at 1
         {
             // Dirac !
             outSamples[i] = mValue;
