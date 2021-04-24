@@ -1457,7 +1457,8 @@ GraphControl12::DrawLineCurve(GraphCurve5 *curve)
     nvgRestore(mVg);
     
 #if CURVE_DEBUG
-    fprintf(stderr, "GraphControl12::DrawLineCurve - num points: %d\n", numPointsDrawn);
+    fprintf(stderr, "GraphControl12::DrawLineCurve - num points: %d\n",
+            numPointsDrawn);
 #endif
 }
 
@@ -1761,7 +1762,8 @@ GraphControl12::DrawFillCurve(GraphCurve5 *curve)
     nvgRestore(mVg);
     
 #if CURVE_DEBUG
-    fprintf(stderr, "GraphControl12::DrawFillCurve - num points: %d\n", numPointsDrawn);
+    fprintf(stderr, "GraphControl12::DrawFillCurve - num points: %d\n",
+            numPointsDrawn);
 #endif
 }
 #endif
