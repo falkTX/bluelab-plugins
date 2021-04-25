@@ -41,7 +41,8 @@ public:
     
     void Reset();
     
-    void Reset(int bufferSize, int overlapping, int oversampling, BL_FLOAT sampleRate);
+    void Reset(int bufferSize, int overlapping,
+               int oversampling, BL_FLOAT sampleRate);
     
     void ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
                           const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer);
@@ -60,6 +61,8 @@ public:
     void SetAdaptivePhantomFreq(bool flag);
     
     void SetDebug(bool flag);
+
+    void GetFftSignal(WDL_TypedBuf<BL_FLOAT> *signal);
     
 protected:
     void DetectPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
@@ -113,6 +116,8 @@ protected:
     
     bool mDebug;
 
+    WDL_TypedBuf<BL_FLOAT> mCurrentFftSignal;
+    
 private:
     // Tmp buffers
     WDL_TypedBuf<WDL_FFT_COMPLEX> mTmpBuf0;

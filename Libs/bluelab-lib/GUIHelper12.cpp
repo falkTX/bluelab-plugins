@@ -184,6 +184,7 @@ GUIHelper12::GUIHelper12(Style style)
         mGraphCurveDescriptionColor = IColor(255, 170, 170, 170);
         mGraphCurveColorBlue = IColor(255, 64, 64, 255);
         mGraphCurveColorGreen = IColor(255, 194, 243, 61);
+        mGraphCurveColorPurple = IColor(255, 162, 61, 243);
         mGraphCurveColorLightBlue = IColor(255, 200, 200, 255);
         mGraphCurveFillAlpha = 0.5;
         mGraphCurveFillAlphaLight = 0.2;
@@ -1166,6 +1167,15 @@ GUIHelper12::GetGraphCurveColorGreen(int color[4])
     color[1] = mGraphCurveColorGreen.G;
     color[2] = mGraphCurveColorGreen.B;
     color[3] = mGraphCurveColorGreen.A;
+}
+
+void
+GUIHelper12::GetGraphCurveColorPurple(int color[4])
+{
+    color[0] = mGraphCurveColorPurple.R;
+    color[1] = mGraphCurveColorPurple.G;
+    color[2] = mGraphCurveColorPurple.B;
+    color[3] = mGraphCurveColorPurple.A;
 }
 
 void

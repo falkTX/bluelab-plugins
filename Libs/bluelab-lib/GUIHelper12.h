@@ -207,6 +207,7 @@ public:
     void GetGraphCurveDescriptionColor(int color[4]);
     void GetGraphCurveColorBlue(int color[4]);
     void GetGraphCurveColorGreen(int color[4]);
+    void GetGraphCurveColorPurple(int color[4]);
     void GetGraphCurveColorLightBlue(int color[4]);
     float GetGraphCurveFillAlpha();
     float GetGraphCurveFillAlphaLight();
@@ -356,6 +357,7 @@ protected:
     IColor mGraphCurveDescriptionColor;
     IColor mGraphCurveColorBlue;
     IColor mGraphCurveColorGreen;
+    IColor mGraphCurveColorPurple;
     IColor mGraphCurveColorLightBlue;
     float mGraphCurveFillAlpha;
     float mGraphCurveFillAlphaLight;

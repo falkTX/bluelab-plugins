@@ -238,6 +238,8 @@ InfraProcess2::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     phases.Resize(magns.GetSize());
     BLUtils::FillAllZero(&phases);
 #endif
+
+    mCurrentFftSignal = magns;
     
     DetectPartials(magns, phases);
     
@@ -327,7 +329,8 @@ InfraProcess2::ProcessSamplesBufferWin(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
     
     // Apply shape to have a good progression in dB
     BL_FLOAT phantomMix = BLUtils::ApplyParamShape(mPhantomMix, (BL_FLOAT)0.5);
-    BL_FLOAT prevPhantomMix = BLUtils::ApplyParamShape(mPrevPhantomMix, (BL_FLOAT)0.5);
+    BL_FLOAT prevPhantomMix = BLUtils::ApplyParamShape(mPrevPhantomMix,
+                                                       (BL_FLOAT)0.5);
     BLUtils::MultValuesRamp(&phantomSynthBuffer0, prevPhantomMix, phantomMix);
     
     // Resize back
@@ -373,7 +376,9 @@ InfraProcess2::ProcessSamplesBufferWin(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
 #endif
     
     // Resize back
-    //BLUtils::ResizeFillZeros(&subSynthBuffer, subSynthBuffer.GetSize()*mOverlapping);
+    //BLUtils::ResizeFillZeros(&subSynthBuffer,
+    //subSynthBuffer.GetSize()*mOverlapping);
+    
     BLUtils::FillAllZero(&subSynthBuffer);
     BLUtils::SetBuf(&subSynthBuffer, subSynthBuffer0);
 #endif
@@ -446,6 +451,12 @@ InfraProcess2::SetDebug(bool flag)
 }
 
 void
+InfraProcess2::GetFftSignal(WDL_TypedBuf<BL_FLOAT> *signal)
+{
+    *signal = mCurrentFftSignal;
+}
+
+void
 InfraProcess2::DetectPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
                               const WDL_TypedBuf<BL_FLOAT> &phases)
 {    
@@ -462,8 +473,9 @@ InfraProcess2::DetectPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
 
 // Generate higher partials
 void
-InfraProcess2::GeneratePhantomPartials(const vector<PartialTracker5::Partial> &partials,
-                                      vector<PartialTracker5::Partial> *newPartials)
+InfraProcess2::
+GeneratePhantomPartials(const vector<PartialTracker5::Partial> &partials,
+                        vector<PartialTracker5::Partial> *newPartials)
 {
     newPartials->clear();
     
@@ -606,7 +618,8 @@ InfraProcess2::IncreaseInitialFreq(WDL_TypedBuf<BL_FLOAT> *result,
         if (i > p.mPeakIndex)
         {
             if (p.mRightIndex - p.mPeakIndex > 0)
-                coeff = ((BL_FLOAT)(p.mRightIndex - i))/(p.mRightIndex - p.mPeakIndex);
+                coeff =
+                    ((BL_FLOAT)(p.mRightIndex - i))/(p.mRightIndex - p.mPeakIndex);
             else
                 coeff = 0.0;
         }
