@@ -8,7 +8,8 @@
 class FftProcessBufObj : public ProcessObj
 {
 public:
-  FftProcessBufObj(int bufferSize, int oversampling, int freqRes, BL_FLOAT sampleRate);
+  FftProcessBufObj(int bufferSize, int oversampling,
+                   int freqRes, BL_FLOAT sampleRate);
   
   virtual ~FftProcessBufObj();
   

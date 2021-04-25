@@ -125,6 +125,7 @@ SmoothCurveDB::SetValuesLF(const WDL_TypedBuf<BL_FLOAT> &values, bool reset)
     BL_GUI_FLOAT curveMinY;
     BL_GUI_FLOAT curveMaxY;
     mCurve->GetYScale(&curveScale, &curveMinY, &curveMaxY);
+
     if ((curveScale == Scale::DB) &&
         (fabs(curveMinY - mMinDB) < BL_EPS) &&
         (fabs(curveMaxY - mMaxDB) < BL_EPS))
