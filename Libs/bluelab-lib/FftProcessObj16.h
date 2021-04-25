@@ -266,7 +266,10 @@ public:
     
     // Enable or disable channel processing (not well tested)
     void SetChannelEnabled(int channelNum, bool flag);
-    
+
+    // Hack
+    void ApplySynthesisWindow(WDL_TypedBuf<BL_FLOAT> *samples);
+        
     // Utility methods
     static void MagnPhasesToSamples(const WDL_TypedBuf<BL_FLOAT> &magns,
                                     const  WDL_TypedBuf<BL_FLOAT> &phases,

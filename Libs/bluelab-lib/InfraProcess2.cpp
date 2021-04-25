@@ -156,6 +156,9 @@ InfraProcess2::InfraProcess2(int bufferSize,
 #endif
     
     mDebug = false;
+
+    mFftObj = NULL;
+    mGenerateOscillatorsFft = false;
 }
 
 InfraProcess2::~InfraProcess2()
@@ -172,6 +175,18 @@ InfraProcess2::~InfraProcess2()
 #if FIX_HIGH_FREQS_SUB
     delete mSubLowFilter;
 #endif
+}
+
+void
+InfraProcess2::SetGenerateOscillatorsFft(bool flag)
+{
+    mGenerateOscillatorsFft = flag;
+}
+
+void
+InfraProcess2::SetFftObj(FftProcessObj16 *fftObj)
+{
+    mFftObj = fftObj;
 }
 
 void
@@ -239,7 +254,7 @@ InfraProcess2::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     BLUtils::FillAllZero(&phases);
 #endif
 
-    mCurrentFftSignal = magns;
+    mCurrentInputFft = magns;
     
     DetectPartials(magns, phases);
     
@@ -284,7 +299,7 @@ InfraProcess2::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
 
 void
 InfraProcess2::ProcessSamplesBufferWin(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
-                                      const WDL_TypedBuf<BL_FLOAT> *scBuffer)
+                                       const WDL_TypedBuf<BL_FLOAT> *scBuffer)
 {
     vector<PartialTracker5::Partial> partials;
     mPartialTracker->GetPartials(&partials);
@@ -397,10 +412,25 @@ InfraProcess2::ProcessSamplesBufferWin(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
     
     BLUtils::AddValues(&phantomSynthBuffer, lowBuffer);
 #endif
+
+    // Generated samples
+    WDL_TypedBuf<BL_FLOAT> &oscillatorsSamples = mTmpBuf10;
+    oscillatorsSamples.Resize(ioBuffer->GetSize());
+                              
+    BLUtils::FillAllZero(&oscillatorsSamples);
+
+    BLUtils::AddValues(&oscillatorsSamples, phantomSynthBuffer);
+    BLUtils::AddValues(&oscillatorsSamples, subSynthBuffer);
+
+    if (mGenerateOscillatorsFft)
+        GenerateOscillatorsFft(oscillatorsSamples);
     
     // Result
-    BLUtils::AddValues(ioBuffer, phantomSynthBuffer);
-    BLUtils::AddValues(ioBuffer, subSynthBuffer);
+    BLUtils::AddValues(ioBuffer, oscillatorsSamples);
+    
+    // Result
+    //BLUtils::AddValues(ioBuffer, phantomSynthBuffer);
+    //BLUtils::AddValues(ioBuffer, subSynthBuffer);
     
     // Update the prev values for ramps
     mPrevPhantomMix = mPhantomMix;
@@ -451,9 +481,15 @@ InfraProcess2::SetDebug(bool flag)
 }
 
 void
-InfraProcess2::GetFftSignal(WDL_TypedBuf<BL_FLOAT> *signal)
+InfraProcess2::GetInputFft(WDL_TypedBuf<BL_FLOAT> *signal)
 {
-    *signal = mCurrentFftSignal;
+    *signal = mCurrentInputFft;
+}
+
+void
+InfraProcess2::GetOscillatorsFft(WDL_TypedBuf<BL_FLOAT> *oscillators)
+{
+    *oscillators = mCurrentOscillatorsFft;
 }
 
 void
@@ -645,4 +681,19 @@ InfraProcess2::IncreaseAllFreqs(WDL_TypedBuf<BL_FLOAT> *ioBuffer, BL_FLOAT mix)
         
         ioBuffer->Get()[i] = val;
     }
+}
+
+void
+InfraProcess2::GenerateOscillatorsFft(const WDL_TypedBuf<BL_FLOAT> &samples)
+{
+    WDL_TypedBuf<BL_FLOAT> &samples0 = mTmpBuf11;
+    samples0 = samples;
+
+#if 0
+    if (mFftObj != NULL)
+        mFftObj->ApplySynthesisWindow(&samples0);
+#endif
+    
+    // NOTE: windowing is not done here, is it a problem?
+    FftProcessObj16::SamplesToHalfMagns(samples0, &mCurrentOscillatorsFft);
 }

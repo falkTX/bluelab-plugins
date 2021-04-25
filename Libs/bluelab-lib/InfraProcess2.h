@@ -38,6 +38,9 @@ public:
                 BL_FLOAT sampleRate);
     
     virtual ~InfraProcess2();
+
+    void SetGenerateOscillatorsFft(bool flag);
+    void SetFftObj(FftProcessObj16 *fftObj); // Used for applying synthesis window
     
     void Reset();
     
@@ -62,7 +65,8 @@ public:
     
     void SetDebug(bool flag);
 
-    void GetFftSignal(WDL_TypedBuf<BL_FLOAT> *signal);
+    void GetInputFft(WDL_TypedBuf<BL_FLOAT> *signal);
+    void GetOscillatorsFft(WDL_TypedBuf<BL_FLOAT> *oscillators);
     
 protected:
     void DetectPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
@@ -80,7 +84,8 @@ protected:
     
     void IncreaseAllFreqs(WDL_TypedBuf<BL_FLOAT> *ioBuffer, BL_FLOAT mix);
 
-    
+    void GenerateOscillatorsFft(const WDL_TypedBuf<BL_FLOAT> &samples);
+        
     //int mBufferSize;
     //BL_FLOAT mOverlapping;
     //BL_FLOAT mOversampling;
@@ -116,7 +121,11 @@ protected:
     
     bool mDebug;
 
-    WDL_TypedBuf<BL_FLOAT> mCurrentFftSignal;
+    WDL_TypedBuf<BL_FLOAT> mCurrentInputFft;
+
+    bool mGenerateOscillatorsFft;
+    FftProcessObj16 *mFftObj;
+    WDL_TypedBuf<BL_FLOAT> mCurrentOscillatorsFft;
     
 private:
     // Tmp buffers
@@ -130,6 +139,8 @@ private:
     WDL_TypedBuf<BL_FLOAT> mTmpBuf7;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf8;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf9;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf10;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf11;
 };
 
 #endif /* defined(__BL_Infra__InfraProcess2__) */

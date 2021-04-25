@@ -206,7 +206,8 @@ protected:
     
     
     void ApplyAnalysisWindow(WDL_TypedBuf<BL_FLOAT> *samples);
-    
+
+    friend class FftProcessObj16; // Hack
     void ApplySynthesisWindow(WDL_TypedBuf<BL_FLOAT> *samples);
     
     //
@@ -1725,6 +1726,15 @@ FftProcessObj16::SetChannelEnabled(int channelNum, bool flag)
         return;
     
     mChannels[channelNum]->SetEnabled(flag);
+}
+
+void
+FftProcessObj16::ApplySynthesisWindow(WDL_TypedBuf<BL_FLOAT> *samples)
+{
+    if (mChannels.empty())
+        return;
+
+    mChannels[0]->ApplySynthesisWindow(samples);
 }
 
 void
