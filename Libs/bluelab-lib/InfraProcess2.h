@@ -61,8 +61,6 @@ public:
     void SetAdaptivePhantomFreq(bool flag);
     
     void SetDebug(bool flag);
-
-    void GetInputFft(WDL_TypedBuf<BL_FLOAT> *signal);
     
 protected:
     void DetectPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
@@ -113,8 +111,6 @@ protected:
 #endif
     
     bool mDebug;
-
-    WDL_TypedBuf<BL_FLOAT> mCurrentInputFft;
     
 private:
     // Tmp buffers

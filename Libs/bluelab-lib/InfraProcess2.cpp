@@ -211,7 +211,7 @@ void
 InfraProcess2::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
                                 const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer)
 
-{
+{    
 #if INFRA_PROCESS_PROFILE
     BlaTimer::Start(&mTimer);
 #endif
@@ -230,8 +230,6 @@ InfraProcess2::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     phases.Resize(magns.GetSize());
     BLUtils::FillAllZero(&phases);
 #endif
-
-    mCurrentInputFft = magns;
     
     DetectPartials(magns, phases);
     
@@ -275,7 +273,7 @@ InfraProcess2::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
 void
 InfraProcess2::ProcessSamplesBufferWin(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
                                        const WDL_TypedBuf<BL_FLOAT> *scBuffer)
-{
+{    
     vector<PartialTracker5::Partial> partials;
     mPartialTracker->GetPartials(&partials);
     
@@ -356,12 +354,11 @@ InfraProcess2::ProcessSamplesBufferWin(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
     
     // GOOD !
     // Must apply submix ramp on the reduced buffer!
-#if 1
+
     // Apply shape to have a good progression in dB
     BL_FLOAT subMix = BLUtils::ApplyParamShape(mSubMix, (BL_FLOAT)0.5);
     BL_FLOAT prevSubMix = BLUtils::ApplyParamShape(mPrevSubMix, (BL_FLOAT)0.5);
     BLUtils::MultValuesRamp(&subSynthBuffer0, prevSubMix, subMix);
-#endif
     
     // Resize back
     //BLUtils::ResizeFillZeros(&subSynthBuffer,
@@ -436,12 +433,6 @@ InfraProcess2::SetDebug(bool flag)
 {
     mDebug = flag;
     mSubSynth->SetDebug(flag);
-}
-
-void
-InfraProcess2::GetInputFft(WDL_TypedBuf<BL_FLOAT> *signal)
-{
-    *signal = mCurrentInputFft;
 }
 
 void

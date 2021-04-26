@@ -388,3 +388,6 @@ BUG: click and turn knob: the mouse pointer is captured
 
 Design: gradient, use gradient in the corner? like https://canonical.com/
 (instead of from up to down)
+
+TODO: user manuals: jutify text! (and see other Libre Office tutorials)
+https://www.youtube.com/playlist?list=PLGYKyocXgHJKAqY-FJL082aYY6mWXTxen
