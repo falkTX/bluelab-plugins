@@ -352,7 +352,8 @@ InfraProcess2::ProcessSamplesBufferWin(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
     //subSynthBuffer.Resize(subSynthBuffer.GetSize()/mOverlapping);
 
     WDL_TypedBuf<BL_FLOAT> &subSynthBuffer0 = mTmpBuf8;
-    subSynthBuffer0.Resize(subSynthBuffer.GetSize()/mOverlapping);
+    //subSynthBuffer0.Resize(subSynthBuffer.GetSize()/mOverlapping);
+    subSynthBuffer0 = subSynthBuffer;
     
     WDL_TypedBuf<BL_FLOAT> &subLowBuffer = mTmpBuf6;
     mSubLowFilter->Process(&subLowBuffer, subSynthBuffer0);
@@ -391,10 +392,10 @@ InfraProcess2::ProcessSamplesBufferWin(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
 #endif
 
     // Generated samples
-    WDL_TypedBuf<BL_FLOAT> &oscillatorsSamples = mTmpBuf10;
-    oscillatorsSamples.Resize(ioBuffer->GetSize());
+    //WDL_TypedBuf<BL_FLOAT> &oscillatorsSamples = mTmpBuf10;
+    //oscillatorsSamples.Resize(ioBuffer->GetSize());
                               
-    BLUtils::FillAllZero(&oscillatorsSamples);
+    //BLUtils::FillAllZero(&oscillatorsSamples);
 
     // NOTE: not the good place to generate the oscillators fft values
     // because we have only filled a part of the buffer
@@ -577,7 +578,7 @@ InfraProcess2::GenerateSubPartials(const vector<PartialTracker5::Partial> &parti
         // Prefer choosing "i" to avoid problems when ids are blinking
         p0.mId = i + SUB_PARTIAL_ID_OFFSET;
         p0.mAmpDB = ampDB;
-        
+            
         // Just in case
         p0.mPhase = p.mPhase;
         
