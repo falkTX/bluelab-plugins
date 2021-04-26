@@ -641,6 +641,8 @@ set(_bluelab-lib_src
   SimpleSpectrogramFftObj.h
   SineSynth2.cpp
   SineSynth2.h
+  SineSynth3.cpp
+  SineSynth3.h
   SineSynth.cpp
   SineSynth.h
   SineSynthSimple.cpp

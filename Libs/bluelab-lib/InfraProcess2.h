@@ -27,7 +27,7 @@ using namespace std;
 
 
 class PartialTracker5;
-class SineSynth2;
+class SineSynth3;
 class FilterIIRLow12dB;
 
 class InfraProcess2 : public ProcessObj
@@ -83,8 +83,8 @@ protected:
     //
     
     PartialTracker5 *mPartialTracker;
-    SineSynth2 *mPhantomSynth;
-    SineSynth2 *mSubSynth;
+    SineSynth3 *mPhantomSynth;
+    SineSynth3 *mSubSynth;
     
     BL_FLOAT mPhantomFreq;
     BL_FLOAT mPhantomMix;

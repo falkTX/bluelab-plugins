@@ -16,7 +16,7 @@ using namespace std;
 #include <DebugGraph.h>
 
 #include <PartialTracker5.h>
-#include <SineSynth2.h>
+#include <SineSynth3.h>
 
 #include <FilterIIRLow12dB.h>
 
@@ -118,8 +118,8 @@ InfraProcess2::InfraProcess2(int bufferSize,
     
     mPartialTracker->SetMaxDetectFreq(MAX_DETECT_FREQ);
     
-    mPhantomSynth = new SineSynth2(bufferSize, sampleRate, overlapping);
-    mSubSynth = new SineSynth2(bufferSize, sampleRate, overlapping);
+    mPhantomSynth = new SineSynth3(bufferSize, sampleRate, overlapping);
+    mSubSynth = new SineSynth3(bufferSize, sampleRate, overlapping);
     
     //
     mPhantomFreq = 20.0;
