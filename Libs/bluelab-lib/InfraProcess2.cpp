@@ -22,8 +22,6 @@ using namespace std;
 
 #include "InfraProcess2.h"
 
-#define EPS 1e-15
-
 #define FIX_RESET 1
 
 // Phantom
@@ -107,8 +105,8 @@ using namespace std;
 
 
 InfraProcess2::InfraProcess2(int bufferSize,
-                           BL_FLOAT overlapping, BL_FLOAT oversampling,
-                           BL_FLOAT sampleRate)
+                             BL_FLOAT overlapping, BL_FLOAT oversampling,
+                             BL_FLOAT sampleRate)
 : ProcessObj(bufferSize)
 {
     mBufferSize = bufferSize;
@@ -175,12 +173,12 @@ InfraProcess2::~InfraProcess2()
 void
 InfraProcess2::Reset()
 {
-    Reset(mBufferSize, mOverlapping, mFreqRes/*mOversampling*/, mSampleRate);
+    Reset(mBufferSize, mOverlapping, mFreqRes, mSampleRate);
 }
 
 void
 InfraProcess2::Reset(int bufferSize, int overlapping, int oversampling,
-                   BL_FLOAT sampleRate)
+                     BL_FLOAT sampleRate)
 {
     ProcessObj::Reset(bufferSize, overlapping, oversampling, sampleRate);
                       
@@ -241,7 +239,7 @@ InfraProcess2::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     // Get partials
     vector<PartialTracker5::Partial> partials;
     mPartialTracker->GetPartials(&partials);
-    // NEW
+    
     mPartialTracker->DenormPartials(&partials);
     mPartialTracker->PartialsAmpToAmpDB(&partials);
     
@@ -281,7 +279,6 @@ InfraProcess2::ProcessSamplesBufferWin(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
     vector<PartialTracker5::Partial> partials;
     mPartialTracker->GetPartials(&partials);
     
-    // New
     mPartialTracker->DenormPartials(&partials);
     mPartialTracker->PartialsAmpToAmpDB(&partials);
     
@@ -304,8 +301,6 @@ InfraProcess2::ProcessSamplesBufferWin(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
     BL_FLOAT phantomMix = BLUtils::ApplyParamShape(mPhantomMix, 0.5);
     BL_FLOAT prevPhantomMix = BLUtils::ApplyParamShape(mPrevPhantomMix, 0.5);
     BLUtils::MultValuesRamp(&phantomSynthBuffer, prevPhantomMix, phantomMix);
-    
-    //BLUtils::MultValues(&phantomSynthBuffer, phantomMix);
 #endif
     
     // GOOD
@@ -375,8 +370,6 @@ InfraProcess2::ProcessSamplesBufferWin(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
     BLUtils::FillAllZero(&subSynthBuffer);
     BLUtils::SetBuf(&subSynthBuffer, subSynthBuffer0);
 #endif
-    
-    //BLUtils::MultValues(&subSynthBuffer, subMix);
         
     // Phantom initial freqs
 #if INCREASE_LOW_FREQS
@@ -385,17 +378,10 @@ InfraProcess2::ProcessSamplesBufferWin(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
     
     BL_FLOAT dbCoeff = mPhantomMix*BLUtils::DBToAmp(INITIAL_INCREASE_DB);
     BL_FLOAT prevDbCoeff = mPrevPhantomMix*BLUtils::DBToAmp(INITIAL_INCREASE_DB);
-    //BLUtils::MultValues(&lowBuffer, dbCoeff);
     BLUtils::MultValuesRamp(&lowBuffer, prevDbCoeff, dbCoeff);
     
     BLUtils::AddValues(&phantomSynthBuffer, lowBuffer);
 #endif
-
-    // Generated samples
-    //WDL_TypedBuf<BL_FLOAT> &oscillatorsSamples = mTmpBuf10;
-    //oscillatorsSamples.Resize(ioBuffer->GetSize());
-                              
-    //BLUtils::FillAllZero(&oscillatorsSamples);
 
     // NOTE: not the good place to generate the oscillators fft values
     // because we have only filled a part of the buffer

@@ -34,8 +34,8 @@ class InfraProcess2 : public ProcessObj
 {
 public:
     InfraProcess2(int bufferSize,
-                BL_FLOAT overlapping, BL_FLOAT oversampling,
-                BL_FLOAT sampleRate);
+                  BL_FLOAT overlapping, BL_FLOAT oversampling,
+                  BL_FLOAT sampleRate);
     
     virtual ~InfraProcess2();
     
