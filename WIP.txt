@@ -13,7 +13,7 @@ BL-Gain60	    :	features+, optim, mem, bugs
 BL-Ghost	    :	features+, optim, mem, bugs, LockFree(legacy)
 BL-GhostViewer	    :   features+,      , mem,     , LockFree
 BL-Impulses	    :   features+, optim, mem, bugs, LockFree(lgacy)
-BL-Infra	    :
+BL-Infra	    :   features+, optim, mem, bugs, LockFree
 BL-InfrasonicViewer :
 BL-InfraSynth	    :
 BL-LoFi		    :
