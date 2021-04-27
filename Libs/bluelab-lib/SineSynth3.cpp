@@ -153,6 +153,8 @@ SineSynth3::ComputeSamples(WDL_TypedBuf<BL_FLOAT> *samples)
         BL_FLOAT amp1Step = 0.0;
         if (numIter > 1)
             amp1Step = (amp - amp0)/(numIter - 1);
+
+        BL_FLOAT *samplesBuf = samples->Get();
         
         for (int j = 0; j < numIter; j++)
         {                
@@ -163,7 +165,8 @@ SineSynth3::ComputeSamples(WDL_TypedBuf<BL_FLOAT> *samples)
             
             samp *= amp1;
             
-            samples->Get()[j] += samp;
+            //samples->Get()[j] += samp;
+            samplesBuf[j] += samp;
             
             phase += phaseCoeff*freq1;
             
@@ -193,11 +196,16 @@ SineSynth3::ComputeSamples(WDL_TypedBuf<BL_FLOAT> *samples)
         
         // Optim
         BL_FLOAT phaseCoeff = 2.0*M_PI/mSampleRate;
-        
+
         // Loop
+        int numIter = samples->GetSize()/mOverlapping;
+        
         BL_FLOAT t = 0.0;
         BL_FLOAT tStep = 1.0/(samples->GetSize()/mOverlapping - 1);
-        for (int j = 0; j < samples->GetSize()/mOverlapping; j++)
+
+        BL_FLOAT *samplesBuf = samples->Get();
+        
+        for (int j = 0; j < numIter/*samples->GetSize()/mOverlapping*/; j++)
         {
             // Compute freq and partial amp
             BL_FLOAT freq1 = (1.0 - t)*freq0 + t*freq;
@@ -212,7 +220,8 @@ SineSynth3::ComputeSamples(WDL_TypedBuf<BL_FLOAT> *samples)
             
             samp *= amp1;
             
-            samples->Get()[j] += samp;
+            //samples->Get()[j] += samp;
+            samplesBuf[j] += samp;
             
             t += tStep;
             phase += phaseCoeff*freq1;
