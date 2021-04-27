@@ -146,6 +146,9 @@ InfraProcess2::InfraProcess2(int bufferSize,
 #endif
     
     mAdaptivePhantomFreq = false;
+
+    mBassFocus = false;
+    mTwinMasterObj = NULL;
     
 #if INFRA_PROCESS_PROFILE
     BlaTimer::Reset(&mTimer, &mCount);
@@ -211,7 +214,13 @@ void
 InfraProcess2::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
                                 const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer)
 
-{    
+{
+    if ((mTwinMasterObj != NULL) && mBassFocus)
+        // The master obj has already computed the bass focused result!
+        // NOTE: totally ignore INCREASE_INITIAL_FREQ and  INCREASE_ALL_FREQS,
+        // which are currently not used
+        return;
+    
 #if INFRA_PROCESS_PROFILE
     BlaTimer::Start(&mTimer);
 #endif
@@ -273,101 +282,118 @@ InfraProcess2::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
 void
 InfraProcess2::ProcessSamplesBufferWin(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
                                        const WDL_TypedBuf<BL_FLOAT> *scBuffer)
-{    
-    vector<PartialTracker5::Partial> partials;
-    mPartialTracker->GetPartials(&partials);
+{
+    if ((mTwinMasterObj == NULL) || !mBassFocus)
+        // Right channel (master), or process in stereo
+    {
+        vector<PartialTracker5::Partial> partials;
+        mPartialTracker->GetPartials(&partials);
     
-    mPartialTracker->DenormPartials(&partials);
-    mPartialTracker->PartialsAmpToAmpDB(&partials);
+        mPartialTracker->DenormPartials(&partials);
+        mPartialTracker->PartialsAmpToAmpDB(&partials);
     
 #if KEEP_ONLY_FIRST_DETECTED_PARTIAL
-    sort(partials.begin(), partials.end(), PartialTracker5::Partial::FreqLess);
+        sort(partials.begin(), partials.end(), PartialTracker5::Partial::FreqLess);
 #endif
     
-    // Phantom
-    WDL_TypedBuf<BL_FLOAT> &phantomSynthBuffer = mTmpBuf4;
-    BLUtils::ResizeFillZeros(&phantomSynthBuffer, ioBuffer->GetSize());
-    
-    vector<PartialTracker5::Partial> phantomPartials;
-    GeneratePhantomPartials(partials, &phantomPartials);
-    mPhantomSynth->SetPartials(phantomPartials);
-    mPhantomSynth->ComputeSamples(&phantomSynthBuffer);
-
-    // Origin: still some small crackles
+        // Phantom
+        WDL_TypedBuf<BL_FLOAT> &phantomSynthBuffer = mTmpBuf4;
+        BLUtils::ResizeFillZeros(&phantomSynthBuffer, ioBuffer->GetSize());
+        
+        vector<PartialTracker5::Partial> phantomPartials;
+        GeneratePhantomPartials(partials, &phantomPartials);
+        mPhantomSynth->SetPartials(phantomPartials);
+        
+        mPhantomSynth->ComputeSamples(&phantomSynthBuffer);
+        
+        // Origin: still some small crackles
 #if !FIX_PHANT_MIX_CRACKLE
-    // Apply shape to have a good progression in dB
-    BL_FLOAT phantomMix = BLUtils::ApplyParamShape(mPhantomMix, 0.5);
-    BL_FLOAT prevPhantomMix = BLUtils::ApplyParamShape(mPrevPhantomMix, 0.5);
-    BLUtils::MultValuesRamp(&phantomSynthBuffer, prevPhantomMix, phantomMix);
+        // Apply shape to have a good progression in dB
+        BL_FLOAT phantomMix = BLUtils::ApplyParamShape(mPhantomMix, 0.5);
+        BL_FLOAT prevPhantomMix = BLUtils::ApplyParamShape(mPrevPhantomMix, 0.5);
+        BLUtils::MultValuesRamp(&phantomSynthBuffer, prevPhantomMix, phantomMix);
 #endif
     
-    // GOOD
-    // Not more crackles at all!
+        // GOOD
+        // Not more crackles at all!
 #if FIX_PHANT_MIX_CRACKLE
-    WDL_TypedBuf<BL_FLOAT> &phantomSynthBuffer0 = mTmpBuf8;
-    phantomSynthBuffer0.Resize(phantomSynthBuffer.GetSize()/mOverlapping);
-    BLUtils::SetBuf(&phantomSynthBuffer0, phantomSynthBuffer);
+        WDL_TypedBuf<BL_FLOAT> &phantomSynthBuffer0 = mTmpBuf8;
+        phantomSynthBuffer0.Resize(phantomSynthBuffer.GetSize()/mOverlapping);
+        BLUtils::SetBuf(&phantomSynthBuffer0, phantomSynthBuffer);
     
-    // Only the first 1/4 of the buffer is filled
-    // So reduce the buffer, to apply ramp only on the filed part
-    //phantomSynthBuffer.Resize(phantomSynthBuffer.GetSize()/mOverlapping);
+        // Only the first 1/4 of the buffer is filled
+        // So reduce the buffer, to apply ramp only on the filed part
+        //phantomSynthBuffer.Resize(phantomSynthBuffer.GetSize()/mOverlapping);
     
-    // Apply shape to have a good progression in dB
-    BL_FLOAT phantomMix = BLUtils::ApplyParamShape(mPhantomMix, (BL_FLOAT)0.5);
-    BL_FLOAT prevPhantomMix = BLUtils::ApplyParamShape(mPrevPhantomMix,
-                                                       (BL_FLOAT)0.5);
-    BLUtils::MultValuesRamp(&phantomSynthBuffer0, prevPhantomMix, phantomMix);
+        // Apply shape to have a good progression in dB
+        BL_FLOAT phantomMix = BLUtils::ApplyParamShape(mPhantomMix, (BL_FLOAT)0.5);
+        BL_FLOAT prevPhantomMix = BLUtils::ApplyParamShape(mPrevPhantomMix,
+                                                           (BL_FLOAT)0.5);
+        BLUtils::MultValuesRamp(&phantomSynthBuffer0, prevPhantomMix, phantomMix);
     
-    // Resize back
-    //BLUtils::ResizeFillZeros(&phantomSynthBuffer,
-    //                         phantomSynthBuffer.GetSize()*mOverlapping);
-    BLUtils::FillAllZero(&phantomSynthBuffer);
-    BLUtils::SetBuf(&phantomSynthBuffer, phantomSynthBuffer0);
+        // Resize back
+        //BLUtils::ResizeFillZeros(&phantomSynthBuffer,
+        //                         phantomSynthBuffer.GetSize()*mOverlapping);
+        BLUtils::FillAllZero(&phantomSynthBuffer);
+        BLUtils::SetBuf(&phantomSynthBuffer, phantomSynthBuffer0);
 #endif
     
-    // Sub
-    WDL_TypedBuf<BL_FLOAT> &subSynthBuffer = mTmpBuf5;
-    BLUtils::ResizeFillZeros(&subSynthBuffer, ioBuffer->GetSize());
+        // Sub
+        WDL_TypedBuf<BL_FLOAT> &subSynthBuffer = mTmpBuf5;
+        BLUtils::ResizeFillZeros(&subSynthBuffer, ioBuffer->GetSize());
     
-    vector<PartialTracker5::Partial> subPartials;
-    GenerateSubPartials(partials, &subPartials);
-    mSubSynth->SetPartials(subPartials);
-    mSubSynth->ComputeSamples(&subSynthBuffer);
-    
+        vector<PartialTracker5::Partial> subPartials;
+        GenerateSubPartials(partials, &subPartials);
+        mSubSynth->SetPartials(subPartials);
+        mSubSynth->ComputeSamples(&subSynthBuffer);
+            
 #if SUB_FREQ_BOOST
-    BLUtils::MultValues(&subSynthBuffer, (BL_FLOAT)SUB_FREQ_BOOST_FACTOR);
+        BLUtils::MultValues(&subSynthBuffer, (BL_FLOAT)SUB_FREQ_BOOST_FACTOR);
 #endif
     
 #if FIX_HIGH_FREQS_SUB
-    // Only the first 1/4 of the buffer is filled
-    // So reduce the buffer, to avoid passing the low pass filter
-    // on the zeros too (would have made artifacts)
-    //subSynthBuffer.Resize(subSynthBuffer.GetSize()/mOverlapping);
+        // Only the first 1/4 of the buffer is filled
+        // So reduce the buffer, to avoid passing the low pass filter
+        // on the zeros too (would have made artifacts)
+        //subSynthBuffer.Resize(subSynthBuffer.GetSize()/mOverlapping);
 
-    WDL_TypedBuf<BL_FLOAT> &subSynthBuffer0 = mTmpBuf13;
-    //subSynthBuffer0.Resize(subSynthBuffer.GetSize()/mOverlapping);
-    subSynthBuffer0 = subSynthBuffer;
+        WDL_TypedBuf<BL_FLOAT> &subSynthBuffer0 = mTmpBuf13;
+        //subSynthBuffer0.Resize(subSynthBuffer.GetSize()/mOverlapping);
+        subSynthBuffer0 = subSynthBuffer;
     
-    WDL_TypedBuf<BL_FLOAT> &subLowBuffer = mTmpBuf6;
-    mSubLowFilter->Process(&subLowBuffer, subSynthBuffer0);
-    subSynthBuffer0 = subLowBuffer;
+        WDL_TypedBuf<BL_FLOAT> &subLowBuffer = mTmpBuf6;
+        mSubLowFilter->Process(&subLowBuffer, subSynthBuffer0);
+        subSynthBuffer0 = subLowBuffer;
     
-    // GOOD !
-    // Must apply submix ramp on the reduced buffer!
-
-    // Apply shape to have a good progression in dB
-    BL_FLOAT subMix = BLUtils::ApplyParamShape(mSubMix, (BL_FLOAT)0.5);
-    BL_FLOAT prevSubMix = BLUtils::ApplyParamShape(mPrevSubMix, (BL_FLOAT)0.5);
-    BLUtils::MultValuesRamp(&subSynthBuffer0, prevSubMix, subMix);
+        // GOOD !
+        // Must apply submix ramp on the reduced buffer!
+        
+        // Apply shape to have a good progression in dB
+        BL_FLOAT subMix = BLUtils::ApplyParamShape(mSubMix, (BL_FLOAT)0.5);
+        BL_FLOAT prevSubMix = BLUtils::ApplyParamShape(mPrevSubMix, (BL_FLOAT)0.5);
+        BLUtils::MultValuesRamp(&subSynthBuffer0, prevSubMix, subMix);
     
-    // Resize back
-    //BLUtils::ResizeFillZeros(&subSynthBuffer,
-    //subSynthBuffer.GetSize()*mOverlapping);
-    
-    BLUtils::FillAllZero(&subSynthBuffer);
-    BLUtils::SetBuf(&subSynthBuffer, subSynthBuffer0);
+        // Resize back
+        //BLUtils::ResizeFillZeros(&subSynthBuffer,
+        //subSynthBuffer.GetSize()*mOverlapping);
+        
+        BLUtils::FillAllZero(&subSynthBuffer);
+        BLUtils::SetBuf(&subSynthBuffer, subSynthBuffer0);
 #endif
         
+        mPhantomSynthBuffer = phantomSynthBuffer;
+        mSubSynthBuffer = subSynthBuffer;
+    }
+    else
+        // Left channel(slave), and process in mono
+    {
+        if (mTwinMasterObj != NULL) // Just in case
+        {
+            mTwinMasterObj->GetPhantomSynthBuffer(&mPhantomSynthBuffer);
+            mTwinMasterObj->GetSubSynthBuffer(&mSubSynthBuffer);
+        }   
+    }
+
     // Phantom initial freqs
 #if INCREASE_LOW_FREQS
     WDL_TypedBuf<BL_FLOAT> &lowBuffer = mTmpBuf7;
@@ -377,15 +403,17 @@ InfraProcess2::ProcessSamplesBufferWin(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
     BL_FLOAT prevDbCoeff = mPrevPhantomMix*BLUtils::DBToAmp(INITIAL_INCREASE_DB);
     BLUtils::MultValuesRamp(&lowBuffer, prevDbCoeff, dbCoeff);
     
-    BLUtils::AddValues(&phantomSynthBuffer, lowBuffer);
+    //BLUtils::AddValues(&mPhantomSynthBuffer, lowBuffer);
 #endif
 
     // NOTE: not the good place to generate the oscillators fft values
     // because we have only filled a part of the buffer
-    
+
+    BLUtils::AddValues(ioBuffer, lowBuffer);
+        
     // Result
-    BLUtils::AddValues(ioBuffer, phantomSynthBuffer);
-    BLUtils::AddValues(ioBuffer, subSynthBuffer);
+    BLUtils::AddValues(ioBuffer, mPhantomSynthBuffer);
+    BLUtils::AddValues(ioBuffer, mSubSynthBuffer);
     
     // Update the prev values for ramps
     mPrevPhantomMix = mPhantomMix;
@@ -426,6 +454,30 @@ void
 InfraProcess2::SetAdaptivePhantomFreq(bool flag)
 {
     mAdaptivePhantomFreq = flag;
+}
+
+void
+InfraProcess2::SetBassFocus(bool flag)
+{
+    mBassFocus = flag;
+}
+
+void
+InfraProcess2::SetTwinMasterObj(InfraProcess2 *obj)
+{
+    mTwinMasterObj = obj;
+}
+
+void
+InfraProcess2::GetPhantomSynthBuffer(WDL_TypedBuf<BL_FLOAT> *phantomBuf)
+{
+    *phantomBuf = mPhantomSynthBuffer;
+}
+
+void
+InfraProcess2::GetSubSynthBuffer(WDL_TypedBuf<BL_FLOAT> *subBuf)
+{
+    *subBuf = mSubSynthBuffer;
 }
 
 void

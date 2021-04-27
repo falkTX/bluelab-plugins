@@ -59,6 +59,13 @@ public:
     void SetSubMix(BL_FLOAT subMix);
     
     void SetAdaptivePhantomFreq(bool flag);
+
+    // Will need to link 2 objects for bass focus
+    // (partials generation in mono)
+    void SetBassFocus(bool flag);
+    void SetTwinMasterObj(InfraProcess2 *obj);
+    void GetPhantomSynthBuffer(WDL_TypedBuf<BL_FLOAT> *phantomBuf);
+    void GetSubSynthBuffer(WDL_TypedBuf<BL_FLOAT> *subBuf);
     
     void SetDebug(bool flag);
     
@@ -104,12 +111,22 @@ protected:
     FilterIIRLow12dB *mSubLowFilter;
     
     bool mAdaptivePhantomFreq;
+
+    // Bass focus
+    //
+    
+    bool mBassFocus;
+    // Twin is the master, aka the right channel in stereo
+    InfraProcess2 *mTwinMasterObj;
+
+    WDL_TypedBuf<BL_FLOAT> mPhantomSynthBuffer;
+    WDL_TypedBuf<BL_FLOAT> mSubSynthBuffer;
     
 #if INFRA_PROCESS_PROFILE
     BlaTimer mTimer;
     long mCount;
 #endif
-    
+
     bool mDebug;
     
 private:
