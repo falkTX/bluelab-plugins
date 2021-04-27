@@ -127,6 +127,7 @@ private:
     WDL_TypedBuf<BL_FLOAT> mTmpBuf10;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf11;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf12;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf13;
 };
 
 #endif /* defined(__BL_Infra__InfraProcess2__) */

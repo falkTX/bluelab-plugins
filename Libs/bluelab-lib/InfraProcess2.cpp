@@ -344,7 +344,7 @@ InfraProcess2::ProcessSamplesBufferWin(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
     // on the zeros too (would have made artifacts)
     //subSynthBuffer.Resize(subSynthBuffer.GetSize()/mOverlapping);
 
-    WDL_TypedBuf<BL_FLOAT> &subSynthBuffer0 = mTmpBuf8;
+    WDL_TypedBuf<BL_FLOAT> &subSynthBuffer0 = mTmpBuf13;
     //subSynthBuffer0.Resize(subSynthBuffer.GetSize()/mOverlapping);
     subSynthBuffer0 = subSynthBuffer;
     

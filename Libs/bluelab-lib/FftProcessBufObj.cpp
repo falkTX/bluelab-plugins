@@ -16,9 +16,10 @@ void
 FftProcessBufObj::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
                                    const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer)
 {
-    mCurrentBuf = *ioBuffer;
-  
-    BLUtils::TakeHalf(&mCurrentBuf);
+    //mCurrentBuf = *ioBuffer;
+    //BLUtils::TakeHalf(&mCurrentBuf);
+
+    BLUtils::TakeHalf(*ioBuffer, &mCurrentBuf);
 }
 
 void
