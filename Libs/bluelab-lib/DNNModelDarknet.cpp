@@ -63,7 +63,7 @@ amp_to_db(float *buf, int size)
     for (int i = 0; i < size; i++)
     {
         float v = buf[i];
-        v = my_amp_to_db_norm(v);
+        v = bl_amp_to_db_norm(v);
         buf[i] = v;
     }
 }
@@ -97,7 +97,7 @@ DNNModelDarknet::~DNNModelDarknet()
 
 bool
 DNNModelDarknet::Load(const char *modelFileName,
-                        const char *resourcePath)
+                      const char *resourcePath)
 {
 #ifdef WIN32
     return false;
@@ -241,7 +241,7 @@ DNNModelDarknet::Predict(const WDL_TypedBuf<BL_FLOAT> &input,
     WDL_TypedBuf<float> dbgMix;
     dbgMix.Resize(IMAGE_WIDTH*IMAGE_HEIGHT);
     float *dbgMixData = dbgMix.Get();
-    my_load_image_bin(IMAGE_WIDTH, IMAGE_HEIGHT, 1,
+    bl_load_image_bin(IMAGE_WIDTH, IMAGE_HEIGHT, 1,
                       dbgMixData, DBG_INPUT_IMAGE_FNAME);
 
     for (int i = 0; i < X.GetSize(); i++)
@@ -253,9 +253,9 @@ DNNModelDarknet::Predict(const WDL_TypedBuf<BL_FLOAT> &input,
 #endif   
 
     // Process
-    //my_normalize(X.Get(), X.GetSize());
+    //bl_normalize(X.Get(), X.GetSize());
     amp_to_db(X.Get(), X.GetSize());
-    //my_normalize(X.Get(), X.GetSize());
+    //bl_normalize(X.Get(), X.GetSize());
 
     //#if DENORMAL_FLUSH_TO_ZERO
     //denormal_flushtozero();
@@ -272,13 +272,13 @@ DNNModelDarknet::Predict(const WDL_TypedBuf<BL_FLOAT> &input,
     
 #if DEBUG_DATA
 #define SAVE_IMG_FNAME "/home/niko/Documents/BlueLabAudio-Debug/X"
-    //my_save_image(IMAGE_WIDTH, IMAGE_HEIGHT, 1, X.Get(), SAVE_IMG_FNAME, 1);
-    my_save_image_mc(IMAGE_WIDTH, IMAGE_HEIGHT, 4, X.Get(), SAVE_IMG_FNAME);
-    my_save_image_txt(IMAGE_WIDTH, IMAGE_HEIGHT, 1, X.Get(), SAVE_IMG_FNAME);
+    //bl_save_image(IMAGE_WIDTH, IMAGE_HEIGHT, 1, X.Get(), SAVE_IMG_FNAME, 1);
+    bl_save_image_mc(IMAGE_WIDTH, IMAGE_HEIGHT, 4, X.Get(), SAVE_IMG_FNAME);
+    bl_save_image_txt(IMAGE_WIDTH, IMAGE_HEIGHT, 1, X.Get(), SAVE_IMG_FNAME);
     
 #define SAVE_PRED_FNAME "/home/niko/Documents/BlueLabAudio-Debug/pred"
-    my_save_image_mc(IMAGE_WIDTH, IMAGE_HEIGHT, 4, pred, SAVE_PRED_FNAME);
-    my_save_image_txt(IMAGE_WIDTH, IMAGE_HEIGHT, 4, pred, SAVE_PRED_FNAME);
+    bl_save_image_mc(IMAGE_WIDTH, IMAGE_HEIGHT, 4, pred, SAVE_PRED_FNAME);
+    bl_save_image_txt(IMAGE_WIDTH, IMAGE_HEIGHT, 4, pred, SAVE_PRED_FNAME);
  
     exit(0);
 #endif
