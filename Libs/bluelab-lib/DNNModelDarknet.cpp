@@ -253,9 +253,9 @@ DNNModelDarknet::Predict(const WDL_TypedBuf<BL_FLOAT> &input,
 #endif   
 
     // Process
-    my_normalize(X.Get(), X.GetSize());
+    //my_normalize(X.Get(), X.GetSize());
     amp_to_db(X.Get(), X.GetSize());
-    my_normalize(X.Get(), X.GetSize());
+    //my_normalize(X.Get(), X.GetSize());
 
     //#if DENORMAL_FLUSH_TO_ZERO
     //denormal_flushtozero();
