@@ -58,7 +58,7 @@ extern "C" {
 
 // From bl-darknet/rebalance.c
 void
-amp_to_db(float *buf, int size)
+amp_to_db_norm(float *buf, int size)
 {
     for (int i = 0; i < size; i++)
     {
@@ -251,12 +251,13 @@ DNNModelDarknet::Predict(const WDL_TypedBuf<BL_FLOAT> &input,
         X.Get()[i] = val;
     }
 #endif   
-
+    
     // Process
     //bl_normalize(X.Get(), X.GetSize());
-    amp_to_db(X.Get(), X.GetSize());
-    //bl_normalize(X.Get(), X.GetSize());
-
+    amp_to_db_norm(X.Get(), X.GetSize());
+    // Should not be necessary: amp_to_db_norm already gives normalized result...
+    //bl_normalize(X.Get(), X.GetSize()); 
+    
     //#if DENORMAL_FLUSH_TO_ZERO
     //denormal_flushtozero();
     //#endif
