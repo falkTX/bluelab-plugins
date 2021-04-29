@@ -53,7 +53,7 @@ RebalanceMaskProcessor::Process(const WDL_TypedBuf<BL_FLOAT> masks0[NUM_STEM_SOU
     BLUtils::FillAllZero(resultMask);
     for (int i = 0; i < NUM_STEM_SOURCES; i++)
     {
-        BLUtils::AddValues(resultMask, masks[i]); 
+        BLUtils::AddValues(resultMask, masks[i]);
     }
 }
 
