@@ -73,7 +73,7 @@ RebalanceProcessFftObjComp4::~RebalanceProcessFftObjComp4()
 {
     if (mSoftMasking != NULL)
         delete mSoftMasking;
-
+ 
     delete mMaskProcessor;
     
     delete mScale;
@@ -392,7 +392,23 @@ RebalanceProcessFftObjComp4::ApplySoftMasking(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioD
     WDL_TypedBuf<BL_FLOAT> &mask = mTmpBuf19;
     mask = mask0;
     
+    // NOTE: mask can be in [0, 2] e.g if we increase the vocal mix part
+    // We must put it in [0, 1] for Wiener soft masking
+    // (soft masking is designed to work in [0, 1] by essence).
+    // So multiply the mask here, and apply the opposite transformation
+    // after soft masking is computed.
+    //
+    // NOTE: this weems to wok well in case of mix increase!
+    // (better than all the other complicated methods that were tried).
+    BLUtils::MultValues(&mask, 0.5);
+    
     mSoftMasking->ProcessCentered(ioData, mask, &softMaskedResult);
+
+    // Apply opposite transformation, to keep the plugin transparent
+    // when all mixe knobs are at default values.
+    BLUtils::MultValues(&softMaskedResult, 2.0);
+
+    // Result
     if (mSoftMasking->IsProcessingEnabled())
         *ioData = softMaskedResult;
 }

@@ -86,7 +86,7 @@ protected:
 
     void ApplySoftMasking(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioData,
                           const WDL_TypedBuf<BL_FLOAT> &mask);
-
+    
     void ComputeInverseDB(WDL_TypedBuf<BL_FLOAT> *magns);
 
     void ComputeResult(const WDL_TypedBuf<WDL_FFT_COMPLEX> &mixBuffer,
