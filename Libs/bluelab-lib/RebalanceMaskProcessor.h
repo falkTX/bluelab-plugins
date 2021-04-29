@@ -61,7 +61,7 @@ class RebalanceMaskProcessor
     };
     
     BL_FLOAT mMasksContrast;
-
+    
 private:
     // Tmp buffers
     WDL_TypedBuf<BL_FLOAT> mTmpBuf0[NUM_STEM_SOURCES];

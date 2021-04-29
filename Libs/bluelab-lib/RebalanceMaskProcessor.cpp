@@ -140,11 +140,13 @@ ApplySensitivity(WDL_TypedBuf<BL_FLOAT> masks[NUM_STEM_SOURCES])
     }
 }
 
+// NOTE: previously tried to apply the mix parameter on
+// mask values converted in amp => not good
 void
 RebalanceMaskProcessor::ApplyMix(WDL_TypedBuf<BL_FLOAT> masks[NUM_STEM_SOURCES])
-{
+{    
     for (int i = 0; i < NUM_STEM_SOURCES; i++)
-    {
+    {            
         BLUtils::MultValues(&masks[i], mMixes[i]);
     }
 }
