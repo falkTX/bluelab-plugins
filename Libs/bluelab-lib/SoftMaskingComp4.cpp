@@ -152,12 +152,13 @@ SoftMaskingComp4::ProcessCentered(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioSum,
         // masked0 = sum*mask
         newHistoLine.mMasked0Square = *ioSum;
         BLUtils::MultValues(&newHistoLine.mMasked0Square, mask);
-    
+
         // maskd1 = sum - masked0
+        // same as: masked1 = sum*(1 - mask)
         newHistoLine.mMasked1Square = *ioSum;
         BLUtils::SubstractValues(&newHistoLine.mMasked1Square,
                                  newHistoLine.mMasked0Square);
-    
+        
         // See: https://hal.inria.fr/hal-01881425/document
         // |x|^2
         // NOTE: square abs => complex conjugate
@@ -222,13 +223,13 @@ SoftMaskingComp4::ProcessCentered(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioSum,
 
             maskVal.re = 0.0;
             maskVal.im = 0.0;
-            
+
             if ((std::fabs(csum.re) > BL_EPS) ||
                 (std::fabs(csum.im) > BL_EPS))
             {
                 COMP_DIV(s0, csum, maskVal);
             }
-
+            
             BL_FLOAT maskMagn = COMP_MAGN(maskVal);
 
             // Limit to 1
@@ -296,7 +297,7 @@ SoftMaskingComp4::ProcessCentered(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioSum,
                     maskVal.re *= maskMagnInv;
                     maskVal.im *= maskMagnInv;
                 }
-                
+                    
                 softMask1Data[i] = maskVal;
             }
 
@@ -388,7 +389,7 @@ SoftMaskingComp4::ComputeSigma2(WDL_TypedBuf<WDL_FFT_COMPLEX> *outSigma2Mask0,
         BLUtils::MultValues(&currentSum0, sumProbaInv);
         BLUtils::MultValues(&currentSum1, sumProbaInv);
     }
-        
+    
     // Result
     *outSigma2Mask0 = currentSum0;
     *outSigma2Mask1 = currentSum1;

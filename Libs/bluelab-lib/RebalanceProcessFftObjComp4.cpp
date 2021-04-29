@@ -385,11 +385,14 @@ RebalanceProcessFftObjComp4::ResetMixColsComp()
 
 void
 RebalanceProcessFftObjComp4::ApplySoftMasking(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioData,
-                                              const WDL_TypedBuf<BL_FLOAT> &mask)
+                                              const WDL_TypedBuf<BL_FLOAT> &mask0)
 {
     WDL_TypedBuf<WDL_FFT_COMPLEX> &softMaskedResult = mTmpBuf10;
+
+    WDL_TypedBuf<BL_FLOAT> &mask = mTmpBuf19;
+    mask = mask0;
+    
     mSoftMasking->ProcessCentered(ioData, mask, &softMaskedResult);
-            
     if (mSoftMasking->IsProcessingEnabled())
         *ioData = softMaskedResult;
 }

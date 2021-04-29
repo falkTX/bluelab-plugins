@@ -112,7 +112,8 @@ protected:
     int mNumInputCols;
     
     // Keep the history of input data
-    // So we can get exactly the same correponding the the correct location of the mask
+    // So we can get exactly the same correponding the the
+    // correct location of the mask
     //deque<WDL_TypedBuf<WDL_FFT_COMPLEX> > mSamplesHistory;
     bl_queue<WDL_TypedBuf<WDL_FFT_COMPLEX> > mSamplesHistory;
     
@@ -147,6 +148,7 @@ private:
     WDL_TypedBuf<BL_FLOAT> mTmpBuf16;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf17;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf18[NUM_STEM_SOURCES];
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf19;
 };
 
 #endif /* defined(__BL_Rebalance__RebalanceProcessFftObjComp4__) */
