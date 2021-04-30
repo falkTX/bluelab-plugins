@@ -257,7 +257,8 @@ ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     WDL_TypedBuf<BL_FLOAT> &phases0 = mTmpBuf2;
     
     BLUtilsComp::ComplexToMagnPhase(&magns0, &phases0, mixBuffer);
-    
+
+#if 0 // Origin
     for (int i = 0; i < magns0.GetSize(); i++)
     {
         BL_FLOAT val = magns0.Get()[i];
@@ -265,7 +266,13 @@ ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
                                  (BL_FLOAT)PROCESS_SIGNAL_MIN_DB, (BL_FLOAT)0.0);
         magns0.Get()[i] = val;
     }
+#endif
 
+#if 1  // Optimized
+    mScale->ApplyScaleForEach(Scale::DB, &magns0,
+                              (BL_FLOAT)PROCESS_SIGNAL_MIN_DB, (BL_FLOAT)0.0);
+#endif
+    
     BLUtilsComp::MagnPhaseToComplex(&mixBuffer, magns0, phases0);
 #endif
     
@@ -418,6 +425,7 @@ RebalanceProcessFftObjComp4::ApplySoftMasking(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioD
 void
 RebalanceProcessFftObjComp4::ComputeInverseDB(WDL_TypedBuf<BL_FLOAT> *magns)
 {
+#if 0 // Origin
     for (int i = 0; i < magns->GetSize(); i++)
     {
         BL_FLOAT val = magns->Get()[i];
@@ -431,6 +439,13 @@ RebalanceProcessFftObjComp4::ComputeInverseDB(WDL_TypedBuf<BL_FLOAT> *magns)
         
         magns->Get()[i] = val;
     }
+#endif
+
+#if 1 // Optimized
+    // NOTE: do we need the noise floor test like above?
+    mScale->ApplyScaleInvForEach(Scale::DB, magns,
+                                 (BL_FLOAT)PROCESS_SIGNAL_MIN_DB, (BL_FLOAT)0.0);
+#endif
 }
 
 void
