@@ -515,9 +515,9 @@ ComputeResult(const WDL_TypedBuf<WDL_FFT_COMPLEX> &mixBuffer,
 
 #if PROCESS_SIGNAL_DB
     ComputeInverseDB(resMagns);
-#endif
     
     BLUtilsComp::MagnPhaseToComplex(result, *resMagns, *resPhases);
+#endif
 }
 
 int

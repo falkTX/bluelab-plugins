@@ -51,7 +51,9 @@
 
 #define USE_SOFT_MASKS 1
 
-#define PROCESS_SIGNAL_DB 1
+// NOTE: strangely, looks far better when set to 0
+// (and will consume less CPU)
+#define PROCESS_SIGNAL_DB 0 //1
 // In theory, should be the same value as when training in darknet
 // But in fact, in darkknet this is -60
 // And here, we must set -120 to get beautiful spectrograms (visually)

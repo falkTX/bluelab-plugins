@@ -219,7 +219,16 @@ void
 DNNModelDarknet::Predict(const WDL_TypedBuf<BL_FLOAT> &input,
                          vector<WDL_TypedBuf<BL_FLOAT> > *masks)
 {
-#define EPS 1e-15
+#if 0 //1 // Bypass ?
+    masks->resize(NUM_STEMS);
+    for (int i = 0; i < NUM_STEMS; i++)
+    {
+        (*masks)[i].Resize(input.GetSize());
+        BLUtils::FillAllValue(&(*masks)[i], 1.0);
+    }
+
+    return;
+#endif
     
     WDL_TypedBuf<BL_FLOAT> &input0 = mTmpBuf0;
     input0 = input;
@@ -254,7 +263,11 @@ DNNModelDarknet::Predict(const WDL_TypedBuf<BL_FLOAT> &input,
     
     // Process
     //bl_normalize(X.Get(), X.GetSize());
+
+    // NOTE: must check this well, and if we provide function input in db or not
+    // Here, this is good for PROCESS_SIGNAL_DB=0
     amp_to_db_norm(X.Get(), X.GetSize());
+
     // Should not be necessary: amp_to_db_norm already gives normalized result...
     //bl_normalize(X.Get(), X.GetSize()); 
     

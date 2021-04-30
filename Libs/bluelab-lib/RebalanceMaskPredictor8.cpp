@@ -27,9 +27,6 @@ using namespace std;
 
 #include "RebalanceMaskPredictor8.h"
 
-// GOOD!
-// Less pumping with it!
-// When using gamma=10, separation is better (but more gating)
 #define USE_MASK_STACK 1
 #define USE_MASK_STACK_METHOD2 1
 
@@ -298,6 +295,16 @@ RebalanceMaskPredictor8::
 ComputeMasks(WDL_TypedBuf<BL_FLOAT> masks[NUM_STEM_SOURCES],
              const WDL_TypedBuf<BL_FLOAT> &mixBufHisto)
 {
+#if 0 //1 // Bypass ?
+    for (int i = 0; i < NUM_STEM_SOURCES; i++)
+    {
+        masks[i].Resize(REBALANCE_NUM_SPECTRO_FREQS*REBALANCE_NUM_SPECTRO_COLS);
+        BLUtils::FillAllValue(&masks[i], 1.0);
+    }
+
+    return;
+#endif
+
     //WDL_TypedBuf<BL_FLOAT> masks0[NUM_STEM_SOURCES];
     WDL_TypedBuf<BL_FLOAT> *masks0 = mTmpBuf6;
     if (mDontPredictEveryStep)
@@ -356,10 +363,13 @@ RebalanceMaskPredictor8::ComputeLineMask(WDL_TypedBuf<BL_FLOAT> *maskResult,
                                          const WDL_TypedBuf<BL_FLOAT> &maskSource,
                                          int numFreqs)
 {
-    int colNum = GetHistoryIndex();
-    
     maskResult->Resize(numFreqs);
+    BLUtils::FillAllZero(maskResult);
+
+    if (maskSource.GetSize() == 0)
+        return;
     
+    int colNum = GetHistoryIndex();
     for (int i = 0; i < numFreqs; i++)
     {
         int idx = i + colNum*numFreqs;
