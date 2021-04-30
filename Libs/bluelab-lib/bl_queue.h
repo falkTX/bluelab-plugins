@@ -27,7 +27,7 @@ public:
         if (mFixedSize)
             return mData.empty();
         else
-            return mNonFixedSizeData.size();
+            return mNonFixedSizeData.empty();
     }
     
     void clear(const T &value)
