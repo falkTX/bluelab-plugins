@@ -37,6 +37,9 @@
 
 #define USE_SOFT_MASKING 1 //0
 
+// Origin: was 0
+#define SMOOTH_SPECTRO_DISPLAY 1 // 0
+
 RebalanceProcessFftObjComp4::
 RebalanceProcessFftObjComp4(int bufferSize, int oversampling,
                             BL_FLOAT sampleRate,
@@ -222,20 +225,19 @@ void
 RebalanceProcessFftObjComp4::AddSpectrogramLine(const WDL_TypedBuf<BL_FLOAT> &magns,
                                                 const WDL_TypedBuf<BL_FLOAT> &phases)
 {
-    // Disabled: so the spectrogram display jitters less
+    // When disabled: the spectrogram display jitters less
     // even whn much resource is consumed
     // And also for updating whole spectrogram when param change
-#if 0 //1 // 0
+#if SMOOTH_SPECTRO_DISPLAY
     // Add for smooth scroll
     if (mSpectroDisplay != NULL)
         mSpectroDisplay->AddSpectrogramLine(magns, phases);
-#endif
-#if 1 //0 // 1
+#else
     // Simple add
     mSpectrogram->AddLine(magns, phases);
 #endif
     
-    // NEW: for updating whole spectrogram when param change
+    // For updating whole spectrogram when param change
     if (mSpectroDisplay != NULL)
         mSpectroDisplay->UpdateSpectrogram(true);
 }
