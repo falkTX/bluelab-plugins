@@ -136,7 +136,7 @@ RebalanceProcessFftObjComp4::SetVocal(BL_FLOAT vocal)
 {
     mMaskProcessor->SetVocalMix(vocal);
 
-    RecomputeSpectrogram();
+    //RecomputeSpectrogram();
 }
 
 void
@@ -144,7 +144,7 @@ RebalanceProcessFftObjComp4::SetBass(BL_FLOAT bass)
 {
     mMaskProcessor->SetBassMix(bass);
 
-    RecomputeSpectrogram();
+    //RecomputeSpectrogram();
 }
 
 void
@@ -152,7 +152,7 @@ RebalanceProcessFftObjComp4::SetDrums(BL_FLOAT drums)
 {
     mMaskProcessor->SetDrumsMix(drums);
 
-    RecomputeSpectrogram();
+    //RecomputeSpectrogram();
 }
 
 void
@@ -160,7 +160,7 @@ RebalanceProcessFftObjComp4::SetOther(BL_FLOAT other)
 {
     mMaskProcessor->SetOtherMix(other);
 
-    RecomputeSpectrogram();
+    //RecomputeSpectrogram();
 }
 
 void
@@ -168,7 +168,7 @@ RebalanceProcessFftObjComp4::SetVocalSensitivity(BL_FLOAT vocal)
 {
     mMaskProcessor->SetVocalSensitivity(vocal);
 
-    RecomputeSpectrogram();
+    //RecomputeSpectrogram();
 }
 
 void
@@ -176,7 +176,7 @@ RebalanceProcessFftObjComp4::SetBassSensitivity(BL_FLOAT bass)
 {
     mMaskProcessor->SetBassSensitivity(bass);
 
-    RecomputeSpectrogram();
+    //RecomputeSpectrogram();
 }
 
 void
@@ -184,7 +184,7 @@ RebalanceProcessFftObjComp4::SetDrumsSensitivity(BL_FLOAT drums)
 {
     mMaskProcessor->SetDrumsSensitivity(drums);
 
-    RecomputeSpectrogram();
+    //RecomputeSpectrogram();
 }
 
 void
@@ -192,7 +192,7 @@ RebalanceProcessFftObjComp4::SetOtherSensitivity(BL_FLOAT other)
 {
     mMaskProcessor->SetOtherSensitivity(other);
 
-    RecomputeSpectrogram();
+    //RecomputeSpectrogram();
 }
 
 void
@@ -200,7 +200,7 @@ RebalanceProcessFftObjComp4::SetContrast(BL_FLOAT contrast)
 {
     mMaskProcessor->SetContrast(contrast);
 
-    RecomputeSpectrogram();
+    //RecomputeSpectrogram();
 }
 
 int

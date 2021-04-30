@@ -72,6 +72,8 @@ public:
     void SetContrast(BL_FLOAT contrast);
 
     int GetLatency();
+
+    void RecomputeSpectrogram();
     
 protected:
     void AddSpectrogramLine(const WDL_TypedBuf<BL_FLOAT> &magns,
@@ -94,8 +96,6 @@ protected:
                        WDL_TypedBuf<WDL_FFT_COMPLEX> *result,
                        WDL_TypedBuf<BL_FLOAT> *resMagns,
                        WDL_TypedBuf<BL_FLOAT> *resPhases);
-
-    void RecomputeSpectrogram();
 
     int ComputeSpectroNumCols();
     

@@ -315,6 +315,13 @@ SetSpectrogramDisplay(SpectrogramDisplayScroll4 *spectroDisplay)
 }
 
 void
+RebalanceProcessor2::RecomputeSpectrogram()
+{
+    if (mDetectProcessObjs[0] != NULL)
+        mDetectProcessObjs[0]->RecomputeSpectrogram();
+}
+
+void
 RebalanceProcessor2::SetDbgThreshold(BL_FLOAT thrs)
 {
 #if 0

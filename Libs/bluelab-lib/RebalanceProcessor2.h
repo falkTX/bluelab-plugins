@@ -66,6 +66,8 @@ public:
     
     // Debug
     void SetDbgThreshold(BL_FLOAT thrs);
+
+    void RecomputeSpectrogram();
     
 protected:
     bool
