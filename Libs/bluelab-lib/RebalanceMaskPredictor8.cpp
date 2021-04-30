@@ -295,16 +295,6 @@ RebalanceMaskPredictor8::
 ComputeMasks(WDL_TypedBuf<BL_FLOAT> masks[NUM_STEM_SOURCES],
              const WDL_TypedBuf<BL_FLOAT> &mixBufHisto)
 {
-#if 0 //1 // Bypass ?
-    for (int i = 0; i < NUM_STEM_SOURCES; i++)
-    {
-        masks[i].Resize(REBALANCE_NUM_SPECTRO_FREQS*REBALANCE_NUM_SPECTRO_COLS);
-        BLUtils::FillAllValue(&masks[i], 1.0);
-    }
-
-    return;
-#endif
-
     //WDL_TypedBuf<BL_FLOAT> masks0[NUM_STEM_SOURCES];
     WDL_TypedBuf<BL_FLOAT> *masks0 = mTmpBuf6;
     if (mDontPredictEveryStep)

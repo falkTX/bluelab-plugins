@@ -108,6 +108,7 @@ SpectrogramDisplayScroll4::GetOffsetSec()
         return 0.0;
     
     BL_FLOAT currentTimeSec = mTransport->GetTransportElapsedSecTotal();
+    
     if (currentTimeSec < 0.0)
         return 0.0;
     

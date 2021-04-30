@@ -218,18 +218,7 @@ DNNModelDarknet::SetMaskScale(int maskNum, BL_FLOAT scale)
 void
 DNNModelDarknet::Predict(const WDL_TypedBuf<BL_FLOAT> &input,
                          vector<WDL_TypedBuf<BL_FLOAT> > *masks)
-{
-#if 0 //1 // Bypass ?
-    masks->resize(NUM_STEMS);
-    for (int i = 0; i < NUM_STEMS; i++)
-    {
-        (*masks)[i].Resize(input.GetSize());
-        BLUtils::FillAllValue(&(*masks)[i], 1.0);
-    }
-
-    return;
-#endif
-    
+{    
     WDL_TypedBuf<BL_FLOAT> &input0 = mTmpBuf0;
     input0 = input;
     
