@@ -65,7 +65,7 @@ public:
                          const WDL_TypedBuf<BL_FLOAT> &mask,
                          WDL_TypedBuf<WDL_FFT_COMPLEX> *ioMaskedResult0,
                          WDL_TypedBuf<WDL_FFT_COMPLEX> *ioMaskedResult1 = NULL);
-    
+               
 protected:
     void ComputeSigma2(WDL_TypedBuf<WDL_FFT_COMPLEX> *outSigma2Mask0,
                        WDL_TypedBuf<WDL_FFT_COMPLEX> *outSigma2Mask1);
@@ -113,6 +113,8 @@ private:
     WDL_TypedBuf<WDL_FFT_COMPLEX> mTmpBuf3;
     WDL_TypedBuf<WDL_FFT_COMPLEX> mTmpBuf4;
     WDL_TypedBuf<WDL_FFT_COMPLEX> mTmpBuf5;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf6;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf7;
 };
 
 #endif /* defined(__BL_DUET__SoftMaskingComp4__) */

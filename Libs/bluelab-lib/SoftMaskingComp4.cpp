@@ -133,6 +133,14 @@ SoftMaskingComp4::GetLatency()
 }
 
 // Process over time
+//
+// Algo:
+
+// s = input * HM
+// n = input * (1.0 - HM)
+// SM = s2(s)/(s2(s) + s2(n))
+// output = input * SM
+//
 void
 SoftMaskingComp4::ProcessCentered(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioSum,
                                   const WDL_TypedBuf<BL_FLOAT> &mask,

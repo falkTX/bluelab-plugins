@@ -130,6 +130,23 @@ BLDebug::DumpData(const char *filename, const WDL_TypedBuf<WDL_FFT_COMPLEX> &buf
     fclose(file);
 }
 
+void
+BLDebug::DumpDataMagns(const char *filename,
+                       const WDL_TypedBuf<WDL_FFT_COMPLEX> &buf)
+{
+    char fullFilename[MAX_PATH];
+    sprintf(fullFilename, BASE_FILE"%s", filename);
+    
+    FILE *file = fopen(fullFilename, "w");
+    for (int i = 0; i < buf.GetSize(); i++)
+    {
+        BL_FLOAT magn = COMP_MAGN(buf.Get()[i]);
+        fprintf(file, "%g ", magn);
+    }
+    
+    fclose(file);
+}
+
 template <typename FLOAT_TYPE>
 void
 BLDebug::LoadData(const char *filename, FLOAT_TYPE *data, int size)

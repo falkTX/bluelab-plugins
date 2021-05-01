@@ -40,6 +40,11 @@
 // Origin: was 0
 #define SMOOTH_SPECTRO_DISPLAY 1 // 0
 
+// With this, it will be possible to increase the gain a lot
+// when setting mix at 200%
+// (Otherwise, the gain effect was very small)
+#define SOFT_MASKING_HACK 1
+
 RebalanceProcessFftObjComp4::
 RebalanceProcessFftObjComp4(int bufferSize, int oversampling,
                             BL_FLOAT sampleRate,
@@ -400,23 +405,33 @@ RebalanceProcessFftObjComp4::ApplySoftMasking(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioD
 
     WDL_TypedBuf<BL_FLOAT> &mask = mTmpBuf19;
     mask = mask0;
-    
-    // NOTE: mask can be in [0, 2] e.g if we increase the vocal mix part
-    // We must put it in [0, 1] for Wiener soft masking
-    // (soft masking is designed to work in [0, 1] by essence).
-    // So multiply the mask here, and apply the opposite transformation
-    // after soft masking is computed.
+
+#if SOFT_MASKING_HACK
+    // s = input * HM
+    // s = (input * alpha) * HM/alpha
     //
-    // NOTE: this weems to wok well in case of mix increase!
-    // (better than all the other complicated methods that were tried).
-    BLUtils::MultValues(&mask, 0.5);
+    // here, alpha = 4.0
+    //
+    // This is a hack, but it works well! :)
+    //
+    BLUtils::MultValues(&mask, 1.0/4.0);
+    BLUtils::MultValues(ioData, 4.0);
+#endif
     
     mSoftMasking->ProcessCentered(ioData, mask, &softMaskedResult);
 
-    // Apply opposite transformation, to keep the plugin transparent
-    // when all mixe knobs are at default values.
-    BLUtils::MultValues(&softMaskedResult, 2.0);
-
+#if SOFT_MASKING_HACK
+    // Empirical coeff
+    //
+    // Compared the input hard mask here, and the soft mask inside mSoftMasking
+    // When maks i 1.0 here (all at 100%), the soft mask is 0.1
+    // So adjust here with a factor 10.0, plus fix the previous gain of 4.0
+    //
+    // NOTE: this makes the plugin transparent when all is at 100%
+    //
+    BLUtils::MultValues(&softMaskedResult, 10.0/4.0);
+#endif
+    
     // Result
     if (mSoftMasking->IsProcessingEnabled())
         *ioData = softMaskedResult;
