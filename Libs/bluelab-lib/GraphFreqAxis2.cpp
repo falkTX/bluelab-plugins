@@ -97,31 +97,69 @@ const BL_FLOAT freqsLog25[NUM_AXIS_DATA_LOG25] =
 // Linear scale
 //
 
+// From 1Hz to 1000Hz
+#define NUM_AXIS_DATA_LIN1000 12
+const char *labelsLin1000[NUM_AXIS_DATA_LIN1000] =
+{
+    "", "100Hz", "200Hz", "300Hz", "400Hz", "500Hz", "600Hz",
+    "700Hz", "800Hz", "900Hz", "1KHz", ""
+};
+const BL_FLOAT freqsLin1000[NUM_AXIS_DATA_LIN1000] =
+{
+    0.0, 100.0, 200.0, 300.0, 400.0, 500.0, 600.0, 700.0, 800.0,
+    900.0, 1000.0, 1100.0
+};
+
+// From 1Hz to 500Hz
+#define NUM_AXIS_DATA_LIN500 12
+const char *labelsLin500[NUM_AXIS_DATA_LIN500] =
+{
+    "", "50Hz", "100Hz", "150Hz", "200Hz", "250Hz", "300Hz",
+    "350Hz", "400Hz", "450Hz", "500Hz", ""
+};
+const BL_FLOAT freqsLin500[NUM_AXIS_DATA_LIN500] =
+{
+    0.0, 50.0, 100.0, 150.0, 200.0, 250.0, 300.0, 350.0, 400.0,
+    450.0, 500.0, 550.0
+};
+
+// From 1Hz to 250Hz
+#define NUM_AXIS_DATA_LIN250 15
+const char *labelsLin250[NUM_AXIS_DATA_LIN250] =
+{
+    "", "20Hz", "40Hz", "60Hz", "80Hz", "100Hz", "120Hz",
+    "140Hz", "160Hz", "180Hz", "200Hz", "220Hz", "240Hz", "260Hz", ""
+};
+const BL_FLOAT freqsLin250[NUM_AXIS_DATA_LIN250] =
+{
+    0.0, 20.0, 40.0, 60.0, 80.0, 100.0, 120.0, 140.0, 160.0,
+    180.0, 200.0, 220.0, 240.0, 260.0, 280.0
+};
+
 // From 1Hz to 100Hz
-#define NUM_AXIS_DATA_LIN100 15
+#define NUM_AXIS_DATA_LIN100 12
 const char *labelsLin100[NUM_AXIS_DATA_LIN100] =
 {
-    "", "8Hz", "16Hz", "24Hz", "32Hz", "40Hz", "48Hz",
-    "56Hz", "64Hz", "72Hz", "80Hz", "88Hz", "96Hz", "104Hz", ""
+    "", "10Hz", "20Hz", "30Hz", "40Hz", "50Hz", "60Hz",
+    "70Hz", "80Hz", "90Hz", "100Hz", ""
 };
 const BL_FLOAT freqsLin100[NUM_AXIS_DATA_LIN100] =
 {
-    0.0, 8.0, 16.0, 24.0, 32.0, 40.0, 48.0, 56.0, 64.0,
-    72.0, 80.0, 88.0, 96.0, 104.0, 112.0
-
+    0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0,
+    90.0, 100.0, 110.0
 };
 
 // From 1Hz to 50Hz
-#define NUM_AXIS_DATA_LIN50 15
+#define NUM_AXIS_DATA_LIN50 12
 const char *labelsLin50[NUM_AXIS_DATA_LIN50] =
 {
-    "", "4Hz", "8Hz", "12Hz", "16Hz", "20Hz", "24Hz",
-    "28Hz", "32Hz", "36Hz", "40Hz", "44Hz", "48Hz", "52Hz", ""
+    "", "5Hz", "10Hz", "15Hz", "20Hz", "25Hz", "30Hz",
+    "35Hz", "40Hz", "45Hz", "50Hz", ""
 };
 const BL_FLOAT freqsLin50[NUM_AXIS_DATA_LIN50] =
 {
-    0.0, 4.0, 8.0, 12.0, 16.0, 20.0, 24.0, 28.0, 32.0,
-    36.0, 40.0, 44.0, 48.0, 52.0, 56.0
+    0.0, 5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0, 40.0,
+    45.0, 50.0, 55.0
 };
 
 // From 1Hz to 25Hz
@@ -393,6 +431,18 @@ GraphFreqAxis2::Update()
             UpdateAxis(NUM_AXIS_DATA_LIN100,
                        freqsLin100, labelsLin100,
                        0.0, 112.0);
+        else if (mMaxFreq <= 262.0)
+            UpdateAxis(NUM_AXIS_DATA_LIN250,
+                       freqsLin250, labelsLin250,
+                       0.0, 262.0);
+        else if (mMaxFreq <= 524.0)
+            UpdateAxis(NUM_AXIS_DATA_LIN500,
+                       freqsLin500, labelsLin500,
+                       0.0, 524.0);
+        else if (mMaxFreq <= 1048.0)
+            UpdateAxis(NUM_AXIS_DATA_LIN1000,
+                       freqsLin1000, labelsLin1000,
+                       0.0, 1048.0);
     }
 }
 
