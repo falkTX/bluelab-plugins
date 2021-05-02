@@ -10,7 +10,7 @@
 
 #include <BLSpectrogram4.h>
 #include <SpectrogramDisplay.h>
-#include <SpectrogramDisplayScroll3.h>
+#include <SpectrogramDisplayScroll4.h>
 
 #include <BLUtils.h>
 #include <BLUtilsComp.h>
@@ -177,7 +177,8 @@ InfrasonicViewerFftObj2::GetSpectrogram()
 
 #if USE_SPECTRO_SCROLL
 void
-InfrasonicViewerFftObj2::SetSpectrogramDisplay(SpectrogramDisplayScroll3 *spectroDisplay)
+InfrasonicViewerFftObj2::
+SetSpectrogramDisplay(SpectrogramDisplayScroll4 *spectroDisplay)
 {
     mSpectroDisplay = spectroDisplay;
 }

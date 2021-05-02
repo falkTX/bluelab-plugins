@@ -414,8 +414,8 @@ RebalanceProcessFftObjComp4::ApplySoftMasking(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioD
     //
     // This is a hack, but it works well! :)
     //
-    BLUtils::MultValues(&mask, 1.0/4.0);
-    BLUtils::MultValues(ioData, 4.0);
+    BLUtils::MultValues(&mask, (BL_FLOAT)(1.0/4.0));
+    BLUtils::MultValues(ioData, (BL_FLOAT)4.0);
 #endif
     
     mSoftMasking->ProcessCentered(ioData, mask, &softMaskedResult);
@@ -429,7 +429,7 @@ RebalanceProcessFftObjComp4::ApplySoftMasking(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioD
     //
     // NOTE: this makes the plugin transparent when all is at 100%
     //
-    BLUtils::MultValues(&softMaskedResult, 10.0/4.0);
+    BLUtils::MultValues(&softMaskedResult, (BL_FLOAT)(10.0/4.0));
 #endif
     
     // Result
