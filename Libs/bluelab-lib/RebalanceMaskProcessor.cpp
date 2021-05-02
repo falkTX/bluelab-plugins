@@ -187,6 +187,13 @@ void
 RebalanceMaskProcessor::
 ApplyMasksContrast(WDL_TypedBuf<BL_FLOAT> masks[NUM_STEM_SOURCES])
 {
+    // Consumes too much (and probably not useful)
+    return;
+
+    /// TODO: re-write ApplyMasksContrast, to avoid sorting and maybe pow
+    //(use simple sigmoid over all the masks?)
+    // And maybe rename to "contrast"
+    
     vector<MaskContrastStruct> &mc = mTmpBuf1;
     mc.resize(NUM_STEM_SOURCES);
     
