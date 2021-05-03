@@ -42,7 +42,9 @@ public:
     virtual ~IGUIResizeButtonControl();
     
     virtual void OnMouseDown(float x, float y, const IMouseMod &mMod) override;
-    
+
+    virtual void OnMouseUp(float x, float y, const IMouseMod& mod) override;
+        
     // Disable double click
     // It was not consistent to use double click on a series of gui resize buttons
     // And made a bug: no button hilighted, and if we reclicked, no graph anymore

@@ -47,6 +47,11 @@ IGUIResizeButtonControl::OnMouseDown(float x, float y, const IMouseMod &mod)
         ((IMouseMod &)mod).A = false;
     
     double prevValue = GetValue();
+
+    // Do nothing if the button is already toggled on
+    // (otherwise, it would deactive the button)
+    if (prevValue > 0.5)
+        return;
     
     IRolloverButtonControl::OnMouseDown(x, y, mod);
 
@@ -59,4 +64,17 @@ IGUIResizeButtonControl::OnMouseDown(float x, float y, const IMouseMod &mod)
         mPlug->ApplyGUIResize(mGuiSizeIdx);
     }
 #endif
+}
+
+void
+IGUIResizeButtonControl::OnMouseUp(float x, float y, const IMouseMod& mod)
+{
+    double prevValue = GetValue();
+
+    // Do nothing if the button is already toggled on
+    // (otherwise, it would deactive the button)
+    if (prevValue > 0.5)
+        return;
+
+    IRolloverButtonControl::OnMouseUp(x, y, mod);
 }
