@@ -2021,7 +2021,7 @@ bool
 FftProcessObj16::Process(const vector<WDL_TypedBuf<BL_FLOAT> > &inputs,
                          const vector<WDL_TypedBuf<BL_FLOAT> > &scInputs,
                          vector<WDL_TypedBuf<BL_FLOAT> > *outputs)
-{
+{    
     vector<WDL_TypedBuf<BL_FLOAT> > &inputs0 = mTmpBuf20;
     if (inputs.size() > 0)
         inputs0 = inputs;

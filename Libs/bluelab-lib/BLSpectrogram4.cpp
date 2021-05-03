@@ -246,6 +246,8 @@ BLSpectrogram4::Reset(BL_FLOAT sampleRate, int height, int maxCols)
     }
     
     ResetQueues();
+
+    mTotalLineNum = 0; // NEW
     
 #if OPTIM_SPECTROGRAM2
     mSpectroDataChanged = true;
@@ -744,7 +746,8 @@ BLSpectrogram4::ImageToSpectrogram(BL_FLOAT sampleRate,
             }
             else
             {
-                PPMFile::PPMPixel16 pix = image->data16[i + (image->h - j - 1)*image->w];
+                PPMFile::PPMPixel16 pix =
+                    image->data16[i + (image->h - j - 1)*image->w];
                 magnColor = pix.red;
                 phaseColor = pix.green;
             }

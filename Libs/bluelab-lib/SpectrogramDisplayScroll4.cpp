@@ -226,14 +226,14 @@ SpectrogramDisplayScroll4::DoUpdateSpectrogram()
 
 void
 SpectrogramDisplayScroll4::PreDraw(NVGcontext *vg, int width, int height)
-{   
+{
     mVg = vg;
     
     BL_FLOAT offsetSec = GetOffsetSec();
     mPrevOffsetSec = offsetSec;
     
     BL_FLOAT offsetPixels = SecsToPixels(offsetSec, width);
-
+    
     //
     DoUpdateSpectrogram();
 
@@ -272,10 +272,9 @@ SpectrogramDisplayScroll4::PreDraw(NVGcontext *vg, int width, int height)
     BL_FLOAT leftDelayPix = SecsToPixels(mDelayTimeSecLeft, width);
     BL_FLOAT rightDelayPix = SecsToPixels(mDelayTimeSecRight, width);
     BL_FLOAT scale = ((BL_FLOAT)(width + leftDelayPix + rightDelayPix))/width;
-
+        
     nvgTranslate(mVg, -leftDelayPix, 1.0);
     nvgScale(mVg, scale, 1.0);
-
     
     nvgBeginPath(mVg);
     nvgRect(mVg,
@@ -356,8 +355,6 @@ SpectrogramDisplayScroll4::SetFftParams(int bufferSize,
                                         int overlapping,
                                         BL_FLOAT sampleRate)
 {
-    bool overlappingChanged = (overlapping != mOverlapping);
-    
     mBufferSize = bufferSize; 
     mOverlapping = overlapping;
     mSampleRate = sampleRate;
@@ -458,7 +455,7 @@ SpectrogramDisplayScroll4::RecomputeParams()
     
     mSpectroLineDurationSec =
         mSpeedMod*((double)mBufferSize/mOverlapping)/mSampleRate;
-
+    
     mSpectroTotalDurationSec = spectroNumCols*mSpectroLineDurationSec;
 
     mDelayTimeSecRight = mSpectroTotalDurationSec*mDelayPercent*0.01;

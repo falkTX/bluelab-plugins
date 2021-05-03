@@ -59,9 +59,10 @@ InfrasonicViewerFftObj2::~InfrasonicViewerFftObj2()
 }
 
 void
-InfrasonicViewerFftObj2::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer0,
-                                          const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer)
-{
+InfrasonicViewerFftObj2::
+ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer0,
+                 const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer)
+{    
     //BLUtils::TakeHalf(ioBuffer);
     WDL_TypedBuf<WDL_FFT_COMPLEX> &ioBuffer = mTmpBuf0;
     BLUtils::TakeHalf(*ioBuffer0, &ioBuffer);
@@ -87,7 +88,7 @@ InfrasonicViewerFftObj2::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffe
 #if 0 // ORIGIN
 void
 InfrasonicViewerFftObj2::Reset(int bufferSize, int oversampling,
-                              int freqRes, BL_FLOAT sampleRate)
+                               int freqRes, BL_FLOAT sampleRate)
 {
     ProcessObj::Reset(bufferSize, oversampling, freqRes, sampleRate);
     
@@ -140,9 +141,11 @@ InfrasonicViewerFftObj2::Reset(int bufferSize, int oversampling,
 #if 1 // NEW
 void
 InfrasonicViewerFftObj2::Reset(int bufferSize, int oversampling,
-                              int freqRes, BL_FLOAT sampleRate,
-                              BL_FLOAT timeWindowSec)
+                               int freqRes, BL_FLOAT sampleRate,
+                               BL_FLOAT timeWindowSec)
 {
+    mTimeWindowSec = timeWindowSec;
+    
     ProcessObj::Reset(bufferSize, oversampling, freqRes, sampleRate);
     
     int lastBin = ComputeLastBin(mMaxFreq);
@@ -289,10 +292,8 @@ InfrasonicViewerFftObj2::SelectSubSonic(const WDL_TypedBuf<BL_FLOAT> &inMagns,
                                         WDL_TypedBuf<BL_FLOAT> *outMagns,
                                         WDL_TypedBuf<BL_FLOAT> *outPhases)
 {
-    // 100 Hz max
+    // 100 Hz max (??)
     int lastBin = ComputeLastBin(mMaxFreq);
-    
-    //fprintf(stderr, "last bin: %d\n", lastBin);
     
     outMagns->Resize(lastBin);
     outPhases->Resize(lastBin);

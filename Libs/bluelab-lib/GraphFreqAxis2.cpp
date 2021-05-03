@@ -375,7 +375,7 @@ GraphFreqAxis2::Update()
     // Just in case
     if (mGraphAxis == NULL)
         return;
-
+            
     if (mMaxFreq < 0.0)
     {
         BL_FLOAT minHzValue;
