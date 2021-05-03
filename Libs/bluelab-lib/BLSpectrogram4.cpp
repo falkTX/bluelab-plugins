@@ -1189,6 +1189,8 @@ BLSpectrogram4::ResetQueues()
         mPhases.resize(mMaxCols);
         mUnwrappedPhases.resize(mMaxCols);
 
+        // No need to call SetFixedSize(true), because resize() does it already
+        
         // Set zero value
         WDL_TypedBuf<BL_FLOAT> zeroLine;
         zeroLine.Resize(mHeight);

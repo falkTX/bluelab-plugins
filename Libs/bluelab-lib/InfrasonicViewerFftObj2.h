@@ -58,7 +58,8 @@ protected:
                         WDL_TypedBuf<BL_FLOAT> *outPhases);
 
     int ComputeLastBin(BL_FLOAT freq);
-    
+
+    //
     BLSpectrogram4 *mSpectrogram;
     
 #if USE_SPECTRO_SCROLL

@@ -62,8 +62,6 @@ public:
     int GetMaxNumCols();
     int GetNumCols();
     int GetHeight();
-
-    void SetFixedSize(bool flag);
     
     void SetColorMap(ColorMapFactory::ColorMap colorMapId);
     
@@ -109,6 +107,8 @@ public:
     BL_FLOAT NormYToFreq(BL_FLOAT normY);
     
 protected:
+    void SetFixedSize(bool flag);
+    
     void UnwrapAllPhases(const bl_queue<WDL_TypedBuf<BL_FLOAT> > &inPhases,
                          vector<WDL_TypedBuf<BL_FLOAT> > *outPhases,
                          bool hozirontal, bool vertical);

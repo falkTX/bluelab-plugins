@@ -42,7 +42,7 @@ SpectrogramDisplayScroll4::SpectrogramDisplayScroll4(Plugin *plug,
     
     mBufferSize = 2048;
     mSampleRate = 44100.0;
-    mOverlapping = 0;
+    mOverlapping = 4; //0;
     
     // Variable speed
     mSpeedMod = 1;
@@ -321,6 +321,9 @@ SpectrogramDisplayScroll4::SetSpectrogram(BLSpectrogram4 *spectro,
                                           BL_FLOAT left, BL_FLOAT top,
                                           BL_FLOAT right, BL_FLOAT bottom)
 {
+    // Just in case
+    mSpectroImageData.Resize(0);
+    
     mSpectrogram = spectro;
     
     // Must "shift" the left of the spectrogram,
@@ -450,14 +453,14 @@ SpectrogramDisplayScroll4::RecomputeParams()
 {
     if (mSpectrogram == NULL)
         return;
-
+    
     int spectroNumCols = mSpectrogram->GetNumCols();
     
     mSpectroLineDurationSec =
         mSpeedMod*((double)mBufferSize/mOverlapping)/mSampleRate;
     
     mSpectroTotalDurationSec = spectroNumCols*mSpectroLineDurationSec;
-
+    
     mDelayTimeSecRight = mSpectroTotalDurationSec*mDelayPercent*0.01;
     // 1 single row => sometimes fails... (in debug only?)
     //mDelayTimeSecLeft = mSpectroLineDurationSec;
