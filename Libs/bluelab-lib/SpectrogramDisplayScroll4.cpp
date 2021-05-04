@@ -470,6 +470,34 @@ SpectrogramDisplayScroll4::RecomputeParams()
     // HACK! So we are sure to avoid black line on the right
     // (and not to have too much delay when speed is slow)
     mDelayTimeSecRight *= 4.0/mSpeedMod;
+
+#if 1
+    // Ensure that the delay corresponds to enough spectro lines
+    // (otherwise we would see black lines)
+    BL_FLOAT delayNumColsL =
+        (mDelayTimeSecLeft/mSpectroTotalDurationSec)*spectroNumCols;
+    BL_FLOAT delayNumColsR =
+        (mDelayTimeSecRight/mSpectroTotalDurationSec)*spectroNumCols;
+
+    const BL_FLOAT minNumLinesL = 2.0;
+    const BL_FLOAT minNumLinesR = 2.0;
+
+#if 1 // Also adjust the left channel?
+      // => Set to 1 to fix a bug: InfraViewer: set freq accuracy to max,
+      // then resize gui => black column on the left
+    if (delayNumColsL < minNumLinesL)
+    {
+        if (delayNumColsL > 0.0)
+            mDelayTimeSecLeft *= minNumLinesL/delayNumColsL;
+    }
+#endif
+    
+    if (delayNumColsR < minNumLinesR)
+    {
+        if (delayNumColsR > 0.0)
+            mDelayTimeSecRight *= minNumLinesR/delayNumColsR;
+    }
+#endif
     
     mSpectroTimeSec = 0.0;
     mPrevOffsetSec = 0.0;
