@@ -66,7 +66,8 @@ ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer0,
     //BLUtils::TakeHalf(ioBuffer);
     WDL_TypedBuf<WDL_FFT_COMPLEX> &ioBuffer = mTmpBuf0;
     BLUtils::TakeHalf(*ioBuffer0, &ioBuffer);
-    
+
+#if 0 // ORIGIN
     WDL_TypedBuf<BL_FLOAT> &magns0 = mTmpBuf1;
     WDL_TypedBuf<BL_FLOAT> &phases0 = mTmpBuf2;
     BLUtilsComp::ComplexToMagnPhase(&magns0, &phases0, ioBuffer);
@@ -75,6 +76,17 @@ ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer0,
     WDL_TypedBuf<BL_FLOAT> &phases = mTmpBuf6;
     
     SelectSubSonic(magns0, phases0, &magns, &phases);
+#endif
+
+#if 1 // OPTIM
+      // Reduce the number of data before computing magns and phases
+    WDL_TypedBuf<WDL_FFT_COMPLEX> &ioBuffer1 = mTmpBuf7;
+    SelectSubSonic(ioBuffer, &ioBuffer1);
+
+    WDL_TypedBuf<BL_FLOAT> &magns = mTmpBuf8;
+    WDL_TypedBuf<BL_FLOAT> &phases = mTmpBuf9;
+    BLUtilsComp::ComplexToMagnPhase(&magns, &phases, ioBuffer1);
+#endif
     
     AddSpectrogramLine(magns, phases);
     
@@ -300,6 +312,18 @@ InfrasonicViewerFftObj2::SelectSubSonic(const WDL_TypedBuf<BL_FLOAT> &inMagns,
 
     BLUtils::SetBuf(outMagns, inMagns);
     BLUtils::SetBuf(outPhases, inPhases);
+}
+
+void
+InfrasonicViewerFftObj2::SelectSubSonic(const WDL_TypedBuf<WDL_FFT_COMPLEX> &inData,
+                                        WDL_TypedBuf<WDL_FFT_COMPLEX> *outData)
+{
+    // 100 Hz max (??)
+    int lastBin = ComputeLastBin(mMaxFreq);
+    
+    outData->Resize(lastBin);
+
+    BLUtils::SetBuf(outData, inData);
 }
 
 int

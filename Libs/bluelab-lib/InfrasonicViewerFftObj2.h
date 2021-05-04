@@ -56,7 +56,9 @@ protected:
                         const WDL_TypedBuf<BL_FLOAT> &inPhases,
                         WDL_TypedBuf<BL_FLOAT> *outMagns,
                         WDL_TypedBuf<BL_FLOAT> *outPhases);
-
+    void SelectSubSonic(const WDL_TypedBuf<WDL_FFT_COMPLEX> &inData,
+                        WDL_TypedBuf<WDL_FFT_COMPLEX> *outData);
+    
     int ComputeLastBin(BL_FLOAT freq);
 
     //
@@ -86,6 +88,9 @@ private:
     WDL_TypedBuf<BL_FLOAT> mTmpBuf4;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf5;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf6;
+    WDL_TypedBuf<WDL_FFT_COMPLEX> mTmpBuf7;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf8;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf9;
 };
 
 #endif /* defined(__BL_GhostViewer__InfrasonicViewerFftObj2__) */
