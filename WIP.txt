@@ -16,7 +16,7 @@ BL-Impulses	    :   features+, optim, mem, bugs, LockFree(lgacy)
 BL-Infra	    :   features+, optim, mem, bugs, LockFree
 BL-InfrasonicViewer :   features+, optim, mem, bugs, LockFree
 BL-InfraSynth	    :
-BL-LoFi		    :
+BL-LoFi		    :            , optim, mem, bugs, LockFree
 BL-OnsetDetect	    :
 BL-Panogram	    :
 BL-PitchShift	    :

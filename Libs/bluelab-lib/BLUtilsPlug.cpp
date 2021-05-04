@@ -884,6 +884,9 @@ BLUtilsPlug::ApplyGain(const vector<WDL_TypedBuf<BL_FLOAT> > &in,
 {
     if (in.empty())
         return;
+
+    if (smoother == NULL)
+        return;
     
     for (int i = 0; i < in[0].GetSize(); i++)
     {
