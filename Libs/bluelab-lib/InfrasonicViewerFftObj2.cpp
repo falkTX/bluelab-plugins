@@ -91,10 +91,12 @@ ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer0,
     AddSpectrogramLine(magns, phases);
     
     mLineCount++;
-    
+
+#if 0 // No need, we don't modify the sound
     //BLUtils::ResizeFillZeros(ioBuffer, ioBuffer->GetSize()*2);
     BLUtils::SetBuf(ioBuffer0, ioBuffer);
     BLUtilsFft::FillSecondFftHalf(ioBuffer0);
+#endif
 }
 
 #if 0 // ORIGIN
