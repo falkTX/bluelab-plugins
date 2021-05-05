@@ -15,7 +15,7 @@
 
 #include <PlaySelectPluginInterface.h>
 
-class SpectrogramDisplayScroll3;
+class SpectrogramDisplayScroll4;
 class PanogramCustomControl : public GraphCustomControl
 {
 public:
@@ -28,7 +28,7 @@ public:
     void Resize(int prevWidth, int prevHeight,
                 int newWidth, int newHeight);
     
-    void SetSpectrogramDisplay(SpectrogramDisplayScroll3 *spectroDisplay);
+    void SetSpectrogramDisplay(SpectrogramDisplayScroll4 *spectroDisplay);
     
     virtual void OnMouseDown(float x, float y, const IMouseMod &mod);
     virtual void OnMouseUp(float x, float y, const IMouseMod &mod);
@@ -64,7 +64,7 @@ protected:
     
     bool mBorderSelected[4];
     
-    SpectrogramDisplayScroll3 *mSpectroDisplay;
+    SpectrogramDisplayScroll4 *mSpectroDisplay;
     
     // Detect if we actually made the mouse down insde the spectrogram
     // (FIXES: mouse up on resize button to a bigger size, and then the mouse up

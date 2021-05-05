@@ -9,7 +9,7 @@
 #ifdef IGRAPHICS_NANOVG
 
 //#include <Panogram.h>
-#include <SpectrogramDisplayScroll3.h>
+#include <SpectrogramDisplayScroll4.h>
 
 #include "PanogramCustomControl.h"
 
@@ -67,7 +67,8 @@ PanogramCustomControl::Resize(int prevWidth, int prevHeight,
 }
 
 void
-PanogramCustomControl::SetSpectrogramDisplay(SpectrogramDisplayScroll3 *spectroDisplay)
+PanogramCustomControl::
+SetSpectrogramDisplay(SpectrogramDisplayScroll4 *spectroDisplay)
 {
     mSpectroDisplay = spectroDisplay;
 }

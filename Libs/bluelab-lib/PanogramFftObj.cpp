@@ -10,7 +10,7 @@
 
 #include <BLSpectrogram4.h>
 #include <Window.h>
-#include <SpectrogramDisplayScroll3.h>
+#include <SpectrogramDisplayScroll4.h>
 #include <PanogramPlayFftObj.h>
 
 #include <BLUtils.h>
@@ -67,8 +67,9 @@ PanogramFftObj::~PanogramFftObj()
 }
 
 void
-PanogramFftObj::ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamples,
-                                const vector<WDL_TypedBuf<WDL_FFT_COMPLEX> > *scBuffer)
+PanogramFftObj::
+ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamples,
+                const vector<WDL_TypedBuf<WDL_FFT_COMPLEX> > *scBuffer)
 {
     if (ioFftSamples->size() != 2)
         return;
@@ -155,7 +156,7 @@ PanogramFftObj::GetSpectrogram()
 }
 
 void
-PanogramFftObj::SetSpectrogramDisplay(SpectrogramDisplayScroll3 *spectroDisplay)
+PanogramFftObj::SetSpectrogramDisplay(SpectrogramDisplayScroll4 *spectroDisplay)
 {
     mSpectroDisplay = spectroDisplay;
 }
