@@ -56,6 +56,8 @@ SpectrogramDisplayScroll4::SpectrogramDisplayScroll4(Plugin *plug,
 
     mDelayTimeSecLeft = 0.0;
     mDelayTimeSecRight = 0.0;
+
+    mViewOrientation = HORIZONTAL;
     
     RecomputeParams();
 
@@ -260,7 +262,7 @@ SpectrogramDisplayScroll4::PreDraw(NVGcontext *vg, int width, int height)
     // Spectrogram image
     //
     
-    // Display the rightmost par in case of zoom
+    // Display the rightmost part in case of zoom
     BL_FLOAT alpha = 1.0;
     NVGpaint imgPaint =
         nvgImagePattern(mVg,
@@ -277,23 +279,55 @@ SpectrogramDisplayScroll4::PreDraw(NVGcontext *vg, int width, int height)
     // the spectrogram won't be displayed.
 
 
-    // Scale and translate the spectrogram image
-    // in order to hide the borders (that are blinking black as data arrives)
-    BL_FLOAT leftDelayPix = SecsToPixels(mDelayTimeSecLeft, width);
-    BL_FLOAT rightDelayPix = SecsToPixels(mDelayTimeSecRight, width);
-    BL_FLOAT scale = ((BL_FLOAT)(width + leftDelayPix + rightDelayPix))/width;
+    if (mViewOrientation == HORIZONTAL)
+    {
+        // Scale and translate the spectrogram image
+        // in order to hide the borders (that are blinking black as data arrives)
+        BL_FLOAT leftDelayPix = SecsToPixels(mDelayTimeSecLeft, width);
+        BL_FLOAT rightDelayPix = SecsToPixels(mDelayTimeSecRight, width);
+        BL_FLOAT scale = ((BL_FLOAT)(width + leftDelayPix + rightDelayPix))/width;
         
-    nvgTranslate(mVg, -leftDelayPix, 1.0);
-    nvgScale(mVg, scale, 1.0);
-    
-    nvgBeginPath(mVg);
-    nvgRect(mVg,
-            mSpectrogramBounds[0]*width + offsetPixels,
-            b1f,
-            (mSpectrogramBounds[2] - mSpectrogramBounds[0])*width, b3f);
-    
-    nvgFillPaint(mVg, imgPaint);
-    nvgFill(mVg);
+        nvgTranslate(mVg, -leftDelayPix, 1.0);
+        nvgScale(mVg, scale, 1.0);
+        
+        nvgBeginPath(mVg);
+        nvgRect(mVg,
+                mSpectrogramBounds[0]*width + offsetPixels,
+                b1f,
+                (mSpectrogramBounds[2] - mSpectrogramBounds[0])*width, b3f);
+        
+        nvgFillPaint(mVg, imgPaint);
+        nvgFill(mVg);
+    }
+    else
+    {
+        // Scale and translate the spectrogram image
+        // in order to hide the borders (that are blinking black as data arrives)
+        BL_FLOAT leftDelayPix = SecsToPixels(mDelayTimeSecLeft, height);
+        BL_FLOAT rightDelayPix = SecsToPixels(mDelayTimeSecRight, height);
+        BL_FLOAT scale = ((BL_FLOAT)(height + leftDelayPix + rightDelayPix))/height;
+        
+        nvgTranslate(mVg, width*0.5, height*0.5);
+        nvgRotate(mVg, -M_PI*0.5);
+        nvgTranslate(mVg, -width*0.5, -height*0.5);
+
+        BL_FLOAT coeff = ((BL_FLOAT)width)/height;
+        nvgTranslate(mVg, width*0.5, height*0.5);
+        nvgScale(mVg, 1.0/coeff, coeff);
+        nvgTranslate(mVg, -width*0.5, -height*0.5);
+        
+        nvgTranslate(mVg, -leftDelayPix, 1.0);
+        nvgScale(mVg, scale, 1.0);
+        
+        nvgBeginPath(mVg);
+        nvgRect(mVg,
+                mSpectrogramBounds[0]*width + offsetPixels,
+                b1f,
+                (mSpectrogramBounds[2] - mSpectrogramBounds[0])*width, b3f);
+        
+        nvgFillPaint(mVg, imgPaint);
+        nvgFill(mVg);
+    }
     
     nvgRestore(mVg);
 }
@@ -467,6 +501,12 @@ SpectrogramDisplayScroll4::GetTimeBoundsNorm(BL_FLOAT *tn0, BL_FLOAT *tn1)
     *tn0 = (mDelayTimeSecLeft - offsetSec)/mSpectroTotalDurationSec;
     *tn1 = (mSpectroTotalDurationSec - mDelayTimeSecRight - offsetSec)/
         mSpectroTotalDurationSec;
+}
+
+void
+SpectrogramDisplayScroll4::SetViewOrientation(ViewOrientation orientation)
+{
+    mViewOrientation = orientation;
 }
 
 void

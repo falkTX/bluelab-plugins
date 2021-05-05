@@ -42,6 +42,12 @@ class SpectrogramDisplayScroll4 : public GraphCustomDrawer,
                                   public TransportListener
 {
 public:
+    enum ViewOrientation
+    {
+        HORIZONTAL = 0,
+        VERTICAL
+    };
+    
     // delayPercent: delay that we bufferize, to fix when the data is a bit late
     // It is a percent of the spectrogram full width
     SpectrogramDisplayScroll4(Plugin *plug, BL_FLOAT delayPercent = 3.125/*25.0*/);
@@ -96,7 +102,9 @@ public:
     void GetTimeTransform(BL_FLOAT *timeOffsetSec, BL_FLOAT *timeScale);
 
     void GetTimeBoundsNorm(BL_FLOAT *tn0, BL_FLOAT *tn1);
-        
+
+    void SetViewOrientation(ViewOrientation orientation);
+                            
 protected:
     BL_FLOAT GetOffsetSec();
 
@@ -152,6 +160,8 @@ protected:
 
     BL_FLOAT mPrevOffsetSec;
 
+    ViewOrientation mViewOrientation;
+    
     // Lock free
     struct SpectrogramLine
     {
