@@ -21,7 +21,8 @@
 
 
 PanogramCustomDrawer::PanogramCustomDrawer(Plugin *plug,
-                                           BL_FLOAT x0, BL_FLOAT y0, BL_FLOAT x1, BL_FLOAT y1,
+                                           BL_FLOAT x0, BL_FLOAT y0,
+                                           BL_FLOAT x1, BL_FLOAT y1,
                                            State *state)
 {
     mState = state;
@@ -212,7 +213,8 @@ PanogramCustomDrawer::DrawBar(NVGcontext *vg, int width, int height)
         nvgStrokeWidth(vg, strokeWidths[i]);
         
         SWAP_COLOR(colors[i]);
-        nvgStrokeColor(vg, nvgRGBA(colors[i][0], colors[i][1], colors[i][2], colors[i][3]));
+        nvgStrokeColor(vg, nvgRGBA(colors[i][0], colors[i][1],
+                                   colors[i][2], colors[i][3]));
         
         // Draw the circle
         nvgBeginPath(vg);
@@ -250,7 +252,8 @@ PanogramCustomDrawer::DrawSelection(NVGcontext *vg, int width, int height)
         nvgStrokeWidth(vg, strokeWidths[i]);
         
         SWAP_COLOR(colors[i]);
-        nvgStrokeColor(vg, nvgRGBA(colors[i][0], colors[i][1], colors[i][2], colors[i][3]));
+        nvgStrokeColor(vg, nvgRGBA(colors[i][0], colors[i][1],
+                                   colors[i][2], colors[i][3]));
         
         // Draw the circle
         nvgBeginPath(vg);
@@ -291,7 +294,8 @@ PanogramCustomDrawer::DrawPlayBar(NVGcontext *vg, int width, int height)
         nvgStrokeWidth(vg, strokeWidths[i]);
         
         SWAP_COLOR(colors[i]);
-        nvgStrokeColor(vg, nvgRGBA(colors[i][0], colors[i][1], colors[i][2], colors[i][3]));
+        nvgStrokeColor(vg, nvgRGBA(colors[i][0], colors[i][1],
+                                   colors[i][2], colors[i][3]));
         
         // Draw the bar
         nvgBeginPath(vg);

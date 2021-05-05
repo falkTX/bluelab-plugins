@@ -13,7 +13,10 @@
 #include "PanogramGraphDrawer.h"
 
 
-PanogramGraphDrawer::PanogramGraphDrawer() {}
+PanogramGraphDrawer::PanogramGraphDrawer()
+{
+    mViewOrientation = HORIZONTAL;
+}
 
 PanogramGraphDrawer::~PanogramGraphDrawer() {}
 
@@ -32,24 +35,44 @@ PanogramGraphDrawer::PostDraw(NVGcontext *vg, int width, int height)
         nvgStrokeWidth(vg, strokeWidths[i]);
         
         SWAP_COLOR(colors[i]);
-        nvgStrokeColor(vg, nvgRGBA(colors[i][0], colors[i][1], colors[i][2], colors[i][3]));
+        nvgStrokeColor(vg, nvgRGBA(colors[i][0], colors[i][1],
+                                   colors[i][2], colors[i][3]));
         
-        // Draw the circle
         nvgBeginPath(vg);
-        
-        // Draw the line
-        BL_FLOAT y = 0.5;
-        
-        BL_FLOAT yf = y*height;
+
+        if (mViewOrientation == HORIZONTAL)
+        {
+            // Draw the line
+            BL_FLOAT y = 0.5;
+            
+            BL_FLOAT yf = y*height;
 #if GRAPH_CONTROL_FLIP_Y
-        yf = height - yf;
+            yf = height - yf;
 #endif
-        
-        nvgMoveTo(vg, 0.0*width, yf);
-        nvgLineTo(vg, 1.0*width, yf);
+            
+            nvgMoveTo(vg, 0.0*width, yf);
+            nvgLineTo(vg, 1.0*width, yf);
+        }
+        else
+        {
+            // Draw the line
+            BL_FLOAT x = 0.5;
+            
+            BL_FLOAT xf = x*width;
+            
+            nvgMoveTo(vg, xf, 0.0*height);
+            nvgLineTo(vg, xf, 1.0*height);
+        }
         
         nvgStroke(vg);
     }
 }
+
+void
+PanogramGraphDrawer::SetViewOrientation(ViewOrientation orientation)
+{
+    mViewOrientation = orientation;
+}
+
 
 #endif // IGRAPHICS_NANOVG

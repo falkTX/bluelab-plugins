@@ -16,6 +16,12 @@
 class PanogramGraphDrawer : public GraphCustomDrawer
 {
 public:
+    enum ViewOrientation
+    {
+        HORIZONTAL = 0,
+        VERTICAL
+    };
+    
     PanogramGraphDrawer();
     
     virtual ~PanogramGraphDrawer();
@@ -25,6 +31,11 @@ public:
     
     // Draw after everything
     void PostDraw(NVGcontext *vg, int width, int height);
+
+    void SetViewOrientation(ViewOrientation orientation);
+
+protected:
+    ViewOrientation mViewOrientation;
 };
 
 #endif // IGRAPHICS_NANOVG
