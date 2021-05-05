@@ -320,6 +320,11 @@ protected:
 
     void CheckCustomDrawersRedraw();
 
+    // For Panogram, when rotating the view by M_PI/2
+    void ApplyViewOrientation(int width, int height,
+                              const GraphAxis2 &axis,
+                              BL_FLOAT *x, BL_FLOAT *y,
+                              int *labelHAlign = NULL);
     
     //
     

@@ -64,6 +64,9 @@ GraphAxis2::GraphAxis2()
     mOffsetPixels = 0.0;
 
     mAlignBorderLabels = true;
+
+    mViewOrientation = HORIZONTAL;
+    mForceLabelHAlign = -1;
 }
 
 GraphAxis2::~GraphAxis2()
@@ -205,6 +208,18 @@ void
 GraphAxis2::SetAlignToScreenPixels(bool flag)
 {
     mAlignToScreenPixels = flag;
+}
+
+void
+GraphAxis2::SetViewOrientation(ViewOrientation orientation)
+{
+    mViewOrientation = orientation;
+}
+
+void
+GraphAxis2::SetForceLabelHAlign(int align)
+{
+    mForceLabelHAlign = align;
 }
 
 void

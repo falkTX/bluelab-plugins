@@ -22,6 +22,12 @@ class GraphControl12;
 class GraphAxis2
 {
 public:
+    enum ViewOrientation
+    {
+        HORIZONTAL = 0,
+        VERTICAL
+    };
+    
     GraphAxis2();
     
     virtual ~GraphAxis2();
@@ -60,6 +66,12 @@ public:
 
     // Align the first and last labels to the borders of the graph?
     void SetAlignBorderLabels(bool flag);
+
+    // View orientation (for Panogram)
+    void SetViewOrientation(ViewOrientation orientation);
+    
+    // Set to -1 to not force (and keep th default)
+    void SetForceLabelHAlign(int align);
     
 protected:
     friend class GraphControl12;
@@ -125,6 +137,11 @@ protected:
     BL_FLOAT mOffsetPixels;
 
     bool mAlignBorderLabels;
+
+    ViewOrientation mViewOrientation;
+    // Hack, for aligning after Panogram view rotation
+    // Set to -1 to ignore
+    int mForceLabelHAlign;
 };
 
 #endif
