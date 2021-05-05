@@ -58,6 +58,8 @@ SpectrogramDisplayScroll4::SpectrogramDisplayScroll4(Plugin *plug,
     mDelayTimeSecRight = 0.0;
 
     mViewOrientation = HORIZONTAL;
+
+    mIsBypassed = false;
     
     RecomputeParams();
 
@@ -117,6 +119,10 @@ SpectrogramDisplayScroll4::GetOffsetSec()
 #endif
     
     if (mTransport == NULL)
+        return 0.0;
+
+    // FIX: monitor, bypass => black margin the the right
+    if (mIsBypassed)
         return 0.0;
     
     BL_FLOAT currentTimeSec = mTransport->GetTransportElapsedSecTotal();
@@ -507,6 +513,12 @@ void
 SpectrogramDisplayScroll4::SetViewOrientation(ViewOrientation orientation)
 {
     mViewOrientation = orientation;
+}
+
+void
+SpectrogramDisplayScroll4::SetBypassed(bool flag)
+{
+    mIsBypassed = flag;
 }
 
 void

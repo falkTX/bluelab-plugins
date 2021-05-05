@@ -104,7 +104,9 @@ public:
     void GetTimeBoundsNorm(BL_FLOAT *tn0, BL_FLOAT *tn1);
 
     void SetViewOrientation(ViewOrientation orientation);
-                            
+
+    void SetBypassed(bool flag);
+    
 protected:
     BL_FLOAT GetOffsetSec();
 
@@ -161,6 +163,8 @@ protected:
     BL_FLOAT mPrevOffsetSec;
 
     ViewOrientation mViewOrientation;
+
+    bool mIsBypassed;
     
     // Lock free
     struct SpectrogramLine
