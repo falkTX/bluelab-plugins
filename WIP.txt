@@ -1,4 +1,4 @@
-BL-Air		    :	features+, optim, mem, bugs, LockFree
+BL-Air		    :	features+, optim, mem, bugs, LockFree  - TODO: low cut filter
 BL-AutoGain	    :	features+, optim, mem, bugs, LockFree
 BL-Bat		    :
 BL-Chroma	    :	features+, optim, mem, bugs, LockFree

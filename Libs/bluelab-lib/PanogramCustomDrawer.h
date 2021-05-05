@@ -16,6 +16,12 @@
 class PanogramCustomDrawer : public GraphCustomDrawer
 {
 public:
+    enum ViewOrientation
+    {
+        HORIZONTAL = 0,
+        VERTICAL
+    };
+    
     struct State
     {
         bool mBarActive;
@@ -26,6 +32,8 @@ public:
         
         bool mPlayBarActive;
         BL_FLOAT mPlayBarPos;
+
+        ViewOrientation mViewOrientation;
     };
     
     PanogramCustomDrawer(Plugin *plug,
@@ -78,6 +86,8 @@ public:
     
     // Normalized inside selection
     void SetSelPlayBarPos(BL_FLOAT pos);
+
+    void SetViewOrientation(ViewOrientation orientation);
     
 protected:
     void DrawBar(NVGcontext *vg, int width, int height);

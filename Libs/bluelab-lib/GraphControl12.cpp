@@ -20,6 +20,7 @@
 
 #include <BLUtils.h>
 #include <BLUtilsMath.h>
+#include <BLUtilsAlgo.h>
 
 #include <ImageDisplay.h>
 #include <UpTime.h>
@@ -3195,20 +3196,7 @@ GraphControl12::ApplyViewOrientation(int width, int height,
                                      int *labelHAlign)
 {
     if (axis.mViewOrientation == GraphAxis2::VERTICAL)
-    {
-        *x = *x / width;
-        *y = *y / height;
-
-        BL_FLOAT tmp = *x;
-        *x = *y;
-        *y = tmp;
-
-        *x *= width;
-        *y *= height;
-
-        // Flip x
-        *x = width - *x;
-    }
+        BLUtilsAlgo::Rotate90(width, height, x, y, true, false);
 
     if (axis.mForceLabelHAlign >= 0)
         *labelHAlign = axis.mForceLabelHAlign;

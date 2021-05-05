@@ -8,6 +8,8 @@
 
 #ifdef IGRAPHICS_NANOVG
 
+#include <BLUtilsAlgo.h>
+
 #include <GraphControl12.h>
 #include <GraphSwapColor.h>
 
@@ -61,6 +63,8 @@ PanogramCustomDrawer::Reset()
     
     for (int i = 0; i < 4; i++)
         mState->mSelection[i] = 0.0;
+
+    mState->mViewOrientation = HORIZONTAL;
 }
 
 void
@@ -176,6 +180,12 @@ PanogramCustomDrawer::SetPlayBarPos(BL_FLOAT pos, bool activate)
         mState->mPlayBarActive = true;
 }
 
+void
+PanogramCustomDrawer::SetViewOrientation(ViewOrientation orientation)
+{
+    mState->mViewOrientation = orientation;
+}
+
 bool
 PanogramCustomDrawer::IsPlayBarActive()
 {
@@ -228,9 +238,23 @@ PanogramCustomDrawer::DrawBar(NVGcontext *vg, int width, int height)
         b1f = height - b1f;
         b3f = height - b3f;
 #endif
-        
-        nvgMoveTo(vg, x, b1f);
-        nvgLineTo(vg, x, b3f);
+
+        if (mState->mViewOrientation == HORIZONTAL)
+        {
+            nvgMoveTo(vg, x, b1f);
+            nvgLineTo(vg, x, b3f);
+        }
+        else
+        {
+            BL_FLOAT x0 = x;
+            BLUtilsAlgo::Rotate90(width, height, &x0, &b1f, false, true);
+
+            BL_FLOAT x1 = x;
+            BLUtilsAlgo::Rotate90(width, height, &x1, &b3f, false, true);
+
+            nvgMoveTo(vg, x0, b1f);
+            nvgLineTo(vg, x1, b3f);
+        }
         
         nvgStroke(vg);
     }
@@ -266,12 +290,42 @@ PanogramCustomDrawer::DrawSelection(NVGcontext *vg, int width, int height)
 #endif
         
         // Draw the line
-        nvgMoveTo(vg, mState->mSelection[0]*width, s1f);
-        
-        nvgLineTo(vg, mState->mSelection[2]*width, s1f);
-        nvgLineTo(vg, mState->mSelection[2]*width, s3f);
-        nvgLineTo(vg, mState->mSelection[0]*width, s3f);
-        nvgLineTo(vg, mState->mSelection[0]*width, s1f);
+        if (mState->mViewOrientation == HORIZONTAL)
+        {
+            nvgMoveTo(vg, mState->mSelection[0]*width, s1f);
+            
+            nvgLineTo(vg, mState->mSelection[2]*width, s1f);
+            nvgLineTo(vg, mState->mSelection[2]*width, s3f);
+            nvgLineTo(vg, mState->mSelection[0]*width, s3f);
+            nvgLineTo(vg, mState->mSelection[0]*width, s1f);
+        }
+        else
+        {
+            BL_FLOAT x0 = mState->mSelection[0]*width;
+            BL_FLOAT y0 = s1f;
+            BLUtilsAlgo::Rotate90(width, height, &x0, &y0, false, true);
+            nvgMoveTo(vg, x0, y0);
+
+            BL_FLOAT x1 = mState->mSelection[2]*width;
+            BL_FLOAT y1 = s1f;
+            BLUtilsAlgo::Rotate90(width, height, &x1, &y1, false, true);
+            nvgLineTo(vg, x1, y1);
+
+            BL_FLOAT x2 = mState->mSelection[2]*width;
+            BL_FLOAT y2 = s3f;
+            BLUtilsAlgo::Rotate90(width, height, &x2, &y2, false, true);
+            nvgLineTo(vg, x2, y2);
+
+            BL_FLOAT x3 = mState->mSelection[0]*width;
+            BL_FLOAT y3 = s3f;
+            BLUtilsAlgo::Rotate90(width, height, &x3, &y3, false, true);
+            nvgLineTo(vg, x3, y3);
+
+            BL_FLOAT x4 = mState->mSelection[0]*width;
+            BL_FLOAT y4 = s1f;
+            BLUtilsAlgo::Rotate90(width, height, &x4, &y4, false, true);
+            nvgLineTo(vg, x4, y4);
+        }
         
         nvgStroke(vg);
     }
@@ -309,8 +363,23 @@ PanogramCustomDrawer::DrawPlayBar(NVGcontext *vg, int width, int height)
 #endif
         
 #if !CLIP_PLAY_BAR
-        nvgMoveTo(vg, x, (1.0 - mBounds[1])*height);
-        nvgLineTo(vg, x, (1.0 - mBounds[3])*height);
+        if (mState->mViewOrientation == HORIZONTAL)
+        {
+            nvgMoveTo(vg, x, (1.0 - mBounds[1])*height);
+            nvgLineTo(vg, x, (1.0 - mBounds[3])*height);
+        }
+        else
+        {
+            BL_FLOAT x0 = x;
+            BL_FLOAT y0 = (1.0 - mBounds[1])*height;
+            BLUtilsAlgo::Rotate90(width, height, &x0, &y0, false, true);
+            nvgMoveTo(vg, x0, y0);
+
+            BL_FLOAT x1 = x;
+            BL_FLOAT y1 = (1.0 - mBounds[3])*height;
+            BLUtilsAlgo::Rotate90(width, height, &x1, &y1, false, true);
+            nvgLineTo(vg, 1, );
+        }
 #else
         
         BL_GUI_FLOAT b1f = (1.0 - mBounds[1])*height;
@@ -327,13 +396,43 @@ PanogramCustomDrawer::DrawPlayBar(NVGcontext *vg, int width, int height)
         
         if (!mState->mSelectionActive)
         {
-            nvgMoveTo(vg, x, b1f);
-            nvgLineTo(vg, x, b3f);
+            if (mState->mViewOrientation == HORIZONTAL)
+            {
+                nvgMoveTo(vg, x, b1f);
+                nvgLineTo(vg, x, b3f);
+            }
+            else
+            {
+                BL_FLOAT x0 = x;
+                BL_FLOAT y0 = b1f;
+                BLUtilsAlgo::Rotate90(width, height, &x0, &y0, false, true);
+                nvgMoveTo(vg, x0, y0);
+
+                BL_FLOAT x1 = x;
+                BL_FLOAT y1 = b3f;
+                BLUtilsAlgo::Rotate90(width, height, &x1, &y1, false, true);
+                nvgLineTo(vg, x1, y1);
+            }
         }
         else
         {
-            nvgMoveTo(vg, x, s1f);
-            nvgLineTo(vg, x, s3f);
+            if (mState->mViewOrientation == HORIZONTAL)
+            {
+                nvgMoveTo(vg, x, s1f);
+                nvgLineTo(vg, x, s3f);
+            }
+            else
+            {
+                BL_FLOAT x0 = x;
+                BL_FLOAT y0 = s1f;
+                BLUtilsAlgo::Rotate90(width, height, &x0, &y0, false, true);
+                nvgMoveTo(vg, x0, y0);
+
+                BL_FLOAT x1 = x;
+                BL_FLOAT y1 = s3f;
+                BLUtilsAlgo::Rotate90(width, height, &x1, &y1, false, true);
+                nvgLineTo(vg, x1, y1);
+            }
         }
 #endif
         

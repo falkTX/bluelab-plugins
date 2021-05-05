@@ -71,6 +71,8 @@ set(_bluelab-lib_src
   BLUpmixGraphDrawer.h
   BLUtils.cpp
   BLUtils.h
+  BLUtilsAlgo.cpp
+  BLUtilsAlgo.h
   BLUtilsComp.cpp
   BLUtilsComp.h
   BLUtilsDecim.cpp
