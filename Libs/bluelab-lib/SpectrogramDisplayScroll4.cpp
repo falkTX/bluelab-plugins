@@ -20,6 +20,9 @@
 
 #define DEBUG_DUMP 0 //1
 
+// Disable smooth scrolling, for debugging
+#define DEBUG_DISABLE_SMOOTH 0 //1
+
 SpectrogramDisplayScroll4::SpectrogramDisplayScroll4(Plugin *plug,
                                                      BL_FLOAT delayPercent)
 {
@@ -51,6 +54,9 @@ SpectrogramDisplayScroll4::SpectrogramDisplayScroll4(Plugin *plug,
 
     mTransport = NULL;
 
+    mDelayTimeSecLeft = 0.0;
+    mDelayTimeSecRight = 0.0;
+    
     RecomputeParams();
 
 #if DEBUG_DUMP
@@ -104,6 +110,10 @@ SpectrogramDisplayScroll4::ResetScroll()
 BL_FLOAT
 SpectrogramDisplayScroll4::GetOffsetSec()
 {
+#if DEBUG_DISABLE_SMOOTH
+    return 0.0;
+#endif
+    
     if (mTransport == NULL)
         return 0.0;
     
@@ -449,6 +459,17 @@ SpectrogramDisplayScroll4::GetTimeTransform(BL_FLOAT *timeOffsetSec,
 }
 
 void
+SpectrogramDisplayScroll4::GetTimeBoundsNorm(BL_FLOAT *tn0, BL_FLOAT *tn1)
+{
+    // Also take offset into account => more accurate!
+    BL_FLOAT offsetSec = GetOffsetSec();
+
+    *tn0 = (mDelayTimeSecLeft - offsetSec)/mSpectroTotalDurationSec;
+    *tn1 = (mSpectroTotalDurationSec - mDelayTimeSecRight - offsetSec)/
+        mSpectroTotalDurationSec;
+}
+
+void
 SpectrogramDisplayScroll4::RecomputeParams()
 {
     if (mSpectrogram == NULL)
@@ -460,7 +481,8 @@ SpectrogramDisplayScroll4::RecomputeParams()
         mSpeedMod*((double)mBufferSize/mOverlapping)/mSampleRate;
     
     mSpectroTotalDurationSec = spectroNumCols*mSpectroLineDurationSec;
-    
+
+#if !DEBUG_DISABLE_SMOOTH
     mDelayTimeSecRight = mSpectroTotalDurationSec*mDelayPercent*0.01;
     // 1 single row => sometimes fails... (in debug only?)
     //mDelayTimeSecLeft = mSpectroLineDurationSec;
@@ -470,7 +492,8 @@ SpectrogramDisplayScroll4::RecomputeParams()
     // HACK! So we are sure to avoid black line on the right
     // (and not to have too much delay when speed is slow)
     mDelayTimeSecRight *= 4.0/mSpeedMod;
-
+#endif
+    
 #if 1
     // Ensure that the delay corresponds to enough spectro lines
     // (otherwise we would see black lines)

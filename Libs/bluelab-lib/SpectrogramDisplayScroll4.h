@@ -94,7 +94,9 @@ public:
     // We can get this scale to adapt some other objects, so they will scroll
     // exactly like the SpectrogramDisplayScroll4
     void GetTimeTransform(BL_FLOAT *timeOffsetSec, BL_FLOAT *timeScale);
-    
+
+    void GetTimeBoundsNorm(BL_FLOAT *tn0, BL_FLOAT *tn1);
+        
 protected:
     BL_FLOAT GetOffsetSec();
 

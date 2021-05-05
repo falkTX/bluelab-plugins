@@ -15,7 +15,7 @@
 #include "PanogramPlayFftObj.h"
 
 // BAD: doesn't work well
-// Align better the sound played with the grapahics
+// Align better the sound played with the graphics
 // PROBLEM: no sound with thin selections
 #define FIX_SHIFT_LINE_COUNT 0 //1
 
@@ -23,10 +23,19 @@
 // rewinds, the last line is played several times, making a garbage sound
 #define FIX_LAST_LINES_BAD_SOUND 1
 
-// GOOD
 // New method => works better
 // Align better the sound with selection and play bar
-#define SHIFT_X_SELECTION 1
+//
+// NOTE: works best with (0, 1)
+// => selection play is accurate when playing a rectangle selection
+// (SHIFT_X_SELECTION_PART1=0)
+// And without selection, the sound starts accurately when play bar passes
+// over the start of the spectro data
+// (SHIFT_X_SELECTION_PART2=1)
+#define SHIFT_X_SELECTION_PART1 0 //1
+// Set to 0 because when the selection has small width,
+// the moving play bar is not displayed anymore
+#define SHIFT_X_SELECTION_PART2 0 //1
 
 // With Reaper and SyncroTest (sine):
 // Use a project freezed by default
@@ -238,7 +247,7 @@ PanogramPlayFftObj::SetNormSelection(BL_FLOAT x0, BL_FLOAT y0,
     mDataSelection[2] = x1*mNumCols;
     mDataSelection[3] = y1*mBufferSize/2;
     
-#if SHIFT_X_SELECTION
+#if SHIFT_X_SELECTION_PART1
     ShiftXSelection(&mDataSelection[0]);
     ShiftXSelection(&mDataSelection[2]);
 #endif
@@ -302,9 +311,10 @@ BL_FLOAT
 PanogramPlayFftObj::GetSelPlayPosition()
 {
     int lineCount = mLineCount;
-    
-#if SHIFT_X_SELECTION
-    lineCount -= 4;
+
+#if SHIFT_X_SELECTION_PART2
+    //lineCount -= 4;
+    lineCount -= 8; // Very accurate when no selection!
     if (lineCount < mDataSelection[0] + 1 /*+ 2*/)
         lineCount = mDataSelection[0] + 1 /*+ 2*/;
 #endif
