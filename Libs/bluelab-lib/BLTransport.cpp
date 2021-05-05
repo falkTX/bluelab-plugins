@@ -7,6 +7,9 @@
 
 #include "BLTransport.h"
 
+// Reset if transport (from the host) made a very long jump
+#define MAX_TRANSPORT_JUMP_SEC 10.0
+
 BLTransport::BLTransport(BL_FLOAT sampleRate)
 {
     mSampleRate = sampleRate;
@@ -144,6 +147,16 @@ BLTransport::SetTransportPlayingLF(bool transportPlaying,
         mResynchOffsetSecLoop = 0.0;
         mDiffSmootherLoop->ResetToTargetValue(0.0);
     }
+
+    if (dawTransportValueSec >
+        mDAWCurrentTransportValueSecLoop + MAX_TRANSPORT_JUMP_SEC)
+    {
+        // Transport has done a very long jump
+        // Steps: play, click very far later on the time line
+        // Clear smoothers and so on to avoid a long smooth and slow scrolling
+        // to the new transport position
+        SetupTransportJustStarted(dawTransportValueSec);
+    }
     
     mIsTransportPlaying = transportPlaying;
     mIsMonitorOn = monitorOn;
@@ -260,6 +273,16 @@ BLTransport::SetDAWTransportValueSecLF(BL_FLOAT dawTransportValueSec)
     {
         mDAWTransportValueSecTotal +=
             dawTransportValueSec - mDAWCurrentTransportValueSecLoop;
+    }
+
+    if (dawTransportValueSec >
+        mDAWCurrentTransportValueSecLoop + MAX_TRANSPORT_JUMP_SEC)
+    {
+        // Transport has done a very long jump
+        // Steps: play, click very far later on the time line
+        // Clear smoothers and so on to avoid a long smooth and slow scrolling
+        // to the new transport position
+        SetupTransportJustStarted(dawTransportValueSec);
     }
     
     mDAWCurrentTransportValueSecLoop = dawTransportValueSec;
