@@ -8,6 +8,8 @@
 
 #ifdef IGRAPHICS_NANOVG
 
+#include <BLUtilsAlgo.h>
+
 //#include <Panogram.h>
 #include <SpectrogramDisplayScroll4.h>
 
@@ -22,6 +24,8 @@ PanogramCustomControl::PanogramCustomControl(PlaySelectPluginInterface *plug)
     mPlug = plug;
     
     mSpectroDisplay = NULL;
+
+    mViewOrientation = HORIZONTAL;
     
     Reset();
 }
@@ -76,6 +80,15 @@ SetSpectrogramDisplay(SpectrogramDisplayScroll4 *spectroDisplay)
 void
 PanogramCustomControl::OnMouseDown(float x, float y, const IMouseMod &mod)
 {
+    if (mViewOrientation == VERTICAL)
+    {
+        int width;
+        int height;
+        mPlug->GetGraphSize(&width, &height);
+    
+        BLUtilsAlgo::Rotate90(width, height, &x, &y, true, false);
+    }
+    
     mPrevMouseDown = true;
     mPrevMouseY = y;
     
@@ -105,6 +118,15 @@ PanogramCustomControl::OnMouseDown(float x, float y, const IMouseMod &mod)
 void
 PanogramCustomControl::OnMouseUp(float x, float y, const IMouseMod &mod)
 {
+    if (mViewOrientation == VERTICAL)
+    {
+        int width;
+        int height;
+        mPlug->GetGraphSize(&width, &height);
+    
+        BLUtilsAlgo::Rotate90(width, height, &x, &y, true, false);
+    }
+    
     // FIX: click on the resize button, to a bigger size, then the
     // mouse up is detected inside the graph, without previous mouse down
     // (would put the bar in incorrect position)
@@ -143,8 +165,19 @@ PanogramCustomControl::OnMouseUp(float x, float y, const IMouseMod &mod)
 }
 
 void
-PanogramCustomControl::OnMouseDrag(float x, float y, float dX, float dY, const IMouseMod &mod)
+PanogramCustomControl::OnMouseDrag(float x, float y,
+                                   float dX, float dY, const IMouseMod &mod)
 {
+    if (mViewOrientation == VERTICAL)
+    {
+        int width;
+        int height;
+        mPlug->GetGraphSize(&width, &height);
+    
+        BLUtilsAlgo::Rotate90(width, height, &x, &y, true, false);
+        BLUtilsAlgo::Rotate90Delta(width, height, &dX, &dY, true, false);
+    }
+    
     bool beginDrag = !mPrevMouseDrag;
     
     mPrevMouseDrag = true;
@@ -259,6 +292,12 @@ PanogramCustomControl::InsideSelection(int x, int y)
         return false;
     
     return true;
+}
+
+void
+PanogramCustomControl::SetViewOrientation(ViewOrientation orientation)
+{
+    mViewOrientation = orientation;
 }
 
 void

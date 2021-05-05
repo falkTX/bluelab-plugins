@@ -19,6 +19,12 @@ class SpectrogramDisplayScroll4;
 class PanogramCustomControl : public GraphCustomControl
 {
 public:
+    enum ViewOrientation
+    {
+        HORIZONTAL = 0,
+        VERTICAL
+    };
+    
     PanogramCustomControl(PlaySelectPluginInterface *plug);
     
     virtual ~PanogramCustomControl() {}
@@ -40,6 +46,8 @@ public:
                       BL_FLOAT x1, BL_FLOAT y1);
     
     void SetSelectionActive(bool flag);
+
+    void SetViewOrientation(ViewOrientation orientation);
     
 protected:
     bool InsideSelection(int x, int y);
@@ -70,6 +78,8 @@ protected:
     // (FIXES: mouse up on resize button to a bigger size, and then the mouse up
     // is inside the graph at the end (without previous mouse down inside)
     bool mPrevMouseDown;
+
+    ViewOrientation mViewOrientation;
 };
 
 #endif // IGRAPHICS_NANOVG
