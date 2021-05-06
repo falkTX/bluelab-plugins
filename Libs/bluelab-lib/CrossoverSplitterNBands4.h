@@ -23,14 +23,15 @@ using namespace std;
 //
 // CrossoverSplitterNBands3: use NFilterRBJ
 //
-// CrossoverSplitterNBands4: use optimizations for 2 chanined filters
+// CrossoverSplitterNBands4: use optimizations for 2 chained filters
 
 #define OPTIM_AVOID_NEW 1
 
 class CrossoverSplitterNBands4
 {
 public:
-    CrossoverSplitterNBands4(int numBands, BL_FLOAT cutoffFreqs[], BL_FLOAT sampleRate);
+    CrossoverSplitterNBands4(int numBands, BL_FLOAT cutoffFreqs[],
+                             BL_FLOAT sampleRate);
     
     CrossoverSplitterNBands4(const CrossoverSplitterNBands4 &other);
     
