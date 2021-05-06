@@ -267,7 +267,7 @@ CrossoverSplitterNBands4::Split(const WDL_TypedBuf<BL_FLOAT> &samples,
     }
     
     //WDL_TypedBuf<BL_FLOAT> resultCross[mNumBands];
-    vector<WDL_TypedBuf<BL_FLOAT> > resultCross;
+    vector<WDL_TypedBuf<BL_FLOAT> > &resultCross = mTmpBuf0;
     resultCross.resize(mNumBands);
 
     for (int i = 0; i < mFilterChains.size(); i++)

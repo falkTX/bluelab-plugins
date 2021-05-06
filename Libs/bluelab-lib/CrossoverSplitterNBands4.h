@@ -48,7 +48,8 @@ public:
     
     void Split(BL_FLOAT sample, BL_FLOAT result[]);
     
-    void Split(const WDL_TypedBuf<BL_FLOAT> &samples, WDL_TypedBuf<BL_FLOAT> result[]);
+    void Split(const WDL_TypedBuf<BL_FLOAT> &samples,
+               WDL_TypedBuf<BL_FLOAT> result[]);
     
 protected:
     void CreateFilters(BL_FLOAT sampleRate);
@@ -67,6 +68,9 @@ protected:
     BL_FLOAT *mTmpResultCross;
     BL_FLOAT *mTmpResultCross2;
 #endif
+
+private:
+    vector<WDL_TypedBuf<BL_FLOAT> > mTmpBuf0;
 };
 
 #endif /* defined(__UST__CrossoverSplitterNBands4__) */
