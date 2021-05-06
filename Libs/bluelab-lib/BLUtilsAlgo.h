@@ -7,10 +7,12 @@ class BLUtilsAlgo
 {
  public:
     // "swap" x and y, used when rotating a view
-    static void Rotate90(int width, int height, BL_FLOAT *x, BL_FLOAT *y,
+    template <typename FLOAT_TYPE>
+    static void Rotate90(int width, int height, FLOAT_TYPE *x, FLOAT_TYPE *y,
                          bool flipX, bool flipY);
 
-    static void Rotate90Delta(int width, int height, BL_FLOAT *dx, BL_FLOAT *dy,
+    template <typename FLOAT_TYPE>
+    static void Rotate90Delta(int width, int height, FLOAT_TYPE *dx, FLOAT_TYPE *dy,
                               bool flipX, bool flipY);
 };
 
