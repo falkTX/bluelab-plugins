@@ -213,10 +213,17 @@ CrossoverSplitterNBands3::Split(const WDL_TypedBuf<BL_FLOAT> &samples,
 #if !OPTIM_AVOID_NEW
     BL_FLOAT *r = new BL_FLOAT[mNumBands];
 #endif
+
+    int samplesSize = samples.GetSize();
+    BL_FLOAT *samplesBuf = samples.Get();
+
+    BL_FLOAT **resultBuf = new BL_FLOAT *[mNumBands];
+    for (int k = 0; k < mNumBands; k++)
+        resultBuf[k] = result[k].Get();
     
-    for (int i = 0; i < samples.GetSize(); i++)
+    for (int i = 0; i < samplesSize; i++)
     {
-        BL_FLOAT s = samples.Get()[i];
+        BL_FLOAT s = samplesBuf[i];
         
 #if !OPTIM_AVOID_NEW
         Split(s, r);
@@ -227,13 +234,17 @@ CrossoverSplitterNBands3::Split(const WDL_TypedBuf<BL_FLOAT> &samples,
         for (int k = 0; k < mNumBands; k++)
         {
 #if !OPTIM_AVOID_NEW
-            result[k].Get()[i] = r[k];
+            //result[k].Get()[i] = r[k];
+            resultBuf[k][i] = r[k];
 #else
-            result[k].Get()[i] = mTmpResultCross2[k];
+            //result[k].Get()[i] = mTmpResultCross2[k];
+            resultBuf[k][i] = mTmpResultCross2[k];
 #endif
         }
     }
 
+    delete []resultBuf;
+        
 #if !OPTIM_AVOID_NEW
     delete r;
 #endif
