@@ -247,13 +247,19 @@ PanogramFftObj::MagnsToPanoLine(const WDL_TypedBuf<BL_FLOAT> magns[2],
     if (maskLine != NULL)
         maskLine->AddValue(0, 0);
 #endif
+
+    int magnsSize = magns[0].GetSize();
+    BL_FLOAT *magns0Buf = magns[0].Get();
+    BL_FLOAT *magns1Buf = magns[1].Get();
+    int panoLineSize = panoLine->GetSize();
+    BL_FLOAT *panoLineBuf = panoLine->Get();
     
     // Do not take 0Hz!
-    for (int i = 1; i < magns[0].GetSize(); i++)
+    for (int i = 1; i < magnsSize; i++)
     {
         // Compute pan
-        BL_FLOAT l = magns[0].Get()[i];
-        BL_FLOAT r = magns[1].Get()[i];
+        BL_FLOAT l = magns0Buf[i];
+        BL_FLOAT r = magns1Buf[i];
         
 #if FIX_EPS_MAGNS
 #define EPS 1e-10
@@ -264,7 +270,8 @@ PanogramFftObj::MagnsToPanoLine(const WDL_TypedBuf<BL_FLOAT> magns[2],
         
         BL_FLOAT angle = std::atan2(r, l);
         
-        BL_FLOAT panNorm = angle/M_PI;
+        //BL_FLOAT panNorm = angle/M_PI;
+        BL_FLOAT panNorm = angle*M_PI_INV;
         panNorm = (panNorm + 0.25);
         panNorm = 1.0 - panNorm;
         
@@ -273,13 +280,13 @@ PanogramFftObj::MagnsToPanoLine(const WDL_TypedBuf<BL_FLOAT> magns[2],
         panNorm = (panNorm - 0.5)*SCALE_FACTOR + 0.5;
         
         //
-        BL_FLOAT binNumF = panNorm*panoLine->GetSize();
+        BL_FLOAT binNumF = panNorm*panoLineSize;
         
         int binNum = bl_round(binNumF);
         
         BL_FLOAT magnVal = (l + r)*0.5;
-        if ((binNum >= 0) && (binNum < panoLine->GetSize()))
-            panoLine->Get()[binNum] += magnVal;
+        if ((binNum >= 0) && (binNum < panoLineSize))
+            panoLineBuf[binNum] += magnVal;
         
         if (maskLine != NULL)
             maskLine->AddValue(binNum, i);

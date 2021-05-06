@@ -136,25 +136,32 @@ PseudoStereoObj2::ProcessSamples(const WDL_TypedBuf<BL_FLOAT> &sampsIn,
     
     // Substract with delay (see paper, "group delay")
     sampsOutR->Resize(sampsIn.GetSize());
-    for (int i = 0; i < sampsIn.GetSize(); i++)
+
+    int numSamples = sampsIn.GetSize();
+    BL_FLOAT *samplesInBuf = sampsIn.Get();
+    BL_FLOAT *samplesOutLBuf = sampsOutL->Get();
+    BL_FLOAT *delayedSamplesBuf = delayedSamples.Get();
+    BL_FLOAT *samplesOutRBuf = sampsOutR->Get();
+    
+    for (int i = 0; i < numSamples; i++)
     {
-        BL_FLOAT samp = sampsIn.Get()[i];
+        BL_FLOAT samp = samplesInBuf[i];
         
 #if !USE_DELAY
         BL_FLOAT sampD = samp;
 #else
         BL_FLOAT sampD = mDelayObj->ProcessSample(samp);
 #endif
-        BL_FLOAT sampL = sampsOutL->Get()[i];
+        BL_FLOAT sampL = samplesOutLBuf[i];
         
 #if !FIX_LATENCY_RIGHT_CHANNEL
         BL_FLOAT sampR = sampD - sampL;
 #else
-        BL_FLOAT delSamp = delayedSamples.Get()[i];
+        BL_FLOAT delSamp = delayedSamplesBuf[i];
         BL_FLOAT sampR = delSamp - sampL;
 #endif
         
-        sampsOutR->Get()[i] = sampR;
+        samplesOutRBuf[i] = sampR;
     }
     
     // Adjust the gain so the processing is transparent

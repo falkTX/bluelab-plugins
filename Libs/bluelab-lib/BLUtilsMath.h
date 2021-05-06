@@ -18,6 +18,8 @@ using namespace std;
 #define TWO_PI 6.28318530717958647692
 #endif
 
+#define M_PI_INV 0.318309886183791
+
 #ifndef MIN
 #define MIN(__x__, __y__) ((__x__ < __y__) ? __x__ : __y__)
 #endif
