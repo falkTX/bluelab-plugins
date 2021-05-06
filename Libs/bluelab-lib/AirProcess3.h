@@ -46,6 +46,8 @@ public:
     void GetNoise(WDL_TypedBuf<BL_FLOAT> *magns);
     void GetHarmo(WDL_TypedBuf<BL_FLOAT> *magns);
     void GetSum(WDL_TypedBuf<BL_FLOAT> *magns);
+
+    void SetEnableSum(bool flag);
     
 protected:
     void DetectPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
@@ -74,6 +76,8 @@ protected:
     WDL_TypedBuf<BL_FLOAT> mHarmo;
     WDL_TypedBuf<BL_FLOAT> mSum;
 
+    bool mEnableComputeSum;
+    
 private:
     // Tmp buffers
     WDL_TypedBuf<WDL_FFT_COMPLEX> mTmpBuf0;

@@ -46,6 +46,8 @@ AirProcess3::AirProcess3(int bufferSize,
     mUseSoftMasks = false;
     mSoftMaskingComp = new SoftMaskingComp4(bufferSize, overlapping,
                                             SOFT_MASKING_HISTO_SIZE);
+
+    mEnableComputeSum = true;
 }
 
 AirProcess3::~AirProcess3()
@@ -158,8 +160,11 @@ AirProcess3::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer0,
                 COMP_ADD(h, n, res);
             }
 
-            // Keep the sum
-            BLUtilsComp::ComplexToMagn(&mSum, fftSamples);
+            if (mEnableComputeSum)
+            {
+                // Keep the sum for later
+                BLUtilsComp::ComplexToMagn(&mSum, fftSamples);
+            }
             
             BLUtilsFft::FillSecondFftHalf(fftSamples, ioBuffer0);
         }
@@ -187,9 +192,12 @@ AirProcess3::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer0,
                 fftSamples = softMaskedResult0;
                 BLUtils::AddValues(&fftSamples, softMaskedResult1);
             }
-            
-            // Keep the sum
-            BLUtilsComp::ComplexToMagn(&mSum, fftSamples);
+
+            if (mEnableComputeSum)
+            {
+                // Keep the sum for later
+                BLUtilsComp::ComplexToMagn(&mSum, fftSamples);
+            }
             
             // Result
             BLUtilsFft::FillSecondFftHalf(fftSamples, ioBuffer0);
@@ -244,6 +252,12 @@ void
 AirProcess3::GetSum(WDL_TypedBuf<BL_FLOAT> *magns)
 {
     *magns = mSum;
+}
+
+void
+AirProcess3::SetEnableSum(bool flag)
+{
+    mEnableComputeSum = flag;
 }
 
 void

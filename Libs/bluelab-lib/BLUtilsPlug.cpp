@@ -903,6 +903,44 @@ BLUtilsPlug::ApplyGain(const vector<WDL_TypedBuf<BL_FLOAT> > &in,
     }
 }
 
+void
+BLUtilsPlug::SumSignals(const vector<WDL_TypedBuf<BL_FLOAT> > &a,
+                        const vector<WDL_TypedBuf<BL_FLOAT> > &b,
+                        vector<WDL_TypedBuf<BL_FLOAT> > *out)
+{
+    if (a.empty())
+        return;
+    if (a.size() != b.size())
+        return;
+    
+    if (out->empty())
+        out->resize(a.size());
+    
+    for (int i = 0; i < out->size(); i++)
+    {
+        if ((i >= a.size()) || (i >= b.size()))
+            break;
+
+        if (a[i].GetSize() != b[i].GetSize())
+            break;
+        
+        (*out)[i].Resize(a[i].GetSize());
+
+        int bufSize = (*out)[i].GetSize();
+        BL_FLOAT *aBuf = a[i].Get();
+        BL_FLOAT *bBuf = b[i].Get();
+        BL_FLOAT *outBuf = (*out)[i].Get();
+        
+        for (int j = 0; j < bufSize; j++)
+        {
+            BL_FLOAT a0 = aBuf[j];
+            BL_FLOAT b0 = bBuf[j];
+            
+            outBuf[j] = a0 + b0; 
+        }
+    }
+}
+
 // Find fps in global config file if any
 int
 BLUtilsPlug::GetPlugFPS(int defaultFPS)

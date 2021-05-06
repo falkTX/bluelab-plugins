@@ -28,7 +28,8 @@ using namespace std;
 class CrossoverSplitterNBands3
 {
 public:
-    CrossoverSplitterNBands3(int numBands, BL_FLOAT cutoffFreqs[], BL_FLOAT sampleRate);
+    CrossoverSplitterNBands3(int numBands, BL_FLOAT cutoffFreqs[],
+                             BL_FLOAT sampleRate);
     
     CrossoverSplitterNBands3(const CrossoverSplitterNBands3 &other);
     
