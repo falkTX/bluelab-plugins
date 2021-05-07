@@ -47,6 +47,9 @@ extern "C" {
 // Use debug loaded data, just for testing?
 #define DEBUG_DATA 0 //1
 
+// model trained with normalized data?
+#define USE_NORMALIZATION 1
+
 // Output is not normalized at all, it has negative values, and values > 1.
 //#define FIX_OUTPUT_NORM 1
 
@@ -253,6 +256,13 @@ DNNModelDarknet::Predict(const WDL_TypedBuf<BL_FLOAT> &input,
     // Process
     //bl_normalize(X.Get(), X.GetSize());
 
+#if USE_NORMALIZATION
+    // New normalization (see Janson 2017)
+    float norm = bl_max(X.Get(), X.GetSize());
+    if (norm > 0.0)
+        bl_mult2(X.Get(), 1.0f/norm, X.GetSize());
+#endif
+    
     // NOTE: must check this well, and if we provide function input in db or not
     // Here, this is good for PROCESS_SIGNAL_DB=0
     amp_to_db_norm(X.Get(), X.GetSize());
