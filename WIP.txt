@@ -41,7 +41,7 @@ BL-Wav3s	    :
 
 ---
 
-DONE: 16
-TODO: 12
+DONE: 17
+TODO: 11
 
 TODO: pass valgrind for mem for all

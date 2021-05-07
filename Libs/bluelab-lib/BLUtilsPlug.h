@@ -85,6 +85,14 @@ class BLUtilsPlug
     static int GetPlugFPS(int defaultFPS);
 
     static BL_FLOAT GetTransportTime(Plugin *plug);
+
+    // Buf must have been allocated before
+    static void ChannelsToInterleaved(const vector<WDL_TypedBuf<BL_FLOAT> > &chans,
+                                      BL_FLOAT *buf);
+
+    // chans must have been resized correctly before
+    static void InterleavedToChannels(const BL_FLOAT *buf,
+                                      vector<WDL_TypedBuf<BL_FLOAT> > *chans);
 };
 
 #endif

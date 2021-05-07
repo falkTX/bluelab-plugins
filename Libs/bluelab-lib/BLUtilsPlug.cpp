@@ -1009,3 +1009,37 @@ BLUtilsPlug::GetTransportTime(Plugin *plug)
 
     return transportTime;
 }
+
+void
+BLUtilsPlug::ChannelsToInterleaved(const vector<WDL_TypedBuf<BL_FLOAT> > &chans,
+                                   BL_FLOAT *buf)
+{
+    if (chans.empty())
+        return;
+
+    // TODO: optimize this
+    for (int i = 0; i < chans[0].GetSize(); i++)
+    {
+        for (int j = 0; j < chans.size(); j++)
+        {
+            *(buf++) = chans[j].Get()[i];
+        }
+    }
+}
+
+void
+BLUtilsPlug::InterleavedToChannels(const BL_FLOAT *buf,
+                                   vector<WDL_TypedBuf<BL_FLOAT> > *chans)
+{
+    if (chans->empty())
+        return;
+
+    // TODO: optimize this
+    for (int i = 0; i < (*chans)[0].GetSize(); i++)
+    {
+        for (int j = 0; j < chans->size(); j++)
+        {
+            (*chans)[j].Get()[i] = *(buf++);
+        }
+    }
+}
