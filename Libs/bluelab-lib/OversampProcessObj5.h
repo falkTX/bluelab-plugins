@@ -9,6 +9,11 @@
 #ifndef __Saturate__OversampProcessObj3__
 #define __Saturate__OversampProcessObj3__
 
+#include <vector>
+using namespace std;
+
+#include <BLTypes.h>
+
 #include "IPlug_include_in_plug_hdr.h"
 //#include "../../WDL/IPlug/Containers.h"
 
@@ -62,13 +67,16 @@ class FilterFftLowPass;
 //
 // NOTE: This class is the best solution: using fixed Oversampler4,
 // it gives very good results!
-class OversampProcessObj3
+//
+// OversampProcessObj5: from OversampProcessObj3
+// - take 2 channels "at the same time
+class OversampProcessObj5
 {
 public:
-    OversampProcessObj3(int oversampling, BL_FLOAT sampleRate,
+    OversampProcessObj5(int oversampling, BL_FLOAT sampleRate,
                         bool filterNyquist);
     
-    virtual ~OversampProcessObj3();
+    virtual ~OversampProcessObj5();
     
     // Must be called at least once
     //void Reset(BL_FLOAT sampleRate);
@@ -76,36 +84,43 @@ public:
     void Reset(BL_FLOAT sampleRate, int blockSize);
     
     int GetLatency();
-    
-    void Process(WDL_TypedBuf<BL_FLOAT> *ioBuffer);
+
+    void Process(vector<WDL_TypedBuf<BL_FLOAT> > &in,
+                 vector<WDL_TypedBuf<BL_FLOAT> > *out);
     
 protected:
-    virtual void ProcessSamplesBuffer(WDL_TypedBuf<BL_FLOAT> *ioBuffer) = 0;
+    virtual void ProcessSamplesBuffer(vector<WDL_TypedBuf<BL_FLOAT> > &in,
+                                      vector<WDL_TypedBuf<BL_FLOAT> > *out) = 0;
     
-    OVERSAMPLER_CLASS *mUpOversampler;
-    OVERSAMPLER_CLASS *mDownOversampler;
+
+    //
+    OVERSAMPLER_CLASS *mUpOversamplers[2];
+    OVERSAMPLER_CLASS *mDownOversamplers[2];
     
 #if OVERSAMP_USE_RBJ_FILTER
-    FilterRBJNX *mFilter;
+    FilterRBJNX *mFilters[2];
 #endif
     
 #if USE_IIR_FILTER
-    FilterIIRLow12dBNX *mFilter;
+    FilterIIRLow12dBNX *mFilters[2];
 #endif
     
 #if USE_BUTTERWORTH_FILTER
-    FilterButterworthLPFNX *mFilter;
+    FilterButterworthLPFNX *mFilters[2];
 #endif
     
 #if USE_SINC_CONVO_FILTER
-    FilterSincConvoLPF *mFilter;
+    FilterSincConvoLPF *mFilters[2];
 #endif
     
 #if USE_FFT_LOW_PASS_FILTER
-    FftLowPassFilter *mFilter;
+    FftLowPassFilter *mFilters[2];
 #endif
     
     int mOversampling;
+
+private:
+    vector<WDL_TypedBuf<BL_FLOAT> > mTmpBuf0;
 };
 
 #endif /* defined(__Saturate__OversampProcessObj3__) */

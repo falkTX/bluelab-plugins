@@ -470,6 +470,8 @@ set(_bluelab-lib_src
   OversampProcessObj3.h
   OversampProcessObj4.cpp
   OversampProcessObj4.h
+  OversampProcessObj5.cpp
+  OversampProcessObj5.h
   OversampProcessObj.cpp
   OversampProcessObj.h
   PanoFftObj.cpp
@@ -530,6 +532,8 @@ set(_bluelab-lib_src
   PhasesDiff.h
   PhasesUnwrapper.cpp
   PhasesUnwrapper.h
+  PitchShifter.cpp
+  PitchShifter.h
   PitchShiftFftObj3.cpp
   PitchShiftFftObj3.h
   PlaySelectPluginInterface.h

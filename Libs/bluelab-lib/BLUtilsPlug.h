@@ -4,6 +4,8 @@
 #include <vector>
 using namespace std;
 
+#include <BLTypes.h>
+
 #include "IPlug_include_in_plug_hdr.h"
 
 using namespace iplug;
