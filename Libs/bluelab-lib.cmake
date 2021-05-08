@@ -538,8 +538,12 @@ set(_bluelab-lib_src
   PitchShifter.h
   #PitchShifterSmb.cpp
   #PitchShifterSmb.h
+  PitchShifterPrusa.cpp
+  PitchShifterPrusa.h
   PitchShiftFftObj3.cpp
   PitchShiftFftObj3.h
+  PitchShiftPrusaFftObj.cpp
+  PitchShiftPrusaFftObj.h
   PlaySelectPluginInterface.h
   PlugBypassDetector.cpp
   PlugBypassDetector.h
