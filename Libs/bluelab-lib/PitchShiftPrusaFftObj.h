@@ -39,6 +39,29 @@ protected:
     //
     BL_FLOAT mFactor;
 
+    //
+    struct Frame
+    {
+        WDL_TypedBuf<BL_FLOAT> mMagns;
+        WDL_TypedBuf<BL_FLOAT> mPhases;
+    };
+    Frame mPrevFrame;
+
+    WDL_TypedBuf<BL_FLOAT> mPrevPhasesTimeDeriv;
+    
+    struct Tuple
+    {
+        BL_FLOAT mMagn;
+        int mBinIdx;
+        int mTimeIdx;
+
+        bool operator< (const Tuple &t0)
+        { return (this->mMagn < t0.mMagn); }
+    };
+
+    bool Contains(const vector<Tuple> &hp, int binIdx, int timeIdx);
+    bool Remove(vector<Tuple> *hp, int binIdx, int timeIdx);
+    
 private:
     WDL_TypedBuf<WDL_FFT_COMPLEX> mTmpBuf6;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf0;

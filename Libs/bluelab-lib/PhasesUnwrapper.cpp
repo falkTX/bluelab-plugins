@@ -191,7 +191,8 @@ PhasesUnwrapper::UnwrapPhasesTime(WDL_TypedBuf<BL_FLOAT> *phases)
     }
     
     // Prev line
-    const WDL_TypedBuf<BL_FLOAT> &prevUnwrapPhases = mUnwrappedPhasesTime[mUnwrappedPhasesTime.size() - 1];
+    const WDL_TypedBuf<BL_FLOAT> &prevUnwrapPhases =
+        mUnwrappedPhasesTime[mUnwrappedPhasesTime.size() - 1];
     
     for (int i = 0; i < phases->GetSize(); i++)
     {
@@ -256,6 +257,25 @@ PhasesUnwrapper::NormalizePhasesTime(WDL_TypedBuf<BL_FLOAT> *phases)
         phases->Get()[i] = phase;
     }
 #endif
+}
+
+void
+PhasesUnwrapper::UnwrapPhasesTime(const WDL_TypedBuf<BL_FLOAT> &phases0,
+                                  WDL_TypedBuf<BL_FLOAT> *phases1)
+{
+    // TODO: use tmp buffer
+    //WDL_TypedBuf<BL_FLOAT> phases0Uw = phases0;
+    //BLUtilsPhases::UnwrapPhases(&phases0Uw);
+
+    for (int i = 0; i < phases1->GetSize(); i++)
+    {
+        BL_FLOAT p0 = phases0/*Uw*/.Get()[i];
+        BLUtilsPhases::FindNextPhase(&p0, (BL_FLOAT)0.0);
+                
+        BL_FLOAT p1 = phases1->Get()[i];
+        BLUtilsPhases::FindNextPhase(&p1, p0);
+        phases1->Get()[i] = 1;
+    }
 }
 
 void

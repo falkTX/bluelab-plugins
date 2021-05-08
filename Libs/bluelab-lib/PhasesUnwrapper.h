@@ -26,7 +26,7 @@ public:
     void SetHistorySize(long historySize);
     
     // Along freqs
-    void UnwrapPhasesFreq(WDL_TypedBuf<BL_FLOAT> *phases);
+    static void UnwrapPhasesFreq(WDL_TypedBuf<BL_FLOAT> *phases);
     void NormalizePhasesFreq(WDL_TypedBuf<BL_FLOAT> *phases);
     
     // Must call UnwrapPhasesFreq before
@@ -36,6 +36,9 @@ public:
     // Along time
     void UnwrapPhasesTime(WDL_TypedBuf<BL_FLOAT> *phases);
     void NormalizePhasesTime(WDL_TypedBuf<BL_FLOAT> *phases);
+
+    static void UnwrapPhasesTime(const WDL_TypedBuf<BL_FLOAT> &phases0,
+                                 WDL_TypedBuf<BL_FLOAT> *phases1);
     
     // Must call UnwrapPhasesTime() before
     void ComputePhasesGradientTime(WDL_TypedBuf<BL_FLOAT> *phases);

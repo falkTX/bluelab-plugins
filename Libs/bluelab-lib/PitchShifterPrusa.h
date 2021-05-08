@@ -28,7 +28,7 @@ class PitchShifterPrusa
     // 0, 1, 2 or 3
     void SetQuality(int quality);
 
-    void SetTransBoost(BL_FLOAT transBoost);
+    void SetTransBoost(BL_FLOAT transBoost) {}
 
     int ComputeLatency(int blockSize);
     
