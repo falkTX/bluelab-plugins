@@ -144,7 +144,7 @@ PitchShifter::SetNumChannels(int nchans)
 }
     
 void
-PitchShifter::SetShift(BL_FLOAT factor)
+PitchShifter::SetFactor(BL_FLOAT factor)
 {
     mWDLPitchShifter->set_shift(factor);
 }

@@ -27,9 +27,12 @@ class PitchShifter
                  vector<WDL_TypedBuf<BL_FLOAT> > *out);
     
     void SetNumChannels(int nchans);
-    void SetShift(BL_FLOAT factor);
+    void SetFactor(BL_FLOAT factor);
     // 0, 1, 2 or 3
     void SetQuality(int quality);
+
+    void SetTransBoost(BL_FLOAT transBoost) {}
+    int ComputeLatency(int blockSize) { return 0; }
     
  protected:
     friend class PitchShiftOversampObj;
