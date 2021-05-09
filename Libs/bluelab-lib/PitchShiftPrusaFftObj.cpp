@@ -85,7 +85,7 @@ PitchShiftPrusaFftObj::Reset()
     ResetPitchShift();
 }
 
-
+// TODO: optimize with tmp buffers
 void
 PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
                                WDL_TypedBuf<BL_FLOAT> *phases,
@@ -93,8 +93,6 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
 {
 #define TOL 1e-6
     
-    // TODO: optimize with tmp buffers
-
     const Frame &frame0 = mPrevFrame;
     
     Frame frame1;
@@ -119,8 +117,6 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
     
     // Pre-processing
     //
-
-    // TODO: use PhasesUnwrapper ?
 
     // Unwrap phases in time
     PhasesUnwrapper::UnwrapPhasesTime(frame0.mPhases, &frame1.mDTPhases);
@@ -202,7 +198,6 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
         {
             int idx = ContainsSorted(tho, t.mBinIdx, 1);
             if (idx >= 0)
-            //if (Contains(tho, t.mBinIdx, 1))
             {
 #if REAL_PHASE_VOCODER_PURNA
                 frame1.mEstimPhases.Get()[t.mBinIdx] =
@@ -214,11 +209,8 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
                     frame0.mEstimPhases.Get()[t.mBinIdx] +
                     frame1.mDTPhases.Get()[t.mBinIdx]*mFactor;
 #endif
-                //Remove(&tho, t.mBinIdx, 1);
-                RemoveIdx(&tho, idx);
                 
-                //hp.push_back(t);
-                //push_heap(hp.begin(), hp.end());
+                RemoveIdx(&tho, idx);
                 
                 BL_FLOAT magn = frame1.mMagns.Get()[t.mBinIdx];
                 AddHeap(&hp, t.mBinIdx, 1, magn);
@@ -229,7 +221,6 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
         {
             int idx0 = ContainsSorted(tho, t.mBinIdx + 1, 1);
             if (idx0 >= 0)
-            //if (Contains(tho, t.mBinIdx + 1, 1))
             {
 #if REAL_PHASE_VOCODER_PURNA
                 frame1.mEstimPhases.Get()[t.mBinIdx + 1] =
@@ -241,7 +232,7 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
                     frame1.mEstimPhases.Get()[t.mBinIdx] +
                     frame1.mDFPhases.Get()[t.mBinIdx + 1]*mFactor;
 #endif
-                //Remove(&tho, t.mBinIdx + 1, 1);
+
                 RemoveIdx(&tho, idx0);
 
                 BL_FLOAT magn = frame1.mMagns.Get()[t.mBinIdx + 1];
@@ -250,7 +241,6 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
 
             int idx1 = ContainsSorted(tho, t.mBinIdx - 1, 1);
             if (idx1 >= 0)
-            //if (Contains(tho, t.mBinIdx - 1, 1))
             {
 #if REAL_PHASE_VOCODER_PURNA
                 frame1.mEstimPhases.Get()[t.mBinIdx - 1] =
@@ -259,18 +249,14 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
                             frame1.mDFPhases.Get()[t.mBinIdx - 1]);
 #else // Pitch shift
                 frame1.mEstimPhases.Get()[t.mBinIdx - 1] =
-                    frame1.mEstimPhases.Get()[t.mBinIdx] /*-*/ + 
+                    frame1.mEstimPhases.Get()[t.mBinIdx] /*-*//*+*/ - 
                     frame1.mDFPhases.Get()[t.mBinIdx - 1]*mFactor;
 #endif
                 
-                //Remove(&tho, t.mBinIdx - 1, 1);
                 RemoveIdx(&tho, idx1);
 
                 BL_FLOAT magn = frame1.mMagns.Get()[t.mBinIdx - 1];
                 AddHeap(&hp, t.mBinIdx - 1, 1, magn);
-                
-                //hp.push_back(t);
-                //push_heap(hp.begin(), hp.end());
             }
         }
     }
@@ -278,7 +264,7 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
     // Result
     PhasesUnwrapper::UnwrapPhasesFreq(&frame1.mEstimPhases);
     
-    //*magns = frame1.mMagns;
+    // No need to update the magns: they have not changed!
     *phases = frame1.mEstimPhases;
     
     // Update prev data
