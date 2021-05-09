@@ -65,7 +65,13 @@ PhasesUnwrapper::SetHistorySize(long historySize)
 void
 PhasesUnwrapper::UnwrapPhasesFreq(WDL_TypedBuf<BL_FLOAT> *phases)
 {
+    BL_FLOAT p0 = phases->Get()[0];
+    BLUtils::AddValues(phases, -p0);
+
+    //
     BLUtilsPhases::UnwrapPhases(phases);
+
+    BLUtils::AddValues(phases, p0);
 }
 
 void
@@ -263,18 +269,14 @@ void
 PhasesUnwrapper::UnwrapPhasesTime(const WDL_TypedBuf<BL_FLOAT> &phases0,
                                   WDL_TypedBuf<BL_FLOAT> *phases1)
 {
-    // TODO: use tmp buffer
-    //WDL_TypedBuf<BL_FLOAT> phases0Uw = phases0;
-    //BLUtilsPhases::UnwrapPhases(&phases0Uw);
-
     for (int i = 0; i < phases1->GetSize(); i++)
     {
-        BL_FLOAT p0 = phases0/*Uw*/.Get()[i];
-        BLUtilsPhases::FindNextPhase(&p0, (BL_FLOAT)0.0);
+        BL_FLOAT p0 = phases0.Get()[i];
+        //BLUtilsPhases::FindNextPhase(&p0, (BL_FLOAT)0.0);
                 
         BL_FLOAT p1 = phases1->Get()[i];
         BLUtilsPhases::FindNextPhase(&p1, p0);
-        phases1->Get()[i] = 1;
+        phases1->Get()[i] = p1;
     }
 }
 

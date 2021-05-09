@@ -16,6 +16,9 @@ using namespace std;
 
 #include <BLDebug.h>
 
+// We don need phases unwrapping!
+#include <PhasesUnwrapper.h>
+
 #include "PitchShiftPrusaFftObj.h"
 
 // Exactly like the "Phase Vocoder Done Right" ?
@@ -97,11 +100,13 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
     Frame frame1;
     frame1.mMagns = *magns;
     frame1.mPhases = *phases;
+    PhasesUnwrapper::UnwrapPhasesFreq(&frame1.mPhases);
+    
     frame1.mDTPhases.Resize(magns->GetSize());
     BLUtils::FillAllZero(&frame1.mDTPhases);
     frame1.mDFPhases.Resize(magns->GetSize());
     BLUtils::FillAllZero(&frame1.mDFPhases);
-    frame1.mEstimPhases = *phases;
+    frame1.mEstimPhases = frame1.mPhases;
     
     // Test if we have prev data 
     if (mPrevFrame.mMagns.GetSize() == 0)
@@ -116,6 +121,9 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
     //
 
     // TODO: use PhasesUnwrapper ?
+
+    // Unwrap phases in time
+    PhasesUnwrapper::UnwrapPhasesTime(frame0.mPhases, &frame1.mDTPhases);
     
     // Phases time derivative
     BLUtils::ComputeDiff(&frame1.mDTPhases, frame0.mPhases, frame1.mPhases);
@@ -268,6 +276,8 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
     }
 
     // Result
+    PhasesUnwrapper::UnwrapPhasesFreq(&frame1.mEstimPhases);
+    
     //*magns = frame1.mMagns;
     *phases = frame1.mEstimPhases;
     
