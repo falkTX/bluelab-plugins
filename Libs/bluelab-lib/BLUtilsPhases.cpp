@@ -26,6 +26,19 @@ BLUtilsPhases::fmod_negative(FLOAT_TYPE x, FLOAT_TYPE y)
 template float BLUtilsPhases::fmod_negative(float x, float y);
 template double BLUtilsPhases::fmod_negative(double x, double y);
 
+// See: http://kth.diva-portal.org/smash/get/diva2:1381398/FULLTEXT01.pdf
+// and: http://ltfat.github.io/notes/ltfatnote050.pdf
+template <typename FLOAT_TYPE>
+FLOAT_TYPE
+BLUtilsPhases::princarg(FLOAT_TYPE x)
+{
+    FLOAT_TYPE result = BLUtilsPhases::fmod_negative(x + M_PI, TWO_PI) - M_PI;
+
+    return result;
+}
+template float BLUtilsPhases::princarg(float x);
+template double BLUtilsPhases::princarg(double x);
+
 template <typename FLOAT_TYPE>
 void
 BLUtilsPhases::FindNextPhase(FLOAT_TYPE *phase, FLOAT_TYPE refPhase)

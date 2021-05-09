@@ -8,6 +8,10 @@ class BLUtilsPhases
     // fmod() managing correctly negative numbers
     template <typename FLOAT_TYPE>
     static FLOAT_TYPE fmod_negative(FLOAT_TYPE x, FLOAT_TYPE y);
+
+    // Map to [-pi, pi]
+    template <typename FLOAT_TYPE>
+    static FLOAT_TYPE princarg(FLOAT_TYPE x);
     
     // Phases
     template <typename FLOAT_TYPE>

@@ -195,7 +195,8 @@ PitchShiftFftObj3::Convert(WDL_TypedBuf<BL_FLOAT> *ioMagns,
         ioPhases->Get()[i] = 0.0;
 #endif
     
-    // Do not reset the phases, we will focus on the magnitudes to detected unset values
+    // Do not reset the phases, we will focus on the
+    // magnitudes to detected unset values
     
     WDL_TypedBuf<BL_FLOAT> &freqs = mTmpBuf5;
     freqs.Resize(originMagns.GetSize());
@@ -214,7 +215,9 @@ PitchShiftFftObj3::Convert(WDL_TypedBuf<BL_FLOAT> *ioMagns,
         int srcBin = i;
         
         // Value of the frequency for the source scale
-        BL_FLOAT srcBinFreq = BLUtils::FftBinToFreq(srcBin, originMagns.GetSize(), mSampleRate);
+        BL_FLOAT srcBinFreq = BLUtils::FftBinToFreq(srcBin,
+                                                    originMagns.GetSize(),
+                                                    mSampleRate);
         
         // Make two cases, in order to avoid holes
         // The two cases are foward and reverse
@@ -225,7 +228,9 @@ PitchShiftFftObj3::Convert(WDL_TypedBuf<BL_FLOAT> *ioMagns,
             
             // Compute the value of the destination frequency
             BL_FLOAT dstFreq = srcBinFreq*mFactor;
-            int dstBin = BLUtils::FreqToFftBin(dstFreq, originMagns.GetSize(), mSampleRate);
+            int dstBin = BLUtils::FreqToFftBin(dstFreq,
+                                               originMagns.GetSize(),
+                                               mSampleRate);
             if (dstBin >= originMagns.GetSize())
                 // Too high frequency
                 continue;
@@ -242,7 +247,8 @@ PitchShiftFftObj3::Convert(WDL_TypedBuf<BL_FLOAT> *ioMagns,
             
             BL_FLOAT dstFreq = srcBinFreq/factor;
             
-            int dstBin = BLUtils::FreqToFftBin(dstFreq, originMagns.GetSize(), mSampleRate);
+            int dstBin = BLUtils::FreqToFftBin(dstFreq, originMagns.GetSize(),
+                                               mSampleRate);
             if (dstBin >= originMagns.GetSize())
                 // Too high frequency
                 continue;
@@ -275,7 +281,8 @@ PitchShiftFftObj3::Convert(WDL_TypedBuf<BL_FLOAT> *ioMagns,
     //
     // So fill holes by interpolation
     //
-    // This was due to buffer overruns and undefined values (replaced some "<" by "<=")
+    // This was due to buffer overruns and undefined values
+    // (replaced some "<" by "<=")
 #if 0
     FillMissingFreqs(&freqs);
 #endif

@@ -237,8 +237,8 @@ PhasesUnwrapper::ComputeUwPhasesDiffTime(WDL_TypedBuf<BL_FLOAT> *diff,
 
         BL_FLOAT h2PiFk = h*2.0*M_PI*fk;
 
-        BL_FLOAT dp = h2PiFk + PRINCARG(p1 - p0 - h2PiFk);
-
+        BL_FLOAT dp = h2PiFk + BLUtilsPhases::princarg(p1 - p0 - h2PiFk);
+    
         diff->Get()[i] = dp;
     }
 }

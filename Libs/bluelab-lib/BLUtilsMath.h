@@ -28,8 +28,6 @@ using namespace std;
 #define MAX(__x__, __y__) ((__x__ > __y__) ? __x__ : __y__)
 #endif
 
-#define PRINCARG(__x__) (fmod(__x__ + M_PI, TWO_PI) - M_PI)
-
 #define BL_EPS 1e-15
 #define BL_EPS3 1e-3
 #define BL_EPS6 1e-6

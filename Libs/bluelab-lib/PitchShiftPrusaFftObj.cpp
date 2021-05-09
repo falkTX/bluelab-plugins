@@ -160,6 +160,8 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
     // ORIG
     BLUtils::ComputeDerivative(frame1.mPhases, &frame1.mDTPhases);
 #endif
+
+    // NOTE: smb moves magns
     
 #define SIMPLE_DBG_ALGO 1 //0 //1
 #if SIMPLE_DBG_ALGO
