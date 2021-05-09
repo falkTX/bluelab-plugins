@@ -18,6 +18,10 @@ using namespace std;
 
 #include "PitchShiftPrusaFftObj.h"
 
+// Exactly like the "Phase Vocoder Done Right" ?
+// Or adapted for pitch shifting?
+#define REAL_PHASE_VOCODER_PURNA 0 //1
+
 PitchShiftPrusaFftObj::PitchShiftPrusaFftObj(int bufferSize,
                                              int oversampling,
                                              int freqRes,
@@ -172,12 +176,11 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
     // Create the heap
     make_heap(hp.begin(), hp.end());
 
-    // Test, to try to optimize
-    // NOTE: after sort, this is not a heap anymore...
-    //sort_heap(hp.begin(), hp.end());
-    
-    BL_FLOAT a = mFactor*2.0;
-    BL_FLOAT b = mFactor*2.0;
+#if REAL_PHASE_VOCODER_PURNA
+    // For real phase vocoder 
+    const BL_FLOAT as = mFactor*2.0;
+    const BL_FLOAT bs = mFactor*2.0;
+#endif
     
     // Iterate
     while(!tho.empty())
@@ -193,11 +196,16 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
             if (idx >= 0)
             //if (Contains(tho, t.mBinIdx, 1))
             {
+#if REAL_PHASE_VOCODER_PURNA
                 frame1.mEstimPhases.Get()[t.mBinIdx] =
                     frame0.mEstimPhases.Get()[t.mBinIdx] +
-                    a*0.5*(frame0.mDTPhases.Get()[t.mBinIdx] +
-                           frame1.mDTPhases.Get()[t.mBinIdx]);
-
+                    as*0.5*(frame0.mDTPhases.Get()[t.mBinIdx] +
+                            frame1.mDTPhases.Get()[t.mBinIdx]);
+#else // Pitch shifting
+                frame1.mEstimPhases.Get()[t.mBinIdx] =
+                    frame0.mEstimPhases.Get()[t.mBinIdx] +
+                    frame1.mDTPhases.Get()[t.mBinIdx]*mFactor;
+#endif
                 //Remove(&tho, t.mBinIdx, 1);
                 RemoveIdx(&tho, idx);
                 
@@ -215,11 +223,16 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
             if (idx0 >= 0)
             //if (Contains(tho, t.mBinIdx + 1, 1))
             {
+#if REAL_PHASE_VOCODER_PURNA
                 frame1.mEstimPhases.Get()[t.mBinIdx + 1] =
                     frame1.mEstimPhases.Get()[t.mBinIdx] +
-                    b*0.5*(frame1.mDFPhases.Get()[t.mBinIdx] +
-                           frame1.mDFPhases.Get()[t.mBinIdx + 1]);
-
+                    bs*0.5*(frame1.mDFPhases.Get()[t.mBinIdx] +
+                            frame1.mDFPhases.Get()[t.mBinIdx + 1]);
+#else // Pitch shift
+                frame1.mEstimPhases.Get()[t.mBinIdx + 1] =
+                    frame1.mEstimPhases.Get()[t.mBinIdx] +
+                    frame1.mDFPhases.Get()[t.mBinIdx + 1]*mFactor;
+#endif
                 //Remove(&tho, t.mBinIdx + 1, 1);
                 RemoveIdx(&tho, idx0);
 
@@ -231,11 +244,17 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
             if (idx1 >= 0)
             //if (Contains(tho, t.mBinIdx - 1, 1))
             {
+#if REAL_PHASE_VOCODER_PURNA
                 frame1.mEstimPhases.Get()[t.mBinIdx - 1] =
                     frame1.mEstimPhases.Get()[t.mBinIdx] -
-                    b*0.5*(frame1.mDFPhases.Get()[t.mBinIdx] +
-                           frame1.mDFPhases.Get()[t.mBinIdx - 1]);
-
+                    bs*0.5*(frame1.mDFPhases.Get()[t.mBinIdx] +
+                            frame1.mDFPhases.Get()[t.mBinIdx - 1]);
+#else // Pitch shift
+                frame1.mEstimPhases.Get()[t.mBinIdx - 1] =
+                    frame1.mEstimPhases.Get()[t.mBinIdx] /*-*/ + 
+                    frame1.mDFPhases.Get()[t.mBinIdx - 1]*mFactor;
+#endif
+                
                 //Remove(&tho, t.mBinIdx - 1, 1);
                 RemoveIdx(&tho, idx1);
 
@@ -249,7 +268,7 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
     }
 
     // Result
-    *magns = frame1.mMagns;
+    //*magns = frame1.mMagns;
     *phases = frame1.mEstimPhases;
     
     // Update prev data
