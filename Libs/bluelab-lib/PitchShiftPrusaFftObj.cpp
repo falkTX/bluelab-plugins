@@ -87,22 +87,26 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
 #define TOL 1e-6
     
     // TODO: optimize with tmp buffers
-    
-    Frame inputFrame;
-    inputFrame.mMagns = *magns;
-    inputFrame.mPhases = *phases;
 
+    const Frame &frame0 = mPrevFrame;
+    
+    Frame frame1;
+    frame1.mMagns = *magns;
+    frame1.mPhases = *phases;
+    frame1.mDTPhases.Resize(magns->GetSize());
+    BLUtils::FillAllZero(&frame1.mDTPhases);
+    frame1.mDFPhases.Resize(magns->GetSize());
+    BLUtils::FillAllZero(&frame1.mDFPhases);
+    frame1.mEstimPhases = *phases;
+    
     // Test if we have prev data 
     if (mPrevFrame.mMagns.GetSize() == 0)
     {
         // Update prev data
-        mPrevFrame = inputFrame;
+        mPrevFrame = frame1;
 
         return;
     }
-
-    const Frame &frame0 = mPrevFrame;
-    Frame frame1 = inputFrame;
     
     // Pre-processing
     //
@@ -110,14 +114,10 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
     // TODO: use PhasesUnwrapper ?
     
     // Phases time derivative
-    WDL_TypedBuf<BL_FLOAT> phasesTimeDeriv;
-    phasesTimeDeriv.Resize(magns->GetSize());
-    BLUtils::ComputeDiff(&phasesTimeDeriv, frame0.mPhases, frame1.mPhases);
+    BLUtils::ComputeDiff(&frame1.mDTPhases, frame0.mPhases, frame1.mPhases);
 
     // Phases freq derivative
-    WDL_TypedBuf<BL_FLOAT> phasesFreqDeriv;
-    phasesFreqDeriv.Resize(magns->GetSize());
-    BLUtils::ComputeDerivative(frame1.mPhases, &phasesFreqDeriv);
+    BLUtils::ComputeDerivative(frame1.mPhases, &frame1.mDTPhases);
 
     // Compute tolerance
     BL_FLOAT maxMagn0 = BLUtils::ComputeMax(frame0.mMagns);
@@ -149,7 +149,7 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
         {
             // Assign random phase value otherwise 
             BL_FLOAT rp = rand()*randMaxInv;
-            frame1.mPhases.Get()[i] = rp;
+            frame1.mEstimPhases.Get()[i] = rp;
         }
     }
 
@@ -193,10 +193,10 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
             if (idx >= 0)
             //if (Contains(tho, t.mBinIdx, 1))
             {
-                frame1.mPhases.Get()[t.mBinIdx] =
-                    frame0.mPhases.Get()[t.mBinIdx] +
-                    a*0.5*(mPrevPhasesTimeDeriv.Get()[t.mBinIdx] +
-                           phasesTimeDeriv.Get()[t.mBinIdx]);
+                frame1.mEstimPhases.Get()[t.mBinIdx] =
+                    frame0.mEstimPhases.Get()[t.mBinIdx] +
+                    a*0.5*(frame0.mDTPhases.Get()[t.mBinIdx] +
+                           frame1.mDTPhases.Get()[t.mBinIdx]);
 
                 //Remove(&tho, t.mBinIdx, 1);
                 RemoveIdx(&tho, idx);
@@ -215,10 +215,10 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
             if (idx0 >= 0)
             //if (Contains(tho, t.mBinIdx + 1, 1))
             {
-                frame1.mPhases.Get()[t.mBinIdx + 1] =
-                    frame1.mPhases.Get()[t.mBinIdx + 1] +
-                    b*0.5*(phasesTimeDeriv.Get()[t.mBinIdx] +
-                           phasesTimeDeriv.Get()[t.mBinIdx + 1]);
+                frame1.mEstimPhases.Get()[t.mBinIdx + 1] =
+                    frame1.mEstimPhases.Get()[t.mBinIdx] +
+                    b*0.5*(frame1.mDFPhases.Get()[t.mBinIdx] +
+                           frame1.mDFPhases.Get()[t.mBinIdx + 1]);
 
                 //Remove(&tho, t.mBinIdx + 1, 1);
                 RemoveIdx(&tho, idx0);
@@ -231,10 +231,10 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
             if (idx1 >= 0)
             //if (Contains(tho, t.mBinIdx - 1, 1))
             {
-                frame1.mPhases.Get()[t.mBinIdx - 1] =
-                    frame1.mPhases.Get()[t.mBinIdx - 1] -
-                    b*0.5*(phasesTimeDeriv.Get()[t.mBinIdx] +
-                           phasesTimeDeriv.Get()[t.mBinIdx - 1]);
+                frame1.mEstimPhases.Get()[t.mBinIdx - 1] =
+                    frame1.mEstimPhases.Get()[t.mBinIdx] -
+                    b*0.5*(frame1.mDFPhases.Get()[t.mBinIdx] +
+                           frame1.mDFPhases.Get()[t.mBinIdx - 1]);
 
                 //Remove(&tho, t.mBinIdx - 1, 1);
                 RemoveIdx(&tho, idx1);
@@ -250,12 +250,10 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
 
     // Result
     *magns = frame1.mMagns;
-    *phases = frame1.mPhases;
+    *phases = frame1.mEstimPhases;
     
     // Update prev data
-    mPrevFrame = inputFrame;
-
-    mPrevPhasesTimeDeriv = phasesTimeDeriv;
+    mPrevFrame = frame1;
 }
 
 bool

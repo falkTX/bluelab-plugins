@@ -44,10 +44,13 @@ protected:
     {
         WDL_TypedBuf<BL_FLOAT> mMagns;
         WDL_TypedBuf<BL_FLOAT> mPhases;
+        
+        WDL_TypedBuf<BL_FLOAT> mDTPhases;
+        WDL_TypedBuf<BL_FLOAT> mDFPhases;
+        
+        WDL_TypedBuf<BL_FLOAT> mEstimPhases;
     };
     Frame mPrevFrame;
-
-    WDL_TypedBuf<BL_FLOAT> mPrevPhasesTimeDeriv;
     
     struct Tuple
     {
