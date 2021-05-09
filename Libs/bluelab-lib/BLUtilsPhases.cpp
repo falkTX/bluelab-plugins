@@ -85,14 +85,17 @@ BLUtilsPhases::UnwrapPhases(WDL_TypedBuf<FLOAT_TYPE> *phases)
 #if !USE_SIMD_OPTIM
 // Optimized version
 void
-BLUtilsPhases::UnwrapPhases(WDL_TypedBuf<FLOAT_TYPE> *phases)
+BLUtilsPhases::UnwrapPhases(WDL_TypedBuf<FLOAT_TYPE> *phases,
+                            bool adjustFirstPhase)
 {
     if (phases->GetSize() == 0)
         // Empty phases
         return;
     
     FLOAT_TYPE prevPhase = phases->Get()[0];
-    FindNextPhase(&prevPhase, 0.0);
+
+    if (adjustFirstPhase)
+        FindNextPhase(&prevPhase, 0.0);
     
     FLOAT_TYPE sum = 0.0;
     
@@ -120,14 +123,17 @@ BLUtilsPhases::UnwrapPhases(WDL_TypedBuf<FLOAT_TYPE> *phases)
 // Optimized version 2
 template <typename FLOAT_TYPE>
 void
-BLUtilsPhases::UnwrapPhases(WDL_TypedBuf<FLOAT_TYPE> *phases)
+BLUtilsPhases::UnwrapPhases(WDL_TypedBuf<FLOAT_TYPE> *phases,
+                            bool adjustFirstPhase)
 {
     if (phases->GetSize() == 0)
         // Empty phases
         return;
     
     FLOAT_TYPE prevPhase = phases->Get()[0];
-    FindNextPhase(&prevPhase, (FLOAT_TYPE)0.0);
+
+    if (adjustFirstPhase)
+        FindNextPhase(&prevPhase, (FLOAT_TYPE)0.0);
     
     //FLOAT_TYPE sum = 0.0;
     
@@ -136,13 +142,6 @@ BLUtilsPhases::UnwrapPhases(WDL_TypedBuf<FLOAT_TYPE> *phases)
     for (int i = 0; i < phasesSize; i++)
     {
         FLOAT_TYPE phase = phasesData[i];
-        //phase += sum;
-        
-        //while(phase < prevPhase)
-        //{
-        //    phase += 2.0*M_PI;
-        //    sum += 2.0*M_PI;
-        //}
         
         FindNextPhase(&phase, prevPhase);
         
@@ -151,8 +150,10 @@ BLUtilsPhases::UnwrapPhases(WDL_TypedBuf<FLOAT_TYPE> *phases)
         prevPhase = phase;
     }
 }
-template void BLUtilsPhases::UnwrapPhases(WDL_TypedBuf<float> *phases);
-template void BLUtilsPhases::UnwrapPhases(WDL_TypedBuf<double> *phases);
+template void BLUtilsPhases::UnwrapPhases(WDL_TypedBuf<float> *phases,
+                                          bool adjustFirstPhase);
+template void BLUtilsPhases::UnwrapPhases(WDL_TypedBuf<double> *phases,
+                                          bool adjustFirstPhase);
 #endif
 
 template <typename FLOAT_TYPE>

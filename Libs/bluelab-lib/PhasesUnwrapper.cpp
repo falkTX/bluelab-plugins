@@ -65,13 +65,8 @@ PhasesUnwrapper::SetHistorySize(long historySize)
 void
 PhasesUnwrapper::UnwrapPhasesFreq(WDL_TypedBuf<BL_FLOAT> *phases)
 {
-    BL_FLOAT p0 = phases->Get()[0];
-    BLUtils::AddValues(phases, -p0);
-
     //
-    BLUtilsPhases::UnwrapPhases(phases);
-
-    BLUtils::AddValues(phases, p0);
+    BLUtilsPhases::UnwrapPhases(phases, false);
 }
 
 void

@@ -14,7 +14,8 @@ class BLUtilsPhases
     static void FindNextPhase(FLOAT_TYPE *phase, FLOAT_TYPE refPhase);
     
     template <typename FLOAT_TYPE>
-    static void UnwrapPhases(WDL_TypedBuf<FLOAT_TYPE> *phases);
+    static void UnwrapPhases(WDL_TypedBuf<FLOAT_TYPE> *phases,
+                             bool adjustFirstPhase = true);
     
     template <typename FLOAT_TYPE>
     static FLOAT_TYPE MapToPi(FLOAT_TYPE val);
