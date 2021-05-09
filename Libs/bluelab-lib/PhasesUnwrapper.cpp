@@ -235,10 +235,25 @@ PhasesUnwrapper::ComputeUwPhasesDiffTime(WDL_TypedBuf<BL_FLOAT> *diff,
         // Frequency of current bin
         BL_FLOAT fk = i*hzPerBin;
 
-        BL_FLOAT h2PiFk = h*2.0*M_PI*fk;
+        // Origin
+        //BL_FLOAT omegaK = h*2.0*M_PI*fk;
 
-        BL_FLOAT dp = h2PiFk + BLUtilsPhases::princarg(p1 - p0 - h2PiFk);
-    
+        //BL_FLOAT omegaK = (2.0*M_PI*overlapping*i)/bufferSize;
+        //BL_FLOAT omegaK = (2.0*M_PI*(bufferSize/overlapping)*i)/bufferSize;
+        //BL_FLOAT omegaK = 2.0*M_PI*bufferSize/overlapping*i*bufferSize/2;
+
+        // From: https://github.com/eevah/matlab/blob/master/VX_pitch_pv.m
+        //
+        // and maybe also:
+        // https://dadorran.wordpress.com/2014/06/02/audio-time-scale-modification-phase-vocoder-implementation-in-matlab
+        //
+        //BL_FLOAT omegaK = 2.0*M_PI*(bufferSize/overlapping)*
+        //    ((BL_FLOAT)i)/diff->GetSize();
+        BL_FLOAT omegaK = 2.0*M_PI*(bufferSize/overlapping)*
+            ((BL_FLOAT)i)/bufferSize;
+          
+        BL_FLOAT dp = omegaK + BLUtilsPhases::princarg(p1 - p0 - omegaK);
+            
         diff->Get()[i] = dp;
     }
 }

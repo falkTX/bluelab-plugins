@@ -115,7 +115,14 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
         // Update prev data
         mPrevFrame = frame1;
 
-        return;
+        // For first step,
+        // see: http://music.informatics.indiana.edu/media/students/kyung/kyung_paper.pdf
+        // ...
+        BLUtils::FillAllZero(&mPrevFrame.mPhases);
+
+        // ... and do not return!
+        
+        //return;
     }
     
     // Pre-processing
@@ -168,14 +175,19 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
     for (int i = 0; i < magns->GetSize(); i++)
     {
         //BL_FLOAT p0 = frame0.mPhases.Get()[i];
-        //BL_FLOAT p1 = frame1.mPhases.Get()[i];
+        BL_FLOAT p1 = frame1.mPhases.Get()[i];
         //BL_FLOAT dp = p1 - p0;
         
         BL_FLOAT dp = frame1.mDTPhases.Get()[i];
         
         BL_FLOAT ep0 = frame0.mEstimPhases.Get()[i];
-    
-        BL_FLOAT ep1 = ep0 + dp*mFactor;
+
+        // ORIGIN
+        //BL_FLOAT ep1 = ep0 + dp*mFactor;
+
+        // With PhasesUnwrapper::ComputeUwPhasesDiffTime,
+        // we must start from current phase (not estimated prev)
+        BL_FLOAT ep1 = p1 + dp*mFactor;
         
         frame1.mEstimPhases.Get()[i] = ep1;
     }
@@ -183,6 +195,20 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
     *phases = frame1.mEstimPhases;
 
     mPrevFrame = frame1;
+        
+#if 1 // 0
+    // Process magns like with Smb
+    BLUtils::FillAllZero(magns);
+    for (int i = 0; i < magns->GetSize(); i++)
+    {
+        int index = i*mFactor;
+
+        if (index >= magns->GetSize())
+            continue;
+        
+        magns->Get()[index] += frame1.mMagns.Get()[i];
+    }
+#endif
 
     return;
 #endif

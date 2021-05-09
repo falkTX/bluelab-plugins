@@ -43,7 +43,7 @@
 
 // Fix bad sound in mono
 // (due to try to fix phases between two stereo channels)
-#define FIX_BAD_SOUND_MONO 1
+#define FIX_BAD_SOUND_MONO 0 //1
 
 //
 PitchShifterPrusa::PitchShifterPrusa()
