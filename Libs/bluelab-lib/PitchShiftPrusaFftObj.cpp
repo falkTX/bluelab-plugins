@@ -14,6 +14,8 @@ using namespace std;
 #include <BLUtilsComp.h>
 #include <BLUtilsFft.h>
 
+#include <BLDebug.h>
+
 #include "PitchShiftPrusaFftObj.h"
 
 PitchShiftPrusaFftObj::PitchShiftPrusaFftObj(int bufferSize,
@@ -133,13 +135,13 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
     for (int i = 0; i < frame1.mMagns.GetSize(); i++)
     {
         BL_FLOAT magn1 = frame1.mMagns.Get()[i];
-        if (magn1 >= abstol)
+        if (magn1 > abstol)
         {            
             // Add to the heap if greater than threshold            
             Tuple t;
             t.mMagn = magn1;
             t.mBinIdx = i;
-            t.mTimeIdx = 0;
+            t.mTimeIdx = 1;
             
             tho.push_back(t);
         }
@@ -151,6 +153,9 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
         }
     }
 
+    // Sort tho, for optimization
+    sort(tho.begin(), tho.end(), Tuple::IndexSmaller);
+         
     vector<Tuple> hp;
     for (int i = 0; i < tho.size(); i++)
     {
@@ -166,7 +171,7 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
     
     // Create the heap
     make_heap(hp.begin(), hp.end());
-
+    
     BL_FLOAT a = mFactor*2.0;
     BL_FLOAT b = mFactor*2.0;
     
@@ -177,49 +182,64 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
         
         Tuple t = hp.back();
         hp.pop_back();
-
+        
         if (t.mTimeIdx == 0)
         {
-            if (Contains(hp, t.mBinIdx, 1))
+            int idx = ContainsSorted(tho, t.mBinIdx, 1);
+            if (idx >= 0)
+            //if (Contains(tho, t.mBinIdx, 1))
             {
                 frame1.mPhases.Get()[t.mBinIdx] =
                     frame0.mPhases.Get()[t.mBinIdx] +
                     a*0.5*mPrevPhasesTimeDeriv.Get()[t.mBinIdx] +
                     phasesTimeDeriv.Get()[t.mBinIdx];
 
-                Remove(&tho, t.mBinIdx, 1);
+                //Remove(&tho, t.mBinIdx, 1);
+                RemoveIdx(&tho, idx);
                 
-                hp.push_back(t);
-                push_heap(hp.begin(), hp.end());
+                //hp.push_back(t);
+                //push_heap(hp.begin(), hp.end());
+                
+                BL_FLOAT magn = frame1.mMagns.Get()[t.mBinIdx];
+                AddHeap(&hp, t.mBinIdx, 1, magn);
             }
         }
 
         if (t.mTimeIdx == 1)
         {
-            if (Contains(hp, t.mBinIdx + 1, 1))
+            int idx0 = ContainsSorted(tho, t.mBinIdx + 1, 1);
+            if (idx0 >= 0)
+            //if (Contains(tho, t.mBinIdx + 1, 1))
             {
                 frame1.mPhases.Get()[t.mBinIdx + 1] =
                     frame1.mPhases.Get()[t.mBinIdx + 1] +
                     b*0.5*phasesTimeDeriv.Get()[t.mBinIdx] +
                     phasesTimeDeriv.Get()[t.mBinIdx + 1];
 
-                Remove(&tho, t.mBinIdx + 1, 1);
-                
-                hp.push_back(t);
-                push_heap(hp.begin(), hp.end());
+                //Remove(&tho, t.mBinIdx + 1, 1);
+                RemoveIdx(&tho, idx0);
+
+                BL_FLOAT magn = frame1.mMagns.Get()[t.mBinIdx + 1];
+                AddHeap(&hp, t.mBinIdx + 1, 1, magn);
             }
 
-            if (Contains(hp, t.mBinIdx - 1, 1))
+            int idx1 = ContainsSorted(tho, t.mBinIdx - 1, 1);
+            if (idx1 >= 0)
+            //if (Contains(tho, t.mBinIdx - 1, 1))
             {
                 frame1.mPhases.Get()[t.mBinIdx - 1] =
                     frame1.mPhases.Get()[t.mBinIdx - 1] -
                     b*0.5*phasesTimeDeriv.Get()[t.mBinIdx] +
                     phasesTimeDeriv.Get()[t.mBinIdx - 1];
 
-                Remove(&tho, t.mBinIdx - 1, 1);
+                //Remove(&tho, t.mBinIdx - 1, 1);
+                RemoveIdx(&tho, idx1);
+
+                BL_FLOAT magn = frame1.mMagns.Get()[t.mBinIdx - 1];
+                AddHeap(&hp, t.mBinIdx - 1, 1, magn);
                 
-                hp.push_back(t);
-                push_heap(hp.begin(), hp.end());
+                //hp.push_back(t);
+                //push_heap(hp.begin(), hp.end());
             }
         }
     }
@@ -248,7 +268,28 @@ PitchShiftPrusaFftObj::Contains(const vector<Tuple> &hp, int binIdx, int timeIdx
     return false;
 }
 
-bool
+// NOTE: lower_bound() doesn't like const vectors
+int
+PitchShiftPrusaFftObj::ContainsSorted(/*const*/ vector<Tuple> &hp,
+                                      int binIdx, int timeIdx)
+{
+    Tuple t;
+    t.mBinIdx = binIdx;
+    t.mTimeIdx = timeIdx;
+    
+    vector<Tuple>::iterator it =
+        lower_bound(hp.begin(), hp.end(), t, Tuple::IndexSmaller);
+    if ((it != hp.end()) && Tuple::IndexEqual(*it, t))
+    {
+        int idx = it - hp.begin();
+
+        return idx;
+    }
+ 
+    return -1;
+}
+
+void
 PitchShiftPrusaFftObj::Remove(vector<Tuple> *hp, int binIdx, int timeIdx)
 {
     int idx = -1;
@@ -264,6 +305,40 @@ PitchShiftPrusaFftObj::Remove(vector<Tuple> *hp, int binIdx, int timeIdx)
 
     if (idx >= 0)
         hp->erase(hp->begin() + idx);
+}
+
+void
+PitchShiftPrusaFftObj::RemoveIdx(vector<Tuple> *hp, int idx)
+{
+    if (idx >= 0)
+        hp->erase(hp->begin() + idx);
+}
+
+void
+PitchShiftPrusaFftObj::AddHeap(vector<Tuple> *hp, int binIdx,
+                               int timeIdx, BL_FLOAT magn)
+{
+    Tuple t;
+    t.mMagn = magn;
+    t.mBinIdx = binIdx;
+    t.mTimeIdx = timeIdx;
+
+    hp->push_back(t);
+    push_heap(hp->begin(), hp->end());
+}
+
+void
+PitchShiftPrusaFftObj::DBG_Dump(const char *fileName, const vector<Tuple> &hp)
+{
+    WDL_TypedBuf<BL_FLOAT> magns;
+    magns.Resize(hp.size());
+
+    for (int i = 0; i < hp.size(); i++)
+    {
+        magns.Get()[i] = hp[i].mMagn;
+    }
+
+    BLDebug::DumpData(fileName, magns);
 }
 
 void

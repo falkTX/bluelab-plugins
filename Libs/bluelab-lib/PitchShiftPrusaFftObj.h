@@ -55,12 +55,47 @@ protected:
         int mBinIdx;
         int mTimeIdx;
 
+        // Optimization idea...
+        /*float mMagn;
+          short mBinIdx;
+          short mTimeIdx;*/
+        
         bool operator< (const Tuple &t0)
-        { return (this->mMagn < t0.mMagn); }
+        { return (this->mMagn < t0.mMagn); } // Was tested successfully!
+
+        // For sorting and sorted search
+        static bool IndexSmaller(const Tuple &t0, const Tuple &t1)
+        {
+            if (t0.mTimeIdx < t1.mTimeIdx)
+                return true;
+
+            if (t0.mBinIdx < t1.mBinIdx)
+                return true;
+
+            return false;
+        }
+        
+        static bool IndexEqual(const Tuple &t0, const Tuple &t1)
+        {
+            if (t0.mTimeIdx != t1.mTimeIdx)
+                return false;
+            
+            if (t0.mBinIdx != t1.mBinIdx)
+                return false;
+            
+            return true;
+        }
     };
 
     bool Contains(const vector<Tuple> &hp, int binIdx, int timeIdx);
-    bool Remove(vector<Tuple> *hp, int binIdx, int timeIdx);
+    int ContainsSorted(/*const*/ vector<Tuple> &hp, int binIdx, int timeIdx); // Optim
+
+    void Remove(vector<Tuple> *hp, int binIdx, int timeIdx);
+    void RemoveIdx(vector<Tuple> *hp, int idx);
+
+    void AddHeap(vector<Tuple> *hp, int binIdx, int timeIdx, BL_FLOAT magn);
+    
+    void DBG_Dump(const char *fileName, const vector<Tuple> &hp);
     
 private:
     WDL_TypedBuf<WDL_FFT_COMPLEX> mTmpBuf6;
