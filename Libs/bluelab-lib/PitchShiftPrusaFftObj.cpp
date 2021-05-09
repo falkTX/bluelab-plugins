@@ -171,6 +171,10 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
     
     // Create the heap
     make_heap(hp.begin(), hp.end());
+
+    // Test, to try to optimize
+    // NOTE: after sort, this is not a heap anymore...
+    //sort_heap(hp.begin(), hp.end());
     
     BL_FLOAT a = mFactor*2.0;
     BL_FLOAT b = mFactor*2.0;
@@ -191,8 +195,8 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
             {
                 frame1.mPhases.Get()[t.mBinIdx] =
                     frame0.mPhases.Get()[t.mBinIdx] +
-                    a*0.5*mPrevPhasesTimeDeriv.Get()[t.mBinIdx] +
-                    phasesTimeDeriv.Get()[t.mBinIdx];
+                    a*0.5*(mPrevPhasesTimeDeriv.Get()[t.mBinIdx] +
+                           phasesTimeDeriv.Get()[t.mBinIdx]);
 
                 //Remove(&tho, t.mBinIdx, 1);
                 RemoveIdx(&tho, idx);
@@ -213,8 +217,8 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
             {
                 frame1.mPhases.Get()[t.mBinIdx + 1] =
                     frame1.mPhases.Get()[t.mBinIdx + 1] +
-                    b*0.5*phasesTimeDeriv.Get()[t.mBinIdx] +
-                    phasesTimeDeriv.Get()[t.mBinIdx + 1];
+                    b*0.5*(phasesTimeDeriv.Get()[t.mBinIdx] +
+                           phasesTimeDeriv.Get()[t.mBinIdx + 1]);
 
                 //Remove(&tho, t.mBinIdx + 1, 1);
                 RemoveIdx(&tho, idx0);
@@ -229,8 +233,8 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
             {
                 frame1.mPhases.Get()[t.mBinIdx - 1] =
                     frame1.mPhases.Get()[t.mBinIdx - 1] -
-                    b*0.5*phasesTimeDeriv.Get()[t.mBinIdx] +
-                    phasesTimeDeriv.Get()[t.mBinIdx - 1];
+                    b*0.5*(phasesTimeDeriv.Get()[t.mBinIdx] +
+                           phasesTimeDeriv.Get()[t.mBinIdx - 1]);
 
                 //Remove(&tho, t.mBinIdx - 1, 1);
                 RemoveIdx(&tho, idx1);
@@ -281,7 +285,8 @@ PitchShiftPrusaFftObj::ContainsSorted(/*const*/ vector<Tuple> &hp,
         lower_bound(hp.begin(), hp.end(), t, Tuple::IndexSmaller);
     if ((it != hp.end()) && Tuple::IndexEqual(*it, t))
     {
-        int idx = it - hp.begin();
+        //int idx = it - hp.begin(); // Should be correct also
+        int idx = distance(hp.begin(), it); // More normalized
 
         return idx;
     }
