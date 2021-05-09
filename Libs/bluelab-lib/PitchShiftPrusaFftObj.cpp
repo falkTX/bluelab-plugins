@@ -362,5 +362,6 @@ PitchShiftPrusaFftObj::DBG_Dump(const char *fileName, const vector<Tuple> &hp)
 void
 PitchShiftPrusaFftObj::ResetPitchShift()
 {
-    // TODO
+    Frame f;
+    mPrevFrame = f;
 }
