@@ -7,6 +7,7 @@
 //
 
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
 #include <BLUtilsPhases.h>
 
 #include "PhasesUnwrapper.h"
@@ -210,6 +211,38 @@ PhasesUnwrapper::UnwrapPhasesTime(WDL_TypedBuf<BL_FLOAT> *phases)
         mUnwrappedPhasesTime.pop_front();
 }
 
+// See: http://kth.diva-portal.org/smash/get/diva2:1381398/FULLTEXT01.pdf
+// "Pitch-shifting algorithm design and applications in musicé - THEO ROYER
+// (phase unwrapping in time very well explained)
+void
+PhasesUnwrapper::ComputeUwPhasesDiffTime(WDL_TypedBuf<BL_FLOAT> *diff,
+                                         const WDL_TypedBuf<BL_FLOAT> &phases0,
+                                         const WDL_TypedBuf<BL_FLOAT> &phases1,
+                                         BL_FLOAT sampleRate, int bufferSize,
+                                         int overlapping)
+{
+    diff->Resize(phases0.GetSize());
+
+    BL_FLOAT hzPerBin = sampleRate/bufferSize;
+    // Interval between 2 measurements
+    BL_FLOAT h = (bufferSize/sampleRate)/overlapping;
+        
+    for (int i = 0; i < diff->GetSize(); i++)
+    {
+        BL_FLOAT p0 = phases0.Get()[i];
+        BL_FLOAT p1 = phases1.Get()[i];
+
+        // Frequency of current bin
+        BL_FLOAT fk = i*hzPerBin;
+
+        BL_FLOAT h2PiFk = h*2.0*M_PI*fk;
+
+        BL_FLOAT dp = h2PiFk + PRINCARG(p1 - p0 - h2PiFk);
+
+        diff->Get()[i] = dp;
+    }
+}
+
 void
 PhasesUnwrapper::NormalizePhasesTime(WDL_TypedBuf<BL_FLOAT> *phases)
 {
@@ -271,6 +304,7 @@ PhasesUnwrapper::UnwrapPhasesTime(const WDL_TypedBuf<BL_FLOAT> &phases0,
                 
         BL_FLOAT p1 = phases1->Get()[i];
         BLUtilsPhases::FindNextPhase(&p1, p0);
+
         phases1->Get()[i] = p1;
     }
 }

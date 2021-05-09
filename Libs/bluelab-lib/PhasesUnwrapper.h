@@ -39,6 +39,13 @@ public:
 
     static void UnwrapPhasesTime(const WDL_TypedBuf<BL_FLOAT> &phases0,
                                  WDL_TypedBuf<BL_FLOAT> *phases1);
+
+    // See: http://kth.diva-portal.org/smash/get/diva2:1381398/FULLTEXT01.pdf
+    static void ComputeUwPhasesDiffTime(WDL_TypedBuf<BL_FLOAT> *diff,
+                                        const WDL_TypedBuf<BL_FLOAT> &phases0,
+                                        const WDL_TypedBuf<BL_FLOAT> &phases1,
+                                        BL_FLOAT sampleRate, int bufferSize,
+                                        int overlapping);
     
     // Must call UnwrapPhasesTime() before
     void ComputePhasesGradientTime(WDL_TypedBuf<BL_FLOAT> *phases);
