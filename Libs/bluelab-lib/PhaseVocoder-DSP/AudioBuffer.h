@@ -11,17 +11,15 @@ template <typename DataType> class AudioBuffer
     
     virtual ~AudioBuffer()
     {
-        clear();
+        reset();
     }
     
     void setSize(int numChans, int bufferSize)
     {
-        clear();
-        
         mChannels.resize(numChans);
         
         for (int k = 0; k < numChans; k++)
-            mChannels[i] = malloc(bufferSize*sizeof(DataType));
+            mChannels[i] = realloc(mChannels[i], bufferSize*sizeof(DataType));
 
         mNumSamples = bufferSize;
     }
@@ -29,10 +27,7 @@ template <typename DataType> class AudioBuffer
     void clear()
     {
         for (int k = 0; k < numChans; k++)
-            free(mChannels[i]);
-        mChannels.clear();
-
-        mNumSamples = 0;
+            memset(mChannels[i], 0, mNumSamples*sizeof(DataType));
     }
 
     DataType *getWritePointer(int chanNum)
@@ -48,7 +43,16 @@ template <typename DataType> class AudioBuffer
         return mNumSamples;
     }
         
-    protected;      
+ protected:
+    void reset()
+    {
+        for (int k = 0; k < numChans; k++)
+            free(mChannels[i]);
+        mChannels.clear();
+
+        mNumSamples = 0;
+    }
+    
     vector<DataType *> mChannels;
     int mNumSamples;
 };

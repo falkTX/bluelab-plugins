@@ -70,6 +70,8 @@ struct BlockCircularBuffer final
         }
 
         //block.allocate (newSize, shouldClear);
+        if (block != NULL)
+            free(block);
         block = (ElementType *)malloc(newSize*sizeof(ElementType));
         if (shouldClear)
             memset(block, 0, newSize*sizeof(ElementType));
@@ -88,6 +90,7 @@ struct BlockCircularBuffer final
     {
         //block.clear (length);
         memset(block, 0, length*sizeof(ElementType));
+        
         writeIndex = readIndex = 0;
     }
 
@@ -166,7 +169,7 @@ struct BlockCircularBuffer final
 		{
 			//juce::FloatVectorOperations::add (internalBuffer, sourceBuffer + firstWriteAmount, overlapAmount - firstWriteAmount);
             for (int k = 0; k < overlapAmount - firstWriteAmount; k++)
-                internalBuffer[k] = sourceBuffer[firstWriteAmount + k];
+                internalBuffer[k] += sourceBuffer[firstWriteAmount + k];
 		}
 
 		tempWriteIndex += overlapAmount;

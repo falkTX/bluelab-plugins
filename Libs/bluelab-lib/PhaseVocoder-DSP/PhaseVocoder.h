@@ -42,24 +42,24 @@ namespace stekyne
 
         // TODO: manage the case when the data is all zero
 
-        FloatType *tmpBuf = (FloatType *)malloc(bufSize*sizeof(FloatType));
+        FloatType *tmpBuf = (FloatType *)malloc(bufSize*2*sizeof(FloatType));
                                    
         // Normalization for WDL
         BL_FLOAT coeff = 1.0;
         if (bufSize > 0)
             coeff = 1.0/bufSize;
 
-        for (int i = 0; i < bufSize/2; i++)
+        for (int i = 0; i < bufSize; i++)
         {
             tmpBuf[i*2] = buf[i]*coeff;
-            tmpBuf[i*2 + 1] = buf[i*2];
+            tmpBuf[i*2 + 1] = 0.0; //buf[i*2];
         }
         
-        WDL_fft((WDL_FFT_COMPLEX *)tmpBuf, bufSize/2, false);
+        WDL_fft((WDL_FFT_COMPLEX *)tmpBuf, bufSize, false);
 
-        for (int i = 0; i < bufSize/2; i++)
+        for (int i = 0; i < bufSize; i++)
         {
-            int k = WDL_fft_permute(bufSize/2, i);
+            int k = WDL_fft_permute(bufSize, i);
    
             buf[i*2] = tmpBuf[k*2];
             buf[i*2 + 1] = tmpBuf[k*2 + 1];
@@ -73,22 +73,22 @@ namespace stekyne
     {
         // The buffer contained re/im interleaved complex values
 
-        FloatType *tmpBuf = (FloatType *)malloc(bufSize*sizeof(FloatType));
+        FloatType *tmpBuf = (FloatType *)malloc(bufSize*2*sizeof(FloatType));
 
-        for (int i = 0; i < bufSize/2; i++)
+        for (int i = 0; i < bufSize; i++)
         {
-            int k = WDL_fft_permute(bufSize/2, i);
+            int k = WDL_fft_permute(bufSize, i);
         
             tmpBuf[k*2] = buf[i*2];
             tmpBuf[k*2 + 1] = buf[i*2 + 1];
         }
 
-        WDL_fft((WDL_FFT_COMPLEX *)tmpBuf, bufSize/2, true);
+        WDL_fft((WDL_FFT_COMPLEX *)tmpBuf, bufSize, true);
 
-        for (int i = 0; i < bufSize/2; i++)
+        for (int i = 0; i < bufSize; i++)
         {
             buf[i] = tmpBuf[i*2];
-            buf[i*2] = tmpBuf[i*2 + 1];
+            buf[i*2] = 0.0; //tmpBuf[i*2 + 1];
         }
         
         free(tmpBuf);
