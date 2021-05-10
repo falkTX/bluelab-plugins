@@ -2,6 +2,9 @@
 
 #include "PhaseVocoder.h"
 
+namespace stekyne
+{
+    
 template<typename FloatType = float>
 class PeakShifter : public PhaseVocoder<FloatType>
 {
@@ -134,3 +137,5 @@ private:
 	float timeStretchRatio = 1.f;
 	int nprevpeaks = 0;
 };
+
+}

@@ -4,6 +4,9 @@
 #include <memory>
 #include <cassert>
 
+namespace stekyne
+{
+    
 template<typename ElementType = float>
 struct BlockCircularBuffer final
 {
@@ -185,3 +188,5 @@ private:
 	const char* name = "";
 #endif
 };
+
+}

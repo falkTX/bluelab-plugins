@@ -1,5 +1,8 @@
 #pragma once
 
+namespace stekyne
+{
+    
 // A circular buffer that operates on blocks of data rather than
 // single elements. Hop size can be set for read or write 
 // This will increment the appropriate index by the hop amount
@@ -200,3 +203,5 @@ private:
     size_t readHopSize = 0;
     size_t writeHopSize = 0;
 };
+
+}

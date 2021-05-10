@@ -4,6 +4,9 @@
 #include <algorithm>
 #include "PhaseVocoder.h"
 
+namespace stekyne
+{
+    
 template<typename FloatType = float>
 class PitchShifter : public PhaseVocoder<FloatType>
 {
@@ -77,3 +80,5 @@ private:
 	float pitchRatio = 0.f;
 	float timeStretchRatio = 1.f;
 };
+
+}
