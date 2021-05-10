@@ -163,7 +163,7 @@ struct BlockCircularBuffer final
 
 		//juce::FloatVectorOperations::add (internalBuffer + writeIndex, sourceBuffer, firstWriteAmount);
         for (int k = 0; k < firstWriteAmount; k++)
-            internalBuffer[writeIndex + k] = sourceBuffer[k];
+            internalBuffer[writeIndex + k] += sourceBuffer[k];
                  
 		if (firstWriteAmount < overlapAmount)
 		{
