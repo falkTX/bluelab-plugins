@@ -16,9 +16,6 @@
 //
 PitchShifterPV::PitchShifterPV()
 {
-    mFftObj = NULL;
-    mPhasesProcess = NULL;
-
     //mPitchObjs[0] = NULL;
     //mPitchObjs[1] = NULL;
     
