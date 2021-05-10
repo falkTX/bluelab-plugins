@@ -22,27 +22,27 @@ namespace stekyne
             buffer[i] = 0.5 * (1.0 - std::cos((FloatType)(2.0*M_PI * ((FloatType)i) / (size - 1))));
 }
 
-    int NextPowerOfTwo(int value)
+    static int NextPowerOfTwo(int value)
     {
         int result = 1;
-    
+        
         while(result < value)
             result *= 2;
-    
+        
         return result;
     }
 
 #include "../../WDL/fft.h"
     
     template <typename FloatType>
-    static void performRealOnlyForwardTransform (FloatType *buf, int bufSize);
+    static void performRealOnlyForwardTransform (FloatType *buf, int bufSize)
     {
         // Real parts are all stacked on the first half of the buffer
         // Second half of the buffer is filled with zeros
 
         // TODO: manage the case when the data is all zero
 
-        FloatType *tmpBuf = malloc(bufSize*sizeof(FloatType));
+        FloatType *tmpBuf = (FloatType *)malloc(bufSize*sizeof(FloatType));
                                    
         // Normalization for WDL
         BL_FLOAT coeff = 1.0;
@@ -67,12 +67,13 @@ namespace stekyne
         
         free(tmpBuf);
     }
-    
+
+    template <typename FloatType>
     static void performRealOnlyInverseTransform (FloatType *buf, int bufSize)
     {
         // The buffer contained re/im interleaved complex values
 
-        FloatType *tmpBuf = malloc(bufSize*sizeof(FloatType));
+        FloatType *tmpBuf = (FloatType *)malloc(bufSize*sizeof(FloatType));
 
         for (int i = 0; i < bufSize/2; i++)
         {
@@ -97,10 +98,11 @@ namespace stekyne
 // Resample a signal to a new size using linear interpolation
 // The 'originalSize' is the max size of the original signal
 // The 'newSignalSize' is the size to resample to. The 'newSignal' must be at least as big as this size.
-static void linearResample (const float* const originalSignal, int originalSize,
-	float* const newSignal, int newSignalSize)
+    template <typename FloatType>
+static void linearResample (const FloatType* const originalSignal, int originalSize,
+	FloatType* const newSignal, int newSignalSize)
 {
-	const auto lerp = [&](float v0, float v1, float t)
+	const auto lerp = [&](FloatType v0, FloatType v1, FloatType t)
 	{
 		return (1.f - t) * v0 + t * v1;
 	};

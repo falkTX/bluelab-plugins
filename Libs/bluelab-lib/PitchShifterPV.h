@@ -30,7 +30,7 @@ class PitchShifterPV
     void SetTransBoost(BL_FLOAT transBoost) {}
     
 protected:
-    stekyne::PitchShifter *mPitchObjs[2];
+    stekyne::PitchShifter<BL_FLOAT> *mPitchObjs[2];
 };
 
 #endif

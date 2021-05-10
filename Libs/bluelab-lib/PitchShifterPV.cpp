@@ -11,7 +11,7 @@ using namespace stekyne;
 PitchShifterPV::PitchShifterPV()
 {
     for (int i = 0; i < 2; i++)
-        mPitchObjs[i] = new PitchShifter();
+        mPitchObjs[i] = new PitchShifter<BL_FLOAT>();
 }
 
 PitchShifterPV::~PitchShifterPV()
@@ -32,7 +32,7 @@ PitchShifterPV::Process(vector<WDL_TypedBuf<BL_FLOAT> > &in,
 
     for (int i = 0; i < in.size(); i++)
     {
-        if (i >= out.size())
+        if (i >= out->size())
             break;
 
         if (mPitchObjs[i] == NULL)
@@ -60,7 +60,7 @@ PitchShifterPV::ComputeLatency(int blockSize)
     int latency = 0;
 
     if (mPitchObjs[0] != NULL)
-        latency = mPitchObjs[0].getLatencyInSamples();
+        latency = mPitchObjs[0]->getLatencyInSamples();
     
     return latency;
 }

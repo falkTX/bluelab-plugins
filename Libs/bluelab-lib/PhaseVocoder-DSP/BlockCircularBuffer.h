@@ -78,11 +78,11 @@ struct BlockCircularBuffer final
         writeIndex = readIndex = 0;
     }
 
-	void setEnableLogging (const char * const bufferName, bool enabled)
-	{
-		name = bufferName;
-		shouldLog = enabled;
-	}
+	/*void setEnableLogging (const char * const bufferName, bool enabled)
+      {
+      name = bufferName;
+      shouldLog = enabled;
+      }*/
 
     void reset ()
     {
@@ -116,7 +116,7 @@ struct BlockCircularBuffer final
 		readIndex += readHopSize != 0 ? readHopSize : destLength;
 		readIndex %= length;
 
-		if (shouldLog) printState ();
+		//if (shouldLog) printState ();
     }
 
     // Write all samples from the 'sourceBuffer' into the internal buffer
@@ -131,18 +131,20 @@ struct BlockCircularBuffer final
 		//auto internalBuffer = block.getData ();
         const ElementType *internalBuffer = block;
 		assert (internalBuffer != sourceBuffer);
-		memcpy (internalBuffer + writeIndex, sourceBuffer, sizeof (ElementType) * firstWriteAmount);
+		memcpy ((void *)(internalBuffer + writeIndex), sourceBuffer,
+                sizeof (ElementType) * firstWriteAmount);
 
 		if (firstWriteAmount < sourceLength)
 		{
-			memcpy (internalBuffer, sourceBuffer + firstWriteAmount, sizeof (ElementType) * 
+			memcpy ((void *)internalBuffer,
+                    sourceBuffer + firstWriteAmount, sizeof (ElementType) * 
 				(static_cast<unsigned long long>(sourceLength) - firstWriteAmount));
 		}
 
 		writeIndex += writeHopSize != 0 ? writeHopSize : sourceLength;
 		writeIndex %= length;
 
-		if (shouldLog) printState ();
+		//if (shouldLog) printState ();
     }
 
     // The first 'overlapAmount' of 'sourceBuffer' samples are added to the existing buffer
@@ -186,7 +188,7 @@ struct BlockCircularBuffer final
 		writeIndex += writeHopSize;
 		writeIndex %= length;
 
-		if (shouldLog) printState ();
+		//if (shouldLog) printState ();
     }
 
 	/*void printState ()
