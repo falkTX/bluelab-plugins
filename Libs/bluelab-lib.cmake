@@ -536,10 +536,12 @@ set(_bluelab-lib_src
   PitchShifterBLSmb.h
   PitchShifter.cpp
   PitchShifter.h
-  #PitchShifterSmb.cpp
-  #PitchShifterSmb.h
+  PitchShifterSmb.cpp
+  PitchShifterSmb.h
   PitchShifterPrusa.cpp
   PitchShifterPrusa.h
+  PitchShifterJh.cpp
+  PitchShifterJh.h
   PitchShiftFftObj3.cpp
   PitchShiftFftObj3.h
   PitchShiftPrusaFftObj.cpp
@@ -900,7 +902,8 @@ set(_bluelab-lib_src
   WavetableSynth.h
   Window.cpp
   Window.h
-  #smbPitchShift.cpp
+  smbPitchShift.cpp
+  jhPitchShift.cpp
   )
 list(TRANSFORM _bluelab-lib_src PREPEND "${BLUELAB_LIB_SRC}")
 iplug_target_add(_bluelab-lib INTERFACE
