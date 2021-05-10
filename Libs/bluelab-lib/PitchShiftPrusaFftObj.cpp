@@ -212,7 +212,7 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
 
     mPrevFrame = frame1;
         
-#if 0 //1 // 0
+#if 1 // 0
     // Process magns like with Smb
     BLUtils::FillAllZero(magns);
     for (int i = 0; i < magns->GetSize(); i++)
