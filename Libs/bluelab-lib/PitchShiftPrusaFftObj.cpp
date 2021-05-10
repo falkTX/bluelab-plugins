@@ -115,14 +115,18 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
         // Update prev data
         mPrevFrame = frame1;
 
+#if 0 // Gives incorrect results at startup, which are propagated...
+        // TODO: check how to fix this.
+        
         // For first step,
         // see: http://music.informatics.indiana.edu/media/students/kyung/kyung_paper.pdf
         // ...
         BLUtils::FillAllZero(&mPrevFrame.mPhases);
 
         // ... and do not return!
-        
-        //return;
+#endif
+
+        return;
     }
     
     // Pre-processing
@@ -169,25 +173,37 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
 #endif
 
     // NOTE: smb moves magns
-    
+
+    // NOTE: it seems that for pitching with phase vocoder, it is necessary
+    // to "stretch the grains somewhere", this looks complicated
+    //
+    // If code needed,
+    // see: https://github.com/stekyne/PhaseVocoder/blob/master/DSP/PitchShifter.h
+    //
 #define SIMPLE_DBG_ALGO 1 //0 //1
 #if SIMPLE_DBG_ALGO
+
+    //BLDebug::DumpData("diff.txt", frame1.mDTPhases);
+    //fprintf(stderr, "factor: %g\n", factor);
+    
     for (int i = 0; i < magns->GetSize(); i++)
     {
-        //BL_FLOAT p0 = frame0.mPhases.Get()[i];
+        BL_FLOAT p0 = frame0.mPhases.Get()[i];
         BL_FLOAT p1 = frame1.mPhases.Get()[i];
-        //BL_FLOAT dp = p1 - p0;
         
+        //BL_FLOAT dp = p1 - p0;
         BL_FLOAT dp = frame1.mDTPhases.Get()[i];
         
         BL_FLOAT ep0 = frame0.mEstimPhases.Get()[i];
 
         // ORIGIN
-        //BL_FLOAT ep1 = ep0 + dp*mFactor;
+        BL_FLOAT ep1 = ep0 +  dp*mFactor;
 
         // With PhasesUnwrapper::ComputeUwPhasesDiffTime,
         // we must start from current phase (not estimated prev)
-        BL_FLOAT ep1 = p1 + dp*mFactor;
+        //
+        // See: https://github.com/stekyne/PhaseVocoder/blob/master/DSP/PitchShifter.h
+        //BL_FLOAT ep1 = p1 + dp*mFactor;
         
         frame1.mEstimPhases.Get()[i] = ep1;
     }
@@ -196,7 +212,7 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
 
     mPrevFrame = frame1;
         
-#if 1 // 0
+#if 0 //1 // 0
     // Process magns like with Smb
     BLUtils::FillAllZero(magns);
     for (int i = 0; i < magns->GetSize(); i++)

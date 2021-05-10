@@ -251,9 +251,9 @@ PhasesUnwrapper::ComputeUwPhasesDiffTime(WDL_TypedBuf<BL_FLOAT> *diff,
         //    ((BL_FLOAT)i)/diff->GetSize();
         BL_FLOAT omegaK = 2.0*M_PI*(bufferSize/overlapping)*
             ((BL_FLOAT)i)/bufferSize;
-          
+        
         BL_FLOAT dp = omegaK + BLUtilsPhases::princarg(p1 - p0 - omegaK);
-            
+        
         diff->Get()[i] = dp;
     }
 }
