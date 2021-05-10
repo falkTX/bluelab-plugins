@@ -258,16 +258,19 @@ public:
                 for (int k = 0; k < windowSize; k++)
                     spectralBuffer[k] *= windowBuffer[k];
 
+                // #bluelab: maybe no need to rotate and rotate back
+                // NOTE: with rotation, and wdl fft, the result is not good
+                
 				// Rotate signal 180 degrees, move the first half to the back and back to the front
-				std::rotate (spectralBuffer, spectralBuffer + (windowSize / 2), spectralBuffer + windowSize);
+				//std::rotate (spectralBuffer, spectralBuffer + (windowSize / 2), spectralBuffer + windowSize);
 
 				// Perform FFT, process and inverse FFT
 				performRealOnlyForwardTransform (spectralBuffer, windowSize);
-				processImpl (spectralBuffer, spectralBufferSize);
+                processImpl (spectralBuffer, spectralBufferSize);
 				performRealOnlyInverseTransform (spectralBuffer, windowSize);
 
 				// Undo signal back to original rotation
-				std::rotate (spectralBuffer, spectralBuffer + (windowSize / 2), spectralBuffer + windowSize);
+                //std::rotate (spectralBuffer, spectralBuffer + (windowSize / 2), spectralBuffer + windowSize);
                 
 				// Apply window to signal
 				//juce::FloatVectorOperations::multiply (spectralBuffer, windowBuffer, windowSize);
