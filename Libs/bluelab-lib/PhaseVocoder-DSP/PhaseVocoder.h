@@ -13,14 +13,18 @@
 #define TWO_PI 6.28318530717958647692
 #endif
 
+#include <BLDebug.h>
+
 namespace stekyne
 {
+    // NOTE: with this, we have exactly the same window as in Juce
+    // (tested for comparison)
     template <typename FloatType>
     static void WindowFunctionHann(FloatType *buffer, int size)
     {
         for (int i = 0; i < size; i++)
             buffer[i] = 0.5 * (1.0 - std::cos((FloatType)(2.0*M_PI * ((FloatType)i) / (size - 1))));
-}
+    }
 
     static int NextPowerOfTwo(int value)
     {
@@ -256,7 +260,7 @@ public:
 
 				// Rotate signal 180 degrees, move the first half to the back and back to the front
 				std::rotate (spectralBuffer, spectralBuffer + (windowSize / 2), spectralBuffer + windowSize);
-				
+
 				// Perform FFT, process and inverse FFT
 				performRealOnlyForwardTransform (spectralBuffer, windowSize);
 				processImpl (spectralBuffer, spectralBufferSize);
@@ -264,12 +268,12 @@ public:
 
 				// Undo signal back to original rotation
 				std::rotate (spectralBuffer, spectralBuffer + (windowSize / 2), spectralBuffer + windowSize);
-
+                
 				// Apply window to signal
 				//juce::FloatVectorOperations::multiply (spectralBuffer, windowBuffer, windowSize);
                 for (int k = 0; k < windowSize; k++)
                     spectralBuffer[k] *= windowBuffer[k];
-
+                
 				// Resample output grain to N * (hop size analysis / hop size synthesis)
 				linearResample (spectralBuffer, windowSize, resampleBuffer, resampleSize);
 
