@@ -5,45 +5,22 @@
 
 #include "PitchShifterPV.h"
 
-// With 1024, we miss some frequencies
-#define BUFFER_SIZE 2048
-
-#define OVERSAMPLING_0 4
-#define OVERSAMPLING_1 8
-#define OVERSAMPLING_2 16
-#define OVERSAMPLING_3 32
+using namespace stekyne;
 
 //
 PitchShifterPV::PitchShifterPV()
 {
-    //mPitchObjs[0] = NULL;
-    //mPitchObjs[1] = NULL;
-    
-    //
-    mOversampling = OVERSAMPLING_0;
-    
-    mSampleRate = 44100.0;
-    mFactor = 1.0;
-
-    Init(mSampleRate);
+    for (int i = 0; i < 2; i++)
+        mPitchObjs[i] = new PitchShifter();
 }
 
 PitchShifterPV::~PitchShifterPV()
 {
     for (int i = 0; i < 2; i++)
     {
-        //if (mPitchObjs[i] != NULL)
-        //    delete mPitchObjs[i];
+        if (mPitchObjs[i] != NULL)
+            delete mPitchObjs[i];
     }
-}
-
-void
-PitchShifterPV::Reset(BL_FLOAT sampleRate, int blockSize)
-{
-    mSampleRate = sampleRate;
-
-    // Sample rate has changed, and we can have variable buffer size
-    Init(mSampleRate);
 }
 
 void
@@ -53,54 +30,37 @@ PitchShifterPV::Process(vector<WDL_TypedBuf<BL_FLOAT> > &in,
     if (in.empty())
         return;
 
-    // TODO
+    for (int i = 0; i < in.size(); i++)
+    {
+        if (i >= out.size())
+            break;
+
+        if (mPitchObjs[i] == NULL)
+            break;
+
+        (*out)[i] = in[i];
+        
+        mPitchObjs[i]->process((*out)[i].Get(), (*out)[i].GetSize());
+    }
 }
     
 void
 PitchShifterPV::SetFactor(BL_FLOAT factor)
 {
-    mFactor = factor;
-}
-
-void
-PitchShifterPV::SetQuality(int quality)
-{
-    switch(quality)
+    for (int i = 0; i < 2; i++)
     {
-        case 0:
-            mOversampling = 4;
-            break;
-            
-        case 1:
-            mOversampling = 8;
-            break;
-            
-        case 2:
-            mOversampling = 16;
-            break;
-            
-        case 3:
-            mOversampling = 32;
-            break;
-            
-        default:
-            break;
+        if (mPitchObjs[i] != NULL)
+            mPitchObjs[i]->setPitchRatio(factor);
     }
-
-    Init(mSampleRate);
 }
 
 int
 PitchShifterPV::ComputeLatency(int blockSize)
 {
-    // TODO
     int latency = 0;
 
+    if (mPitchObjs[0] != NULL)
+        latency = mPitchObjs[0].getLatencyInSamples();
+    
     return latency;
-}
-
-void
-PitchShifterPV::Init(BL_FLOAT sampleRate)
-{
-    // TODO
 }

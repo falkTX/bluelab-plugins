@@ -1,8 +1,9 @@
 #pragma once
 
+#include "AudioBuffer.h"
+
 namespace stekyne
 {
-    
 // A circular buffer that operates on blocks of data rather than
 // single elements. Hop size can be set for read or write 
 // This will increment the appropriate index by the hop amount
@@ -114,13 +115,13 @@ private:
     {
         const size_t maxSamples = internalBuffer.getNumSamples ();
 
-        jassert (isPositiveAndBelow (destIndex, maxSamples));
-        jassert (isPositiveAndBelow (numSrcElements, maxSamples));
+        //jassert (isPositiveAndBelow (destIndex, maxSamples));
+        //jassert (isPositiveAndBelow (numSrcElements, maxSamples));
         
         const size_t firstAmount = destIndex + numSrcElements >= maxSamples ?
             maxSamples - destIndex : numSrcElements;
 
-        jassert (isPositiveAndNotGreaterThan (firstAmount, numSrcElements));
+        //jassert (isPositiveAndNotGreaterThan (firstAmount, numSrcElements));
         memcpy (destBuffer + destIndex, sourceBuffer, 
             sizeof (DataType) * firstAmount);
 
@@ -130,8 +131,8 @@ private:
 
         // Perform a second memcpy if wrapping the end of the buffer 
         const auto secondAmount = numSrcElements - firstAmount;
-        jassert (destIndex + firstAmount <= maxSamples);
-        jassert (firstAmount + secondAmount == numSrcElements);
+        //jassert (destIndex + firstAmount <= maxSamples);
+        //jassert (firstAmount + secondAmount == numSrcElements);
         memcpy (destBuffer, sourceBuffer + firstAmount, 
             sizeof (DataType) * secondAmount);
 
@@ -146,9 +147,9 @@ private:
     bool overlapAdd (DataType* destBuffer, DataType* sourceBuffer, size_t overlapAmount, 
                      size_t numSrcElements, size_t destIndex)
     {
-        jassert (destIndex < internalBuffer.getNumSamples ());
-        jassert (overlapAmount < numSrcElements);
-        jassert (numSrcElements < internalBuffer.getNumSamples ());
+        //jassert (destIndex < internalBuffer.getNumSamples ());
+        //jassert (overlapAmount < numSrcElements);
+        //jassert (numSrcElements < internalBuffer.getNumSamples ());
 
         // Calculate write amount from buffer end
         auto remainingSamples = numSrcElements;
@@ -184,7 +185,7 @@ private:
 
     inline void incrementIndex (size_t& index, size_t incrementAmount, bool hasWrapped)
     {
-        jassert (index < internalBuffer.getNumSamples ());
+        //jassert (index < internalBuffer.getNumSamples ());
 
         if (hasWrapped)
             index = (index - internalBuffer.getNumSamples ()) + incrementAmount;
@@ -197,7 +198,7 @@ private:
 
 private:
     AudioBuffer<DataType> internalBuffer;
-    HeapBlock<DataType> inBuffer;
+    //HeapBlock<DataType> inBuffer;
     size_t readIndex = 0;
     size_t writeIndex = 0;
     size_t readHopSize = 0;

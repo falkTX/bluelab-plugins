@@ -1,6 +1,6 @@
 #pragma once
 
-#include <juce_core/juce_core.h>
+//#include <juce_core/juce_core.h>
 #include <memory>
 #include <cassert>
 
@@ -10,13 +10,25 @@ namespace stekyne
 template<typename ElementType = float>
 struct BlockCircularBuffer final
 {
-    BlockCircularBuffer () = default;
+    //BlockCircularBuffer () = default;
+    BlockCircularBuffer ()
+    {
+        block = NULL;
+    }
 
     BlockCircularBuffer (long newSize)
     {
+        block = NULL;
+        
         setSize (newSize, true);
     }
 
+    virtual ~BlockCircularBuffer ()
+    {
+        if (block != NULL)
+            free(block);
+    }
+    
 	void setReadHopSize (int hopSize)
 	{
 		readHopSize = hopSize;
@@ -57,7 +69,11 @@ struct BlockCircularBuffer final
             return;
         }
 
-        block.allocate (newSize, shouldClear);
+        //block.allocate (newSize, shouldClear);
+        block = (ElementType *)malloc(newSize*sizeof(ElementType));
+        if (shouldClear)
+            memset(block, 0, newSize*sizeof(ElementType));
+        
         length = newSize;
         writeIndex = readIndex = 0;
     }
@@ -70,7 +86,8 @@ struct BlockCircularBuffer final
 
     void reset ()
     {
-        block.clear (length);
+        //block.clear (length);
+        memset(block, 0, length*sizeof(ElementType));
         writeIndex = readIndex = 0;
     }
 
@@ -84,7 +101,8 @@ struct BlockCircularBuffer final
 		assert (destLength <= length);
 		assert (firstReadAmount <= destLength);
 
-		const auto internalBuffer = block.getData ();
+		//const auto internalBuffer = block.getData ();
+        const ElementType *internalBuffer = block;
 		assert (internalBuffer != destBuffer);
 
 		memcpy (destBuffer, internalBuffer + readIndex, sizeof (ElementType) * firstReadAmount);
@@ -110,7 +128,8 @@ struct BlockCircularBuffer final
 		const auto firstWriteAmount = writeIndex + sourceLength >= length ?
 			length - writeIndex : sourceLength;
 
-		auto internalBuffer = block.getData ();
+		//auto internalBuffer = block.getData ();
+        const ElementType *internalBuffer = block;
 		assert (internalBuffer != sourceBuffer);
 		memcpy (internalBuffer + writeIndex, sourceBuffer, sizeof (ElementType) * firstWriteAmount);
 
@@ -131,17 +150,21 @@ struct BlockCircularBuffer final
     void overlapWrite (ElementType* sourceBuffer, const long sourceLength)
     {
 		const auto overlapAmount = sourceLength - writeHopSize;
-        auto internalBuffer = block.getData ();
+        //auto internalBuffer = block.getData ();
+        ElementType *internalBuffer = block;
 		auto tempWriteIndex = writeIndex;
 		auto firstWriteAmount = writeIndex + overlapAmount > length ?
 			length - writeIndex : overlapAmount;
 
-		juce::FloatVectorOperations::add (internalBuffer + writeIndex, sourceBuffer, firstWriteAmount);
-
+		//juce::FloatVectorOperations::add (internalBuffer + writeIndex, sourceBuffer, firstWriteAmount);
+        for (int k = 0; k < firstWriteAmount; k++)
+            internalBuffer[writeIndex + k] = sourceBuffer[k];
+                 
 		if (firstWriteAmount < overlapAmount)
 		{
-			juce::FloatVectorOperations::add (internalBuffer, sourceBuffer + firstWriteAmount,
-				overlapAmount - firstWriteAmount);
+			//juce::FloatVectorOperations::add (internalBuffer, sourceBuffer + firstWriteAmount, overlapAmount - firstWriteAmount);
+            for (int k = 0; k < overlapAmount - firstWriteAmount; k++)
+                internalBuffer[k] = sourceBuffer[firstWriteAmount + k];
 		}
 
 		tempWriteIndex += overlapAmount;
@@ -166,16 +189,18 @@ struct BlockCircularBuffer final
 		if (shouldLog) printState ();
     }
 
-	void printState ()
-	{
-#ifdef DEBUG
-		DBG ("Name: " << name << juce::String::formatted (", Read Indx: %d, Write Indx: %d, Length: %d",
-			readIndex, writeIndex, length));
-#endif
-	}
+	/*void printState ()
+      {
+      #ifdef DEBUG
+      DBG ("Name: " << name << juce::String::formatted (", Read Indx: %d, Write Indx: %d, Length: %d",
+      readIndex, writeIndex, length));
+      #endif
+      }*/
 
 private:
-    juce::HeapBlock<ElementType> block;
+    //juce::HeapBlock<ElementType> block;
+    ElementType *block;
+    
     long writeIndex = 0;
     long readIndex = 0;
     long length = 0;
@@ -184,9 +209,9 @@ private:
     int readHopSize = 0;
 	bool shouldLog = false;
 
-#ifdef DEBUG
-	const char* name = "";
-#endif
+    /*#ifdef DEBUG
+      const char* name = "";
+      #endif*/
 };
 
 }

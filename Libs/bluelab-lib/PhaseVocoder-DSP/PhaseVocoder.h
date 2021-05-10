@@ -1,12 +1,99 @@
 #pragma once
 
-#include <juce_dsp/juce_dsp.h>
+//#include <juce_dsp/juce_dsp.h>
 #include <algorithm>
 #include <functional>
 #include "BlockCircularBuffer.h"
 
+#ifndef M_PI
+#define M_PI 3.1415926535897932384
+#endif
+
+#ifndef TWO_PI
+#define TWO_PI 6.28318530717958647692
+#endif
+
 namespace stekyne
 {
+    template <typename FloatType>
+    static void WindowFunctionHann(FloatType *buffer, int size)
+    {
+        for (int i = 0; i < size; i++)
+            buffer[i] = 0.5 * (1.0 - std::cos((FloatType)(2.0*M_PI * ((FloatType)i) / (size - 1))));
+}
+
+    int NextPowerOfTwo(int value)
+    {
+        int result = 1;
+    
+        while(result < value)
+            result *= 2;
+    
+        return result;
+    }
+
+#include "../../WDL/fft.h"
+    
+    template <typename FloatType>
+    static void performRealOnlyForwardTransform (FloatType *buf, int bufSize);
+    {
+        // Real parts are all stacked on the first half of the buffer
+        // Second half of the buffer is filled with zeros
+
+        // TODO: manage the case when the data is all zero
+
+        FloatType *tmpBuf = malloc(bufSize*sizeof(FloatType));
+                                   
+        // Normalization for WDL
+        BL_FLOAT coeff = 1.0;
+        if (bufSize > 0)
+            coeff = 1.0/bufSize;
+
+        for (int i = 0; i < bufSize/2; i++)
+        {
+            tmpBuf[i*2] = buf[i]*coeff;
+            tmpBuf[i*2 + 1] = buf[i*2];
+        }
+        
+        WDL_fft((WDL_FFT_COMPLEX *)tmpBuf, bufSize/2, false);
+
+        for (int i = 0; i < bufSize/2; i++)
+        {
+            int k = WDL_fft_permute(bufSize/2, i);
+   
+            buf[i*2] = tmpBuf[k*2];
+            buf[i*2 + 1] = tmpBuf[k*2 + 1];
+        }
+        
+        free(tmpBuf);
+    }
+    
+    static void performRealOnlyInverseTransform (FloatType *buf, int bufSize)
+    {
+        // The buffer contained re/im interleaved complex values
+
+        FloatType *tmpBuf = malloc(bufSize*sizeof(FloatType));
+
+        for (int i = 0; i < bufSize/2; i++)
+        {
+            int k = WDL_fft_permute(bufSize/2, i);
+        
+            tmpBuf[k*2] = buf[i*2];
+            tmpBuf[k*2 + 1] = buf[i*2 + 1];
+        }
+
+        WDL_fft((WDL_FFT_COMPLEX *)tmpBuf, bufSize/2, true);
+
+        for (int i = 0; i < bufSize/2; i++)
+        {
+            buf[i] = tmpBuf[i*2];
+            buf[i*2] = tmpBuf[i*2 + 1];
+        }
+        
+        free(tmpBuf);
+    }
+    
+    
 // Resample a signal to a new size using linear interpolation
 // The 'originalSize' is the max size of the original signal
 // The 'newSignalSize' is the size to resample to. The 'newSignal' must be at least as big as this size.
@@ -52,15 +139,16 @@ public:
 		windowSize (windowLength),
 		resampleSize (windowLength),
 		spectralBufferSize (windowLength * 2),
-		fft (std::make_unique<juce::dsp::FFT> (nearestPower2 (fftSize))),
+		//fft (std::make_unique<juce::dsp::FFT> (nearestPower2 (fftSize))),
 		analysisBuffer (windowLength),
 		synthesisBuffer (windowLength * 3),
 		windowBuffer (new FloatType[windowLength])
 	{
 		// TODO make the window more configurable
-		juce::dsp::WindowingFunction<FloatType>::fillWindowingTables (windowBuffer, windowSize,
-			juce::dsp::WindowingFunction<FloatType>::hann, false);
-
+		//juce::dsp::WindowingFunction<FloatType>::fillWindowingTables (windowBuffer, windowSize,
+		//	juce::dsp::WindowingFunction<FloatType>::hann, false);
+        WindowFunctionHann(windowBuffer, windowSize);
+    
 		// Processing reuses the spectral buffer to resize the output grain
 		// It must be the at least the size of the min pitch ratio
 		// TODO FFT size must be big enough also
@@ -113,13 +201,13 @@ public:
 	// 7. Read a block of samples from the synthesis buffer
 	void process (FloatType* const incomingBuffer, const int incomingBufferSize)
 	{
-		const juce::SpinLock::ScopedLockType lock(paramLock);
-		juce::ScopedNoDenormals noDenormals;
+		//const juce::SpinLock::ScopedLockType lock(paramLock);
+		//juce::ScopedNoDenormals noDenormals;
 
-		static int callbackCount = 0;
-		DBG (" ");
-		DBG ("Callback: " << ++callbackCount << ", SampleCount: " << incomingSampleCount << 
-			", (+ incoming): " << incomingBufferSize);
+		//static int callbackCount = 0;
+		/*DBG (" ");
+          DBG ("Callback: " << ++callbackCount << ", SampleCount: " << incomingSampleCount << 
+          ", (+ incoming): " << incomingBufferSize);*/
 
 		// Only write enough samples into the analysis buffer to complete a processing
 		// frame. Likewise, only write enough into the synthesis buffer to generate the 
@@ -132,14 +220,14 @@ public:
 			internalBufferSize = incomingSampleCount + remainingIncomingSamples >= samplesTilNextProcess ?
 				samplesTilNextProcess - incomingSampleCount : remainingIncomingSamples;
 			
-			DBG ("Internal buffer: Offset: " << internalOffset << ", Size: " << internalBufferSize);
-			jassert (internalBufferSize <= incomingBufferSize);
+			//DBG ("Internal buffer: Offset: " << internalOffset << ", Size: " << internalBufferSize);
+			//jassert (internalBufferSize <= incomingBufferSize);
 
 			// Write the incoming samples into the internal buffer
 			// Once there are enough samples, perform spectral processing
 			const auto previousAnalysisWriteIndex = analysisBuffer.getReadIndex ();
 			analysisBuffer.write (incomingBuffer + internalOffset, internalBufferSize);
-			DBG ("Analysis Write Index: " << previousAnalysisWriteIndex << " -> " << analysisBuffer.getWriteIndex ());
+			//DBG ("Analysis Write Index: " << previousAnalysisWriteIndex << " -> " << analysisBuffer.getWriteIndex ());
 
 			incomingSampleCount += internalBufferSize;
 
@@ -148,40 +236,44 @@ public:
 			{
 				isProcessing = true;
 				incomingSampleCount -= samplesTilNextProcess;
-				DBG (" ");
-				DBG ("Process: SampleCount: " << incomingSampleCount);
+				//DBG (" ");
+				//DBG ("Process: SampleCount: " << incomingSampleCount);
 
 				// After first processing, do another process every analysisHopSize samples
 				samplesTilNextProcess = analysisHopSize;
 				
-				jassert (spectralBufferSize > windowSize);
+				//jassert (spectralBufferSize > windowSize);
 				analysisBuffer.setReadHopSize (analysisHopSize);
 				analysisBuffer.read (spectralBuffer, windowSize);
-				DBG ("Analysis Read Index: " << analysisBuffer.getReadIndex ());
+				//DBG ("Analysis Read Index: " << analysisBuffer.getReadIndex ());
 
 				// Apply window to signal
-				juce::FloatVectorOperations::multiply (spectralBuffer, windowBuffer, windowSize);
+				//juce::FloatVectorOperations::multiply (spectralBuffer, windowBuffer, windowSize);
+                for (int k = 0; k < windowSize; k++)
+                    spectralBuffer[k] *= windowBuffer[k];
 
 				// Rotate signal 180 degrees, move the first half to the back and back to the front
 				std::rotate (spectralBuffer, spectralBuffer + (windowSize / 2), spectralBuffer + windowSize);
 				
 				// Perform FFT, process and inverse FFT
-				fft->performRealOnlyForwardTransform (spectralBuffer);
+				performRealOnlyForwardTransform (spectralBuffer, windowSize);
 				processImpl (spectralBuffer, spectralBufferSize);
-				fft->performRealOnlyInverseTransform (spectralBuffer);
+				performRealOnlyInverseTransform (spectralBuffer, windowSize);
 
 				// Undo signal back to original rotation
 				std::rotate (spectralBuffer, spectralBuffer + (windowSize / 2), spectralBuffer + windowSize);
 
 				// Apply window to signal
-				juce::FloatVectorOperations::multiply (spectralBuffer, windowBuffer, windowSize);
+				//juce::FloatVectorOperations::multiply (spectralBuffer, windowBuffer, windowSize);
+                for (int k = 0; k < windowSize; k++)
+                    spectralBuffer[k] *= windowBuffer[k];
 
 				// Resample output grain to N * (hop size analysis / hop size synthesis)
 				linearResample (spectralBuffer, windowSize, resampleBuffer, resampleSize);
 
 				synthesisBuffer.setWriteHopSize (synthesisHopSize);
 				synthesisBuffer.overlapWrite (resampleBuffer, resampleSize);
-				DBG ("Synthesis Write Index: " << synthesisBuffer.getWriteIndex ());
+				//DBG ("Synthesis Write Index: " << synthesisBuffer.getWriteIndex ());
 			}
 
 			// Emit silence until we start producing output
@@ -190,38 +282,39 @@ public:
 				std::fill (incomingBuffer + internalOffset, incomingBuffer + internalOffset +
 					internalBufferSize, 0.f);
 				
-				DBG ("Zeroed output: " << internalOffset << " -> " << internalBufferSize);
+				//DBG ("Zeroed output: " << internalOffset << " -> " << internalBufferSize);
 				continue;
 			}
 
 			const auto previousSynthesisReadIndex = synthesisBuffer.getReadIndex ();
 			synthesisBuffer.read (incomingBuffer + internalOffset, internalBufferSize);
-			DBG ("Synthesis Read Index: " << previousSynthesisReadIndex << " -> " << synthesisBuffer.getReadIndex ());
+			//DBG ("Synthesis Read Index: " << previousSynthesisReadIndex << " -> " << synthesisBuffer.getReadIndex ());
 		}
 
 		// Rescale output
-		juce::FloatVectorOperations::multiply (incomingBuffer, 1.f / rescalingFactor, incomingBufferSize);
+		//juce::FloatVectorOperations::multiply (incomingBuffer, 1.f / rescalingFactor, incomingBufferSize);
+        for (int k = 0; k < incomingBufferSize; k++)
+            incomingBuffer[k] *= 1.f / rescalingFactor;
 	}
 
 	// Principal argument - Unwrap a phase argument to between [-PI, PI]
 	static float principalArgument (float arg)
 	{
-		return std::fmod (arg + juce::MathConstants<FloatType>::pi, 
-			-juce::MathConstants<FloatType>::twoPi) + juce::MathConstants<FloatType>::pi;
+		return std::fmod (arg + M_PI, -TWO_PI) + M_PI;
 	}
 
 	// Returns the 2^x exponent for a given power of two value
 	// If the value given is not a power of two, the nearest power 2 will be used
 	static int nearestPower2 (int value)
 	{
-		return (int)log2 (juce::nextPowerOfTwo (value));
+		return (int)log2 (NextPowerOfTwo (value));
 	}
 
 private:
 	virtual void processImpl (FloatType* const, const int) = 0;
 
 private:	
-	std::unique_ptr<juce::dsp::FFT> fft;
+	//std::unique_ptr<juce::dsp::FFT> fft;
 
 	// Buffers
 	BlockCircularBuffer<FloatType> analysisBuffer;
@@ -236,7 +329,7 @@ private:
 	bool isProcessing = false;
 
 protected:
-	juce::SpinLock paramLock;
+	//juce::SpinLock paramLock;
 	FloatType* windowBuffer = nullptr;
 	float rescalingFactor = 1.f;
 	int analysisHopSize = 0;

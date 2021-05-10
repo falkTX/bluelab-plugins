@@ -23,7 +23,7 @@ public:
 		if (pitchRatio == ratio) 
 			return;
 
-		const juce::SpinLock::ScopedLockType lock(paramLock);
+		//const juce::SpinLock::ScopedLockType lock(paramLock);
 
 		// Lower ratios require a larger amount of incoming samples
 		// This will introduce more latency and large analysis and synthesis buffers
@@ -58,7 +58,7 @@ public:
 			const auto imag = buffer[i + 1];
 			const auto mag = sqrtf (real * real + imag * imag);
 			const auto phase = atan2 (imag, real);
-			const auto omega = juce::MathConstants<float>::twoPi * analysisHopSize * x / (float)windowSize;
+			const auto omega = TWO_PI * analysisHopSize * x / (float)windowSize;
 
 			const auto deltaPhase = omega + principalArgument (
 				phase - previousFramePhases[x] - omega);

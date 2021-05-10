@@ -4,7 +4,7 @@
 #include <vector>
 using namespace std;
 
-//#include <PhaseVocoder-DSP/PitchShifter.h>
+#include <PhaseVocoder-DSP/PitchShifter.h>
 
 class PitchShiftPVFftObj;
 class PitchShifterPV
@@ -13,32 +13,24 @@ class PitchShifterPV
     PitchShifterPV();
     virtual ~PitchShifterPV();
 
-    void Reset(BL_FLOAT sampleRate, int blockSize);
+    void Reset(BL_FLOAT sampleRate, int blockSize) {}
 
     void Process(vector<WDL_TypedBuf<BL_FLOAT> > &in,
                  vector<WDL_TypedBuf<BL_FLOAT> > *out);
-    
-    void SetNumChannels(int nchans) {}
-    void SetFactor(BL_FLOAT factor);
-    // 0, 1, 2 or 3
-    void SetQuality(int quality);
 
-    void SetTransBoost(BL_FLOAT transBoost) {}
+    void SetFactor(BL_FLOAT factor);
 
     int ComputeLatency(int blockSize);
     
+    void SetNumChannels(int nchans) {}
+
+    // 0, 1, 2 or 3
+    void SetQuality(int quality) {}
+
+    void SetTransBoost(BL_FLOAT transBoost) {}
+    
 protected:
-    void Init(BL_FLOAT sampleRate);
-
-    //
-    BL_FLOAT mSampleRate;
-    int mOversampling;
-
-    // Shift factor
-    BL_FLOAT mFactor;
-
-    //
-    //stekyne::PitchShifter *mPitchObjs[2];
+    stekyne::PitchShifter *mPitchObjs[2];
 };
 
 #endif

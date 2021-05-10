@@ -2,6 +2,10 @@
 
 #include "PhaseVocoder.h"
 
+#ifndef TWO_PI
+#define TWO_PI 6.28318530717958647692
+#endif
+
 namespace stekyne
 {
     
@@ -77,7 +81,7 @@ public:
 				// Propagate peak's phase assuming linear frequency
 				// Variation between connected peaks p1 and p2
 				const auto avg_p = (peak + prev_peak) * FloatType (0.5);
-				const auto omega = juce::MathConstants<float>::twoPi * analysisHopSize * avg_p / (float)windowSize;
+				const auto omega = TWO_PI * analysisHopSize * avg_p / (float)windowSize;
 				const auto peak_delta_phi = omega + principalArgument (phases[peak] + phi0[prev_peak] - omega);
 				const auto peak_target_phase = principalArgument (psi [prev_peak] + peak_delta_phi * timeStretchRatio);
 				const auto peak_phase_rotation = principalArgument (peak_target_phase - phases[peak]);
@@ -106,7 +110,7 @@ public:
 		{
 			for (auto i = 0; i < windowSize / 2; ++i)
 			{
-				const auto omega = juce::MathConstants<float>::twoPi * analysisHopSize * i / (float)windowSize;
+				const auto omega = TWO_PI * analysisHopSize * i / (float)windowSize;
 				const auto deltaPhi = omega + principalArgument (phases[i] - phi0[i] - omega);
 				psi[i] = principalArgument (psi[i] + deltaPhi * timeStretchRatio);
 			}
