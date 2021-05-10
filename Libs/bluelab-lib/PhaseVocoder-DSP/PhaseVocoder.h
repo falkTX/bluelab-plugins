@@ -128,9 +128,9 @@ template <typename FloatType = float>
 class PhaseVocoder
 {
 public: 
-	static constexpr int MinOverlapAmount = 4;
-	static constexpr float MaxPitchRatio = 2.0f;
-	static constexpr float MinPitchRatio = 0.5f;
+	static /*constexpr*/ int MinOverlapAmount; // = 4;
+	static /*constexpr*/ float MaxPitchRatio; // = 2.0f;
+	static /*constexpr*/ float MinPitchRatio; // = 0.5f;
 
 public:
 	// Default settings
@@ -339,5 +339,14 @@ protected:
 	int windowSize = 0;
 	int resampleSize = 0;
 };
+
+template <typename FloatType>
+int PhaseVocoder<FloatType>::MinOverlapAmount = 4;
+
+template <typename FloatType>
+float PhaseVocoder<FloatType>::MaxPitchRatio = 2.0f;
+
+template <typename FloatType>
+float PhaseVocoder<FloatType>::MinPitchRatio = 0.5f;
 
 }
