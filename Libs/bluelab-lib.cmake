@@ -904,8 +904,6 @@ set(_bluelab-lib_src
   WavetableSynth.h
   Window.cpp
   Window.h
-  smbPitchShift.cpp
-  jhPitchShift.cpp
   )
 list(TRANSFORM _bluelab-lib_src PREPEND "${BLUELAB_LIB_SRC}")
 iplug_target_add(_bluelab-lib INTERFACE

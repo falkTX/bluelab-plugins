@@ -4,7 +4,7 @@
 #include <vector>
 using namespace std;
 
-#include <PhaseVocoder-DSP/PitchShifter.h>
+#include <../PhaseVocoder-DSP/PitchShifter.h>
 //#include <PhaseVocoder-DSP/PeakShifter.h> // Was a test
 
 class PitchShiftPVFftObj;
