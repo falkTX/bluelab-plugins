@@ -536,12 +536,12 @@ set(_bluelab-lib_src
   PitchShifterBLSmb.h
   PitchShifter.cpp
   PitchShifter.h
-  PitchShifterSmb.cpp
-  PitchShifterSmb.h
+  #PitchShifterSmb.cpp
+  #PitchShifterSmb.h
   PitchShifterPrusa.cpp
   PitchShifterPrusa.h
-  PitchShifterJh.cpp
-  PitchShifterJh.h
+  #PitchShifterJh.cpp
+  #PitchShifterJh.h
   PitchShifterPV.cpp
   PitchShifterPV.h
   PitchShiftFftObj3.cpp
