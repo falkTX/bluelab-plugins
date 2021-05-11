@@ -25,6 +25,21 @@ using namespace std;
 // Or adapted for pitch shifting?
 #define REAL_PHASE_VOCODER_PURNA 0 //1
 
+// See:
+// http://kth.diva-portal.org/smash/get/diva2:1381398/FULLTEXT01.pdf
+// http://ltfat.github.io/notes/ltfatnote050.pdf
+// http://dsp-book.narod.ru/Pitch_shifting.pdf
+// https://dadorran.wordpress.com/2014/06/02/audio-time-scale-modification-phase-vocoder-implementation-in-matlab/
+// https://sethares.engr.wisc.edu/vocoders/phasevocoder.html
+// https://sethares.engr.wisc.edu/vocoders/matlabphasevocoder.html
+// http://music.informatics.indiana.edu/media/students/kyung/kyung_paper.pdf
+// https://github.com/stekyne/PhaseVocoder/blob/master/DSP/PeakShifter.h
+// https://github.com/befuture/PhaseVocoder/blob/master/Source/PV.cpp
+// http://blogs.zynaptiq.com/bernsee/pitch-shifting-using-the-ft/
+// http://www.paulnasca.com/algorithms-created-by-me
+// http://hypermammut.sourceforge.net/paulstretch/
+
+
 PitchShiftPrusaFftObj::PitchShiftPrusaFftObj(int bufferSize,
                                              int oversampling,
                                              int freqRes,
@@ -61,52 +76,19 @@ PitchShiftPrusaFftObj::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer0
     BLUtilsFft::FillSecondFftHalf(ioBuffer0);
 }
 
-// TMP
-template <typename FloatType>
-static void
-linearResample(const FloatType* const originalSignal, int originalSize,
-               FloatType* const newSignal, int newSignalSize)
-{    
-	const auto lerp = [&](FloatType v0, FloatType v1, FloatType t)
-                      {
-                          return (1.f - t) * v0 + t * v1;
-                      };
-
-	// If the original signal is bigger than the new size,
-    // condense the signal to fit the new buffer otherwise expand
-    // the signal to fit the new buffer
-	const auto scale = originalSize / (float)newSignalSize;
-    
-	float index = 0.f;
-
-	for (int i = 0; i < newSignalSize; ++i)
-	{
-		const auto wholeIndex = (int)floor (index);
-		const auto fractionIndex = index - wholeIndex;
-		const auto sampleA = originalSignal[wholeIndex];
-		const auto sampleB = originalSignal[wholeIndex + 1];
-		newSignal[i] = lerp (sampleA, sampleB, fractionIndex);
-		index += scale;
-	}
-    
-    // #bluelab
-    // Ensure that the last value is the same on the resampled signal
-    // (this was not the case before)
-    newSignal[newSignalSize - 1] = originalSignal[originalSize - 1];
-}
-
 void
 PitchShiftPrusaFftObj::ProcessSamplesPost(WDL_TypedBuf<BL_FLOAT> *ioBuffer)
-{
-    int resampSize = (1.0/mFactor)*ioBuffer->GetSize();
+{    
+    // Src buf
+    WDL_TypedBuf<BL_FLOAT> &copyBuf = mTmpBuf2;
+    copyBuf = *ioBuffer;
 
-    // TODO: use tmp buffers
-    WDL_TypedBuf<BL_FLOAT> copyBuf = *ioBuffer;
+    // Dst buf
+    int resampSize = (1.0/mFactor)*ioBuffer->GetSize();
     ioBuffer->Resize(resampSize);
 
-    // TODO: use another function (more clean code)
-    linearResample(copyBuf.Get(), copyBuf.GetSize(),
-                   ioBuffer->Get(), ioBuffer->GetSize());
+    BLUtilsMath::LinearResample(copyBuf.Get(), copyBuf.GetSize(),
+                                ioBuffer->Get(), ioBuffer->GetSize());
 }
 
 void

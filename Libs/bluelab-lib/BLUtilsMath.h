@@ -127,6 +127,10 @@ class BLUtilsMath
     // a = 0.5 -> gives a line
     template <typename FLOAT_TYPE>
     static FLOAT_TYPE ApplySigmoid(FLOAT_TYPE t, FLOAT_TYPE a);
+
+    template <typename FLOAT_TYPE>
+    static void LinearResample(const FLOAT_TYPE *srcBuf, int srcSize,
+                               FLOAT_TYPE *dstBuf, int dstSize);
 };
 
 #endif

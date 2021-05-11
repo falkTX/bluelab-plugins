@@ -1002,14 +1002,17 @@ ProcessObjChannel::NextOutBuffer()
 {
     if (mResultSum.Available() < mBufferSize)
         return;
-        
+
+    //int shift = mShift;
+    int shift = bl_round(mShift*mOutTimeStretchFactor);
+    
     // Let the possiblity to modify, or even resample
     // the result, before adding it to the object
-    if (mTmpBuf0.GetSize() != mShift*mOutTimeStretchFactor)
-        mTmpBuf0.Resize(mShift*mOutTimeStretchFactor);
+    if (mTmpBuf0.GetSize() != shift)
+        mTmpBuf0.Resize(shift);
    
     WDL_TypedBuf<BL_FLOAT> &samplesToAdd = mTmpBuf0;
-    mResultSum.GetToBuf(0, samplesToAdd.Get(), mShift*mOutTimeStretchFactor);
+    mResultSum.GetToBuf(0, samplesToAdd.Get(), shift);
     
     if (mProcessObj != NULL)
     {
@@ -1018,12 +1021,12 @@ ProcessObjChannel::NextOutBuffer()
     mResultOut.Add(samplesToAdd.Get(), samplesToAdd.GetSize());
     
     //
-    if (mResultSum.Available() == mShift*mOutTimeStretchFactor)
+    if (mResultSum.Available() == shift)
     {
         mResultSum.Clear();
     
         // Grow the output with zeros
-        mResultSum.Add(0, mShift*mOutTimeStretchFactor);
+        mResultSum.Add(0, shift);
     }
     else if (mResultSum.Available() > mBufferSize)
     {
@@ -1031,14 +1034,12 @@ ProcessObjChannel::NextOutBuffer()
             mTmpBuf1.Resize(mResultSum.Available());
     
         // Copy the intersting data at the beginning
-        mResultSum.GetToBuf(mShift*mOutTimeStretchFactor,
-                            mTmpBuf1.Get(),
-                            mResultSum.Available() - mShift*mOutTimeStretchFactor);
+        mResultSum.GetToBuf(shift, mTmpBuf1.Get(),
+                            mResultSum.Available() - shift);
         
         // Fill the end with zeros
-        memset(&mTmpBuf1.Get()[mTmpBuf1.GetSize() -
-                               (int)(mShift*mOutTimeStretchFactor)],
-               0, mShift*sizeof(BL_FLOAT));
+        memset(&mTmpBuf1.Get()[mTmpBuf1.GetSize() - shift],
+               0, shift*sizeof(BL_FLOAT));
         
         // Copy the result
         mResultSum.SetFromBuf(0, mTmpBuf1.Get(), mResultSum.Available());

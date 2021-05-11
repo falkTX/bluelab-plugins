@@ -644,3 +644,31 @@ FLOAT_TYPE BLUtilsMath::ApplySigmoid(FLOAT_TYPE t, FLOAT_TYPE a)
 }
 template float BLUtilsMath::ApplySigmoid(float t, float a);
 template double BLUtilsMath::ApplySigmoid(double t, double a);
+
+template <typename FLOAT_TYPE>
+void BLUtilsMath::LinearResample(const FLOAT_TYPE *srcBuf, int srcSize,
+                                 FLOAT_TYPE *dstBuf, int dstSize)
+{   
+	FLOAT_TYPE scale = srcSize/(FLOAT_TYPE)dstSize;
+    
+	FLOAT_TYPE index = 0.0;
+	for (int i = 0; i < dstSize; i++)
+	{
+		int indexI = (int)floor(index);
+		FLOAT_TYPE t = index - indexI;
+		FLOAT_TYPE v0 = srcBuf[indexI];
+		FLOAT_TYPE v1 = srcBuf[indexI + 1];
+        
+        dstBuf[i] = (1.0 - t)*v0 + t*v1;
+		index += scale;
+	}
+    
+    // #bluelab
+    // Ensure that the last value is the same on the resampled signal
+    // (this was not the case before)
+    dstBuf[dstSize - 1] = srcBuf[srcSize - 1];
+}
+template void BLUtilsMath::LinearResample(const float *srcBuf, int srcSize,
+                                          float *dstBuf, int dstSize);
+template void BLUtilsMath::LinearResample(const double *srcBuf, int srcSize,
+                                          double *dstBuf, int dstSize);
