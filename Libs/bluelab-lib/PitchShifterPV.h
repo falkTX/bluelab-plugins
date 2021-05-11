@@ -5,7 +5,7 @@
 using namespace std;
 
 #include <PhaseVocoder-DSP/PitchShifter.h>
-#include <PhaseVocoder-DSP/PeakShifter.h> // TESt
+//#include <PhaseVocoder-DSP/PeakShifter.h> // Was a test
 
 class PitchShiftPVFftObj;
 class PitchShifterPV
@@ -31,8 +31,8 @@ class PitchShifterPV
     void SetTransBoost(BL_FLOAT transBoost) {}
     
 protected:
-    //stekyne::PitchShifter<BL_FLOAT> *mPitchObjs[2];
-    stekyne::PeakShifter<BL_FLOAT> *mPitchObjs[2];
+    stekyne::PitchShifter<BL_FLOAT> *mPitchObjs[2];
+    //stekyne::PeakShifter<BL_FLOAT> *mPitchObjs[2];
 };
 
 #endif

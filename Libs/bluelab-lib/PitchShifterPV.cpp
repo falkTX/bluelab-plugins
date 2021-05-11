@@ -11,8 +11,8 @@ using namespace stekyne;
 PitchShifterPV::PitchShifterPV()
 {
     for (int i = 0; i < 2; i++)
-        //mPitchObjs[i] = new PitchShifter<BL_FLOAT>();
-        mPitchObjs[i] = new PeakShifter<BL_FLOAT>();
+        mPitchObjs[i] = new PitchShifter<BL_FLOAT>();
+        //mPitchObjs[i] = new PeakShifter<BL_FLOAT>();
 }
 
 PitchShifterPV::~PitchShifterPV()

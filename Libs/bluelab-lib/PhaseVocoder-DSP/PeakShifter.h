@@ -11,14 +11,14 @@ class PeakShifter : public PhaseVocoder<FloatType>
 public:
 	PeakShifter () :
     phi0 (PhaseVocoder<FloatType>::windowSize / 2, 0),
-		psi (PhaseVocoder<FloatType>::windowSize / 2, 0),
-		psi2 (PhaseVocoder<FloatType>::windowSize / 2, 0),
-		peaks (PhaseVocoder<FloatType>::windowSize / 2, 0)
+    psi (PhaseVocoder<FloatType>::windowSize / 2, 0),
+    psi2 (PhaseVocoder<FloatType>::windowSize / 2, 0),
+    peaks (PhaseVocoder<FloatType>::windowSize / 2, 0)
 	{
 	}
 
     void reset()
-    {
+    {   
         PhaseVocoder<FloatType>::reset();
         
         phi0.clear();
@@ -30,6 +30,11 @@ public:
         timeStretchRatio = 1.f;
         nprevpeaks = 0;
 
+        phi0.resize(PhaseVocoder<FloatType>::windowSize / 2, 0);
+        psi.resize (PhaseVocoder<FloatType>::windowSize / 2, 0);
+        psi2.resize(PhaseVocoder<FloatType>::windowSize / 2, 0);
+        peaks.resize(PhaseVocoder<FloatType>::windowSize / 2, 0);
+            
         pitchRatio = -1.0;
         setPitchRatio(pitchRatioSave);
     }
@@ -44,12 +49,29 @@ public:
 		pitchRatio = clamp (ratio,
                             PhaseVocoder<FloatType>::MinPitchRatio,
                             PhaseVocoder<FloatType>::MaxPitchRatio);
+
+#if 0 // Was a test
+        // #bluelab
+        this->synthesisHopSize =
+            (int)(PhaseVocoder<FloatType>::windowSize /
+                  (float)PhaseVocoder<FloatType>::MinOverlapAmount);
+		this->analysisHopSize =
+            (int)round (PhaseVocoder<FloatType>::synthesisHopSize / pitchRatio);
+		this->resampleSize =
+            (int)std::ceil (PhaseVocoder<FloatType>::windowSize *
+                            PhaseVocoder<FloatType>::analysisHopSize /
+                            (float)PhaseVocoder<FloatType>::synthesisHopSize);
+		timeStretchRatio = PhaseVocoder<FloatType>::synthesisHopSize /
+            (float)PhaseVocoder<FloatType>::analysisHopSize;
+#endif
+        
+        //
 		timeStretchRatio = PhaseVocoder<FloatType>::synthesisHopSize /
             (float)PhaseVocoder<FloatType>::analysisHopSize;
 	}
 
 	void processImpl (FloatType* const buffer, const int bufferSize) override final
-	{
+	{        
 		auto npeaks = 0;
 		std::vector<FloatType> mags (bufferSize, 0);
 		std::vector<FloatType> phases (bufferSize, 0);
