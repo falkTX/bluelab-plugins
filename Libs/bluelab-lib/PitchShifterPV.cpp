@@ -40,6 +40,20 @@ PitchShifterPV::Process(vector<WDL_TypedBuf<BL_FLOAT> > &in,
     if (in.empty())
         return;
 
+#if 1 // DEBUG: process a single channel
+    if (mPitchObjs[0] != NULL)
+    {
+        (*out)[0] = in[0];
+        
+        mPitchObjs[0]->process((*out)[0].Get(), (*out)[0].GetSize());
+
+        if (out->size() == 2)
+            (*out)[1] = (*out)[0];
+    }
+
+    return;
+#endif
+    
     for (int i = 0; i < in.size(); i++)
     {
         if (i >= out->size())
