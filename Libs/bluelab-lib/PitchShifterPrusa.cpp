@@ -137,6 +137,9 @@ PitchShifterPrusa::SetFactor(BL_FLOAT factor)
 
     for (int i = 0; i < 2; i++)
         mPitchObjs[i]->SetFactor(mFactor);
+
+    if (mFftObj != NULL)
+        mFftObj->SetOutTimeStretchFactor(mFactor);
 }
 
 void

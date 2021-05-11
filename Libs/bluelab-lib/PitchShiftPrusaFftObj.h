@@ -21,7 +21,9 @@ public:
     virtual ~PitchShiftPrusaFftObj();
     
     void ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
-                          const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer);
+                          const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer) override;
+
+    void ProcessSamplesPost(WDL_TypedBuf<BL_FLOAT> *ioBuffer) override;
     
     void Reset(int bufferSize, int oversampling, int freqRes, BL_FLOAT sampleRate);
     

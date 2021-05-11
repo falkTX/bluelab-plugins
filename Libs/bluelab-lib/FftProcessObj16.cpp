@@ -188,7 +188,9 @@ public:
     
     void SetEnabled(bool flag);
     bool IsEnabled();
-    
+
+    void SetOutTimeStretchFactor(BL_FLOAT factor);
+        
 protected:
     void ProcessOneBuffer(const WDL_TypedBuf<BL_FLOAT> &inBuffer,
                           const WDL_TypedBuf<BL_FLOAT> &inScBuffer,
@@ -282,6 +284,8 @@ protected:
     // and moreover, to grow the output buffer indefinitely
     // if the channel is empty (memory leak)
     bool mEmptyChannel;
+
+    BL_FLOAT mOutTimeStretchFactor;
     
 private:
     ProcessObjChannel *mScChan;
@@ -335,6 +339,8 @@ ProcessObjChannel::ProcessObjChannel(ProcessObj *processObj, int bufferSize)
     mEmptyChannel = false;
     
     mIsEnabled = true;
+
+    mOutTimeStretchFactor = 1.0;
     
 #if DC_OFFSET_PROCESS
     mDCOffset = 0.0;
@@ -698,6 +704,12 @@ ProcessObjChannel::IsEnabled()
 }
 
 void
+ProcessObjChannel::SetOutTimeStretchFactor(BL_FLOAT factor)
+{
+    mOutTimeStretchFactor = factor;
+}
+
+void
 ProcessObjChannel::PrepareBufferStep()
 {  
     // This can be an empty channel !
@@ -960,25 +972,26 @@ ProcessObjChannel::NextOutBuffer()
     // Let the possiblity to modify, or even resample
     // the result, before adding it to the object
     WDL_TypedBuf<BL_FLOAT> &samplesToAdd = mTmpBuf4;
-    samplesToAdd.Resize(mShift);
-    mResultSum.GetToBuf(0, sampleToAdd.Get(), mShift);
+    samplesToAdd.Resize(mShift*mOutTimeStretchFactor);
+    mResultSum.GetToBuf(0, sampleToAdd.Get(), mShift*mOutTimeStretchFactor);
  
     if (mProcessObj != NULL)
     {
         mProcessObj->ProcessSamplesPost(&samplesToAdd);
     }
+    
     mResultOut.Add(samplesToAdd.Get(), samplesToAdd.GetSize());
     
-    if (mResultSum.Available() == mShift)
+    if (mResultSum.Available() == mShift*mOutTimeStretchFactor)
     {
         mResultSum.Clear();
     }
     else if (mResultSum.Available() > mBufferSize)
     {
-        mResultSum.Advance(mShift);
+        mResultSum.Advance(mShift*mOutTimeStretchFactor);
     }
 
-    mResultSum.Add(0, mShift);
+    mResultSum.Add(0, mShift*mOutTimeStretchFactor);
 }
 #endif
 
@@ -992,11 +1005,11 @@ ProcessObjChannel::NextOutBuffer()
         
     // Let the possiblity to modify, or even resample
     // the result, before adding it to the object
-    if (mTmpBuf0.GetSize() != mShift)
-        mTmpBuf0.Resize(mShift);
+    if (mTmpBuf0.GetSize() != mShift*mOutTimeStretchFactor)
+        mTmpBuf0.Resize(mShift*mOutTimeStretchFactor);
    
     WDL_TypedBuf<BL_FLOAT> &samplesToAdd = mTmpBuf0;
-    mResultSum.GetToBuf(0, samplesToAdd.Get(), mShift);
+    mResultSum.GetToBuf(0, samplesToAdd.Get(), mShift*mOutTimeStretchFactor);
     
     if (mProcessObj != NULL)
     {
@@ -1005,12 +1018,12 @@ ProcessObjChannel::NextOutBuffer()
     mResultOut.Add(samplesToAdd.Get(), samplesToAdd.GetSize());
     
     //
-    if (mResultSum.Available() == mShift)
+    if (mResultSum.Available() == mShift*mOutTimeStretchFactor)
     {
         mResultSum.Clear();
     
         // Grow the output with zeros
-        mResultSum.Add(0, mShift);
+        mResultSum.Add(0, mShift*mOutTimeStretchFactor);
     }
     else if (mResultSum.Available() > mBufferSize)
     {
@@ -1018,10 +1031,13 @@ ProcessObjChannel::NextOutBuffer()
             mTmpBuf1.Resize(mResultSum.Available());
     
         // Copy the intersting data at the beginning
-        mResultSum.GetToBuf(mShift, mTmpBuf1.Get(), mResultSum.Available() - mShift);
+        mResultSum.GetToBuf(mShift*mOutTimeStretchFactor,
+                            mTmpBuf1.Get(),
+                            mResultSum.Available() - mShift*mOutTimeStretchFactor);
         
         // Fill the end with zeros
-        memset(&mTmpBuf1.Get()[mTmpBuf1.GetSize() - mShift],
+        memset(&mTmpBuf1.Get()[mTmpBuf1.GetSize() -
+                               (int)(mShift*mOutTimeStretchFactor)],
                0, mShift*sizeof(BL_FLOAT));
         
         // Copy the result
@@ -1725,6 +1741,13 @@ FftProcessObj16::SetChannelEnabled(int channelNum, bool flag)
         return;
     
     mChannels[channelNum]->SetEnabled(flag);
+}
+
+void
+FftProcessObj16::SetOutTimeStretchFactor(BL_FLOAT factor)
+{
+    for (int i = 0; i < mChannels.size(); i++)
+        mChannels[i]->SetOutTimeStretchFactor(factor);
 }
 
 void

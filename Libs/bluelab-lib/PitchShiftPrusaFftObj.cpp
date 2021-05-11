@@ -61,6 +61,54 @@ PitchShiftPrusaFftObj::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer0
     BLUtilsFft::FillSecondFftHalf(ioBuffer0);
 }
 
+// TMP
+template <typename FloatType>
+static void
+linearResample(const FloatType* const originalSignal, int originalSize,
+               FloatType* const newSignal, int newSignalSize)
+{    
+	const auto lerp = [&](FloatType v0, FloatType v1, FloatType t)
+                      {
+                          return (1.f - t) * v0 + t * v1;
+                      };
+
+	// If the original signal is bigger than the new size,
+    // condense the signal to fit the new buffer otherwise expand
+    // the signal to fit the new buffer
+	const auto scale = originalSize / (float)newSignalSize;
+    
+	float index = 0.f;
+
+	for (int i = 0; i < newSignalSize; ++i)
+	{
+		const auto wholeIndex = (int)floor (index);
+		const auto fractionIndex = index - wholeIndex;
+		const auto sampleA = originalSignal[wholeIndex];
+		const auto sampleB = originalSignal[wholeIndex + 1];
+		newSignal[i] = lerp (sampleA, sampleB, fractionIndex);
+		index += scale;
+	}
+    
+    // #bluelab
+    // Ensure that the last value is the same on the resampled signal
+    // (this was not the case before)
+    newSignal[newSignalSize - 1] = originalSignal[originalSize - 1];
+}
+
+void
+PitchShiftPrusaFftObj::ProcessSamplesPost(WDL_TypedBuf<BL_FLOAT> *ioBuffer)
+{
+    int resampSize = (1.0/mFactor)*ioBuffer->GetSize();
+
+    // TODO: use tmp buffers
+    WDL_TypedBuf<BL_FLOAT> copyBuf = *ioBuffer;
+    ioBuffer->Resize(resampSize);
+
+    // TODO: use another function (more clean code)
+    linearResample(copyBuf.Get(), copyBuf.GetSize(),
+                   ioBuffer->Get(), ioBuffer->GetSize());
+}
+
 void
 PitchShiftPrusaFftObj::SetFactor(BL_FLOAT factor)
 {
@@ -90,7 +138,7 @@ void
 PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
                                WDL_TypedBuf<BL_FLOAT> *phases,
                                BL_FLOAT factor)
-{    
+{
 #define TOL 1e-6
     
     const Frame &frame0 = mPrevFrame;
@@ -212,7 +260,7 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
 
     mPrevFrame = frame1;
         
-#if 1 // 0
+#if 0 //1 // 0
     // Process magns like with Smb
     BLUtils::FillAllZero(magns);
     for (int i = 0; i < magns->GetSize(); i++)

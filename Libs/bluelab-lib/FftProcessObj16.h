@@ -266,7 +266,9 @@ public:
     
     // Enable or disable channel processing (not well tested)
     void SetChannelEnabled(int channelNum, bool flag);
-        
+
+    void SetOutTimeStretchFactor(BL_FLOAT factor);
+    
     // Utility methods
     static void MagnPhasesToSamples(const WDL_TypedBuf<BL_FLOAT> &magns,
                                     const  WDL_TypedBuf<BL_FLOAT> &phases,
