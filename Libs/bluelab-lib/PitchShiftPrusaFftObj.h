@@ -107,6 +107,7 @@ private:
     WDL_TypedBuf<BL_FLOAT> mTmpBuf0;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf1;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf2;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf3;
 };
 
 #endif /* defined(__BL_PitchShift__PitchShiftPrusaFftObj__) */

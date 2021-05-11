@@ -170,13 +170,6 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
     WDL_TypedBuf<BL_FLOAT> frame1PhasesTUw = frame1.mPhases;
     PhasesUnwrapper::UnwrapPhasesTime(frame0.mPhases, &frame1PhasesTUw);
     BLUtils::ComputeDiff(&frame1.mDTPhases, frame0.mPhases, frame1PhasesTUw);
- #endif
-
-#if 1 //0 //1 // NEW
-    PhasesUnwrapper::ComputeUwPhasesDiffTime(&frame1.mDTPhases,
-                                             frame0.mPhases, frame1.mPhases,
-                                             mSampleRate, mBufferSize,
-                                             mOverlapping);
 #endif
     
 #if 0 //1
@@ -189,19 +182,26 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
 #endif
     
     // Phases freq derivative
-
-#if 0 //1
-    // TEST
-    WDL_TypedBuf<BL_FLOAT> frame1PhasesFUw = frame1.mPhases;
-    PhasesUnwrapper::UnwrapPhasesFreq(&frame1PhasesFUw);
-    BLUtils::ComputeDerivative(frame1PhasesFUw, &frame1.mDFPhases);
-#endif
-
+    
 #if 0
     // ORIG
     BLUtils::ComputeDerivative(frame1.mPhases, &frame1.mDTPhases);
 #endif
 
+#if 1
+    WDL_TypedBuf<BL_FLOAT> &frame1PhasesFUw = mTmpBuf3;
+    frame1PhasesFUw = frame1.mPhases;
+    PhasesUnwrapper::UnwrapPhasesFreq(&frame1PhasesFUw);
+    BLUtils::ComputeDerivative(frame1PhasesFUw, &frame1.mDFPhases);
+#endif
+    
+#if 1 //0 //1 // NEW: VERY GOOD!
+    PhasesUnwrapper::ComputeUwPhasesDiffTime(&frame1.mDTPhases,
+                                             frame0.mPhases, frame1.mPhases,
+                                             mSampleRate, mBufferSize,
+                                             mOverlapping);
+#endif
+    
     // NOTE: smb moves magns
 
     // NOTE: it seems that for pitching with phase vocoder, it is necessary
@@ -210,7 +210,7 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
     // If code needed,
     // see: https://github.com/stekyne/PhaseVocoder/blob/master/DSP/PitchShifter.h
     //
-#define SIMPLE_DBG_ALGO 1 //0 //1
+#define SIMPLE_DBG_ALGO 0 //1
 #if SIMPLE_DBG_ALGO
 
     //BLDebug::DumpData("diff.txt", frame1.mDTPhases);
@@ -349,6 +349,10 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
             }
         }
 
+        //if (tho.empty())
+        //    break;
+        //continue;
+        
         if (t.mTimeIdx == 1)
         {
             int idx0 = ContainsSorted(tho, t.mBinIdx + 1, 1);
@@ -381,7 +385,7 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
                             frame1.mDFPhases.Get()[t.mBinIdx - 1]);
 #else // Pitch shift
                 frame1.mEstimPhases.Get()[t.mBinIdx - 1] =
-                    frame1.mEstimPhases.Get()[t.mBinIdx] /*-*//*+*/ +
+                    frame1.mEstimPhases.Get()[t.mBinIdx] - // Best results with '-'
                     frame1.mDFPhases.Get()[t.mBinIdx - 1]*mFactor;
 #endif
                 
