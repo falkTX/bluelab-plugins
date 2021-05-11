@@ -16,7 +16,7 @@ using namespace std;
 
 #include <BLDebug.h>
 
-// We don need phases unwrapping!
+// We don't need phases unwrapping!
 #include <PhasesUnwrapper.h>
 
 #include "PitchShiftPrusaFftObj.h"
@@ -109,7 +109,6 @@ PitchShiftPrusaFftObj::Reset(int bufferSize, int oversampling,
 void
 PitchShiftPrusaFftObj::Reset()
 {
-    //ProcessObj::Reset();
     ProcessObj::Reset(mBufferSize, mOverlapping, mFreqRes, mSampleRate);
     
     ResetPitchShift();
@@ -128,10 +127,6 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
     Frame frame1;
     frame1.mMagns = *magns;
     frame1.mPhases = *phases;
-
-#if 0 // TEST
-    PhasesUnwrapper::UnwrapPhasesFreq(&frame1.mPhases);
-#endif
     
     frame1.mDTPhases.Resize(magns->GetSize());
     BLUtils::FillAllZero(&frame1.mDTPhases);
@@ -162,88 +157,55 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
     // Pre-processing
     //
 
-    // Unwrap phases in time
-
-#if 0 //1 // GOOD
-    // TEST
-    //
-    WDL_TypedBuf<BL_FLOAT> frame1PhasesTUw = frame1.mPhases;
-    PhasesUnwrapper::UnwrapPhasesTime(frame0.mPhases, &frame1PhasesTUw);
-    BLUtils::ComputeDiff(&frame1.mDTPhases, frame0.mPhases, frame1PhasesTUw);
-#endif
+    // Phases time derivative
     
 #if 0 //1
-    // ORIGIN
+    // Naive method, without good unwrapping
     
     PhasesUnwrapper::UnwrapPhasesTime(frame0.mPhases, &frame1.mPhases);
     
-    // Phases time derivative
     BLUtils::ComputeDiff(&frame1.mDTPhases, frame0.mPhases, frame1.mPhases);
-#endif
-    
-    // Phases freq derivative
-    
-#if 0
-    // ORIG
-    BLUtils::ComputeDerivative(frame1.mPhases, &frame1.mDTPhases);
 #endif
 
 #if 1
-    WDL_TypedBuf<BL_FLOAT> &frame1PhasesFUw = mTmpBuf3;
-    frame1PhasesFUw = frame1.mPhases;
-    PhasesUnwrapper::UnwrapPhasesFreq(&frame1PhasesFUw);
-    BLUtils::ComputeDerivative(frame1PhasesFUw, &frame1.mDFPhases);
-#endif
-    
-#if 1 //0 //1 // NEW: VERY GOOD!
+    // Good phases time unwrapping
     PhasesUnwrapper::ComputeUwPhasesDiffTime(&frame1.mDTPhases,
                                              frame0.mPhases, frame1.mPhases,
                                              mSampleRate, mBufferSize,
                                              mOverlapping);
 #endif
     
-    // NOTE: smb moves magns
+    // Phases freq derivative
+    
+    WDL_TypedBuf<BL_FLOAT> &frame1PhasesFUw = mTmpBuf3;
+    frame1PhasesFUw = frame1.mPhases;
+    PhasesUnwrapper::UnwrapPhasesFreq(&frame1PhasesFUw);
+    BLUtils::ComputeDerivative(frame1PhasesFUw, &frame1.mDFPhases);
 
-    // NOTE: it seems that for pitching with phase vocoder, it is necessary
-    // to "stretch the grains somewhere", this looks complicated
-    //
-    // If code needed,
-    // see: https://github.com/stekyne/PhaseVocoder/blob/master/DSP/PitchShifter.h
-    //
+    // Naive algo: to do like in standard Phase Vocoder
 #define SIMPLE_DBG_ALGO 0 //1
 #if SIMPLE_DBG_ALGO
 
-    //BLDebug::DumpData("diff.txt", frame1.mDTPhases);
-    //fprintf(stderr, "factor: %g\n", factor);
-    
     for (int i = 0; i < magns->GetSize(); i++)
     {
         BL_FLOAT p0 = frame0.mPhases.Get()[i];
         BL_FLOAT p1 = frame1.mPhases.Get()[i];
+
+        BL_FLOAT ep0 = frame0.mEstimPhases.Get()[i];
         
-        //BL_FLOAT dp = p1 - p0;
         BL_FLOAT dp = frame1.mDTPhases.Get()[i];
         
-        BL_FLOAT ep0 = frame0.mEstimPhases.Get()[i];
-
-        // ORIGIN
         BL_FLOAT ep1 = ep0 +  dp*mFactor;
 
-        // With PhasesUnwrapper::ComputeUwPhasesDiffTime,
-        // we must start from current phase (not estimated prev)
-        //
-        // See: https://github.com/stekyne/PhaseVocoder/blob/master/DSP/PitchShifter.h
-        //BL_FLOAT ep1 = p1 + dp*mFactor;
-        
         frame1.mEstimPhases.Get()[i] = ep1;
     }
 
     *phases = frame1.mEstimPhases;
 
     mPrevFrame = frame1;
-        
-#if 0 //1 // 0
-    // Process magns like with Smb
+
+#if 0
+    // Process magns like with Smb (and not like in standard Phase Vocoder) ?
     BLUtils::FillAllZero(magns);
     for (int i = 0; i < magns->GetSize(); i++)
     {
@@ -256,8 +218,11 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
     }
 #endif
 
+    // End of simple algo
     return;
 #endif
+
+    // Prusa algo
     
     // Compute tolerance
     BL_FLOAT maxMagn0 = BLUtils::ComputeMax(frame0.mMagns);
@@ -268,7 +233,7 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
     
     // Set random values for very small magns
     // and insert other values in the heap
-
+    
     const BL_FLOAT randMaxInv = 1.0/RAND_MAX;
      
     vector<Tuple> tho;
@@ -348,10 +313,6 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
                 AddHeap(&hp, t.mBinIdx, 1, magn);
             }
         }
-
-        //if (tho.empty())
-        //    break;
-        //continue;
         
         if (t.mTimeIdx == 1)
         {
@@ -385,7 +346,8 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
                             frame1.mDFPhases.Get()[t.mBinIdx - 1]);
 #else // Pitch shift
                 frame1.mEstimPhases.Get()[t.mBinIdx - 1] =
-                    frame1.mEstimPhases.Get()[t.mBinIdx] - // Best results with '-'
+                    // The good result is with '-'
+                    frame1.mEstimPhases.Get()[t.mBinIdx] - 
                     frame1.mDFPhases.Get()[t.mBinIdx - 1]*mFactor;
 #endif
                 
@@ -398,7 +360,7 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
     }
 
     // Result
-    //PhasesUnwrapper::UnwrapPhasesFreq(&frame1.mEstimPhases);
+    //
     
     // No need to update the magns: they have not changed!
     *phases = frame1.mEstimPhases;
