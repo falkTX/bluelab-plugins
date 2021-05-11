@@ -2,10 +2,6 @@
 
 #include "PhaseVocoder.h"
 
-#ifndef TWO_PI
-#define TWO_PI 6.28318530717958647692
-#endif
-
 namespace stekyne
 {
     
@@ -14,20 +10,42 @@ class PeakShifter : public PhaseVocoder<FloatType>
 {
 public:
 	PeakShifter () :
-		phi0 (windowSize / 2, 0),
-		psi (windowSize / 2, 0),
-		psi2 (windowSize / 2, 0),
-		peaks (windowSize / 2, 0)
+    phi0 (PhaseVocoder<FloatType>::windowSize / 2, 0),
+		psi (PhaseVocoder<FloatType>::windowSize / 2, 0),
+		psi2 (PhaseVocoder<FloatType>::windowSize / 2, 0),
+		peaks (PhaseVocoder<FloatType>::windowSize / 2, 0)
 	{
 	}
 
+    void reset()
+    {
+        PhaseVocoder<FloatType>::reset();
+        
+        phi0.clear();
+        psi.clear();
+        psi2.clear();
+        peaks.clear();
+        prev_peaks.clear();
+        pitchRatio = 0.f;
+        timeStretchRatio = 1.f;
+        nprevpeaks = 0;
+
+        pitchRatio = -1.0;
+        setPitchRatio(pitchRatioSave);
+    }
+    
 	void setPitchRatio (float ratio)
 	{
+        pitchRatioSave = ratio;
+        
 		if (pitchRatio == ratio)
 			return;
 
-		pitchRatio = std::clamp (ratio, MinPitchRatio, MaxPitchRatio);;
-		timeStretchRatio = synthesisHopSize / (float)analysisHopSize;
+		pitchRatio = clamp (ratio,
+                            PhaseVocoder<FloatType>::MinPitchRatio,
+                            PhaseVocoder<FloatType>::MaxPitchRatio);
+		timeStretchRatio = PhaseVocoder<FloatType>::synthesisHopSize /
+            (float)PhaseVocoder<FloatType>::analysisHopSize;
 	}
 
 	void processImpl (FloatType* const buffer, const int bufferSize) override final
@@ -81,13 +99,19 @@ public:
 				// Propagate peak's phase assuming linear frequency
 				// Variation between connected peaks p1 and p2
 				const auto avg_p = (peak + prev_peak) * FloatType (0.5);
-				const auto omega = TWO_PI * analysisHopSize * avg_p / (float)windowSize;
-				const auto peak_delta_phi = omega + principalArgument (phases[peak] + phi0[prev_peak] - omega);
-				const auto peak_target_phase = principalArgument (psi [prev_peak] + peak_delta_phi * timeStretchRatio);
-				const auto peak_phase_rotation = principalArgument (peak_target_phase - phases[peak]);
+				const auto omega =
+                                TWO_PI * PhaseVocoder<FloatType>::analysisHopSize *
+                                avg_p /
+                                (float)PhaseVocoder<FloatType>::windowSize;
+				const auto peak_delta_phi =
+                                omega + PhaseVocoder<FloatType>::principalArgument (phases[peak] + phi0[prev_peak] - omega);
+				const auto peak_target_phase =
+                                PhaseVocoder<FloatType>::principalArgument (psi [prev_peak] + peak_delta_phi * timeStretchRatio);
+				const auto peak_phase_rotation =
+                                PhaseVocoder<FloatType>::principalArgument (peak_target_phase - phases[peak]);
 
 				auto bin1 = 1;
-				auto bin2 = windowSize / 2;
+				auto bin2 = PhaseVocoder<FloatType>::windowSize / 2;
 
 				// Rotate phases of all bins around the current peak
 				if (p == npeaks)
@@ -101,18 +125,22 @@ public:
 				}
 
 				for (auto i = 0; i < bin2 - bin1; ++i)
-					psi2[bin1 + i] = principalArgument (phases[bin1 + i] + peak_phase_rotation);
+					psi2[bin1 + i] =
+                        PhaseVocoder<FloatType>::principalArgument (phases[bin1 + i] + peak_phase_rotation);
 			}
 
 			psi = psi2;
 		}
 		else
 		{
-			for (auto i = 0; i < windowSize / 2; ++i)
+			for (auto i = 0; i < PhaseVocoder<FloatType>::windowSize / 2; ++i)
 			{
-				const auto omega = TWO_PI * analysisHopSize * i / (float)windowSize;
-				const auto deltaPhi = omega + principalArgument (phases[i] - phi0[i] - omega);
-				psi[i] = principalArgument (psi[i] + deltaPhi * timeStretchRatio);
+				const auto omega = TWO_PI *
+                    PhaseVocoder<FloatType>::analysisHopSize * i /
+                    (float)PhaseVocoder<FloatType>::windowSize;
+				const auto deltaPhi = omega +
+                    PhaseVocoder<FloatType>::principalArgument (phases[i] - phi0[i] - omega);
+				psi[i] = PhaseVocoder<FloatType>::principalArgument (psi[i] + deltaPhi * timeStretchRatio);
 			}
 		}
 
@@ -140,6 +168,8 @@ private:
 	float pitchRatio = 0.f;
 	float timeStretchRatio = 1.f;
 	int nprevpeaks = 0;
+
+    float pitchRatioSave = 0.f;
 };
 
 }

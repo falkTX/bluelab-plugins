@@ -17,6 +17,17 @@
 
 namespace stekyne
 {
+    template<class T>
+    constexpr const T& clamp( const T& v, const T& lo, const T& hi )
+    {
+        if (v < lo)
+            return lo;
+        if (v > hi)
+            return hi;
+
+        return v;
+    }
+    
     // NOTE: with this, we have exactly the same window as in Juce
     // (tested for comparison)
     template <typename FloatType>

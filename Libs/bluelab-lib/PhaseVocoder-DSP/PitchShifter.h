@@ -7,17 +7,6 @@
 namespace stekyne
 {
 
-    template<class T>
-    constexpr const T& clamp( const T& v, const T& lo, const T& hi )
-    {
-        if (v < lo)
-            return lo;
-        if (v > hi)
-            return hi;
-
-        return v;
-    }
-    
 template<typename FloatType = float>
 class PitchShifter : public PhaseVocoder<FloatType>
 {
