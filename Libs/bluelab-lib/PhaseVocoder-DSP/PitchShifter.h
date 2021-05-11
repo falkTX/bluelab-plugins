@@ -29,8 +29,25 @@ public:
 		setPitchRatio (1.f);
 	}
 
+    void reset()
+    {
+        PhaseVocoder<FloatType>::reset();
+
+        for (int k = 0; k < synthPhaseIncrements.size(); k++)
+            synthPhaseIncrements[k] = 0.0;
+
+        for (int k = 0; k < previousFramePhases.size(); k++)
+            previousFramePhases[k] = 0.0;
+
+        // For forcing setting prev pitch
+        pitchRatio = 0.0;
+        setPitchRatio(pitchRatioSave);
+    }
+    
 	void setPitchRatio (float ratio)
 	{
+        pitchRatioSave = ratio;
+        
 		if (pitchRatio == ratio) 
 			return;
 
@@ -109,6 +126,8 @@ private:
 	
 	float pitchRatio = 0.f;
 	float timeStretchRatio = 1.f;
+
+    float pitchRatioSave;
 };
 
 }

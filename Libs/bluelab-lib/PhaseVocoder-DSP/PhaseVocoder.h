@@ -190,7 +190,41 @@ public:
 		}
 		
 	}
-	
+
+    void reset()
+    {
+        incomingSampleCount = 0;
+        spectralBufferSize = 0;
+        samplesTilNextProcess = 0;
+        isProcessing = false;
+        
+        samplesTilNextProcess = windowSize;
+        analysisHopSize = windowSize / MinOverlapAmount;
+		synthesisHopSize = windowSize / MinOverlapAmount;
+		resampleSize = windowSize;
+		spectralBufferSize = windowSize * 2;
+
+        analysisBuffer.setSize(windowSize);
+        analysisBuffer.reset();
+
+        synthesisBuffer.setSize(windowSize * 3);
+        synthesisBuffer.reset();
+
+        spectralBufferSize =
+            windowSize * (1 / MinPitchRatio) <
+            spectralBufferSize ? 
+            (int)ceil (windowSize * (1 / MinPitchRatio)) : spectralBufferSize;
+        
+        for (int k = 0; k < spectralBufferSize; k++)
+            spectralBuffer[k] = 0.0;
+
+        const auto maxResampleSize =
+            (int)std::ceil (std::max (this->windowSize * MaxPitchRatio,
+                                      this->windowSize / MinPitchRatio));
+        for (int k = 0; k < maxResampleSize; k++)
+            resampleBuffer[k] = 0.0;
+    }
+                     
 	int getLatencyInSamples () const
 	{
 		return windowSize;

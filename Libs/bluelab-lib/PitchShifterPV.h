@@ -13,7 +13,7 @@ class PitchShifterPV
     PitchShifterPV();
     virtual ~PitchShifterPV();
 
-    void Reset(BL_FLOAT sampleRate, int blockSize) {}
+    void Reset(BL_FLOAT sampleRate, int blockSize);
 
     void Process(vector<WDL_TypedBuf<BL_FLOAT> > &in,
                  vector<WDL_TypedBuf<BL_FLOAT> > *out);

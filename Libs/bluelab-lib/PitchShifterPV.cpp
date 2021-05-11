@@ -24,6 +24,16 @@ PitchShifterPV::~PitchShifterPV()
 }
 
 void
+PitchShifterPV::Reset(BL_FLOAT sampleRate, int blockSize)
+{
+    for (int i = 0; i < 2; i++)
+    {
+        if (mPitchObjs[i] != NULL)
+            mPitchObjs[i]->reset();
+    }
+}
+
+void
 PitchShifterPV::Process(vector<WDL_TypedBuf<BL_FLOAT> > &in,
                         vector<WDL_TypedBuf<BL_FLOAT> > *out)
 {
