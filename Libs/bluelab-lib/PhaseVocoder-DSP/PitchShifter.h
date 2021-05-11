@@ -16,6 +16,8 @@ public:
 		previousFramePhases (this->windowSize, 0)
 	{
 		setPitchRatio (1.f);
+
+        //firstProcess = true;
 	}
 
     void reset()
@@ -31,6 +33,8 @@ public:
         // For forcing setting prev pitch
         pitchRatio = 0.0;
         setPitchRatio(pitchRatioSave);
+
+        //firstProcess = true;
     }
     
 	void setPitchRatio (float ratio)
@@ -99,6 +103,10 @@ public:
 
 			previousFramePhases[x] = phase;
 
+            // #bluelab
+            //if (firstProcess)
+            //    synthPhaseIncrements[x] = phase;
+            
 			synthPhaseIncrements[x] =
                 PhaseVocoder<FloatType>::principalArgument(synthPhaseIncrements[x] +
                                                            (deltaPhase *
@@ -107,6 +115,8 @@ public:
 			buffer[i] = mag * std::cos (synthPhaseIncrements[x]);
 			buffer[i + 1] = mag * std::sin (synthPhaseIncrements[x]);
 		}
+
+        //firstProcess = false;
 	}
 
 private:
@@ -117,6 +127,8 @@ private:
 	float timeStretchRatio = 1.f;
 
     float pitchRatioSave;
+
+    //bool firstProcess;
 };
 
 }

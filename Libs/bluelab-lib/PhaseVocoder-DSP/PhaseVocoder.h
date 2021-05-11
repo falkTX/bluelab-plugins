@@ -116,7 +116,7 @@ namespace stekyne
     template <typename FloatType>
 static void linearResample (const FloatType* const originalSignal, int originalSize,
 	FloatType* const newSignal, int newSignalSize)
-{
+{    
 	const auto lerp = [&](FloatType v0, FloatType v1, FloatType t)
 	{
 		return (1.f - t) * v0 + t * v1;
@@ -137,6 +137,11 @@ static void linearResample (const FloatType* const originalSignal, int originalS
 		newSignal[i] = lerp (sampleA, sampleB, fractionIndex);
 		index += scale;
 	}
+
+    // #bluelab
+    // Ensure that the last value is the same on the resampled signal
+    // (this was not the case before)
+    newSignal[newSignalSize - 1] = originalSignal[originalSize - 1];
 }
 
 template <typename FloatType = float>
