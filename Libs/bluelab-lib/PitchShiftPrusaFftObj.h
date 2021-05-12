@@ -56,14 +56,22 @@ protected:
     
     struct Tuple
     {
+#if 0 // ORIG
         BL_FLOAT mMagn;
         int mBinIdx;
         int mTimeIdx;
+#endif
 
-        // Optimization idea...
-        /*float mMagn;
-          short mBinIdx;
-          short mTimeIdx;*/
+#if 1 // Optim size
+        // We use magns only for comparing them
+        float mMagn;
+
+        // With this we can go until 32767 which is far enough for bin num
+        short mBinIdx;
+
+        // Time index is only 0 for (n-1), or 1 for n
+        short mTimeIdx;
+#endif
         
         bool operator< (const Tuple &t0)
         { return (this->mMagn < t0.mMagn); } // Was tested successfully!
