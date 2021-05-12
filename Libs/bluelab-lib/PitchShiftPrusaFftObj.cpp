@@ -140,19 +140,10 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
     {
         // Update prev data
         mPrevFrame = frame1;
-
-#if 0 // Gives incorrect results at startup, which are propagated...
-        // TODO: check how to fix this.
         
         // For first step,
-        // see: http://music.informatics.indiana.edu/media/students/kyung/kyung_paper.pdf
-        // ...
+        // See: http://music.informatics.indiana.edu/media/students/kyung/kyung_paper.pdf
         BLUtils::FillAllZero(&mPrevFrame.mPhases);
-
-        // ... and do not return!
-#endif
-
-        return;
     }
     
     // Pre-processing
