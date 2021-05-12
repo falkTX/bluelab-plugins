@@ -153,9 +153,7 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
     
 #if 0 //1
     // Naive method, without good unwrapping
-    
     PhasesUnwrapper::UnwrapPhasesTime(frame0.mPhases, &frame1.mPhases);
-    
     BLUtils::ComputeDiff(&frame1.mDTPhases, frame0.mPhases, frame1.mPhases);
 #endif
 
@@ -294,6 +292,9 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
                     as*0.5*(frame0.mDTPhases.Get()[t.mBinIdx] +
                             frame1.mDTPhases.Get()[t.mBinIdx]);
 #else // Pitch shifting
+                // Use backward scheme
+                // NOTE: can not use Prusa forward or centered scheme for the moment
+                // (we don't have frame(n+1), we only have frame(n) and frame(n-1)
                 frame1.mEstimPhases.Get()[t.mBinIdx] =
                     frame0.mEstimPhases.Get()[t.mBinIdx] +
                     frame1.mDTPhases.Get()[t.mBinIdx]*mFactor;
@@ -317,6 +318,9 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
                     bs*0.5*(frame1.mDFPhases.Get()[t.mBinIdx] +
                             frame1.mDFPhases.Get()[t.mBinIdx + 1]);
 #else // Pitch shift
+                // Use backward scheme
+                // NOTE: can not use Prusa forward or centered scheme for the moment
+                // (we don't have frame(n+1), we only have frame(n) and frame(n-1)
                 frame1.mEstimPhases.Get()[t.mBinIdx + 1] =
                     frame1.mEstimPhases.Get()[t.mBinIdx] +
                     // NOTE: in Theo Royer, this is "*mFactor"
@@ -339,6 +343,9 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
                     bs*0.5*(frame1.mDFPhases.Get()[t.mBinIdx] +
                             frame1.mDFPhases.Get()[t.mBinIdx - 1]);
 #else // Pitch shift
+                // Use backward scheme
+                // NOTE: can not use Prusa forward or centered scheme for the moment
+                // (we don't have frame(n+1), we only have frame(n) and frame(n-1)
                 frame1.mEstimPhases.Get()[t.mBinIdx - 1] =
                     // NOTE: in Theo Royer, this is "+"
                     // => this is better like in Prusa with "-"
