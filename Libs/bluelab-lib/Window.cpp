@@ -9,7 +9,9 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "BLUtils.h"
+#include <BLUtils.h>
+#include <BLUtilsMath.h>
+
 #include "Window.h"
 
 #ifndef M_PI
@@ -344,7 +346,8 @@ Window::MakeGaussian2(BL_FLOAT sigma, int size, WDL_TypedBuf<BL_FLOAT> *result)
 #endif
 
 BL_FLOAT
-Window::CheckCOLA(const WDL_TypedBuf<BL_FLOAT> *window, int overlap)
+Window::CheckCOLA(const WDL_TypedBuf<BL_FLOAT> *window,
+                  int overlap, BL_FLOAT outTimeStretchFactor)
 {
 #if DUMP_COLA
     BLDebug::DumpData("win.txt", window->Get(), window->GetSize());
@@ -358,7 +361,9 @@ Window::CheckCOLA(const WDL_TypedBuf<BL_FLOAT> *window, int overlap)
     }
     
     int shift = ((BL_FLOAT)window->GetSize())/overlap;
-    
+
+    shift = bl_round(shift*outTimeStretchFactor);
+                     
     WDL_TypedBuf<BL_FLOAT> sum;
     sum.Resize(window->GetSize());
     for (int i = 0; i < window->GetSize(); i++)
@@ -385,15 +390,20 @@ Window::CheckCOLA(const WDL_TypedBuf<BL_FLOAT> *window, int overlap)
 #if DUMP_COLA
     BLDebug::DumpData("ola-sum.txt", sum.Get(), sum.GetSize());
 #endif
-    
+
     // Check that the cola condition is respected
 #define COLA_EPS 1e-3
     BL_FLOAT avg = BLUtils::ComputeAvg(sum.Get(), sum.GetSize());
-    for (int i = 0; i < sum.GetSize(); i++)
+
+    if (fabs(outTimeStretchFactor - 1.0) < BL_EPS)
+        // Check COLA only if outTimeStretchFactor is 1.0
     {
-        BL_FLOAT val = sum.Get()[i];
-        if (std::fabs(val - avg) > COLA_EPS)
-            return -1.0;
+        for (int i = 0; i < sum.GetSize(); i++)
+        {
+            BL_FLOAT val = sum.Get()[i];
+            if (std::fabs(val - avg) > COLA_EPS)
+                return -1.0;
+        }
     }
     
     return avg;
@@ -475,9 +485,10 @@ Window::MakeBlackman(int size, WDL_TypedBuf<BL_FLOAT> *result)
 }
 
 void
-Window::NormalizeWindow(WDL_TypedBuf<BL_FLOAT> *window, int oversampling)
+Window::NormalizeWindow(WDL_TypedBuf<BL_FLOAT> *window, int oversampling,
+                        BL_FLOAT outTimeStretchFactor)
 {
-    BL_FLOAT colaCoeff = CheckCOLA(window, oversampling);
+    BL_FLOAT colaCoeff = CheckCOLA(window, oversampling, outTimeStretchFactor);
     
     NormalizeWindow(window, colaCoeff);
 }

@@ -360,7 +360,8 @@ protected:
                             enum WindowType analysisMethod,
                             enum WindowType synthesisMethod,
                             WDL_TypedBuf<BL_FLOAT> *analysisWindow,
-                            WDL_TypedBuf<BL_FLOAT> *synthesisWindow);
+                            WDL_TypedBuf<BL_FLOAT> *synthesisWindow,
+                            BL_FLOAT outTimeStretchFactor);
     
     //
     

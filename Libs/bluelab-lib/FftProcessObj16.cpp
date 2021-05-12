@@ -426,7 +426,8 @@ ProcessObjChannel::Reset()
     
     FftProcessObj16::MakeWindows(mBufferSize, mOverlapping,
                                  mAnalysisMethod, mSynthesisMethod,
-                                 &mAnalysisWindow, &mSynthesisWindow);
+                                 &mAnalysisWindow, &mSynthesisWindow,
+                                 mOutTimeStretchFactor);
     // Set the buffers
     mSamplesIn.Clear();
     
@@ -752,7 +753,8 @@ ProcessObjChannel::MakeAnaWindowStep()
     {
         FftProcessObj16::MakeWindows(mBufferSize, mOverlapping,
                                      mAnalysisMethod, mSynthesisMethod,
-                                     &mAnalysisWindow, &mSynthesisWindow);
+                                     &mAnalysisWindow, &mSynthesisWindow,
+                                     mOutTimeStretchFactor);
     }
     mMustMakeWindows = false;
     
@@ -893,7 +895,8 @@ ProcessObjChannel::MakeResultSamplesStep()
     {
         FftProcessObj16::MakeWindows(mBufferSize, mOverlapping,
                                      mAnalysisMethod, mSynthesisMethod,
-                                     &mAnalysisWindow, &mSynthesisWindow);
+                                     &mAnalysisWindow, &mSynthesisWindow,
+                                     mOutTimeStretchFactor);
     }
     mMustMakeWindows = false;
     
@@ -2106,7 +2109,8 @@ FftProcessObj16::MakeWindows(int bufSize, int overlapping,
                              enum WindowType analysisMethod,
                              enum WindowType synthesisMethod,
                              WDL_TypedBuf<BL_FLOAT> *analysisWindow,
-                             WDL_TypedBuf<BL_FLOAT> *synthesisWindow)
+                             WDL_TypedBuf<BL_FLOAT> *synthesisWindow,
+                             BL_FLOAT outTimeStretchFactor)
 {
     // Analysis and synthesis Hann windows
     // With Hanning, the gain is not increased when we increase the overlapping
@@ -2176,7 +2180,8 @@ FftProcessObj16::MakeWindows(int bufSize, int overlapping,
     
     // Analysis
     //
-    // NOTE: if no overlapping, it is sometimes better to even have an analysis window !
+    // NOTE: if no overlapping, it is sometimes better to even
+    // have an analysis window !
     //
     
     // FIX: if we want to analyse only, with overlapping > 1, we need a window !
@@ -2205,7 +2210,7 @@ FftProcessObj16::MakeWindows(int bufSize, int overlapping,
     else if((analysisMethod == WindowRectangular) &&
             (synthesisMethod == WindowHanning))
     {
-        Window::NormalizeWindow(synthesisWindow, overlapping);
+        Window::NormalizeWindow(synthesisWindow, overlapping, outTimeStretchFactor);
     }
     else if((analysisMethod == WindowHanning) &&
             (synthesisMethod == WindowHanning))
@@ -2223,7 +2228,8 @@ FftProcessObj16::MakeWindows(int bufSize, int overlapping,
             WDL_TypedBuf<BL_FLOAT> win;
             Window::MakeHanningPow(analysisWindow->GetSize(), hanningFactor*2, &win);
             
-            BL_FLOAT cola = Window::CheckCOLA(&win, overlapping);
+            BL_FLOAT cola = Window::CheckCOLA(&win, overlapping,
+                                              outTimeStretchFactor);
             
             // Normalize only the synthesis window
             Window::NormalizeWindow(synthesisWindow, cola);
