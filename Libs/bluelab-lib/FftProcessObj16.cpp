@@ -968,12 +968,15 @@ ProcessObjChannel::NextOutBuffer()
 {
     if (mResultSum.Available() < mBufferSize)
         return;
+
+    //int shift = mShift;
+    int shift = bl_round(mShift*mOutTimeStretchFactor);
     
     // Let the possiblity to modify, or even resample
     // the result, before adding it to the object
     WDL_TypedBuf<BL_FLOAT> &samplesToAdd = mTmpBuf4;
-    samplesToAdd.Resize(mShift*mOutTimeStretchFactor);
-    mResultSum.GetToBuf(0, sampleToAdd.Get(), mShift*mOutTimeStretchFactor);
+    samplesToAdd.Resize(shift);
+    mResultSum.GetToBuf(0, sampleToAdd.Get(), shift);
  
     if (mProcessObj != NULL)
     {
@@ -982,16 +985,16 @@ ProcessObjChannel::NextOutBuffer()
     
     mResultOut.Add(samplesToAdd.Get(), samplesToAdd.GetSize());
     
-    if (mResultSum.Available() == mShift*mOutTimeStretchFactor)
+    if (mResultSum.Available() == shift)
     {
         mResultSum.Clear();
     }
     else if (mResultSum.Available() > mBufferSize)
     {
-        mResultSum.Advance(mShift*mOutTimeStretchFactor);
+        mResultSum.Advance(shift);
     }
 
-    mResultSum.Add(0, mShift*mOutTimeStretchFactor);
+    mResultSum.Add(0, shift);
 }
 #endif
 

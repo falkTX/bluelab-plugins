@@ -84,7 +84,8 @@ PitchShiftPrusaFftObj::ProcessSamplesPost(WDL_TypedBuf<BL_FLOAT> *ioBuffer)
     copyBuf = *ioBuffer;
 
     // Dst buf
-    int resampSize = (1.0/mFactor)*ioBuffer->GetSize();
+    BL_FLOAT resampSizeF = (1.0/mFactor)*ioBuffer->GetSize();
+    int resampSize = bl_round(resampSizeF);
     ioBuffer->Resize(resampSize);
 
     BLUtilsMath::LinearResample(copyBuf.Get(), copyBuf.GetSize(),
