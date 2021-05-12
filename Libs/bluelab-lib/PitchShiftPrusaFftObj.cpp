@@ -328,7 +328,9 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
 #else // Pitch shift
                 frame1.mEstimPhases.Get()[t.mBinIdx + 1] =
                     frame1.mEstimPhases.Get()[t.mBinIdx] +
-                    frame1.mDFPhases.Get()[t.mBinIdx + 1]*mFactor;
+                    // NOTE: in Theo Royer, this is "*mFactor"
+                    // => this is far better like in Prusa with "/mFactor"
+                    frame1.mDFPhases.Get()[t.mBinIdx + 1]/mFactor;
 #endif
 
                 RemoveIdx(&tho, idx0);
@@ -347,9 +349,12 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
                             frame1.mDFPhases.Get()[t.mBinIdx - 1]);
 #else // Pitch shift
                 frame1.mEstimPhases.Get()[t.mBinIdx - 1] =
-                    // The good result is with '-'
-                    frame1.mEstimPhases.Get()[t.mBinIdx] - 
-                    frame1.mDFPhases.Get()[t.mBinIdx - 1]*mFactor;
+                    // NOTE: in Theo Royer, this is "+"
+                    // => this is better like in Prusa with "-"
+                    frame1.mEstimPhases.Get()[t.mBinIdx] -
+                    // NOTE: in Theo Royer, this is "*mFactor"
+                    // => this is far better like in Prusa with "/mFactor"
+                    frame1.mDFPhases.Get()[t.mBinIdx - 1]/mFactor;
 #endif
                 
                 RemoveIdx(&tho, idx1);
