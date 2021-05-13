@@ -272,13 +272,13 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
     {
         const Tuple &thoT = tho[i];
 
-        Tuple t;
+        Tuple &t = hp[i];
         t.mMagn = frame0.mMagns.Get()[thoT.mBinIdx];
         t.mBinIdx = thoT.mBinIdx;
         t.mTimeIdx = 0;
 
         //hp.push_back(t);
-        hp[i] = t;
+        //hp[i] = t;
     }
     
     // Create the heap
@@ -291,11 +291,13 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
 #endif
     
     // Iterate
+    Tuple t;
     while(!tho.empty())
     {
         pop_heap(hp.begin(), hp.end());
         
-        Tuple t = hp.back();
+        //Tuple t = hp.back();
+        t = hp.back();
         hp.pop_back();
         
         if (t.mTimeIdx == 0)
