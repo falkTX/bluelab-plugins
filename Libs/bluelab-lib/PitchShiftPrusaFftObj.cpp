@@ -227,6 +227,20 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
     const BL_FLOAT randMaxInv = 1.0/RAND_MAX;
      
     vector<Tuple> tho;
+    // Optim
+    int thoSize = 0;
+    for (int i = 0; i < frame1.mMagns.GetSize(); i++)
+    {
+        BL_FLOAT magn1 = frame1.mMagns.Get()[i];
+        if (magn1 > abstol)
+        {
+            thoSize++;
+        }
+    }
+
+    tho.resize(thoSize);
+    int thoIdx = 0;
+    
     for (int i = 0; i < frame1.mMagns.GetSize(); i++)
     {
         BL_FLOAT magn1 = frame1.mMagns.Get()[i];
@@ -238,7 +252,8 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
             t.mBinIdx = i;
             t.mTimeIdx = 1;
             
-            tho.push_back(t);
+            //tho.push_back(t);
+            tho[thoIdx++] = t;
         }
         else
         {
