@@ -252,6 +252,7 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
     sort(tho.begin(), tho.end(), Tuple::IndexSmaller);
          
     vector<Tuple> hp;
+    hp.resize(tho.size());
     for (int i = 0; i < tho.size(); i++)
     {
         const Tuple &thoT = tho[i];
@@ -261,7 +262,8 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
         t.mBinIdx = thoT.mBinIdx;
         t.mTimeIdx = 0;
 
-        hp.push_back(t);
+        //hp.push_back(t);
+        hp[i] = t;
     }
     
     // Create the heap
