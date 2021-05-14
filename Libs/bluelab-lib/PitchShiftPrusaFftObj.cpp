@@ -125,7 +125,7 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
     
     const Frame &frame0 = mPrevFrame;
     
-    Frame frame1;
+    Frame &frame1 = mTmpBuf8;
     frame1.mMagns = *magns;
     frame1.mPhases = *phases;
     
@@ -510,11 +510,15 @@ PitchShiftPrusaFftObj::PropagatePhasesPrusaOptim(const Frame &frame0, Frame *fra
     // tho: use n
     vector<Tuple> &tho = mTmpBuf5;
     tho.resize(frame1->mMagns.GetSize());
-    for (int i = 0; i < frame1->mMagns.GetSize(); i++)
+    
+    int frame1MagnsSize = frame1->mMagns.GetSize();
+    BL_FLOAT *frame1MagnsBuf = frame1->mMagns.Get();
+    
+    for (int i = 0; i < frame1MagnsSize; i++)
     {
         // Fill all the values, but invalidate the values
         // which are under the tolerance
-        BL_FLOAT magn1 = frame1->mMagns.Get()[i];
+        BL_FLOAT magn1 = frame1MagnsBuf[i];
                     
         Tuple &t = tho[i];
         t.mMagn = magn1;
@@ -541,11 +545,15 @@ PitchShiftPrusaFftObj::PropagatePhasesPrusaOptim(const Frame &frame0, Frame *fra
     // hp0, use n-1
     vector<Tuple> &hp0 = mTmpBuf6;
     hp0.resize(tho.size());
-    for (int i = 0; i < hp0.size(); i++)
+    
+    int hp0Size = hp0.size();
+    BL_FLOAT *frame0MagnsBuf = frame0.mMagns.Get();
+    
+    for (int i = 0; i < hp0Size; i++)
     {
         const Tuple &t = tho[i];
 
-        BL_FLOAT magn0 = frame0.mMagns.Get()[t.mBinIdx];
+        BL_FLOAT magn0 = frame0MagnsBuf[t.mBinIdx];
         
         Tuple &t0 = hp0[i];
         t0.mMagn = magn0;
@@ -567,11 +575,14 @@ PitchShiftPrusaFftObj::PropagatePhasesPrusaOptim(const Frame &frame0, Frame *fra
     // heap for n
     vector<Tuple> &hp1 = mTmpBuf7;
     hp1.resize(tho.size());
-    for (int i = 0; i < hp1.size(); i++)
+
+    int hp1Size = hp1.size();
+    //BL_FLOAT *frame1MagnsBuf = frame1->mMagns.Get();
+    for (int i = 0; i < hp1Size; i++)
     {
         const Tuple &t = tho[i];
 
-        BL_FLOAT magn1 = frame1->mMagns.Get()[t.mBinIdx];
+        BL_FLOAT magn1 = frame1MagnsBuf[t.mBinIdx];
         
         Tuple &t1 = hp1[i];
         t1.mMagn = magn1;

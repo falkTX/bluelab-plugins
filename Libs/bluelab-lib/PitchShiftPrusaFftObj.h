@@ -343,6 +343,7 @@ private:
     vector<Tuple> mTmpBuf5;
     vector<Tuple> mTmpBuf6;
     vector<Tuple> mTmpBuf7;
+    Frame mTmpBuf8;
 };
 
 #endif /* defined(__BL_PitchShift__PitchShiftPrusaFftObj__) */
