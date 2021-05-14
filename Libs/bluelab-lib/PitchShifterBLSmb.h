@@ -4,13 +4,15 @@
 #include <vector>
 using namespace std;
 
+#include <PitchShifterInterface.h>
+
 // Original code
 // Moved from plugin main PitchShift.cpp to an external class
 class PostTransientFftObj3;
 class PitchShiftFftObj3;
 class FftProcessObj16;
 class StereoPhasesProcess;
-class PitchShifterBLSmb
+class PitchShifterBLSmb : public PitchShifterInterface
 {
  public:
     PitchShifterBLSmb();

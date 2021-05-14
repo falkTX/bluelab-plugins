@@ -4,6 +4,8 @@
 #include <vector>
 using namespace std;
 
+#include <PitchShifterInterface.h>
+
 // Implementation of:
 // "Phase Vocoder Done Right" by Zdenek Prusa and Nicki Holighaus.
 // with improvements from:
@@ -12,7 +14,7 @@ using namespace std;
 class PitchShiftPrusaFftObj;
 class FftProcessObj16;
 class StereoPhasesProcess;
-class PitchShifterPrusa
+class PitchShifterPrusa : public PitchShifterInterface
 {
  public:
     PitchShifterPrusa();

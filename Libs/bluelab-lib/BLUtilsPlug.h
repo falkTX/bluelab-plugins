@@ -80,6 +80,10 @@ class BLUtilsPlug
                           vector<WDL_TypedBuf<BL_FLOAT> > *out,
                           ParamSmoother2 *smoother);
 
+    static void ApplyDryWet(const vector<WDL_TypedBuf<BL_FLOAT> > &in,
+                            vector<WDL_TypedBuf<BL_FLOAT> > *out,
+                            ParamSmoother2 *smoother);
+    
     static void SumSignals(const vector<WDL_TypedBuf<BL_FLOAT> > &a,
                            const vector<WDL_TypedBuf<BL_FLOAT> > &b,
                            vector<WDL_TypedBuf<BL_FLOAT> > *out);
