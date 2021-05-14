@@ -194,7 +194,8 @@ protected:
             
             Tuple &t0 = (*mVector)[mFirstValidIndex];
             t0.mIsValid = 0;
-            
+
+#if 0 // Origin
             while(mFirstValidIndex < mVector->size())
             {
                 mFirstValidIndex++;
@@ -202,10 +203,27 @@ protected:
                 if (mFirstValidIndex >= mVector->size())
                     break;
                 
-                Tuple &t1 = (*mVector)[mFirstValidIndex];
+                const Tuple &t1 = (*mVector)[mFirstValidIndex];
                 if (t1.mIsValid == 1)
                     break;
             }
+#endif
+#if 1 // Optim
+            vector<Tuple>::iterator it = mVector->begin() + mFirstValidIndex;
+            while(it != mVector->end())
+            {
+                mFirstValidIndex++;
+
+                it++;
+                
+                if (mFirstValidIndex >= mVector->size())
+                    break;
+                
+                const Tuple &t1 = *it;
+                if (t1.mIsValid == 1)
+                    break;
+            }
+#endif
         }
         
         static const Tuple &Pop(Heap *heap0, Heap *heap1)
