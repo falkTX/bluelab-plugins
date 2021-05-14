@@ -358,7 +358,7 @@ PitchShiftPrusaFftObj::PropagatePhasesPrusa(const Frame &frame0, Frame *frame1)
             Tuple t;
             t.mMagn = magn1;
             t.mBinIdx = i;
-            t.mTimeIdx = 1;
+            t.mTimeIdx = (unsigned char)1;
             
             //tho.push_back(t);
             tho[thoIdx++] = t;
@@ -383,7 +383,7 @@ PitchShiftPrusaFftObj::PropagatePhasesPrusa(const Frame &frame0, Frame *frame1)
         Tuple &t = hp[i];
         t.mMagn = frame0.mMagns.Get()[thoT.mBinIdx];
         t.mBinIdx = thoT.mBinIdx;
-        t.mTimeIdx = 0;
+        t.mTimeIdx = (unsigned char)0;
 
         //hp.push_back(t);
         //hp[i] = t;
@@ -408,7 +408,7 @@ PitchShiftPrusaFftObj::PropagatePhasesPrusa(const Frame &frame0, Frame *frame1)
         t = hp.back();
         hp.pop_back();
         
-        if (t.mTimeIdx == 0)
+        if (t.mTimeIdx == (unsigned char)0)
         {
             int idx = ContainsSorted(tho, t.mBinIdx, 1);
             if (idx >= 0)
@@ -434,7 +434,7 @@ PitchShiftPrusaFftObj::PropagatePhasesPrusa(const Frame &frame0, Frame *frame1)
             }
         }
         
-        if (t.mTimeIdx == 1)
+        if (t.mTimeIdx == (unsigned char)1)
         {
             int idx0 = ContainsSorted(tho, t.mBinIdx + 1, 1);
             if (idx0 >= 0)
@@ -519,13 +519,13 @@ PitchShiftPrusaFftObj::PropagatePhasesPrusaOptim(const Frame &frame0, Frame *fra
         Tuple &t = tho[i];
         t.mMagn = magn1;
         t.mBinIdx = i;
-        t.mTimeIdx = 1;
-        t.mIsValid = 1;
+        t.mTimeIdx = (unsigned char)1;
+        t.mIsValid = (unsigned char)1;
 
         if (magn1 <= abstol)
         {
             // Invalidate if smaller than threshold
-            t.mIsValid = 0;
+            t.mIsValid = (unsigned char)0;
             
             // And assign random phase value
             BL_FLOAT rp = rand()*randMaxInv;
@@ -550,12 +550,12 @@ PitchShiftPrusaFftObj::PropagatePhasesPrusaOptim(const Frame &frame0, Frame *fra
         Tuple &t0 = hp0[i];
         t0.mMagn = magn0;
         t0.mBinIdx = t.mBinIdx;
-        t0.mTimeIdx = 0;
-        t0.mIsValid = 1;
+        t0.mTimeIdx = (unsigned char)0;
+        t0.mIsValid = (unsigned char)1;
 
         // Transmit for tolerance invalidation
-        if (t.mIsValid == 0)
-            t0.mIsValid = 0;
+        if (t.mIsValid == (unsigned char)0)
+            t0.mIsValid = (unsigned char)0;
     }
 
     // Must also sort hp0, because the magns come from frame0
@@ -576,15 +576,18 @@ PitchShiftPrusaFftObj::PropagatePhasesPrusaOptim(const Frame &frame0, Frame *fra
         Tuple &t1 = hp1[i];
         t1.mMagn = magn1;
         t1.mBinIdx = t.mBinIdx;
-        t1.mTimeIdx = 1;
-        t1.mIsValid = 0; // All empty at the beginning
+        t1.mTimeIdx = (unsigned char)1;
+        t1.mIsValid = (unsigned char)0; // All empty at the beginning
     }
 
+    // In theory, we should not have to sort (order should be the same as tho)
+#if 1
     // Sort also hp1.
     // This is necessary because the order can be a bit differrent than h0,
     // and the magns are not exactly the same,
     // so the sorted orders is slightliy different
     sort(hp1.begin(), hp1.end(), Tuple::MagnGreater);
+#endif
     
     Heap heap1(&hp1);
     heap1.Clear(); // "empty" heap
@@ -602,7 +605,7 @@ PitchShiftPrusaFftObj::PropagatePhasesPrusaOptim(const Frame &frame0, Frame *fra
         t = Heap::Pop(&heap0, &heap1);
 
         // n - 1
-        if (t.mTimeIdx == 0)
+        if (t.mTimeIdx == (unsigned char)0)
         {
             int idx = thoV.Contains(t.mBinIdx); // time=1
             
@@ -630,7 +633,7 @@ PitchShiftPrusaFftObj::PropagatePhasesPrusaOptim(const Frame &frame0, Frame *fra
         }
 
         // n
-        if (t.mTimeIdx == 1)
+        if (t.mTimeIdx == (unsigned char)1)
         {
             // m + 1
             int idx0 = thoV.Contains(t.mBinIdx + 1); // time=1

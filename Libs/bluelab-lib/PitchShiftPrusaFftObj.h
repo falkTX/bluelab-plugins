@@ -136,7 +136,7 @@ protected:
             // Find first valid index
             for (int i = 0; i < mVector->size(); i++)
             {
-                if ((*mVector)[i].mIsValid == 1)
+                if ((*mVector)[i].mIsValid == (unsigned char)1)
                     break;
                 
                 mFirstValidIndex++;
@@ -161,20 +161,20 @@ protected:
             for (int i = 0; i < mVector->size(); i++)
             {
                 Tuple &t = (*mVector)[i];
-                t.mIsValid = 0;
+                t.mIsValid = (unsigned char)0;
             }
 
             mFirstValidIndex = mVector->size();
         }
 
-        void Insert(int binIdx, int timeIndex) //, BL_FLOAT magn)
+        void Insert(int binIdx, unsigned char timeIndex) //, BL_FLOAT magn)
         {
             int vecIdx = mBinToVecIdx[binIdx];            
 
             //(*mVector)[vecIdx].mMagn = magn;
             //assert((*mVector)[vecIdx].mBinIdx == binIdx); // DEBUG
             (*mVector)[vecIdx].mTimeIdx = timeIndex;
-            (*mVector)[vecIdx].mIsValid = 1;
+            (*mVector)[vecIdx].mIsValid = (unsigned char)1;
             
             if (vecIdx < mFirstValidIndex)
                 mFirstValidIndex = vecIdx;
@@ -193,7 +193,7 @@ protected:
                 return;
             
             Tuple &t0 = (*mVector)[mFirstValidIndex];
-            t0.mIsValid = 0;
+            t0.mIsValid = (unsigned char)0;
 
 #if 0 // Origin
             while(mFirstValidIndex < mVector->size())
@@ -204,11 +204,11 @@ protected:
                     break;
                 
                 const Tuple &t1 = (*mVector)[mFirstValidIndex];
-                if (t1.mIsValid == 1)
+                if (t1.mIsValid == (unsigned char)1)
                     break;
             }
 #endif
-#if 1 // Optim
+#if 1 // Optim (does not really optimize)
             vector<Tuple>::iterator it = mVector->begin() + mFirstValidIndex;
             while(it != mVector->end())
             {
@@ -220,7 +220,7 @@ protected:
                     break;
                 
                 const Tuple &t1 = *it;
-                if (t1.mIsValid == 1)
+                if (t1.mIsValid == (unsigned char)1)
                     break;
             }
 #endif
@@ -286,7 +286,7 @@ protected:
             mNumValidValues = 0;
             for (int i = 0; i < mVector->size(); i++)
             {
-                if ((*mVector)[i].mIsValid == 1)
+                if ((*mVector)[i].mIsValid == (unsigned char)1)
                     mNumValidValues++;
             }
         }
@@ -300,7 +300,7 @@ protected:
             
             int vecIdx = mBinToVecIdx[binIdx];
             
-            if ((*mVector)[vecIdx].mIsValid == 1)
+            if ((*mVector)[vecIdx].mIsValid == (unsigned char)1)
                 return vecIdx;
             
             return -1;
@@ -311,10 +311,10 @@ protected:
             if ((idx < 0) || (idx >= mVector->size()))
                 return;
             
-            if ((*mVector)[idx].mIsValid == 0)
+            if ((*mVector)[idx].mIsValid == (unsigned char)0)
                 return;
             
-            (*mVector)[idx].mIsValid = 0;
+            (*mVector)[idx].mIsValid = (unsigned char)0;
 
             mNumValidValues--;
         }
