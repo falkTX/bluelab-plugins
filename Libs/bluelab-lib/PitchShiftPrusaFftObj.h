@@ -57,6 +57,7 @@ protected:
     void PropagatePhasesSimple(const Frame &frame0, Frame *frame1,
                                WDL_TypedBuf<BL_FLOAT> *magns);
     void PropagatePhasesPrusa(const Frame &frame0, Frame *frame1);
+    void PropagatePhasesPrusaOptim(const Frame &frame0, Frame *frame1);
     
     struct Tuple
     {
@@ -74,12 +75,19 @@ protected:
         short mBinIdx;
 
         // Time index is only 0 for (n-1), or 1 for n
-        short mTimeIdx;
+        //short mTimeIdx;
+        unsigned char mTimeIdx;
+
+        unsigned char mIsValid;
 #endif
         
         bool operator< (const Tuple &t0)
         { return (this->mMagn < t0.mMagn); } // Was tested successfully!
-
+        
+        // For optimization
+        static bool MagnGreater(const Tuple &t0, const Tuple &t1)
+        { return (t0.mMagn > t1.mMagn); }
+        
         // For sorting and sorted search
         static bool IndexSmaller(const Tuple &t0, const Tuple &t1)
         {
@@ -91,7 +99,7 @@ protected:
 
             return false;
         }
-        
+
         static bool IndexEqual(const Tuple &t0, const Tuple &t1)
         {
             if (t0.mTimeIdx != t1.mTimeIdx)
@@ -103,7 +111,7 @@ protected:
             return true;
         }
     };
-
+    
     bool Contains(const vector<Tuple> &hp, int binIdx, int timeIdx);
     int ContainsSorted(/*const*/ vector<Tuple> &hp, int binIdx, int timeIdx); // Optim
 
@@ -113,6 +121,200 @@ protected:
     void AddHeap(vector<Tuple> *hp, int binIdx, int timeIdx, BL_FLOAT magn);
     
     void DBG_Dump(const char *fileName, const vector<Tuple> &hp);
+
+    // Optimized for Tuple and fixed size
+    // Vector must be sorted at the beginning
+    class Heap
+    {
+    public:
+        Heap(vector<Tuple> *vector)
+        {
+            mVector = vector;
+            
+            mFirstValidIndex = 0;
+
+            // Find first valid index
+            for (int i = 0; i < mVector->size(); i++)
+            {
+                if ((*mVector)[i].mIsValid == 1)
+                    break;
+                
+                mFirstValidIndex++;
+            }
+
+            mBinToVecIdx.resize(mVector->size());
+            for (int i = 0; i < mVector->size(); i++)
+                mBinToVecIdx[(*mVector)[i].mBinIdx] = i;
+        }
+
+        virtual ~Heap() {}
+        
+        bool IsEmpty()
+        {
+            bool empty = (mFirstValidIndex >= mVector->size());
+            
+            return empty;
+        }
+        
+        void Clear()
+        {
+            for (int i = 0; i < mVector->size(); i++)
+            {
+                Tuple &t = (*mVector)[i];
+                t.mIsValid = 0;
+            }
+
+            mFirstValidIndex = mVector->size();
+        }
+
+        void Insert(int binIdx, int timeIndex) //, BL_FLOAT magn)
+        {
+            int vecIdx = mBinToVecIdx[binIdx];            
+
+            //(*mVector)[vecIdx].mMagn = magn;
+            //assert((*mVector)[vecIdx].mBinIdx == binIdx); // DEBUG
+            (*mVector)[vecIdx].mTimeIdx = timeIndex;
+            (*mVector)[vecIdx].mIsValid = 1;
+            
+            if (vecIdx < mFirstValidIndex)
+                mFirstValidIndex = vecIdx;
+        }
+        
+        const Tuple &GetMax()
+        {
+            Tuple &t = (*mVector)[mFirstValidIndex];
+            
+            return t;
+        }
+
+        void RemoveMax()
+        {
+            if (mFirstValidIndex >= mVector->size())
+                return;
+            
+            Tuple &t0 = (*mVector)[mFirstValidIndex];
+            t0.mIsValid = 0;
+            
+            while(mFirstValidIndex < mVector->size())
+            {
+                mFirstValidIndex++;
+
+                if (mFirstValidIndex >= mVector->size())
+                    break;
+                
+                Tuple &t1 = (*mVector)[mFirstValidIndex];
+                if (t1.mIsValid == 1)
+                    break;
+            }
+        }
+        
+        static const Tuple &Pop(Heap *heap0, Heap *heap1)
+        {
+            // First empty ?
+            if (heap0->IsEmpty())
+            {
+                const Tuple &t1 = heap1->GetMax();
+                heap1->RemoveMax();
+                
+                return t1;
+            }
+
+            // Second empty ?
+            if (heap1->IsEmpty())
+            {
+                const Tuple &t0 = heap0->GetMax();
+                heap0->RemoveMax();
+                
+                return t0;
+            }
+
+            // Both not empty, compare them
+            const Tuple &t0 = heap0->GetMax();
+            const Tuple &t1 = heap1->GetMax();
+
+            if (t0.mMagn >= t1.mMagn)
+            {
+                heap0->RemoveMax();
+                
+                return t0;
+            }
+            else
+            {
+                heap1->RemoveMax();
+                
+                return t1;
+            }
+        }
+
+    protected:
+        vector<Tuple> *mVector;
+        int mFirstValidIndex;
+
+        vector<int> mBinToVecIdx;
+    };
+
+    class SortedVec
+    {
+    public:
+        SortedVec(vector<Tuple> *vector)
+        {
+            mVector = vector;
+
+            mBinToVecIdx.resize(vector->size());
+            for (int i = 0; i < vector->size(); i++)
+                mBinToVecIdx[(*vector)[i].mBinIdx] = i;
+
+            // Compute num valid values
+            mNumValidValues = 0;
+            for (int i = 0; i < mVector->size(); i++)
+            {
+                if ((*mVector)[i].mIsValid == 1)
+                    mNumValidValues++;
+            }
+        }
+
+        virtual ~SortedVec() {}
+
+        int Contains(int binIdx)
+        {
+            if ((binIdx < 0) || (binIdx >= mBinToVecIdx.size()))
+                return -1;
+            
+            int vecIdx = mBinToVecIdx[binIdx];
+            
+            if ((*mVector)[vecIdx].mIsValid == 1)
+                return vecIdx;
+            
+            return -1;
+        }
+
+        void Remove(int idx)
+        {
+            if ((idx < 0) || (idx >= mVector->size()))
+                return;
+            
+            if ((*mVector)[idx].mIsValid == 0)
+                return;
+            
+            (*mVector)[idx].mIsValid = 0;
+
+            mNumValidValues--;
+        }
+
+        bool IsEmpty()
+        {
+            bool empty = (mNumValidValues <= 0);
+            
+            return empty;
+        }
+        
+    protected:
+        vector<Tuple> *mVector;
+
+        vector<int> mBinToVecIdx;
+
+        int mNumValidValues;
+    };
     
 private:
     WDL_TypedBuf<WDL_FFT_COMPLEX> mTmpBuf6;
