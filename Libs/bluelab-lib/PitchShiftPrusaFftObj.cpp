@@ -57,7 +57,7 @@ void
 PitchShiftPrusaFftObj::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer0,
                                         const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer)
 {
-    WDL_TypedBuf<WDL_FFT_COMPLEX> &ioBuffer = mTmpBuf6;
+    WDL_TypedBuf<WDL_FFT_COMPLEX> &ioBuffer = mTmpBuf4;
     BLUtils::TakeHalf(*ioBuffer0, &ioBuffer);
     
     WDL_TypedBuf<BL_FLOAT> &magns = mTmpBuf0;
@@ -508,7 +508,7 @@ PitchShiftPrusaFftObj::PropagatePhasesPrusaOptim(const Frame &frame0, Frame *fra
     const BL_FLOAT randMaxInv = 1.0/RAND_MAX;
 
     // tho: use n
-    vector<Tuple> tho;
+    vector<Tuple> &tho = mTmpBuf5;
     tho.resize(frame1->mMagns.GetSize());
     for (int i = 0; i < frame1->mMagns.GetSize(); i++)
     {
@@ -539,7 +539,7 @@ PitchShiftPrusaFftObj::PropagatePhasesPrusaOptim(const Frame &frame0, Frame *fra
     SortedVec thoV(&tho);
         
     // hp0, use n-1
-    vector<Tuple> hp0;
+    vector<Tuple> &hp0 = mTmpBuf6;
     hp0.resize(tho.size());
     for (int i = 0; i < hp0.size(); i++)
     {
@@ -565,7 +565,7 @@ PitchShiftPrusaFftObj::PropagatePhasesPrusaOptim(const Frame &frame0, Frame *fra
     Heap heap0(&hp0);
 
     // heap for n
-    vector<Tuple> hp1;
+    vector<Tuple> &hp1 = mTmpBuf7;
     hp1.resize(tho.size());
     for (int i = 0; i < hp1.size(); i++)
     {
