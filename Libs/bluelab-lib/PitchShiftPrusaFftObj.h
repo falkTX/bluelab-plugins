@@ -53,6 +53,10 @@ protected:
         WDL_TypedBuf<BL_FLOAT> mEstimPhases;
     };
     Frame mPrevFrame;
+
+    void PropagatePhasesSimple(const Frame &frame0, Frame *frame1,
+                               WDL_TypedBuf<BL_FLOAT> *magns);
+    void PropagatePhasesPrusa(const Frame &frame0, Frame *frame1);
     
     struct Tuple
     {

@@ -172,216 +172,9 @@ PitchShiftPrusaFftObj::Convert(WDL_TypedBuf<BL_FLOAT> *magns,
     PhasesUnwrapper::UnwrapPhasesFreq(&frame1PhasesFUw);
     BLUtils::ComputeDerivative(frame1PhasesFUw, &frame1.mDFPhases);
 
-    // Naive algo: to do like in standard Phase Vocoder
-#define SIMPLE_DBG_ALGO 0 //1
-#if SIMPLE_DBG_ALGO
-
-    for (int i = 0; i < magns->GetSize(); i++)
-    {
-        BL_FLOAT p0 = frame0.mPhases.Get()[i];
-        BL_FLOAT p1 = frame1.mPhases.Get()[i];
-
-        BL_FLOAT ep0 = frame0.mEstimPhases.Get()[i];
-        
-        BL_FLOAT dp = frame1.mDTPhases.Get()[i];
-        
-        BL_FLOAT ep1 = ep0 +  dp*mFactor;
-
-        frame1.mEstimPhases.Get()[i] = ep1;
-    }
-
-    *phases = frame1.mEstimPhases;
-
-    mPrevFrame = frame1;
-
-#if 0
-    // Process magns like with Smb (and not like in standard Phase Vocoder) ?
-    BLUtils::FillAllZero(magns);
-    for (int i = 0; i < magns->GetSize(); i++)
-    {
-        int index = i*mFactor;
-
-        if (index >= magns->GetSize())
-            continue;
-        
-        magns->Get()[index] += frame1.mMagns.Get()[i];
-    }
-#endif
-
-    // End of simple algo
-    return;
-#endif
-
-    // Prusa algo
+    //PropagatePhasesSimple(frame0, &frame1, magns);
+    PropagatePhasesPrusa(frame0, &frame1);
     
-    // Compute tolerance
-    BL_FLOAT maxMagn0 = BLUtils::ComputeMax(frame0.mMagns);
-    BL_FLOAT maxMagn1 = BLUtils::ComputeMax(frame1.mMagns);
-    BL_FLOAT maxMagn = MAX(maxMagn0, maxMagn1);
-
-    BL_FLOAT abstol = TOL*maxMagn;
-    
-    // Set random values for very small magns
-    // and insert other values in the heap
-    
-    const BL_FLOAT randMaxInv = 1.0/RAND_MAX;
-     
-    vector<Tuple> tho;
-    // Optim
-    int thoSize = 0;
-    for (int i = 0; i < frame1.mMagns.GetSize(); i++)
-    {
-        BL_FLOAT magn1 = frame1.mMagns.Get()[i];
-        if (magn1 > abstol)
-        {
-            thoSize++;
-        }
-    }
-
-    tho.resize(thoSize);
-    int thoIdx = 0;
-    
-    for (int i = 0; i < frame1.mMagns.GetSize(); i++)
-    {
-        BL_FLOAT magn1 = frame1.mMagns.Get()[i];
-        if (magn1 > abstol)
-        {            
-            // Add to the heap if greater than threshold            
-            Tuple t;
-            t.mMagn = magn1;
-            t.mBinIdx = i;
-            t.mTimeIdx = 1;
-            
-            //tho.push_back(t);
-            tho[thoIdx++] = t;
-        }
-        else
-        {
-            // Assign random phase value otherwise 
-            BL_FLOAT rp = rand()*randMaxInv;
-            frame1.mEstimPhases.Get()[i] = rp;
-        }
-    }
-
-    // Sort tho, for optimization
-    sort(tho.begin(), tho.end(), Tuple::IndexSmaller);
-         
-    vector<Tuple> hp;
-    hp.resize(tho.size());
-    for (int i = 0; i < tho.size(); i++)
-    {
-        const Tuple &thoT = tho[i];
-
-        Tuple &t = hp[i];
-        t.mMagn = frame0.mMagns.Get()[thoT.mBinIdx];
-        t.mBinIdx = thoT.mBinIdx;
-        t.mTimeIdx = 0;
-
-        //hp.push_back(t);
-        //hp[i] = t;
-    }
-    
-    // Create the heap
-    make_heap(hp.begin(), hp.end());
-
-#if REAL_PHASE_VOCODER_PURNA
-    // For real phase vocoder 
-    const BL_FLOAT as = mFactor*2.0;
-    const BL_FLOAT bs = mFactor*2.0;
-#endif
-    
-    // Iterate
-    Tuple t;
-    while(!tho.empty())
-    {
-        pop_heap(hp.begin(), hp.end());
-        
-        //Tuple t = hp.back();
-        t = hp.back();
-        hp.pop_back();
-        
-        if (t.mTimeIdx == 0)
-        {
-            int idx = ContainsSorted(tho, t.mBinIdx, 1);
-            if (idx >= 0)
-            {
-#if REAL_PHASE_VOCODER_PURNA
-                frame1.mEstimPhases.Get()[t.mBinIdx] =
-                    frame0.mEstimPhases.Get()[t.mBinIdx] +
-                    as*0.5*(frame0.mDTPhases.Get()[t.mBinIdx] +
-                            frame1.mDTPhases.Get()[t.mBinIdx]);
-#else // Pitch shifting
-                // Use backward scheme
-                // NOTE: can not use Prusa forward or centered scheme for the moment
-                // (we don't have frame(n+1), we only have frame(n) and frame(n-1)
-                frame1.mEstimPhases.Get()[t.mBinIdx] =
-                    frame0.mEstimPhases.Get()[t.mBinIdx] +
-                    frame1.mDTPhases.Get()[t.mBinIdx]*mFactor;
-#endif
-                
-                RemoveIdx(&tho, idx);
-                
-                BL_FLOAT magn = frame1.mMagns.Get()[t.mBinIdx];
-                AddHeap(&hp, t.mBinIdx, 1, magn);
-            }
-        }
-        
-        if (t.mTimeIdx == 1)
-        {
-            int idx0 = ContainsSorted(tho, t.mBinIdx + 1, 1);
-            if (idx0 >= 0)
-            {
-#if REAL_PHASE_VOCODER_PURNA
-                frame1.mEstimPhases.Get()[t.mBinIdx + 1] =
-                    frame1.mEstimPhases.Get()[t.mBinIdx] +
-                    bs*0.5*(frame1.mDFPhases.Get()[t.mBinIdx] +
-                            frame1.mDFPhases.Get()[t.mBinIdx + 1]);
-#else // Pitch shift
-                // Use backward scheme
-                // NOTE: can not use Prusa forward or centered scheme for the moment
-                // (we don't have frame(n+1), we only have frame(n) and frame(n-1)
-                frame1.mEstimPhases.Get()[t.mBinIdx + 1] =
-                    frame1.mEstimPhases.Get()[t.mBinIdx] +
-                    // NOTE: in Theo Royer, this is "*mFactor"
-                    // => this is far better like in Prusa with "/mFactor"
-                    frame1.mDFPhases.Get()[t.mBinIdx + 1]/mFactor;
-#endif
-
-                RemoveIdx(&tho, idx0);
-
-                BL_FLOAT magn = frame1.mMagns.Get()[t.mBinIdx + 1];
-                AddHeap(&hp, t.mBinIdx + 1, 1, magn);
-            }
-
-            int idx1 = ContainsSorted(tho, t.mBinIdx - 1, 1);
-            if (idx1 >= 0)
-            {
-#if REAL_PHASE_VOCODER_PURNA
-                frame1.mEstimPhases.Get()[t.mBinIdx - 1] =
-                    frame1.mEstimPhases.Get()[t.mBinIdx] -
-                    bs*0.5*(frame1.mDFPhases.Get()[t.mBinIdx] +
-                            frame1.mDFPhases.Get()[t.mBinIdx - 1]);
-#else // Pitch shift
-                // Use backward scheme
-                // NOTE: can not use Prusa forward or centered scheme for the moment
-                // (we don't have frame(n+1), we only have frame(n) and frame(n-1)
-                frame1.mEstimPhases.Get()[t.mBinIdx - 1] =
-                    // NOTE: in Theo Royer, this is "+"
-                    // => this is better like in Prusa with "-"
-                    frame1.mEstimPhases.Get()[t.mBinIdx] -
-                    // NOTE: in Theo Royer, this is "*mFactor"
-                    // => this is far better like in Prusa with "/mFactor"
-                    frame1.mDFPhases.Get()[t.mBinIdx - 1]/mFactor;
-#endif
-                
-                RemoveIdx(&tho, idx1);
-
-                BL_FLOAT magn = frame1.mMagns.Get()[t.mBinIdx - 1];
-                AddHeap(&hp, t.mBinIdx - 1, 1, magn);
-            }
-        }
-    }
-
     // Result
     //
     
@@ -485,4 +278,214 @@ PitchShiftPrusaFftObj::ResetPitchShift()
 {
     Frame f;
     mPrevFrame = f;
+}
+
+void
+PitchShiftPrusaFftObj::PropagatePhasesSimple(const Frame &frame0, Frame *frame1,
+                                             WDL_TypedBuf<BL_FLOAT> *magns)
+{
+    // Naive algo: to do like in standard Phase Vocoder
+    for (int i = 0; i < magns->GetSize(); i++)
+    {
+        BL_FLOAT p0 = frame0.mPhases.Get()[i];
+        BL_FLOAT p1 = frame1->mPhases.Get()[i];
+
+        BL_FLOAT ep0 = frame0.mEstimPhases.Get()[i];
+        
+        BL_FLOAT dp = frame1->mDTPhases.Get()[i];
+        
+        BL_FLOAT ep1 = ep0 +  dp*mFactor;
+
+        frame1->mEstimPhases.Get()[i] = ep1;
+    }
+
+#if 0
+    // Process magns like with Smb (and not like in standard Phase Vocoder!)
+    // To be used if we don't use phase vocoder time stretch
+    BLUtils::FillAllZero(magns);
+    for (int i = 0; i < magns->GetSize(); i++)
+    {
+        int index = i*mFactor;
+
+        if (index >= magns->GetSize())
+            continue;
+        
+        magns->Get()[index] += frame1->mMagns.Get()[i];
+    }
+#endif
+}
+
+void
+PitchShiftPrusaFftObj::PropagatePhasesPrusa(const Frame &frame0, Frame *frame1)
+{
+    // Prusa algo
+    
+    // Compute tolerance
+    BL_FLOAT maxMagn0 = BLUtils::ComputeMax(frame0.mMagns);
+    BL_FLOAT maxMagn1 = BLUtils::ComputeMax(frame1->mMagns);
+    BL_FLOAT maxMagn = MAX(maxMagn0, maxMagn1);
+
+    BL_FLOAT abstol = TOL*maxMagn;
+    
+    // Set random values for very small magns
+    // and insert other values in the heap
+    
+    const BL_FLOAT randMaxInv = 1.0/RAND_MAX;
+     
+    vector<Tuple> tho;
+    // Optim
+    // Compute the size of tho that we need
+    int thoSize = 0;
+    for (int i = 0; i < frame1->mMagns.GetSize(); i++)
+    {
+        BL_FLOAT magn1 = frame1->mMagns.Get()[i];
+        if (magn1 > abstol)
+        {
+            thoSize++;
+        }
+    }
+
+    tho.resize(thoSize);
+    int thoIdx = 0;
+    
+    for (int i = 0; i < frame1->mMagns.GetSize(); i++)
+    {
+        BL_FLOAT magn1 = frame1->mMagns.Get()[i];
+        if (magn1 > abstol)
+        {            
+            // Add to the heap if greater than threshold            
+            Tuple t;
+            t.mMagn = magn1;
+            t.mBinIdx = i;
+            t.mTimeIdx = 1;
+            
+            //tho.push_back(t);
+            tho[thoIdx++] = t;
+        }
+        else
+        {
+            // Assign random phase value otherwise 
+            BL_FLOAT rp = rand()*randMaxInv;
+            frame1->mEstimPhases.Get()[i] = rp;
+        }
+    }
+
+    // Sort tho, for optimization
+    sort(tho.begin(), tho.end(), Tuple::IndexSmaller);
+         
+    vector<Tuple> hp;
+    hp.resize(tho.size()); // Optim
+    for (int i = 0; i < tho.size(); i++)
+    {
+        const Tuple &thoT = tho[i];
+
+        Tuple &t = hp[i];
+        t.mMagn = frame0.mMagns.Get()[thoT.mBinIdx];
+        t.mBinIdx = thoT.mBinIdx;
+        t.mTimeIdx = 0;
+
+        //hp.push_back(t);
+        //hp[i] = t;
+    }
+    
+    // Create the heap
+    make_heap(hp.begin(), hp.end());
+
+#if REAL_PHASE_VOCODER_PURNA
+    // For real phase vocoder 
+    const BL_FLOAT as = mFactor*2.0;
+    const BL_FLOAT bs = mFactor*2.0;
+#endif
+    
+    // Iterate
+    Tuple t; // Optim
+    while(!tho.empty())
+    {
+        pop_heap(hp.begin(), hp.end());
+        
+        //Tuple t = hp.back();
+        t = hp.back();
+        hp.pop_back();
+        
+        if (t.mTimeIdx == 0)
+        {
+            int idx = ContainsSorted(tho, t.mBinIdx, 1);
+            if (idx >= 0)
+            {
+#if REAL_PHASE_VOCODER_PURNA
+                frame1->mEstimPhases.Get()[t.mBinIdx] =
+                    frame0.mEstimPhases.Get()[t.mBinIdx] +
+                    as*0.5*(frame0.mDTPhases.Get()[t.mBinIdx] +
+                            frame1->mDTPhases.Get()[t.mBinIdx]);
+#else // Pitch shifting
+                // Use backward scheme
+                // NOTE: can not use Prusa forward or centered scheme for the moment
+                // (we don't have frame(n+1), we only have frame(n) and frame(n-1)
+                frame1->mEstimPhases.Get()[t.mBinIdx] =
+                    frame0.mEstimPhases.Get()[t.mBinIdx] +
+                    frame1->mDTPhases.Get()[t.mBinIdx]*mFactor;
+#endif
+                
+                RemoveIdx(&tho, idx);
+                
+                BL_FLOAT magn = frame1->mMagns.Get()[t.mBinIdx];
+                AddHeap(&hp, t.mBinIdx, 1, magn);
+            }
+        }
+        
+        if (t.mTimeIdx == 1)
+        {
+            int idx0 = ContainsSorted(tho, t.mBinIdx + 1, 1);
+            if (idx0 >= 0)
+            {
+#if REAL_PHASE_VOCODER_PURNA
+                frame1->mEstimPhases.Get()[t.mBinIdx + 1] =
+                    frame1->mEstimPhases.Get()[t.mBinIdx] +
+                    bs*0.5*(frame1->mDFPhases.Get()[t.mBinIdx] +
+                            frame1->mDFPhases.Get()[t.mBinIdx + 1]);
+#else // Pitch shift
+                // Use backward scheme
+                // NOTE: can not use Prusa forward or centered scheme for the moment
+                // (we don't have frame(n+1), we only have frame(n) and frame(n-1)
+                frame1->mEstimPhases.Get()[t.mBinIdx + 1] =
+                    frame1->mEstimPhases.Get()[t.mBinIdx] +
+                    // NOTE: in Theo Royer, this is "*mFactor"
+                    // => this is far better like in Prusa with "/mFactor"
+                    frame1->mDFPhases.Get()[t.mBinIdx + 1]/mFactor;
+#endif
+
+                RemoveIdx(&tho, idx0);
+
+                BL_FLOAT magn = frame1->mMagns.Get()[t.mBinIdx + 1];
+                AddHeap(&hp, t.mBinIdx + 1, 1, magn);
+            }
+
+            int idx1 = ContainsSorted(tho, t.mBinIdx - 1, 1);
+            if (idx1 >= 0)
+            {
+#if REAL_PHASE_VOCODER_PURNA
+                frame1->mEstimPhases.Get()[t.mBinIdx - 1] =
+                    frame1->mEstimPhases.Get()[t.mBinIdx] -
+                    bs*0.5*(frame1->mDFPhases.Get()[t.mBinIdx] +
+                            frame1->mDFPhases.Get()[t.mBinIdx - 1]);
+#else // Pitch shift
+                // Use backward scheme
+                // NOTE: can not use Prusa forward or centered scheme for the moment
+                // (we don't have frame(n+1), we only have frame(n) and frame(n-1)
+                frame1->mEstimPhases.Get()[t.mBinIdx - 1] =
+                    // NOTE: in Theo Royer, this is "+"
+                    // => this is better like in Prusa with "-"
+                    frame1->mEstimPhases.Get()[t.mBinIdx] -
+                    // NOTE: in Theo Royer, this is "*mFactor"
+                    // => this is far better like in Prusa with "/mFactor"
+                    frame1->mDFPhases.Get()[t.mBinIdx - 1]/mFactor;
+#endif
+                
+                RemoveIdx(&tho, idx1);
+
+                BL_FLOAT magn = frame1->mMagns.Get()[t.mBinIdx - 1];
+                AddHeap(&hp, t.mBinIdx - 1, 1, magn);
+            }
+        }
+    }
 }
