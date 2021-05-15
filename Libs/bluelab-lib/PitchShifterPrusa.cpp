@@ -41,10 +41,14 @@
 //
 // That seem to only improved with fake stereo i.e a duplicated
 // mono channel
+//
+// Was useful for Smb! Not tested for Prusa (seems to we don't need it)
 #define ADJUST_STEREO_PHASES 0 //1
 
 // Fix bad sound in mono
 // (due to try to fix phases between two stereo channels)
+//
+// Was for Smb (not tested for Prusa (seems we don't need it)
 #define FIX_BAD_SOUND_MONO 0 //1
 
 //
