@@ -27,7 +27,7 @@ class PitchShifterPrusa : public PitchShifterInterface
     
     void SetNumChannels(int nchans) {}
     void SetFactor(BL_FLOAT factor);
-    // 0, 1, 2 or 3
+    // Set the buffer size: 0 or 1
     void SetQuality(int quality);
 
     void SetTransBoost(BL_FLOAT transBoost) {}
@@ -39,7 +39,12 @@ protected:
 
     //
     BL_FLOAT mSampleRate;
-    int mOversampling; // Not used anymore
+    // Not used anymore
+    // It smeared traisients when increasing it
+    // Change buffer size instead, to get better defined frequancies
+    int mOversampling;
+
+    // 2048 -> 4096: makes better defined frequencies
     int mBufferSize;
     
     // Shift factor

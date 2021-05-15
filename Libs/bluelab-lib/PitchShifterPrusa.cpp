@@ -9,13 +9,13 @@
 
 #include "PitchShifterPrusa.h"
 
-// With 1024, we miss some frequencies
-//#define BUFFER_SIZE 4096 //2048 //8192 //2048
+// Better for drums
 #define BUFFER_SIZE_0 2048
+// Better for Thumb Piano
+// Keeps better defined frequencies
 #define BUFFER_SIZE_1 4096
 
-// OVERSAMPLING 2 is not good ...
-// ... and the author of real freqencies computation adviced 4
+// Not used anymore
 #define OVERSAMPLING_0 4
 #define OVERSAMPLING_1 8
 #define OVERSAMPLING_2 16
@@ -147,7 +147,7 @@ PitchShifterPrusa::SetFactor(BL_FLOAT factor)
 void
 PitchShifterPrusa::SetQuality(int quality)
 {
-#if 0 // Old: chenge the overlapping
+#if 0 // Not used anymore: change the overlapping
     switch(quality)
     {
         case 0:
@@ -171,7 +171,7 @@ PitchShifterPrusa::SetQuality(int quality)
     }
 #endif
 
-    // New: change buffer size
+    // Change buffer size
     switch(quality)
     {
         case 0:
