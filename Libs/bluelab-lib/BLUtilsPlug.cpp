@@ -919,16 +919,13 @@ BLUtilsPlug::ApplyDryWet(const vector<WDL_TypedBuf<BL_FLOAT> > &in,
         BL_FLOAT t = smoother->Process();
 
         BL_FLOAT li = in[0].Get()[i];
-        BL_FLOAT lo = (out)[0].Get()[i];
+        BL_FLOAT lo = (*out)[0].Get()[i];
         (*out)[0].Get()[i] = (1.0 - t)*li + t*lo;
     
         if ((in.size() > 1) && (out->size() > 1))
         {
-            BL_FLOAT rs = in[1].Get()[i];
-            (*out)[1].Get()[i] = gain*rs;
-
             BL_FLOAT ri = in[1].Get()[i];
-            BL_FLOAT ro = (out)[1].Get()[i];
+            BL_FLOAT ro = (*out)[1].Get()[i];
             (*out)[1].Get()[i] = (1.0 - t)*ri + t*ro;
         }
     }
