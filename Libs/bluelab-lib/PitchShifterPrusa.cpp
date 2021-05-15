@@ -186,7 +186,8 @@ PitchShifterPrusa::SetQuality(int quality)
             break;
     }
     
-    InitFft(mSampleRate);
+    //InitFft(mSampleRate);
+    Reset(mSampleRate, -1); // Block size is not used anyway
 }
 
 int
