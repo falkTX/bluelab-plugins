@@ -39,8 +39,9 @@ protected:
 
     //
     BL_FLOAT mSampleRate;
-    int mOversampling;
-
+    int mOversampling; // Not used anymore
+    int mBufferSize;
+    
     // Shift factor
     BL_FLOAT mFactor;
     

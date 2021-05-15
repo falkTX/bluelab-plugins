@@ -10,7 +10,9 @@
 #include "PitchShifterPrusa.h"
 
 // With 1024, we miss some frequencies
-#define BUFFER_SIZE 2048
+//#define BUFFER_SIZE 4096 //2048 //8192 //2048
+#define BUFFER_SIZE_0 2048
+#define BUFFER_SIZE_1 4096
 
 // OVERSAMPLING 2 is not good ...
 // ... and the author of real freqencies computation adviced 4
@@ -55,8 +57,8 @@ PitchShifterPrusa::PitchShifterPrusa()
     mPitchObjs[1] = NULL;
     
     //
+    mBufferSize = BUFFER_SIZE_0;
     mOversampling = OVERSAMPLING_0;
-    
     mSampleRate = 44100.0;
     mFactor = 1.0;
 
@@ -91,16 +93,16 @@ PitchShifterPrusa::Reset(BL_FLOAT sampleRate, int blockSize)
     // Then we must reset
 
     if (mFftObj != NULL)
-        mFftObj->Reset(BUFFER_SIZE, mOversampling, FREQ_RES, sampleRate);
+        mFftObj->Reset(mBufferSize, mOversampling, FREQ_RES, sampleRate);
   
     for (int i = 0; i < 2; i++)
     {
         if (mPitchObjs[i] != NULL)
-            mPitchObjs[i]->Reset(BUFFER_SIZE, mOversampling, FREQ_RES, sampleRate);
+            mPitchObjs[i]->Reset(mBufferSize, mOversampling, FREQ_RES, sampleRate);
     }
   
     if (mPhasesProcess != NULL)
-        mPhasesProcess->Reset(BUFFER_SIZE, mOversampling, FREQ_RES, sampleRate);
+        mPhasesProcess->Reset(mBufferSize, mOversampling, FREQ_RES, sampleRate);
 }
 
 void
@@ -145,6 +147,7 @@ PitchShifterPrusa::SetFactor(BL_FLOAT factor)
 void
 PitchShifterPrusa::SetQuality(int quality)
 {
+#if 0 // Old: chenge the overlapping
     switch(quality)
     {
         case 0:
@@ -166,7 +169,23 @@ PitchShifterPrusa::SetQuality(int quality)
         default:
             break;
     }
+#endif
 
+    // New: change buffer size
+    switch(quality)
+    {
+        case 0:
+            mBufferSize = BUFFER_SIZE_0;
+            break;
+            
+        case 1:
+            mBufferSize = BUFFER_SIZE_1;
+            break;
+            
+        default:
+            break;
+    }
+    
     InitFft(mSampleRate);
 }
 
@@ -186,7 +205,7 @@ PitchShifterPrusa::InitFft(BL_FLOAT sampleRate)
         vector<ProcessObj *> processObjs;
         for (int i = 0; i < 2; i++)
         {
-            mPitchObjs[i] = new PitchShiftPrusaFftObj(BUFFER_SIZE, mOversampling,
+            mPitchObjs[i] = new PitchShiftPrusaFftObj(mBufferSize, mOversampling,
                                                       FREQ_RES, mSampleRate);
       
             processObjs.push_back(mPitchObjs[i]);
@@ -197,7 +216,7 @@ PitchShifterPrusa::InitFft(BL_FLOAT sampleRate)
       
         mFftObj = new FftProcessObj16(processObjs,
                                       numChannels, numScInputs,
-                                      BUFFER_SIZE, mOversampling, FREQ_RES,
+                                      mBufferSize, mOversampling, FREQ_RES,
                                       mSampleRate);
       
 #if !VARIABLE_HANNING
@@ -217,12 +236,16 @@ PitchShifterPrusa::InitFft(BL_FLOAT sampleRate)
     
         // Moreover, this seems to avoids phase drift !
 #if ADJUST_STEREO_PHASES
-        mPhasesProcess = new StereoPhasesProcess(BUFFER_SIZE);
+        mPhasesProcess = new StereoPhasesProcess(mBufferSize);
         mFftObj->AddMultichannelProcess(mPhasesProcess);
 #endif
     }
     else
     {
-        mFftObj->Reset(BUFFER_SIZE, mOversampling, FREQ_RES, sampleRate);
+        mFftObj->Reset(mBufferSize, mOversampling, FREQ_RES, sampleRate);
+        
+#if ADJUST_STEREO_PHASES
+        mPhasesProcess->Reset(mBufferSize, mOversampling, FREQ_RES, sampleRate);
+#endif
     }
 }

@@ -23,7 +23,8 @@ public:
     void Reset();
     
     // For PhasesDiff::USE_LINERP_PHASES
-    void Reset(int bufferSize, int overlapping, int oversampling, BL_FLOAT sampleRate);
+    void Reset(int bufferSize, int overlapping,
+               int oversampling, BL_FLOAT sampleRate);
     
     void SetActive(bool flag);
     
