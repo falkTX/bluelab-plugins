@@ -1179,6 +1179,18 @@ BLSpectrogram4::NormYToFreq(BL_FLOAT normY)
     return resultY; 
 }
 
+BL_FLOAT
+BLSpectrogram4::FreqToNormY(BL_FLOAT freq)
+{
+    freq /= mSampleRate*0.5;
+    
+    BL_FLOAT resultY =
+        mScale->ApplyScale(mYScale, freq,
+                           (BL_FLOAT)0.0, (BL_FLOAT)(mSampleRate*0.5));
+
+    return resultY;
+}
+
 void
 BLSpectrogram4::ResetQueues()
 {

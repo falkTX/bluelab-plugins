@@ -105,6 +105,7 @@ public:
     BL_FLOAT GetSampleRate();
 
     BL_FLOAT NormYToFreq(BL_FLOAT normY);
+    BL_FLOAT FreqToNormY(BL_FLOAT freq);
     
 protected:
     void SetFixedSize(bool flag);
