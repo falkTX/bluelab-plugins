@@ -223,6 +223,12 @@ GraphAxis2::SetForceLabelHAlign(int align)
 }
 
 void
+GraphAxis2::SetScaleType(Scale::Type scaleType)
+{
+    mScaleType = scaleType;
+}
+
+void
 GraphAxis2::SetOffsetPixels(BL_FLOAT offsetPixels)
 {
     mOffsetPixels = offsetPixels;

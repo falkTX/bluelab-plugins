@@ -72,6 +72,8 @@ public:
     
     // Set to -1 to not force (and keep th default)
     void SetForceLabelHAlign(int align);
+
+    void SetScaleType(Scale::Type scaleType);
     
 protected:
     friend class GraphControl12;

@@ -370,6 +370,17 @@ GraphFreqAxis2::Reset()
 }
 
 void
+GraphFreqAxis2::SetScale(Scale::Type scale)
+{
+    mScale = scale;
+
+    if (mGraphAxis != NULL)
+        mGraphAxis->SetScaleType(mScale);
+    
+    Update();
+}
+
+void
 GraphFreqAxis2::Update()
 {
     // Just in case
@@ -394,7 +405,8 @@ GraphFreqAxis2::Update()
     else if ((mScale == Scale::LOG) ||
              (mScale == Scale::LOG10) ||
              (mScale == Scale::LOG_FACTOR) ||
-             (mScale == Scale::MEL))
+             (mScale == Scale::MEL) ||
+             (mScale == Scale::LOW_ZOOM))
     {
         if (mMaxFreq <= 30.0)
             UpdateAxis(NUM_AXIS_DATA_LOG25,

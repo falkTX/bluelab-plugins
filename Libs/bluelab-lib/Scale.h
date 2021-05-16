@@ -29,7 +29,8 @@ public:
         MEL_FILTER, // Mel with real filters,
         MEL_INV,
         MEL_FILTER_INV,
-        DB_INV
+        DB_INV,
+        LOW_ZOOM // Zoom on low freqs
     };
 
     // Filter banks
@@ -40,6 +41,7 @@ public:
         FILTER_BANK_LOG10,
         FILTER_BANK_LOG_FACTOR,
         FILTER_BANK_MEL,
+        FILTER_BANK_LOW_ZOOM,
         NUM_FILTER_BANKS
     };
      
@@ -144,6 +146,12 @@ protected:
     
     //template <typename FLOAT_TYPE>
     /*static*/ BL_FLOAT NormalizedToLogScaleInv(BL_FLOAT value);
+
+    BL_FLOAT NormalizedToLowZoom(BL_FLOAT x, BL_FLOAT minValue,
+                                 BL_FLOAT maxValue);
+    
+    BL_FLOAT NormalizedToLowZoomInv(BL_FLOAT x, BL_FLOAT minValue,
+                                    BL_FLOAT maxValue);
     
     // Apply to spectrogram for example
     //template <typename FLOAT_TYPE>
@@ -206,6 +214,13 @@ protected:
     
     void NormalizedToMelInvForEach(WDL_TypedBuf<BL_FLOAT> *values,
                                    BL_FLOAT minFreq, BL_FLOAT maxFreq);
+
+    void NormalizedToLowZoomForEach(WDL_TypedBuf<BL_FLOAT> *values,
+                                    BL_FLOAT minValue, BL_FLOAT maxValue);
+    
+    void NormalizedToLowZoomInvForEach(WDL_TypedBuf<BL_FLOAT> *values,
+                                       BL_FLOAT minValue, BL_FLOAT maxValue);
+    
     //
     // Must keep the object, for precomputed filter bank
     MelScale *mMelScale;

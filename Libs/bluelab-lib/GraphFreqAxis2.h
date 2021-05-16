@@ -41,6 +41,8 @@ public:
     void SetResetParams(int bufferSize, BL_FLOAT sampleRate);
     bool MustReset();
     void Reset();
+
+    void SetScale(Scale::Type scale);
     
 protected:
     void Update();

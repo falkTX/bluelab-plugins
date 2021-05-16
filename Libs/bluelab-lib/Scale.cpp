@@ -90,6 +90,10 @@ Scale::ApplyScale(Type scaleType,
     {
         x = NormalizedToDBInv(x, minValue, maxValue);
     }
+    else if (scaleType == LOW_ZOOM)
+    {
+        x = NormalizedToLowZoom(x, minValue, maxValue);
+    }
     
     return x;
 }
@@ -130,6 +134,10 @@ Scale::ApplyScaleInv(Type scaleType,
     else if ((scaleType == MEL) || (scaleType == MEL_FILTER))
     {
         x = NormalizedToMelInv(x, minValue, maxValue);
+    }
+    else if (scaleType == LOW_ZOOM)
+    {
+        x = NormalizedToLowZoomInv(x, minValue, maxValue);
     }
     
     return x;
@@ -181,6 +189,10 @@ Scale::ApplyScaleForEach(Type scaleType,
     {
         NormalizedToDBInvForEach(values, minValue, maxValue);
     }
+    else if (scaleType == LOW_ZOOM)
+    {
+        NormalizedToLowZoomForEach(values, minValue, maxValue);
+    }
 }
     
 void
@@ -218,6 +230,10 @@ Scale::ApplyScaleInvForEach(Type scaleType,
     else if ((scaleType == MEL) || (scaleType == MEL_FILTER))
     {
         NormalizedToMelInvForEach(values, minValue, maxValue);
+    }
+    else if (scaleType == LOW_ZOOM)
+    {
+        NormalizedToLowZoomInvForEach(values, minValue, maxValue);
     }
 }
 
@@ -309,6 +325,10 @@ Scale::TypeToFilterBankType(Type type)
             return FILTER_BANK_MEL;
             break;
 
+        case LOW_ZOOM:
+            return FILTER_BANK_LOW_ZOOM;
+            break;
+            
         default:
             return (FilterBankType)-1;
     }
@@ -339,6 +359,10 @@ Scale::FilterBankTypeToType(FilterBankType fbType)
             return MEL;
             break;
 
+        case FILTER_BANK_LOW_ZOOM:
+            return LOW_ZOOM;
+            break;
+            
         default:
             return (Type)-1;
     }
@@ -531,6 +555,26 @@ Scale::NormalizedToLogScaleInv(BL_FLOAT value)
 //template float Scale::NormalizedToLogScaleInv(float value);
 //template double Scale::NormalizedToLogScaleInv(double value);
 
+BL_FLOAT
+Scale::NormalizedToLowZoom(BL_FLOAT x, BL_FLOAT minValue, BL_FLOAT maxValue)
+{
+    // 2 times mel
+    BL_FLOAT result = NormalizedToMel(x, minValue, maxValue);
+    result = NormalizedToMel(result, minValue, maxValue);
+
+    return result;
+}
+    
+BL_FLOAT
+Scale::NormalizedToLowZoomInv(BL_FLOAT x, BL_FLOAT minValue, BL_FLOAT maxValue)
+{
+    // 2 times mel inv
+    BL_FLOAT result = NormalizedToMelInv(x, minValue, maxValue);
+    result = NormalizedToMelInv(result, minValue, maxValue);
+
+    return result;
+}
+
 //template <typename FLOAT_TYPE>
 void
 Scale::DataToLogScale(WDL_TypedBuf<BL_FLOAT> *values)
@@ -549,7 +593,8 @@ Scale::DataToLogScale(WDL_TypedBuf<BL_FLOAT> *values)
         // "Inverse" process for data
         t0 *= LOG_SCALE2_FACTOR;
         //BL_FLOAT t = (std::exp(t0) - 1.0)/(std::exp(LOG_SCALE2_FACTOR) - 1.0);
-        BL_FLOAT t = (FastMath::exp(t0) - 1.0)/(FastMath::exp(LOG_SCALE2_FACTOR) - 1.0);
+        BL_FLOAT t =
+            (FastMath::exp(t0) - 1.0)/(FastMath::exp(LOG_SCALE2_FACTOR) - 1.0);
         
         int dstIdx = (int)(t*valuesSize);
         
@@ -1032,4 +1077,22 @@ Scale::NormalizedToMelInvForEach(WDL_TypedBuf<BL_FLOAT> *values,
         
         valuesData[i] = x;
     }
+}
+
+void
+Scale::NormalizedToLowZoomForEach(WDL_TypedBuf<BL_FLOAT> *values,
+                                  BL_FLOAT minValue, BL_FLOAT maxValue)
+{
+    // 2 times mel
+    NormalizedToMelForEach(values, minValue, maxValue);
+    NormalizedToMelForEach(values, minValue, maxValue);
+}
+    
+void
+Scale::NormalizedToLowZoomInvForEach(WDL_TypedBuf<BL_FLOAT> *values,
+                                     BL_FLOAT minValue, BL_FLOAT maxValue)
+{
+    // 2 times mel inv
+    NormalizedToMelInvForEach(values, minValue, maxValue);
+    NormalizedToMelInvForEach(values, minValue, maxValue);
 }
