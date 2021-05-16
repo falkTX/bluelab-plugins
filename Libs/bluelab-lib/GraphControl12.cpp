@@ -849,10 +849,18 @@ GraphControl12::SetDirty(bool triggerAction, int valIdx)
 bool
 GraphControl12::IsDirty()
 {
+    // ORIG
     // Always dirty => Force redraw!
-    //return true; // ORIG
+    //return true;
 
     // New (to refresh only when necessary)
+    //
+    if (!mIsEnabled)
+        return false;
+
+    // Check is any custom drawer need refresh
+    CheckCustomDrawersRedraw();
+    
     return mDataChanged;
 }
 
@@ -2696,6 +2704,13 @@ GraphControl12::Draw(IGraphics &graphics)
 {
     PullAllData();
 
+    if (!mIsEnabled)
+    {
+        mDataChanged = false;
+        
+        return;
+    }
+    
     if (mUseLegacyLock)
         mMutex.Enter();
         
@@ -2707,6 +2722,8 @@ GraphControl12::Draw(IGraphics &graphics)
 
     if (mUseLegacyLock)
         mMutex.Leave();
+
+    mDataChanged = false;
 }
 #endif
 
@@ -2720,7 +2737,7 @@ GraphControl12::Draw(IGraphics &graphics)
 #if DBG_DISABLE_DRAW
     return;
 #endif
-    
+
     // Checked: if we fall here, the graph is sure to have mIsEnabled = true!
     if (!mIsEnabled)
     {
@@ -2734,10 +2751,11 @@ GraphControl12::Draw(IGraphics &graphics)
     
     mVg = (NVGcontext *)graphics.GetDrawContext();
     
-    CheckCustomDrawersRedraw();
-    
     int w = mRECT.W();
     int h = mRECT.H();
+
+    // NOTE: here, mDataChanged is always true
+    // => so in theory, FBO would be useless
     
     // Regenerate the fbo only if we need to draw new data
     if (mDataChanged || (mFBO == NULL))

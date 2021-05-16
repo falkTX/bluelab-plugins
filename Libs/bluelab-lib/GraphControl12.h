@@ -36,6 +36,9 @@ using namespace std;
 
 // FBO rendering
 // Avoids blinking
+// NOTE: disable on linux? Looked useless since fixes in mDataChanged
+// NOTE: when disabled, bugs in Ghost app when zooming
+// (zoomed graph goes over the knobs)
 #define USE_FBO 1 //0
 
 // Font size
