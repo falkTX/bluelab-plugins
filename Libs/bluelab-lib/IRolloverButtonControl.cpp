@@ -103,6 +103,8 @@ IRolloverButtonControl::OnMouseOver(float x, float y, const IMouseMod &mod)
         SetValue(0.5);
     
     mDirty = true;
+
+    mPrevMouseOut = false;
 }
 
 void
@@ -110,8 +112,14 @@ IRolloverButtonControl::OnMouseOut()
 {
     if (GetValue() <= 0.5)
         SetValue(0.0);
-    
-    mDirty = true;
+
+    // FIX: rollover buttons refreshed if we mouse wheels wherever in the gui
+    // (this is because OnMouseOut() is called in many cases,
+    // not only when mouse was in and goes out)
+    if (!mPrevMouseOut)
+        mDirty = true;
+
+    mPrevMouseOut = true;
 }
 
 void

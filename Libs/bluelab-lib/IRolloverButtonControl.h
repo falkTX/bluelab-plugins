@@ -37,7 +37,8 @@ public:
                            EBlend blend = EBlend::Default)
     : IBitmapControl(x, y, bitmap, kNoParameter, blend),
       mToggleFlag(toggleFlag),
-      mText(NULL) {}
+      mText(NULL),
+      mPrevMouseOut(false) {}
     
     virtual ~IRolloverButtonControl() {}
     
@@ -52,9 +53,10 @@ public:
     virtual void OnMouseOut() override;
     
     virtual void SetDisabled(bool disable) override;
-    
+
     // Reference fo the associated text control, for hilighting
-    void LinkText(ITextControl *textControl, const IColor &color, const IColor &hilightColor);
+    void LinkText(ITextControl *textControl, const IColor &color,
+                  const IColor &hilightColor);
     
 protected:
     bool mToggleFlag;
@@ -62,6 +64,8 @@ protected:
     ITextControl *mText;
     IColor mTextColor;
     IColor mTextHilightColor;
+
+    bool mPrevMouseOut;
 };
 
 #endif /* IRolloverButtonControl_h */
