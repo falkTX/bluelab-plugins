@@ -68,7 +68,9 @@ public:
     
     // Normalized inside selection
     void SetSelPlayBarPos(BL_FLOAT pos);
-    
+
+    bool NeedRedraw();
+        
 protected:
     void DrawBar(NVGcontext *vg, int width, int height);
     void DrawSelection(NVGcontext *vg, int width, int height);
@@ -80,6 +82,8 @@ protected:
     GhostPluginInterface *mPlug;
     
     State *mState;
+
+    bool mNeedRedraw;
 };
 
 #endif

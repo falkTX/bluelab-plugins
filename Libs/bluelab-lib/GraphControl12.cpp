@@ -850,7 +850,10 @@ bool
 GraphControl12::IsDirty()
 {
     // Always dirty => Force redraw!
-    return true;
+    //return true; // ORIG
+
+    // New (to refresh only when necessary)
+    return mDataChanged;
 }
 
 void
@@ -2720,8 +2723,12 @@ GraphControl12::Draw(IGraphics &graphics)
     
     // Checked: if we fall here, the graph is sure to have mIsEnabled = true!
     if (!mIsEnabled)
+    {
+        mDataChanged = false;
+        
         return;
-
+    }
+    
     if (mUseLegacyLock)
         mMutex.Enter();
     

@@ -51,7 +51,7 @@ public:
     
     // Refresh the selection (for example after zoom)
     void UpdateSelection(bool updateCenterPos);
-    
+
 protected:
     bool InsideSelection(int x, int y);
     

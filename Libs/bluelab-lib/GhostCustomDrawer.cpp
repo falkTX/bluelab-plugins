@@ -33,6 +33,8 @@ GhostCustomDrawer::GhostCustomDrawer(GhostPluginInterface *plug,
     mBounds[3] = y1;
     
     mPlug = plug;
+
+    mNeedRedraw = true;
 }
 
 GhostCustomDrawer::State *
@@ -49,18 +51,24 @@ GhostCustomDrawer::PostDraw(NVGcontext *vg, int width, int height)
     DrawSelection(vg, width, height);
     
     DrawPlayBar(vg, width, height);
+
+    mNeedRedraw = false;
 }
 
 void
 GhostCustomDrawer::ClearBar()
 {
     mState->mBarActive = false;
+
+    mNeedRedraw = true;
 }
 
 void
 GhostCustomDrawer::ClearSelection()
 {
     mState->mSelectionActive = false;
+
+    mNeedRedraw = true;
 }
 
 void
@@ -73,12 +81,16 @@ GhostCustomDrawer::SetBarPos(BL_FLOAT pos)
     
     mState->mBarActive = true;
     mState->mSelectionActive = false;
+
+    mNeedRedraw = true;
 }
 
 void
 GhostCustomDrawer::SetSelectionActive(bool flag)
 {
     mState->mSelectionActive = flag;
+
+    mNeedRedraw = true;
 }
 
 bool
@@ -97,6 +109,8 @@ void
 GhostCustomDrawer::SetBarActive(bool flag)
 {
     mState->mBarActive = flag;
+
+    mNeedRedraw = true;
 }
 
 bool
@@ -126,6 +140,8 @@ GhostCustomDrawer::SetSelection(BL_FLOAT x0, BL_FLOAT y0,
     mState->mSelection[1] = y0;
     mState->mSelection[2] = x1;
     mState->mSelection[3] = y1;
+
+    mNeedRedraw = true;
 }
 
 void
@@ -145,6 +161,8 @@ GhostCustomDrawer::UpdateZoom(BL_FLOAT zoomChange)
 {
     //mPlug->UpdateZoomSelection(mState->mSelection, zoomChange);
     mPlug->UpdateZoom(zoomChange);
+
+    mNeedRedraw = true;
 }
 
 bool
@@ -166,6 +184,8 @@ GhostCustomDrawer::SetPlayBarPos(BL_FLOAT pos, bool activate)
     
     if (activate)
         mState->mPlayBarActive = true;
+
+    mNeedRedraw = true;
 }
 
 bool
@@ -178,6 +198,8 @@ void
 GhostCustomDrawer::SetPlayBarActive(bool flag)
 {
     mState->mPlayBarActive = flag;
+
+    mNeedRedraw = true;
 }
 
 void
@@ -187,6 +209,14 @@ GhostCustomDrawer::SetSelPlayBarPos(BL_FLOAT pos)
                         pos*(mState->mSelection[2] - mState->mSelection[0]);
     
     mState->mPlayBarActive = true;
+
+    mNeedRedraw = true;
+}
+
+bool
+GhostCustomDrawer::NeedRedraw()
+{
+    return mNeedRedraw;
 }
 
 void
@@ -205,7 +235,8 @@ GhostCustomDrawer::DrawBar(NVGcontext *vg, int width, int height)
         nvgStrokeWidth(vg, strokeWidths[i]);
         
         SWAP_COLOR(colors[i]);
-        nvgStrokeColor(vg, nvgRGBA(colors[i][0], colors[i][1], colors[i][2], colors[i][3]));
+        nvgStrokeColor(vg, nvgRGBA(colors[i][0], colors[i][1],
+                                   colors[i][2], colors[i][3]));
     
         // Draw the circle
         nvgBeginPath(vg);

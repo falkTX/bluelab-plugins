@@ -103,7 +103,8 @@ public:
     // the graph is deleted.
     virtual bool IsOwnedByGraph() { return false; }
     
-    virtual bool NeedRedraw() { return true; }
+    //virtual bool NeedRedraw() { return true; }
+    virtual bool NeedRedraw() { return false; }
 };
 
 class GraphCustomControl
