@@ -575,10 +575,13 @@ BL_FLOAT
 Scale::NormalizedToLowZoomInv(BL_FLOAT x, BL_FLOAT minValue, BL_FLOAT maxValue)
 {
     // 2 times mel inv
-    BL_FLOAT result = NormalizedToMelInv(x, minValue, maxValue);
+    //BL_FLOAT result = NormalizedToMelInv(x, minValue, maxValue);
     //result = NormalizedToMelInv(result, minValue, maxValue); // double mel
-    result = BLUtilsMath::ApplyGamma(result, 1.0 - LOW_ZOOM_GAMMA); // mel then gamma
 
+    BL_FLOAT result =
+        BLUtilsMath::ApplyGamma(x, 1.0 - LOW_ZOOM_GAMMA); // mel then gamma
+    result = NormalizedToMelInv(result, minValue, maxValue);
+ 
     return result;
 }
 
