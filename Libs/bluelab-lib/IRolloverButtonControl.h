@@ -29,7 +29,8 @@ public:
                            EBlend blend = EBlend::Default)
     : IBitmapControl(x, y, bitmap, paramIdx, blend),
       mToggleFlag(toggleFlag),
-      mText(NULL) {}
+      mText(NULL),
+      mPrevMouseOut(false) {}
     
     IRolloverButtonControl(float x, float y,
                            const IBitmap &bitmap,
