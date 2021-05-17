@@ -611,6 +611,7 @@ BLUtilsMath::SegSegIntersect(BL_FLOAT seg0[2][2], BL_FLOAT seg1[2][2])
 // a included in [0, 1]
 // a = 0.5 -> gives a line
 
+#if 0 // Naive method (first page of the paper)
 // bias
 static float betaA(float t, float a)
 {
@@ -624,6 +625,7 @@ static double betaA(double t, double a)
     return bA;
 }
 
+// gain
 template <typename FLOAT_TYPE>
 FLOAT_TYPE BLUtilsMath::ApplySigmoid(FLOAT_TYPE t, FLOAT_TYPE a)
 {
@@ -644,7 +646,100 @@ FLOAT_TYPE BLUtilsMath::ApplySigmoid(FLOAT_TYPE t, FLOAT_TYPE a)
 }
 template float BLUtilsMath::ApplySigmoid(float t, float a);
 template double BLUtilsMath::ApplySigmoid(double t, double a);
+#endif
 
+#if 1 //Schlick method (more efficint
+// gain
+template <typename FLOAT_TYPE>
+FLOAT_TYPE BLUtilsMath::ApplySigmoid(FLOAT_TYPE t, FLOAT_TYPE a)
+{
+    if (t < 0.0)
+        t = 0.0;
+    if (t > 1.0)
+        t = 1.0;
+    
+    // gain
+    FLOAT_TYPE gammaA;
+#if 0 
+    if (t < (FLOAT_TYPE)0.5)
+        gammaA = t/((1.0/a - 2.0)*(1.0 - 2.0*t) + 1.0);
+    else
+        gammaA = ((1.0/a - 2.0)*(1.0 - 2.0*t) - t)/
+            ((1.0/a - 2.0)*(1.0 - 2.0*t) - 1.0);
+#endif
+#if 1 // Optim
+    FLOAT_TYPE fac0 = (1.0/a - 2.0)*(1.0 - 2.0*t);
+    
+    if (t < (FLOAT_TYPE)0.5)
+        gammaA = t/(fac0 + 1.0);
+    else
+        gammaA = (fac0 - t)/(fac0 - 1.0);
+#endif
+            
+    return gammaA;
+}
+template float BLUtilsMath::ApplySigmoid(float t, float a);
+template double BLUtilsMath::ApplySigmoid(double t, double a);
+#endif
+
+template <typename FLOAT_TYPE>
+void
+BLUtilsMath::ApplySigmoid(WDL_TypedBuf<FLOAT_TYPE> *data, FLOAT_TYPE a)
+{
+    int dataSize = data->GetSize();
+    FLOAT_TYPE *dataBuf = data->Get();
+
+    FLOAT_TYPE fac0 = (1.0/a - 2.0);
+    
+    for (int i = 0; i < dataSize; i++)
+    {
+        FLOAT_TYPE t = dataBuf[i];
+
+        FLOAT_TYPE fac1 = fac0*(1.0 - 2.0*t);
+
+        FLOAT_TYPE gammaA;
+        if (t < (FLOAT_TYPE)0.5)
+            gammaA = t/(fac1 + 1.0);
+        else
+            gammaA = (fac1 - t)/(fac1 - 1.0);
+
+        dataBuf[i] = gammaA;
+    }
+}
+template void BLUtilsMath::ApplySigmoid(WDL_TypedBuf<float> *data, float a);
+template void BLUtilsMath::ApplySigmoid(WDL_TypedBuf<double> *data, double a);
+
+template <typename FLOAT_TYPE>
+FLOAT_TYPE
+BLUtilsMath::ApplyGamma(FLOAT_TYPE t, FLOAT_TYPE a)
+{
+    FLOAT_TYPE bA = t/((1.0/a - 2.0)*(1.0 - t) + 1.0);
+    return bA;
+}
+template float BLUtilsMath::ApplyGamma(float t, float a);
+template double BLUtilsMath::ApplyGamma(double t, double a);
+    
+template <typename FLOAT_TYPE>
+void
+BLUtilsMath::ApplyGamma(WDL_TypedBuf<FLOAT_TYPE> *data, FLOAT_TYPE a)
+{
+    int dataSize = data->GetSize();
+    FLOAT_TYPE *dataBuf = data->Get();
+
+    FLOAT_TYPE fac0 = (1.0/a - 2.0);
+    
+    for (int i = 0; i < dataSize; i++)
+    {
+        FLOAT_TYPE t = dataBuf[i];
+
+        FLOAT_TYPE bA = t/(fac0*(1.0 - t) + 1.0);
+
+        dataBuf[i] = bA;
+    }
+}
+template void BLUtilsMath::ApplyGamma(WDL_TypedBuf<float> *data, float a);
+template void BLUtilsMath::ApplyGamma(WDL_TypedBuf<double> *data, double a);
+    
 template <typename FLOAT_TYPE>
 void BLUtilsMath::LinearResample(const FLOAT_TYPE *srcBuf, int srcSize,
                                  FLOAT_TYPE *dstBuf, int dstSize)

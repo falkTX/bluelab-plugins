@@ -28,6 +28,9 @@
 // with this, the center freq is between 1000 and 2000Hz
 #define LOG_CENTER_FREQ 100.0
 
+//#define LOW_ZOOM_GAMMA 0.95
+#define LOW_ZOOM_GAMMA 0.8
+
 Scale::Scale()
 {
     mMelScale = new MelScale();
@@ -547,8 +550,10 @@ Scale::NormalizedToLogScale(BL_FLOAT value)
 BL_FLOAT
 Scale::NormalizedToLogScaleInv(BL_FLOAT value)
 {
-    //BL_FLOAT t0 = (std::exp(value) - 1.0)/(((std::exp(LOG_SCALE2_FACTOR) - 1.0))/LOG_SCALE2_FACTOR);
-    BL_FLOAT t0 = (FastMath::exp(value*LOG_SCALE2_FACTOR) - 1.0)/FastMath::exp(LOG_SCALE2_FACTOR - 1.0);
+    //BL_FLOAT t0 = (std::exp(value) - 1.0)/
+    (((std::exp(LOG_SCALE2_FACTOR) - 1.0))/LOG_SCALE2_FACTOR);
+    BL_FLOAT t0 = (FastMath::exp(value*LOG_SCALE2_FACTOR) - 1.0)/
+        FastMath::exp(LOG_SCALE2_FACTOR - 1.0);
     
     return t0;
 }
@@ -560,7 +565,8 @@ Scale::NormalizedToLowZoom(BL_FLOAT x, BL_FLOAT minValue, BL_FLOAT maxValue)
 {
     // 2 times mel
     BL_FLOAT result = NormalizedToMel(x, minValue, maxValue);
-    result = NormalizedToMel(result, minValue, maxValue);
+    //result = NormalizedToMel(result, minValue, maxValue); // double mel
+    result = BLUtilsMath::ApplyGamma(result, LOW_ZOOM_GAMMA); // mel then gamma
 
     return result;
 }
@@ -570,7 +576,8 @@ Scale::NormalizedToLowZoomInv(BL_FLOAT x, BL_FLOAT minValue, BL_FLOAT maxValue)
 {
     // 2 times mel inv
     BL_FLOAT result = NormalizedToMelInv(x, minValue, maxValue);
-    result = NormalizedToMelInv(result, minValue, maxValue);
+    //result = NormalizedToMelInv(result, minValue, maxValue); // double mel
+    result = BLUtilsMath::ApplyGamma(result, 1.0 - LOW_ZOOM_GAMMA); // mel then gamma
 
     return result;
 }
@@ -1081,11 +1088,38 @@ Scale::NormalizedToMelInvForEach(WDL_TypedBuf<BL_FLOAT> *values,
 
 void
 Scale::NormalizedToLowZoomForEach(WDL_TypedBuf<BL_FLOAT> *values,
-                                  BL_FLOAT minValue, BL_FLOAT maxValue)
+                                  BL_FLOAT minFreq, BL_FLOAT maxFreq)
 {
     // 2 times mel
-    NormalizedToMelForEach(values, minValue, maxValue);
-    NormalizedToMelForEach(values, minValue, maxValue);
+    //NormalizedToMelForEach(values, minValue, maxValue);
+    //NormalizedToMelForEach(values, minValue, maxValue);
+
+    int numValues = values->GetSize();
+    BL_FLOAT *valuesData = values->Get();
+
+    BL_FLOAT lMin = MelScale::HzToMel(minFreq);
+    lMin = BLUtilsMath::ApplyGamma(lMin, LOW_ZOOM_GAMMA);
+    
+    BL_FLOAT lMax = MelScale::HzToMel(maxFreq);
+    lMax = BLUtilsMath::ApplyGamma(lMax, LOW_ZOOM_GAMMA);
+        
+    BL_FLOAT coeffInv = 0.0;
+    if (lMax - lMin > BL_EPS)
+        coeffInv = 1.0/(lMax - lMin);
+    
+    for (int i = 0; i < numValues; i++)
+    {
+        BL_FLOAT x = valuesData[i];
+        
+        x = x*(maxFreq - minFreq) + minFreq;
+    
+        x = MelScale::HzToMel(x);
+        x = BLUtilsMath::ApplyGamma(x, LOW_ZOOM_GAMMA);
+    
+        x = (x - lMin)*coeffInv;;
+
+        valuesData[i] = x;
+    }
 }
     
 void
@@ -1093,6 +1127,34 @@ Scale::NormalizedToLowZoomInvForEach(WDL_TypedBuf<BL_FLOAT> *values,
                                      BL_FLOAT minValue, BL_FLOAT maxValue)
 {
     // 2 times mel inv
-    NormalizedToMelInvForEach(values, minValue, maxValue);
-    NormalizedToMelInvForEach(values, minValue, maxValue);
+    //NormalizedToMelInvForEach(values, minValue, maxValue);
+    //NormalizedToMelInvForEach(values, minValue, maxValue);
+
+    int numValues = values->GetSize();
+    BL_FLOAT *valuesData = values->Get();
+
+    BL_FLOAT minMel = MelScale::HzToMel(minValue);
+    minMel = BLUtilsMath::ApplyGamma(minMel, LOW_ZOOM_GAMMA);
+    
+    BL_FLOAT maxMel = MelScale::HzToMel(maxValue);
+    maxMel = BLUtilsMath::ApplyGamma(maxMel, LOW_ZOOM_GAMMA);
+        
+    BL_FLOAT coeffInv = 0.0;
+    if (maxValue - minValue > BL_EPS)
+        coeffInv = 1.0/(maxValue - minValue);
+    
+    for (int i = 0; i < numValues; i++)
+    {
+        BL_FLOAT x = valuesData[i];
+    
+        x = x*(maxMel - minMel) + minMel;
+
+        x = BLUtilsMath::ApplyGamma(x, 1.0 - LOW_ZOOM_GAMMA);
+        
+        x = MelScale::MelToHz(x);
+    
+        x = (x - minValue)*coeffInv;
+        
+        valuesData[i] = x;
+    }
 }
