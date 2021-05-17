@@ -126,10 +126,13 @@ SpectrogramDisplay3::DoUpdateSpectrogram()
 
     // The following lines avoid that: at startup when there is no data loaded,
     // all the background was white.
+    bool imageSizeWasNull = false;
     if ((w == 0) || (h == 0))
     {
         w = 1;
         h = 1;
+
+        imageSizeWasNull = true;
     }
     
     int imageSize = w*h*4;
@@ -151,8 +154,12 @@ SpectrogramDisplay3::DoUpdateSpectrogram()
                 (mSpectroImageData.GetSize() != imageSize))
             {
                 mSpectroImageData.Resize(imageSize);
-            
-                memset(mSpectroImageData.Get(), 0, imageSize);
+
+                // Check well to reset memory only if image was null
+                // Otherwise if we pass here, and if the data hasn't changed,
+                // the data gets reset and the fg spectro gets black
+                if (imageSizeWasNull)
+                    memset(mSpectroImageData.Get(), 0, imageSize);
                 mSpectrogram->GetImageDataFloat(mSpectroImageData.Get());
             }
             
@@ -187,8 +194,10 @@ SpectrogramDisplay3::DoUpdateSpectrogram()
                     mState->mBGSpectroImageHeight = bgH;
                     
                     mState->mBGSpectroImageData.Resize(bgImageSize);
+
+                    if (imageSizeWasNull)
+                        memset(mState->mBGSpectroImageData.Get(), 0, bgImageSize);
                     
-                    memset(mState->mBGSpectroImageData.Get(), 0, bgImageSize);
                     mSpectrogramBG->
                         GetImageDataFloat(mState->mBGSpectroImageData.Get());
                 }
@@ -231,7 +240,9 @@ SpectrogramDisplay3::DoUpdateSpectrogram()
         
         if (!imageCreated || !bgImageCreated)
         {
-            memset(mSpectroImageData.Get(), 0, imageSize);
+            if (imageSizeWasNull)
+                memset(mSpectroImageData.Get(), 0, imageSize);
+            
             bool updated = mSpectrogram->GetImageDataFloat(mSpectroImageData.Get());
 
             if (updated)
