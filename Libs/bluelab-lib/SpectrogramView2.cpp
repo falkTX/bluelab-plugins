@@ -408,18 +408,21 @@ SpectrogramView2::GetTranslation()
     return mTranslation;
 }
 
+// Pass the spectrogram separately, so we can pass the BG spctrogram
+// and full range, to regenereate it
 void
-SpectrogramView2::UpdateSpectrogramData(BL_FLOAT minXNorm, BL_FLOAT maxXNorm)
+SpectrogramView2::UpdateSpectrogramData(BL_FLOAT minXNorm, BL_FLOAT maxXNorm,
+                                        BLSpectrogram4 *spectrogram)
 {
     // Test for input
-    if (mSpectrogram == NULL)
+    if (spectrogram == NULL)
         return;
 
     // Save for step    
     int prevOverlap = mFftObj->GetOverlapping();
     
-    BL_FLOAT sampleRate = mSpectrogram->GetSampleRate();
-    mSpectrogram->Reset(sampleRate);
+    BL_FLOAT sampleRate = spectrogram->GetSampleRate();
+    spectrogram->Reset(sampleRate);
 
     if ((mSamples == NULL) || mSamples->empty())
         return;
@@ -446,7 +449,7 @@ SpectrogramView2::UpdateSpectrogramData(BL_FLOAT minXNorm, BL_FLOAT maxXNorm)
     //DBG_AnnotateMagns(&magns[0]);
     
     // Update spectrogram
-    mSpectrogram->SetLines(magns[0], phases[0]);
+    spectrogram->SetLines(magns[0], phases[0]);
 
     // Initial zoom
     mZoomFactor = 1.0;

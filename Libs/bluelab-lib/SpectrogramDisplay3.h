@@ -46,6 +46,10 @@ public:
         // Background spectrogram
         int mSpectroImageWidth;
         int mSpectroImageHeight;
+
+        int mBGSpectroImageWidth;
+        int mBGSpectroImageHeight;
+        
         WDL_TypedBuf<unsigned char> mBGSpectroImageData;
     };
     
@@ -77,6 +81,7 @@ public:
     void SetBounds(BL_FLOAT left, BL_FLOAT top,
                    BL_FLOAT right, BL_FLOAT bottom);
     void SetSpectrogram(BLSpectrogram4 *spectro);
+    void SetSpectrogramBG(BLSpectrogram4 *spectro);
     
     void ShowSpectrogram(bool flag);
     void UpdateSpectrogram(bool updateData = true, bool updateBgData = false);
@@ -132,6 +137,7 @@ protected:
     
     // Spectrogram
     BLSpectrogram4 *mSpectrogram;
+    BLSpectrogram4 *mSpectrogramBG;
     BL_FLOAT mSpectrogramBounds[4];
     
     int mNvgSpectroImage;

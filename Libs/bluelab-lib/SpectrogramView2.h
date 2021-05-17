@@ -93,8 +93,10 @@ public:
     
     BL_FLOAT GetTranslation();
     
-    //
-    void UpdateSpectrogramData(BL_FLOAT minNormX, BL_FLOAT maxNormX);
+    // Pass the spectrogram separately, so we can pass the BG spctrogram
+    // and full range, to regenereate it
+    void UpdateSpectrogramData(BL_FLOAT minNormX, BL_FLOAT maxNormX,
+                               BLSpectrogram4 *spectrogram);
     
     void SetSampleRate(BL_FLOAT sampleRate);
     

@@ -35,6 +35,9 @@ SpectrogramDisplay3::SpectrogramDisplay3(SpectrogramDisplayState *state)
         mState->mSpectroImageWidth = 0;
         mState->mSpectroImageHeight = 0;
 
+        mState->mBGSpectroImageWidth = 0;
+        mState->mBGSpectroImageHeight = 0;
+        
         // Zoom adjust
         mState->mZoomAdjustFactor = 1.0;
         mState->mZoomAdjustOffset = 0.0;
@@ -48,6 +51,8 @@ SpectrogramDisplay3::SpectrogramDisplay3(SpectrogramDisplayState *state)
     
     // Spectrogram
     mSpectrogram = NULL;
+    mSpectrogramBG = NULL;
+    
     mNvgSpectroImage = 0;
     mNeedUpdateSpectrogram = false;
     mNeedUpdateSpectrogramData = false;
@@ -131,26 +136,62 @@ SpectrogramDisplay3::DoUpdateSpectrogram()
     
     if ((mNeedUpdateSpectrogramData ||
          (mNvgSpectroImage == 0) ||
+         mNeedUpdateBGSpectrogramData ||
          (mNvgBGSpectroImage == 0)) ||
         (mSpectroImageData.GetSize() != imageSize))
     {
         bool imageCreated = false;
-        if ((mSpectroImageData.GetSize() != imageSize) ||
-            (mNvgSpectroImage == 0))
+        if (mNeedUpdateSpectrogramData ||
+            (mNvgSpectroImage == 0) ||
+            (mSpectroImageData.GetSize() != imageSize) ||
+            mNeedUpdateBGSpectrogramData)
         {
-            mSpectroImageData.Resize(imageSize);
+            if (mNeedUpdateSpectrogramData ||
+                (mNvgSpectroImage == 0) ||
+                (mSpectroImageData.GetSize() != imageSize))
+            {
+                mSpectroImageData.Resize(imageSize);
             
-            memset(mSpectroImageData.Get(), 0, imageSize);
-            mSpectrogram->GetImageDataFloat(mSpectroImageData.Get());
+                memset(mSpectroImageData.Get(), 0, imageSize);
+                mSpectrogram->GetImageDataFloat(mSpectroImageData.Get());
+            }
             
+            // Spectrogram just created (e.g loaded from file)
+            // We initialize size and copy the fg to bg
+            // (it is the full data
             if (mState->mBGSpectroImageData.GetSize() == 0)
             {
                 mState->mSpectroImageWidth = w;
                 mState->mSpectroImageHeight = h;
+
+                mState->mBGSpectroImageWidth = w;
+                mState->mBGSpectroImageHeight = h;
                 
                 mState->mBGSpectroImageData = mSpectroImageData;
                 
                 mNeedUpdateBGSpectrogramData = true;
+            }
+            else if (mNeedUpdateBGSpectrogramData)
+            {
+                // Use the real BG spectrogram
+                
+                if ((mSpectrogramBG != NULL) &&
+                    (mSpectrogramBG->GetNumCols() > 0))
+                    // BG spectrogram is defined!
+                {
+                    int bgW = mSpectrogramBG->GetNumCols();
+                    int bgH = mSpectrogramBG->GetHeight();
+                    int bgImageSize = bgW*bgH*4;
+                    
+                    mState->mBGSpectroImageWidth = bgW;
+                    mState->mBGSpectroImageHeight = bgH;
+                    
+                    mState->mBGSpectroImageData.Resize(bgImageSize);
+                    
+                    memset(mState->mBGSpectroImageData.Get(), 0, bgImageSize);
+                    mSpectrogramBG->
+                        GetImageDataFloat(mState->mBGSpectroImageData.Get());
+                }
             }
             
             // Spectrogram image
@@ -175,15 +216,16 @@ SpectrogramDisplay3::DoUpdateSpectrogram()
             if (mNvgBGSpectroImage != 0)
                 nvgDeleteImage(mVg, mNvgBGSpectroImage);
                 
-            mNvgBGSpectroImage = nvgCreateImageRGBA(mVg,
-                                                    mState->mSpectroImageWidth,
-                                                    mState->mSpectroImageHeight,
+            mNvgBGSpectroImage =
+                nvgCreateImageRGBA(mVg,
+                                   mState->mBGSpectroImageWidth,
+                                   mState->mBGSpectroImageHeight,
 #if USE_SPECTRO_NEAREST
-                                                    NVG_IMAGE_NEAREST |
+                                   NVG_IMAGE_NEAREST |
 #endif
-                                                    NVG_IMAGE_ONE_FLOAT_FORMAT,
-                                                    mState->mBGSpectroImageData.Get());
-                    
+                                   NVG_IMAGE_ONE_FLOAT_FORMAT,
+                                   mState->mBGSpectroImageData.Get());
+            
             bgImageCreated = true;
         }
         
@@ -442,6 +484,19 @@ SpectrogramDisplay3::SetSpectrogram(BLSpectrogram4 *spectro)
 }
 
 void
+SpectrogramDisplay3::SetSpectrogramBG(BLSpectrogram4 *spectro)
+{
+    mSpectrogramBG = spectro;
+    
+    mShowSpectrogram = true;
+    
+    // Be sure to create the texture image in the right thread
+    UpdateSpectrogram(true, true);
+    
+    mNeedRedraw = true;
+}
+
+void
 SpectrogramDisplay3::ShowSpectrogram(bool flag)
 {
     mShowSpectrogram = flag;
@@ -637,9 +692,18 @@ SpectrogramDisplay3::ClearBGSpectrogram()
 {
     mState->mSpectroImageWidth = 0;
     mState->mSpectroImageHeight = 0;
+
+    mState->mBGSpectroImageWidth = 0;
+    mState->mBGSpectroImageHeight = 0;
     
     mState->mBGSpectroImageData.Resize(0);
 
+    if (mSpectrogramBG != NULL)
+    {
+        BL_FLOAT sampleRate = mSpectrogramBG->GetSampleRate();
+        mSpectrogramBG->Reset(sampleRate);
+    }
+    
     mNeedRedraw = true;
 }
 
