@@ -10,7 +10,7 @@ BL-Gain12	    :	features+, optim, mem, bugs
 BL-Gain200	    :	features+, optim, mem, bugs
 BL-Gain24	    :	features+, optim, mem, bugs
 BL-Gain60	    :	features+, optim, mem, bugs
-BL-Ghost	    :	features+, optim, mem, bugs, LockFree(legacy)
+BL-Ghost	    :	features+, optim, mem, bugs, LockFree(legacy), gui refresh
 BL-GhostViewer	    :   features+,      , mem,     , LockFree
 BL-Impulses	    :   features+, optim, mem, bugs, LockFree(lgacy)
 BL-Infra	    :   features+, optim, mem, bugs, LockFree
