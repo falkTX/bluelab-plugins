@@ -44,4 +44,5 @@ BL-Wav3s	    :
 DONE: 18
 TODO: 10
 
+TODO: check gui refresh for all plugins
 TODO: pass valgrind for mem for all

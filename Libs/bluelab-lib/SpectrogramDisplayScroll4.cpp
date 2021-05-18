@@ -11,7 +11,10 @@
 #include <BLSpectrogram4.h>
 #include <UpTime.h>
 #include <BLDebug.h>
+
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
+
 #include <BLTransport.h>
 
 #include "SpectrogramDisplayScroll4.h"
@@ -63,6 +66,8 @@ SpectrogramDisplayScroll4::SpectrogramDisplayScroll4(Plugin *plug,
     
     RecomputeParams();
 
+    mNeedRedraw = true;
+    
 #if DEBUG_DUMP
     BLDebug::ResetFile("offset.txt");
 #endif
@@ -89,6 +94,8 @@ SpectrogramDisplayScroll4::SetTransport(BLTransport *transport)
     mTransport = transport;
     
     mTransport->SetListener(this);
+
+    mNeedRedraw = true;
 }
 
 void
@@ -103,12 +110,16 @@ SpectrogramDisplayScroll4::Reset()
     mNeedUpdateColormapData = true;
     
     RecomputeParams();
+
+    mNeedRedraw = true;
 }
 
 void
 SpectrogramDisplayScroll4::ResetScroll()
 {    
     RecomputeParams();
+
+    mNeedRedraw = true;
 }
 
 BL_FLOAT
@@ -202,6 +213,8 @@ SpectrogramDisplayScroll4::DoUpdateSpectrogram()
                     nvgUpdateImage(mVg, mNvgSpectroImage, mSpectroImageData.Get());
                 }
         }
+
+         mNeedRedraw = true;
     }
     
     if (mNeedUpdateColormapData || (mNvgColormapImage == 0))
@@ -233,6 +246,8 @@ SpectrogramDisplayScroll4::DoUpdateSpectrogram()
                                (unsigned char *)mColormapImageData.Get());
             }
         }
+
+         mNeedRedraw = true;
     }
     
     mNeedUpdateSpectrogram = false;
@@ -248,6 +263,10 @@ SpectrogramDisplayScroll4::PreDraw(NVGcontext *vg, int width, int height)
     mVg = vg;
     
     BL_FLOAT offsetSec = GetOffsetSec();
+    
+    if (std::fabs(offsetSec - mPrevOffsetSec) > BL_EPS)
+        mNeedRedraw = true;
+    
     mPrevOffsetSec = offsetSec;
     
     BL_FLOAT offsetPixels = SecsToPixels(offsetSec, width);
@@ -256,7 +275,11 @@ SpectrogramDisplayScroll4::PreDraw(NVGcontext *vg, int width, int height)
     DoUpdateSpectrogram();
 
     if (!mShowSpectrogram)
+    {
+        mNeedRedraw = false;
+        
         return;
+    }
     
     // Draw spectrogram first
     nvgSave(mVg);
@@ -336,6 +359,14 @@ SpectrogramDisplayScroll4::PreDraw(NVGcontext *vg, int width, int height)
     }
     
     nvgRestore(mVg);
+
+    mNeedRedraw = false;
+}
+
+bool
+SpectrogramDisplayScroll4::NeedRedraw()
+{
+    return mNeedRedraw;
 }
 
 void
@@ -401,6 +432,8 @@ SpectrogramDisplayScroll4::SetSpectrogram(BLSpectrogram4 *spectro,
     mSpectrogram->TouchColorMap();
     
     RecomputeParams();
+
+    mNeedRedraw = true;
 }
 
 void
@@ -413,6 +446,8 @@ SpectrogramDisplayScroll4::SetFftParams(int bufferSize,
     mSampleRate = sampleRate;
     
     RecomputeParams();
+
+    mNeedRedraw = true;
 }
 
 void
@@ -433,31 +468,48 @@ SpectrogramDisplayScroll4::LFAddSpectrogramLine(const WDL_TypedBuf<BL_FLOAT> &ma
     mSpectrogram->AddLine(magns, phases);
     
     mSpectroTimeSec += mSpectroLineDurationSec;
+
+    mNeedRedraw = true;
 }
 
 void
 SpectrogramDisplayScroll4::ShowSpectrogram(bool flag)
 {
+    if (flag != mShowSpectrogram)
+        mNeedRedraw = true;
+    
     mShowSpectrogram = flag;
 }
 
 void
 SpectrogramDisplayScroll4::UpdateSpectrogram(bool flag)
-{
+{    
+    if (!mNeedUpdateSpectrogram)
+        mNeedRedraw = true;
+    
     mNeedUpdateSpectrogram = true;
     
-    if (!mNeedUpdateSpectrogramData)
+    if (flag && !mNeedUpdateSpectrogramData)
+    {
         mNeedUpdateSpectrogramData = flag;
+
+        mNeedRedraw = true;
+    }
 }
 
 void
 SpectrogramDisplayScroll4::UpdateColormap(bool flag)
 {
+    if (!mNeedUpdateSpectrogram)
+        mNeedRedraw = true;
+    
     mNeedUpdateSpectrogram = true;
     
-    if (!mNeedUpdateColormapData)
+    if (flag && !mNeedUpdateColormapData)
     {
         mNeedUpdateColormapData = flag;
+
+        mNeedRedraw = true;
     }
 }
 
@@ -465,6 +517,8 @@ void
 SpectrogramDisplayScroll4::TransportPlayingChanged()
 {
     RecomputeParams();
+
+    mNeedRedraw = true;
 }
 
 // Variable speed
@@ -479,6 +533,8 @@ SpectrogramDisplayScroll4::SetSpeedMod(int speedMod)
     
         RecomputeParams();
     }
+
+    mNeedRedraw = true;
 }
 
 int
@@ -512,12 +568,18 @@ SpectrogramDisplayScroll4::GetTimeBoundsNorm(BL_FLOAT *tn0, BL_FLOAT *tn1)
 void
 SpectrogramDisplayScroll4::SetViewOrientation(ViewOrientation orientation)
 {
+    if (orientation != mViewOrientation)
+        mNeedRedraw = true;
+    
     mViewOrientation = orientation;
 }
 
 void
 SpectrogramDisplayScroll4::SetBypassed(bool flag)
 {
+    if (flag != mIsBypassed)
+        mNeedRedraw = true;
+        
     mIsBypassed = flag;
 }
 

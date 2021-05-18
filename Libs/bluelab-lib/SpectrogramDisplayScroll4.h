@@ -67,7 +67,8 @@ public:
     // CustomDrawer
     void PreDraw(NVGcontext *vg, int width, int height) override;
     bool IsOwnedByGraph() override { return true; }
-
+    bool NeedRedraw() override;
+    
     // LockFreeObj
     void PushData() override;
     void PullData() override;
@@ -165,6 +166,8 @@ protected:
     ViewOrientation mViewOrientation;
 
     bool mIsBypassed;
+
+    bool mNeedRedraw;
     
     // Lock free
     struct SpectrogramLine
