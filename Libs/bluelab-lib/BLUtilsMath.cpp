@@ -714,6 +714,7 @@ FLOAT_TYPE
 BLUtilsMath::ApplyGamma(FLOAT_TYPE t, FLOAT_TYPE a)
 {
     FLOAT_TYPE bA = t/((1.0/a - 2.0)*(1.0 - t) + 1.0);
+    
     return bA;
 }
 template float BLUtilsMath::ApplyGamma(float t, float a);

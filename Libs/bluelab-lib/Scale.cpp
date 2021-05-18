@@ -581,7 +581,7 @@ Scale::NormalizedToLowZoomInv(BL_FLOAT x, BL_FLOAT minValue, BL_FLOAT maxValue)
     BL_FLOAT result =
         BLUtilsMath::ApplyGamma(x, 1.0 - LOW_ZOOM_GAMMA); // mel then gamma
     result = NormalizedToMelInv(result, minValue, maxValue);
- 
+        
     return result;
 }
 
@@ -1101,10 +1101,10 @@ Scale::NormalizedToLowZoomForEach(WDL_TypedBuf<BL_FLOAT> *values,
     BL_FLOAT *valuesData = values->Get();
 
     BL_FLOAT lMin = MelScale::HzToMel(minFreq);
-    lMin = BLUtilsMath::ApplyGamma(lMin, LOW_ZOOM_GAMMA);
+    //lMin = BLUtilsMath::ApplyGamma(lMin, LOW_ZOOM_GAMMA);
     
     BL_FLOAT lMax = MelScale::HzToMel(maxFreq);
-    lMax = BLUtilsMath::ApplyGamma(lMax, LOW_ZOOM_GAMMA);
+    //lMax = BLUtilsMath::ApplyGamma(lMax, LOW_ZOOM_GAMMA);
         
     BL_FLOAT coeffInv = 0.0;
     if (lMax - lMin > BL_EPS)
@@ -1117,10 +1117,11 @@ Scale::NormalizedToLowZoomForEach(WDL_TypedBuf<BL_FLOAT> *values,
         x = x*(maxFreq - minFreq) + minFreq;
     
         x = MelScale::HzToMel(x);
-        x = BLUtilsMath::ApplyGamma(x, LOW_ZOOM_GAMMA);
-    
+        
         x = (x - lMin)*coeffInv;;
 
+        x = BLUtilsMath::ApplyGamma(x, LOW_ZOOM_GAMMA);
+        
         valuesData[i] = x;
     }
 }
@@ -1137,10 +1138,10 @@ Scale::NormalizedToLowZoomInvForEach(WDL_TypedBuf<BL_FLOAT> *values,
     BL_FLOAT *valuesData = values->Get();
 
     BL_FLOAT minMel = MelScale::HzToMel(minValue);
-    minMel = BLUtilsMath::ApplyGamma(minMel, LOW_ZOOM_GAMMA);
+    //minMel = BLUtilsMath::ApplyGamma(minMel, LOW_ZOOM_GAMMA);
     
     BL_FLOAT maxMel = MelScale::HzToMel(maxValue);
-    maxMel = BLUtilsMath::ApplyGamma(maxMel, LOW_ZOOM_GAMMA);
+    //maxMel = BLUtilsMath::ApplyGamma(maxMel, LOW_ZOOM_GAMMA);
         
     BL_FLOAT coeffInv = 0.0;
     if (maxValue - minValue > BL_EPS)
@@ -1149,10 +1150,12 @@ Scale::NormalizedToLowZoomInvForEach(WDL_TypedBuf<BL_FLOAT> *values,
     for (int i = 0; i < numValues; i++)
     {
         BL_FLOAT x = valuesData[i];
-    
-        x = x*(maxMel - minMel) + minMel;
 
         x = BLUtilsMath::ApplyGamma(x, 1.0 - LOW_ZOOM_GAMMA);
+        
+        x = x*(maxMel - minMel) + minMel;
+
+        //x = BLUtilsMath::ApplyGamma(x, 1.0 - LOW_ZOOM_GAMMA);
         
         x = MelScale::MelToHz(x);
     
