@@ -371,7 +371,13 @@ SpectrogramDisplayScroll4::NeedRedraw()
 
 void
 SpectrogramDisplayScroll4::PushData()
-{    
+{
+    // Must dirty this CustomDrawer if some data is pushed
+    // Because GraphControl12::IsDirty() is called before PullAllData(),
+    // which is called in GraphControl12::Draw()
+    if (!mLockFreeQueues[0].empty())
+        mNeedRedraw = true;
+    
     mLockFreeQueues[1].push(mLockFreeQueues[0]);
     mLockFreeQueues[0].clear();
 }
