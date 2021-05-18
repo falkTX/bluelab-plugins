@@ -72,7 +72,7 @@ SpectroMeter::Reset(int bufferSize, BL_FLOAT sampleRate)
 void
 SpectroMeter::GenerateUI(GUIHelper12 *guiHelper,
                          IGraphics *graphics,
-                         int offsetX)
+                         int offsetX, int offsetY)
 {
     IColor valueColor;
     guiHelper->GetValueTextColor(&valueColor);
@@ -80,7 +80,7 @@ SpectroMeter::GenerateUI(GUIHelper12 *guiHelper,
     // Cursor pos
     mCursorPosTexts[0] =
         guiHelper->CreateTextButton(graphics,
-                                    mX + offsetX, mY,
+                                    mX + offsetX, mY + offsetY,
                                     mTimeParamIdx,
                                     DEFAULT_TEXT, TEXT_FIELD_V_SIZE,
                                     FONT,
@@ -89,7 +89,8 @@ SpectroMeter::GenerateUI(GUIHelper12 *guiHelper,
     IRECT cp0 = mCursorPosTexts[0]->GetRECT();
     mCursorPosTexts[1] =
         guiHelper->CreateTextButton(graphics,
-                                    cp0.R + TEXT_FIELD_H_SPACING1, mY,
+                                    cp0.R + TEXT_FIELD_H_SPACING1,
+                                    mY + offsetY,
                                     mFreqParamIdx,
                                     DEFAULT_TEXT, TEXT_FIELD_V_SIZE,
                                     FONT,

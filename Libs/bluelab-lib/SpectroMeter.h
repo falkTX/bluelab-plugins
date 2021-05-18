@@ -43,7 +43,7 @@ public:
     void Reset(int bufferSize, BL_FLOAT sampleRate);
     
     void GenerateUI(GUIHelper12 *guiHelper, IGraphics *graphics,
-                    int offsetX);
+                    int offsetX, int offsetY = 0);
     void ClearUI();
     
     void SetCursorPosition(BL_FLOAT timeX, BL_FLOAT freqY);
