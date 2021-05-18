@@ -23,7 +23,7 @@ public:
     enum FreqMode
     {
         SPECTRO_METER_FREQ_HZ = 0,
-        SPCTRO_METER_FREQ_BIN
+        SPECTRO_METER_FREQ_BIN
     };
 
     //
