@@ -371,13 +371,22 @@ SpectroMeter::FreqToStr(BL_FLOAT freqHz, char buf[256])
 void
 SpectroMeter::HMSStr(BL_FLOAT timeSec, char buf[256])
 {
+    int sign = 1;
+    if (timeSec < 0.0)
+    {
+        timeSec = -timeSec;
+        sign = -1;
+    }
+    
     int h;
     int m;
     int s;
     int ms;
     ConvertToHMS(timeSec, &h, &m, &s, &ms);
 
-    sprintf(buf, "%02d:%02d:%02d.%03d", h, m, s, ms);
+    const char *signStr = (sign >= 0) ? "" : "-";
+    
+    sprintf(buf, "%s%02d:%02d:%02d.%03d", signStr, h, m, s, ms);
 }
 
 void
