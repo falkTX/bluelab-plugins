@@ -19,7 +19,8 @@
 
 SpectroMeter::SpectroMeter(BL_FLOAT x, BL_FLOAT y,
                            int timeParamIdx, int freqParamIdx,
-                           int bufferSize, BL_FLOAT sampleRate)
+                           int bufferSize, BL_FLOAT sampleRate,
+                           DisplayType type)
 {
 #ifdef _DEBUG
     // When debugging, we prefer samples
@@ -30,7 +31,9 @@ SpectroMeter::SpectroMeter(BL_FLOAT x, BL_FLOAT y,
 #endif
     
     mFreqMode = SPECTRO_METER_FREQ_HZ;
-    
+
+    mDisplayType = type;
+        
     mTimeParamIdx = timeParamIdx;
     mFreqParamIdx = freqParamIdx;
 
@@ -92,45 +95,48 @@ SpectroMeter::GenerateUI(GUIHelper12 *guiHelper,
                                     FONT,
                                     valueColor, TEXT_ALIGN);
 
-    // Selection pos
-    mSelPosTexts[0] =
-        guiHelper->CreateTextButton(graphics,
-                                    mX + offsetX, cp0.B + TEXT_FIELD_V_SPACING,
-                                    mTimeParamIdx,
-                                    DEFAULT_TEXT, TEXT_FIELD_V_SIZE,
-                                    FONT,
-                                    valueColor, TEXT_ALIGN);
-    IRECT sp0 = mSelPosTexts[0]->GetRECT();
+    if (mDisplayType == SPECTRO_METER_DISPLAY_SELECTION)
+    {
+        // Selection pos
+        mSelPosTexts[0] =
+            guiHelper->CreateTextButton(graphics,
+                                        mX + offsetX, cp0.B + TEXT_FIELD_V_SPACING,
+                                        mTimeParamIdx,
+                                        DEFAULT_TEXT, TEXT_FIELD_V_SIZE,
+                                        FONT,
+                                        valueColor, TEXT_ALIGN);
+        IRECT sp0 = mSelPosTexts[0]->GetRECT();
+        
+        mSelPosTexts[1] =
+            guiHelper->CreateTextButton(graphics,
+                                        cp0.R + TEXT_FIELD_H_SPACING1,
+                                        cp0.B + TEXT_FIELD_V_SPACING,
+                                        mFreqParamIdx,
+                                        DEFAULT_TEXT, TEXT_FIELD_V_SIZE,
+                                        FONT,
+                                        valueColor, TEXT_ALIGN);
     
-    mSelPosTexts[1] =
-        guiHelper->CreateTextButton(graphics,
-                                    cp0.R + TEXT_FIELD_H_SPACING1,
-                                    cp0.B + TEXT_FIELD_V_SPACING,
-                                    mFreqParamIdx,
-                                    DEFAULT_TEXT, TEXT_FIELD_V_SIZE,
-                                    FONT,
-                                    valueColor, TEXT_ALIGN);
+        // Selection size
+        mSelSizeTexts[0] =
+            guiHelper->CreateTextButton(graphics,
+                                        mX + offsetX,
+                                        sp0.B + TEXT_FIELD_V_SPACING,
+                                        mTimeParamIdx,
+                                        DEFAULT_TEXT, TEXT_FIELD_V_SIZE,
+                                        FONT,
+                                        valueColor, TEXT_ALIGN);
+        IRECT ss0 = mSelSizeTexts[0]->GetRECT();
+        
+        mSelSizeTexts[1] =
+            guiHelper->CreateTextButton(graphics,
+                                        ss0.R + TEXT_FIELD_H_SPACING1,
+                                        sp0.B + TEXT_FIELD_V_SPACING,
+                                        mFreqParamIdx,
+                                        DEFAULT_TEXT, TEXT_FIELD_V_SIZE,
+                                        FONT,
+                                        valueColor, TEXT_ALIGN);
+    }
     
-    // Selection size
-    mSelSizeTexts[0] =
-        guiHelper->CreateTextButton(graphics,
-                                    mX + offsetX,
-                                    sp0.B + TEXT_FIELD_V_SPACING,
-                                    mTimeParamIdx,
-                                    DEFAULT_TEXT, TEXT_FIELD_V_SIZE,
-                                    FONT,
-                                    valueColor, TEXT_ALIGN);
-    IRECT ss0 = mSelSizeTexts[0]->GetRECT();
-    
-    mSelSizeTexts[1] =
-        guiHelper->CreateTextButton(graphics,
-                                    ss0.R + TEXT_FIELD_H_SPACING1,
-                                    sp0.B + TEXT_FIELD_V_SPACING,
-                                    mFreqParamIdx,
-                                    DEFAULT_TEXT, TEXT_FIELD_V_SIZE,
-                                    FONT,
-                                    valueColor, TEXT_ALIGN);
-
     UpdateTextBGColor();
 }
 
@@ -275,13 +281,22 @@ SpectroMeter::UpdateTextBGColor()
     IColor color(255, 64, 64, 64);
 
     for (int i = 0; i < 2; i++)
-        mCursorPosTexts[i]->SetTextBGColor(color);
+    {
+        if (mCursorPosTexts[i] != NULL)
+            mCursorPosTexts[i]->SetTextBGColor(color);
+    }
 
     for (int i = 0; i < 2; i++)
-        mSelPosTexts[i]->SetTextBGColor(color);
+    {
+        if (mSelPosTexts[i] != NULL)
+            mSelPosTexts[i]->SetTextBGColor(color);
+    }
 
     for (int i = 0; i < 2; i++)
-        mSelSizeTexts[i]->SetTextBGColor(color); 
+    {
+        if (mSelSizeTexts[i] != NULL)
+            mSelSizeTexts[i]->SetTextBGColor(color);
+    }
 }
 
 void

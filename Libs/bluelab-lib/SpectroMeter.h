@@ -26,11 +26,18 @@ public:
         SPECTRO_METER_FREQ_BIN
     };
 
+    enum DisplayType
+    {
+        SPECTRO_METER_DISPLAY_POS = 0,
+        SPECTRO_METER_DISPLAY_SELECTION
+    };
+    
     //
     
     SpectroMeter(BL_FLOAT x, BL_FLOAT y,
                  int timeParamIdx, int freqParamIdx,
-                 int buffersize, BL_FLOAT sampleRate);
+                 int buffersize, BL_FLOAT sampleRate,
+                 DisplayType type = SPECTRO_METER_DISPLAY_SELECTION);
     virtual ~SpectroMeter();
 
     void Reset(int bufferSize, BL_FLOAT sampleRate);
@@ -95,6 +102,8 @@ protected:
     
     BL_FLOAT mPrevSelTimeW;
     BL_FLOAT mPrevSelFreqH;
+
+    DisplayType mDisplayType;
 };
 
 #endif
