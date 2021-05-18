@@ -10,6 +10,9 @@
 
 #include "SimpleInpaintPolar3.h"
 
+// TODO: Use correct phase unwrapping (like in PitchShift)
+// PhasesUnwrapper::ComputeUwPhasesDiffTime()
+
 SimpleInpaintPolar3::SimpleInpaintPolar3(bool processHoriz, bool processVert)
 {
     mProcessHoriz = processHoriz;
