@@ -74,6 +74,7 @@
 #define DECIMATOR_SAMPLE float
 #define WDL_RESAMPLE_TYPE float
 #define DCT_FLOAT float
+#define WDL_SIMPLEPITCHSHIFT_SAMPLETYPE float
 #else
 #define BL_FLOAT double
 #define WDL_FFT_REALSIZE 8 // WDL fft
@@ -87,6 +88,7 @@
 #define WDL_RESAMPLE_FULL_SINC_PRECISION
 #define WDL_RESAMPLE_TYPE double
 #define DCT_FLOAT double
+#define WDL_SIMPLEPITCHSHIFT_SAMPLETYPE double
 #endif
 
 // When we inject samples of value 0, after having injected non-zero signal,

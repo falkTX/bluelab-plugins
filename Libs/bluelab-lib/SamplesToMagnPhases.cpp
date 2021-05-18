@@ -8,8 +8,6 @@
 
 #include <BLDebug.h>
 
-#include <TestSigmoid.h>
-
 #include "SamplesToMagnPhases.h"
 
 SamplesToMagnPhases::SamplesToMagnPhases(vector<WDL_TypedBuf<BL_FLOAT> > *samples,

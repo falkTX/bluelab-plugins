@@ -566,7 +566,7 @@ Scale::NormalizedToLowZoom(BL_FLOAT x, BL_FLOAT minValue, BL_FLOAT maxValue)
     // 2 times mel
     BL_FLOAT result = NormalizedToMel(x, minValue, maxValue);
     //result = NormalizedToMel(result, minValue, maxValue); // double mel
-    result = BLUtilsMath::ApplyGamma(result, LOW_ZOOM_GAMMA); // mel then gamma
+    result = BLUtilsMath::ApplyGamma(result, (BL_FLOAT)LOW_ZOOM_GAMMA); // mel + gamma
 
     return result;
 }
@@ -579,7 +579,7 @@ Scale::NormalizedToLowZoomInv(BL_FLOAT x, BL_FLOAT minValue, BL_FLOAT maxValue)
     //result = NormalizedToMelInv(result, minValue, maxValue); // double mel
 
     BL_FLOAT result =
-        BLUtilsMath::ApplyGamma(x, 1.0 - LOW_ZOOM_GAMMA); // mel then gamma
+        BLUtilsMath::ApplyGamma(x, (BL_FLOAT)(1.0 - LOW_ZOOM_GAMMA)); // mel + gamma
     result = NormalizedToMelInv(result, minValue, maxValue);
         
     return result;
@@ -1120,7 +1120,7 @@ Scale::NormalizedToLowZoomForEach(WDL_TypedBuf<BL_FLOAT> *values,
         
         x = (x - lMin)*coeffInv;;
 
-        x = BLUtilsMath::ApplyGamma(x, LOW_ZOOM_GAMMA);
+        x = BLUtilsMath::ApplyGamma(x, (BL_FLOAT)LOW_ZOOM_GAMMA);
         
         valuesData[i] = x;
     }
@@ -1151,7 +1151,7 @@ Scale::NormalizedToLowZoomInvForEach(WDL_TypedBuf<BL_FLOAT> *values,
     {
         BL_FLOAT x = valuesData[i];
 
-        x = BLUtilsMath::ApplyGamma(x, 1.0 - LOW_ZOOM_GAMMA);
+        x = BLUtilsMath::ApplyGamma(x, (BL_FLOAT)(1.0 - LOW_ZOOM_GAMMA));
         
         x = x*(maxMel - minMel) + minMel;
 
