@@ -318,8 +318,6 @@ set(_bluelab-lib_src
   GhostCustomControl.cpp
   GhostCustomControl.h
   GhostCustomDrawer.cpp
-  GhostMeter.h
-  GhostMeter.cpp
   GhostPluginInterface.cpp
   GhostPluginInterface.h
   GhostTriggerControl.cpp
@@ -793,6 +791,8 @@ set(_bluelab-lib_src
   SpectrogramView.h
   SpectrogramView2.cpp
   SpectrogramView2.h
+  SpectroMeter.h
+  SpectroMeter.cpp
   Spectrum.cpp
   Spectrum.h
   SpectrumViewFftObj.cpp

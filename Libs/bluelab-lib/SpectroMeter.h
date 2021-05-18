@@ -1,5 +1,5 @@
-#ifndef GHOST_METER_H
-#define GHOST_METER_H
+#ifndef SPECTRO_METER_H
+#define SPECTRO_METER_H
 
 #include <BLTypes.h>
 
@@ -11,27 +11,27 @@ using namespace iplug;
 using namespace iplug::igraphics;
 
 class GUIHelper12;
-class GhostMeter
+class SpectroMeter
 {
 public:
     enum TimeMode
     {
-        GHOST_METER_TIME_SAMPLES = 0,
-        GHOST_METER_TIME_HMS
+        SPECTRO_METER_TIME_SAMPLES = 0,
+        SPECTRO_METER_TIME_HMS
     };
 
     enum FreqMode
     {
-        GHOST_METER_FREQ_HZ = 0,
-        GHOST_METER_FREQ_BIN
+        SPECTRO_METER_FREQ_HZ = 0,
+        SPCTRO_METER_FREQ_BIN
     };
 
     //
     
-    GhostMeter(BL_FLOAT x, BL_FLOAT y,
-               int timeParamIdx, int freqParamIdx,
-               int buffersize, BL_FLOAT sampleRate);
-    virtual ~GhostMeter();
+    SpectroMeter(BL_FLOAT x, BL_FLOAT y,
+                 int timeParamIdx, int freqParamIdx,
+                 int buffersize, BL_FLOAT sampleRate);
+    virtual ~SpectroMeter();
 
     void Reset(int bufferSize, BL_FLOAT sampleRate);
     

@@ -2,7 +2,7 @@
 
 #include <GUIHelper12.h>
 
-#include "GhostMeter.h"
+#include "SpectroMeter.h"
 
 #define TEXT_FIELD_V_SIZE 14 //16 //40
 
@@ -17,19 +17,19 @@
 
 #define TEXT_ALIGN EAlign::Far
 
-GhostMeter::GhostMeter(BL_FLOAT x, BL_FLOAT y,
-                       int timeParamIdx, int freqParamIdx,
-                       int bufferSize, BL_FLOAT sampleRate)
+SpectroMeter::SpectroMeter(BL_FLOAT x, BL_FLOAT y,
+                           int timeParamIdx, int freqParamIdx,
+                           int bufferSize, BL_FLOAT sampleRate)
 {
 #ifdef _DEBUG
     // When debugging, we prefer samples
-    mTimeMode = GHOST_METER_TIME_SAMPLES;
+    mTimeMode = SPECTRO_METER_TIME_SAMPLES;
 #else
     // When releasing, h/m/s is better
-    mTimeMode = GHOST_METER_TIME_HMS;
+    mTimeMode = SPECTRO_METER_TIME_HMS;
 #endif
     
-    mFreqMode = GHOST_METER_FREQ_HZ;
+    mFreqMode = SPECTRO_METER_FREQ_HZ;
     
     mTimeParamIdx = timeParamIdx;
     mFreqParamIdx = freqParamIdx;
@@ -55,10 +55,10 @@ GhostMeter::GhostMeter(BL_FLOAT x, BL_FLOAT y,
     mPrevSelFreqH = 0.0;
 }
 
-GhostMeter::~GhostMeter() {}
+SpectroMeter::~SpectroMeter() {}
 
 void
-GhostMeter::Reset(int bufferSize, BL_FLOAT sampleRate)
+SpectroMeter::Reset(int bufferSize, BL_FLOAT sampleRate)
 {
     mBufferSize = bufferSize;
     mSampleRate = sampleRate;
@@ -67,9 +67,9 @@ GhostMeter::Reset(int bufferSize, BL_FLOAT sampleRate)
 }
 
 void
-GhostMeter::GenerateUI(GUIHelper12 *guiHelper,
-                       IGraphics *graphics,
-                       int offsetX)
+SpectroMeter::GenerateUI(GUIHelper12 *guiHelper,
+                         IGraphics *graphics,
+                         int offsetX)
 {
     IColor valueColor;
     guiHelper->GetValueTextColor(&valueColor);
@@ -135,7 +135,7 @@ GhostMeter::GenerateUI(GUIHelper12 *guiHelper,
 }
 
 void
-GhostMeter::ClearUI()
+SpectroMeter::ClearUI()
 {
     for (int i = 0; i < 2; i++)
         mCursorPosTexts[i] = NULL;
@@ -148,7 +148,7 @@ GhostMeter::ClearUI()
 }
 
 void
-GhostMeter::SetCursorPosition(BL_FLOAT timeX, BL_FLOAT freqY)
+SpectroMeter::SetCursorPosition(BL_FLOAT timeX, BL_FLOAT freqY)
 {
     mPrevCursorTimeX = timeX;
     mPrevCursorFreqY = freqY;
@@ -173,7 +173,7 @@ GhostMeter::SetCursorPosition(BL_FLOAT timeX, BL_FLOAT freqY)
 }
 
 void
-GhostMeter::ResetCursorPosition()
+SpectroMeter::ResetCursorPosition()
 {
     if (mCursorPosTexts[0] != NULL)
         mCursorPosTexts[0]->SetStr(DEFAULT_TEXT);
@@ -183,8 +183,8 @@ GhostMeter::ResetCursorPosition()
 }
 
 void
-GhostMeter::SetSelectionValues(BL_FLOAT timeX, BL_FLOAT freqY,
-                               BL_FLOAT timeW, BL_FLOAT freqH)
+SpectroMeter::SetSelectionValues(BL_FLOAT timeX, BL_FLOAT freqY,
+                                 BL_FLOAT timeW, BL_FLOAT freqH)
 {
     mSelectionActive = true;
     
@@ -236,7 +236,7 @@ GhostMeter::SetSelectionValues(BL_FLOAT timeX, BL_FLOAT freqY,
 }
 
 void
-GhostMeter::ResetSelectionValues()
+SpectroMeter::ResetSelectionValues()
 {
     if (mSelPosTexts[0] != NULL)
         mSelPosTexts[0]->SetStr(DEFAULT_TEXT);
@@ -254,7 +254,7 @@ GhostMeter::ResetSelectionValues()
 }
 
 void
-GhostMeter::SetTimeMode(TimeMode mode)
+SpectroMeter::SetTimeMode(TimeMode mode)
 {
     mTimeMode = mode;
 
@@ -262,7 +262,7 @@ GhostMeter::SetTimeMode(TimeMode mode)
 }
 
 void
-GhostMeter::SetFreqMode(FreqMode mode)
+SpectroMeter::SetFreqMode(FreqMode mode)
 {
     mFreqMode = mode;
 
@@ -270,7 +270,7 @@ GhostMeter::SetFreqMode(FreqMode mode)
 }
 
 void
-GhostMeter::UpdateTextBGColor()
+SpectroMeter::UpdateTextBGColor()
 {
     IColor color(255, 64, 64, 64);
 
@@ -285,8 +285,8 @@ GhostMeter::UpdateTextBGColor()
 }
 
 void
-GhostMeter::ConvertToHMS(BL_FLOAT timeSec,
-                         int *h, int *m, int *s, int *ms)
+SpectroMeter::ConvertToHMS(BL_FLOAT timeSec,
+                           int *h, int *m, int *s, int *ms)
 {
     *h = 0;
     *m = 0;
@@ -330,20 +330,20 @@ GhostMeter::ConvertToHMS(BL_FLOAT timeSec,
 }
 
 void
-GhostMeter::TimeToStr(BL_FLOAT timeSec, char buf[256])
+SpectroMeter::TimeToStr(BL_FLOAT timeSec, char buf[256])
 {
-    if (mTimeMode == GHOST_METER_TIME_HMS)
+    if (mTimeMode == SPECTRO_METER_TIME_HMS)
         HMSStr(timeSec, buf);
-    else if (mTimeMode == GHOST_METER_TIME_SAMPLES)
+    else if (mTimeMode == SPECTRO_METER_TIME_SAMPLES)
         SamplesStr(timeSec, buf);
 }
 
 void
-GhostMeter::FreqToStr(BL_FLOAT freqHz, char buf[256])
+SpectroMeter::FreqToStr(BL_FLOAT freqHz, char buf[256])
 {
-    if (mFreqMode == GHOST_METER_FREQ_HZ)
+    if (mFreqMode == SPECTRO_METER_FREQ_HZ)
         sprintf(buf, "%g Hz", freqHz);
-    else if (mFreqMode == GHOST_METER_FREQ_BIN)
+    else if (mFreqMode == SPECTRO_METER_FREQ_BIN)
     {
         int binNum = (freqHz/(mSampleRate*0.5))*(mBufferSize*0.5);
 
@@ -354,7 +354,7 @@ GhostMeter::FreqToStr(BL_FLOAT freqHz, char buf[256])
 }
 
 void
-GhostMeter::HMSStr(BL_FLOAT timeSec, char buf[256])
+SpectroMeter::HMSStr(BL_FLOAT timeSec, char buf[256])
 {
     int h;
     int m;
@@ -366,7 +366,7 @@ GhostMeter::HMSStr(BL_FLOAT timeSec, char buf[256])
 }
 
 void
-GhostMeter::SamplesStr(BL_FLOAT timeSec, char buf[256])
+SpectroMeter::SamplesStr(BL_FLOAT timeSec, char buf[256])
 {
     int numSamples = timeSec*mSampleRate;
 
@@ -374,7 +374,7 @@ GhostMeter::SamplesStr(BL_FLOAT timeSec, char buf[256])
 }
 
 BL_FLOAT
-GhostMeter::AdjustFreq(BL_FLOAT freq)
+SpectroMeter::AdjustFreq(BL_FLOAT freq)
 {
     // For frequencies, keep 1 digit
     freq = ((int)(freq*10))*0.1;
@@ -383,7 +383,7 @@ GhostMeter::AdjustFreq(BL_FLOAT freq)
 }
 
 void
-GhostMeter::RefreshValues()
+SpectroMeter::RefreshValues()
 {
     // Update with prev values
     SetCursorPosition(mPrevCursorTimeX, mPrevCursorFreqY);
