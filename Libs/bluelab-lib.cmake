@@ -62,6 +62,8 @@ set(_bluelab-lib_src
   BLReverbSndF.h
   BLReverbViewer.cpp
   BLReverbViewer.h
+  BLClipperDisplay.cpp
+  BLClipperDisplay.h
   BLScanDisplay.cpp
   BLScanDisplay.h
   BLSpectrogram4.cpp
