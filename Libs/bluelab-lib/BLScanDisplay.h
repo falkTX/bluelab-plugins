@@ -1,13 +1,12 @@
 //
-//  USTClipperDisplay4.h
-//  UST
+//  BLScanDisplay.h
 //
 //  Created by applematuer on 7/30/19.
 //
 //
 
-#ifndef __UST__USTClipperDisplay4__
-#define __UST__USTClipperDisplay4__
+#ifndef __BL__BLScanDisplay__
+#define __BL__BLScanDisplay__
 
 #include "IPlug_include_in_plug_hdr.h"
 
@@ -24,12 +23,13 @@ class GraphCurve5;
 //
 // USTClipperDisplay4: use sweep update + exponential zoom
 //
-class USTClipperDisplay4
+// BLScanDisplay: from USTClipperDisplay4
+class BLScanDisplay
 {
 public:
-    USTClipperDisplay4(BL_GUI_FLOAT sampleRate);
+    BLScanDisplay(BL_GUI_FLOAT sampleRate);
     
-    virtual ~USTClipperDisplay4();
+    virtual ~BLScanDisplay();
     
     void SetGraph(GraphControl12 *graph);
     
@@ -95,4 +95,4 @@ protected:
     GraphCurve5 *mSweepBarCurve;
 };
 
-#endif /* defined(__UST__USTClipperDisplay2__) */
+#endif
