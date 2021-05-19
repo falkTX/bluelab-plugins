@@ -48,6 +48,8 @@ public:
     
     // The graph will destroy it automatically
     bool IsOwnedByGraph() override { return true; }
+
+    bool NeedRedraw() override;
     
     // Implement one of the two methods, depending on when
     // you whant to draw
@@ -100,6 +102,8 @@ protected:
     State *mState;
     
     BL_FLOAT mBounds[4];
+
+    bool mNeedRedraw;
 };
 
 #endif // IGRAPHICS_NANOVG

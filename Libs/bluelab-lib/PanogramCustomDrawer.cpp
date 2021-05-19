@@ -42,6 +42,8 @@ PanogramCustomDrawer::PanogramCustomDrawer(Plugin *plug,
     mBounds[1] = y0;
     mBounds[2] = x1;
     mBounds[3] = y1;
+
+    mNeedRedraw = true;
 }
 
 PanogramCustomDrawer::State *
@@ -65,6 +67,14 @@ PanogramCustomDrawer::Reset()
         mState->mSelection[i] = 0.0;
 
     mState->mViewOrientation = HORIZONTAL;
+
+    mNeedRedraw = true;
+}
+
+bool
+PanogramCustomDrawer::NeedRedraw()
+{
+    return mNeedRedraw;
 }
 
 void
@@ -75,17 +85,25 @@ PanogramCustomDrawer::PostDraw(NVGcontext *vg, int width, int height)
     DrawSelection(vg, width, height);
     
     DrawPlayBar(vg, width, height);
+
+    mNeedRedraw = false;
 }
 
 void
 PanogramCustomDrawer::ClearBar()
 {
+    if (mState->mBarActive)
+        mNeedRedraw = true;
+    
     mState->mBarActive = false;
 }
 
 void
 PanogramCustomDrawer::ClearSelection()
 {
+    if (mState->mSelectionActive)
+        mNeedRedraw = true;
+    
     mState->mSelectionActive = false;
 }
 
@@ -99,11 +117,16 @@ PanogramCustomDrawer::SetBarPos(BL_FLOAT pos)
     
     mState->mBarActive = true;
     mState->mSelectionActive = false;
+
+    mNeedRedraw = true;
 }
 
 void
 PanogramCustomDrawer::SetSelectionActive(bool flag)
 {
+    if (flag != mState->mSelectionActive)
+        mNeedRedraw = true;
+    
     mState->mSelectionActive = flag;
 }
 
@@ -116,6 +139,9 @@ PanogramCustomDrawer::GetBarPos()
 void
 PanogramCustomDrawer::SetBarActive(bool flag)
 {
+    if (flag != mState->mBarActive)
+        mNeedRedraw = true;
+    
     mState->mBarActive = flag;
 }
 
@@ -127,7 +153,7 @@ PanogramCustomDrawer::IsBarActive()
 
 void
 PanogramCustomDrawer::SetSelection(BL_FLOAT x0, BL_FLOAT y0,
-                                BL_FLOAT x1, BL_FLOAT y1)
+                                   BL_FLOAT x1, BL_FLOAT y1)
 {
     // Bound only y
     // For x, we may want to select sound outside the view
@@ -146,6 +172,8 @@ PanogramCustomDrawer::SetSelection(BL_FLOAT x0, BL_FLOAT y0,
     mState->mSelection[1] = y0;
     mState->mSelection[2] = x1;
     mState->mSelection[3] = y1;
+
+    mNeedRedraw = true;
 }
 
 void
@@ -178,11 +206,16 @@ PanogramCustomDrawer::SetPlayBarPos(BL_FLOAT pos, bool activate)
     
     if (activate)
         mState->mPlayBarActive = true;
+
+    mNeedRedraw = true;
 }
 
 void
 PanogramCustomDrawer::SetViewOrientation(ViewOrientation orientation)
 {
+    if (orientation != mState->mViewOrientation)
+            mNeedRedraw = true;
+    
     mState->mViewOrientation = orientation;
 }
 
@@ -195,6 +228,9 @@ PanogramCustomDrawer::IsPlayBarActive()
 void
 PanogramCustomDrawer::SetPlayBarActive(bool flag)
 {
+    if (flag != mState->mPlayBarActive)
+        mNeedRedraw = true;
+    
     mState->mPlayBarActive = flag;
 }
 
@@ -202,9 +238,11 @@ void
 PanogramCustomDrawer::SetSelPlayBarPos(BL_FLOAT pos)
 {
     mState->mPlayBarPos = mState->mSelection[0] +
-                            pos*(mState->mSelection[2] - mState->mSelection[0]);
+        pos*(mState->mSelection[2] - mState->mSelection[0]);
     
     mState->mPlayBarActive = true;
+
+    mNeedRedraw = true;
 }
 
 void
