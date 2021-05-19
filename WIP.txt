@@ -26,8 +26,8 @@ BL-Reverb	    :
 BL-ReverbDepth	    :
 BL-SampleDelay	    :   features0 ...
 BL-SASViewer	    :
-BL-Saturate	    :   wip
-BL-Shaper	    :
+BL-Saturate	    :   features+                                    , gui refresh
+BL-Shaper	    :   wip
 BL-Sine		    :
 BL-SoundMetaViewer  :
 BL-Spatializer	    :
@@ -41,8 +41,8 @@ BL-Wav3s	    :
 
 ---
 
-DONE: 20
-TODO: 8
+DONE: 21
+TODO: 7
 
 TODO: check plugs CPU % when "resting"
 TODO: check gui refresh for all plugins

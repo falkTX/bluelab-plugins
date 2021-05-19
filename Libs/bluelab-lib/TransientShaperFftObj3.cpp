@@ -64,7 +64,8 @@ SMALL PROBLEMs:
 
 TransientShaperFftObj3::TransientShaperFftObj3(int bufferSize, int oversampling,
                                                int freqRes, BL_FLOAT sampleRate,
-                                               int decimNumPoints, BL_FLOAT decimFactor,
+                                               int decimNumPoints,
+                                               BL_FLOAT decimFactor,
                                                bool doApplyTransients)
 : ProcessObj(bufferSize),
 mInput(true),
@@ -396,13 +397,15 @@ TransientShaperFftObj3::ProcessSamplesPost(WDL_TypedBuf<BL_FLOAT> *ioBuffer)
     WDL_ResampleSample *resampledAudio = NULL;
     int desiredSamples = ioBuffer->GetSize(); // Input driven
     int numOutSamples = ioBuffer->GetSize()*sampleRate/SAMPLE_RATE; // Input driven
-    int numSamples = mResamplerOut.ResamplePrepare(desiredSamples, 1, &resampledAudio);
+    int numSamples =
+        mResamplerOut.ResamplePrepare(desiredSamples, 1, &resampledAudio);
     
     // Compute remaining "parts of sample", due to rounding
     // and re-add it to the number of requested samples
     // FIX: fixes blank frame with sample rate 48000 and buffer size 447
     //
-    BL_FLOAT remaining = ((BL_FLOAT)ioBuffer->GetSize())*sampleRate/SAMPLE_RATE - numOutSamples;
+    BL_FLOAT remaining =
+        ((BL_FLOAT)ioBuffer->GetSize())*sampleRate/SAMPLE_RATE - numOutSamples;
     mRemainingSamples += remaining;
     if (mRemainingSamples >= 1.0)
     {
@@ -485,8 +488,9 @@ TransientShaperFftObj3::ProcessSamplesPost(WDL_TypedBuf<BL_FLOAT> *ioBuffer)
 #endif
 
 void
-TransientShaperFftObj3::ProcessSamplesBufferEnergy(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
-                                                   const WDL_TypedBuf<BL_FLOAT> *scBuffer)
+TransientShaperFftObj3::
+ProcessSamplesBufferEnergy(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
+                           const WDL_TypedBuf<BL_FLOAT> *scBuffer)
 {
     mOutput.AddValues(*ioBuffer);
 }
