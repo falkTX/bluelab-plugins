@@ -88,6 +88,8 @@ GraphCurve5::GraphCurve5(int numValues)
     
     mViewSize[0] = 256;
     mViewSize[1] = 256;
+
+    mNeedRedraw = true;
 }
 
 GraphCurve5::~GraphCurve5()
@@ -103,6 +105,8 @@ GraphCurve5::SetViewSize(BL_FLOAT width, BL_FLOAT height)
 {
     mViewSize[0] = width;
     mViewSize[1] = height;
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -111,6 +115,8 @@ void
 GraphCurve5::SetYScaleFactor(BL_FLOAT factor)
 {
     mYScaleFactor = factor;
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -119,6 +125,8 @@ void
 GraphCurve5::SetAutoAdjustFactor(BL_FLOAT factor)
 {
     mAutoAdjustFactor = factor;
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -130,6 +138,8 @@ GraphCurve5::SetBounds(const BL_GUI_FLOAT bounds[4])
     {
         mBounds[i] = bounds[i];
     }
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -149,6 +159,8 @@ GraphCurve5::SetDescription(const char *description, int descrColor[4])
     
     for (int i = 0; i < 4; i++)
         mDescrColor[i] = descrColor[i];
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -163,6 +175,8 @@ GraphCurve5::ResetNumValues(int numValues)
     
     BLUtils::FillAllZero(&mXValues);
     BLUtils::FillAllZero(&mYValues);
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -172,6 +186,8 @@ GraphCurve5::ClearValues()
 {
     BLUtils::FillAllValue(&mXValues, (BL_GUI_FLOAT)CURVE_VALUE_UNDEFINED);
     BLUtils::FillAllValue(&mYValues, (BL_GUI_FLOAT)CURVE_VALUE_UNDEFINED);
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -182,6 +198,8 @@ GraphCurve5::SetYScale(Scale::Type scale, BL_GUI_FLOAT minY, BL_GUI_FLOAT maxY)
     mYScale = scale;
     mMinY = minY;
     mMaxY = maxY;
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -201,6 +219,8 @@ GraphCurve5::FillAllYValues(BL_GUI_FLOAT val)
     {
         mYValues.Get()[i] = val;
     }
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -216,6 +236,8 @@ GraphCurve5::FillAllXValues(BL_GUI_FLOAT minX, BL_GUI_FLOAT maxX)
         
         mXValues.Get()[i] = x;
     }
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -240,6 +262,8 @@ GraphCurve5::SetYValues(const WDL_TypedBuf<BL_GUI_FLOAT> *yValues,
         //mXValues.Add(x);
         mXValues.Get()[i] = x;
     }
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -254,6 +278,8 @@ GraphCurve5::SetValue(BL_GUI_FLOAT t, BL_GUI_FLOAT x, BL_GUI_FLOAT y)
     
     mXValues.Get()[pos] = x;
     mYValues.Get()[pos] = y;
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -295,6 +321,8 @@ GraphCurve5::PushValue(BL_GUI_FLOAT x, BL_GUI_FLOAT y)
         mXValues = newXValues;
         mYValues = newYValues;
     }
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -308,6 +336,8 @@ GraphCurve5::NormalizeXValues(BL_GUI_FLOAT maxXValue)
         
         mXValues.Get()[i] = t*maxXValue;
     }
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -318,6 +348,8 @@ GraphCurve5::SetXScale(Scale::Type scale, BL_GUI_FLOAT minX, BL_GUI_FLOAT maxX)
     mXScale = scale;
     mMinX = minX;
     mMaxX = maxX;
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -328,6 +360,8 @@ GraphCurve5::SetPointValues(const WDL_TypedBuf<BL_GUI_FLOAT> &xValues,
 {
     mXValues = xValues;
     mYValues = yValues;
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -336,6 +370,8 @@ void
 GraphCurve5::SetLimitToBounds(bool flag)
 {
     mLimitToBounds = flag;
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -347,6 +383,8 @@ GraphCurve5::SetWeightTargetColor(int color[4])
     
     SET_COLOR_FROM_INT(mWeightTargetColor,
                        color[0], color[1], color[2], color[3]);
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -355,6 +393,8 @@ void
 GraphCurve5::SetColor(int r, int g, int b)
 {
     SET_COLOR_FROM_INT(mColor, r, g, b, 255);
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -363,6 +403,8 @@ void
 GraphCurve5::SetAlpha(BL_GUI_FLOAT alpha)
 {
     mAlpha = alpha;
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -371,6 +413,8 @@ void
 GraphCurve5::SetLineWidth(BL_GUI_FLOAT lineWidth)
 {
     mLineWidth = lineWidth;
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -379,6 +423,8 @@ void
 GraphCurve5::SetBevel(bool bevelFlag)
 {
     mBevelFlag = bevelFlag;
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -387,6 +433,8 @@ void
 GraphCurve5::SetSmooth(bool flag)
 {
     mDoSmooth = flag;
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -396,6 +444,8 @@ GraphCurve5::SetFill(bool flag, BL_GUI_FLOAT originY)
 {
     mCurveFill = flag;
     mCurveFillOriginY = originY;
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -405,6 +455,8 @@ GraphCurve5::SetFillColor(int r, int g, int b)
 {
     SET_COLOR_FROM_INT(mFillColor, r, g, b, 255);
     mFillColorSet = true;
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -413,6 +465,8 @@ void
 GraphCurve5::SetFillAlpha(BL_GUI_FLOAT alpha)
 {
     mFillAlpha = alpha;
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -422,6 +476,8 @@ GraphCurve5::SetFillAlphaUp(BL_GUI_FLOAT alpha)
 {
     mFillAlphaUpFlag = true;
     mFillAlphaUp = alpha;
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -430,6 +486,8 @@ void
 GraphCurve5::SetPointSize(BL_GUI_FLOAT pointSize)
 {
     mPointSize = pointSize;
+
+    mNeedRedraw = true;
     
     NotifyGraph();}
 
@@ -437,6 +495,8 @@ void
 GraphCurve5::SetPointOverlay(bool flag)
 {
     mPointOverlay = flag;
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -445,6 +505,8 @@ void
 GraphCurve5::SetWeightMultAlpha(bool flag)
 {
     mWeightMultAlpha = flag;
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -457,6 +519,8 @@ GraphCurve5::SetPointStyle(bool pointFlag,
     mPointStyle = pointFlag;
     mPointsAsLinesPolar = pointsAsLinesPolar;
     mPointsAsLines = pointsAsLines;
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -495,6 +559,8 @@ GraphCurve5::SetValuesPoint(const WDL_TypedBuf<BL_GUI_FLOAT> &xValues,
     ConvertX(&mXValues, width);
     ConvertY(&mYValues, height);
 #endif
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -592,6 +658,8 @@ GraphCurve5::SetValuesPointEx(const WDL_TypedBuf<BL_GUI_FLOAT> &xValues,
         }
     }
 #endif
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -629,6 +697,8 @@ GraphCurve5::SetValuesPointWeight(const WDL_TypedBuf<BL_GUI_FLOAT> &xValues,
 #endif
     
     mWeights = weights;
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -637,6 +707,8 @@ void
 GraphCurve5::SetColorWeight(const WDL_TypedBuf<BL_GUI_FLOAT> &colorWeights)
 {
     mWeights = colorWeights;
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -645,6 +717,8 @@ void
 GraphCurve5::SetSingleValueH(bool flag)
 {
     mSingleValueH = flag;
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -653,6 +727,8 @@ void
 GraphCurve5::SetSingleValueV(bool flag)
 {
     mSingleValueV = flag;
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -661,6 +737,8 @@ void
 GraphCurve5::SetOptimSameColor(bool flag)
 {
     mOptimSameColor = flag;
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -670,6 +748,8 @@ GraphCurve5::Reset(BL_GUI_FLOAT val)
 {
     FillAllXValues(mMinX, mMaxX);
     FillAllYValues(val);
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -679,6 +759,8 @@ GraphCurve5::FillAllValues(BL_GUI_FLOAT val)
 {
     FillAllXValues(mMinX, mMaxX);
     FillAllYValues(val);
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -687,6 +769,8 @@ void
 GraphCurve5::SetValues(const WDL_TypedBuf<BL_GUI_FLOAT> *values)
 {
     SetYValues(values, mMinX, mMaxX);
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -701,6 +785,8 @@ GraphCurve5::SetValues2(const WDL_TypedBuf<BL_GUI_FLOAT> *values)
         
         SetValue(t, y);
     }
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -720,6 +806,8 @@ GraphCurve5::SetValues3(const WDL_TypedBuf<BL_GUI_FLOAT> *values)
         
         SetValue(t, y);
     }
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -790,6 +878,8 @@ GraphCurve5::SetValues4(const WDL_TypedBuf<BL_GUI_FLOAT> &values,
         //mYValues.Get()[i] = y;
         yValuesData[i] = y;
     }
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -871,6 +961,8 @@ GraphCurve5::SetValues5LF(const WDL_TypedBuf<BL_GUI_FLOAT> &values,
             yValuesData[i] = y;
         }
     }
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -901,6 +993,8 @@ GraphCurve5::SetValuesDecimateSimple(const WDL_TypedBuf<BL_GUI_FLOAT> *values)
     // (would make a traversing line in the display)
     BL_GUI_FLOAT lastValue = values->Get()[values->GetSize() - 1];
     SetValue(1.0, lastValue);
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -950,6 +1044,8 @@ GraphCurve5::SetValuesDecimate(const WDL_TypedBuf<BL_GUI_FLOAT> *values,
         if (isWaveSignal)
             maxY = (mMinY + mMaxY)/2.0;
     }
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -979,6 +1075,8 @@ GraphCurve5::SetValuesDecimate2(const WDL_TypedBuf<BL_GUI_FLOAT> *values,
         
         SetValue(t, y);
     }
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -1008,6 +1106,8 @@ GraphCurve5::SetValuesDecimate3(const WDL_TypedBuf<BL_GUI_FLOAT> *values,
         
         SetValue(t, y);
     }
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -1038,6 +1138,8 @@ GraphCurve5::SetValuesXDbDecimate(const WDL_TypedBuf<BL_GUI_FLOAT> *values,
         
         SetValue(t, decimSignal.Get()[i]);
     }
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -1068,6 +1170,8 @@ GraphCurve5::SetValuesXDbDecimateDb(const WDL_TypedBuf<BL_GUI_FLOAT> *values,
         
         SetValue(t, decimSignal.Get()[i]);
     }
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -1104,6 +1208,8 @@ GraphCurve5::SetValue(BL_GUI_FLOAT t, BL_GUI_FLOAT val)
     }
     
     SetValue(t, x, y);
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -1112,6 +1218,8 @@ void
 GraphCurve5::SetSingleValueH(BL_GUI_FLOAT val)
 {
     SetValue(0.0, val);
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -1120,6 +1228,8 @@ void
 GraphCurve5::SetSingleValueV(BL_GUI_FLOAT val)
 {
     SetValue(0.0, val);
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -1136,6 +1246,8 @@ GraphCurve5::PushValue(BL_GUI_FLOAT val)
     
     BL_GUI_FLOAT maxXValue = mViewSize[0];
     NormalizeXValues(maxXValue);
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -1226,6 +1338,8 @@ GraphCurve5::ConvertX(WDL_TypedBuf<BL_GUI_FLOAT> *vals, BL_GUI_FLOAT width)
         
         vals->Get()[i] = x;
     }
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -1270,6 +1384,8 @@ GraphCurve5::ConvertY(WDL_TypedBuf<BL_GUI_FLOAT> *vals,
         
         vals->Get()[i] = y;
     }
+
+    mNeedRedraw = true;
     
     NotifyGraph();
 }
@@ -1278,6 +1394,8 @@ void
 GraphCurve5::SetGraph(GraphControl12 *graph)
 {
     mGraph = graph;
+
+    mNeedRedraw = true;
 }
 
 void
@@ -1291,6 +1409,12 @@ GraphCurve5::NotifyGraph()
 void
 GraphCurve5::PushData()
 {
+    // Must dirty this CustomDrawer if some data is pushed
+    // Because GraphControl12::IsDirty() is called before PullAllData(),
+    // which is called in GraphControl12::Draw()
+    if (!mLockFreeQueues[0].empty())
+        mNeedRedraw = true;
+    
     mLockFreeQueues[1].push(mLockFreeQueues[0]);
     mLockFreeQueues[0].clear();
 }
@@ -1316,6 +1440,18 @@ GraphCurve5::ApplyData()
     }
 
     mLockFreeQueues[2].clear();
+}
+
+bool
+GraphCurve5::NeedRedraw()
+{
+    return mNeedRedraw;
+}
+
+void
+GraphCurve5::DrawDone()
+{
+    mNeedRedraw = false;
 }
 
 #endif

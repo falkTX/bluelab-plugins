@@ -210,6 +210,9 @@ public:
     void PushData() override;
     void PullData() override;
     void ApplyData() override;
+
+    bool NeedRedraw();
+    void DrawDone();
     
 protected:
     friend class GraphControl12;
@@ -330,6 +333,8 @@ protected:
     };
     
     LockFreeQueue2<Command> mLockFreeQueues[LOCK_FREE_NUM_BUFFERS];
+
+    bool mNeedRedraw;
     
 private:
     // Tmp buffers

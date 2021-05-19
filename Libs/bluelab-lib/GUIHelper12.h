@@ -215,6 +215,8 @@ public:
     void GetGraphCurveColorGray(int color[4]);
     void GetGraphCurveColorRed(int color[4]);
 
+    void GetGraphCurveColorLightRed(int color[4]);
+    
     // For overlay curves
     void GetGraphCurveColorBlack(int color[4]);
 
@@ -365,6 +367,8 @@ protected:
     IColor mGraphCurveColorGray;
     IColor mGraphCurveColorRed;
 
+    IColor mGraphCurveColorLightRed;
+    
     IColor mGraphCurveColorBlack;
     
     // Circle graph drawer

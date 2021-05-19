@@ -860,6 +860,9 @@ GraphControl12::IsDirty()
 
     // Check is any custom drawer need refresh
     CheckCustomDrawersRedraw();
+
+    // To redraw is we have e.g curve values to pull
+    CheckCurvesRedraw();
     
     return mDataChanged;
 }
@@ -1475,6 +1478,8 @@ GraphControl12::DrawCurves()
                     }
                 }
         }
+
+        mCurves[i]->DrawDone();
     }
 }
 
@@ -3208,6 +3213,23 @@ GraphControl12::CheckCustomDrawersRedraw()
             // Need to redraw anyway
             mDataChanged = true;
             
+            return;
+        }
+    }
+}
+
+void
+GraphControl12::CheckCurvesRedraw()
+{
+    for (int i = 0; i < mCurves.size(); i++)
+    {
+        GraphCurve5 *curve = mCurves[i];
+
+        if (curve->NeedRedraw())
+        {
+            // Need to redraw anyway
+            mDataChanged = true;
+
             return;
         }
     }

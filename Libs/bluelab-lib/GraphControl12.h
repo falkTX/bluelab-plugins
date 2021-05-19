@@ -323,6 +323,8 @@ protected:
                           int minNumValues);
 
     void CheckCustomDrawersRedraw();
+    
+    void CheckCurvesRedraw();
 
     // For Panogram, when rotating the view by M_PI/2
     void ApplyViewOrientation(int width, int height,
