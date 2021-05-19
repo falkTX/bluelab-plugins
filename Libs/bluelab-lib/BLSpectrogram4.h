@@ -106,6 +106,10 @@ public:
 
     BL_FLOAT NormYToFreq(BL_FLOAT normY);
     BL_FLOAT FreqToNormY(BL_FLOAT freq);
+
+    // In case max spectrogram frequancy is not sampleRate/2
+    // (case where we cut the top of the spectrogram)
+    void SetMaxFreq(BL_FLOAT maxFreq);
     
 protected:
     void SetFixedSize(bool flag);
@@ -205,6 +209,10 @@ protected:
     
     Scale *mScale;
 
+    // In case we cut the top of the columns before inserting into the BLSpectrogram
+    // In case max freq is different than sampleRate/2
+    BL_FLOAT mMaxFreq;
+    
 private:
     WDL_TypedBuf<BL_FLOAT> mTmpBuf0;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf1;

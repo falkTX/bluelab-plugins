@@ -78,6 +78,8 @@ BLSpectrogram4::BLSpectrogram4(BL_FLOAT sampleRate,
     mSpectroDataChanged = true;
     mColormapDataChanged = true;
 #endif
+
+    mMaxFreq = -1.0;
 }
 
 BLSpectrogram4::~BLSpectrogram4()
@@ -327,11 +329,13 @@ BLSpectrogram4::AddLine(const WDL_TypedBuf<BL_FLOAT> &magns,
     
     WDL_TypedBuf<BL_FLOAT> &phases0 = mTmpBuf1;
     phases0 = phases;
+
+    BL_FLOAT maxFreq = mSampleRate*0.5;
+    if (mMaxFreq > 0.0)
+        maxFreq = mMaxFreq;
     
-    mScale->ApplyScale(mYScale, &magns0,
-                       (BL_FLOAT)0.0, (BL_FLOAT)(mSampleRate*0.5));
-    mScale->ApplyScale(mYScale, &phases0,
-                       (BL_FLOAT)0.0, (BL_FLOAT)(mSampleRate*0.5));
+    mScale->ApplyScale(mYScale, &magns0, (BL_FLOAT)0.0, maxFreq);
+    mScale->ApplyScale(mYScale, &phases0, (BL_FLOAT)0.0, maxFreq);
     
     if ((magns0.GetSize() > mHeight) ||
         (phases0.GetSize() > mHeight))
@@ -1170,23 +1174,33 @@ BLSpectrogram4::GetSampleRate()
 BL_FLOAT
 BLSpectrogram4::NormYToFreq(BL_FLOAT normY)
 {
-    BL_FLOAT resultY =
-        mScale->ApplyScaleInv(mYScale, normY,
-                              (BL_FLOAT)0.0, (BL_FLOAT)(mSampleRate*0.5));
+    BL_FLOAT maxFreq = mSampleRate*0.5;
+    if (mMaxFreq > 0.0)
+        maxFreq = mMaxFreq;
+    
+    BL_FLOAT resultY = mScale->ApplyScaleInv(mYScale, normY, (BL_FLOAT)0.0, maxFreq);
 
-    resultY *= mSampleRate*0.5;
+    resultY *= maxFreq;
 
     return resultY; 
+}
+
+void
+BLSpectrogram4::SetMaxFreq(BL_FLOAT maxFreq)
+{
+    mMaxFreq = maxFreq;
 }
 
 BL_FLOAT
 BLSpectrogram4::FreqToNormY(BL_FLOAT freq)
 {
-    freq /= mSampleRate*0.5;
+    BL_FLOAT maxFreq = mSampleRate*0.5;
+    if (mMaxFreq > 0.0)
+        maxFreq = mMaxFreq;
     
-    BL_FLOAT resultY =
-        mScale->ApplyScale(mYScale, freq,
-                           (BL_FLOAT)0.0, (BL_FLOAT)(mSampleRate*0.5));
+    freq /= maxFreq;
+    
+    BL_FLOAT resultY = mScale->ApplyScale(mYScale, freq, (BL_FLOAT)0.0, maxFreq);
 
     return resultY;
 }

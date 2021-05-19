@@ -21,7 +21,7 @@ BL-OnsetDetect	    :
 BL-Panogram	    :   features+, optim, mem, bugs, LockFree
 BL-PitchShift	    :   features+, optim, mem, bugs, (LockFree)      , gui refresh
 BL-Precedence	    :
-BL-Rebalance	    :	wip: model is training
+BL-Rebalance	    :	wip: model is training,                      , gui refresh
 BL-Reverb	    :
 BL-ReverbDepth	    :
 BL-SampleDelay	    :

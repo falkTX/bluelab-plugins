@@ -362,7 +362,7 @@ SpectroMeter::FreqToStr(BL_FLOAT freqHz, char buf[256])
     else if (mFreqMode == SPECTRO_METER_FREQ_BIN)
     {
         int binNum = (freqHz/(mSampleRate*0.5))*(mBufferSize*0.5);
-
+            
         // Don't knpw if we want "bin" or "bins"
         // => "bin" seems more neutral (e.g for position, this is "bin num"
         sprintf(buf, "%d bin", binNum);
