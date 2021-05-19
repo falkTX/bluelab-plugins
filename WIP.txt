@@ -24,9 +24,9 @@ BL-Precedence	    :   features0 ...
 BL-Rebalance	    :	wip: model is training,                      , gui refresh
 BL-Reverb	    :
 BL-ReverbDepth	    :
-BL-SampleDelay	    :   
+BL-SampleDelay	    :   features0 ...
 BL-SASViewer	    :
-BL-Saturate	    :
+BL-Saturate	    :   wip
 BL-Shaper	    :
 BL-Sine		    :
 BL-SoundMetaViewer  :
@@ -41,8 +41,8 @@ BL-Wav3s	    :
 
 ---
 
-DONE: 18
-TODO: 10
+DONE: 20
+TODO: 8
 
 TODO: check plugs CPU % when "resting"
 TODO: check gui refresh for all plugins
