@@ -20,11 +20,11 @@ BL-LoFi		    :            , optim, mem, bugs, LockFree
 BL-OnsetDetect	    :
 BL-Panogram	    :   features+, optim, mem, bugs, LockFree
 BL-PitchShift	    :   features+, optim, mem, bugs, (LockFree)      , gui refresh
-BL-Precedence	    :
+BL-Precedence	    :   features0 ...
 BL-Rebalance	    :	wip: model is training,                      , gui refresh
 BL-Reverb	    :
 BL-ReverbDepth	    :
-BL-SampleDelay	    :
+BL-SampleDelay	    :   
 BL-SASViewer	    :
 BL-Saturate	    :
 BL-Shaper	    :
@@ -44,5 +44,6 @@ BL-Wav3s	    :
 DONE: 18
 TODO: 10
 
+TODO: check plugs CPU % when "resting"
 TODO: check gui refresh for all plugins
 TODO: pass valgrind for mem for all
