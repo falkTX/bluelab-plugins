@@ -35,10 +35,7 @@ public:
     
     void Reset(BL_GUI_FLOAT sampleRate);
     
-    void SetClipValue(BL_GUI_FLOAT clipValue);
-    
     void AddSamples(const WDL_TypedBuf<BL_FLOAT> &samples);
-    
     void AddClippedSamples(const WDL_TypedBuf<BL_FLOAT> &samples);
     
     void SetEnabled(bool flag);
@@ -52,7 +49,6 @@ public:
 protected:
     void AddSamplesZoom();
     void AddSamplesZoomClip();
-    void SetClipValueZoom();
     
     long GetNumSamples();
     
@@ -83,8 +79,6 @@ protected:
     WDL_TypedBuf<BL_GUI_FLOAT> mCurrentDecimValuesUpClip;
     WDL_TypedBuf<BL_GUI_FLOAT> mCurrentDecimValuesDownClip;
     
-    BL_GUI_FLOAT mCurrentClipValue;
-    
     long mSweepPos;
     long mSweepPosClip;
 
@@ -94,8 +88,6 @@ protected:
     GraphCurve5 *mWaveformDownCurve;
     GraphCurve5 *mWaveformClipUpCurve;
     GraphCurve5 *mWaveformClipDownCurve;
-    GraphCurve5 *mClipLoCurve;
-    GraphCurve5 *mClipHiCurve;
     GraphCurve5 *mSweepBarCurve;
 };
 

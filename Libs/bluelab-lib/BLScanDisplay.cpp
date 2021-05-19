@@ -21,7 +21,6 @@
 // Curves
 #define BLUE_COLOR_SCHEME 1
 
-#define FILL_CLIP_LINES 1 //0
 #define CURVE_FILL_ALPHA 0.1
 
 // On this version, scrolling display is not debugged well (it jitters)
@@ -38,7 +37,6 @@ BLScanDisplay::BLScanDisplay(BL_GUI_FLOAT sampleRate)
     mSampleRate = sampleRate;
     
     mZoom = 1.0;
-    mCurrentClipValue = 0.0;
     
 #if SWEEP_UPDATE
     mSweepPos = 0;
@@ -53,8 +51,6 @@ BLScanDisplay::BLScanDisplay(BL_GUI_FLOAT sampleRate)
     mWaveformDownCurve = NULL;
     mWaveformClipUpCurve = NULL;
     mWaveformClipDownCurve = NULL;
-    mClipLoCurve = NULL;
-    mClipHiCurve = NULL;
     mSweepBarCurve = NULL;
 
     CreateCurves();
@@ -71,8 +67,6 @@ BLScanDisplay::~BLScanDisplay()
   delete mWaveformDownCurve;
   delete mWaveformClipUpCurve;
   delete mWaveformClipDownCurve;
-  delete mClipLoCurve;
-  delete mClipHiCurve;
   delete mSweepBarCurve;
 }
 
@@ -147,54 +141,7 @@ BLScanDisplay::SetGraph(GraphControl12 *graph)
         mWaveformClipDownCurve->SetFillAlpha(1.0);
         mWaveformClipDownCurve->SetFill(true, 0.5 + FILL_ORIGIN_Y_OFFSET);
         mWaveformClipDownCurve->SetYScale(Scale::LINEAR, -2.0, 2.0);
-        
-        // Clip Lo
-                
-#if BLUE_COLOR_SCHEME
-        //mGraph->SetCurveColor(CLIP_LO_CURVE, 113, 130, 182);
-        
-        // Blue
-        mClipLoCurve->SetColor(255, 255, 255);
-        mClipHiCurve->SetColor(255, 255, 255);
-#endif
-        
-        mClipLoCurve->SetAlpha(1.0);
-        mClipLoCurve->SetLineWidth(2.0);
-        
-#if FILL_CLIP_LINES
-        mClipLoCurve->SetFill(true);
-#endif
-
-        // Doesn't fill low
-        mClipLoCurve->SetFillAlpha(0.0);
-        // Fill up only
-        mClipLoCurve->SetFillAlphaUp(CURVE_FILL_ALPHA);
-        
-        mClipLoCurve->SetSingleValueH(true);
-        
-        mClipLoCurve->SetYScale(Scale::LINEAR, -2.0, 2.0);
-        
-        // Must set view size before value...
-        mClipLoCurve->SetViewSize(width, height);
-        mClipLoCurve->SetSingleValueH((BL_GUI_FLOAT)-1.0);
-        
-        // Clip Hi
-        
-        mClipHiCurve->SetAlpha(1.0);
-        mClipHiCurve->SetLineWidth(2.0);
-        
-#if FILL_CLIP_LINES
-        mClipHiCurve->SetFill(true);
-#endif
-        
-        mClipHiCurve->SetFillAlpha(CURVE_FILL_ALPHA);
-        mClipHiCurve->SetSingleValueH(true);
-        mClipHiCurve->SetYScale(Scale::LINEAR, -2.0, 2.0);
-        
-        // Must set view size before value...
-        mClipHiCurve->SetViewSize(width, height);
-        mClipHiCurve->SetSingleValueH((BL_GUI_FLOAT)1.0);
-	  
+                        
         // Sweep bar
         mSweepBarCurve->SetColor(255, 255, 255);
         mSweepBarCurve->SetAlpha(1.0);
@@ -207,8 +154,6 @@ BLScanDisplay::SetGraph(GraphControl12 *graph)
         mGraph->AddCurve(mWaveformDownCurve);
         mGraph->AddCurve(mWaveformClipUpCurve);
         mGraph->AddCurve(mWaveformClipDownCurve);
-        mGraph->AddCurve(mClipLoCurve);
-        mGraph->AddCurve(mClipHiCurve);
         mGraph->AddCurve(mSweepBarCurve);
     }
 }
@@ -246,24 +191,6 @@ BLScanDisplay::Reset(BL_GUI_FLOAT sampleRate)
         mWaveformClipUpCurve->SetValues5(mCurrentDecimValuesUpClip);
         mWaveformClipDownCurve->SetValues5(mCurrentDecimValuesDownClip);
     }
-}
-
-void
-BLScanDisplay::SetClipValue(BL_GUI_FLOAT clipValue)
-{
-    if (mGraph == NULL)
-        return;
-    
-#if 0
-    if (clipValue > 1.0)
-        clipValue = 1.0;
-    if (clipValue < -1.0)
-        clipValue = -1.0;
-#endif
-        
-    mCurrentClipValue = clipValue;
-    
-    SetClipValueZoom();
 }
 
 void
@@ -407,8 +334,6 @@ BLScanDisplay::SetZoom(BL_GUI_FLOAT zoom)
     AddSamplesZoom();
     AddSamplesZoomClip();
     
-    SetClipValueZoom();
-    
     if (mGraph != NULL)
         mGraph->SetDataChanged();
 }
@@ -469,31 +394,6 @@ BLScanDisplay::AddSamplesZoomClip()
     }
 }
 
-void
-BLScanDisplay::SetClipValueZoom()
-{
-    BL_GUI_FLOAT clipValue = mCurrentClipValue;
-    
-#if !GAMMA_ZOOM
-    clipValue *= mZoom;
-#else
-    bool neg = (clipValue < 0.0);
-    if (neg)
-        clipValue = -clipValue;
-    
-    clipValue = BLUtils::ApplyParamShape(clipValue, mZoom);
-    
-    if (neg)
-        clipValue = -clipValue;
-#endif
-    
-    if (mGraph != NULL)
-    {
-        mClipLoCurve->SetSingleValueH(clipValue);
-        mClipHiCurve->SetSingleValueH(-clipValue);
-    }
-}
-
 long
 BLScanDisplay::GetNumSamples()
 {
@@ -536,8 +436,6 @@ BLScanDisplay::CreateCurves()
   mWaveformDownCurve = new GraphCurve5(GRAPH_NUM_POINTS);
   mWaveformClipUpCurve = new GraphCurve5(GRAPH_NUM_POINTS);
   mWaveformClipDownCurve = new GraphCurve5(GRAPH_NUM_POINTS);
-  mClipLoCurve = new GraphCurve5(GRAPH_NUM_POINTS);
-  mClipHiCurve = new GraphCurve5(GRAPH_NUM_POINTS);
   mSweepBarCurve = new GraphCurve5(GRAPH_NUM_POINTS);
 }
 
