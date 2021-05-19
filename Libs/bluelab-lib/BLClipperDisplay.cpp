@@ -1,5 +1,5 @@
 //
-//  BLScanDisplay.cpp
+//  BLClipperDisplay.cpp
 //  UST
 //
 //  Created by applematuer on 7/30/19.
@@ -12,7 +12,7 @@
 
 #include <BLUtils.h>
 
-#include "BLScanDisplay.h"
+#include "BLClipperDisplay.h"
 
 // We display 2 seconds of samples
 #define NUM_SECONDS 4.0 //2.0
@@ -50,7 +50,7 @@
 #define GAMMA_ZOOM 0 //1
 
 
-BLScanDisplay::BLScanDisplay(BL_GUI_FLOAT sampleRate)
+BLClipperDisplay::BLClipperDisplay(BL_GUI_FLOAT sampleRate)
 {
     mSampleRate = sampleRate;
     
@@ -81,7 +81,7 @@ BLScanDisplay::BLScanDisplay(BL_GUI_FLOAT sampleRate)
     Reset(sampleRate);
 }
 
-BLScanDisplay::~BLScanDisplay()
+BLClipperDisplay::~BLClipperDisplay()
 {
   delete mAxisCurve;
   delete mWaveformUpCurve;
@@ -94,7 +94,7 @@ BLScanDisplay::~BLScanDisplay()
 }
 
 void
-BLScanDisplay::SetGraph(GraphControl12 *graph)
+BLClipperDisplay::SetGraph(GraphControl12 *graph)
 {
     mGraph = graph;
     
@@ -296,7 +296,7 @@ BLScanDisplay::SetGraph(GraphControl12 *graph)
 }
 
 void
-BLScanDisplay::Reset(BL_GUI_FLOAT sampleRate)
+BLClipperDisplay::Reset(BL_GUI_FLOAT sampleRate)
 {
     mSampleRate = sampleRate;
     
@@ -333,7 +333,7 @@ BLScanDisplay::Reset(BL_GUI_FLOAT sampleRate)
 }
 
 void
-BLScanDisplay::SetClipValue(BL_GUI_FLOAT clipValue)
+BLClipperDisplay::SetClipValue(BL_GUI_FLOAT clipValue)
 {
     if (mGraph == NULL)
         return;
@@ -353,7 +353,7 @@ BLScanDisplay::SetClipValue(BL_GUI_FLOAT clipValue)
 }
 
 void
-BLScanDisplay::AddSamples(const WDL_TypedBuf<BL_FLOAT> &samplesIn)
+BLClipperDisplay::AddSamples(const WDL_TypedBuf<BL_FLOAT> &samplesIn)
 {
     WDL_TypedBuf<BL_GUI_FLOAT> samples;
     BLUtils::ConvertToGUIFloatType(&samples, samplesIn);
@@ -403,7 +403,7 @@ BLScanDisplay::AddSamples(const WDL_TypedBuf<BL_FLOAT> &samplesIn)
 }
 
 void
-BLScanDisplay::AddClippedSamples(const WDL_TypedBuf<BL_FLOAT> &samplesIn)
+BLClipperDisplay::AddClippedSamples(const WDL_TypedBuf<BL_FLOAT> &samplesIn)
 {
     WDL_TypedBuf<BL_GUI_FLOAT> samples;
     BLUtils::ConvertToGUIFloatType(&samples, samplesIn);
@@ -452,7 +452,7 @@ BLScanDisplay::AddClippedSamples(const WDL_TypedBuf<BL_FLOAT> &samplesIn)
 }
 
 void
-BLScanDisplay::SetDirty()
+BLClipperDisplay::SetDirty()
 {
     if (mGraph != NULL)
     {
@@ -462,7 +462,7 @@ BLScanDisplay::SetDirty()
 }
 
 void
-BLScanDisplay::SetEnabled(bool flag)
+BLClipperDisplay::SetEnabled(bool flag)
 {
     if (!flag)
     {
@@ -478,7 +478,7 @@ BLScanDisplay::SetEnabled(bool flag)
 }
 
 void
-BLScanDisplay::SetZoom(BL_GUI_FLOAT zoom)
+BLClipperDisplay::SetZoom(BL_GUI_FLOAT zoom)
 {
     mZoom = zoom;
     
@@ -500,7 +500,7 @@ BLScanDisplay::SetZoom(BL_GUI_FLOAT zoom)
 }
 
 void
-BLScanDisplay::AddSamplesZoom()
+BLClipperDisplay::AddSamplesZoom()
 {
     // Graph
     if (mGraph != NULL)
@@ -522,7 +522,7 @@ BLScanDisplay::AddSamplesZoom()
 }
 
 void
-BLScanDisplay::AddSamplesZoomClip()
+BLClipperDisplay::AddSamplesZoomClip()
 {
     if (mGraph != NULL)
     {
@@ -543,7 +543,7 @@ BLScanDisplay::AddSamplesZoomClip()
 }
 
 void
-BLScanDisplay::SetClipValueZoom()
+BLClipperDisplay::SetClipValueZoom()
 {
     BL_GUI_FLOAT clipValue = mCurrentClipValue;
     
@@ -568,7 +568,7 @@ BLScanDisplay::SetClipValueZoom()
 }
 
 long
-BLScanDisplay::GetNumSamples()
+BLClipperDisplay::GetNumSamples()
 {
     long numSamples = mSampleRate*NUM_SECONDS;
     
@@ -577,7 +577,7 @@ BLScanDisplay::GetNumSamples()
 
 // Find min and max (equaivalent to decimation to get a single value)
 void
-BLScanDisplay::DecimateSamplesOneLine(const WDL_TypedBuf<BL_GUI_FLOAT> &bufSamples,
+BLClipperDisplay::DecimateSamplesOneLine(const WDL_TypedBuf<BL_GUI_FLOAT> &bufSamples,
                                            BL_GUI_FLOAT *decimLineMin, BL_GUI_FLOAT *decimLineMax)
 {
     BL_GUI_FLOAT minVal = BLUtils::ComputeMin(bufSamples);
@@ -588,7 +588,7 @@ BLScanDisplay::DecimateSamplesOneLine(const WDL_TypedBuf<BL_GUI_FLOAT> &bufSampl
 }
 
 void
-BLScanDisplay::UpdateSweepBar()
+BLClipperDisplay::UpdateSweepBar()
 {
     if (mGraph != NULL)
     {
@@ -598,7 +598,7 @@ BLScanDisplay::UpdateSweepBar()
 }
 
 void
-BLScanDisplay::CreateCurves()
+BLClipperDisplay::CreateCurves()
 {
   mAxisCurve = new GraphCurve5(GRAPH_NUM_POINTS);
   mWaveformUpCurve = new GraphCurve5(GRAPH_NUM_POINTS);

@@ -46,6 +46,8 @@ public:
     void SetDirty();
     
     void SetZoom(BL_GUI_FLOAT zoom);
+
+    void ResetSweepBar();
     
 protected:
     void AddSamplesZoom();
@@ -66,6 +68,8 @@ protected:
     GraphControl12 *mGraph;
     
     BL_GUI_FLOAT mSampleRate;
+
+    bool mIsEnabled;
     
     WDL_TypedBuf<BL_GUI_FLOAT> mCurrentSamples;
     WDL_TypedBuf<BL_GUI_FLOAT> mCurrentClippedSamples;
