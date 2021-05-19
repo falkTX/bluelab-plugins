@@ -19,23 +19,6 @@
 #define GRAPH_NUM_POINTS 256
 
 // Curves
-/*#define AXIS_CURVE 0
-
-#define WAVEFORM_UP_CURVE 1
-#define WAVEFORM_DOWN_CURVE 2
-
-#define WAVEFORM_CLIP_UP_CURVE 3
-#define WAVEFORM_CLIP_DOWN_CURVE 4
-
-#define CLIP_LO_CURVE 6 //5
-#define CLIP_HI_CURVE 7 //6
-
-#define SWEEP_BAR_CURVE 5 //7
-*/
-
-//#define CURVE_FILL_ALPHA 0.2
-
-#define ORANGE_COLOR_SCHEME 0
 #define BLUE_COLOR_SCHEME 1
 
 #define FILL_CLIP_LINES 1 //0
@@ -56,8 +39,6 @@ BLScanDisplay::BLScanDisplay(BL_GUI_FLOAT sampleRate)
     
     mZoom = 1.0;
     mCurrentClipValue = 0.0;
-    
-    //mGraph = graph;
     
 #if SWEEP_UPDATE
     mSweepPos = 0;
@@ -103,16 +84,8 @@ BLScanDisplay::SetGraph(GraphControl12 *graph)
     if (mGraph != NULL)
     {
         mGraph->SetBounds(0.0, 0.0, 1.0, 1.0);
-        //mGraph->SetClearColor(255, 0, 255, 255); // DEBUG
         mGraph->SetClearColor(0, 0, 0, 255);
-        
-        // Orizontal axis
-        //mGraph->SetCurveColor(AXIS_CURVE, 232, 110, 36);
-        
-#if ORANGE_COLOR_SCHEME
-        mAxisCurve->SetColor(252, 79, 36);
-#endif
-        
+                
 #if BLUE_COLOR_SCHEME
         mAxisCurve->SetColor(170, 202, 209);
 #endif
@@ -121,9 +94,7 @@ BLScanDisplay::SetGraph(GraphControl12 *graph)
         mAxisCurve->SetLineWidth(2.0);
         mAxisCurve->SetFill(false);
         mAxisCurve->SetFillAlpha(CURVE_FILL_ALPHA);
-        //mAxisCurve->SetYScale(false, 0.0, 1.0);
         mAxisCurve->SetSingleValueH(true);
-        //mAxisCurve->SetYScale(false, -2.0, 2.0);
         mAxisCurve->SetYScale(Scale::LINEAR, -2.0, 2.0);
         
         // Must set view size before value...
@@ -139,29 +110,8 @@ BLScanDisplay::SetGraph(GraphControl12 *graph)
         
 #define FILL_ORIGIN_Y_OFFSET 0.001
         
-        // Waveform up
-        
-        //mGraph->SetCurveDescription(WAVEFORM_UP_CURVE, "input", descrColor);
-#if (!ORANGE_COLOR_SCHEME && !BLUE_COLOR_SCHEME)
-        mWaveformUpCurve->SetColor(128, 128, 255);
-        
-        // Dummy
-        mWaveformClipUpCurve->SetColor(252, 228, 205);
-#endif
-        
-#if ORANGE_COLOR_SCHEME
-        //mGraph->SetCurveColor(WAVEFORM_CURVE, 252, 228, 205);
-        mWaveformUpCurve->SetColor(252, 79, 36);
-        mWaveformDownCurve->SetColor(252, 79, 36);
-        
-        mWaveformClipUpCurve->SetColor(252, 228, 205);
-#endif
-        
-#if BLUE_COLOR_SCHEME
-        // Blue
-        //mGraph->SetCurveColor(WAVEFORM_UP_CURVE, 170, 202, 209);
-        //mGraph->SetCurveColor(WAVEFORM_DOWN_CURVE, 170, 202, 209);
-        
+        // Waveform up        
+#if BLUE_COLOR_SCHEME 
         // Orange
         mWaveformUpCurve->SetColor(234, 101, 0);
         mWaveformDownCurve->SetColor(234, 101, 0);
@@ -178,7 +128,6 @@ BLScanDisplay::SetGraph(GraphControl12 *graph)
         
         // Waveform down
         
-        //mGraph->SetCurveColor(WAVEFORM_DOWN_CURVE, 252, 79, 36);
         mWaveformDownCurve->SetAlpha(1.0);
         mWaveformDownCurve->SetLineWidth(-1.0);
         mWaveformDownCurve->SetFillAlpha(1.0);
@@ -186,7 +135,6 @@ BLScanDisplay::SetGraph(GraphControl12 *graph)
         mWaveformDownCurve->SetYScale(Scale::LINEAR, -2.0, 2.0);
         
         // Waveform clip up
-        //mGraph->SetCurveColor(WAVEFORM_CLIP_UP_CURVE, 252, 228, 205);
         mWaveformClipUpCurve->SetAlpha(1.0);
         mWaveformClipUpCurve->SetLineWidth(-1.0);
         mWaveformClipUpCurve->SetFillAlpha(1.0);
@@ -194,7 +142,6 @@ BLScanDisplay::SetGraph(GraphControl12 *graph)
         mWaveformClipUpCurve->SetYScale(Scale::LINEAR, -2.0, 2.0);
         
         // Waveform clip down
-        //mGraph->SetCurveColor(WAVEFORM_CLIP_DOWN_CURVE, 252, 228, 205);
         mWaveformClipDownCurve->SetAlpha(1.0);
         mWaveformClipDownCurve->SetLineWidth(-1.0);
         mWaveformClipDownCurve->SetFillAlpha(1.0);
@@ -202,32 +149,14 @@ BLScanDisplay::SetGraph(GraphControl12 *graph)
         mWaveformClipDownCurve->SetYScale(Scale::LINEAR, -2.0, 2.0);
         
         // Clip Lo
-        
-        //mGraph->SetCurveDescription(GRAPH_THRESHOLD_CURVE,
-        //                            "threshold", descrColor);
-        
-#if (!ORANGE_COLOR_SCHEME && !BLUE_COLOR_SCHEME)
-        mClipLoCurve->SetColor(64, 64, 255);
-        mClipHiCurveh->SetColor(64, 64, 255);
-#endif
-        
-#if ORANGE_COLOR_SCHEME
-        mClipLoCurve->SetColor(232, 110, 36);
-        mClipHiCurve->SetColor(232, 110, 36);
-#endif
-        
+                
 #if BLUE_COLOR_SCHEME
         //mGraph->SetCurveColor(CLIP_LO_CURVE, 113, 130, 182);
         
         // Blue
         mClipLoCurve->SetColor(255, 255, 255);
         mClipHiCurve->SetColor(255, 255, 255);
-        
-        // Orange
-        //mGraph->SetCurveColor(CLIP_LO_CURVE, 234, 101, 0);
-        //mGraph->SetCurveColor(CLIP_HI_CURVE, 234, 101, 0);
 #endif
-        
         
         mClipLoCurve->SetAlpha(1.0);
         mClipLoCurve->SetLineWidth(2.0);
@@ -235,28 +164,21 @@ BLScanDisplay::SetGraph(GraphControl12 *graph)
 #if FILL_CLIP_LINES
         mClipLoCurve->SetFill(true);
 #endif
-        
-        //mGraph->SetCurveFillAlpha(CLIP_LO_CURVE, CURVE_FILL_ALPHA);
 
         // Doesn't fill low
         mClipLoCurve->SetFillAlpha(0.0);
         // Fill up only
-        mClipLoCurve->SetFillAlphaUp(CURVE_FILL_ALPHA); //
+        mClipLoCurve->SetFillAlphaUp(CURVE_FILL_ALPHA);
         
-        //mClipLoCurve->SetYScale(Scale::LINEAR, 0.0, 1.0);
         mClipLoCurve->SetSingleValueH(true);
         
-        //mClipLoCurve->SetYScale(Scale::LINEAR, -2.0, 2.0);
-        mClipLoCurve->SetYScale(Scale::LINEAR, -2.0, 2.0); // NEW
+        mClipLoCurve->SetYScale(Scale::LINEAR, -2.0, 2.0);
         
         // Must set view size before value...
         mClipLoCurve->SetViewSize(width, height);
         mClipLoCurve->SetSingleValueH((BL_GUI_FLOAT)-1.0);
         
         // Clip Hi
-        
-        //mGraph->SetCurveDescription(GRAPH_THRESHOLD_CURVE,
-        //                            "threshold", descrColor);
         
         mClipHiCurve->SetAlpha(1.0);
         mClipHiCurve->SetLineWidth(2.0);
@@ -265,14 +187,9 @@ BLScanDisplay::SetGraph(GraphControl12 *graph)
         mClipHiCurve->SetFill(true);
 #endif
         
-        //mGraph->SetCurveFillAlpha(CLIP_HI_CURVE, CURVE_FILL_ALPHA);
-        //mGraph->SetCurveFillAlphaUp(CLIP_HI_CURVE, CURVE_FILL_ALPHA);
-        mClipHiCurve->SetFillAlpha(CURVE_FILL_ALPHA);//
-        
-        //mClipHiCurve->SetYScale(Scale::LINEAR, 0.0, 1.0);
+        mClipHiCurve->SetFillAlpha(CURVE_FILL_ALPHA);
         mClipHiCurve->SetSingleValueH(true);
-        //mClipHiCurve->SetYScale(Scale::LINEAR, -2.0, 2.0);
-        mClipHiCurve->SetYScale(Scale::LINEAR, -2.0, 2.0); // NEW
+        mClipHiCurve->SetYScale(Scale::LINEAR, -2.0, 2.0);
         
         // Must set view size before value...
         mClipHiCurve->SetViewSize(width, height);
@@ -283,7 +200,6 @@ BLScanDisplay::SetGraph(GraphControl12 *graph)
         mSweepBarCurve->SetAlpha(1.0);
         mSweepBarCurve->SetLineWidth(1.0);
         mSweepBarCurve->SetSingleValueV(true);
-        //mGraph->SetCurveXScale(SWEEP_BAR_CURVE, false);
         
         // Add curved
         mGraph->AddCurve(mAxisCurve);
@@ -323,14 +239,12 @@ BLScanDisplay::Reset(BL_GUI_FLOAT sampleRate)
 #endif
 
     if (mGraph != NULL)
-    {
-        //mGraph->Resize(GRAPH_NUM_POINTS);
+    {        
+        mWaveformUpCurve->SetValues5(mCurrentDecimValuesUp);
+        mWaveformDownCurve->SetValues5(mCurrentDecimValuesDown);
         
-        mWaveformUpCurve->SetValues5/*4*/(mCurrentDecimValuesUp);
-        mWaveformDownCurve->SetValues5/*4*/(mCurrentDecimValuesDown);
-        
-        mWaveformClipUpCurve->SetValues5/*4*/(mCurrentDecimValuesUpClip);
-        mWaveformClipDownCurve->SetValues5/*4*/(mCurrentDecimValuesDownClip);
+        mWaveformClipUpCurve->SetValues5(mCurrentDecimValuesUpClip);
+        mWaveformClipDownCurve->SetValues5(mCurrentDecimValuesDownClip);
     }
 }
 
@@ -346,9 +260,7 @@ BLScanDisplay::SetClipValue(BL_GUI_FLOAT clipValue)
     if (clipValue < -1.0)
         clipValue = -1.0;
 #endif
-    
-    //clipValue = 1.0 - clipValue;
-    
+        
     mCurrentClipValue = clipValue;
     
     SetClipValueZoom();
@@ -463,10 +375,7 @@ void
 BLScanDisplay::SetDirty()
 {
     if (mGraph != NULL)
-    {
-        //mGraph->SetDirty(true);
         mGraph->SetDataChanged();
-    }
 }
 
 void
@@ -501,10 +410,7 @@ BLScanDisplay::SetZoom(BL_GUI_FLOAT zoom)
     SetClipValueZoom();
     
     if (mGraph != NULL)
-    {
-        //mGraph->SetDirty(true);
         mGraph->SetDataChanged();
-    }
 }
 
 void
@@ -537,8 +443,8 @@ BLScanDisplay::AddSamplesZoom()
         BLUtils::ApplyParamShapeWaveform(&decimValuesDown, mZoom);
 #endif
         
-        mWaveformUpCurve->SetValues5/*4*/(decimValuesUp);
-        mWaveformDownCurve->SetValues5/*4*/(decimValuesDown);
+        mWaveformUpCurve->SetValues5(decimValuesUp);
+        mWaveformDownCurve->SetValues5(decimValuesDown);
     }
 }
 
@@ -558,8 +464,8 @@ BLScanDisplay::AddSamplesZoomClip()
         BLUtils::ApplyParamShapeWaveform(&decimValuesDown, mZoom);
 #endif
         
-        mWaveformClipUpCurve->SetValues5/*4*/(decimValuesUp);
-        mWaveformClipDownCurve->SetValues5/*4*/(decimValuesDown);
+        mWaveformClipUpCurve->SetValues5(decimValuesUp);
+        mWaveformClipDownCurve->SetValues5(decimValuesDown);
     }
 }
 
@@ -583,8 +489,8 @@ BLScanDisplay::SetClipValueZoom()
     
     if (mGraph != NULL)
     {
-        mClipLoCurve->SetSingleValueH(clipValue /*- 2.0*/);
-        mClipHiCurve->SetSingleValueH(/*2.0*/ - clipValue);
+        mClipLoCurve->SetSingleValueH(clipValue);
+        mClipHiCurve->SetSingleValueH(-clipValue);
     }
 }
 
@@ -599,7 +505,8 @@ BLScanDisplay::GetNumSamples()
 // Find min and max (equaivalent to decimation to get a single value)
 void
 BLScanDisplay::DecimateSamplesOneLine(const WDL_TypedBuf<BL_GUI_FLOAT> &bufSamples,
-                                           BL_GUI_FLOAT *decimLineMin, BL_GUI_FLOAT *decimLineMax)
+                                      BL_GUI_FLOAT *decimLineMin,
+                                      BL_GUI_FLOAT *decimLineMax)
 {
     BL_GUI_FLOAT minVal = BLUtils::ComputeMin(bufSamples);
     BL_GUI_FLOAT maxVal = BLUtils::ComputeMax(bufSamples);
