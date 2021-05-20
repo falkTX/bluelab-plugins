@@ -90,7 +90,8 @@ protected:
             mCurves[0] = NULL;
             mCurves[1] = NULL;
 
-            mIsSampleCurve = false;
+            //mIsSampleCurve = false;
+            mIsSampleCurve = true;
         }
 
         virtual ~Curve()
