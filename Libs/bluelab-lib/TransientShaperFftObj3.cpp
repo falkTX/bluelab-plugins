@@ -67,7 +67,7 @@ TransientShaperFftObj3::TransientShaperFftObj3(int bufferSize, int oversampling,
                                                int decimNumPoints,
                                                BL_FLOAT decimFactor,
                                                bool doApplyTransients)
-: ProcessObj(bufferSize),
+    : ProcessObj(bufferSize),
 mInput(true),
 mOutput(true)
 {
@@ -93,6 +93,8 @@ mOutput(true)
     
     mRemainingSamples = 0.0;
 #endif
+
+    mHasNewData = true;
 }
 
 TransientShaperFftObj3::~TransientShaperFftObj3()
@@ -125,10 +127,13 @@ TransientShaperFftObj3::Reset()
     // 
     mInput.Reset();
     mOutput.Reset();
+
+    mHasNewData = true;
 }
 
 void
-TransientShaperFftObj3::Reset(int bufferSize, int oversampling, int freqRes, BL_FLOAT sampleRate)
+TransientShaperFftObj3::Reset(int bufferSize, int oversampling,
+                              int freqRes, BL_FLOAT sampleRate)
 {
     ProcessObj::Reset(bufferSize, oversampling, freqRes, sampleRate);
     
@@ -145,6 +150,8 @@ TransientShaperFftObj3::Reset(int bufferSize, int oversampling, int freqRes, BL_
     mSamplesIn.Resize(0);
     mTransientnessBuf.Resize(0);
 #endif
+
+    mHasNewData = true;
 }
 
 #if FORCE_SAMPLE_RATE
@@ -206,8 +213,9 @@ TransientShaperFftObj3::SetFreqAmpRatio(BL_FLOAT ratio)
 }
 
 void
-TransientShaperFftObj3::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
-                                         const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer)
+TransientShaperFftObj3::
+ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
+                 const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer)
 {
 #if DENOISER_OPTIM5
 
@@ -350,6 +358,8 @@ TransientShaperFftObj3::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer
                               currentTransientness.GetSize());
     }
 #endif
+
+    mHasNewData = true;
 }
 
 #if !FORCE_SAMPLE_RATE_KEEP_QUALITY
@@ -365,6 +375,8 @@ TransientShaperFftObj3::ProcessSamplesBuffer(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
 #define EPS 1e-15
         if (std::fabs(mSoftHard) < EPS)
         {
+            mHasNewData = true;
+                
             return;
         }
 #endif
@@ -373,6 +385,8 @@ TransientShaperFftObj3::ProcessSamplesBuffer(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
     }
 
     //mInput.AddValues(*ioBuffer);
+
+    mHasNewData = true;
 }
 #else
 void
@@ -380,6 +394,8 @@ TransientShaperFftObj3::ProcessSamplesBuffer(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
                                              WDL_TypedBuf<BL_FLOAT> *scBuffer)
 {
     mInput.AddValues(*ioBuffer);
+
+    mHasNewData = true;
 }
 #endif
 
@@ -389,7 +405,7 @@ TransientShaperFftObj3::ProcessSamplesBuffer(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
 void
 TransientShaperFftObj3::ProcessSamplesPost(WDL_TypedBuf<BL_FLOAT> *ioBuffer)
 {
-    if (mSampleRate == SAMPLE_RATE)
+    if (mSampleRate == SAMPLE_RATE)        
         return;
     
     BL_FLOAT sampleRate = mSampleRate;
@@ -446,7 +462,7 @@ TransientShaperFftObj3::ProcessSamplesPost(WDL_TypedBuf<BL_FLOAT> *ioBuffer)
 void
 TransientShaperFftObj3::ProcessSamplesPost(WDL_TypedBuf<BL_FLOAT> *ioBuffer)
 {
-    if (mSampleRate == SAMPLE_RATE)
+    if (mSampleRate == SAMPLE_RATE)        
         return;
     
     BL_FLOAT coeff = mSampleRate/SAMPLE_RATE;
@@ -456,7 +472,7 @@ TransientShaperFftObj3::ProcessSamplesPost(WDL_TypedBuf<BL_FLOAT> *ioBuffer)
     //
     
     // Just in case
-    if (mSamplesIn.GetSize() < newSize)
+    if (mSamplesIn.GetSize() < newSize)        
         return;
     
     WDL_TypedBuf<BL_FLOAT> &result = mTmpBuf7;
@@ -471,7 +487,9 @@ TransientShaperFftObj3::ProcessSamplesPost(WDL_TypedBuf<BL_FLOAT> *ioBuffer)
     
     // Just in case
     if (mTransientnessBuf.GetSize() < newSize)
+    {
         return;
+    }
     
     WDL_TypedBuf<BL_FLOAT> &trans = mTmpBuf8;
     //trans.Add(mTransientnessBuf.Get(), newSize);
@@ -484,6 +502,8 @@ TransientShaperFftObj3::ProcessSamplesPost(WDL_TypedBuf<BL_FLOAT> *ioBuffer)
     
     // Result
     *ioBuffer = result;
+
+    mHasNewData = true;
 }
 #endif
 
@@ -493,6 +513,8 @@ ProcessSamplesBufferEnergy(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
                            const WDL_TypedBuf<BL_FLOAT> *scBuffer)
 {
     mOutput.AddValues(*ioBuffer);
+
+    mHasNewData = true;
 }
 
 void
@@ -519,6 +541,8 @@ TransientShaperFftObj3::SetTrackIO(int maxNumPoints, BL_FLOAT decimFactor,
     
     if (trackOutput)
         mOutput.SetParams(maxNumPoints, decimFactor);
+
+    mHasNewData = true;
 }
 
 void
@@ -541,9 +565,22 @@ TransientShaperFftObj3::GetCurrentOutput(WDL_TypedBuf<BL_FLOAT> *outOutput)
 }
 
 void
-TransientShaperFftObj3::GetCurrentTransientness(WDL_TypedBuf<BL_FLOAT> *outTransientness)
+TransientShaperFftObj3::
+GetCurrentTransientness(WDL_TypedBuf<BL_FLOAT> *outTransientness)
 {
     *outTransientness = mCurrentTransientness;
+}
+
+bool
+TransientShaperFftObj3::HasNewData()
+{
+    return mHasNewData;
+}
+
+void
+TransientShaperFftObj3::TouchNewData()
+{
+    mHasNewData = false;
 }
 
 // The old version give strong change in amplitude

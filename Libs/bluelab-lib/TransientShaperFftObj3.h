@@ -114,6 +114,9 @@ public:
     //
     void GetCurrentInput(WDL_TypedBuf<BL_FLOAT> *outInput);
     void GetCurrentOutput(WDL_TypedBuf<BL_FLOAT> *outOutput);
+
+    bool HasNewData();
+    void TouchNewData();
     
 protected:
     // NOTE: we can't compute a transientness normalized from the gain of the signal...
@@ -170,6 +173,8 @@ protected:
     FifoDecimator2 mOutput;
     
     TransientLib5 *mTransLib;
+
+    bool mHasNewData;
     
 private:
     // Tmp buffers
