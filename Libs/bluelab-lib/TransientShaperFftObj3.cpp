@@ -14,7 +14,7 @@
 //#include "TransientLib4.h"
 #include <TransientLib5.h>
 
-#include <FifoDecimator2.h>
+#include <FifoDecimator3.h>
 
 #include "TransientShaperFftObj3.h"
 
@@ -532,7 +532,7 @@ TransientShaperFftObj3::SetTrackIO(int maxNumPoints, BL_FLOAT decimFactor,
     if (trackTransientness)
     {
         //mTransientness = new FifoDecimator(maxNumPoints, decimFactor, false);
-        mTransientness = new FifoDecimator2(maxNumPoints, decimFactor, false);
+        mTransientness = new FifoDecimator3(maxNumPoints, decimFactor, false);
     }
 
     // ??

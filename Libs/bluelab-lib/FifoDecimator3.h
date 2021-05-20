@@ -1,13 +1,13 @@
 //
-//  FifoDecimator2.h
+//  FifoDecimator3.h
 //  BL-TransientShaper
 //
 //  Created by Pan on 11/04/18.
 //
 //
 
-#ifndef __BL_TransientShaper__FifoDecimator2__
-#define __BL_TransientShaper__FifoDecimator2__
+#ifndef __BL_TransientShaper__FifoDecimator3__
+#define __BL_TransientShaper__FifoDecimator3__
 
 #include <BLTypes.h>
 
@@ -16,15 +16,15 @@
 #include "IPlug_include_in_plug_hdr.h"
 
 // Keep many values, and decimate when GetValues()
-class FifoDecimator2
+class FifoDecimator3
 {
 public:
     // If we want to process samples (waveform, set isSamples to true)
-    FifoDecimator2(long maxSize, BL_FLOAT decimFactor, bool isSamples);
+    FifoDecimator3(long maxSize, BL_FLOAT decimFactor, bool isSamples);
     
-    FifoDecimator2(bool isSamples);
+    FifoDecimator3(bool isSamples);
     
-    virtual ~FifoDecimator2();
+    virtual ~FifoDecimator3();
     
     void Reset();
     
@@ -49,4 +49,4 @@ private:
     WDL_TypedBuf<BL_FLOAT> mTmpBuf1;
 };
 
-#endif /* defined(__BL_TransientShaper__FifoDecimator2__) */
+#endif /* defined(__BL_TransientShaper__FifoDecimator3__) */

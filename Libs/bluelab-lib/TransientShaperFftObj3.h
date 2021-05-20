@@ -10,7 +10,8 @@
 #define __BL_Shaper__TransientShaperFftObj3__
 
 //#include <FifoDecimator.h>
-#include <FifoDecimator2.h> // NEW iPlug2
+//#include <FifoDecimator2.h> // NEW iPlug2
+#include <FifoDecimator3.h> // NEW Shaper with BLScanDisplay
 #include <FftProcessObj16.h>
 
 // Detection of "s" and "p" is good at 44100Hz
@@ -119,7 +120,8 @@ public:
     void TouchNewData();
     
 protected:
-    // NOTE: we can't compute a transientness normalized from the gain of the signal...
+    // NOTE: we can't compute a transientness normalized
+    // from the gain of the signal...
     // ... because transientness doesn't depend on the gain
     
     // For old version
@@ -141,8 +143,7 @@ protected:
     WDL_TypedBuf<BL_FLOAT> mCurrentTransientness;
     
     // For GUI
-    //FifoDecimator *mTransientness;
-    FifoDecimator2 *mTransientness;
+    FifoDecimator3 *mTransientness;
     
     // For computing derivative (for amp to trans)
     WDL_TypedBuf<BL_FLOAT> mPrevPhases;
@@ -162,15 +163,10 @@ protected:
     WDL_TypedBuf<BL_FLOAT> mSamplesIn;
     WDL_TypedBuf<BL_FLOAT> mTransientnessBuf;
 #endif
-    
-    // Unused
-    //WDL_TypedBuf<BL_FLOAT> mTransSmoothWin;
 
     // For tracking
-    //FifoDecimator mInput;
-    //FifoDecimator mOutput;
-    FifoDecimator2 mInput;
-    FifoDecimator2 mOutput;
+    FifoDecimator3 mInput;
+    FifoDecimator3 mOutput;
     
     TransientLib5 *mTransLib;
 

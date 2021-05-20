@@ -251,6 +251,8 @@ set(_bluelab-lib_src
   FftProcessBufObj.h
   FftProcessObj16.cpp
   FftProcessObj16.h
+  FifoDecimator3.cpp
+  FifoDecimator3.h
   FifoDecimator2.cpp
   FifoDecimator2.h
   FifoDecimator.cpp
