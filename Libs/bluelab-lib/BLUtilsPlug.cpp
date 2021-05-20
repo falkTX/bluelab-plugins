@@ -887,18 +887,25 @@ BLUtilsPlug::ApplyGain(const vector<WDL_TypedBuf<BL_FLOAT> > &in,
 
     if (smoother == NULL)
         return;
+
+    int in0Size = in[0].GetSize();
+    BL_FLOAT *in0Buf = in[0].Get();
+    BL_FLOAT *out0Buf = (*out)[0].Get();
+
+    BL_FLOAT *in1Buf = (in.size() > 1) ? in[1].Get() : NULL;
+    BL_FLOAT *out1Buf = (out->size() > 1) ? (*out)[1].Get() : NULL;
     
-    for (int i = 0; i < in[0].GetSize(); i++)
+    for (int i = 0; i < in0Size; i++)
     {
         BL_FLOAT gain = smoother->Process();
 
-        BL_FLOAT ls = in[0].Get()[i];
-        (*out)[0].Get()[i] = gain*ls;
+        BL_FLOAT ls = in0Buf[i];
+        out0Buf[i] = gain*ls;
     
         if ((in.size() > 1) && (out->size() > 1))
         {
-            BL_FLOAT rs = in[1].Get()[i];
-            (*out)[1].Get()[i] = gain*rs;
+            BL_FLOAT rs = in1Buf[i];
+            out1Buf[i] = gain*rs;
         }
     }
 }

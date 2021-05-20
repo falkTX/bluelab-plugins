@@ -202,12 +202,13 @@ CMASmoother::ProcessOne(const BL_FLOAT *data, BL_FLOAT *smoothedData,
     
     // Copy mirrored data at the beginning
     int prevSize0 = windowSize;
+    BL_FLOAT *inDataBuf = inData.Get();
     for (int i = 0; i < windowSize; i++)
     {
         // Try a fix (12/09/2017) => Worked well for EqHack
         BL_FLOAT val = data[windowSize - i];
         
-        inData.Get()[prevSize0 + i] = val;
+        inDataBuf[prevSize0 + i] = val;
     }
     
     int prevSize1 = 2*windowSize;
@@ -216,7 +217,7 @@ CMASmoother::ProcessOne(const BL_FLOAT *data, BL_FLOAT *smoothedData,
     
     int prevSize2 = 2*windowSize + nFrames;
     
-    BL_FLOAT *inDataBuf = inData.Get();
+    /*BL_FLOAT * */inDataBuf = inData.Get();
     for (int i = 0; i < windowSize; i++)
     {
         BL_FLOAT val = data[nFrames - i - 1];
