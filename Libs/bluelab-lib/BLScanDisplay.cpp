@@ -93,7 +93,7 @@ BLScanDisplay::SetGraph(GraphControl12 *graph)
         // Sweep bar
         mSweepBarCurve->SetColor(255, 255, 255);
         mSweepBarCurve->SetAlpha(1.0);
-        mSweepBarCurve->SetLineWidth(1.0);
+        mSweepBarCurve->SetLineWidth(1.5);
         mSweepBarCurve->SetSingleValueV(true);
         
         // Add curved

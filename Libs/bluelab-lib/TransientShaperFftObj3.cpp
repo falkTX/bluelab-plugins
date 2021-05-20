@@ -51,8 +51,9 @@
 //
 // With that, we can again separate white noise and sine
 //
-
-#define BYPASS_IF_NOCHANGE 1
+// NOTE: now et to 0, because we need to compute the transientness in any case,
+// to display it as curve since BLScanDisplay
+#define BYPASS_IF_NOCHANGE 0 //1
 
 // Validated!
 #define DENOISER_OPTIM5 1
