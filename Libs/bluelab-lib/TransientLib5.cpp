@@ -1271,13 +1271,32 @@ TransientLib5::ComputeTransientness6(const WDL_TypedBuf<BL_FLOAT> &magns,
     
     WDL_TypedBuf<int> &sampleIds = mTmpBuf25;
     BLUtilsFft::FftIdsToSamplesIds(phases, &sampleIds);
+
+    //
+    int sampleIdsSize = sampleIds.GetSize();
+    int *sampleIdsBuf = sampleIds.Get();
+    BL_FLOAT *magnsBuf = magns.Get();
     
-    for (int i = 0; i < sampleIds.GetSize(); i++)
+    BL_FLOAT DB_THRESHOLD_TR6_INV = 1.0/DB_THRESHOLD_TR6;
+    BL_FLOAT TRANS_COEFF_FREQ_TR6_GLOBAL =
+        TRANS_COEFF_FREQ_TR6*TRANS_COEFF_GLOBAL_TR6;
+
+    int prevPhasesSize = prevPhases->GetSize();
+    BL_FLOAT *prevPhasesBuf = prevPhases->Get();
+    BL_FLOAT *phasesBuf = phases.Get();
+    
+    BL_FLOAT TRANS_COEFF_AMP_TR6_GLOBAL =
+        TRANS_COEFF_AMP_TR6*TRANS_COEFF_GLOBAL_TR6;
+
+    BL_FLOAT *transientnessSBuf = transientnessS.Get();
+    BL_FLOAT *transientnessPBuf = transientnessP.Get();
+    
+    for (int i = 0; i < sampleIdsSize; i++)
     {
-        int sampleId = sampleIds.Get()[i];
+        int sampleId = sampleIdsBuf[i];
         
         // Do as Werner Van Belle
-        BL_FLOAT magn = magns.Get()[i];
+        BL_FLOAT magn = magnsBuf[i];
         
         // Ignore small magns
         BL_FLOAT magnDB = BLUtils::AmpToDB(magn,
@@ -1289,41 +1308,46 @@ TransientLib5::ComputeTransientness6(const WDL_TypedBuf<BL_FLOAT> &magns,
         BL_FLOAT freqWeight = 0.0;
         
         // Do as Werner Van Belle
-        BL_FLOAT wf = -(magnDB - DB_THRESHOLD_TR6)/DB_THRESHOLD_TR6;
+        //BL_FLOAT wf = -(magnDB - DB_THRESHOLD_TR6)/DB_THRESHOLD_TR6;
+        BL_FLOAT wf = -(magnDB - DB_THRESHOLD_TR6)*DB_THRESHOLD_TR6_INV;
         
-        wf *= TRANS_COEFF_FREQ_TR6*TRANS_COEFF_GLOBAL_TR6;
+        wf *= TRANS_COEFF_FREQ_TR6_GLOBAL;
         
         freqWeight = wf;
         
         BL_FLOAT ampWeight = 0.0;
-        if ((prevPhases != NULL) && (prevPhases->GetSize() == sampleIds.GetSize()))
+        
+        //if ((prevPhases != NULL) && (prevPhases->GetSize() == sampleIds.GetSize()))
+        if ((prevPhases != NULL) && (prevPhasesSize == sampleIdsSize))
         {
             // Use additional method: compute derivative of phase over time
             // This is a very good indicator of transientness !
             
-            BL_FLOAT phase0 = prevPhases->Get()[i];
-            BL_FLOAT phase1 = phases.Get()[i];
+            BL_FLOAT phase0 = prevPhasesBuf[i];
+            BL_FLOAT phase1 = phasesBuf[i];
             
             // Ensure that phase1 is greater than phase0
             while(phase1 < phase0)
-                phase1 += 2.0*M_PI;
+                phase1 += TWO_PI;
             
             BL_FLOAT delta = phase1 - phase0;
             
-            delta = fmod(delta, 2.0*M_PI);
+            delta = fmod(delta, TWO_PI);
             
             if (delta > M_PI)
-                delta = 2.0*M_PI - delta;
+                //delta = 2.0*M_PI - delta;
+                delta = TWO_PI - delta;
             
-            BL_FLOAT w = delta/M_PI;
+            //BL_FLOAT w = delta/M_PI;
+            BL_FLOAT w = delta*M_PI_INV;
             
-            w *= TRANS_COEFF_AMP_TR6*TRANS_COEFF_GLOBAL_TR6;
+            w *= TRANS_COEFF_AMP_TR6_GLOBAL;
             
             ampWeight = w;
         }
         
-        transientnessS.Get()[sampleId] += freqWeight;
-        transientnessP.Get()[sampleId] += ampWeight;
+        transientnessSBuf[sampleId] += freqWeight;
+        transientnessPBuf[sampleId] += ampWeight;
     }
     
     // At the end, the transientness is reversed
@@ -1359,11 +1383,16 @@ TransientLib5::ComputeTransientness6(const WDL_TypedBuf<BL_FLOAT> &magns,
     SmoothTransients4(&transientnessP);
 #endif
 
+    int transientnessSize = transientness->GetSize();
+    BL_FLOAT *transientnessBuf = transientness->Get();
     
-    for (int i = 0; i < transientness->GetSize(); i++)
+    transientnessSBuf = transientnessS.Get();
+    transientnessPBuf = transientnessP.Get();
+    
+    for (int i = 0; i < transientnessSize; i++)
     {
-        BL_FLOAT ts = transientnessS.Get()[i];
-        BL_FLOAT tp = transientnessP.Get()[i];
+        BL_FLOAT ts = transientnessSBuf[i];
+        BL_FLOAT tp = transientnessPBuf[i];
         
         BL_FLOAT a = tp - ts;
         if (a < 0.0)
@@ -1383,7 +1412,7 @@ TransientLib5::ComputeTransientness6(const WDL_TypedBuf<BL_FLOAT> &magns,
             b = 0.0;
 #endif
         
-        transientness->Get()[i] = freqAmpRatio*a + (1.0 - freqAmpRatio)*b;
+        transientnessBuf[i] = freqAmpRatio*a + (1.0 - freqAmpRatio)*b;
     }
     
     BLUtils::ClipMin(transientness, (BL_FLOAT)0.0);
