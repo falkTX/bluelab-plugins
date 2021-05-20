@@ -296,7 +296,7 @@ BLScanDisplay::SetCurveStyle(int curveNum,
             c->SetLineWidth(lineWidth);
         else
             // Do not draw line curve over fill
-            c->SetLineWidth(-1.0);
+            c->SetLineWidth(-lineWidth);
         
         c->SetFillAlpha(1.0);
         c->SetFill(fillFlag, 0.5 - FILL_ORIGIN_Y_OFFSET);

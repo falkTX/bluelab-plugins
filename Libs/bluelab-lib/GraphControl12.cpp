@@ -913,9 +913,18 @@ GraphControl12::DisplayCurveDescriptions()
         // want to display the description
         BL_GUI_FLOAT prevAlpha = curve->mAlpha;
         curve->mAlpha = 1.0;
+
+        // If line width < 0, it can be the case when we want to fill
+        // a curve, but not display line over (just the fill)
+        // But for the description, we need the right line width
+        BL_FLOAT prevLineWidth = curve->mLineWidth;
+        if (curve->mLineWidth < 0)
+            curve->mLineWidth = -curve->mLineWidth;
         
         SetCurveDrawStyle(curve);
-        
+
+        curve->mLineWidth = prevLineWidth;
+            
         curve->mAlpha = prevAlpha;
         
         y += TEXT_Y_OFFSET;
@@ -1645,7 +1654,8 @@ GraphControl12::DrawFillCurve(GraphCurve5 *curve)
         }
     }
     
-    nvgFillColor(mVg, nvgRGBA(sFillColor[0], sFillColor[1], sFillColor[2], sFillColor[3]));
+    nvgFillColor(mVg, nvgRGBA(sFillColor[0], sFillColor[1],
+                              sFillColor[2], sFillColor[3]));
 	nvgFill(mVg);
     
     nvgStrokeColor(mVg, nvgRGBA(sStrokeColor[0], sStrokeColor[1],
@@ -1769,7 +1779,8 @@ GraphControl12::DrawFillCurve(GraphCurve5 *curve)
         
         nvgClosePath(mVg);
         
-        nvgFillColor(mVg, nvgRGBA(sFillColor[0], sFillColor[1], sFillColor[2], sFillColor[3]));
+        nvgFillColor(mVg, nvgRGBA(sFillColor[0], sFillColor[1],
+                                  sFillColor[2], sFillColor[3]));
         nvgFill(mVg);
         
         // Revert offset
@@ -1852,7 +1863,8 @@ GraphControl12::DrawFillCurve(GraphCurve5 *curve)
             
             nvgClosePath(mVg);
             
-            nvgFillColor(mVg, nvgRGBA(sFillColorUp[0], sFillColorUp[1], sFillColorUp[2], sFillColorUp[3]));
+            nvgFillColor(mVg, nvgRGBA(sFillColorUp[0], sFillColorUp[1],
+                                      sFillColorUp[2], sFillColorUp[3]));
             nvgFill(mVg);
             
             prevX = x;
