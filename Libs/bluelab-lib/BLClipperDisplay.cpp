@@ -578,7 +578,8 @@ BLClipperDisplay::GetNumSamples()
 // Find min and max (equaivalent to decimation to get a single value)
 void
 BLClipperDisplay::DecimateSamplesOneLine(const WDL_TypedBuf<BL_GUI_FLOAT> &bufSamples,
-                                           BL_GUI_FLOAT *decimLineMin, BL_GUI_FLOAT *decimLineMax)
+                                         BL_GUI_FLOAT *decimLineMin,
+                                         BL_GUI_FLOAT *decimLineMax)
 {
     BL_GUI_FLOAT minVal = BLUtils::ComputeMin(bufSamples);
     BL_GUI_FLOAT maxVal = BLUtils::ComputeMax(bufSamples);
@@ -600,14 +601,14 @@ BLClipperDisplay::UpdateSweepBar()
 void
 BLClipperDisplay::CreateCurves()
 {
-  mAxisCurve = new GraphCurve5(GRAPH_NUM_POINTS);
-  mWaveformUpCurve = new GraphCurve5(GRAPH_NUM_POINTS);
-  mWaveformDownCurve = new GraphCurve5(GRAPH_NUM_POINTS);
-  mWaveformClipUpCurve = new GraphCurve5(GRAPH_NUM_POINTS);
-  mWaveformClipDownCurve = new GraphCurve5(GRAPH_NUM_POINTS);
-  mClipLoCurve = new GraphCurve5(GRAPH_NUM_POINTS);
-  mClipHiCurve = new GraphCurve5(GRAPH_NUM_POINTS);
-  mSweepBarCurve = new GraphCurve5(GRAPH_NUM_POINTS);
+    mAxisCurve = new GraphCurve5(GRAPH_NUM_POINTS);
+    mWaveformUpCurve = new GraphCurve5(GRAPH_NUM_POINTS);
+    mWaveformDownCurve = new GraphCurve5(GRAPH_NUM_POINTS);
+    mWaveformClipUpCurve = new GraphCurve5(GRAPH_NUM_POINTS);
+    mWaveformClipDownCurve = new GraphCurve5(GRAPH_NUM_POINTS);
+    mClipLoCurve = new GraphCurve5(GRAPH_NUM_POINTS);
+    mClipHiCurve = new GraphCurve5(GRAPH_NUM_POINTS);
+    mSweepBarCurve = new GraphCurve5(GRAPH_NUM_POINTS);
 }
 
 #endif // IGRAPHICS_NANOVG

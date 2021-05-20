@@ -16,6 +16,7 @@
 
 // We display 2 seconds of samples
 #define NUM_SECONDS 4.0 //2.0
+//#define NUM_SECONDS 12.0 //16.0 //8.0
 #define GRAPH_NUM_POINTS 256
 
 // Curves
@@ -32,7 +33,7 @@
 #define GAMMA_ZOOM 0 //1
 
 
-BLScanDisplay::BLScanDisplay(BL_GUI_FLOAT sampleRate)
+BLScanDisplay::BLScanDisplay(int numCurves, BL_GUI_FLOAT sampleRate)
 {
     mSampleRate = sampleRate;
     
@@ -40,20 +41,15 @@ BLScanDisplay::BLScanDisplay(BL_GUI_FLOAT sampleRate)
     
 #if SWEEP_UPDATE
     mSweepPos = 0;
-    mSweepPosClip = 0;
 #endif
     
     mGraph = NULL;
 
     // Curves
     mAxisCurve = NULL;
-    mWaveformUpCurve = NULL;
-    mWaveformDownCurve = NULL;
-    mWaveformClipUpCurve = NULL;
-    mWaveformClipDownCurve = NULL;
     mSweepBarCurve = NULL;
 
-    CreateCurves();
+    CreateCurves(numCurves);
     
     Reset(sampleRate);
 
@@ -62,17 +58,12 @@ BLScanDisplay::BLScanDisplay(BL_GUI_FLOAT sampleRate)
 
 BLScanDisplay::~BLScanDisplay()
 {
-  delete mAxisCurve;
-  delete mWaveformUpCurve;
-  delete mWaveformDownCurve;
-  delete mWaveformClipUpCurve;
-  delete mWaveformClipDownCurve;
-  delete mSweepBarCurve;
+    DeleteCurves();  
 }
 
 void
 BLScanDisplay::SetGraph(GraphControl12 *graph)
-{
+{        
     mGraph = graph;
     
     if (mGraph != NULL)
@@ -98,49 +89,6 @@ BLScanDisplay::SetGraph(GraphControl12 *graph)
         mAxisCurve->SetViewSize(width, height);
         
         mAxisCurve->SetSingleValueH((BL_GUI_FLOAT)0.0);
-        
-        // Waveform curves
-        //
-        
-#define FILL_ORIGIN_Y_OFFSET 0.001
-        
-        // Waveform up        
-#if BLUE_COLOR_SCHEME 
-        // Orange
-        mWaveformUpCurve->SetColor(234, 101, 0);
-        mWaveformDownCurve->SetColor(234, 101, 0);
-        
-        mWaveformClipUpCurve->SetColor(113, 130, 182);
-        mWaveformClipDownCurve->SetColor(113, 130, 182);
-#endif
-        
-        mWaveformUpCurve->SetAlpha(1.0);
-        mWaveformUpCurve->SetLineWidth(-1.0); // Disable draw line over fill
-        mWaveformUpCurve->SetFill(true, 0.5 - FILL_ORIGIN_Y_OFFSET);
-        mWaveformUpCurve->SetFillAlpha(1.0);
-        mWaveformUpCurve->SetYScale(Scale::LINEAR, -2.0, 2.0);
-        
-        // Waveform down
-        
-        mWaveformDownCurve->SetAlpha(1.0);
-        mWaveformDownCurve->SetLineWidth(-1.0);
-        mWaveformDownCurve->SetFillAlpha(1.0);
-        mWaveformDownCurve->SetFill(true, 0.5 + FILL_ORIGIN_Y_OFFSET);
-        mWaveformDownCurve->SetYScale(Scale::LINEAR, -2.0, 2.0);
-        
-        // Waveform clip up
-        mWaveformClipUpCurve->SetAlpha(1.0);
-        mWaveformClipUpCurve->SetLineWidth(-1.0);
-        mWaveformClipUpCurve->SetFillAlpha(1.0);
-        mWaveformClipUpCurve->SetFill(true, 0.5 - FILL_ORIGIN_Y_OFFSET);
-        mWaveformClipUpCurve->SetYScale(Scale::LINEAR, -2.0, 2.0);
-        
-        // Waveform clip down
-        mWaveformClipDownCurve->SetAlpha(1.0);
-        mWaveformClipDownCurve->SetLineWidth(-1.0);
-        mWaveformClipDownCurve->SetFillAlpha(1.0);
-        mWaveformClipDownCurve->SetFill(true, 0.5 + FILL_ORIGIN_Y_OFFSET);
-        mWaveformClipDownCurve->SetYScale(Scale::LINEAR, -2.0, 2.0);
                         
         // Sweep bar
         mSweepBarCurve->SetColor(255, 255, 255);
@@ -150,10 +98,16 @@ BLScanDisplay::SetGraph(GraphControl12 *graph)
         
         // Add curved
         mGraph->AddCurve(mAxisCurve);
-        mGraph->AddCurve(mWaveformUpCurve);
-        mGraph->AddCurve(mWaveformDownCurve);
-        mGraph->AddCurve(mWaveformClipUpCurve);
-        mGraph->AddCurve(mWaveformClipDownCurve);
+
+        for (int i = 0; i < mCurves.size(); i++)
+        {
+            Curve &c = mCurves[i];
+
+            mGraph->AddCurve(c.mCurves[0]);
+            if (c.mIsSampleCurve)
+                mGraph->AddCurve(c.mCurves[1]);
+        }
+
         mGraph->AddCurve(mSweepBarCurve);
     }
 }
@@ -165,136 +119,99 @@ BLScanDisplay::Reset(BL_GUI_FLOAT sampleRate)
     
     WDL_TypedBuf<BL_GUI_FLOAT> zeros;
     BLUtils::ResizeFillZeros(&zeros, GRAPH_NUM_POINTS);
+
+    for (int i = 0; i < mCurves.size(); i++)
+    {
+        Curve &curve = mCurves[i];
+        
+        // To bufferize
+        curve.mCurrentSamples.Resize(0);
     
-    // To bufferize
-    mCurrentSamples.Resize(0);
-    mCurrentClippedSamples.Resize(0);
-    
-    // To display
-    mCurrentDecimValuesUp = zeros;
-    mCurrentDecimValuesDown = zeros;
-    
-    mCurrentDecimValuesUpClip = zeros;
-    mCurrentDecimValuesDownClip = zeros;
-    //
+        // To display
+        curve.mCurrentDecimValues[0] = zeros;
+        if (curve.mIsSampleCurve)
+            curve.mCurrentDecimValues[1] = zeros;
+
+        if (mGraph != NULL)
+        {        
+            curve.mCurves[0]->SetValues5(curve.mCurrentDecimValues[0]);
+            if (curve.mIsSampleCurve)
+                curve.mCurves[1]->SetValues5(curve.mCurrentDecimValues[1]);
+        }
+    }
     
 #if SWEEP_UPDATE
     mSweepPos = 0;
-    mSweepPosClip = 0;
 #endif
-
-    if (mGraph != NULL)
-    {        
-        mWaveformUpCurve->SetValues5(mCurrentDecimValuesUp);
-        mWaveformDownCurve->SetValues5(mCurrentDecimValuesDown);
-        
-        mWaveformClipUpCurve->SetValues5(mCurrentDecimValuesUpClip);
-        mWaveformClipDownCurve->SetValues5(mCurrentDecimValuesDownClip);
-    }
 }
 
 void
-BLScanDisplay::AddSamples(const WDL_TypedBuf<BL_FLOAT> &samplesIn)
+BLScanDisplay::AddSamples(int curveNum, const WDL_TypedBuf<BL_FLOAT> &samplesIn)
 {
     if (!mIsEnabled)
         return;
+
+    if (curveNum >= mCurves.size())
+        return;
+
+    for (int i = 0; i < mCurves.size(); i++)
+    {
+        Curve &curve = mCurves[i];
+        
+        WDL_TypedBuf<BL_GUI_FLOAT> samples;
+        BLUtils::ConvertToGUIFloatType(&samples, samplesIn);
     
-    WDL_TypedBuf<BL_GUI_FLOAT> samples;
-    BLUtils::ConvertToGUIFloatType(&samples, samplesIn);
-    
-    mCurrentSamples.Add(samples.Get(), samples.GetSize());
+        curve.mCurrentSamples.Add(samples.Get(), samples.GetSize());
+    }
     
     int numSamples = GetNumSamples();
     long oneLineSizeSamples = numSamples/GRAPH_NUM_POINTS;
-    
-    while(mCurrentSamples.GetSize() >= oneLineSizeSamples)
-    {
-        // Buffer management
-        WDL_TypedBuf<BL_GUI_FLOAT> bufSamples;
-        bufSamples.Add(mCurrentSamples.Get(), oneLineSizeSamples);
-        BLUtils::ConsumeLeft(&mCurrentSamples, oneLineSizeSamples);
-    
-        // Find min and max (equaivalent to decimation to get a single value)
-        BL_GUI_FLOAT decimLineMin;
-        BL_GUI_FLOAT decimLineMax;
-        DecimateSamplesOneLine(bufSamples, &decimLineMin, &decimLineMax);
 
-        // Cut
-        if (decimLineMin > 0.0)
-            decimLineMin = 0.0;
+    while(mCurves[0].mCurrentSamples.GetSize() >= oneLineSizeSamples)
+    {
+        for (int i = 0; i < mCurves.size(); i++)
+        {
+            Curve &curve = mCurves[i];
         
-        if (decimLineMax < 0.0)
-            decimLineMax = 0.0;
+            // Buffer management
+            WDL_TypedBuf<BL_GUI_FLOAT> bufSamples;
+            bufSamples.Add(curve.mCurrentSamples.Get(), oneLineSizeSamples);
+            BLUtils::ConsumeLeft(&curve.mCurrentSamples, oneLineSizeSamples);
     
-        // For zoom
-#if !SWEEP_UPDATE
-        mCurrentDecimValuesUp.Add(&decimLineMax, 1);
-        BLUtils::ConsumeLeft(&mCurrentDecimValuesUp, 1);
+            // Find min and max (equaivalent to decimation to get a single value)
+            BL_GUI_FLOAT decimLineMin;
+            BL_GUI_FLOAT decimLineMax;
+            DecimateSamplesOneLine(bufSamples, &decimLineMin, &decimLineMax);
+            
+            // Cut
+            if (decimLineMin > 0.0)
+                decimLineMin = 0.0;
         
-        mCurrentDecimValuesDown.Add(&decimLineMin, 1);
-        BLUtils::ConsumeLeft(&mCurrentDecimValuesDown, 1);
+            if (decimLineMax < 0.0)
+                decimLineMax = 0.0;
+    
+            // For zoom
+#if !SWEEP_UPDATE
+            curve.mCurrentDecimValues[0].Add(&decimLineMax, 1);
+            BLUtils::ConsumeLeft(&curve.mCurrentDecimValues[0], 1);
+
+            if (curve.mIsSampleCurve)
+            {
+                curve.mCurrentDecimValues[1].Add(&decimLineMin, 1);
+                BLUtils::ConsumeLeft(&curve.mCurrentDecimValues[1], 1);
+            }
 #else
-        mCurrentDecimValuesUp.Get()[mSweepPos] = decimLineMax;;
-        mCurrentDecimValuesDown.Get()[mSweepPos] = decimLineMin;
+            curve.mCurrentDecimValues[0].Get()[mSweepPos] = decimLineMax;;
+            if (curve.mIsSampleCurve)
+                curve.mCurrentDecimValues[1].Get()[mSweepPos] = decimLineMin;
+        }
         
         mSweepPos = (mSweepPos + 1) % GRAPH_NUM_POINTS;
-#endif
-        
+
         AddSamplesZoom();
         
         UpdateSweepBar();
-    }
-}
-
-void
-BLScanDisplay::AddClippedSamples(const WDL_TypedBuf<BL_FLOAT> &samplesIn)
-{
-    if (!mIsEnabled)
-        return;
-    
-    WDL_TypedBuf<BL_GUI_FLOAT> samples;
-    BLUtils::ConvertToGUIFloatType(&samples, samplesIn);
-    
-    mCurrentClippedSamples.Add(samples.Get(), samples.GetSize());
-    
-    int numSamples = GetNumSamples();
-    long oneLineSizeSamples = numSamples/GRAPH_NUM_POINTS;
-    
-    while(mCurrentClippedSamples.GetSize() >= oneLineSizeSamples)
-    {
-        // Buffer management
-        WDL_TypedBuf<BL_GUI_FLOAT> bufSamples;
-        bufSamples.Add(mCurrentClippedSamples.Get(), oneLineSizeSamples);
-        BLUtils::ConsumeLeft(&mCurrentClippedSamples, oneLineSizeSamples);
-        
-        // Find min and max (equaivalent to decimation to get a single value)
-        BL_GUI_FLOAT decimLineMin;
-        BL_GUI_FLOAT decimLineMax;
-        DecimateSamplesOneLine(bufSamples, &decimLineMin, &decimLineMax);
-        
-        // Cut
-        if (decimLineMin > 0.0)
-            decimLineMin = 0.0;
-        
-        if (decimLineMax < 0.0)
-            decimLineMax = 0.0;
-        
-        // For zoom
-#if !SWEEP_UPDATE
-        mCurrentDecimValuesUpClip.Add(&decimLineMax, 1);
-        BLUtils::ConsumeLeft(&mCurrentDecimValuesUpClip, 1);
-        
-        mCurrentDecimValuesDownClip.Add(&decimLineMin, 1);
-        BLUtils::ConsumeLeft(&mCurrentDecimValuesDownClip, 1);
-#else
-        mCurrentDecimValuesUpClip.Get()[mSweepPosClip] = decimLineMax;
-        mCurrentDecimValuesDownClip.Get()[mSweepPosClip] = decimLineMin;
-        
-        mSweepPosClip = (mSweepPosClip + 1) % GRAPH_NUM_POINTS;
 #endif
-        
-        //
-        AddSamplesZoomClip();
     }
 }
 
@@ -330,9 +247,8 @@ BLScanDisplay::SetZoom(BL_GUI_FLOAT zoom)
     // Smaller zoom value if we use param shape
     mZoom = 1.0 + (mZoom - 1.0)*0.5;
 #endif
-    
+
     AddSamplesZoom();
-    AddSamplesZoomClip();
     
     if (mGraph != NULL)
         mGraph->SetDataChanged();
@@ -352,45 +268,70 @@ BLScanDisplay::ResetSweepBar()
 }
 
 void
+BLScanDisplay::SetCurveStyle(int curveNum,
+                             const char *description, int descrColor[4],
+                             bool isSampleCurve, BL_GUI_FLOAT lineWidth,
+                             bool fillFlag, int color[4])
+{
+#define FILL_ORIGIN_Y_OFFSET 0.001
+    
+    if (curveNum >= mCurves.size())
+        return;
+
+    Curve &curve = mCurves[curveNum];
+    curve.mIsSampleCurve = isSampleCurve;
+    
+    int size = 1;
+    if (isSampleCurve)
+        size = 2;
+    for (int i = 0; i < size; i++)
+    {
+        GraphCurve5 *c = curve.mCurves[i];
+
+        if ((i == 0) && (description != NULL))
+            c->SetDescription(description, descrColor);
+        
+        c->SetAlpha(1.0);
+        if (!fillFlag)
+            c->SetLineWidth(lineWidth);
+        else
+            // Do not draw line curve over fill
+            c->SetLineWidth(-1.0);
+        
+        c->SetFillAlpha(1.0);
+        c->SetFill(fillFlag, 0.5 - FILL_ORIGIN_Y_OFFSET);
+        c->SetYScale(Scale::LINEAR, -2.0, 2.0);
+
+        c->SetColor(color[0], color[1], color[2]);
+    }
+}
+
+void
 BLScanDisplay::AddSamplesZoom()
 {
     // Graph
     if (mGraph != NULL)
     {
-        WDL_TypedBuf<BL_GUI_FLOAT> decimValuesUp = mCurrentDecimValuesUp;
-        WDL_TypedBuf<BL_GUI_FLOAT> decimValuesDown = mCurrentDecimValuesDown;
+        for (int i = 0; i < mCurves.size(); i++)
+        {    
+            Curve &curve = mCurves[i];
         
+            WDL_TypedBuf<BL_GUI_FLOAT> decimValues[2];
+            decimValues[0] = curve.mCurrentDecimValues[0];
+            decimValues[1] = curve.mCurrentDecimValues[1];
+            
 #if !GAMMA_ZOOM
-        BLUtils::MultValues(&decimValuesUp, mZoom);
-        BLUtils::MultValues(&decimValuesDown, mZoom);
+            BLUtils::MultValues(&decimValues[0], mZoom);
+            BLUtils::MultValues(&decimValues[1], mZoom);
 #else
-        BLUtils::ApplyParamShapeWaveform(&decimValuesUp, mZoom);
-        BLUtils::ApplyParamShapeWaveform(&decimValuesDown, mZoom);
+            BLUtils::ApplyParamShapeWaveform(&decimValues[0], mZoom);
+            BLUtils::ApplyParamShapeWaveform(&decimValues[1], mZoom);
 #endif
-        
-        mWaveformUpCurve->SetValues5(decimValuesUp);
-        mWaveformDownCurve->SetValues5(decimValuesDown);
-    }
-}
-
-void
-BLScanDisplay::AddSamplesZoomClip()
-{
-    if (mGraph != NULL)
-    {
-        WDL_TypedBuf<BL_GUI_FLOAT> decimValuesUp = mCurrentDecimValuesUpClip;
-        WDL_TypedBuf<BL_GUI_FLOAT> decimValuesDown = mCurrentDecimValuesDownClip;
-        
-#if !GAMMA_ZOOM
-        BLUtils::MultValues(&decimValuesUp, mZoom);
-        BLUtils::MultValues(&decimValuesDown, mZoom);
-#else
-        BLUtils::ApplyParamShapeWaveform(&decimValuesUp, mZoom);
-        BLUtils::ApplyParamShapeWaveform(&decimValuesDown, mZoom);
-#endif
-        
-        mWaveformClipUpCurve->SetValues5(decimValuesUp);
-        mWaveformClipDownCurve->SetValues5(decimValuesDown);
+            
+            curve.mCurves[0]->SetValues5(decimValues[0]);
+            if (curve.mIsSampleCurve)
+                curve.mCurves[1]->SetValues5(decimValues[1]);
+        }
     }
 }
 
@@ -402,7 +343,7 @@ BLScanDisplay::GetNumSamples()
     return numSamples;
 }
 
-// Find min and max (equaivalent to decimation to get a single value)
+// Find min and max (equivalent to decimation to get a single value)
 void
 BLScanDisplay::DecimateSamplesOneLine(const WDL_TypedBuf<BL_GUI_FLOAT> &bufSamples,
                                       BL_GUI_FLOAT *decimLineMin,
@@ -429,14 +370,45 @@ BLScanDisplay::UpdateSweepBar()
 }
 
 void
-BLScanDisplay::CreateCurves()
+BLScanDisplay::CreateCurves(int numCurves)
 {
-  mAxisCurve = new GraphCurve5(GRAPH_NUM_POINTS);
-  mWaveformUpCurve = new GraphCurve5(GRAPH_NUM_POINTS);
-  mWaveformDownCurve = new GraphCurve5(GRAPH_NUM_POINTS);
-  mWaveformClipUpCurve = new GraphCurve5(GRAPH_NUM_POINTS);
-  mWaveformClipDownCurve = new GraphCurve5(GRAPH_NUM_POINTS);
-  mSweepBarCurve = new GraphCurve5(GRAPH_NUM_POINTS);
+    mAxisCurve = new GraphCurve5(GRAPH_NUM_POINTS);
+    mSweepBarCurve = new GraphCurve5(GRAPH_NUM_POINTS);
+    
+    mCurves.resize(numCurves);
+    for (int i = 0; i < mCurves.size(); i++)
+    {
+        Curve &curve = mCurves[i];
+        
+        curve.mCurves[0] = new GraphCurve5(GRAPH_NUM_POINTS);
+        curve.mCurves[1] = new GraphCurve5(GRAPH_NUM_POINTS);
+    }
+}
+
+void
+BLScanDisplay::DeleteCurves()
+{
+    delete mAxisCurve;
+    delete mSweepBarCurve;
+  
+    for (int i = 0; i < mCurves.size(); i++)
+    {
+        Curve &curve = mCurves[i];
+        
+        if (curve.mCurves[0] != NULL)
+        {
+            delete curve.mCurves[0];
+            curve.mCurves[0] = NULL;
+        }
+        
+        if (curve.mCurves[1] != NULL)
+        {
+            delete curve.mCurves[1];
+            curve.mCurves[1] = NULL;
+        }
+    }
+
+    mCurves.resize(0);
 }
 
 #endif // IGRAPHICS_NANOVG

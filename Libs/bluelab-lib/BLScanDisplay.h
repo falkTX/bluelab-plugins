@@ -27,7 +27,7 @@ class GraphCurve5;
 class BLScanDisplay
 {
 public:
-    BLScanDisplay(BL_GUI_FLOAT sampleRate);
+    BLScanDisplay(int numCurves, BL_GUI_FLOAT sampleRate);
     
     virtual ~BLScanDisplay();
     
@@ -35,8 +35,7 @@ public:
     
     void Reset(BL_GUI_FLOAT sampleRate);
     
-    void AddSamples(const WDL_TypedBuf<BL_FLOAT> &samples);
-    void AddClippedSamples(const WDL_TypedBuf<BL_FLOAT> &samples);
+    void AddSamples(int curveNum, const WDL_TypedBuf<BL_FLOAT> &samples);
     
     void SetEnabled(bool flag);
     
@@ -45,10 +44,14 @@ public:
     void SetZoom(BL_GUI_FLOAT zoom);
 
     void ResetSweepBar();
-    
+
+    void SetCurveStyle(int curveNum,
+                       const char *description, int descrColor[4],
+                       bool isSampleCurve, BL_GUI_FLOAT lineWidth,
+                       bool fillFlag, int color[4]);
+                       
 protected:
     void AddSamplesZoom();
-    void AddSamplesZoomClip();
     
     long GetNumSamples();
     
@@ -58,8 +61,9 @@ protected:
 
     void UpdateSweepBar();
 
-    void CreateCurves();
-
+    void CreateCurves(int numCurves);
+    void DeleteCurves();
+    
     //
     GraphControl12 *mGraph;
     
@@ -67,28 +71,49 @@ protected:
 
     bool mIsEnabled;
     
-    WDL_TypedBuf<BL_GUI_FLOAT> mCurrentSamples;
-    WDL_TypedBuf<BL_GUI_FLOAT> mCurrentClippedSamples;
-    
     // Zoom
     BL_GUI_FLOAT mZoom;
     
-    WDL_TypedBuf<BL_GUI_FLOAT> mCurrentDecimValuesUp;
-    WDL_TypedBuf<BL_GUI_FLOAT> mCurrentDecimValuesDown;
-    
-    WDL_TypedBuf<BL_GUI_FLOAT> mCurrentDecimValuesUpClip;
-    WDL_TypedBuf<BL_GUI_FLOAT> mCurrentDecimValuesDownClip;
-    
     long mSweepPos;
-    long mSweepPosClip;
 
     // Curves
     GraphCurve5 *mAxisCurve;
-    GraphCurve5 *mWaveformUpCurve;
-    GraphCurve5 *mWaveformDownCurve;
-    GraphCurve5 *mWaveformClipUpCurve;
-    GraphCurve5 *mWaveformClipDownCurve;
     GraphCurve5 *mSweepBarCurve;
+
+    //
+    class Curve
+    {
+    public:
+        Curve()
+        {
+            mCurves[0] = NULL;
+            mCurves[1] = NULL;
+
+            mIsSampleCurve = false;
+        }
+
+        virtual ~Curve()
+        {
+            if (mCurves[0] != NULL)
+                delete mCurves[0];
+
+            if (mCurves[1] != NULL)
+                delete mCurves[1];
+        }
+
+    public:
+        bool mIsSampleCurve;
+        
+        // Up and down curves, for samples
+        // 0 -> up | 1 -> down
+        GraphCurve5 *mCurves[2];
+
+        WDL_TypedBuf<BL_GUI_FLOAT> mCurrentSamples;
+
+        WDL_TypedBuf<BL_GUI_FLOAT> mCurrentDecimValues[2];
+    };
+
+    vector<Curve> mCurves;
 };
 
 #endif

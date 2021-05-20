@@ -12,8 +12,8 @@
 #include "FifoDecimator2.h"
 
 FifoDecimator2::FifoDecimator2(long maxSize,
-                             BL_FLOAT decimFactor,
-                             bool isSamples)
+                               BL_FLOAT decimFactor,
+                               bool isSamples)
 {
     mMaxSize = maxSize;
     mDecimFactor = decimFactor;
