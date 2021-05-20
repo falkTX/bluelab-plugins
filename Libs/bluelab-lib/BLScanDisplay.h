@@ -35,7 +35,8 @@ public:
     
     void Reset(BL_GUI_FLOAT sampleRate);
     
-    void AddSamples(int curveNum, const WDL_TypedBuf<BL_FLOAT> &samples);
+    void AddSamples(int curveNum, const WDL_TypedBuf<BL_FLOAT> &samples,
+                    bool advanceSweep);
     
     void SetEnabled(bool flag);
     
@@ -51,7 +52,7 @@ public:
                        bool fillFlag, int color[4]);
                        
 protected:
-    void AddSamplesZoom();
+    void AddSamplesZoom(int curveNum);
     
     long GetNumSamples();
     
