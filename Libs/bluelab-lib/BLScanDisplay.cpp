@@ -292,11 +292,19 @@ BLScanDisplay::SetCurveStyle(int curveNum,
             c->SetDescription(description, descrColor);
         
         c->SetAlpha(1.0);
-        if (!fillFlag)
-            c->SetLineWidth(lineWidth);
-        else
-            // Do not draw line curve over fill
-            c->SetLineWidth(-lineWidth);
+
+        // NOTE: set positive line width anyway
+        // So we will fill, and also draw a stroke over
+        // the borders of the filled  curve
+        //
+        // => This is more costly, but fixes a fill bug
+        // at the x extremities of the view
+        
+        //if (!fillFlag)
+        c->SetLineWidth(lineWidth);
+        //else
+        // Do not draw line curve over fill
+        // c->SetLineWidth(-lineWidth);
         
         c->SetFillAlpha(1.0);
         c->SetFill(fillFlag, 0.5 - FILL_ORIGIN_Y_OFFSET);
