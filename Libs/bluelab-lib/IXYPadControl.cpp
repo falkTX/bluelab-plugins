@@ -18,6 +18,9 @@ IXYPadControl::IXYPadControl(const IRECT& bounds,
 
     mOffsetX = 0.0;
     mOffsetY = 0.0;
+
+    mPrevX = 0.0;
+    mPrevY = 0.0;
 }
 
 IXYPadControl::~IXYPadControl() {}
@@ -52,6 +55,9 @@ IXYPadControl::OnMouseDown(float x, float y, const IMouseMod& mod)
         
     mMouseDown = true;
 
+    mPrevX = x;
+    mPrevY = y;
+    
     // Check if we clicked exactly on the handle
     // In this case, do not make the handle jump
     /*bool mouseOnHandle = */MouseOnHandle(x, y, &mOffsetX, &mOffsetY);
@@ -75,6 +81,26 @@ void
 IXYPadControl::OnMouseDrag(float x, float y, float dX, float dY,
                            const IMouseMod& mod)
 {
+    // For sensitivity
+    if (mod.S) // Shift pressed => move slower
+    {
+#define PRECISION 0.25
+    
+        float newX = mPrevX + PRECISION*dX;
+        float newY = mPrevY + PRECISION*dY;
+
+        mPrevX = newX;
+        mPrevY = newY;
+        
+        x = newX;
+        y = newY;
+    }
+
+    // Manage well when hitting/releasing shift witing the same drag action
+    mPrevX = x;
+    mPrevY = y;
+        
+    // For dragging from click on the handle
     x -= mOffsetX;
     y -= mOffsetY;
     

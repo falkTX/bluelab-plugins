@@ -51,6 +51,9 @@ class IXYPadControl : public IControl
 
     float mOffsetX;
     float mOffsetY;
+
+    float mPrevX;
+    float mPrevY;
 };
 
 #endif
