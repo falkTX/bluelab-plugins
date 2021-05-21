@@ -621,7 +621,7 @@ GUIHelper12::CreateXYPad(IGraphics *graphics,
                          const char *trackBitmapFname,
                          const char *handleBitmapFname,
                          int xParamIdx, int yParamIdx,
-                         float borderSize)
+                         float borderSize, bool reverseY)
 {
     std::initializer_list<int> params( { xParamIdx, yParamIdx } );
     
@@ -630,7 +630,8 @@ GUIHelper12::CreateXYPad(IGraphics *graphics,
 
     IRECT rect(x, y, x + trackBitmap.W(), y + trackBitmap.H());
     IXYPadControl *result =
-        new IXYPadControl(rect, params, trackBitmap, handleBitmap, borderSize);
+        new IXYPadControl(rect, params, trackBitmap, handleBitmap,
+                          borderSize, reverseY);
     
     graphics->AttachControl(result);
     

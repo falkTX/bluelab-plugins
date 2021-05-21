@@ -4,13 +4,15 @@ IXYPadControl::IXYPadControl(const IRECT& bounds,
                              const std::initializer_list<int>& params,
                              const IBitmap& trackBitmap,
                              const IBitmap& handleBitmap,
-                             float borderSize)
+                             float borderSize, bool reverseY)
 : IControl(bounds, params)
 {
     mTrackBitmap = trackBitmap;
     mHandleBitmap = handleBitmap;
 
     mBorderSize = borderSize;
+
+    mReverseY = reverseY;
     
     mMouseDown = false;
 
@@ -75,7 +77,7 @@ IXYPadControl::OnMouseDrag(float x, float y, float dX, float dY,
 {
     x -= mOffsetX;
     y -= mOffsetY;
-
+    
     // Original code
     mRECT.Constrain(x, y);
     
@@ -103,7 +105,8 @@ IXYPadControl::DrawHandle(IGraphics& g)
     float xn = GetValue(0);
     float yn = GetValue(1);
 
-    yn = 1.0 - yn;
+    if (!mReverseY)
+        yn = 1.0 - yn;
     
     float x = xn;
     float y = yn;
@@ -129,6 +132,9 @@ IXYPadControl::PixelsToParams(float *x, float *y)
     *y = 1.f - ((*y - (mRECT.T + h/2 + mBorderSize)) /
                 (mRECT.H() - h - mBorderSize*2.0));
 
+    if (mReverseY)
+        *y = 1.0 - *y;
+    
     // Bounds
     if (*x < 0.0)
         *x = 0.0;
@@ -161,7 +167,8 @@ IXYPadControl::MouseOnHandle(float mx, float my,
     float xn = GetValue(0);
     float yn = GetValue(1);
 
-    yn = 1.0 - yn;
+    if (!mReverseY)
+        yn = 1.0 - yn;
     
     float x = xn;
     float y = yn;
