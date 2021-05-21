@@ -42,8 +42,8 @@ BL-SpectralDiff	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr
 BL-SpectroExpe	    :
 BL-SpectrumView	    :
 BL-StereoDeReverb   :
-BL-StereoPan	    :
-BL-StereoWidth	    :
+BL-StereoPan	    :   (fea+)
+BL-StereoWidth	    :   
 BL-Wav3s	    :
 
 ---
