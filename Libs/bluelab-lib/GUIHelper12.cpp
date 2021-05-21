@@ -615,6 +615,27 @@ GUIHelper12::CreateBitmap(IGraphics *graphics,
     return result;
 }
 
+IXYPadControl *
+GUIHelper12::CreateXYPad(IGraphics *graphics,
+                         float x, float y,
+                         const char *trackBitmapFname,
+                         const char *handleBitmapFname,
+                         int xParamIdx, int yParamIdx)
+{
+    std::initializer_list<int> params( { xParamIdx, yParamIdx } );
+    
+    IBitmap trackBitmap = graphics->LoadBitmap(trackBitmapFname, 1);
+    IBitmap handleBitmap = graphics->LoadBitmap(handleBitmapFname, 1);
+
+    IRECT rect(x, y, x + trackBitmap.W(), y + trackBitmap.H());
+    IXYPadControl *result =
+        new IXYPadControl(rect, params, trackBitmap, handleBitmap);
+                                              
+    graphics->AttachControl(result);
+    
+    return result;
+}
+
 void
 GUIHelper12::CreateVersion(Plugin *plug, IGraphics *graphics,
                            const char *versionStr)

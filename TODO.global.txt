@@ -391,3 +391,9 @@ Design: gradient, use gradient in the corner? like https://canonical.com/
 
 TODO: user manuals: jutify text! (and see other Libre Office tutorials)
 https://www.youtube.com/playlist?list=PLGYKyocXgHJKAqY-FJL082aYY6mWXTxen
+=========
+GUI:
+re-work the design
+=> see Spatializer, XYpad, grey contour, dark blue fill, pure black background
+-> This gives a more serious visual feeling (more "precious")
+=> looks better than the background gradient + blue knobs!!

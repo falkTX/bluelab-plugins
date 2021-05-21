@@ -16,6 +16,7 @@
 #include <BLVumeter2SidesControl.h>
 #include <ResizeGUIPluginInterface.h>
 #include <ITextButtonControl.h>
+#include <IXYPadControl.h>
 
 #include "IPlug_include_in_plug_hdr.h"
 
@@ -141,6 +142,12 @@ public:
                                  float offsetX = 0.0, float offsetY = 0.0,
                                  float *width = NULL, float *height = NULL);
 
+
+    IXYPadControl *CreateXYPad(IGraphics *graphics,
+                               float x, float y,
+                               const char *trackBitmapFname,
+                               const char *handleBitmapFname,
+                               int xParamIdx, int yParamIdx);
     
     void CreateVersion(Plugin *plug, IGraphics *graphics,
                        const char *versionStr);
