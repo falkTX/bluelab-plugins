@@ -41,8 +41,11 @@ IXYPadControl::OnMouseDrag(float x, float y, float dX, float dY,
                            const IMouseMod& mod)
 {
     mRECT.Constrain(x, y);
-    float xn = (x - mRECT.L) / mRECT.W();
-    float yn = 1.f - ((y - mRECT.T) / mRECT.H());
+    
+    float xn = x;
+    float yn = y;
+    PixelsToParams(&xn, &yn);
+    
     SetValue(xn, 0);
     SetValue(yn, 1);
     SetDirty(true);
@@ -65,17 +68,46 @@ IXYPadControl::DrawHandle(IGraphics& g)
 
     yn = 1.0 - yn;
     
-    float x = mRECT.L + xn*mRECT.W();
-    float y = mRECT.T + yn*mRECT.H();
+    float x = xn;
+    float y = yn;
+    ParamsToPixels(&x, &y);
 
     int w = mHandleBitmap.W();
     int h = mHandleBitmap.H();
-    
-    IRECT handleRect(x - w/2, y - h/2, x + w/2, y + h/2);
+
+    IRECT handleRect(x, y, x + w, y + h);
     
     IBlend blend = GetBlend();
-    //g.DrawBitmap(mHandleBitmap,
-    //             GetRECT().GetCentredInside(IRECT(0, 0, mHandleBitmap)),
-    //             0, &blend);
     g.DrawBitmap(mHandleBitmap, handleRect, 0, &blend);
+}
+
+void
+IXYPadControl::PixelsToParams(float *x, float *y)
+{
+    int w = mHandleBitmap.W();
+    int h = mHandleBitmap.H();
+    
+    *x = (*x - (mRECT.L + w/2)) / (mRECT.W() - w);
+    *y = 1.f - ((*y - (mRECT.T + h/2)) / (mRECT.H() - h));
+
+    // Bounds
+    if (*x < 0.0)
+        *x = 0.0;
+    if (*x > 1.0)
+        *x = 1.0;
+
+    if (*y < 0.0)
+        *y = 0.0;
+    if (*y > 1.0)
+        *y = 1.0;
+}
+
+void
+IXYPadControl::ParamsToPixels(float *x, float *y)
+{
+    int w = mHandleBitmap.W();
+    int h = mHandleBitmap.H();
+    
+    *x = mRECT.L + (*x)*(mRECT.W() - w);
+    *y = mRECT.T + (*y)*(mRECT.H() - h);
 }

@@ -29,6 +29,10 @@ class IXYPadControl : public IControl
     void DrawTrack(IGraphics& g);
     void DrawHandle(IGraphics& g);
 
+    // Ensure that the handle doesn't go out of the track at all 
+    void PixelsToParams(float *x, float *y);
+    void ParamsToPixels(float *x, float *y);
+ 
     //
     IBitmap mTrackBitmap;
     IBitmap mHandleBitmap;
