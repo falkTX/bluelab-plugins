@@ -1,37 +1,44 @@
-BL-Air		    :	features+, optim, mem, bugs, LockFree
-BL-AutoGain	    :	features+, optim, mem, bugs, LockFree
+---
+features+ : fea+
+LockFree: LoFr
+LockFree(legacy): LoFr(l)
+valgrind (check for mem corruption): valg
+lazy gui refresh: lgr
+---
+BL-Air		    :	fea+,      ,optim, mem, bugs, LoFr
+BL-AutoGain	    :	fea+,      ,optim, mem, bugs, LoFr
 BL-Bat		    :
-BL-Chroma	    :	features+, optim, mem, bugs, LockFree       , gui refresh
-BL-Denoiser	    :	features+, optim, mem, bugs, LockFree
+BL-Chroma	    :	fea+,      ,optim, mem, bugs, LoFr    , lgr
+BL-Denoiser	    :	fea+,      ,optim, mem, bugs, LoFr
 BL-DUET		    :
-BL-Envelope	    :	features+, optim, mem, bugs
-BL-EQHack	    :	features+, optim, mem, bugs, LockFree
-BL-Gain12	    :	features+, optim, mem, bugs
-BL-Gain200	    :	features+, optim, mem, bugs
-BL-Gain24	    :	features+, optim, mem, bugs
-BL-Gain60	    :	features+, optim, mem, bugs
-BL-Ghost	    :	features+, optim, mem, bugs, LockFree(legacy), gui refresh
-BL-GhostViewer	    :   features+,      , mem,     , LockFree        , gui refresh
-BL-Impulses	    :   features+, optim, mem, bugs, LockFree(lgacy)
-BL-Infra	    :   features+, optim, mem, bugs, LockFree
-BL-InfrasonicViewer :   features+, optim, mem, bugs, LockFree        ,gui refresh
+BL-Envelope	    :	fea+,      ,optim, mem, bugs
+BL-EQHack	    :	fea+,      ,optim, mem, bugs, LoFr
+BL-Gain12	    :	fea+,      ,optim, mem, bugs
+BL-Gain200	    :	fea+,      ,optim, mem, bugs
+BL-Gain24	    :	fea+,      ,optim, mem, bugs
+BL-Gain60	    :	fea+,      ,optim, mem, bugs
+BL-Ghost	    :	fea+,      ,optim, mem, bugs, LoFr(l) , lgr
+BL-GhostViewer	    :   fea+,            , mem,     , LoFr    , lgr
+BL-Impulses	    :   fea+,      ,optim, mem, bugs, LoFr(l)
+BL-Infra	    :   fea+,      ,optim, mem, bugs, LoFr
+BL-InfrasonicViewer :   fea+,      ,optim, mem, bugs, LoFr    , lgr
 BL-InfraSynth	    :
-BL-LoFi		    :            , optim, mem, bugs, LockFree
+BL-LoFi		    :       ,      ,optim, mem, bugs, LoFr
 BL-OnsetDetect	    :
-BL-Panogram	    :   features+, optim, mem, bugs, LockFree
-BL-PitchShift	    :   features+, optim, mem, bugs, (LockFree)      , gui refresh
-BL-Precedence	    :   (features+)
-BL-Rebalance	    :	wip: model is training,                      , gui refresh
+BL-Panogram	    :   fea+,      ,optim, mem, bugs, LoFr
+BL-PitchShift	    :   fea+,      ,optim, mem, bugs, (LoFr)  , lgr
+BL-Precedence	    :   (fea+)
+BL-Rebalance	    :	wip: model is training,               , lgr
 BL-Reverb	    :
 BL-ReverbDepth	    :
-BL-SampleDelay	    :   features0 ...
-BL-SASViewer	    :
-BL-Saturate	    :   features+                                    , gui refresh
-BL-Shaper	    :   features+, optim, mem, bugs,  LockFree       , gui refresh
-BL-Sine		    :   features+, optim, mem, bugs, (LockFree)      
+BL-SampleDelay	    :   (fea+)
+BL-SASViewer	    : 
+BL-Saturate	    :   fea+                                  , lgr
+BL-Shaper	    :   fea+,     , optim, mem, bugs,  LoFr   , lgr
+BL-Sine		    :   fea+,     , optim, mem, bugs, (LoFr)      
 BL-SoundMetaViewer  :
-BL-Spatializer	    :   features+, optim, mem, bugs, (LockFree)      , gui refresh
-BL-SpectralDiff	    :   
+BL-Spatializer	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr
+BL-SpectralDiff	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr
 BL-SpectroExpe	    :
 BL-SpectrumView	    :
 BL-StereoDeReverb   :
@@ -41,9 +48,10 @@ BL-Wav3s	    :
 
 ---
 
-DONE: 24
-TODO: 4
+DONE: 25
+TODO: 3
 
 TODO: check plugs CPU % when "resting"
 TODO: check gui refresh for all plugins
 TODO: pass valgrind for mem for all
+(already done for the last ones, update the list!)
