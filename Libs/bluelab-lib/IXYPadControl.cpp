@@ -27,6 +27,24 @@ IXYPadControl::Draw(IGraphics& g)
 void
 IXYPadControl::OnMouseDown(float x, float y, const IMouseMod& mod)
 {
+#ifndef __linux__
+  if (mod.A)
+  {
+    SetValueToDefault(GetValIdxForPos(x, y));
+
+    return;
+  }
+#else
+  // On Linux, Alt+click does nothing (at least on my xubuntu)
+  // So use Ctrl-click instead to reset parameters
+  if (mod.C)
+  {
+    SetValueToDefault(GetValIdxForPos(x, y));
+
+    return;
+  }
+#endif
+        
     mMouseDown = true;
 
     OnMouseDrag(x, y, 0., 0., mod);
