@@ -20,7 +20,7 @@ BL-LoFi		    :            , optim, mem, bugs, LockFree
 BL-OnsetDetect	    :
 BL-Panogram	    :   features+, optim, mem, bugs, LockFree
 BL-PitchShift	    :   features+, optim, mem, bugs, (LockFree)      , gui refresh
-BL-Precedence	    :   features0 ...
+BL-Precedence	    :   (features+)
 BL-Rebalance	    :	wip: model is training,                      , gui refresh
 BL-Reverb	    :
 BL-ReverbDepth	    :
@@ -30,8 +30,8 @@ BL-Saturate	    :   features+                                    , gui refresh
 BL-Shaper	    :   features+, optim, mem, bugs,  LockFree       , gui refresh
 BL-Sine		    :   features+, optim, mem, bugs, (LockFree)      
 BL-SoundMetaViewer  :
-BL-Spatializer	    :
-BL-SpectralDiff	    :
+BL-Spatializer	    :   features+, optim, mem, bugs, (LockFree)      , gui refresh
+BL-SpectralDiff	    :   
 BL-SpectroExpe	    :
 BL-SpectrumView	    :
 BL-StereoDeReverb   :
@@ -41,8 +41,8 @@ BL-Wav3s	    :
 
 ---
 
-DONE: 23
-TODO: 5
+DONE: 24
+TODO: 4
 
 TODO: check plugs CPU % when "resting"
 TODO: check gui refresh for all plugins
