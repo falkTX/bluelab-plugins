@@ -3,12 +3,15 @@
 IXYPadControl::IXYPadControl(const IRECT& bounds,
                              const std::initializer_list<int>& params,
                              const IBitmap& trackBitmap,
-                             const IBitmap& handleBitmap)
+                             const IBitmap& handleBitmap,
+                             float borderSize)
 : IControl(bounds, params)
 {
     mTrackBitmap = trackBitmap;
     mHandleBitmap = handleBitmap;
-        
+
+    mBorderSize = borderSize;
+    
     mMouseDown = false;
 }
 
@@ -84,11 +87,13 @@ IXYPadControl::DrawHandle(IGraphics& g)
 void
 IXYPadControl::PixelsToParams(float *x, float *y)
 {
-    int w = mHandleBitmap.W();
-    int h = mHandleBitmap.H();
-    
-    *x = (*x - (mRECT.L + w/2)) / (mRECT.W() - w);
-    *y = 1.f - ((*y - (mRECT.T + h/2)) / (mRECT.H() - h));
+    float w = mHandleBitmap.W();
+    float h = mHandleBitmap.H();
+
+    *x = (*x - (mRECT.L + w/2 + mBorderSize)) /
+        (mRECT.W() - w - mBorderSize*2.0);
+    *y = 1.f - ((*y - (mRECT.T + h/2 + mBorderSize)) /
+                (mRECT.H() - h - mBorderSize*2.0));
 
     // Bounds
     if (*x < 0.0)
@@ -105,9 +110,9 @@ IXYPadControl::PixelsToParams(float *x, float *y)
 void
 IXYPadControl::ParamsToPixels(float *x, float *y)
 {
-    int w = mHandleBitmap.W();
-    int h = mHandleBitmap.H();
+    float w = mHandleBitmap.W();
+    float h = mHandleBitmap.H();
     
-    *x = mRECT.L + (*x)*(mRECT.W() - w);
-    *y = mRECT.T + (*y)*(mRECT.H() - h);
+    *x = mRECT.L + mBorderSize + (*x)*(mRECT.W() - w - mBorderSize*2.0);
+    *y = mRECT.T + mBorderSize + (*y)*(mRECT.H() - h - mBorderSize*2.0);
 }

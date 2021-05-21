@@ -14,7 +14,8 @@ class IXYPadControl : public IControl
     IXYPadControl(const IRECT& bounds,
                   const std::initializer_list<int>& params,
                   const IBitmap& trackBitmap,
-                  const IBitmap& handleBitmap);
+                  const IBitmap& handleBitmap,
+                  float borderSize = 0.0);
 
     virtual ~IXYPadControl();
     
@@ -36,7 +37,10 @@ class IXYPadControl : public IControl
     //
     IBitmap mTrackBitmap;
     IBitmap mHandleBitmap;
-        
+
+    // Border size, or "stroke width"
+    float mBorderSize;
+    
     bool mMouseDown;
 };
 

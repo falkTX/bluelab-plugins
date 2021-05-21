@@ -147,7 +147,8 @@ public:
                                float x, float y,
                                const char *trackBitmapFname,
                                const char *handleBitmapFname,
-                               int xParamIdx, int yParamIdx);
+                               int xParamIdx, int yParamIdx,
+                               float borderSize = 0.0);
     
     void CreateVersion(Plugin *plug, IGraphics *graphics,
                        const char *versionStr);
