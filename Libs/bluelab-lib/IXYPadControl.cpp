@@ -13,6 +13,9 @@ IXYPadControl::IXYPadControl(const IRECT& bounds,
     mBorderSize = borderSize;
     
     mMouseDown = false;
+
+    mOffsetX = 0.0;
+    mOffsetY = 0.0;
 }
 
 IXYPadControl::~IXYPadControl() {}
@@ -47,6 +50,11 @@ IXYPadControl::OnMouseDown(float x, float y, const IMouseMod& mod)
         
     mMouseDown = true;
 
+    // Check if we clicked exactly on the handle
+    // In this case, do not make the handle jump
+    /*bool mouseOnHandle = */MouseOnHandle(x, y, &mOffsetX, &mOffsetY);
+    
+    // Direct jump
     OnMouseDrag(x, y, 0., 0., mod);
 }
 
@@ -54,6 +62,10 @@ void
 IXYPadControl::OnMouseUp(float x, float y, const IMouseMod& mod)
 {
     mMouseDown = false;
+
+    mOffsetX = 0.0;
+    mOffsetY = 0.0;
+    
     SetDirty(true);
 }
 
@@ -61,6 +73,10 @@ void
 IXYPadControl::OnMouseDrag(float x, float y, float dX, float dY,
                            const IMouseMod& mod)
 {
+    x -= mOffsetX;
+    y -= mOffsetY;
+
+    // Original code
     mRECT.Constrain(x, y);
     
     float xn = x;
@@ -133,4 +149,38 @@ IXYPadControl::ParamsToPixels(float *x, float *y)
     
     *x = mRECT.L + mBorderSize + (*x)*(mRECT.W() - w - mBorderSize*2.0);
     *y = mRECT.T + mBorderSize + (*y)*(mRECT.H() - h - mBorderSize*2.0);
+}
+
+// Used to avoid handle jumps when clicking directly on it
+// (In this case, we want to drag smoothly from the current position
+// to a nearby position, without any jump)
+bool
+IXYPadControl::MouseOnHandle(float mx, float my,
+                             float *offsetX, float *offsetY)
+{
+    float xn = GetValue(0);
+    float yn = GetValue(1);
+
+    yn = 1.0 - yn;
+    
+    float x = xn;
+    float y = yn;
+    ParamsToPixels(&x, &y);
+
+    int w = mHandleBitmap.W();
+    int h = mHandleBitmap.H();
+
+    IRECT handleRect(x, y, x + w, y + h);
+
+    bool onHandle = handleRect.Contains(mx, my);
+
+    *offsetX = 0.0;
+    *offsetY = 0.0;
+    if (onHandle)
+    {
+        *offsetX = mx - (x + w/2);
+        *offsetY = my - (y + h/2);
+    }
+    
+    return onHandle;
 }

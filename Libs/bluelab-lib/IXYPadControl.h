@@ -33,7 +33,10 @@ class IXYPadControl : public IControl
     // Ensure that the handle doesn't go out of the track at all 
     void PixelsToParams(float *x, float *y);
     void ParamsToPixels(float *x, float *y);
- 
+
+    bool MouseOnHandle(float x, float y,
+                       float *offsetX, float *offsetY);
+        
     //
     IBitmap mTrackBitmap;
     IBitmap mHandleBitmap;
@@ -42,6 +45,9 @@ class IXYPadControl : public IControl
     float mBorderSize;
     
     bool mMouseDown;
+
+    float mOffsetX;
+    float mOffsetY;
 };
 
 #endif
