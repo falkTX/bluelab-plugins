@@ -49,7 +49,6 @@ using namespace std;
 // BLWidthAdjuster: from USTWidthAdjuster9
 
 class BLCorrelationComputer2;
-
 class BLStereoWidener;
 class CParamSmooth;
 class CMAParamSmooth;
@@ -110,9 +109,6 @@ protected:
     
     // Compression algorithm
     InstantCompressor *mComp;
-    
-    // For debugging
-    BLCorrelationComputer2 *mCorrComputerDbg;
 };
 
 #endif /* defined(__BL__BLWidthAdjuster__) */
