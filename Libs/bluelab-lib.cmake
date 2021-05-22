@@ -70,6 +70,8 @@ set(_bluelab-lib_src
   BLScanDisplay.h
   BLSpectrogram4.cpp
   BLSpectrogram4.h
+  BLStereoWidener.cpp
+  BLStereoWidener.h
   BLTransport.h
   BLTransport.cpp
   BLWidthAdjuster.h

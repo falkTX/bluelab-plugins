@@ -8,7 +8,6 @@
 
 #include <UpTime.h>
 #include <BLUtils.h>
-#include <BLProcess.h>
 
 #include <BLStereoWidener.h>
 #include <BLCorrelationComputer2.h>
