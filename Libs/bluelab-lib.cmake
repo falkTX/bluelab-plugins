@@ -44,6 +44,8 @@ set(_bluelab-lib_src
   BLCircleGraphDrawer.h
   BLCorrelationComputer.cpp
   BLCorrelationComputer.h
+  BLCorrelationComputer2.cpp
+  BLCorrelationComputer2.h
   BLDebug.cpp
   BLDebug.h
   BLFireworks.cpp
@@ -70,6 +72,8 @@ set(_bluelab-lib_src
   BLSpectrogram4.h
   BLTransport.h
   BLTransport.cpp
+  BLWidthAdjuster.h
+  BLWidthAdjuster.cpp
   BLTypes.h
   BLUpmixGraphDrawer.cpp
   BLUpmixGraphDrawer.h
