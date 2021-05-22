@@ -35,7 +35,9 @@ class BLUtilsPlug
     // Set non normalized value
     static void SetParameterValue(Plugin *plug, int paramIdx, BL_FLOAT nonNormValue,
                                   bool updateControl);
-                                  
+
+    static void ResetParameterValue(Plugin *plug, int paramIdx, bool updateControl);
+    
     // For a give index, try to get both in and out buffers
     static bool GetIOBuffers(int index, double *in[2], double *out[2],
                              double **inBuf, double **outBuf);

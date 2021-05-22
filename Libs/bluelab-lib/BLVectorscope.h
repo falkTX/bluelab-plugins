@@ -51,9 +51,12 @@ class BLVectorscopePlug
 public:
     virtual void VectorscopeUpdatePanCB(BL_FLOAT newPan) = 0;
     virtual void VectorscopeUpdateDPanCB(BL_FLOAT dpan) = 0;
+    virtual void VectorscopeUpdateWidthCB(BL_FLOAT dwidth) = 0; // new
     virtual void VectorscopeUpdateDWidthCB(BL_FLOAT dwidth) = 0;
     virtual void VectorscopeUpdateDepthCB(BL_FLOAT newDepth) = 0;
     virtual void VectorscopeUpdateDDepthCB(BL_FLOAT ddepth) = 0;
+    
+    virtual void VectorscopeResetAllParamsCB() = 0;
 };
 
 // USTVectorscope2: several modes

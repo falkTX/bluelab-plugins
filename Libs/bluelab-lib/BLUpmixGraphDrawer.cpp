@@ -264,7 +264,8 @@ BLUpmixGraphDrawer::OnMouseUp(float x, float y, const IMouseMod &mod)
 }
 
 void
-BLUpmixGraphDrawer::OnMouseDrag(float x, float y, float dX, float dY, const IMouseMod &mod)
+BLUpmixGraphDrawer::OnMouseDrag(float x, float y, float dX, float dY,
+                                const IMouseMod &mod)
 {
     // Protools intercepts alt+mouse down, and does not send mouse down
     //

@@ -169,6 +169,14 @@ BLVectorscope::SetMode(Mode mode)
 void
 BLVectorscope::OnMouseDown(float x, float y, const IMouseMod &mod)
 {
+    if (mod.C)
+    {
+        // Reset parameters
+        mPlug->VectorscopeResetAllParamsCB();
+    
+        return;
+    }
+    
     if (mMode == UPMIX)
     {
         // Upmix graph drawer also manage control

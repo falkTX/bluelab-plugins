@@ -852,6 +852,15 @@ BLUtilsPlug::SetParameterValue(Plugin *plug, int paramIdx, BL_FLOAT nonNormValue
     }
 }
 
+// NOTE: not tested
+void
+BLUtilsPlug::ResetParameterValue(Plugin *plug, int paramIdx, bool updateControl)
+{
+    BL_FLOAT defaultValue = plug->GetParam(paramIdx)->GetDefault();
+    
+    SetParameterValue(plug, paramIdx, defaultValue, updateControl);
+}
+
 bool
 BLUtilsPlug::GetFullPlugResourcesPath(const IPluginBase &plug, WDL_String *resPath)
 {
