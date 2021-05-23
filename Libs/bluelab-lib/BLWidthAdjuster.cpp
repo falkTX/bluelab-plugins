@@ -35,6 +35,9 @@
 #define COMP_MIN_RELEASE_TIME 1000.0 //500.0
 #define COMP_MAX_RELEASE_TIME 2000.0
 
+// Adaptations for width boost
+#define FIX_WIDTH_BOOST 1
+
 
 BLWidthAdjuster::BLWidthAdjuster(BL_FLOAT sampleRate)
 {
@@ -50,18 +53,23 @@ BLWidthAdjuster::BLWidthAdjuster(BL_FLOAT sampleRate)
     
     mStereoWidener = new BLStereoWidener();
     
-    mUserWidth = 0.0;
-    
     mComp = new InstantCompressor(sampleRate);
     
     // Attack 10: make stair scales
     // Attack 100: smooth (but reduces less)
     // Release 500: good
     // Release 1000: takes more time to return to original level
-    //SetParameters(BL_FLOAT threshold, BL_FLOAT slope,
+    //
+    // SetParameters(BL_FLOAT threshold, BL_FLOAT slope,
     // BL_FLOAT  tatt, BL_FLOAT  trel);
-    
+
+#if !FIX_WIDTH_BOOST
+    // Origin: for width [-1, 1]
     mComp->SetParameters(50.0, 100.0, COMP_ATTACK_TIME, 1000.0);
+#else
+    // New: for width [-1, 5] (width boost)
+    mComp->SetParameters(50.0, 200.0, COMP_ATTACK_TIME, 1000.0);
+#endif
     
     // Knee
     mComp->SetKnee(25.0);
@@ -140,7 +148,7 @@ BLWidthAdjuster::Update(BL_FLOAT l, BL_FLOAT r)
     // Apply compression
     //
     BL_FLOAT rmsAmp = CorrToComp(corr);
-
+    
     mComp->Process(&rmsAmp);
     
     BL_FLOAT compGain = mComp->GetGain();
@@ -154,7 +162,7 @@ BLWidthAdjuster::Update(BL_FLOAT l, BL_FLOAT r)
 
 void
 BLWidthAdjuster::UpdateWidth(BL_FLOAT width)
-{
+{    
     mLimitedWidth = width;
 }
 
@@ -187,9 +195,13 @@ BL_FLOAT
 BLWidthAdjuster::ApplyCompWidth(BL_FLOAT width, BL_FLOAT compGain,
                                 BL_FLOAT corr)
 {
+#if !FIX_WIDTH_BOOST
     // Compress more at the end.
     BL_FLOAT c = 0.92;
     BL_FLOAT gainW = std::tan(compGain*c) - 0.1728954;
+#endif
+    
+    BL_FLOAT gainW = compGain;
     
     if (gainW < 0.0)
         gainW = 0.0;
@@ -198,6 +210,7 @@ BLWidthAdjuster::ApplyCompWidth(BL_FLOAT width, BL_FLOAT compGain,
         gainW = 1.0;
     
     BL_FLOAT normWidth = (width + 1.0)*0.5;
+        
     normWidth *= gainW;
     
     BL_FLOAT result = (normWidth*2.0) - 1.0;

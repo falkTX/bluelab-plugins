@@ -64,8 +64,8 @@ InstantCompressor::Reset(BL_FLOAT sampleRate)
 }
 
 void
-InstantCompressor::SetParameters(BL_FLOAT threshold, BL_FLOAT  slope,
-                                 BL_FLOAT  tatt, BL_FLOAT  trel)
+InstantCompressor::SetParameters(BL_FLOAT threshold, BL_FLOAT slope,
+                                 BL_FLOAT tatt, BL_FLOAT trel)
 {
     mThreshold = threshold;
     mSlope = slope;
@@ -148,7 +148,7 @@ InstantCompressor::Process(BL_FLOAT *rmsAmp)
     BL_FLOAT rms = *rmsAmp;
         
     // dynamic selection: attack or release?
-    BL_FLOAT  theta = rms > mEnv ? att : rel;
+    BL_FLOAT  theta = (rms > mEnv) ? att : rel;
         
     // smoothing with capacitor, envelope extraction...
     // here be aware of pIV denormal numbers glitch
