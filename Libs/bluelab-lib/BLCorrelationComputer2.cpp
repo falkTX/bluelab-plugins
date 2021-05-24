@@ -27,6 +27,10 @@ BLCorrelationComputer2::Reset(BL_FLOAT sampleRate)
     mCorrelation = 0.0;
     
     mHistorySize = mSmoothTimeMs*0.001*mSampleRate;
+
+    mXLXR.unfreeze();
+    mXL2.unfreeze();
+    mXR2.unfreeze();
     
     mXLXR.clear();
     mXL2.clear();
@@ -36,6 +40,11 @@ BLCorrelationComputer2::Reset(BL_FLOAT sampleRate)
     mXLXR.resize(mHistorySize);
     mXL2.resize(mHistorySize);
     mXR2.resize(mHistorySize);
+
+    // New
+    mXLXR.freeze();
+    mXL2.freeze();
+    mXR2.freeze();
     
     for (int i = 0; i < mHistorySize; i++)
     {
@@ -59,6 +68,7 @@ BLCorrelationComputer2::Reset()
 void
 BLCorrelationComputer2::Process(const WDL_TypedBuf<BL_FLOAT> samples[2])
 {
+#if 0 // origin
     // Fill the history
     for (int i = 0; i < samples[0].GetSize(); i++)
     {
@@ -88,7 +98,49 @@ BLCorrelationComputer2::Process(const WDL_TypedBuf<BL_FLOAT> samples[2])
         while(mXR2.size() > mHistorySize)
             mXR2.pop_front();
     }
-    
+#endif
+
+    // Fill the history
+    for (int i = 0; i < samples[0].GetSize(); i++)
+    {
+        BL_FLOAT l = samples[0].Get()[i];
+        BL_FLOAT r = samples[1].Get()[i];
+
+        BL_FLOAT xLxR = l*r;
+        BL_FLOAT xL2 = l*l;
+        BL_FLOAT xR2 = r*r;
+        
+        if (mXLXR.size() >= 2)
+        {
+            mSumXLXR += xLxR - mXLXR[0];
+            mSumXL2 += xL2 - mXL2[0];
+            mSumXR2 += xR2 - mXR2[0];
+        }
+
+        if (mXLXR.size() == mHistorySize)
+            mXLXR.push_pop(xLxR);
+        else
+            mXLXR.push_back(xLxR);
+
+        if (mXL2.size() == mHistorySize)
+            mXL2.push_pop(xL2);
+        else
+            mXL2.push_back(xL2);
+
+        if (mXR2.size() == mHistorySize)
+            mXR2.push_pop(xR2);
+        else
+            mXR2.push_back(xR2);
+    }
+
+    // Just in case
+    while(mXLXR.size() > mHistorySize)
+        mXLXR.pop_front();
+    while(mXL2.size() > mHistorySize)
+        mXL2.pop_front();
+    while(mXR2.size() > mHistorySize)
+        mXR2.pop_front();
+        
     // Compute the expectation (aka the averages)
     BL_FLOAT ExLxR = 0.0;
     BL_FLOAT ExL2 = 0.0;
@@ -114,13 +166,22 @@ BLCorrelationComputer2::Process(BL_FLOAT l, BL_FLOAT r)
 {
     // Fill the history
     BL_FLOAT xLxR = l*r;
-    mXLXR.push_back(xLxR);
+    if (mXLXR.size() == mHistorySize)
+        mXLXR.push_pop(xLxR);
+    else
+        mXLXR.push_back(xLxR);
         
     BL_FLOAT xL2 = l*l;
-    mXL2.push_back(xL2);
+    if (mXL2.size() == mHistorySize)
+        mXL2.push_pop(xL2);
+    else
+        mXL2.push_back(xL2);
         
     BL_FLOAT xR2 = r*r;
-    mXR2.push_back(xR2);
+    if (mXR2.size() == mHistorySize)
+        mXR2.push_pop(xR2);
+    else
+        mXR2.push_back(xR2);
     
     if (mXLXR.size() >= 2)
     {

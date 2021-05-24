@@ -9,8 +9,9 @@
 #ifndef __UST__BLCorrelationComputer2__
 #define __UST__BLCorrelationComputer2__
 
-#include <deque>
-using namespace std;
+//#include <deque>
+//using namespace std;
+#include <bl_queue.h>
 
 #include <BLTypes.h>
 
@@ -60,10 +61,10 @@ protected:
     // Histories
     long mHistorySize;
     
-    deque<BL_FLOAT> mXLXR;
-    deque<BL_FLOAT> mXL2;
-    deque<BL_FLOAT> mXR2;
-    
+    bl_queue<BL_FLOAT> mXLXR;
+    bl_queue<BL_FLOAT> mXL2;
+    bl_queue<BL_FLOAT> mXR2;
+
     // Optimization
     BL_FLOAT mSumXLXR;
     BL_FLOAT mSumXL2;
