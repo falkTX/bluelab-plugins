@@ -51,7 +51,7 @@ BLWidthAdjuster::BLWidthAdjuster(BL_FLOAT sampleRate)
     mCorrComputer = new BLCorrelationComputer2(sampleRate,
                                                CORRELATION_SMOOTH_TIME_MS);
     
-    mStereoWidener = new BLStereoWidener();
+    mStereoWidener = new BLStereoWidener(sampleRate);
     
     mComp = new InstantCompressor(sampleRate);
     
@@ -97,6 +97,9 @@ BLWidthAdjuster::Reset(BL_FLOAT sampleRate)
     mCorrComputer->Reset(sampleRate);
     
     mComp->Reset(sampleRate);
+
+    if (mStereoWidener != NULL)
+        mStereoWidener->Reset(sampleRate);
 }
 
 bool

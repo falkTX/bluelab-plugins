@@ -12,6 +12,8 @@
 #include <BLUtilsMath.h>
 #include <BLUtilsComp.h>
 
+#include <ParamSmoother2.h>
+
 #include "BLStereoWidener.h"
 
 // FIX: On Protools, when width parameter was reset to 0,
@@ -27,15 +29,28 @@
 
 #define MAX_WIDTH_FACTOR 2.0
 
-BLStereoWidener::BLStereoWidener()
+BLStereoWidener::BLStereoWidener(BL_FLOAT sampleRate)
 {
     // See: http://www.musicdsp.org/showArchiveComment.php?ArchiveID=256
     
     mAngle0 = ComputeAngle0();
     mAngle1 = ComputeAngle1();
+
+    BL_FLOAT defaultStereoWidth = 0.0;
+    mStereoWidthSmoother = new ParamSmoother2(sampleRate, defaultStereoWidth);
 }
 
-BLStereoWidener::~BLStereoWidener() {}
+BLStereoWidener::~BLStereoWidener()
+{
+    delete mStereoWidthSmoother;
+}
+
+void
+BLStereoWidener::Reset(BL_FLOAT sampleRate)
+{
+    if (mStereoWidthSmoother != NULL)
+        mStereoWidthSmoother->Reset(sampleRate);
+}
 
 void
 BLStereoWidener::StereoWiden(BL_FLOAT *l, BL_FLOAT *r, BL_FLOAT widthFactor) const
@@ -56,6 +71,12 @@ BLStereoWidener::StereoWiden(BL_FLOAT *left, BL_FLOAT *right, BL_FLOAT widthFact
                              const WDL_FFT_COMPLEX &angle0,
                              const WDL_FFT_COMPLEX &angle1) const
 {
+    if (mStereoWidthSmoother != NULL)
+    {
+        mStereoWidthSmoother->SetTargetValue(widthFactor);
+        widthFactor = mStereoWidthSmoother->Process();
+    }
+        
     // Init
     WDL_FFT_COMPLEX signal0;
     signal0.re = *left;

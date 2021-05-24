@@ -19,13 +19,16 @@ using namespace std;
 // BLStereoWidener : from USTStereoWidener
 
 class BLWidthAdjuster;
+class ParamSmoother2;
 class BLStereoWidener
 {
 public:
-    BLStereoWidener();
+    BLStereoWidener(BL_FLOAT sampleRate);
     
     virtual ~BLStereoWidener();
-    
+
+    void Reset(BL_FLOAT sampleRate);
+        
     void StereoWiden(BL_FLOAT *l, BL_FLOAT *r, BL_FLOAT widthFactor) const;
     
     void StereoWiden(vector<WDL_TypedBuf<BL_FLOAT> * > *ioSamples,
@@ -43,10 +46,12 @@ protected:
     
     static WDL_FFT_COMPLEX ComputeAngle0();
     static WDL_FFT_COMPLEX ComputeAngle1();
-    
-    
+
+    //
     WDL_FFT_COMPLEX mAngle0;
     WDL_FFT_COMPLEX mAngle1;
+
+    ParamSmoother2 *mStereoWidthSmoother;
 };
 
 #endif /* defined(__BL__BLStereoWidener__) */
