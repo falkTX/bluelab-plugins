@@ -9,6 +9,7 @@
 #include <FftProcessObj16.h>
 
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
 
 #include "BLVectorscopeProcess.h"
 
@@ -16,6 +17,7 @@
 #define M_PI 3.141592653589
 #endif
 
+#define PI_DIV4 0.785398163397448
 #define SQR2_INV 0.70710678118655
 
 // Polar samples
@@ -34,11 +36,17 @@ BLVectorscopeProcess::ComputePolarSamples(const WDL_TypedBuf<BL_FLOAT> samples[2
 {
     polarSamples[0].Resize(samples[0].GetSize());
     polarSamples[1].Resize(samples[0].GetSize());
-     
-    for (int i = 0; i < samples[0].GetSize(); i++)
+
+    int numSamples = samples[0].GetSize();
+    BL_FLOAT *samples0Buf = samples[0].Get();
+    BL_FLOAT *samples1Buf = samples[1].Get();
+
+    BL_FLOAT *polarSamples0Buf = polarSamples[0].Get();
+    BL_FLOAT *polarSamples1Buf = polarSamples[1].Get();
+    for (int i = 0; i < numSamples; i++)
     {
-        BL_FLOAT l = samples[0].Get()[i];
-        BL_FLOAT r = samples[1].Get()[i];
+        BL_FLOAT l = samples0Buf[i];
+        BL_FLOAT r = samples1Buf[i];
         
         BL_FLOAT angle = std::atan2(r, l);
         BL_FLOAT dist = std::sqrt(l*l + r*r);
@@ -52,8 +60,8 @@ BLVectorscopeProcess::ComputePolarSamples(const WDL_TypedBuf<BL_FLOAT> samples[2
         {
 #if !CLIP_KEEP
             // Discard
-            polarSamples[0].Get()[i] = -1.0;
-            polarSamples[1].Get()[i] = -1.0;
+            polarSamples0Buf[i] = -1.0;
+            polarSamples1Buf[i] = -1.0;
             
             continue;
 #else
@@ -64,7 +72,7 @@ BLVectorscopeProcess::ComputePolarSamples(const WDL_TypedBuf<BL_FLOAT> samples[2
         
         // Adjust
         angle = -angle;
-        angle -= M_PI/4.0;
+        angle -= PI_DIV4;
         
         // Compute (x, y)
         BL_FLOAT x = dist*cos(angle);
@@ -80,8 +88,8 @@ BLVectorscopeProcess::ComputePolarSamples(const WDL_TypedBuf<BL_FLOAT> samples[2
         }
 #endif
         
-        polarSamples[0].Get()[i] = x;
-        polarSamples[1].Get()[i] = y;
+        polarSamples0Buf[i] = x;
+        polarSamples1Buf[i] = y;
     }
 }
 
@@ -98,18 +106,26 @@ BLVectorscopeProcess::ComputePolarLevels(const WDL_TypedBuf<BL_FLOAT> samples[2]
     WDL_TypedBuf<int> numValues;
     numValues.Resize(numBins);
     BLUtils::FillAllZero(&numValues);
-    
-    for (int i = 0; i < samples[0].GetSize(); i++)
+
+    int samplesSize = samples[0].GetSize();
+    BL_FLOAT *samples0Buf = samples[0].Get();
+    BL_FLOAT *samples1Buf = samples[1].Get();
+
+    int levelsSize = levels->GetSize();
+    BL_FLOAT *levelsBuf = levels->Get();
+    int *numValuesBuf = numValues.Get();
+        
+    for (int i = 0; i < samplesSize; i++)
     {
-        BL_FLOAT l = samples[0].Get()[i];
-        BL_FLOAT r = samples[1].Get()[i];
+        BL_FLOAT l = samples0Buf[i];
+        BL_FLOAT r = samples1Buf[i];
         
         BL_FLOAT dist = std::sqrt(l*l + r*r);
         BL_FLOAT angle = std::atan2(r, l);
         
         // Adjust
         angle = -angle;
-        angle -= M_PI/4.0;
+        angle -= PI_DIV4;
         
         // Bound to [-Pi, Pi]
         angle = fmod(angle, 2.0*M_PI);
@@ -124,7 +140,8 @@ BLVectorscopeProcess::ComputePolarLevels(const WDL_TypedBuf<BL_FLOAT> samples[2]
             angle += M_PI;
 #endif
         
-        int binNum = (angle/M_PI)*numBins;
+        //int binNum = (angle/M_PI)*numBins;
+        int binNum = (angle*M_PI_INV)*numBins;
         
         if (binNum < 0)
             binNum = 0;
@@ -134,30 +151,30 @@ BLVectorscopeProcess::ComputePolarLevels(const WDL_TypedBuf<BL_FLOAT> samples[2]
         if (mode == MAX)
         {
             // Better to take max, will avoid increase in the borders and decrease in the center
-            if (dist > levels->Get()[binNum])
-                levels->Get()[binNum] = dist;
+            if (dist > levelsBuf[binNum])
+                levelsBuf[binNum] = dist;
         }
         
         if (mode == AVG)
         {
-            levels->Get()[binNum] += dist;
-            numValues.Get()[binNum]++;
+            levelsBuf[binNum] += dist;
+            numValuesBuf[binNum]++;
         }
     }
-    
+        
     if (mode == AVG)
     {
-        for (int i = 0; i < levels->GetSize(); i++)
+        for (int i = 0; i < levelsSize; i++)
         {
-            int nv = numValues.Get()[i];
+            int nv = numValuesBuf[i];
             if (nv > 0)
                 levels->Get()[i] /= nv;
         }
     }
     
-    for (int i = 0; i < levels->GetSize(); i++)
+    for (int i = 0; i < levelsSize; i++)
     {
-        BL_FLOAT dist = levels->Get()[i];
+        BL_FLOAT dist = levelsBuf[i];
         
         // Clip so it will stay in the half circle
         if (dist > CLIP_DISTANCE)
@@ -165,7 +182,7 @@ BLVectorscopeProcess::ComputePolarLevels(const WDL_TypedBuf<BL_FLOAT> samples[2]
             dist = CLIP_DISTANCE;
         }
         
-        levels->Get()[i] = dist;
+        levelsBuf[i] = dist;
     }
 }
 
@@ -193,8 +210,9 @@ BLVectorscopeProcess::SmoothPolarLevels(WDL_TypedBuf<BL_FLOAT> *ioLevels,
 }
 
 void
-BLVectorscopeProcess::ComputePolarLevelPoints(const  WDL_TypedBuf<BL_FLOAT> &levels,
-                                              WDL_TypedBuf<BL_FLOAT> polarLevelSamples[2])
+BLVectorscopeProcess::
+ComputePolarLevelPoints(const  WDL_TypedBuf<BL_FLOAT> &levels,
+                        WDL_TypedBuf<BL_FLOAT> polarLevelSamples[2])
 {
     // Convert to (x, y)
     polarLevelSamples[0].Resize(levels.GetSize());
@@ -202,11 +220,21 @@ BLVectorscopeProcess::ComputePolarLevelPoints(const  WDL_TypedBuf<BL_FLOAT> &lev
     
     polarLevelSamples[1].Resize(levels.GetSize());
     BLUtils::FillAllZero(&polarLevelSamples[1]);
+
+    int levelsSize = levels.GetSize();
+    BL_FLOAT *levelsBuf = levels.Get();
     
-    for (int i = 0; i < levels.GetSize(); i++)
+    BL_FLOAT coeff = M_PI;
+    if (levelsSize > 1)
+        coeff = M_PI/(levelsSize - 1);
+
+    BL_FLOAT *polarLevelSamplesBuf0 = polarLevelSamples[0].Get();
+    BL_FLOAT *polarLevelSamplesBuf1 = polarLevelSamples[1].Get();
+        
+    for (int i = 0; i < levelsSize; i++)
     {
-        BL_FLOAT angle = (((BL_FLOAT)i)/(levels.GetSize() - 1))*M_PI;
-        BL_FLOAT dist = levels.Get()[i];
+        BL_FLOAT angle = i*coeff;
+        BL_FLOAT dist = levelsBuf[i];
         
         // Compute (x, y)
         BL_FLOAT x = dist*cos(angle);
@@ -219,23 +247,30 @@ BLVectorscopeProcess::ComputePolarLevelPoints(const  WDL_TypedBuf<BL_FLOAT> &lev
         y += OFFSET_Y;
 #endif
         
-        polarLevelSamples[0].Get()[i] = x;
-        polarLevelSamples[1].Get()[i] = y;
+        polarLevelSamplesBuf0[i] = x;
+        polarLevelSamplesBuf1[i] = y;
     }
 }
 
 void
 BLVectorscopeProcess::ComputeLissajous(const WDL_TypedBuf<BL_FLOAT> samples[2],
-                             WDL_TypedBuf<BL_FLOAT> lissajousSamples[2],
-                             bool fitInSquare)
+                                       WDL_TypedBuf<BL_FLOAT> lissajousSamples[2],
+                                       bool fitInSquare)
 {
     lissajousSamples[0].Resize(samples[0].GetSize());
     lissajousSamples[1].Resize(samples[0].GetSize());
-    
-    for (int i = 0; i < samples[0].GetSize(); i++)
+
+    int samples0Size = samples[0].GetSize();
+    BL_FLOAT *samples0Buf = samples[0].Get();
+    BL_FLOAT *samples1Buf = samples[1].Get();
+
+    BL_FLOAT *lissajousSamples0Buf = lissajousSamples[0].Get();
+    BL_FLOAT *lissajousSamples1Buf = lissajousSamples[1].Get();
+        
+    for (int i = 0; i < samples0Size; i++)
     {
-        BL_FLOAT l = samples[0].Get()[i];
-        BL_FLOAT r = samples[1].Get()[i];
+        BL_FLOAT l = samples0Buf[i];
+        BL_FLOAT r = samples1Buf[i];
         
         if (fitInSquare)
         {
@@ -261,7 +296,7 @@ BLVectorscopeProcess::ComputeLissajous(const WDL_TypedBuf<BL_FLOAT> samples[2],
         }
         
         angle = -angle;
-        angle -= M_PI/4.0;
+        angle -= PI_DIV4;
         
         BL_FLOAT x = dist*cos(angle);
         BL_FLOAT y = dist*sin(angle);
@@ -272,7 +307,7 @@ BLVectorscopeProcess::ComputeLissajous(const WDL_TypedBuf<BL_FLOAT> samples[2],
         y = (y + 1.0)*0.5;
 #endif
         
-        lissajousSamples[0].Get()[i] = x;
-        lissajousSamples[1].Get()[i] = y;
+        lissajousSamples0Buf[i] = x;
+        lissajousSamples1Buf[i] = y;
     }
 }
