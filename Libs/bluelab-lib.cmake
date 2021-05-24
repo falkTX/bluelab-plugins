@@ -385,6 +385,8 @@ set(_bluelab-lib_src
   Hrtf.h
   IBitmapControlAnim.cpp
   IBitmapControlAnim.h
+  IBLSwitchControl.cpp
+  IBLSwitchControl.h
   IGUIResizeButtonControl.cpp
   IGUIResizeButtonControl.h
   IHelpButtonControl.cpp

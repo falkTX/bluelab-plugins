@@ -17,6 +17,7 @@
 #include <ResizeGUIPluginInterface.h>
 #include <ITextButtonControl.h>
 #include <IXYPadControl.h>
+#include <IBLSwitchControl.h>
 
 #include "IPlug_include_in_plug_hdr.h"
 
@@ -80,20 +81,22 @@ public:
 #endif // IGRAPHICS_NANOVG
     
     // 2 states or more
-    IBSwitchControl *CreateSwitchButton(IGraphics *graphics,
-                                        float x, float y,
-                                        const char *bitmapFname, int nStates,
-                                        int paramIdx,
-                                        const char *title = NULL,
-                                        Size titleSize = SIZE_DEFAULT);
+    IBLSwitchControl *CreateSwitchButton(IGraphics *graphics,
+                                         float x, float y,
+                                         const char *bitmapFname, int nStates,
+                                         int paramIdx,
+                                         const char *title = NULL,
+                                         Size titleSize = SIZE_DEFAULT,
+                                         bool clickToggleOff = true);
     
     // 2 states
-    IBSwitchControl *CreateToggleButton(IGraphics *graphics,
-                                        float x, float y,
-                                        const char *bitmapFname,
-                                        int paramIdx,
-                                        const char *title = NULL,
-                                        Size titleSize = SIZE_DEFAULT);
+    IBLSwitchControl *CreateToggleButton(IGraphics *graphics,
+                                         float x, float y,
+                                         const char *bitmapFname,
+                                         int paramIdx,
+                                         const char *title = NULL,
+                                         Size titleSize = SIZE_DEFAULT,
+                                         bool clickToggleOff = true);
     
     VumeterControl *CreateVumeter(IGraphics *graphics,
                                   float x, float y,

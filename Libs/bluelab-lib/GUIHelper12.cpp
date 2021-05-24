@@ -408,35 +408,39 @@ GUIHelper12::CreateGraph(Plugin *plug, IGraphics *graphics,
 #endif // IGRAPHICS_NANOVG
 
 
-IBSwitchControl *
+IBLSwitchControl *
 GUIHelper12::CreateSwitchButton(IGraphics *graphics,
                                 float x, float y,
                                 const char *bitmapFname, int nStates,
                                 int paramIdx, const char *title,
-                                Size titleSize)
+                                Size titleSize, bool clickToggleOff)
 {
     IBitmap bitmap = graphics->LoadBitmap(bitmapFname, nStates);
  
     if (mCreateTitles)
         CreateTitle(graphics, x + bitmap.W()/2, y, title, titleSize);
     
-    IBSwitchControl *button = new IBSwitchControl(x, y, bitmap, paramIdx);
+    IBLSwitchControl *button = new IBLSwitchControl(x, y, bitmap, paramIdx);
+
+    button->SetClickToggleOff(clickToggleOff);
+    
     graphics->AttachControl(button);
     
     return button;
 }
 
-IBSwitchControl *
+IBLSwitchControl *
 GUIHelper12::CreateToggleButton(IGraphics *graphics,
                                 float x, float y,
                                 const char *bitmapFname,
                                 int paramIdx, const char *title,
-                                Size titleSize)
+                                Size titleSize, bool clickToggleOff)
 {
-    IBSwitchControl *button = CreateSwitchButton(graphics, x, y,
-                                                 bitmapFname, 2,
-                                                 paramIdx,
-                                                 title, titleSize);
+    IBLSwitchControl *button = CreateSwitchButton(graphics, x, y,
+                                                  bitmapFname, 2,
+                                                  paramIdx,
+                                                  title, titleSize);
+    button->SetClickToggleOff(clickToggleOff);
     
     return button;
 }
