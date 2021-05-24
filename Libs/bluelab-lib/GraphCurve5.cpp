@@ -527,7 +527,19 @@ GraphCurve5::SetPointStyle(bool pointFlag,
 
 void
 GraphCurve5::SetValuesPoint(const WDL_TypedBuf<BL_GUI_FLOAT> &xValues,
-                            const WDL_TypedBuf<BL_GUI_FLOAT> &yValues)
+                              const WDL_TypedBuf<BL_GUI_FLOAT> &yValues)
+{
+    Command &cmd = mTmpBuf9;
+    cmd.mType = Command::SET_VALUES_POINT;
+    cmd.mXValues = xValues;
+    cmd.mYValues = yValues;
+
+    mLockFreeQueues[0].push(cmd);
+}
+
+void
+GraphCurve5::SetValuesPointLF(const WDL_TypedBuf<BL_GUI_FLOAT> &xValues,
+                              const WDL_TypedBuf<BL_GUI_FLOAT> &yValues)
 {
     mPointStyle = true;
     
@@ -569,6 +581,23 @@ void
 GraphCurve5::SetValuesPointEx(const WDL_TypedBuf<BL_GUI_FLOAT> &xValues,
                               const WDL_TypedBuf<BL_GUI_FLOAT> &yValues,
                               bool singleScale, bool scaleX, bool centerFlag)
+{
+    Command &cmd = mTmpBuf9;
+    cmd.mType = Command::SET_VALUES_POINT_EX;
+    cmd.mXValues = xValues;
+    cmd.mYValues = yValues;
+ 
+    cmd.mSingleScale = singleScale;
+    cmd.mScaleX = scaleX;
+    cmd.mCenterFlag = centerFlag;
+
+    mLockFreeQueues[0].push(cmd);
+}
+
+void
+GraphCurve5::SetValuesPointExLF(const WDL_TypedBuf<BL_GUI_FLOAT> &xValues,
+                                const WDL_TypedBuf<BL_GUI_FLOAT> &yValues,
+                                bool singleScale, bool scaleX, bool centerFlag)
 {
     mPointStyle = true;
     
@@ -1435,8 +1464,18 @@ GraphCurve5::ApplyData()
         mLockFreeQueues[2].get(i, cmd);
 
         if (cmd.mType == Command::SET_VALUES5)
+        {
             SetValues5LF(cmd.mValues, cmd.mApplyXScale, cmd.mApplyYScale);
-        
+        }
+        else if (cmd.mType == Command::SET_VALUES_POINT)
+        {
+            SetValuesPointLF(cmd.mXValues, cmd.mYValues);
+        }
+        else if (cmd.mType == Command::SET_VALUES_POINT_EX)
+        {
+            SetValuesPointExLF(cmd.mXValues, cmd.mYValues,
+                               cmd.mSingleScale, cmd.mScaleX, cmd.mCenterFlag);
+        }
     }
 
     mLockFreeQueues[2].clear();

@@ -434,7 +434,7 @@ BLVectorscope::SetGraphs(GraphControl12 *graph0,
         mGraphs[SOURCE_MODE_ID]->SetDisablePointOffsetHack(true);
     }
     
-    SetMode(mMode); // TEST
+    SetMode(mMode);
 }
 
 void
@@ -475,7 +475,8 @@ BLVectorscope::AddSamples(const vector<WDL_TypedBuf<BL_FLOAT> > &samples)
             // Origin
             BLUtils::MultValues(&polarSamples[1], (BL_FLOAT)SCALE_POLAR_Y);
             
-            mCurves[POLAR_SAMPLE_MODE_ID]->SetValuesPoint(polarSamples[0], polarSamples[1]);
+            mCurves[POLAR_SAMPLE_MODE_ID]->
+                SetValuesPoint(polarSamples[0], polarSamples[1]);
         }
     }
     
@@ -524,7 +525,8 @@ BLVectorscope::AddSamples(const vector<WDL_TypedBuf<BL_FLOAT> > &samples)
             BLUtils::MultValues(&polarSamples[1], (BL_FLOAT)SCALE_POLAR_Y);
             BLUtils::MultValues(&polarSamplesMax[1], (BL_FLOAT)SCALE_POLAR_Y);
             
-            mCurves[FIREWORKS_MODE_ID]->SetValuesPoint(polarSamples[0], polarSamples[1]);
+            mCurves[FIREWORKS_MODE_ID]->
+                SetValuesPoint(polarSamples[0], polarSamples[1]);
             
             mCurves[FIREWORKS_MODE_ID + 1]->SetValuesPoint(polarSamplesMax[0],
                                                            polarSamplesMax[1]);

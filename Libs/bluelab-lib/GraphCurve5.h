@@ -123,12 +123,18 @@ public:
     
     void SetValuesPoint(const WDL_TypedBuf<BL_GUI_FLOAT> &xValues,
                         const WDL_TypedBuf<BL_GUI_FLOAT> &yValues);
+    void SetValuesPointLF(const WDL_TypedBuf<BL_GUI_FLOAT> &xValues,
+                          const WDL_TypedBuf<BL_GUI_FLOAT> &yValues);
     
     // For UST
     void SetValuesPointEx(const WDL_TypedBuf<BL_GUI_FLOAT> &xValues,
                           const WDL_TypedBuf<BL_GUI_FLOAT> &yValues,
                           bool singleScale = false, bool scaleX = true,
                           bool centerFlag = false);
+    void SetValuesPointExLF(const WDL_TypedBuf<BL_GUI_FLOAT> &xValues,
+                            const WDL_TypedBuf<BL_GUI_FLOAT> &yValues,
+                            bool singleScale = false, bool scaleX = true,
+                            bool centerFlag = false);
     
     void SetColorWeight(const WDL_TypedBuf<BL_GUI_FLOAT> &colorWeights);
     
@@ -321,7 +327,9 @@ protected:
     {
         enum Type
         {
-            SET_VALUES5 = 0
+            SET_VALUES5 = 0,
+            SET_VALUES_POINT,
+            SET_VALUES_POINT_EX,
         };
 
         Type mType;
@@ -330,6 +338,17 @@ protected:
         WDL_TypedBuf<BL_GUI_FLOAT> mValues;
         bool mApplyXScale;
         bool mApplyYScale;
+
+        // For SetValuesPoint
+        WDL_TypedBuf<BL_GUI_FLOAT> mXValues;
+        WDL_TypedBuf<BL_GUI_FLOAT> mYValues;
+
+        // For SetValuesPointEx
+        //WDL_TypedBuf<BL_GUI_FLOAT> mXValues;
+        //WDL_TypedBuf<BL_GUI_FLOAT> mYValues;
+        bool mSingleScale;
+        bool mScaleX;
+        bool mCenterFlag;
     };
     
     LockFreeQueue2<Command> mLockFreeQueues[LOCK_FREE_NUM_BUFFERS];
