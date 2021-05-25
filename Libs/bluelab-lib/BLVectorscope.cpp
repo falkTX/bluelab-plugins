@@ -94,6 +94,7 @@
 //
 #define LISSAJOUS_SCALE 0.8
 
+#define OPTIM_QUAD_SAME_COLOR 1
 
 BLVectorscope::BLVectorscope(BLVectorscopePlug *plug,
                              BL_FLOAT sampleRate)
@@ -304,6 +305,10 @@ BLVectorscope::SetGraphs(GraphControl12 *graph0,
                       bevelFlag,
                       pointColor[0], pointColor[1], pointColor[2],
                       false, alpha, pointsAsLines, overlay, false);
+
+#if OPTIM_QUAD_SAME_COLOR
+        mCurves[POLAR_SAMPLE_CURVE_ID]->SetOptimSameColor(true);
+#endif
         
         mGraphs[POLAR_SAMPLE_MODE_ID]->SetDisablePointOffsetHack(true);
     }
@@ -337,6 +342,10 @@ BLVectorscope::SetGraphs(GraphControl12 *graph0,
                       bevelFlag,
                       pointColor[0], pointColor[1], pointColor[2],
                       false, alpha, pointsAsLines, overlay, false);
+
+#if OPTIM_QUAD_SAME_COLOR
+        mCurves[LISSAJOUS_CURVE_ID]->SetOptimSameColor(true);
+#endif
         
         mGraphs[LISSAJOUS_MODE_ID]->SetDisablePointOffsetHack(true);
     }
