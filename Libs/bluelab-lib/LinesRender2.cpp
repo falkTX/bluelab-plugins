@@ -56,10 +56,8 @@ using namespace std;
 // (but triangular shape for peaks)
 //#define DENSITY_MAX_NUM_SLICES_FREQS 64
 
-// Optimize only horizontal lines
-#define OPTIM_STRAIGHT_LINES     0
 // Optimize horizontal and vertical lines
-#define OPTIM_STRAIGHT_LINES2    1
+#define OPTIM_STRAIGHT_LINES 1
 // 1e-2 => clips everything
 // 1e-4 => 30ms instead of 40
 // 1e-5 => optimizes well too
@@ -464,7 +462,7 @@ LinesRender2::DrawLinesFreq(NVGcontext *vg, const vector<vector<Point> > &points
 
 void
 LinesRender2::DoDrawLinesFreq(NVGcontext *vg, const vector<vector<Point> > &points,
-                             unsigned char inColor[4], BL_FLOAT lineWidth)
+                              unsigned char inColor[4], BL_FLOAT lineWidth)
 {
     if (points.empty())
         return;
@@ -490,7 +488,7 @@ LinesRender2::DoDrawLinesFreq(NVGcontext *vg, const vector<vector<Point> > &poin
         {
             const Point &p = points0[j];
             
-#if OPTIM_STRAIGHT_LINES2
+#if OPTIM_STRAIGHT_LINES
             if ((j > 0) && (j < points0.size() - 1))
             {
                 if ((mMode == LINES_FREQ) && p.mSkipDisplayX)
@@ -564,7 +562,7 @@ LinesRender2::DoDrawLinesTime(NVGcontext *vg, const vector<vector<Point> > &poin
         {
             const Point &p = points[i][j];
             
-#if OPTIM_STRAIGHT_LINES2
+#if OPTIM_STRAIGHT_LINES
             if ((i > 0) && (i < points.size() - 1))
             {
                 if ((mMode == LINES_TIME) && p.mSkipDisplayZ)
@@ -841,7 +839,7 @@ LinesRender2::ProjectPoints(vector<Point> *points, int width, int height)
     {
         Point &p = (*points)[i];
         
-#if OPTIM_STRAIGHT_LINES2
+#if OPTIM_STRAIGHT_LINES
         // Do not project the point if we will ignore it during display
         if ((mMode == LINES_FREQ) && p.mSkipDisplayX)
             continue;
@@ -955,7 +953,10 @@ LinesRender2::ProjectSlices(vector<vector<Point> > *points,
             vector<Point> &newPoints = mTmpBuf10;
             newPoints.resize(densityNumSlicesJ);
             
-            BL_FLOAT jCoeff = ((BL_FLOAT)slices[targetIIdx].size())/densityNumSlicesJ;
+            //BL_FLOAT jCoeff =
+            // ((BL_FLOAT)slices[targetIIdx].size())/densityNumSlicesJ;
+            BL_FLOAT jCoeff =
+                ((BL_FLOAT)slices[targetIIdx].size())/(densityNumSlicesJ - 1);
             for (int j = 0; j < newPoints.size(); j++)
             {
                 int targetJIdx = bl_round(j*jCoeff);
@@ -1036,7 +1037,7 @@ LinesRender2::ProjectSlices(vector<vector<Point> > *points,
     
     // Final processes
     //
-#if OPTIM_STRAIGHT_LINES2
+#if OPTIM_STRAIGHT_LINES
     if ((mMode == LINES_FREQ) ||
         (mMode == GRID))
     {
