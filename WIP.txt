@@ -44,7 +44,7 @@ BL-SpectrumView	    :
 BL-StereoDeReverb   :
 BL-StereoPan	    :   (fea+)
 BL-StereoWidth	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr -- bug clicks ?
-BL-Wav3s	    :
+BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr
 
 ---
 
