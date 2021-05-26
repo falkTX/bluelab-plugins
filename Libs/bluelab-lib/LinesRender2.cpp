@@ -74,17 +74,6 @@ using namespace std;
 // (but it is not perfect)
 #define HACK_DB_SCALE 1
 
-// When density was minimum, while playing, the frequencies lines jittered
-// This fixes, but makes the lowest density to be 32 and not 16
-#define FIX_JITTER_LOW_DENSITY 1
-
-// When density was minimum, while playing, the frequencies lines jittered
-// this fix suppresses the jittering, and at the ame time does not increase
-// the minimum density
-#define FIX_JITTER_LOW_DENSITY2 0 //1
-
-// NOTE: FIX_JITTER_LOW_DENSITY 1/2 => finally rewritten the whole method
-
 // Jittering frequency lines with low density, just higher than the lowest density
 #define FIX_JITTER_LOW_DENSITY 1
 
@@ -936,7 +925,8 @@ LinesRender2::ProjectSlices(vector<vector<Point> > *points,
 #if FIX_JITTER_LOW_DENSITY
     // FIX: fixes well jumps/sparkles with low density just geater than the minimum
     // This fixes everything except the first line
-    iOffset = -iOffset;
+    if (mMode == LINES_FREQ)
+        iOffset = -iOffset;
 #endif
     
     // Decimate / augment on i (slices)
@@ -945,8 +935,11 @@ LinesRender2::ProjectSlices(vector<vector<Point> > *points,
 #if FIX_JITTER_LOW_DENSITY
         // Suppress the first line, and later will rescale a
         // bit over z to fill the gap
-        if (i == 0)
-            continue;
+        if (mMode == LINES_FREQ)
+        {
+            if (i == 0)
+                continue;
+        }
 #endif
         
         BL_FLOAT targetIIdx = bl_round(i*iCoeff + iOffset);
@@ -993,8 +986,11 @@ LinesRender2::ProjectSlices(vector<vector<Point> > *points,
 
 #if FIX_JITTER_LOW_DENSITY
         // Scale z a bit, to compensate for the suppression of the first line
-        BL_FLOAT coeff = ((BL_FLOAT)(points->size() + 1.0))/points->size();
-        z *= coeff;
+        if (mMode == LINES_FREQ)
+        {
+            BL_FLOAT coeff = ((BL_FLOAT)(points->size() + 1.0))/points->size();
+            z *= coeff;
+        }
 #endif
         
         // Center
