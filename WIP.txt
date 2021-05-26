@@ -43,13 +43,10 @@ BL-SpectroExpe	    :
 BL-SpectrumView	    :
 BL-StereoDeReverb   :
 BL-StereoPan	    :   (fea+)
-BL-StereoWidth	    :   
+BL-StereoWidth	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr -- bug clicks ?
 BL-Wav3s	    :
 
 ---
-
-DONE: 25
-TODO: 3
 
 TODO: check plugs CPU % when "resting"
 TODO: check gui refresh for all plugins
