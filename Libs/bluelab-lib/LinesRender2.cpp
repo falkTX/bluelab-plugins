@@ -315,16 +315,13 @@ LinesRender2::PreDraw(NVGcontext *vg, int width, int height)
 
     // Make a copy of the sensitive variables, to be able to release
     // the mutex early
-    //deque<vector<Point> > slices = mSlices;
     bl_queue<vector<Point> > &slices = mTmpBuf4;
     slices = mSlices;
     
     if (mMustRecomputeProj)
     {
         if (!mDisplayAllSlices)
-            //ProjectSlices(&points, slices, mViewWidth, mViewHeight);
-            //ProjectSlices2(&points, slices, mViewWidth, mViewHeight);
-            ProjectSlices3(&points, slices, mViewWidth, mViewHeight);
+            ProjectSlices(&points, slices, mViewWidth, mViewHeight);
         else
             ProjectSlicesNoDecim(&points, slices, mViewWidth, mViewHeight);
         
@@ -478,7 +475,7 @@ LinesRender2::DoDrawLinesFreq(NVGcontext *vg, const vector<vector<Point> > &poin
     if (points.empty())
         return;
     
-    unsigned char color0[4] = { inColor[0], inColor[1], inColor[2], inColor[3/*2*/] };
+    unsigned char color0[4] = { inColor[0], inColor[1], inColor[2], inColor[3] };
     
     SWAP_COLOR(color0);
     
@@ -550,7 +547,7 @@ void
 LinesRender2::DoDrawLinesTime(NVGcontext *vg, const vector<vector<Point> > &points,
                               unsigned char inColor[4], BL_FLOAT lineWidth)
 {
-    unsigned char color0[4] = { inColor[0], inColor[1], inColor[2], inColor[3/*2*/] };
+    unsigned char color0[4] = { inColor[0], inColor[1], inColor[2], inColor[3] };
     
     SWAP_COLOR(color0);
     
@@ -848,13 +845,12 @@ LinesRender2::ProjectPoints(vector<Point> *points, int width, int height)
 #endif
         
         // Matrix transform
-        //glm::vec4 v;
         v.x = p.mX;
         v.y = p.mY;
         v.z = p.mZ;
         v.w = 1.0;
         
-        /*glm::vec4*/ v4 = modelProjMat*v;
+        v4 = modelProjMat*v;
         
         BL_FLOAT x = v4.x;
         BL_FLOAT y = v4.y;
@@ -885,334 +881,8 @@ LinesRender2::ProjectPoints(vector<Point> *points, int width, int height)
 
 void
 LinesRender2::ProjectSlices(vector<vector<Point> > *points,
-                            //const deque<vector<Point> > &slices,
                             const bl_queue<vector<Point> > &slices,
                             int width, int height)
-{
-    int densityNumSlicesI = mDensityNumSlices;
-    int densityNumSlicesJ = mDensityNumSlices;
-    
-    // Will reduce number of points per line
-    // (but is not very beautiful)
-#if !OPTIM_DENSITY_LINES
-    if (mMode == LINES_FREQ)
-        densityNumSlicesJ = DENSITY_MAX_NUM_SLICES_FREQS;
-    
-    if (mMode == LINES_TIME)
-        densityNumSlicesI = DENSITY_MAX_NUM_SLICES;
-#endif
-    
-    // Haked fix, but it works...
-#if FIX_JITTER_LOW_DENSITY
-    if (densityNumSlicesI < mNumSlices)
-        densityNumSlicesI = (int)mNumSlices;
-#endif
-    
-    BL_FLOAT startI = 0;
-    
-#if FIX_JITTER_LOW_DENSITY2
-    if (densityNumSlicesI < mNumSlices)
-        startI = std::fmod((BL_FLOAT)mNumLinesAdded,
-                           ((BL_FLOAT)mNumSlices)/densityNumSlicesI);
-#endif
-    
-    // Optim
-    BL_FLOAT coeffI0 = (1.0/(densityNumSlicesI))*(slices.size() - 1);
-    BL_FLOAT coeffI1 = (1.0/(densityNumSlicesI - 1))*(slices.size() - 1);
-    
-    points->resize(densityNumSlicesI);
-    for (int i = (int)startI; i < densityNumSlicesI; i++)
-    {
-        BL_FLOAT i0;
-        if (densityNumSlicesI <= 1)
-            //i0 = (((BL_FLOAT)i)/densityNumSlicesI)*(slices.size() - 1);
-            i0 = i*coeffI0;
-        else
-        {
-            //i0 = (((BL_FLOAT)i)/(densityNumSlicesI - 1))*(slices.size() - 1);
-            i0 = i*coeffI1;
-        }
-        
-        //i0 -= startI;
-        
-        if (mDensePointsFlag)
-        {
-            // Rescale on j
-            vector<Point> &newPoints = mTmpBuf8;
-            newPoints.resize(densityNumSlicesJ);
-            
-            // Optim
-            BL_FLOAT coeffJ0 = (1.0/densityNumSlicesJ)*(slices[i0].size() - 1);
-            BL_FLOAT coeffJ1 = (1.0/(densityNumSlicesJ - 1))*(slices[i0].size() - 1);
-            
-            for (int j = 0; j < densityNumSlicesJ; j++)
-            {
-                int j0;
-                if (slices[i0].size() <= 1)
-                    //j0 = (((BL_FLOAT)j)/densityNumSlicesJ)*(mSlices[i0].size() - 1);
-                    j0 = j*coeffJ0;
-                else
-                {
-                    //j0 = (((BL_FLOAT)j)/(densityNumSlicesJ - 1))*(mSlices[i0].size() - 1);
-                    j0 = j*coeffJ1;
-                }
-                
-                const Point &p = slices[i0][j0];
-                
-                newPoints[j] = p;
-                
-                newPoints[j].mSkipDisplayX = false;
-                newPoints[j].mSkipDisplayZ = false;
-            }
-            
-            (*points)[i] = newPoints;
-        }
-        else
-            (*points)[i] = slices[i0];
-        
-        // Update z
-        //
-        
-        //BL_FLOAT z;
-        //#if !REVERSE_SCROLL_ORDER
-        //        // Compute time step
-        //        if (densityNumSlicesI <= 1)
-        //            z = 1.0 - ((BL_FLOAT)i)/densityNumSlicesI;
-        //        else
-        //            z = 1.0 - ((BL_FLOAT)i)/(densityNumSlicesI - 1);
-        //#else
-        //        if (densityNumSlicesI <= 1)
-        //            z = ((BL_FLOAT)i)/densityNumSlicesI;
-        //        else
-        //            z = ((BL_FLOAT)i)/(densityNumSlicesI - 1);
-        //#endif
-        
-        // Compute time step
-        BL_FLOAT z = 0.0;
-        if (densityNumSlicesI > 1)
-        {
-            if (mScrollDirection == BACK_FRONT)
-                z = 1.0 - ((BL_FLOAT)i)/(densityNumSlicesI - 1);
-            else
-                z = ((BL_FLOAT)i)/(densityNumSlicesI - 1);
-        }
-        
-        // Center
-        z -= 0.5;
-        
-        for (int j = 0; j < (*points)[i].size(); j++)
-        {
-            Point &p = (*points)[i][j];
-            p.mZ = z;
-        }
-        
-        // Scale on Y
-        for (int j = 0; j < (*points)[i].size(); j++)
-        {
-            Point &p = (*points)[i][j];
-            
-            //p.mY *= mScale; //
-            
-#if USE_DB_SCALE
-            if (mDBScale)
-            {
-                p.mY = BLUtils::AmpToDBNorm(p.mY, (BL_FLOAT)1e-15, mMinDB);
-                
-                // If we want to adjust more the db scale to the axis,
-                // first try to examine this value
-#if HACK_DB_SCALE
-                p.mY *= 0.5;
-#endif
-            }
-#endif
-            
-            p.mY *= mScale;
-        }
-        
-#if OPTIM_STRAIGHT_LINES
-        // Optim
-        // NOTE: optimize only horizontal lines
-        DecimateStraightLine(&(*points)[i]);
-#endif
-        
-#if !OPTIM_STRAIGHT_LINES2
-        ProjectPoints(&(*points)[i], width, height);
-#endif
-    }
-    
-#if OPTIM_STRAIGHT_LINES2
-    if ((mMode == LINES_FREQ) ||
-        (mMode == GRID))
-    {
-        OptimStraightLineX(points);
-    }
-    
-    if (mMode == LINES_TIME)
-    {
-        OptimStraightLineZ(points);
-    }
-    
-    // Project everything at one time
-    for (int i = 0; i < points->size(); i++)
-    {
-        ProjectPoints(&(*points)[i], width, height);
-    }
-#endif
-}
-
-void
-LinesRender2::ProjectSlices2(vector<vector<Point> > *points,
-                             //const deque<vector<Point> > &slices,
-                             const bl_queue<vector<Point> > &slices,
-                             int width, int height)
-{
-    int densityNumSlicesI = mDensityNumSlices;
-    int densityNumSlicesJ = mDensityNumSlices;
-    
-    // Will reduce number of points per line
-    // (but is not very beautiful)
-    if (mMode == LINES_FREQ)
-        densityNumSlicesJ = DENSITY_MAX_NUM_SLICES_FREQS;
-    
-    if (mMode == LINES_TIME)
-        densityNumSlicesI = DENSITY_MAX_NUM_SLICES;
-    
-    points->resize(densityNumSlicesI);
-    WDL_TypedBuf<BL_FLOAT> &pointsZ = mTmpBuf0;
-    pointsZ.Resize(points->size());
-    
-    BL_FLOAT iStep = ((BL_FLOAT)mNumSlices)/densityNumSlicesI;
-    
-    BL_FLOAT startI = 0.0;
-    if (densityNumSlicesI < mNumSlices)
-        startI = std::fmod((BL_FLOAT)mNumLinesAdded, iStep);
-    
-    BL_FLOAT iIdx = startI;
-    
-    // NOTE: If step is < 1.0, then we will duplicate some lines,
-    // to give the high density effect
-    
-    while(iIdx < slices.size())
-    {
-        int ptIIdx = (int)(iIdx/iStep);
-        
-        if (mDensePointsFlag)
-        {
-            // Rescale on j
-            vector<Point> &newPoints = mTmpBuf9;
-            newPoints.resize(densityNumSlicesJ);
-            
-            BL_FLOAT jStep = ((BL_FLOAT)slices[(int)iIdx].size())/densityNumSlicesJ;
-            BL_FLOAT jIdx = 0.0;
-            while(jIdx < slices[(int)iIdx].size())
-            {
-                int ptJIdx = (int)(jIdx/jStep);
-                
-                const Point &p = slices[(int)iIdx][(int)jIdx];
-                
-                newPoints[ptJIdx] = p;
-                
-                newPoints[ptJIdx].mSkipDisplayX = false;
-                newPoints[ptJIdx].mSkipDisplayZ = false;
-                
-                jIdx += jStep;
-            }
-            
-            (*points)[ptIIdx] = newPoints;
-        }
-        else
-            (*points)[ptIIdx] = slices[(int)iIdx];
-        
-        //
-        // Compute time step
-        BL_FLOAT z = 0.0;
-        if (densityNumSlicesI > 1)
-        {
-            if (mScrollDirection == BACK_FRONT)
-                z = 1.0 - (iIdx - startI)/(slices.size() - 1);
-            else
-                z = (iIdx - startI)/(slices.size() - 1);
-        }
-        
-        // Center
-        z -= 0.5;
-        
-        pointsZ.Get()[ptIIdx] = z;
-        
-        // Increment the counter
-        iIdx += iStep;
-    }
-    
-    // Process result points
-    //
-    for (int i = 0; i < points->size(); i++)
-    {
-        BL_FLOAT z = pointsZ.Get()[i];
-        for (int j = 0; j < (*points)[i].size(); j++)
-        {
-            Point &p = (*points)[i][j];
-            p.mZ = z;
-        }
-        
-        // Scale on Y
-        for (int j = 0; j < (*points)[i].size(); j++)
-        {
-            Point &p = (*points)[i][j];
-            
-#if USE_DB_SCALE
-            if (mDBScale)
-            {
-                p.mY = BLUtils::AmpToDBNorm(p.mY, (BL_FLOAT)1e-15, mMinDB);
-                
-                // If we want to adjust more the db scale to the axis,
-                // first try to examine this value
-#if HACK_DB_SCALE
-                p.mY *= 0.5;
-#endif
-            }
-#endif
-            
-            p.mY *= mScale;
-        }
-        
-#if OPTIM_STRAIGHT_LINES
-        // Optim
-        // NOTE: optimize only horizontal lines
-        DecimateStraightLine(&(*points)[i]);
-#endif
-        
-#if !OPTIM_STRAIGHT_LINES2
-        ProjectPoints(&(*points)[i], width, height);
-#endif
-    }
-    
-    // Final processes
-    //
-#if OPTIM_STRAIGHT_LINES2
-    if ((mMode == LINES_FREQ) ||
-        (mMode == GRID))
-    {
-        //OptimStraightLineX(points);
-    }
-    
-    if (mMode == LINES_TIME)
-    {
-        OptimStraightLineZ(points);
-    }
-    
-    // Project everything at one time
-    for (int i = 0; i < points->size(); i++)
-    {
-        ProjectPoints(&(*points)[i], width, height);
-    }
-#endif
-}
-
-void
-LinesRender2::ProjectSlices3(vector<vector<Point> > *points,
-                             //const deque<vector<Point> > &slices,
-                             const bl_queue<vector<Point> > &slices,
-                             int width, int height)
 {
     // Decimate the right way:
     // - iterate over the target data
@@ -1247,7 +917,6 @@ LinesRender2::ProjectSlices3(vector<vector<Point> > *points,
     // Decimate / augment on i (slices)
     for (int i = 0; i < points->size(); i++)
     {
-        //BL_FLOAT targetIIdx = bl_round(i*iCoeff + iOffset);
         BL_FLOAT targetIIdx = bl_round(i*iCoeff + iOffset);
         if (targetIIdx > slices.size() - 1)
             targetIIdx = slices.size() - 1;
@@ -1277,7 +946,6 @@ LinesRender2::ProjectSlices3(vector<vector<Point> > *points,
         else
             (*points)[i] = slices[targetIIdx];
         
-        //
         // Compute time step
         BL_FLOAT z = 0.0;
         if (densityNumSlicesI > 1)
@@ -1295,7 +963,6 @@ LinesRender2::ProjectSlices3(vector<vector<Point> > *points,
     }
     
     // Process result points
-    //
     for (int i = 0; i < points->size(); i++)
     {
         BL_FLOAT z = pointsZ.Get()[i];
@@ -1351,7 +1018,6 @@ LinesRender2::ProjectSlices3(vector<vector<Point> > *points,
 
 void
 LinesRender2::ProjectSlicesNoDecim(vector<vector<Point> > *points,
-                                   //const deque<vector<Point> > &slices,
                                    const bl_queue<vector<Point> > &slices,
                                    int width, int height)
 {
@@ -1393,8 +1059,6 @@ LinesRender2::ProjectSlicesNoDecim(vector<vector<Point> > *points,
         for (int j = 0; j < (*points)[i].size(); j++)
         {
             Point &p = (*points)[i][j];
-            
-            //p.mY *= mScale; //
             
 #if USE_DB_SCALE
             if (mDBScale)
@@ -1556,7 +1220,6 @@ LinesRender2::DrawAdditionalLines(NVGcontext *vg, int width, int height)
     {
         Line &line = lines[i];
         
-        //line0.push_back(line.mPoints);
         line0[i] = line.mPoints;
         
         DoDrawLinesFreq(vg, line0, line.mColor,
@@ -1645,11 +1308,9 @@ LinesRender2::ProjectAdditionalLines2(vector<Line> *lines, int width, int height
             
             p.mY *= mScale;
             
-            //newLine.mPoints.push_back(p);
             newLine.mPoints[pointIdx++] = p;
         }
         
-#if 1
         // Fix the extremity of the lines at low density
         if (step >= 2.0)
         {
@@ -1673,11 +1334,9 @@ LinesRender2::ProjectAdditionalLines2(vector<Line> *lines, int width, int height
                 
                 p.mY *= mScale;
             
-                //newLine.mPoints.push_back(p);
                 newLine.mPoints[pointIdx++] = p;
             }
         }
-#endif
         
         line = newLine;
         
@@ -1710,7 +1369,6 @@ LinesRender2::DecimateStraightLine(vector<Point> *points)
     if (mMode != LINES_FREQ)
         return;
     
-    //
     int numPoints = 0;
     for (int i = 0; i < points->size(); i++)
     {
@@ -1755,7 +1413,6 @@ LinesRender2::DecimateStraightLine(vector<Point> *points)
         }
         
         if (!skip)
-            //newPoints.push_back(p);
             newPoints[pointIdx++] = p;
     }
     

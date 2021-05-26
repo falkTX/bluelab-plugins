@@ -167,25 +167,13 @@ protected:
     
     void ProjectPoints(vector<Point> *slices, int width, int height);
     
+    // GOOD method, do it the best way
     void ProjectSlices(vector<vector<Point> > *points,
-                       //const deque<vector<Point> > &slices,
                        const bl_queue<vector<Point> > &slices,
                        int width, int height);
-    // Re-written the method, more simple, with fixes
-    void ProjectSlices2(vector<vector<Point> > *points,
-                        //const deque<vector<Point> > &slices,
-                        const bl_queue<vector<Point> > &slices,
-                        int width, int height);
-    
-    // GOOD method, do it the best way
-    void ProjectSlices3(vector<vector<Point> > *points,
-                        //const deque<vector<Point> > &slices,
-                        const bl_queue<vector<Point> > &slices,
-                        int width, int height);
     
     // For debugging: display all
     void ProjectSlicesNoDecim(vector<vector<Point> > *points,
-                              //const deque<vector<Point> > &slices,
                               const bl_queue<vector<Point> > &slices,
                               int width, int height);
 
@@ -214,7 +202,6 @@ protected:
     void DoDrawGrid(NVGcontext *vg, const vector<vector<Point> > &points,
                     unsigned char inColor[4], BL_FLOAT lineWidth);
     
-    // NEW
     // Draw using each point color
     void DoDrawPoints(NVGcontext *vg, const vector<vector<Point> > &points,
                       BL_FLOAT pointSize);
