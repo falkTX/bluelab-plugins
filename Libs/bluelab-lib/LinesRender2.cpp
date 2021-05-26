@@ -21,6 +21,8 @@ using namespace std;
 #include <BLUtils.h>
 #include <BLUtilsMath.h>
 
+#include <BLDebug.h>
+
 #include "LinesRender2.h"
 
 #define NEAR_PLANE 0.1f
@@ -82,6 +84,9 @@ using namespace std;
 #define FIX_JITTER_LOW_DENSITY2 0 //1
 
 // NOTE: FIX_JITTER_LOW_DENSITY 1/2 => finally rewritten the whole method
+
+// Jittering frequency lines with low density, just higher than the lowest density
+#define FIX_JITTER_LOW_DENSITY 1
 
 static void
 CameraModelProjMat(int winWidth, int winHeight, float angle0, float angle1,
@@ -920,20 +925,34 @@ LinesRender2::ProjectSlices(vector<vector<Point> > *points,
     points->resize(densityNumSlicesI);
     WDL_TypedBuf<BL_FLOAT> &pointsZ = mTmpBuf1;
     pointsZ.Resize((int)points->size());
-    
-    BL_FLOAT iCoeff = ((BL_FLOAT)mNumSlices)/densityNumSlicesI;
 
+    // Coeff
+    BL_FLOAT iCoeff = ((BL_FLOAT)mNumSlices)/densityNumSlicesI;
+    
     BL_FLOAT iOffset = 0.0;
     if (iCoeff > 1.0)
         iOffset = std::fmod((BL_FLOAT)mNumLinesAdded, iCoeff);
-    
-    // NOTE: If step is < 1.0, then we will duplicate some lines,
-    // to give the high density effect (augmentation)
+
+#if FIX_JITTER_LOW_DENSITY
+    // FIX: fixes well jumps/sparkles with low density just geater than the minimum
+    // This fixes everything except the first line
+    iOffset = -iOffset;
+#endif
     
     // Decimate / augment on i (slices)
     for (int i = 0; i < points->size(); i++)
     {
+#if FIX_JITTER_LOW_DENSITY
+        // Suppress the first line, and later will rescale a
+        // bit over z to fill the gap
+        if (i == 0)
+            continue;
+#endif
+        
         BL_FLOAT targetIIdx = bl_round(i*iCoeff + iOffset);
+        if (targetIIdx < 0.0)
+            targetIIdx = 0.0;
+        
         if (targetIIdx > slices.size() - 1)
             targetIIdx = slices.size() - 1;
         
@@ -971,6 +990,12 @@ LinesRender2::ProjectSlices(vector<vector<Point> > *points,
             else
                 z = ((BL_FLOAT)i)/(points->size() - 1);
         }
+
+#if FIX_JITTER_LOW_DENSITY
+        // Scale z a bit, to compensate for the suppression of the first line
+        BL_FLOAT coeff = ((BL_FLOAT)(points->size() + 1.0))/points->size();
+        z *= coeff;
+#endif
         
         // Center
         z -= 0.5;
