@@ -110,7 +110,9 @@ public:
     void ApplyData() override;
     
     void ClearSlices();
+    bool MustAddSlice();
     void AddSlice(const vector<Point> &points);
+    
     
     void SetCameraAngles(BL_FLOAT angle0, BL_FLOAT angle1);
     

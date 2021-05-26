@@ -131,9 +131,14 @@ void
 WavesRender::AddMagns(const WDL_TypedBuf<BL_FLOAT> &magns)
 {
     vector<LinesRender2::Point> &points = mTmpBuf0;
-    MagnsToPoints(&points, magns);
+
+    if (mLinesRender->MustAddSlice())
+        // Do not call costly MagnsToPoints() if not necessary
+    {
+        MagnsToPoints(&points, magns);
     
-    mLinesRender->AddSlice(points);
+        mLinesRender->AddSlice(points);
+    }
     
     mAddNum++;
     

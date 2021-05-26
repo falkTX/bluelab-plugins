@@ -693,9 +693,32 @@ LinesRender2::ClearSlices()
     mNeedRedraw = true;
 }
 
+bool
+LinesRender2::MustAddSlice()
+{
+    if (!mDisplayAllSlices)
+    {
+        // Warning: mAddNum is incremented, but we are in an accessor
+        bool skipDisplay = (mAddNum++ % mSpeed != 0);
+        if (skipDisplay)
+            return false;
+    }
+
+    return true;
+}
+
 void
 LinesRender2::AddSlice(const vector<Point> &points)
 {
+#if 0
+    if (!mDisplayAllSlices)
+    {
+        bool skipDisplay = (mAddNum++ % mSpeed != 0);
+        if (skipDisplay)
+            return;
+    }
+#endif
+    
     Slice &slice = mTmpBuf15;
     slice.mPoints = points;
     
@@ -740,13 +763,6 @@ LinesRender2::ApplyData()
 void
 LinesRender2::AddSliceLF(const vector<Point> &points)
 {
-    if (!mDisplayAllSlices)
-    {
-        bool skipDisplay = (mAddNum++ % mSpeed != 0);
-        if (skipDisplay)
-            return;
-    }
-    
     vector<Point> &points0 = mTmpBuf7;
     points0 = points;
 
