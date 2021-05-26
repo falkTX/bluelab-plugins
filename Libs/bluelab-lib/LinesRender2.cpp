@@ -990,6 +990,9 @@ LinesRender2::ProjectSlices(vector<vector<Point> > *points,
         {
             BL_FLOAT coeff = ((BL_FLOAT)(points->size() + 1.0))/points->size();
             z *= coeff;
+
+            if (mScrollDirection == FRONT_BACK)
+                z -= 1.0/points->size();
         }
 #endif
         
