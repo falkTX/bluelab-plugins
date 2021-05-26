@@ -114,8 +114,8 @@ protected:
     void RecomputeParams();
 
     BL_FLOAT SecsToPixels(BL_FLOAT secs, BL_FLOAT width);
-
-    void LFAddSpectrogramLine(const WDL_TypedBuf<BL_FLOAT> &magns,
+    
+    void AddSpectrogramLineLF(const WDL_TypedBuf<BL_FLOAT> &magns,
                               const WDL_TypedBuf<BL_FLOAT> &phases);
     
     // NanoVG

@@ -102,12 +102,15 @@ public:
     void SetDensePointsFlag(bool flag);
     
     // Inherited
-    void PreDraw(NVGcontext *vg, int width, int height);
+    void PreDraw(NVGcontext *vg, int width, int height) override;
+
+    // LockFreeObj
+    void PushData() override;
+    void PullData() override;
+    void ApplyData() override;
     
     void ClearSlices();
-    
     void AddSlice(const vector<Point> &points);
-
     
     void SetCameraAngles(BL_FLOAT angle0, BL_FLOAT angle1);
     
@@ -160,6 +163,8 @@ public:
     void DBG_ForceDensityNumSlices();
 
 protected:
+    void AddSliceLF(const vector<Point> &points);
+    
     void ProjectPoints(vector<Point> *slices, int width, int height);
     
     void ProjectSlices(vector<vector<Point> > *points,
@@ -296,6 +301,16 @@ protected:
     // Debug
     bool mDbgForceDensityNumSlices;
 
+    // Lock free
+    struct Slice
+    {
+        vector<Point> mPoints;
+    };
+    
+    LockFreeQueue2<Slice> mLockFreeQueues[LOCK_FREE_NUM_BUFFERS];
+
+    bool mNeedRedraw;
+    
 private:
     // Tmp buffers
     WDL_TypedBuf<BL_FLOAT> mTmpBuf0;
@@ -314,6 +329,8 @@ private:
     vector<vector<Point> > mTmpBuf13;
     Line mTmpLine;
     vector<Point> mTmpBuf14;
+    Slice mTmpBuf15;
+    Slice mTmpBuf16;
 };
 
 #endif // IGRAPHICS_NANOVG

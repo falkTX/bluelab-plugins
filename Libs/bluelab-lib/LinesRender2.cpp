@@ -173,6 +173,8 @@ LinesRender2::LinesRender2()
     mColor1[3] = 255;
 
     mDbgForceDensityNumSlices = false;
+
+    mNeedRedraw = true;
     
     Init();
 }
@@ -259,6 +261,8 @@ LinesRender2::Init()
 #endif
     
     mMustRecomputeProj = true;
+
+    mNeedRedraw = true;
 }
 
 void
@@ -273,6 +277,8 @@ LinesRender2::SetNumSlices(long numSlices)
     {
         mDensityNumSlices = mNumSlices;
     }
+
+    mNeedRedraw = true;
 }
 
 long
@@ -287,6 +293,8 @@ LinesRender2::SetDensePointsFlag(bool flag)
     mDensePointsFlag = flag;
     
     mMustRecomputeProj = true;
+
+    mNeedRedraw = true;
 }
 
 void
@@ -348,6 +356,8 @@ LinesRender2::PreDraw(NVGcontext *vg, int width, int height)
             axis->Draw(vg, width, height);
         }
     }
+
+    mNeedRedraw = false;
 }
 
 void
@@ -682,10 +692,56 @@ LinesRender2::ClearSlices()
     mShowAdditionalLines = false;
     
     mMustRecomputeProj = true;
+
+    mNeedRedraw = true;
 }
 
 void
 LinesRender2::AddSlice(const vector<Point> &points)
+{
+    Slice &slice = mTmpBuf15;
+    slice.mPoints = points;
+    
+    mLockFreeQueues[0].push(slice);
+}
+
+void
+LinesRender2::PushData()
+{
+    // Must dirty this CustomDrawer if some data is pushed
+    // Because GraphControl12::IsDirty() is called before PullAllData(),
+    // which is called in GraphControl12::Draw()
+    if (!mLockFreeQueues[0].empty())
+        mNeedRedraw = true;
+    
+    mLockFreeQueues[1].push(mLockFreeQueues[0]);
+    mLockFreeQueues[0].clear();
+}
+
+void
+LinesRender2::PullData()
+{   
+    mLockFreeQueues[2].push(mLockFreeQueues[1]);
+    mLockFreeQueues[1].clear();
+}
+
+void
+LinesRender2::ApplyData()
+{
+    for (int i = 0; i < mLockFreeQueues[2].size(); i++)
+    {
+        Slice &slice = mTmpBuf16;
+        mLockFreeQueues[2].get(i, slice);
+
+        AddSliceLF(slice.mPoints);
+    }
+
+    mLockFreeQueues[2].clear();
+}
+
+
+void
+LinesRender2::AddSliceLF(const vector<Point> &points)
 {
     if (!mDisplayAllSlices)
     {

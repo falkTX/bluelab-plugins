@@ -397,7 +397,7 @@ SpectrogramDisplayScroll4::ApplyData()
         SpectrogramLine &line = mTmpBuf1;
         mLockFreeQueues[2].get(i, line);
 
-        LFAddSpectrogramLine(line.mMagns, line.mPhases);
+        AddSpectrogramLineLF(line.mMagns, line.mPhases);
     }
 
     mLockFreeQueues[2].clear();
@@ -468,7 +468,7 @@ SpectrogramDisplayScroll4::AddSpectrogramLine(const WDL_TypedBuf<BL_FLOAT> &magn
 }
     
 void
-SpectrogramDisplayScroll4::LFAddSpectrogramLine(const WDL_TypedBuf<BL_FLOAT> &magns,
+SpectrogramDisplayScroll4::AddSpectrogramLineLF(const WDL_TypedBuf<BL_FLOAT> &magns,
                                                 const WDL_TypedBuf<BL_FLOAT> &phases)
 {    
     mSpectrogram->AddLine(magns, phases);
