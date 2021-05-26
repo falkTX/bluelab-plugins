@@ -397,3 +397,6 @@ re-work the design
 => see Spatializer, XYpad, grey contour, dark blue fill, pure black background
 -> This gives a more serious visual feeling (more "precious")
 => looks better than the background gradient + blue knobs!!
+
+Name for the cross synthetizer: X-Gen
+(Generation X / Cross generator)
