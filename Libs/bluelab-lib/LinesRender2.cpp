@@ -392,7 +392,7 @@ void
 LinesRender2::DoDrawPoints(NVGcontext *vg, const vector<vector<Point> > &points,
                           unsigned char inColor[4], BL_FLOAT inPointSize)
 {
-    unsigned char color0[4] = { inColor[0], inColor[1], inColor[2], inColor[3/*2*/] };
+    unsigned char color0[4] = { inColor[0], inColor[1], inColor[2], inColor[3] };
     SWAP_COLOR(color0);
     
     NVGcolor color =  nvgRGBA(color0[0], color0[1], color0[2], color0[3]);

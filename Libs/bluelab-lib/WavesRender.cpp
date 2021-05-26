@@ -477,15 +477,23 @@ WavesRender::MagnsToPoints(vector<LinesRender2::Point> *points,
     
     // Convert to points
     points->resize(magnsDB.GetSize());
-    for (int i = 0; i < magnsDB.GetSize(); i++)
+
+    int magnsDBSize = magnsDB.GetSize();
+    BL_FLOAT *magnsDBBuf = magnsDB.Get();
+
+    BL_FLOAT iCoeff = 1.0;
+    if (magnsDB.GetSize() > 1)
+        iCoeff = 1.0/(magnsDB.GetSize() - 1);
+    
+    for (int i = 0; i < magnsDBSize; i++)
     {
-        BL_FLOAT magn = magnsDB.Get()[i];
+        BL_FLOAT magn = magnsDBBuf[i];
         
         LinesRender2::Point &p = (*points)[i];
         
         p.mX = 0.0;
-        if (magnsDB.GetSize() > 1)
-            p.mX = ((BL_FLOAT)i)/(magnsDB.GetSize() - 1) - 0.5;
+        if (magnsDBSize > 1)
+            p.mX = ((BL_FLOAT)i)*iCoeff - 0.5;
         p.mY = magn;
         
         // Fill with dummy Z (to avoid undefined value)
@@ -609,7 +617,6 @@ WavesRender::CreateFreqsAxis()
         
         normPos[i] = freq;
     }
-    
     
     // 3d extremities of the axis
     BL_FLOAT p0[3] = { -0.5, 0.0, 0.5 + AXIS_OFFSET_Z };
