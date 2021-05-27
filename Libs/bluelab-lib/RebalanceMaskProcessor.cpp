@@ -183,12 +183,13 @@ NormalizeMasks(WDL_TypedBuf<BL_FLOAT> masks[NUM_STEM_SOURCES])
 // GOOD!
 // NOTE: With gamma=10, it is almost like keeping only the maximum value
 //
+// TODO: improve this with simple sigmoids
 void
 RebalanceMaskProcessor::
 ApplyMasksContrast(WDL_TypedBuf<BL_FLOAT> masks[NUM_STEM_SOURCES])
 {
     // Consumes too much (and probably not useful)
-    return;
+    //return;
 
     /// TODO: re-write ApplyMasksContrast, to avoid sorting and maybe pow
     //(use simple sigmoid over all the masks?)
