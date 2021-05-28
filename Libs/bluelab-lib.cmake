@@ -392,6 +392,8 @@ set(_bluelab-lib_src
   IHelpButtonControl.cpp
   IHelpButtonControl.h
   IKeyboardControl.h
+  ITabsBarControl.cpp
+  ITabsBarControl.h
   IXYPadControl.cpp
   IXYPadControl.h
   ImageDisplay2.cpp

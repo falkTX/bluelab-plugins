@@ -11,13 +11,14 @@
 
 #include <IControls.h>
 
-#include <BLVumeterControl.h>
+/*#include <BLVumeterControl.h>
 #include <BLVumeterNeedleControl.h>
 #include <BLVumeter2SidesControl.h>
 #include <ResizeGUIPluginInterface.h>
 #include <ITextButtonControl.h>
 #include <IXYPadControl.h>
 #include <IBLSwitchControl.h>
+#include <ITabsBarControl.h>*/
 
 #include "IPlug_include_in_plug_hdr.h"
 
@@ -34,6 +35,15 @@ class IGUIResizeButtonControl;
 
 // GUIHelper12: from GUIHelper11, for GraphControl12
 //
+class BLVumeterControl;
+class BLVumeterNeedleControl;
+class BLVumeter2SidesControl;
+class ResizeGUIPluginInterface;
+class ITextButtonControl;
+class IXYPadControl;
+class IBLSwitchControl;
+class ITabsBarControl;
+
 class GUIHelper12
 {
 public:
@@ -251,6 +261,9 @@ public:
                                   float x, float y,
                                   const char *textValue);
 
+    ITabsBarControl *CreateTabsBar(IGraphics *graphics,
+                                   float x, float y, float w, float h);
+                                   
     // Circle graph drawer
     void GetCircleGDCircleLineWidth(float *circleLineWidth);
     void GetCircleGDLinesWidth(float *linesWidth);

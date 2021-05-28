@@ -17,7 +17,7 @@ BL-Gain12	    :	fea+,      ,optim, mem, bugs
 BL-Gain200	    :	fea+,      ,optim, mem, bugs
 BL-Gain24	    :	fea+,      ,optim, mem, bugs
 BL-Gain60	    :	fea+,      ,optim, mem, bugs
-BL-Ghost	    :	fea+,      ,optim, mem, bugs, LoFr(l) , lgr
+BL-Ghost	    :	fea+,      ,optim, mem, bugs, LoFr(l) , lgr --> implement tabs
 BL-GhostViewer	    :   fea+,            , mem,     , LoFr    , lgr
 BL-Impulses	    :   fea+,      ,optim, mem, bugs, LoFr(l)
 BL-Infra	    :   fea+,      ,optim, mem, bugs, LoFr
@@ -28,7 +28,7 @@ BL-OnsetDetect	    :
 BL-Panogram	    :   fea+,      ,optim, mem, bugs, LoFr
 BL-PitchShift	    :   fea+,      ,optim, mem, bugs, (LoFr)  , lgr
 BL-Precedence	    :   (fea+)
-BL-Rebalance	    :	wip: model is training,               , lgr
+BL-Rebalance	    :	wip: upscaled model is training,      , lgr
 BL-Reverb	    :
 BL-ReverbDepth	    :
 BL-SampleDelay	    :   (fea+)
@@ -37,7 +37,7 @@ BL-Saturate	    :   fea+                                  , lgr
 BL-Shaper	    :   fea+,     , optim, mem, bugs,  LoFr   , lgr
 BL-Sine		    :   fea+,     , optim, mem, bugs, (LoFr)      
 BL-SoundMetaViewer  :
-BL-Spatializer	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr
+BL-Spatializer	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr -- render heads
 BL-SpectralDiff	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr
 BL-SpectroExpe	    :
 BL-SpectrumView	    :

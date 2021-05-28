@@ -16,6 +16,15 @@
 #include <IRadioButtonsControl.h>
 #include <IGUIResizeButtonControl.h>
 
+#include <BLVumeterControl.h>
+#include <BLVumeterNeedleControl.h>
+#include <BLVumeter2SidesControl.h>
+#include <ResizeGUIPluginInterface.h>
+#include <ITextButtonControl.h>
+#include <IXYPadControl.h>
+#include <IBLSwitchControl.h>
+#include <ITabsBarControl.h>
+
 #include "GUIHelper12.h"
 
 // Available fonts:
@@ -1385,6 +1394,18 @@ GUIHelper12::CreateValueText(IGraphics *graphics,
     
     return control;
 }    
+
+ITabsBarControl *
+GUIHelper12::CreateTabsBar(IGraphics *graphics,
+                           float x, float y, float w, float h)
+{
+    IRECT bounds(x, y, w, h);
+    ITabsBarControl *tabsBar = new ITabsBarControl(bounds);
+
+    graphics->AttachControl(tabsBar);
+
+    return tabsBar;
+}
 
 void
 GUIHelper12::GetCircleGDCircleLineWidth(float *circleLineWidth)
