@@ -34,6 +34,7 @@ class ITabsBarControl : public IControl
     void OnMouseOut() override;
     
     void NewTab(const char *name);
+    void SelectTab(int tabNum);
     
 protected:
     void DrawBackground(IGraphics &g);

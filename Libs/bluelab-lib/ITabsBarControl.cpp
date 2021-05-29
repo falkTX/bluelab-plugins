@@ -229,6 +229,24 @@ ITabsBarControl::NewTab(const char *name)
 }
 
 void
+ITabsBarControl::SelectTab(int tabNum)
+{
+    if (tabNum >= mTabs.size())
+        return;
+
+    // Disable all current tabs, and enable the new tab
+    for (int i = 0; i < mTabs.size(); i++)
+    {
+        Tab &t0 = mTabs[i];
+        t0.SetEnabled(false);
+    }
+
+    mTabs[tabNum].SetEnabled(true);
+
+    mDirty = true;
+}
+
+void
 ITabsBarControl::DrawBackground(IGraphics &g)
 {
     g.FillRect(mBGColor, mRECT);
