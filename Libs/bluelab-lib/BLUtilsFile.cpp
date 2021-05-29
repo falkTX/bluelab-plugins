@@ -23,6 +23,9 @@ BLUtilsFile::GetFileExtension(const char *fileName)
 char *
 BLUtilsFile::GetFileName(const char *path)
 {
+    if (path == NULL)
+        return NULL;
+    
 	char *fileName = (char *)strrchr(path, '/');
 
 	// Here, we have for example "/file.wav"
