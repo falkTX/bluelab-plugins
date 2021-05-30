@@ -199,7 +199,16 @@ ITabsBarControl::OnMouseOver(float x, float y, const IMouseMod& mod)
     // Check tab rollover
     int tabIdx = MouseOverTabIdx(x, y);
     if (tabIdx >= 0)
+    {
         mTabs[tabIdx].SetTabRollover(true);
+
+        const char *fileName = mTabs[tabIdx].GetName();
+        SetTooltip(fileName);
+    }
+    else
+    {
+        SetTooltip(NULL);
+    }
 
     // Check cross rollover
     int crossIdx = MouseOverCrossIdx(x, y);
