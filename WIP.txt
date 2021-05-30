@@ -17,7 +17,7 @@ BL-Gain12	    :	fea+,      ,optim, mem, bugs
 BL-Gain200	    :	fea+,      ,optim, mem, bugs
 BL-Gain24	    :	fea+,      ,optim, mem, bugs
 BL-Gain60	    :	fea+,      ,optim, mem, bugs
-BL-Ghost	    :	fea+,      ,optim, mem, bugs, LoFr(l) , lgr --> implement tabs
+BL-Ghost	    :	fea+,      ,optim, mem, bugs, LoFr(l) , lgr
 BL-GhostViewer	    :   fea+,            , mem,     , LoFr    , lgr
 BL-Impulses	    :   fea+,      ,optim, mem, bugs, LoFr(l)
 BL-Infra	    :   fea+,      ,optim, mem, bugs, LoFr
