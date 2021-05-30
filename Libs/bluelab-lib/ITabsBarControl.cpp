@@ -125,10 +125,16 @@ ITabsBarControl::SetListener(ITabsBarListener *listener)
 void
 ITabsBarControl::Draw(IGraphics& g)
 {
+    // This bug is not reproductible (fat text)
+    // And if we keep this,there is a new bug:
+    // Open a tab, resize gui
+    // => we had to move the mouse to make the tab bar appear again
+#if 0
     // FIX: load a file, zoom on graph => the tab filenames got fat
     // This is a hack, to avoid redrawing wrongly over tab bar
     if (!mDirty)
         return;
+#endif
     
     DrawBackground(g);
     DrawTabs(g);
@@ -421,4 +427,6 @@ ITabsBarControl::DisableAllRollover()
         t.SetTabRollover(false);
         t.SetCrossRollover(false);
     }
+
+    mDirty = true;
 }
