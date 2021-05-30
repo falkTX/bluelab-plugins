@@ -35,7 +35,7 @@ class ITabsBarControl : public IControl
     
     void NewTab(const char *name);
     void SelectTab(int tabNum);
-    
+        
 protected:
     void DrawBackground(IGraphics &g);
     void DrawTabs(IGraphics &g);

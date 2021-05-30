@@ -125,6 +125,11 @@ ITabsBarControl::SetListener(ITabsBarListener *listener)
 void
 ITabsBarControl::Draw(IGraphics& g)
 {
+    // FIX: load a file, zoom on graph => the tab filenames got fat
+    // This is a hack, to avoid redrawing wrongly over tab bar
+    if (!mDirty)
+        return;
+    
     DrawBackground(g);
     DrawTabs(g);
     DrawCrosses(g);
