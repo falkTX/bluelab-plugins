@@ -25,6 +25,8 @@
 #include <IBLSwitchControl.h>
 #include <ITabsBarControl.h>
 
+#include <IBLTooltipControl.h>
+
 #include "GUIHelper12.h"
 
 // Available fonts:
@@ -1441,6 +1443,15 @@ void
 GUIHelper12::GetCircleGDOffsetY(int *x)
 {
     *x = mCircleGDOffsetY;
+}
+
+void
+GUIHelper12::AttachToolTipControl(IGraphics *graphics)
+{
+    IBLTooltipControl *control = new IBLTooltipControl();
+
+    graphics->AttachToolTipControl(control);
+    
 }
 
 float

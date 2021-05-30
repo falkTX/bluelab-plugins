@@ -271,6 +271,8 @@ public:
     void GetCircleGDTextColor(IColor *textColor);
     void GetCircleGDOffsetX(int *x);
     void GetCircleGDOffsetY(int *y);
+
+    void AttachToolTipControl(IGraphics *graphics);
     
 protected:
     void GetManualFullPath(Plugin *plug, IGraphics *graphics,
