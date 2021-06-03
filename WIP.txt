@@ -48,8 +48,8 @@ BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr
 
 ---
 
+TODO: big knobs texture too large => bug
 TODO: check plugs CPU % when "resting"
 TODO: check gui refresh for all plugins
 TODO: pass valgrind for mem for all
 (already done for the last ones, update the list!)
-TODO: menu instead of checkboxes

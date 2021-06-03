@@ -378,6 +378,46 @@ GUIHelper12::CreateKnob(IGraphics *graphics,
     return knob;
 }
 
+ISVGKnobControl *
+GUIHelper12::CreateKnobSVG(IGraphics *graphics,
+                           float x, float y,
+                           float width, float height,
+                           const char *svgFname,
+                           int paramIdx,
+                           const char *tfBitmapFname,
+                           const char *title,
+                           Size titleSize,
+                           ICaptionControl **caption,
+                           bool createValue)
+{
+    const ISVG knobSVG = graphics->LoadSVG(svgFname);
+    IRECT bounds(x, y, x + width, y + height);
+    ISVGKnobControl *knob = new ISVGKnobControl(bounds, knobSVG, paramIdx);
+    graphics->AttachControl(knob);
+    
+    if (mCreateTitles)
+    {
+        // Title
+        if ((title != NULL) && (strlen(title) > 0))
+        {
+            CreateTitle(graphics, x + width/2, y, title, titleSize);
+        }
+    }
+
+    if (createValue)
+    {
+        ICaptionControl *caption0 =
+        CreateValue(graphics,
+                    x + width/2, y + height,
+                    tfBitmapFname,
+                    paramIdx);
+        if (caption != NULL)
+            *caption = caption0;
+    }
+    
+    return knob;
+}
+
 #ifdef IGRAPHICS_NANOVG
 GraphControl12 *
 GUIHelper12::CreateGraph(Plugin *plug, IGraphics *graphics,

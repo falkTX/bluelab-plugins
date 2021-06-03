@@ -82,6 +82,17 @@ public:
                               Size titleSize = SIZE_DEFAULT,
                               ICaptionControl **caption = NULL,
                               bool createValue = true);
+
+    ISVGKnobControl *CreateKnobSVG(IGraphics *graphics,
+                                   float x, float y,
+                                   float width, float height,
+                                   const char *svgFname,
+                                   int paramIdx,
+                                   const char *tfBitmapFname,
+                                   const char *title = NULL,
+                                   Size titleSize = SIZE_DEFAULT,
+                                   ICaptionControl **caption = NULL,
+                                   bool createValue = true);
     
 #ifdef IGRAPHICS_NANOVG
     GraphControl12 *CreateGraph(Plugin *plug, IGraphics *graphics,

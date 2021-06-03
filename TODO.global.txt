@@ -400,3 +400,9 @@ re-work the design
 
 Name for the cross synthetizer: X-Gen
 (Generation X / Cross generator)
+=========
+NOTE: there was the idea of menus instead of checkboxes
+=> but in fact, this would require 2 clicks instead of 1 for the same action
+=> let's keep it like this! :)
+
+SVGKnobs: must center them in the page
