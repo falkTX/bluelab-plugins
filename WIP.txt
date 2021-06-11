@@ -5,6 +5,7 @@ LockFree(legacy): LoFr(l)
 valgrind (check for mem corruption): valg
 lazy gui refresh: lgr
 ---
+
 BL-Air		    :	fea+,      ,optim, mem, bugs, LoFr
 BL-AutoGain	    :	fea+,      ,optim, mem, bugs, LoFr
 BL-Bat		    :
@@ -37,7 +38,7 @@ BL-Saturate	    :   fea+                                  , lgr
 BL-Shaper	    :   fea+,     , optim, mem, bugs,  LoFr   , lgr
 BL-Sine		    :   fea+,     , optim, mem, bugs, (LoFr)      
 BL-SoundMetaViewer  :
-BL-Spatializer	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr -- render heads
+BL-Spatializer	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr
 BL-SpectralDiff	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr
 BL-SpectroExpe	    :
 BL-SpectrumView	    :

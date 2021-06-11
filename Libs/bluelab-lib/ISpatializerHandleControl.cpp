@@ -88,12 +88,6 @@ ISpatializerHandleControl::OnMouseDrag(float x, float y, float dX, float dY,
     // Manage well when hitting/releasing shift witing the same drag action
     mPrevX = x;
     mPrevY = y;
-    
-    // Original code
-    //mRECT.Constrain(x, y);
-    
-    //SetValue(xn, 0);
-    //SetValue(xn);
 
     PixelsToParam(&deltaY);
         
@@ -141,7 +135,6 @@ ISpatializerHandleControl::ParamToPixels(float val, float *x, float *y)
     float w = mRECT.W();
     float h = mRECT.H();
 
-    //float rad = sqrtf(w*w + h*h);
     float rad = w*0.5;
 
     rad -= handleW;
