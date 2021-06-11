@@ -24,8 +24,8 @@
 #include <IXYPadControl.h>
 #include <IBLSwitchControl.h>
 #include <ITabsBarControl.h>
-
 #include <IBLTooltipControl.h>
+#include <ISpatializerHandleControl.h>
 
 #include "GUIHelper12.h"
 
@@ -689,6 +689,32 @@ GUIHelper12::CreateXYPad(IGraphics *graphics,
                           borderSize, reverseY);
     
     graphics->AttachControl(result);
+    
+    return result;
+}
+
+ISpatializerHandleControl *
+GUIHelper12::CreateSpatializerHandle(IGraphics *graphics,
+                                     float x, float y, float rad,
+                                     float minAngle, float maxAngle,
+                                     bool reverseY,
+                                     const char *handleBitmapFname,
+                                     const char *tfBitmapFname,
+                                     int paramIdx,
+                                     float valueYOffset)
+{
+    IBitmap handleBitmap = graphics->LoadBitmap(handleBitmapFname, 1);
+
+    IRECT rect(x, y, x + rad*2.0, y + rad*2.0);
+    ISpatializerHandleControl *result =
+        new ISpatializerHandleControl(rect, minAngle, maxAngle, reverseY,
+                                      handleBitmap, paramIdx);
+    graphics->AttachControl(result);
+
+    // Text field
+    CreateValue(graphics,
+                x + rect.W()/2, y + rect.H() + valueYOffset,
+                tfBitmapFname, paramIdx);
     
     return result;
 }

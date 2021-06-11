@@ -43,6 +43,7 @@ class ITextButtonControl;
 class IXYPadControl;
 class IBLSwitchControl;
 class ITabsBarControl;
+class ISpatializerHandleControl;
 
 class GUIHelper12
 {
@@ -174,6 +175,19 @@ public:
                                int xParamIdx, int yParamIdx,
                                float borderSize = 0.0,
                                bool reverseY = false);
+
+    // Circle around heads, for Spatializer
+    // - (x, y) is the center
+    // - minAngle and maxAngle are in degree [0, 360]
+    ISpatializerHandleControl *
+    CreateSpatializerHandle(IGraphics *graphics,
+                            float x, float y, float rad,
+                            float minAngle, float maxAngle,
+                            bool reverseY,
+                            const char *handleBitmapFname,
+                            const char *tfBitmapFname,
+                            int paramIdx,
+                            float valueYOffset);
     
     void CreateVersion(Plugin *plug, IGraphics *graphics,
                        const char *versionStr);

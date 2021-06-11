@@ -5,3 +5,10 @@ V3.6
 - Modifications after Mickaels's remarks
 - LogoIcon.xcf => tmp icon, for Ghost desktop installation
 
+v3.6.9
+- added xypad handle
+
+3.6.10
+- added SpatializerHandle
+
+
