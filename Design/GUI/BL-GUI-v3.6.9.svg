@@ -1,0 +1,2722 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   sodipodi:docname="BL-GUI-v3.6.9.svg"
+   inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)"
+   id="svg8"
+   version="1.1"
+   viewBox="0 0 210 297"
+   height="1122.5197"
+   width="793.70081">
+  <defs
+     id="defs2">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient1401">
+      <stop
+         style="stop-color:#ff9000;stop-opacity:1"
+         offset="0"
+         id="stop1397" />
+      <stop
+         style="stop-color:#01ff00;stop-opacity:1"
+         offset="1"
+         id="stop1399" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient1395">
+      <stop
+         style="stop-color:#ff0000;stop-opacity:1"
+         offset="0"
+         id="stop1391" />
+      <stop
+         style="stop-color:#ff9000;stop-opacity:1"
+         offset="1"
+         id="stop1393" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient1090">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop1086" />
+      <stop
+         style="stop-color:#1c4a75;stop-opacity:1"
+         offset="1"
+         id="stop1088" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient886">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop882" />
+      <stop
+         style="stop-color:#0e253b;stop-opacity:1"
+         offset="1"
+         id="stop884" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient1090"
+       id="linearGradient888"
+       x1="58.208332"
+       y1="0"
+       x2="58.208332"
+       y2="-129.64583"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient886"
+       id="linearGradient1082"
+       gradientUnits="userSpaceOnUse"
+       x1="58.208332"
+       y1="0"
+       x2="58.208332"
+       y2="-61.786873"
+       gradientTransform="matrix(1,0,0,1.0619869,0,1.8254833e-4)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient1395"
+       id="linearGradient1383"
+       x1="-176.74165"
+       y1="-53.974998"
+       x2="-124.88333"
+       y2="-53.974998"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.99489793,0,0,1,-0.63716392,0)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient1401"
+       id="linearGradient1403"
+       x1="-122.2375"
+       y1="-53.974998"
+       x2="-70.379166"
+       y2="-53.974998"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.99489823,0,0,1,-0.62362773,0)" />
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter1462"
+       x="-2.1355712e-05"
+       width="1.0000427"
+       y="-2.6037305e-05"
+       height="1.0000521">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.00099923136"
+         id="feGaussianBlur1464" />
+    </filter>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#818181"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="2.8284271"
+     inkscape:cx="-593.73319"
+     inkscape:cy="-545.90237"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer27"
+     inkscape:document-rotation="0"
+     showgrid="true"
+     inkscape:window-width="1440"
+     inkscape:window-height="849"
+     inkscape:window-x="0"
+     inkscape:window-y="25"
+     inkscape:window-maximized="1"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     units="px"
+     inkscape:snap-path-clip="false"
+     inkscape:snap-path-mask="false">
+    <inkscape:grid
+       type="xygrid"
+       id="grid1065"
+       empspacing="1"
+       spacingx="0.52916667"
+       spacingy="0.52916667"
+       visible="true"
+       enabled="false"
+       snapvisiblegridlinesonly="false" />
+    <inkscape:grid
+       type="xygrid"
+       id="grid1326"
+       empspacing="1"
+       enabled="false"
+       snapvisiblegridlinesonly="false"
+       visible="true" />
+    <sodipodi:guide
+       position="-77.522915,448.34167"
+       orientation="1,0"
+       id="guide1298" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:groupmode="layer"
+     id="g880"
+     inkscape:label="Background-gradient - Full height - OLD"
+     style="display:none"
+     sodipodi:insensitive="true">
+    <rect
+       style="fill:url(#linearGradient888);fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none"
+       id="rect878"
+       width="120.6395"
+       height="129.11372"
+       x="0.017908979"
+       y="-129.11667"
+       inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/BL-GUI-v3.3.1.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer4"
+     inkscape:label="Knobs - OLD"
+     style="display:none;opacity:0.998076"
+     sodipodi:insensitive="true">
+    <rect
+       style="display:inline;opacity:0.998076;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round"
+       id="rect934"
+       width="26.458332"
+       height="23.812494"
+       x="-34.395832"
+       y="-128.05832" />
+    <g
+       id="g9692"
+       transform="matrix(1.3535834,0,0,1.3535834,19.660793,18.584396)">
+      <circle
+         style="fill:#d1d8df;fill-opacity:1;stroke:none;stroke-width:0.523508;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         id="path1266"
+         cx="-30.1625"
+         cy="-107.42223"
+         r="0.52350676" />
+      <g
+         id="g9583"
+         style="display:inline;opacity:0.998076">
+        <g
+           id="g9557"
+           transform="translate(0,0.11523179)">
+          <ellipse
+             style="fill:#000000;fill-opacity:1;stroke:#5252ff;stroke-width:0.693878;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+             id="path938"
+             cx="-30.1625"
+             cy="-99.259056"
+             rx="6.7217069"
+             ry="6.6957583" />
+          <path
+             style="fill:none;stroke:#5252ff;stroke-width:0.781875;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+             d="m -30.1625,-99.169882 v -6.349998"
+             id="path1264" />
+        </g>
+        <g
+           id="g9487">
+          <use
+             xlink:href="#path1266"
+             transform="translate(-3.44214,0.737811)"
+             id="use6092"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             xlink:href="#path1266"
+             transform="translate(-6.48804,3.030785)"
+             id="use7254"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             xlink:href="#path1266"
+             transform="translate(-8.21778,6.429495)"
+             id="use6384"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             xlink:href="#path1266"
+             transform="translate(-8.27496,10.242155)"
+             id="use8853"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             xlink:href="#path1266"
+             transform="translate(-6.65525,13.692755)"
+             id="use764"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             xlink:href="#path1266"
+             transform="translate(6.69535,13.648755)"
+             id="use2775"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             xlink:href="#path1266"
+             transform="translate(8.28666,10.183955)"
+             id="use8107"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             xlink:href="#path1266"
+             transform="translate(8.19337,6.374265)"
+             id="use4986"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             xlink:href="#path1266"
+             transform="translate(6.44619,2.988255)"
+             id="use6940"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             xlink:href="#path1266"
+             transform="translate(3.38683,0.715074)"
+             id="use7033"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             xlink:href="#path1266"
+             transform="translate(-3.44214,0.72558998)"
+             id="use8611"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             xlink:href="#path1266"
+             transform="translate(-6.48804,3.01856)"
+             id="use2529"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             xlink:href="#path1266"
+             transform="translate(-8.21777,6.41727)"
+             id="use4314"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             xlink:href="#path1266"
+             transform="translate(-8.27496,10.2299)"
+             id="use9840"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             xlink:href="#path1266"
+             transform="translate(-6.65524,13.6806)"
+             id="use363"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             xlink:href="#path1266"
+             transform="translate(6.69535,13.6366)"
+             id="use4927"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             xlink:href="#path1266"
+             transform="translate(8.28666,10.1717)"
+             id="use266"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             xlink:href="#path1266"
+             transform="translate(8.19336,6.36202)"
+             id="use376"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             xlink:href="#path1266"
+             transform="translate(6.44617,2.97602)"
+             id="use1267"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             xlink:href="#path1266"
+             transform="translate(3.38681,0.70284298)"
+             id="use6023"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+        </g>
+      </g>
+    </g>
+    <rect
+       style="display:inline;opacity:0.998076;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round"
+       id="rect9726"
+       width="27.254622"
+       height="18.549534"
+       x="-34.395832"
+       y="-100.0412" />
+    <g
+       id="use9841"
+       transform="matrix(0.69118557,0,0,0.69142827,-1.1165752,-22.209094)"
+       style="stroke-width:0.999888;stroke-miterlimit:4;stroke-dasharray:none">
+      <circle
+         style="fill:#d1d8df;fill-opacity:1;stroke:none;stroke-width:0.523508;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         id="circle1194"
+         cx="-30.1625"
+         cy="-107.41019"
+         r="0.52350676" />
+      <g
+         id="g1244"
+         style="display:inline;opacity:0.998076">
+        <g
+           id="g1200"
+           transform="matrix(0.97996487,0,0,0.97971719,-0.5892228,-2.1496851)">
+          <circle
+             style="fill:#000000;fill-opacity:1;stroke:#5252ff;stroke-width:0.833039;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+             id="circle1196"
+             cx="-30.1625"
+             cy="-98.954163"
+             r="6.614583" />
+          <path
+             style="fill:none;stroke:#5252ff;stroke-width:1.04922;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+             d="m -30.1625,-98.954176 v -6.349994"
+             id="path1198" />
+        </g>
+        <g
+           id="g1242">
+          <use
+             xlink:href="#path1266"
+             transform="translate(-3.44214,0.737811)"
+             id="use1202"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             xlink:href="#path1266"
+             transform="translate(-6.48804,3.030785)"
+             id="use1204"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             xlink:href="#path1266"
+             transform="translate(-8.21778,6.429495)"
+             id="use1206"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             xlink:href="#path1266"
+             transform="translate(-8.27496,10.242155)"
+             id="use1208"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             xlink:href="#path1266"
+             transform="translate(-6.65525,13.692755)"
+             id="use1210"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             xlink:href="#path1266"
+             transform="translate(6.69535,13.648755)"
+             id="use1212"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             xlink:href="#path1266"
+             transform="translate(8.28666,10.183955)"
+             id="use1214"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             xlink:href="#path1266"
+             transform="translate(8.19337,6.374265)"
+             id="use1216"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             xlink:href="#path1266"
+             transform="translate(6.44619,2.988255)"
+             id="use1218"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             xlink:href="#path1266"
+             transform="translate(3.38683,0.715074)"
+             id="use1220"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             xlink:href="#path1266"
+             transform="translate(-3.44214,0.737645)"
+             id="use1222"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             xlink:href="#path1266"
+             transform="translate(-6.48804,3.030615)"
+             id="use1224"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             xlink:href="#path1266"
+             transform="translate(-8.21777,6.429325)"
+             id="use1226"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             xlink:href="#path1266"
+             transform="translate(-8.27496,10.241955)"
+             id="use1228"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             xlink:href="#path1266"
+             transform="translate(-6.65524,13.692655)"
+             id="use1230"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             xlink:href="#path1266"
+             transform="translate(6.69535,13.648655)"
+             id="use1232"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             xlink:href="#path1266"
+             transform="translate(8.28666,10.183755)"
+             id="use1234"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             xlink:href="#path1266"
+             transform="translate(8.19336,6.374075)"
+             id="use1236"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             xlink:href="#path1266"
+             transform="translate(6.44617,2.988075)"
+             id="use1238"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+          <use
+             xlink:href="#path1266"
+             transform="translate(3.38681,0.714898)"
+             id="use1240"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+        </g>
+      </g>
+    </g>
+    <use
+       x="0"
+       y="0"
+       xlink:href="#g9692"
+       id="use9843"
+       transform="translate(70.916893,76.868864)"
+       width="100%"
+       height="100%" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use9841"
+       id="use9845"
+       transform="translate(43.129259,56.751214)"
+       width="100%"
+       height="100%" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use9841"
+       id="use9847"
+       transform="translate(99.750092,56.751214)"
+       width="100%"
+       height="100%" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use9841"
+       id="use9849"
+       transform="translate(122.50426,56.751214)"
+       width="100%"
+       height="100%" />
+    <circle
+       style="fill:#d1d8df;fill-opacity:0.106712;stroke:none;stroke-width:0.708612;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="circle1135"
+       cx="-50.799999"
+       cy="-126.80425"
+       r="0.70861006" />
+    <g
+       id="g1127"
+       transform="matrix(1.3535834,0,0,1.3535834,-9.972541,17.662063)"
+       inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/knob-big.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96">
+      <g
+         id="g1125"
+         style="display:inline;opacity:0.998076">
+        <g
+           id="g1081"
+           transform="translate(0,0.11523179)">
+          <ellipse
+             style="fill:#000000;fill-opacity:1;stroke:#5252ff;stroke-width:0.693878;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+             id="ellipse1076"
+             cx="-30.1625"
+             cy="-99.259056"
+             rx="6.7217069"
+             ry="6.6957583" />
+          <path
+             style="fill:none;stroke:#5252ff;stroke-width:0.781875;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.994869"
+             d="m -30.1625,-99.169882 v -6.349998"
+             id="path1078" />
+        </g>
+      </g>
+    </g>
+    <g
+       id="g1181"
+       transform="matrix(0.69118557,0,0,0.69142827,-28.90421,-22.498344)"
+       style="stroke-width:0.999888;stroke-miterlimit:4;stroke-dasharray:none"
+       inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/knob-small.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96">
+      <g
+         id="g1179"
+         style="display:inline;opacity:0.998076">
+        <g
+           id="g1135"
+           transform="matrix(0.97996487,0,0,0.97971719,-0.5892228,-2.1496851)">
+          <circle
+             style="fill:#000000;fill-opacity:1;stroke:#5252ff;stroke-width:0.833039;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+             id="circle1131"
+             cx="-30.1625"
+             cy="-98.954163"
+             r="6.614583" />
+          <path
+             style="fill:none;stroke:#5252ff;stroke-width:1.04922;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+             d="m -30.1625,-98.954176 v -6.349994"
+             id="path1133" />
+        </g>
+      </g>
+    </g>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer25"
+     inkscape:label="TMP-OLD"
+     sodipodi:insensitive="true"
+     style="display:none">
+    <path
+       d="m -71.157646,-202.21212 a 11.4532,11.409 0 0 1 -11.4532,11.409 11.4532,11.409 0 0 1 -11.4532,-11.409 11.4532,11.409 0 0 1 11.4532,-11.409 11.4532,11.409 0 0 1 11.4532,11.409 z"
+       style="display:inline;opacity:0.996156;fill:#000000;fill-opacity:0;stroke:#5252ff;stroke-width:0.283213;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="ellipse1168" />
+    <rect
+       style="display:inline;opacity:0.998076;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round"
+       id="rect1152"
+       width="35.454166"
+       height="34.395828"
+       x="-101.02961"
+       y="-218.77278" />
+    <path
+       style="display:inline;opacity:0.996156;fill:none;stroke:#939393;stroke-width:0.452357;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m -81.560848,-174.64331 v -0.92235"
+       id="path10902" />
+    <path
+       d="m -70.107597,-160.358 a 11.4532,11.409 0 0 1 -11.4532,11.409 11.4532,11.409 0 0 1 -11.4532,-11.409 11.4532,11.409 0 0 1 11.4532,-11.409 11.4532,11.409 0 0 1 11.4532,11.409 z"
+       style="display:inline;opacity:0.996156;fill:#000000;fill-opacity:0;stroke:#5252ff;stroke-width:0.283213;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path10904" />
+    <rect
+       style="display:inline;opacity:0.998076;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round"
+       id="rect10906"
+       width="35.454166"
+       height="34.395828"
+       x="-99.979561"
+       y="-176.91866" />
+    <path
+       style="display:inline;opacity:0.996156;fill:none;stroke:#3b3b3b;stroke-width:0.452357;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m -82.610897,-216.49743 v -0.92235"
+       id="path1166" />
+    <path
+       d="m -91.561546,-195.87712 -0.74,0.55 m -1.1125,-4.904 -0.9118,0.137 m 1.0989,-4.907 -0.894,-0.226 m 3.0607,-3.981 -0.6822,-0.62 m 4.4737,-2.286 -0.3927,-0.834 m 5.0554,-0.212 -0.0049,-0.92008 m 4.62545,1.95108 0.3927,-0.834 m 3.4072,3.728 0.6821,-0.62 m 1.4999,4.819 0.894,-0.226 m -0.6928,4.996 0.9118,0.136 m -2.7482,4.224 0.74,0.55"
+       style="display:inline;opacity:0.996156;fill:none;stroke:#3b3b3b;stroke-width:0.452357;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path8043"
+       sodipodi:nodetypes="cccccccccccccccccccccc" />
+    <g
+       id="g11036"
+       transform="translate(-60.812945,-48.381121)"
+       style="display:inline">
+      <ellipse
+         style="opacity:0.996156;fill:#181b25;fill-opacity:1;stroke:#5252ff;stroke-width:0.926042;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         id="ellipse1137"
+         cx="-21.797951"
+         cy="-153.83078"
+         rx="9.0983906"
+         ry="9.0632677" />
+      <path
+         style="opacity:0.996156;fill:none;stroke:#5252ff;stroke-width:0.926042;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.994869"
+         d="m -21.797951,-157.1625 v -5.42026"
+         id="path1139" />
+    </g>
+    <g
+       id="g10944"
+       transform="matrix(0.50000001,0,0,0.50000001,-71.185609,-105.0118)"
+       style="display:inline">
+      <path
+         d="m -29.698551,-105.64188 -0.74,0.55 m -1.1125,-4.904 -0.9118,0.137 m 1.0989,-4.907 -0.894,-0.226 m 3.0607,-3.981 -0.6822,-0.62 m 4.4737,-2.286 -0.3927,-0.834 m 5.0554,-0.212 -0.0049,-0.92008 m 4.62545,1.95108 0.3927,-0.834 m 3.4072,3.728 0.6821,-0.62 m 1.4999,4.819 0.8939996,-0.226 m -0.6928,4.996 0.9118,0.136 m -2.7481996,4.224 0.74,0.55"
+         style="opacity:0.996156;fill:none;stroke:#3b3b3b;stroke-width:0.452357;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         id="path10908"
+         sodipodi:nodetypes="cccccccccccccccccccccc" />
+      <ellipse
+         style="opacity:0.996156;fill:#181b25;fill-opacity:1;stroke:#5252ff;stroke-width:0.926042;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         id="ellipse10910"
+         cx="-20.747902"
+         cy="-111.97666"
+         rx="9.0983906"
+         ry="9.0632677" />
+      <path
+         style="opacity:0.996156;fill:none;stroke:#5252ff;stroke-width:0.926042;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.994869"
+         d="m -20.747902,-115.30838 v -5.42026"
+         id="path10912" />
+    </g>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer12"
+     inkscape:label="Checkboxes - OLD - HIDE"
+     style="display:none;opacity:1"
+     sodipodi:insensitive="true">
+    <use
+       x="0"
+       y="0"
+       xlink:href="#rect10015"
+       id="use10027"
+       transform="translate(131.66714,2.1166639)"
+       width="100%"
+       height="100%" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round"
+       id="rect9959"
+       width="50.799999"
+       height="39.687496"
+       x="-56.620834"
+       y="-78.316666" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="-50.071877"
+       y="-66.987732"
+       id="text9965"><tspan
+         sodipodi:role="line"
+         id="tspan9963"
+         x="-50.071877"
+         y="-66.987732"
+         style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:3.52778px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Ultra-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#939393;fill-opacity:1;stroke-width:0.264583">MO -&gt; ST</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#d1d8df;stroke-width:1.05833;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect10015"
+       width="4.2333183"
+       height="4.2333331"
+       x="-44.449986"
+       y="-61.912502"
+       ry="0.16582941"
+       rx="0.14314246"
+       inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/checkbox-off.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <g
+       id="g1252"
+       inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/checkbox-on.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96">
+      <rect
+         style="fill:#000000;fill-opacity:1;stroke:#d1d8df;stroke-width:1.05833;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         id="rect10017"
+         width="4.2333188"
+         height="4.2333336"
+         x="-44.449986"
+         y="-53.219711"
+         ry="0.16582942"
+         rx="0.14314248" />
+      <rect
+         style="fill:#5252ff;fill-opacity:1;stroke:none;stroke-width:1.27;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         id="rect10019"
+         width="3.1750021"
+         height="3.1750021"
+         x="-43.920834"
+         y="-52.690544" />
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;line-height:1.25;font-family:Poppins;-inkscape-font-specification:'Poppins, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="-37.924236"
+       y="-49.841274"
+       id="text10023"><tspan
+         sodipodi:role="line"
+         id="tspan10021"
+         x="-37.924236"
+         y="-49.841274"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;font-family:Poppins;-inkscape-font-specification:'Poppins, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#939393;fill-opacity:1;stroke-width:0.264583">PSEUDO STEREO</tspan></text>
+    <use
+       x="0"
+       y="0"
+       xlink:href="#rect10015"
+       id="use10025"
+       transform="translate(55.033332,2.1166639)"
+       width="100%"
+       height="100%" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="g1296"
+     inkscape:label="Buttons number - TEST -OLD"
+     style="display:none"
+     sodipodi:insensitive="true">
+    <rect
+       style="fill:#010101;fill-opacity:1;stroke:#d1d8df;stroke-width:0.305405;stroke-opacity:0.0634182;paint-order:stroke fill markers"
+       id="rect1212"
+       width="39.158329"
+       height="25.929174"
+       x="-103.71667"
+       y="-162.18959" />
+    <g
+       id="g1220"
+       inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/Buttons-numbers/v3.4.0/button-number1-on.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"
+       transform="translate(1.2979914e-5,-25.929151)">
+      <rect
+         style="display:inline;opacity:1;fill:#000000;fill-opacity:1;stroke:#d1d8df;stroke-width:1.05833;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         id="rect1214"
+         width="4.2333183"
+         height="4.2333331"
+         x="-97.366661"
+         y="-120.12085"
+         ry="0.16582941"
+         rx="0.14314246"
+         inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/checkbox-off.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;line-height:1.25;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#d1d8df;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="-96.082855"
+         y="-116.745"
+         id="text1218"><tspan
+           sodipodi:role="line"
+           id="tspan1216"
+           x="-96.082855"
+           y="-116.745"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#d1d8df;fill-opacity:1;stroke-width:0.264583">1</tspan></text>
+    </g>
+    <g
+       id="g1228"
+       inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/Buttons-numbers/v3.4.0/button-number1-off.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"
+       transform="translate(4.9302855e-6,-24.870833)">
+      <rect
+         style="display:inline;opacity:1;fill:#000000;fill-opacity:1;stroke:#939393;stroke-width:1.05833;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         id="rect1222"
+         width="4.2333183"
+         height="4.2333331"
+         x="-97.366653"
+         y="-126.47083"
+         ry="0.16582941"
+         rx="0.14314246"
+         inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/checkbox-off.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;line-height:1.25;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#939393;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="-96.082848"
+         y="-123.09499"
+         id="text1226"><tspan
+           sodipodi:role="line"
+           id="tspan1224"
+           x="-96.082848"
+           y="-123.09499"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#939393;fill-opacity:1;stroke-width:0.264583">1</tspan></text>
+    </g>
+    <g
+       id="g1236"
+       inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/Buttons-numbers/v3.4.0/button-number2-off.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"
+       transform="translate(-1.8520886,-24.870833)">
+      <rect
+         style="display:inline;opacity:1;fill:#000000;fill-opacity:1;stroke:#939393;stroke-width:1.05833;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         id="rect1230"
+         width="4.2333183"
+         height="4.2333331"
+         x="-90.487488"
+         y="-126.47083"
+         ry="0.16582941"
+         rx="0.14314246"
+         inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/checkbox-off.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;line-height:1.25;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#939393;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="-89.388855"
+         y="-123.0769"
+         id="text1234"><tspan
+           sodipodi:role="line"
+           id="tspan1232"
+           x="-89.388855"
+           y="-123.0769"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#939393;fill-opacity:1;stroke-width:0.264583">2</tspan></text>
+    </g>
+    <g
+       id="g1245"
+       inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/Buttons-numbers/v3.4.0/button-number2-on.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"
+       transform="translate(-1.8520806,-25.929151)">
+      <rect
+         style="display:inline;opacity:1;fill:#000000;fill-opacity:1;stroke:#d1d8df;stroke-width:1.05833;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         id="rect1238"
+         width="4.2333183"
+         height="4.2333331"
+         x="-90.487495"
+         y="-120.12085"
+         ry="0.16582941"
+         rx="0.14314246"
+         inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/checkbox-off.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;line-height:1.25;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#d1d8df;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="-89.388855"
+         y="-116.72691"
+         id="text1242"><tspan
+           sodipodi:role="line"
+           id="tspan1240"
+           x="-89.388855"
+           y="-116.72691"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#d1d8df;fill-opacity:1;stroke-width:0.264583">2</tspan></text>
+    </g>
+    <g
+       id="g1253"
+       inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/Buttons-numbers/v3.4.0/button-number3-off.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"
+       transform="translate(-3.1750037,-24.870833)">
+      <rect
+         style="display:inline;opacity:1;fill:#000000;fill-opacity:1;stroke:#939393;stroke-width:1.05833;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         id="rect1247"
+         width="4.2333183"
+         height="4.2333331"
+         x="-84.137489"
+         y="-126.47083"
+         ry="0.16582941"
+         rx="0.14314246"
+         inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/checkbox-off.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;line-height:1.25;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#939393;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="-83.026802"
+         y="-123.09412"
+         id="text1251"><tspan
+           sodipodi:role="line"
+           id="tspan1249"
+           x="-83.026802"
+           y="-123.09412"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#939393;fill-opacity:1;stroke-width:0.264583">3</tspan></text>
+    </g>
+    <g
+       id="g1261"
+       inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/Buttons-numbers/v3.4.0/button-number3-on.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"
+       transform="translate(-3.1749957,-25.929151)">
+      <rect
+         style="display:inline;opacity:1;fill:#000000;fill-opacity:1;stroke:#d1d8df;stroke-width:1.05833;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         id="rect1255"
+         width="4.2333183"
+         height="4.2333331"
+         x="-84.137497"
+         y="-120.12085"
+         ry="0.16582941"
+         rx="0.14314246"
+         inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/checkbox-off.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;line-height:1.25;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#d1d8df;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="-83.026802"
+         y="-116.74414"
+         id="text1259"><tspan
+           sodipodi:role="line"
+           id="tspan1257"
+           x="-83.026802"
+           y="-116.74414"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#d1d8df;fill-opacity:1;stroke-width:0.264583">3</tspan></text>
+    </g>
+    <g
+       id="g1269"
+       inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/Buttons-numbers/v3.4.0/button-number4-off.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"
+       transform="translate(-4.4979453,-24.870833)">
+      <rect
+         style="display:inline;opacity:1;fill:#000000;fill-opacity:1;stroke:#939393;stroke-width:1.05833;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         id="rect1263"
+         width="4.2333183"
+         height="4.2333331"
+         x="-77.787483"
+         y="-126.47083"
+         ry="0.16582941"
+         rx="0.14314246"
+         inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/checkbox-off.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;line-height:1.25;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#939393;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="-76.680237"
+         y="-123.09499"
+         id="text1267"><tspan
+           sodipodi:role="line"
+           id="tspan1265"
+           x="-76.680237"
+           y="-123.09499"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#939393;fill-opacity:1;stroke-width:0.264583">4</tspan></text>
+    </g>
+    <g
+       id="g1277"
+       inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/Buttons-numbers/v3.4.0/button-number4-on.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"
+       transform="translate(-4.4979373,-25.929151)">
+      <rect
+         style="display:inline;opacity:1;fill:#000000;fill-opacity:1;stroke:#d1d8df;stroke-width:1.05833;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         id="rect1271"
+         width="4.2333183"
+         height="4.2333331"
+         x="-77.787491"
+         y="-120.12085"
+         ry="0.16582941"
+         rx="0.14314246"
+         inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/checkbox-off.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;line-height:1.25;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#d1d8df;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="-76.680237"
+         y="-116.745"
+         id="text1275"><tspan
+           sodipodi:role="line"
+           id="tspan1273"
+           x="-76.680237"
+           y="-116.745"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#d1d8df;fill-opacity:1;stroke-width:0.264583">4</tspan></text>
+    </g>
+    <g
+       id="g1286"
+       inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/Buttons-numbers/v3.4.0/button-number5-off.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"
+       transform="translate(-5.8208492,-24.870833)">
+      <rect
+         style="display:inline;opacity:1;fill:#000000;fill-opacity:1;stroke:#939393;stroke-width:1.05833;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         id="rect1279"
+         width="4.2333183"
+         height="4.2333331"
+         x="-71.437485"
+         y="-126.47083"
+         ry="0.16582941"
+         rx="0.14314246"
+         inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/checkbox-off.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;line-height:1.25;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#939393;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="-70.334549"
+         y="-123.11221"
+         id="text1283"><tspan
+           sodipodi:role="line"
+           id="tspan1281"
+           x="-70.334549"
+           y="-123.11221"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#939393;fill-opacity:1;stroke-width:0.264583">5</tspan></text>
+    </g>
+    <g
+       id="g1294"
+       inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/Buttons-numbers/v3.4.0/button-number5-on.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"
+       transform="translate(-5.8208412,-25.929151)">
+      <rect
+         style="display:inline;opacity:1;fill:#000000;fill-opacity:1;stroke:#d1d8df;stroke-width:1.05833;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         id="rect1288"
+         width="4.2333183"
+         height="4.2333331"
+         x="-71.437492"
+         y="-120.12085"
+         ry="0.16582941"
+         rx="0.14314246"
+         inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/checkbox-off.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;line-height:1.25;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#d1d8df;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="-70.334549"
+         y="-116.76222"
+         id="text1292"><tspan
+           sodipodi:role="line"
+           id="tspan1290"
+           x="-70.334549"
+           y="-116.76222"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#d1d8df;fill-opacity:1;stroke-width:0.264583">5</tspan></text>
+    </g>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer6"
+     inkscape:label="Background OLD"
+     style="display:none"
+     sodipodi:insensitive="true">
+    <rect
+       style="fill:#000000;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none"
+       id="rect1000"
+       width="120.6395"
+       height="129.11372"
+       x="0.017908979"
+       y="-129.11667" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer7"
+     inkscape:label="Plug name OLD"
+     style="display:none"
+     sodipodi:insensitive="true">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="15.567543"
+       y="-4.3797908"
+       id="text1076"><tspan
+         sodipodi:role="line"
+         id="tspan1074"
+         x="15.567543"
+         y="-4.3797908"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.93889px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#5252ff;fill-opacity:1;stroke-width:0.264583">STEREOWIDTH</tspan></text>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer5"
+     inkscape:label="WK - scatter circle 1 OLD"
+     style="display:none"
+     sodipodi:insensitive="true">
+    <circle
+       style="display:inline;opacity:0.998076;fill:none;fill-opacity:1;stroke:#ff0000;stroke-width:0.264583;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path1278"
+       cx="-30.1625"
+       cy="-98.95417"
+       r="8.4666634" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="g1168"
+     inkscape:label="Checkboxes OLD"
+     style="display:none;opacity:1"
+     sodipodi:insensitive="true">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="93.338028"
+       y="-56.417397"
+       id="text1126"><tspan
+         sodipodi:role="line"
+         id="tspan1124"
+         x="93.338028"
+         y="-56.417397"
+         style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:3.52778px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Ultra-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#939393;fill-opacity:1;stroke-width:0.264583">MONO OUT</tspan></text>
+    <use
+       x="0"
+       y="0"
+       xlink:href="#rect10015"
+       id="use1128"
+       transform="translate(131.66714,2.1166639)"
+       width="100%"
+       height="100%" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round"
+       id="rect1130"
+       width="44.979168"
+       height="79.375"
+       x="-53.574997"
+       y="-80.98233" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#f8f8f8;stroke-width:0.47625;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke"
+       id="rect1132"
+       width="5.2916665"
+       height="5.2916665"
+       x="-32.808334"
+       y="-72.495834" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="-38.076366"
+       y="-62.419674"
+       id="text1136"><tspan
+         sodipodi:role="line"
+         id="tspan1134"
+         x="-38.076366"
+         y="-62.419674"
+         style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:3.52778px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Ultra-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#939393;fill-opacity:1;stroke-width:0.264583">MO -&gt; ST</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:0.999482;stroke:#f8f8f8;stroke-width:1.05833;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect1138"
+       width="3.7041793"
+       height="3.7041793"
+       x="-48.683346"
+       y="-54.504177" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="-42.686752"
+       y="-51.39032"
+       id="text1142"><tspan
+         sodipodi:role="line"
+         id="tspan1140"
+         x="-42.686752"
+         y="-51.39032"
+         style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:3.52778px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Ultra-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#939393;fill-opacity:1;stroke-width:0.264583">PSEUDO STEREO</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#f8f8f8;stroke-width:1.05833;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect1144"
+       width="3.7041793"
+       height="3.7041793"
+       x="-48.762058"
+       y="-47.77552" />
+    <rect
+       style="fill:#f8f8f8;fill-opacity:1;stroke:none;stroke-width:1.05833;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect1146"
+       width="2.6458333"
+       height="2.6458333"
+       x="-48.23288"
+       y="-47.246338" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="-42.686752"
+       y="-51.39032"
+       id="text1150"><tspan
+         sodipodi:role="line"
+         id="tspan1148"
+         x="-42.686752"
+         y="-51.39032"
+         style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:3.52778px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Ultra-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#939393;fill-opacity:1;stroke-width:0.264583">PSEUDO STEREO</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="16.590857"
+       y="-56.417397"
+       id="text1154"><tspan
+         sodipodi:role="line"
+         id="tspan1152"
+         x="16.590857"
+         y="-56.417397"
+         style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:3.52778px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Ultra-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#939393;fill-opacity:1;stroke-width:0.264583">PSEUDO STEREO</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#f8f8f8;stroke-width:1.05833;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect1156"
+       width="4.2333183"
+       height="4.2333331"
+       x="-49.212486"
+       y="-33.337502"
+       ry="0.16582941"
+       rx="0.14314246" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#f8f8f8;stroke-width:1.05833;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect1158"
+       width="4.2333188"
+       height="4.2333336"
+       x="-49.515537"
+       y="-24.644711"
+       ry="0.16582942"
+       rx="0.14314248" />
+    <rect
+       style="fill:#5252ff;fill-opacity:1;stroke:none;stroke-width:1.0891;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect1160"
+       width="2.7227528"
+       height="2.7227528"
+       x="-48.760254"
+       y="-23.88942" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="-42.989788"
+       y="-21.266275"
+       id="text1164"><tspan
+         sodipodi:role="line"
+         id="tspan1162"
+         x="-42.989788"
+         y="-21.266275"
+         style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:3.52778px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Ultra-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#939393;fill-opacity:1;stroke-width:0.264583">PSEUDO STEREO</tspan></text>
+    <use
+       x="0"
+       y="0"
+       xlink:href="#rect10015"
+       id="use1166"
+       transform="translate(55.033332,2.1166639)"
+       width="100%"
+       height="100%" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer15"
+     inkscape:label="Colors - PALETTE"
+     style="display:inline;mix-blend-mode:normal;filter:url(#filter1462)">
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#939393;stroke-width:0.384969;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect10109"
+       width="16.933332"
+       height="17.991667"
+       x="134.9375"
+       y="-127.52917" />
+    <rect
+       style="fill:#ebf2fa;fill-opacity:1;stroke:#939393;stroke-width:0.384969;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect10111"
+       width="16.933332"
+       height="17.991667"
+       x="230.29988"
+       y="-128.08792" />
+    <rect
+       style="fill:#939393;fill-opacity:1;stroke:#939393;stroke-width:0.384969;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect10113"
+       width="16.933332"
+       height="17.991667"
+       x="135.99583"
+       y="-104.24583" />
+    <rect
+       style="fill:#5252ff;fill-opacity:1;stroke:#5252ff;stroke-width:0.384969;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect10115"
+       width="16.933332"
+       height="17.991667"
+       x="186.42105"
+       y="-103.16945" />
+    <rect
+       style="fill:#776dff;fill-opacity:1;stroke:#776dff;stroke-width:0.384969;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect10117"
+       width="16.933332"
+       height="17.991667"
+       x="229.77072"
+       y="-104.80458" />
+    <rect
+       style="fill:#b6ff55;fill-opacity:1;stroke:#b6ff55;stroke-width:0.384969;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect10119"
+       width="16.933332"
+       height="17.991667"
+       x="134.9375"
+       y="-53.974998" />
+    <rect
+       style="fill:#1c4a75;fill-opacity:1;stroke:#1c4a75;stroke-width:0.384969;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect10121"
+       width="16.933332"
+       height="17.991667"
+       x="134.9375"
+       y="-77.787498" />
+    <rect
+       style="fill:#4240d7;fill-opacity:1;stroke:none;stroke-width:0.384969;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect1025"
+       width="16.933332"
+       height="17.991667"
+       x="230.2999"
+       y="-78.346252" />
+    <rect
+       style="fill:#2f3940;fill-opacity:1;stroke:#1c4a75;stroke-width:0.384969;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect1063"
+       width="16.933332"
+       height="17.991667"
+       x="229.24155"
+       y="-56.650421" />
+    <rect
+       style="fill:#d1d8df;fill-opacity:1;stroke:#939393;stroke-width:0.384969;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect1039"
+       width="16.933332"
+       height="17.991667"
+       x="186.14005"
+       y="-126.94085" />
+    <rect
+       style="fill:#0e253b;fill-opacity:1;stroke:#0e253b;stroke-width:0.384969;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect1084"
+       width="16.933332"
+       height="17.991667"
+       x="159.27916"
+       y="-77.258339" />
+    <rect
+       style="fill:#3b3b3b;fill-opacity:1;stroke:#3b3b3b;stroke-width:0.384969;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect10898"
+       width="16.933332"
+       height="17.991667"
+       x="159.1851"
+       y="-103.24015" />
+    <rect
+       style="fill:#181b25;fill-opacity:1;stroke:#181b25;stroke-width:0.384969;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect10900"
+       width="16.933332"
+       height="17.991667"
+       x="158.87555"
+       y="-127.9137" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="g1080"
+     inkscape:label="Background-gradient - Half Height"
+     style="display:inline"
+     sodipodi:insensitive="true">
+    <rect
+       style="fill:url(#linearGradient1082);fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none"
+       id="rect1078"
+       width="120.6395"
+       height="137.1171"
+       x="0.017908979"
+       y="-137.12004"
+       inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/Background/v3.6.8/background-StereoWidth.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+  </g>
+  <g
+     inkscape:label="Logo"
+     inkscape:groupmode="layer"
+     id="layer1"
+     style="display:inline"
+     sodipodi:insensitive="true">
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.68764;paint-order:stroke fill markers"
+       id="rect1073"
+       width="21.166664"
+       height="24.869408"
+       x="-134.93752"
+       y="-25.160597" />
+    <g
+       id="layer3"
+       inkscape:label="Bottle"
+       style="display:inline"
+       transform="matrix(0.09637446,0,0,0.09637446,5.7132363,-17.690463)">
+      <g
+         id="g4609"
+         transform="matrix(0.20228319,0,0,0.20228319,11.46966,38.320744)">
+        <title
+           id="title4606">background</title>
+        <rect
+           style="fill:none"
+           id="canvas_background"
+           height="402"
+           width="582"
+           y="-1"
+           x="-1" />
+      </g>
+    </g>
+    <g
+       id="g1061"
+       transform="translate(-136.40703,-1.6989275)">
+      <path
+         id="path2"
+         style="display:inline;fill:#5252ff;fill-opacity:1"
+         d="m 44.757812,27 c -4.128999,0 -7.476562,3.347564 -7.476562,7.476562 v 4.046876 C 37.28125,42.652437 40.628813,46 44.757812,46 H 45.28125 V 58.736328 L 19.5,106.76367 C 15.33,114.72667 18.741031,121 27.082031,121 h 36.773438 0.08398 36.773441 c 8.341,0 11.75203,-6.27333 7.58203,-14.23633 L 82.513672,58.736328 V 46 h 0.523437 c 4.129,0 7.476563,-3.347563 7.476563,-7.476562 V 34.476562 C 90.513672,30.347564 87.166108,27 83.037109,27 h -19.097656 -0.08398 z m 0,4 h 19.097657 0.08398 19.097656 c 1.916999,0 3.476563,1.559609 3.476563,3.474609 v 4.048829 c 0,1.917 -1.559563,3.476562 -3.476563,3.476562 h -4.523437 v 17.761719 l 26.238282,48.857421 c 1.386,2.645 1.70171,5.07033 0.84571,6.48633 -0.997,1.648 -3.48877,1.89453 -4.88477,1.89453 H 63.939453 63.855469 27.082031 c -1.396,0 -3.887765,-0.24653 -4.884765,-1.89453 -0.856,-1.416 -0.540297,-3.84133 0.845703,-6.48633 L 49.28125,59.761719 V 42 h -4.523438 c -1.917,0 -3.476562,-1.559562 -3.476562,-3.476562 V 34.474609 C 41.28125,32.559609 42.840813,31 44.757812,31 Z"
+         transform="matrix(0.09637446,0,0,0.09637446,5.7132363,-17.690463)" />
+      <g
+         id="layer8"
+         inkscape:label="Bubbles"
+         style="display:inline"
+         transform="matrix(0.09637446,0,0,0.09637446,5.7132363,-17.690463)">
+        <g
+           id="g948">
+          <circle
+             cx="69.818085"
+             cy="16.915253"
+             r="4.6669998"
+             id="circle10"
+             style="display:inline;fill:#5252ff;fill-opacity:1" />
+          <circle
+             cx="56.411312"
+             cy="10.790627"
+             r="4"
+             id="circle12"
+             style="display:inline;fill:#5252ff;fill-opacity:1" />
+        </g>
+      </g>
+      <g
+         id="layer2"
+         inkscape:label="Fluid"
+         style="display:inline"
+         transform="matrix(0.09637446,0,0,0.09637446,5.7132363,-17.690463)">
+        <path
+           style="fill:#5252ff;fill-opacity:1;stroke:#5252ff;stroke-width:5.31615;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="m 54.122375,63.988049 19.854478,0.0569 24.748767,46.284711 H 29.069298 Z"
+           id="path934"
+           sodipodi:nodetypes="cccc" />
+      </g>
+      <g
+         id="layer1-3"
+         inkscape:label="Waveform"
+         style="display:inline"
+         transform="matrix(0.09637446,0,0,0.09637446,5.7132363,-17.690463)">
+        <polyline
+           transform="matrix(0.11505534,0,0,0.09956537,35.076097,64.481027)"
+           style="display:inline;mix-blend-mode:normal;fill:none;stroke:#000000;stroke-width:23.4419;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+           rx="100"
+           id="svg_1"
+           stroke-miterlimit="10"
+           points="29.5,277.5539855957031 101.71400451660156,277.5539855957031 114.16500854492188,240.2010040283203 131.59600830078125,317.39599609375 168.947998046875,200.35899353027344 193.8489990234375,326.1109924316406 234.93701171875,74.60700225830078 279.7590026855469,444.39300537109375 317.1109924316406,190.3990020751953 346.99298095703125,317.39599609375 378.1199951171875,220.27999877929688 399.2859802246094,277.5539855957031 471.5,277.5539855957031 " />
+      </g>
+    </g>
+    <use
+       x="0"
+       y="0"
+       xlink:href="#g1061"
+       id="use1075"
+       transform="translate(132.79294,4.9980815)"
+       width="100%"
+       height="100%" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer16"
+     inkscape:label="Plug name"
+     style="display:inline"
+     sodipodi:insensitive="true">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="58.399227"
+       y="-3.8582683"
+       id="text984"><tspan
+         sodipodi:role="line"
+         id="tspan982"
+         x="58.399227"
+         y="-3.8582683"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#ebf2fa;fill-opacity:1;stroke-width:0.264583">stereowidth</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.53429;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect1077"
+       width="65.616669"
+       height="21.695833"
+       x="-109.5375"
+       y="-22.754168" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="58.399227"
+       y="-3.8582683"
+       id="text1085"><tspan
+         sodipodi:role="line"
+         id="tspan1083"
+         x="58.399227"
+         y="-3.8582683"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#ebf2fa;fill-opacity:1;stroke-width:0.264583">stereowidth</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="-103.7028"
+       y="-11.936099"
+       id="text1089"><tspan
+         sodipodi:role="line"
+         id="tspan1087"
+         x="-103.7028"
+         y="-11.936099"
+         style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:4.93889px;font-family:Poppins;-inkscape-font-specification:'Poppins, Ultra-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#5252ff;fill-opacity:1;stroke-width:0.264583">BlueLab</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="-78.578918"
+       y="-11.971463"
+       id="text1093"><tspan
+         sodipodi:role="line"
+         id="tspan1091"
+         x="-78.578918"
+         y="-11.971463"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#ebf2fa;fill-opacity:1;stroke-width:0.264583">stereowidth</tspan></text>
+    <use
+       x="0"
+       y="0"
+       xlink:href="#text1089"
+       id="use1098"
+       transform="translate(136.92632,8.1128325)"
+       width="100%"
+       height="100%" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer14"
+     inkscape:label="Version - HIDE"
+     style="display:inline"
+     sodipodi:insensitive="true">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;fill:#939393;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="101.28597"
+       y="-2.6992755"
+       id="text10067"><tspan
+         sodipodi:role="line"
+         id="tspan10065"
+         x="101.28597"
+         y="-2.6992755"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.82222px;font-family:Roboto;-inkscape-font-specification:'Roboto, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#939393;fill-opacity:1;stroke-width:0.264583">v6.0.0</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.05833;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect1118"
+       width="14.287499"
+       height="15.345833"
+       x="-41.275005"
+       y="-16.166185" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;fill:#939393;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="-38.182076"
+       y="-5.5484152"
+       id="text1122"><tspan
+         sodipodi:role="line"
+         id="tspan1120"
+         x="-38.182076"
+         y="-5.5484152"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.82222px;font-family:Roboto;-inkscape-font-specification:'Roboto, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#939393;fill-opacity:1;stroke-width:0.264583">v6.0.0</tspan></text>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer13"
+     inkscape:label="Help button"
+     sodipodi:insensitive="true">
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.279294;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect10048"
+       width="20.637501"
+       height="18.520832"
+       x="-24.341671"
+       y="-18.812021" />
+    <g
+       id="g10059"
+       transform="matrix(0.71643313,0,0,0.71643313,37.562795,-38.379563)">
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;fill:#f8f8f8;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="-73.370544"
+         y="42.255615"
+         id="text10052"><tspan
+           sodipodi:role="line"
+           id="tspan10050"
+           x="-73.370544"
+           y="42.255615"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.64444px;font-family:Roboto;-inkscape-font-specification:'Roboto, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#939393;fill-opacity:1;stroke-width:0.264583">?</tspan></text>
+      <circle
+         style="fill:none;fill-opacity:1;stroke:#939393;stroke-width:0.537341;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         id="path10054"
+         cx="-72.003532"
+         cy="40.238171"
+         r="3.179714" />
+    </g>
+    <use
+       x="0"
+       y="0"
+       xlink:href="#g10059"
+       id="use10061"
+       transform="translate(128.49822,4.4796025)"
+       width="100%"
+       height="100%"
+       inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/v3.5.2/help-button.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer24"
+     inkscape:label="Knobs"
+     style="display:inline"
+     sodipodi:insensitive="true">
+    <path
+       style="opacity:0.996156;fill:none;stroke:#3b3b3b;stroke-width:0.453503;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m -31.3868,-126.71387 v -0.75063"
+       id="path11061" />
+    <path
+       d="m -19.546158,-112.06083 a 11.8129,11.7674 0 0 1 -11.8129,11.7674 11.8129,11.7674 0 0 1 -11.8129,-11.7674 11.8129,11.7674 0 0 1 11.8129,-11.7674 11.8129,11.7674 0 0 1 11.8129,11.7674 z"
+       style="opacity:0.996156;fill:#000000;fill-opacity:0;stroke:#5252ff;stroke-width:0.292109;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path11059" />
+    <rect
+       style="display:inline;opacity:0.998076;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round"
+       id="rect11038"
+       width="35.454166"
+       height="34.395828"
+       x="-49.77784"
+       y="-128.62123" />
+    <g
+       id="g11046"
+       transform="translate(42.086284,-6.3207416)" />
+    <g
+       id="g13500"
+       style="display:inline"
+       transform="translate(-9.561174,41.77043)">
+      <ellipse
+         style="opacity:0.996156;fill:#181b25;fill-opacity:1;stroke:#5252ff;stroke-width:0.926042;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         id="ellipse11042"
+         cx="-21.797951"
+         cy="-153.83078"
+         rx="9.0983906"
+         ry="9.0632677" />
+      <path
+         style="opacity:0.996156;fill:none;stroke:#5252ff;stroke-width:0.926042;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m -21.797951,-157.1625 v -5.42026"
+         id="path11044" />
+    </g>
+    <path
+       d="m -40.517058,-105.25983 -0.6022,0.448 m -1.45473,-5.014 -0.72753,0.184 m 0.85345,-5.153 -0.72754,-0.184 m 2.96555,-4.297 -0.6022,-0.447 m 4.5276,-2.604 -0.3196,-0.679 m 5.248297,-0.39729 v -0.77057 m 4.807603,1.78786 0.3246,-0.676 m 3.658,3.719 0.5543,-0.505 m 1.7128,4.931 0.7265,-0.187 m -0.5529,5.178 0.7388,0.133 m -2.7354,4.43 0.6001,0.45"
+       style="opacity:0.996156;fill:none;stroke:#3b3b3b;stroke-width:0.453503;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path1277"
+       sodipodi:nodetypes="cccccccccccccccccccccc" />
+    <g
+       id="g1324"
+       style="display:inline"
+       transform="translate(-74.125659,1.321447)"
+       inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/Knobs/v3.6.8/knob-big.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96">
+      <ellipse
+         style="opacity:0.996156;fill:#181b25;fill-opacity:1;stroke:#5252ff;stroke-width:0.926042;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         id="ellipse1320"
+         cx="-21.797951"
+         cy="-153.83078"
+         rx="9.0983906"
+         ry="9.0632677" />
+      <path
+         style="opacity:0.996156;fill:none;stroke:#5252ff;stroke-width:0.926042;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m -21.797951,-157.1625 v -5.42026"
+         id="path1322" />
+    </g>
+    <g
+       id="g1448">
+      <g
+         id="g1336"
+         style="display:inline"
+         transform="translate(71.548178,115.36204)">
+        <ellipse
+           style="opacity:0.996156;fill:#181b25;fill-opacity:1;stroke:#5252ff;stroke-width:0.926042;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           id="ellipse1332"
+           cx="-21.797951"
+           cy="-153.83078"
+           rx="9.0983906"
+           ry="9.0632677" />
+        <path
+           style="opacity:0.996156;fill:none;stroke:#5252ff;stroke-width:0.926042;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="m -21.797951,-157.1625 v -5.42026"
+           id="path1334" />
+      </g>
+      <path
+         d="m 40.592294,-31.66822 -0.6022,0.448 m -1.45473,-5.014 -0.72753,0.184 m 0.85345,-5.153 -0.72754,-0.184 m 2.96555,-4.297 -0.6022,-0.447 m 4.5276,-2.604 -0.3196,-0.679 m 5.248297,-0.39729 v -0.77057 m 4.807603,1.78786 0.3246,-0.676 m 3.658,3.719 0.5543,-0.505 m 1.7128,4.931 0.7265,-0.187 m -0.5529,5.178 0.7388,0.133 m -2.7354,4.43 0.6001,0.45"
+         style="opacity:0.996156;fill:none;stroke:#3b3b3b;stroke-width:0.453503;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         id="path1338"
+         sodipodi:nodetypes="cccccccccccccccccccccc" />
+    </g>
+    <rect
+       style="display:inline;opacity:0.998076;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round"
+       id="rect13531"
+       width="35.454166"
+       height="34.395828"
+       x="-50.804924"
+       y="-176.66159" />
+    <g
+       id="g13537"
+       style="display:inline"
+       transform="matrix(0.5,0,0,0.5,-21.393975,-81.269587)">
+      <ellipse
+         style="opacity:0.996156;fill:#181b25;fill-opacity:1;stroke:#5252ff;stroke-width:0.926042;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         id="ellipse13533"
+         cx="-21.797951"
+         cy="-153.83078"
+         rx="9.0983906"
+         ry="9.0632677" />
+      <path
+         style="opacity:0.996156;fill:none;stroke:#5252ff;stroke-width:0.926042;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m -21.797951,-157.1625 v -5.42026"
+         id="path13535" />
+    </g>
+    <path
+       d="m -36.871917,-154.78472 -0.3011,0.224 m -0.727365,-2.507 -0.363765,0.092 m 0.426725,-2.5765 -0.36377,-0.092 m 1.482775,-2.1485 -0.3011,-0.2235 m 2.2638,-1.302 -0.1598,-0.3395 m 2.624149,-0.19864 v -0.38529 m 2.403801,0.89393 0.1623,-0.338 m 1.829,1.8595 0.27715,-0.2525 m 0.8564,2.4655 0.36325,-0.0935 m -0.27645,2.589 0.3694,0.0665 m -1.3677,2.215 0.30005,0.225"
+       style="opacity:0.996156;fill:none;stroke:#3b3b3b;stroke-width:0.226752;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path13539"
+       sodipodi:nodetypes="cccccccccccccccccccccc" />
+    <g
+       id="g1330"
+       style="display:inline"
+       transform="matrix(0.5,0,0,0.5,-55.087808,-73.981478)"
+       inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/Knobs/v3.6.8/knob-small.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96">
+      <ellipse
+         style="opacity:0.996156;fill:#181b25;fill-opacity:1;stroke:#5252ff;stroke-width:0.926042;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         id="ellipse1326"
+         cx="-21.797951"
+         cy="-153.83078"
+         rx="9.0983906"
+         ry="9.0632677" />
+      <path
+         style="opacity:0.996156;fill:none;stroke:#5252ff;stroke-width:0.926042;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m -21.797951,-157.1625 v -5.42026"
+         id="path1328" />
+    </g>
+    <g
+       id="g1442">
+      <g
+         id="g1359"
+         style="display:inline"
+         transform="matrix(0.5,0,0,0.5,32.074202,43.013663)">
+        <ellipse
+           style="opacity:0.996156;fill:#181b25;fill-opacity:1;stroke:#5252ff;stroke-width:0.926042;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           id="ellipse1355"
+           cx="-21.797951"
+           cy="-153.83078"
+           rx="9.0983906"
+           ry="9.0632677" />
+        <path
+           style="opacity:0.996156;fill:none;stroke:#5252ff;stroke-width:0.926042;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="m -21.797951,-157.1625 v -5.42026"
+           id="path1357" />
+      </g>
+      <path
+         d="m 16.59626,-30.501466 -0.3011,0.224 m -0.727365,-2.507 -0.363765,0.092 m 0.426725,-2.5765 -0.36377,-0.092 m 1.482775,-2.1485 -0.3011,-0.2235 m 2.2638,-1.302 -0.1598,-0.3395 m 2.624148,-0.198645 v -0.385285 m 2.403802,0.89393 0.1623,-0.338 m 1.829,1.8595 0.27715,-0.2525 m 0.8564,2.4655 0.36325,-0.0935 m -0.27645,2.589 0.3694,0.0665 m -1.3677,2.215 0.30005,0.225"
+         style="opacity:0.996156;fill:none;stroke:#3b3b3b;stroke-width:0.226752;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         id="path1361"
+         sodipodi:nodetypes="cccccccccccccccccccccc" />
+    </g>
+    <g
+       id="g1454">
+      <g
+         id="g1375"
+         style="display:inline"
+         transform="matrix(0.5,0,0,0.5,88.695035,43.013663)">
+        <ellipse
+           style="opacity:0.996156;fill:#181b25;fill-opacity:1;stroke:#5252ff;stroke-width:0.926042;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           id="ellipse1371"
+           cx="-21.797951"
+           cy="-153.83078"
+           rx="9.0983906"
+           ry="9.0632677" />
+        <path
+           style="opacity:0.996156;fill:none;stroke:#5252ff;stroke-width:0.926042;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="m -21.797951,-157.1625 v -5.42026"
+           id="path1373" />
+      </g>
+      <path
+         d="m 73.217093,-30.501466 -0.3011,0.224 m -0.727365,-2.507 -0.363765,0.092 m 0.426725,-2.5765 -0.36377,-0.092 m 1.482775,-2.1485 -0.3011,-0.2235 m 2.2638,-1.302 -0.1598,-0.3395 m 2.624148,-0.198645 v -0.385285 m 2.403802,0.89393 0.1623,-0.338 m 1.829,1.8595 0.27715,-0.2525 m 0.8564,2.4655 0.36325,-0.0935 m -0.27645,2.589 0.3694,0.0665 m -1.3677,2.215 0.30005,0.225"
+         style="opacity:0.996156;fill:none;stroke:#3b3b3b;stroke-width:0.226752;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         id="path1377"
+         sodipodi:nodetypes="cccccccccccccccccccccc" />
+    </g>
+    <g
+       id="g1460">
+      <g
+         id="g1391"
+         style="display:inline"
+         transform="matrix(0.5,0,0,0.5,111.44921,43.013663)">
+        <ellipse
+           style="opacity:0.996156;fill:#181b25;fill-opacity:1;stroke:#5252ff;stroke-width:0.926042;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           id="ellipse1387"
+           cx="-21.797951"
+           cy="-153.83078"
+           rx="9.0983906"
+           ry="9.0632677" />
+        <path
+           style="opacity:0.996156;fill:none;stroke:#5252ff;stroke-width:0.926042;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="m -21.797951,-157.1625 v -5.42026"
+           id="path1389" />
+      </g>
+      <path
+         d="m 95.971263,-30.501466 -0.3011,0.224 m -0.727365,-2.507 -0.363765,0.092 m 0.426725,-2.5765 -0.36377,-0.092 m 1.482775,-2.1485 -0.3011,-0.2235 m 2.2638,-1.302 -0.1598,-0.3395 m 2.624147,-0.198645 v -0.385285 m 2.4038,0.89393 0.1623,-0.338 m 1.829,1.8595 0.27715,-0.2525 m 0.8564,2.4655 0.36325,-0.0935 m -0.27645,2.589 0.3694,0.0665 m -1.3677,2.215 0.30005,0.225"
+         style="opacity:0.996156;fill:none;stroke:#3b3b3b;stroke-width:0.226752;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         id="path1393"
+         sodipodi:nodetypes="cccccccccccccccccccccc" />
+    </g>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer11"
+     inkscape:label="Knob values - HIDE"
+     style="display:inline"
+     sodipodi:insensitive="true">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:3.52778px;line-height:1.25;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Ultra-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#d1d8df;fill-opacity:1;stroke:none;stroke-width:0.265;stroke-miterlimit:4;stroke-dasharray:none"
+       x="15.327679"
+       y="-17.471437"
+       id="text9918"><tspan
+         sodipodi:role="line"
+         id="tspan9916"
+         x="15.327679"
+         y="-17.471437"
+         style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:3.52778px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Ultra-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#939393;fill-opacity:1;stroke-width:0.265;stroke-miterlimit:4;stroke-dasharray:none">500 Hz</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:3.52778px;line-height:1.25;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Ultra-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#d1d8df;fill-opacity:1;stroke:none;stroke-width:0.265;stroke-miterlimit:4;stroke-dasharray:none"
+       x="41.911072"
+       y="-17.484356"
+       id="text9922"><tspan
+         sodipodi:role="line"
+         id="tspan9920"
+         x="41.911072"
+         y="-17.484356"
+         style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:3.52778px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Ultra-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#939393;fill-opacity:1;stroke-width:0.265;stroke-miterlimit:4;stroke-dasharray:none">100.00 %</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:3.52778px;line-height:1.25;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Ultra-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#d1d8df;fill-opacity:1;stroke:none;stroke-width:0.265;stroke-miterlimit:4;stroke-dasharray:none"
+       x="72.019997"
+       y="-17.480049"
+       id="text9926"><tspan
+         sodipodi:role="line"
+         id="tspan9924"
+         x="72.019997"
+         y="-17.480049"
+         style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:3.52778px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Ultra-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#939393;fill-opacity:1;stroke-width:0.265;stroke-miterlimit:4;stroke-dasharray:none">0.00 %</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:3.52778px;line-height:1.25;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Ultra-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#d1d8df;fill-opacity:1;stroke:none;stroke-width:0.265;stroke-miterlimit:4;stroke-dasharray:none"
+       x="95.206528"
+       y="-17.480049"
+       id="text9930"><tspan
+         sodipodi:role="line"
+         id="tspan9928"
+         x="95.206528"
+         y="-17.480049"
+         style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:3.52778px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Ultra-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#939393;fill-opacity:1;stroke-width:0.265;stroke-miterlimit:4;stroke-dasharray:none">0.0 dB</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round"
+       id="rect9936"
+       width="20.637501"
+       height="15.345827"
+       x="-83.07917"
+       y="-100.54166" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:3.52778px;line-height:1.25;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Ultra-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="-79.683907"
+       y="-92.068108"
+       id="text9934"><tspan
+         sodipodi:role="line"
+         id="tspan9932"
+         x="-79.683907"
+         y="-92.068108"
+         style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:3.52778px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Ultra-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#939393;fill-opacity:1;stroke-width:0.264583">500 Hz</tspan></text>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer10"
+     inkscape:label="Titles"
+     style="display:inline"
+     sodipodi:insensitive="true">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;line-height:1.25;font-family:Poppins;-inkscape-font-specification:'Poppins, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="10.105733"
+       y="-22.621889"
+       id="text9883"><tspan
+         sodipodi:role="line"
+         id="tspan9881"
+         x="10.105733"
+         y="-22.621889"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;font-family:Poppins;-inkscape-font-specification:'Poppins, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#d1d8df;fill-opacity:1;stroke-width:0.264583">BASS FOCUS</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;line-height:1.25;font-family:Poppins;-inkscape-font-specification:'Poppins, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="43.831478"
+       y="-22.587439"
+       id="text9887"><tspan
+         sodipodi:role="line"
+         id="tspan9885"
+         x="43.831478"
+         y="-22.587439"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;font-family:Poppins;-inkscape-font-specification:'Poppins, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#d1d8df;fill-opacity:1;stroke-width:0.264583">WIDTH</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;line-height:1.25;font-family:Poppins;-inkscape-font-specification:'Poppins, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="74.062576"
+       y="-22.587439"
+       id="text9891"><tspan
+         sodipodi:role="line"
+         id="tspan9889"
+         x="74.062576"
+         y="-22.587439"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;font-family:Poppins;-inkscape-font-specification:'Poppins, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#d1d8df;fill-opacity:1;stroke-width:0.264583">PAN</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;line-height:1.25;font-family:Poppins;-inkscape-font-specification:'Poppins, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="92.057777"
+       y="-22.621889"
+       id="text9895"><tspan
+         sodipodi:role="line"
+         id="tspan9893"
+         x="92.057777"
+         y="-22.621889"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;font-family:Poppins;-inkscape-font-specification:'Poppins, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#d1d8df;fill-opacity:1;stroke-width:0.264583">OUT GAIN</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;line-height:1.25;font-family:Poppins;-inkscape-font-specification:'Poppins, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="90.722908"
+       y="-56.435631"
+       id="text9995"><tspan
+         sodipodi:role="line"
+         id="tspan9993"
+         x="90.722908"
+         y="-56.435631"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;font-family:Poppins;-inkscape-font-specification:'Poppins, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#d1d8df;fill-opacity:1;stroke-width:0.264583">MONO OUT</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;line-height:1.25;font-family:Poppins;-inkscape-font-specification:'Poppins, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="17.282263"
+       y="-56.435631"
+       id="text9987"><tspan
+         sodipodi:role="line"
+         id="tspan9985"
+         x="17.282263"
+         y="-56.435631"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;font-family:Poppins;-inkscape-font-specification:'Poppins, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#d1d8df;fill-opacity:1;stroke-width:0.264583">MONO TO STEREO</tspan></text>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="g10992"
+     inkscape:label="Checkboxes - HIDE"
+     style="display:inline;opacity:1"
+     sodipodi:insensitive="true">
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round"
+       id="rect10972"
+       width="50.799999"
+       height="39.687496"
+       x="-57.422832"
+       y="-75.689949" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="-50.071877"
+       y="-66.987732"
+       id="text10976"><tspan
+         sodipodi:role="line"
+         id="tspan10974"
+         x="-50.071877"
+         y="-66.987732"
+         style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:3.52778px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Ultra-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#d1d8df;fill-opacity:1;stroke-width:0.264583">MO -&gt; ST</tspan></text>
+    <rect
+       style="fill:#181b25;fill-opacity:1;stroke:#939393;stroke-width:1.05833;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect10978"
+       width="4.2333183"
+       height="4.2333331"
+       x="-44.468266"
+       y="-61.81123"
+       ry="0.16582941"
+       rx="0.14314246"
+       inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/Checkbox/v3.6.8/checkbox-off.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <g
+       id="g10984"
+       inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/Checkbox/v3.6.8/checkbox-on.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96">
+      <rect
+         style="fill:#181b25;fill-opacity:1;stroke:#939393;stroke-width:1.05833;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         id="rect10980"
+         width="4.2333188"
+         height="4.2333336"
+         x="-44.449986"
+         y="-53.219711"
+         ry="0.16582942"
+         rx="0.14314248" />
+      <rect
+         style="fill:#5252ff;fill-opacity:1;stroke:none;stroke-width:1.27;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         id="rect10982"
+         width="3.1750021"
+         height="3.1750021"
+         x="-43.920834"
+         y="-52.690544" />
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;line-height:1.25;font-family:Poppins;-inkscape-font-specification:'Poppins, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="-37.924236"
+       y="-49.841274"
+       id="text10988"><tspan
+         sodipodi:role="line"
+         id="tspan10986"
+         x="-37.924236"
+         y="-49.841274"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;font-family:Poppins;-inkscape-font-specification:'Poppins, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#d1d8df;fill-opacity:1;stroke-width:0.264583">PSEUDO STEREO</tspan></text>
+    <use
+       x="0"
+       y="0"
+       xlink:href="#rect10978"
+       id="use10994"
+       transform="translate(55.051612,2.0153933)"
+       width="100%"
+       height="100%" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#rect10978"
+       id="use10996"
+       transform="translate(142.90642,8.365398)"
+       width="100%"
+       height="100%" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer9"
+     inkscape:label="Graph"
+     style="display:inline"
+     sodipodi:insensitive="true">
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round"
+       id="rect9854"
+       width="120.61224"
+       height="63.49852"
+       x="0.037753448"
+       y="-137.05269"
+       inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/graph-StereoWidth.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer17"
+     inkscape:label="Buttons number "
+     sodipodi:insensitive="true"
+     style="display:inline">
+    <rect
+       style="fill:#010101;fill-opacity:1;stroke:#d1d8df;stroke-width:0.305405;stroke-opacity:0.0634182;paint-order:stroke fill markers"
+       id="rect1184"
+       width="39.158329"
+       height="25.929174"
+       x="-101.59999"
+       y="-132.82083" />
+    <g
+       id="g1275"
+       inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/Buttons-numbers/v3.4.0/button-number1-on.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96">
+      <rect
+         style="display:inline;opacity:1;fill:#000000;fill-opacity:1;stroke:#d1d8df;stroke-width:1.05833;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         id="rect1188"
+         width="4.2333183"
+         height="4.2333331"
+         x="-97.366661"
+         y="-120.12085"
+         ry="0.16582941"
+         rx="0.14314246"
+         inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/checkbox-off.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;line-height:1.25;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#d1d8df;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="-96.082855"
+         y="-116.745"
+         id="text1233"><tspan
+           sodipodi:role="line"
+           id="tspan1231"
+           x="-96.082855"
+           y="-116.745"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#d1d8df;fill-opacity:1;stroke-width:0.264583">1</tspan></text>
+    </g>
+    <g
+       id="g1270"
+       inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/Buttons-numbers/v3.4.0/button-number1-off.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96">
+      <rect
+         style="display:inline;opacity:1;fill:#000000;fill-opacity:1;stroke:#939393;stroke-width:1.05833;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         id="rect1191"
+         width="4.2333183"
+         height="4.2333331"
+         x="-97.366653"
+         y="-126.47083"
+         ry="0.16582941"
+         rx="0.14314246"
+         inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/checkbox-off.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;line-height:1.25;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#939393;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="-96.082848"
+         y="-123.09499"
+         id="text1229"><tspan
+           sodipodi:role="line"
+           id="tspan1227"
+           x="-96.082848"
+           y="-123.09499"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#939393;fill-opacity:1;stroke-width:0.264583">1</tspan></text>
+    </g>
+    <g
+       id="g1280"
+       inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/Buttons-numbers/v3.4.0/button-number2-off.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96">
+      <rect
+         style="display:inline;opacity:1;fill:#000000;fill-opacity:1;stroke:#939393;stroke-width:1.05833;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         id="rect1195"
+         width="4.2333183"
+         height="4.2333331"
+         x="-90.487488"
+         y="-126.47083"
+         ry="0.16582941"
+         rx="0.14314246"
+         inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/checkbox-off.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;line-height:1.25;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#939393;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="-89.388855"
+         y="-123.0769"
+         id="text1237"><tspan
+           sodipodi:role="line"
+           id="tspan1235"
+           x="-89.388855"
+           y="-123.0769"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#939393;fill-opacity:1;stroke-width:0.264583">2</tspan></text>
+    </g>
+    <g
+       id="g1285"
+       inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/Buttons-numbers/v3.4.0/button-number2-on.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96">
+      <rect
+         style="display:inline;opacity:1;fill:#000000;fill-opacity:1;stroke:#d1d8df;stroke-width:1.05833;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         id="rect1193"
+         width="4.2333183"
+         height="4.2333331"
+         x="-90.487495"
+         y="-120.12085"
+         ry="0.16582941"
+         rx="0.14314246"
+         inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/checkbox-off.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;line-height:1.25;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#d1d8df;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="-89.388855"
+         y="-116.72691"
+         id="text1241"><tspan
+           sodipodi:role="line"
+           id="tspan1239"
+           x="-89.388855"
+           y="-116.72691"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#d1d8df;fill-opacity:1;stroke-width:0.264583">2</tspan></text>
+    </g>
+    <g
+       id="g1290"
+       inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/Buttons-numbers/v3.4.0/button-number3-off.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96">
+      <rect
+         style="display:inline;opacity:1;fill:#000000;fill-opacity:1;stroke:#939393;stroke-width:1.05833;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         id="rect1199"
+         width="4.2333183"
+         height="4.2333331"
+         x="-84.137489"
+         y="-126.47083"
+         ry="0.16582941"
+         rx="0.14314246"
+         inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/checkbox-off.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;line-height:1.25;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#939393;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="-83.026802"
+         y="-123.09412"
+         id="text1245"><tspan
+           sodipodi:role="line"
+           id="tspan1243"
+           x="-83.026802"
+           y="-123.09412"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#939393;fill-opacity:1;stroke-width:0.264583">3</tspan></text>
+    </g>
+    <g
+       id="g1295"
+       inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/Buttons-numbers/v3.4.0/button-number3-on.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96">
+      <rect
+         style="display:inline;opacity:1;fill:#000000;fill-opacity:1;stroke:#d1d8df;stroke-width:1.05833;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         id="rect1197"
+         width="4.2333183"
+         height="4.2333331"
+         x="-84.137497"
+         y="-120.12085"
+         ry="0.16582941"
+         rx="0.14314246"
+         inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/checkbox-off.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;line-height:1.25;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#d1d8df;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="-83.026802"
+         y="-116.74414"
+         id="text1249"><tspan
+           sodipodi:role="line"
+           id="tspan1247"
+           x="-83.026802"
+           y="-116.74414"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#d1d8df;fill-opacity:1;stroke-width:0.264583">3</tspan></text>
+    </g>
+    <g
+       id="g1300"
+       inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/Buttons-numbers/v3.4.0/button-number4-off.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96">
+      <rect
+         style="display:inline;opacity:1;fill:#000000;fill-opacity:1;stroke:#939393;stroke-width:1.05833;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         id="rect1203"
+         width="4.2333183"
+         height="4.2333331"
+         x="-77.787483"
+         y="-126.47083"
+         ry="0.16582941"
+         rx="0.14314246"
+         inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/checkbox-off.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;line-height:1.25;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#939393;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="-76.680237"
+         y="-123.09499"
+         id="text1253"><tspan
+           sodipodi:role="line"
+           id="tspan1251"
+           x="-76.680237"
+           y="-123.09499"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#939393;fill-opacity:1;stroke-width:0.264583">4</tspan></text>
+    </g>
+    <g
+       id="g1305"
+       inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/Buttons-numbers/v3.4.0/button-number4-on.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96">
+      <rect
+         style="display:inline;opacity:1;fill:#000000;fill-opacity:1;stroke:#d1d8df;stroke-width:1.05833;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         id="rect1201"
+         width="4.2333183"
+         height="4.2333331"
+         x="-77.787491"
+         y="-120.12085"
+         ry="0.16582941"
+         rx="0.14314246"
+         inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/checkbox-off.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;line-height:1.25;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#d1d8df;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="-76.680237"
+         y="-116.745"
+         id="text1257"><tspan
+           sodipodi:role="line"
+           id="tspan1255"
+           x="-76.680237"
+           y="-116.745"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#d1d8df;fill-opacity:1;stroke-width:0.264583">4</tspan></text>
+    </g>
+    <g
+       id="g1310"
+       inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/Buttons-numbers/v3.4.0/button-number5-off.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96">
+      <rect
+         style="display:inline;opacity:1;fill:#000000;fill-opacity:1;stroke:#939393;stroke-width:1.05833;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         id="rect1207"
+         width="4.2333183"
+         height="4.2333331"
+         x="-71.437485"
+         y="-126.47083"
+         ry="0.16582941"
+         rx="0.14314246"
+         inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/checkbox-off.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;line-height:1.25;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#939393;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="-70.334549"
+         y="-123.11221"
+         id="text1261"><tspan
+           sodipodi:role="line"
+           id="tspan1259"
+           x="-70.334549"
+           y="-123.11221"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#939393;fill-opacity:1;stroke-width:0.264583">5</tspan></text>
+    </g>
+    <g
+       id="g1315"
+       inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/Buttons-numbers/v3.4.0/button-number5-on.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96">
+      <rect
+         style="display:inline;opacity:1;fill:#000000;fill-opacity:1;stroke:#d1d8df;stroke-width:1.05833;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         id="rect1205"
+         width="4.2333183"
+         height="4.2333331"
+         x="-71.437492"
+         y="-120.12085"
+         ry="0.16582941"
+         rx="0.14314246"
+         inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/checkbox-off.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;line-height:1.25;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#d1d8df;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="-70.334549"
+         y="-116.76222"
+         id="text1265"><tspan
+           sodipodi:role="line"
+           id="tspan1263"
+           x="-70.334549"
+           y="-116.76222"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#d1d8df;fill-opacity:1;stroke-width:0.264583">5</tspan></text>
+    </g>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer18"
+     inkscape:label="Stereo width meter"
+     style="display:inline"
+     sodipodi:insensitive="true">
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.298847;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect1318"
+       width="116.94582"
+       height="4.1162281"
+       x="-181.50415"
+       y="-40.628727"
+       inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/Width meter/width-meter.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <rect
+       style="fill:#5252ff;fill-opacity:1;stroke:none;stroke-width:0.145868;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect1320"
+       width="111.65416"
+       height="0.78206903"
+       x="-179.3875"
+       y="-39.411236"
+       inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/Width meter/3.4.1/width-meter-bar.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer19"
+     inkscape:label="Correlation meter background"
+     style="display:inline"
+     sodipodi:insensitive="true">
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.256653;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect1351"
+       width="111.65417"
+       height="3.179846"
+       x="-179.3875"
+       y="-55.561886"
+       inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/Correlation meter/3.4.1/correlation-meter-bg.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer20"
+     inkscape:label="Correlation meter gradient"
+     style="display:inline"
+     sodipodi:insensitive="true">
+    <g
+       id="g1477">
+      <rect
+         style="display:inline;fill:url(#linearGradient1383);fill-opacity:1;stroke:none;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         id="rect1357"
+         width="51.593735"
+         height="0.53108448"
+         x="-176.47708"
+         y="-54.239586"
+         inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/Width meter/3.4.1/width-meter-bar.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <rect
+         style="display:inline;fill:url(#linearGradient1403);fill-opacity:1;stroke:none;stroke-width:0.081585;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         id="rect1371"
+         width="51.59375"
+         height="0.52944988"
+         x="-122.2375"
+         y="-54.239868"
+         inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/Width meter/3.4.1/width-meter-bar.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;display:inline;mix-blend-mode:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="-178.81079"
+         y="-53.219936"
+         id="text1407"><tspan
+           sodipodi:role="line"
+           id="tspan1405"
+           x="-178.81079"
+           y="-53.219936"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.11667px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#939393;fill-opacity:1;stroke-width:0.264583">-1</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;display:inline;mix-blend-mode:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="-70.141998"
+         y="-53.219936"
+         id="text1414"><tspan
+           sodipodi:role="line"
+           id="tspan1412"
+           x="-70.141998"
+           y="-53.219936"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.11667px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#939393;fill-opacity:1;stroke-width:0.264583">+1</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;display:inline;mix-blend-mode:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="-124.13571"
+         y="-53.219036"
+         id="text1418"><tspan
+           sodipodi:role="line"
+           id="tspan1416"
+           x="-124.13571"
+           y="-53.219036"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.11667px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#939393;fill-opacity:1;stroke-width:0.264583">0</tspan></text>
+    </g>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer21"
+     inkscape:label="Correlation meter needle"
+     style="display:inline"
+     sodipodi:insensitive="true">
+    <rect
+       style="display:inline;fill:#d1d8df;fill-opacity:1;stroke:none;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect1420"
+       width="1.0583416"
+       height="3.1749942"
+       x="-124.08958"
+       y="-55.5625" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer23"
+     inkscape:label="BL-StereoWidth meters BG"
+     style="display:inline"
+     sodipodi:insensitive="true">
+    <rect
+       style="display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect1494"
+       width="120.65"
+       height="7.937499"
+       x="0"
+       y="-73.554169" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer22"
+     inkscape:label="BL-StereoWidth meters - HIDE"
+     style="display:inline"
+     sodipodi:insensitive="true">
+    <g
+       id="g1488"
+       transform="translate(183.89807,-16.933049)">
+      <use
+         x="0"
+         y="0"
+         xlink:href="#rect1351"
+         id="use1483"
+         style="display:inline"
+         width="100%"
+         height="100%" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#g1477"
+         id="use1480"
+         style="display:inline"
+         width="100%"
+         height="100%" />
+    </g>
+    <use
+       x="0"
+       y="0"
+       xlink:href="#rect1320"
+       id="use1490"
+       style="display:inline"
+       transform="translate(183.89808,-28.839585)"
+       width="100%"
+       height="100%" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer26"
+     inkscape:label="XYPad"
+     style="display:inline"
+     sodipodi:insensitive="true">
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.995737;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect1228"
+       width="88.743958"
+       height="66.979263"
+       x="-201.43665"
+       y="-157.26723"
+       rx="0"
+       ry="0" />
+    <g
+       id="g1258"
+       inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/xypad-track.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96">
+      <rect
+         style="fill:#181b25;fill-opacity:1;stroke:#939393;stroke-width:1.05833;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         id="rect1226"
+         width="65.065544"
+         height="38.834576"
+         x="-183.10855"
+         y="-148.63614"
+         rx="2.4126627"
+         ry="2.1121085" />
+      <rect
+         style="fill:#3b3b3b;fill-opacity:1;stroke:#3b3b3b;stroke-width:0.225084;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         id="rect1231"
+         width="0.067883439"
+         height="38.609394"
+         x="-150.60973"
+         y="-148.52327"
+         ry="3.0540142"
+         rx="0" />
+    </g>
+    <rect
+       style="fill:#3b3b3b;fill-opacity:1;stroke:#3b3b3b;stroke-width:0.26516;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect1233"
+       width="0.056118563"
+       height="64.814682"
+       x="-129.24692"
+       y="118.17577"
+       ry="5.1268601"
+       rx="0"
+       transform="rotate(90)" />
+    <ellipse
+       style="fill:#181b25;fill-opacity:1;stroke:#d1d8df;stroke-width:1.09825;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="path1260"
+       cx="-165.01059"
+       cy="-121.04463"
+       rx="2.0562127"
+       ry="2.0916805"
+       inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/xypad-handle.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer27"
+     inkscape:label="SpatializerHandle">
+    <ellipse
+       style="display:inline;fill:#181b25;fill-opacity:1;stroke:#d1d8df;stroke-width:0.67071875;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       id="ellipse1233"
+       cx="-170.64978"
+       cy="-169.2961"
+       rx="0.80976105"
+       ry="0.82372874"
+       inkscape:export-filename="/home/niko/Documents/Dev/plugs-dev/bluelab/Design/GUI/Exports/Elements/xypad-handle.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+  </g>
+</svg>
