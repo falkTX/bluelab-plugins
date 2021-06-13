@@ -4,10 +4,11 @@ LockFree: LoFr
 LockFree(legacy): LoFr(l)
 valgrind (check for mem corruption): valg
 lazy gui refresh: lgr
+gui: gui design in Inkscape
 ---
 
-BL-Air		    :	fea+,      ,optim, mem, bugs, LoFr
-BL-AutoGain	    :	fea+,      ,optim, mem, bugs, LoFr
+BL-Air		    :	fea+,      ,optim, mem, bugs, LoFr    ,     , gui
+BL-AutoGain	    :	fea+,      ,optim, mem, bugs, LoFr    ,     , gui
 BL-Bat		    :
 BL-Chroma	    :	fea+,      ,optim, mem, bugs, LoFr    , lgr
 BL-Denoiser	    :	fea+,      ,optim, mem, bugs, LoFr
@@ -38,13 +39,13 @@ BL-Saturate	    :   fea+                                  , lgr
 BL-Shaper	    :   fea+,     , optim, mem, bugs,  LoFr   , lgr
 BL-Sine		    :   fea+,     , optim, mem, bugs, (LoFr)      
 BL-SoundMetaViewer  :
-BL-Spatializer	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr
+BL-Spatializer	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr, gui
 BL-SpectralDiff	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr
 BL-SpectroExpe	    :
 BL-SpectrumView	    :
 BL-StereoDeReverb   :
 BL-StereoPan	    :   (fea+)
-BL-StereoWidth	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr -- bug clicks ?
+BL-StereoWidth	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr, gui (wip) -- bug clicks ?
 BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr
 
 ---
@@ -54,3 +55,9 @@ TODO: check plugs CPU % when "resting"
 TODO: check gui refresh for all plugins
 TODO: pass valgrind for mem for all
 (already done for the last ones, update the list!)
+
+---
+TODO GUI
+---
+Spatializer: pad center lines are rounded at the end
+Gradient: darker -> better ?

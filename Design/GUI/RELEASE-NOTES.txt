@@ -8,9 +8,54 @@ V3.6
 v3.6.9
 - added xypad handle
 
-3.6.10
+v3.6.10
 - added SpatializerHandle
 
-3.6.11
+v3.6.11
 - more fat SpatializerHandle
+
+v3.7.0
+- Spatializer GUI
+
+v3.7.3
+- aligned heads
+- gradient => no gradient, black is better
+- gradient color was: 0e253bff
+- fixed bug round line joints for xypad
+- biggest stroke width for small knobs
+- biggest stroke width for small knobs graduations
+
+v3.7.4
+- StereoWidth: applied modifs from spatializer
+
+v3.7.5
+- graduations, big knob: recentered and more fat
+
+v3.7.9
+- changed a bit the blue of the knobs (so they are darker than the logo)
+
+v3.7.11
+- changed a bit the blue of the knobs (so they are lighter than the logo)
+=> better!
+
+v3.7.12
+- bigger graph, aligned graph, bigger plugin size
+
+v3.8.0
+- aligned Air bottom bar
+- created radio buttons
+- create AutoGain GUI
+
+v3.9.0
+- Chroma
+
+
+
+0e253bff
+knob orig color: 5252ffff
+new color: 6a6affff
+
+
+TODO: StereoWidth additional controls
+NOTE: blue for all widgets: lighter blue, not the BlueLab title one
 
