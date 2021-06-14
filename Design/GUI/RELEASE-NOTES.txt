@@ -48,7 +48,15 @@ v3.8.0
 
 v3.9.0
 - Chroma
+- redisigned GUI resize buttons
 
+v3.9.1
+- basic position of all the widgets
+
+TODO: 
+- Chroma: bosition wudgets better
+- problem with colormap radiobuttons (make second radiobuttons, smaller?)
+- make the The 3 other GUI layouts for total of 4 gui sizes
 
 
 0e253bff
