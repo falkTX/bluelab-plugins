@@ -384,7 +384,9 @@ ITabsBarControl::DrawTabNames(IGraphics &g)
     float margin = mRECT.H()*0.5;
     
     IText text(mFontSize, mNameColor, "Roboto-Bold", EAlign::Near);
-
+    // Make the text to be clipped by the tab bounds
+    text.mClipToBounds = true;
+    
     float crossSize = mRECT.H()*mCrossRatio;
     float marginRight = (mRECT.H() - crossSize)*0.5;
 
