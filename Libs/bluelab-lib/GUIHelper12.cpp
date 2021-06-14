@@ -1475,6 +1475,42 @@ GUIHelper12::CreateTabsBar(IGraphics *graphics,
     return tabsBar;
 }
 
+ICaptionControl *
+GUIHelper12::CreateDropDownMenu(IGraphics *graphics,
+                                float x, float y, float width,
+                                int paramIdx,
+                                const char *title,
+                                Size titleSize)
+{
+#define DM_MENU_TEXT_SIZE 16.0 //12.0 //24.0
+
+    float height = DM_MENU_TEXT_SIZE;
+    
+    // Popup menu for colormap
+    // NOTE: the popup menu seems to be managed for CaptionControl automatically,
+    // if we have an enum parameter
+    graphics->AttachPopupMenuControl(DEFAULT_LABEL_TEXT);
+    
+    IRECT rect(x, y, x + width, y + height);
+    ICaptionControl *control = new ICaptionControl(rect, paramIdx,
+                                                   IText(DM_MENU_TEXT_SIZE),
+                                                   DEFAULT_FGCOLOR,
+                                                   false);
+    
+    graphics->AttachControl(control, kNoTag, "");
+
+    if (mCreateTitles)
+    {
+        // Title
+        if ((title != NULL) && (strlen(title) > 0))
+        {
+            CreateTitle(graphics, x + width/2, y, title, titleSize);
+        }
+    }
+    
+    return control;
+}
+
 void
 GUIHelper12::GetCircleGDCircleLineWidth(float *circleLineWidth)
 {

@@ -288,7 +288,18 @@ public:
 
     ITabsBarControl *CreateTabsBar(IGraphics *graphics,
                                    float x, float y, float w, float h);
-                                   
+
+    // For the menu to appear
+    // - the associated parameter must have been created as InitEnum()
+    // - we must have calle pGraphics->AttachPopupMenuControl()
+    // before before creating the menu
+    ICaptionControl *CreateDropDownMenu(IGraphics *graphics,
+                                        float x, float y,
+                                        float width,
+                                        int paramIdx,
+                                        const char *title,
+                                        Size titleSize = SIZE_DEFAULT);
+    
     // Circle graph drawer
     void GetCircleGDCircleLineWidth(float *circleLineWidth);
     void GetCircleGDLinesWidth(float *linesWidth);
