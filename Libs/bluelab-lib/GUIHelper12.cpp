@@ -1485,17 +1485,37 @@ GUIHelper12::CreateDropDownMenu(IGraphics *graphics,
 #define DM_MENU_TEXT_SIZE 16.0 //12.0 //24.0
 
     float height = DM_MENU_TEXT_SIZE;
+
+    // Colors
+    IColor bgColor = mValueTextBGColor; // DEFAULT_FGCOLOR;
+    IColor textFGColor = mValueTextFGColor; // DEFAULT_TEXT_FGCOLOR;
+    IColor textEntryBGColor = mValueTextBGColor; // DEFAULT_TEXTENTRY_BGCOLOR;
+    textEntryBGColor.A = 255; // Not transparent menu
+    IColor textEntryFGColor = mValueTextFGColor; // DEFAULT_TEXTENTRY_FGCOLOR;
     
     // Popup menu for colormap
     // NOTE: the popup menu seems to be managed for CaptionControl automatically,
     // if we have an enum parameter
     graphics->AttachPopupMenuControl(DEFAULT_LABEL_TEXT);
+
+    // Popup menu style
+    IPopupMenuControl *menu = graphics->GetPopupMenuControl();
+    menu->SetPanelColor(textEntryBGColor);
+    menu->SetItemColor(textEntryFGColor);
+    menu->SetSeparatorColor(textEntryFGColor);
+    menu->SetBorderStyle(textEntryFGColor, 2.0);
+    menu->SetDropShadow(false);
     
-    IRECT rect(x, y, x + width, y + height);
-    ICaptionControl *control = new ICaptionControl(rect, paramIdx,
-                                                   IText(DM_MENU_TEXT_SIZE),
-                                                   DEFAULT_FGCOLOR,
-                                                   false);
+    IText text(DM_MENU_TEXT_SIZE,
+               textFGColor, mValueTextFont,
+               EAlign::Center, EVAlign::Middle,
+               0.0, 
+               textEntryBGColor,
+               textEntryFGColor);
+        
+    IRECT rect(x, y, x + width, y + height);    
+    ICaptionControl *control =
+        new ICaptionControl(rect, paramIdx, text, bgColor, false);
     
     graphics->AttachControl(control, kNoTag, "");
 
