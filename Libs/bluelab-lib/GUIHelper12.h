@@ -441,6 +441,14 @@ protected:
     IColor mCircleGDTextColor;
     int mCircleGDOffsetX;
     int mCircleGDOffsetY;
+
+    // Drop down menus
+    float mMenuTextSize;
+    IColor mMenuTextColor;
+    IColor mMenuTextFGColor;
+    IColor mMenuTextBGColor;
+    char *mMenuTextFont;
+    char *mMenuCaptionTextFont;
 };
 
 #endif /* GUIHelper12_hpp */

@@ -206,6 +206,14 @@ GUIHelper12::GUIHelper12(Style style)
         mGraphCurveColorLightRed = IColor(255, 255, 200, 200);
         
         mGraphCurveColorBlack = IColor(255, 0, 0, 0);
+
+        // Menu
+        mMenuTextSize = 16.0;
+        mMenuTextColor = IColor(255, 248, 248, 248);
+        mMenuTextFGColor = IColor(255, 248, 248, 248); 
+        mMenuTextBGColor = IColor(0, 0, 0, 0);;
+        mMenuTextFont = "font-regular";
+        mMenuCaptionTextFont = "font-bold";
     }
 
     if (style == STYLE_BLUELAB_V3)
@@ -335,6 +343,14 @@ GUIHelper12::GUIHelper12(Style style)
         // IColor(255, 128, 128, 128);
         mCircleGDOffsetX = 18; //15; //8;
         mCircleGDOffsetY = 14; //16;
+
+        // Menu
+        mMenuTextSize = 16.0;
+        mMenuTextColor = IColor(255, 248, 248, 248); 
+        mMenuTextFGColor = IColor(255, 248, 248, 248); 
+        mMenuTextBGColor = IColor(0, 0, 0, 0);;
+        mMenuTextFont = "OpenSans-ExtraBold";
+        mMenuCaptionTextFont = "Roboto-Bold";
     }
 }
 
@@ -1482,21 +1498,26 @@ GUIHelper12::CreateDropDownMenu(IGraphics *graphics,
                                 const char *title,
                                 Size titleSize)
 {
-#define DM_MENU_TEXT_SIZE 16.0 //12.0 //24.0
-
-    float height = DM_MENU_TEXT_SIZE;
+    float height = mMenuTextSize;
 
     // Colors
-    IColor bgColor = mValueTextBGColor; // DEFAULT_FGCOLOR;
-    IColor textFGColor = mValueTextFGColor; // DEFAULT_TEXT_FGCOLOR;
-    IColor textEntryBGColor = mValueTextBGColor; // DEFAULT_TEXTENTRY_BGCOLOR;
+    IColor bgColor = mMenuTextBGColor; // DEFAULT_FGCOLOR;
+    IColor textFGColor = mMenuTextFGColor; // DEFAULT_TEXT_FGCOLOR;
+    IColor textEntryBGColor = mMenuTextBGColor; // DEFAULT_TEXTENTRY_BGCOLOR;
     textEntryBGColor.A = 255; // Not transparent menu
-    IColor textEntryFGColor = mValueTextFGColor; // DEFAULT_TEXTENTRY_FGCOLOR;
+    IColor textEntryFGColor = mMenuTextFGColor; // DEFAULT_TEXTENTRY_FGCOLOR;
+
+    IText menuText(mMenuTextSize,
+                   textFGColor, mMenuTextFont,
+                   EAlign::Center, EVAlign::Middle,
+                   0.0, 
+                   textEntryBGColor,
+                   textEntryFGColor);
     
     // Popup menu for colormap
     // NOTE: the popup menu seems to be managed for CaptionControl automatically,
     // if we have an enum parameter
-    graphics->AttachPopupMenuControl(DEFAULT_LABEL_TEXT);
+    graphics->AttachPopupMenuControl(menuText/*DEFAULT_LABEL_TEXT*/);
 
     // Popup menu style
     IPopupMenuControl *menu = graphics->GetPopupMenuControl();
@@ -1505,17 +1526,17 @@ GUIHelper12::CreateDropDownMenu(IGraphics *graphics,
     menu->SetSeparatorColor(textEntryFGColor);
     menu->SetBorderStyle(textEntryFGColor, 2.0);
     menu->SetDropShadow(false);
+
+    IText captionText(mMenuTextSize,
+                      textFGColor, mMenuCaptionTextFont,
+                      EAlign::Center, EVAlign::Middle,
+                      0.0, 
+                      textEntryBGColor,
+                      textEntryFGColor);
     
-    IText text(DM_MENU_TEXT_SIZE,
-               textFGColor, mValueTextFont,
-               EAlign::Center, EVAlign::Middle,
-               0.0, 
-               textEntryBGColor,
-               textEntryFGColor);
-        
     IRECT rect(x, y, x + width, y + height);    
     ICaptionControl *control =
-        new ICaptionControl(rect, paramIdx, text, bgColor, false);
+        new ICaptionControl(rect, paramIdx, captionText, bgColor, false);
     
     graphics->AttachControl(control, kNoTag, "");
 
