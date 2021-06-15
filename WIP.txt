@@ -19,7 +19,7 @@ BL-Gain12	    :	fea+,      ,optim, mem, bugs,         ,     , gui
 BL-Gain200	    :	fea+,      ,optim, mem, bugs
 BL-Gain24	    :	fea+,      ,optim, mem, bugs,         ,     , gui
 BL-Gain60	    :	fea+,      ,optim, mem, bugs,         ,     , gui
-BL-Ghost	    :	fea+,      ,optim, mem, bugs, LoFr(l) , lgr
+BL-Ghost	    :	fea+,      ,optim, mem, bugs, LoFr(l) , lgr , gui
 BL-GhostViewer	    :   fea+,            , mem,     , LoFr    , lgr
 BL-Impulses	    :   fea+,      ,optim, mem, bugs, LoFr(l)
 BL-Infra	    :   fea+,      ,optim, mem, bugs, LoFr
@@ -49,6 +49,10 @@ BL-StereoWidth	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr, gui (wip) --
 BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr
 
 ---
+GUI: 9/26
+
+- TODO: for drop down menu, set blue to real rolover blue color
+rollover blue: 6a6affff and set text to black
 
 - TODO: big knobs texture too large => bug
 - TODO: check plugs CPU % when "resting"
@@ -58,4 +62,4 @@ BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr
 ---
 TODO GUI
 ---
-Spatializer: pad center lines are rounded at the end
+Spatializer: xy pad center lines are rounded at the end
