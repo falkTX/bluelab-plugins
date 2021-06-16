@@ -74,6 +74,60 @@ v3.13.0
 v3.14
 - GhostViewer
 
+3.15
+- Impulses
+
+3.16
+- Infra
+
+v3.17
+- InfrasonicViewer
+
+v3.18 (??)
+- LoFi
+
+v3.19 (??)
+- Panogram
+
+3.20
+- PitchShift
+
+v3.21
+- Precedence
+
+v3.22
+- Rebalance
+
+v3.23
+- SampleDelay
+
+v3.24
+- Saturate
+
+v3.26
+- Shaper
+
+v3.27
+- Sine
+
+v3.28
+- SpectralDiff
+
+v3.29
+- StereoPan
+
+v3.30
+- StrereoWidth (new)
+
+v3.31
+- Wav3s
+
+v3.32
+- WIP
+
+
+fill knob: 181b25ff (very dark blue)
+fill buttons: 0e253bff (blue/green less sad)
 
 0e253bff
 knob orig color: 5252ffff

@@ -20,41 +20,45 @@ BL-Gain200	    :	fea+,      ,optim, mem, bugs
 BL-Gain24	    :	fea+,      ,optim, mem, bugs,         ,     , gui
 BL-Gain60	    :	fea+,      ,optim, mem, bugs,         ,     , gui
 BL-Ghost	    :	fea+,      ,optim, mem, bugs, LoFr(l) , lgr , gui
-BL-GhostViewer	    :   fea+,            , mem,     , LoFr    , lgr
-BL-Impulses	    :   fea+,      ,optim, mem, bugs, LoFr(l)
-BL-Infra	    :   fea+,      ,optim, mem, bugs, LoFr
-BL-InfrasonicViewer :   fea+,      ,optim, mem, bugs, LoFr    , lgr
+BL-GhostViewer	    :   fea+,            , mem,     , LoFr    , lgr , gui
+BL-Impulses	    :   fea+,      ,optim, mem, bugs, LoFr(l) ,     , gui
+BL-Infra	    :   fea+,      ,optim, mem, bugs, LoFr    ,     , gui
+BL-InfrasonicViewer :   fea+,      ,optim, mem, bugs, LoFr    , lgr , gui
 BL-InfraSynth	    :
-BL-LoFi		    :       ,      ,optim, mem, bugs, LoFr
+BL-LoFi		    :       ,      ,optim, mem, bugs, LoFr    ,     , gui
 BL-OnsetDetect	    :
-BL-Panogram	    :   fea+,      ,optim, mem, bugs, LoFr
-BL-PitchShift	    :   fea+,      ,optim, mem, bugs, (LoFr)  , lgr
-BL-Precedence	    :   (fea+)
-BL-Rebalance	    :	wip: upscaled model is training,      , lgr
+BL-Panogram	    :   fea+,      ,optim, mem, bugs, LoFr    ,     , gui
+BL-PitchShift	    :   fea+,      ,optim, mem, bugs, (LoFr)  , lgr , gui 
+BL-Precedence	    :   (fea+)                                      , gui
+BL-Rebalance	    :	wip: upscaled model is training,      , lgr , gui
 BL-Reverb	    :
 BL-ReverbDepth	    :
-BL-SampleDelay	    :   (fea+)
+BL-SampleDelay	    :   (fea+)                                      , gui
 BL-SASViewer	    : 
-BL-Saturate	    :   fea+                                  , lgr
-BL-Shaper	    :   fea+,     , optim, mem, bugs,  LoFr   , lgr
-BL-Sine		    :   fea+,     , optim, mem, bugs, (LoFr)      
+BL-Saturate	    :   fea+                                  , lgr , gui
+BL-Shaper	    :   fea+,     , optim, mem, bugs,  LoFr   , lgr , gui
+BL-Sine		    :   fea+,     , optim, mem, bugs, (LoFr)        , gui
 BL-SoundMetaViewer  :
-BL-Spatializer	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr, gui
-BL-SpectralDiff	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr
+BL-Spatializer	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui
+BL-SpectralDiff	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui
 BL-SpectroExpe	    :
 BL-SpectrumView	    :
 BL-StereoDeReverb   :
-BL-StereoPan	    :   (fea+)
-BL-StereoWidth	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr, gui (wip) -- bug clicks ?
-BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr
+BL-StereoPan	    :   (fea+)                                      , gui
+BL-StereoWidth	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui -- bug clicks ?
+BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui
 
 ---
-GUI: 9/26
 
-- TODO: for drop down menu, set blue to real rolover blue color
+- IDEA: paint knobs (and checkbox etc.) with greenish blue (like for buttons) ?
+=> or change greenish blue of the buttons by dark blue or another blue
+- TODO: drop down menu, make items in lower case (no upper case as it is currently)
+First letter in upper case. Find a good font (see the font of the Ghost-X buttons)
+- TODO: rollover on help button
+- TODO: options (e.g radio button items) => put them in lower case?
+
+- TODO: for drop down menu, set blue to real rollover blue color
 rollover blue: 6a6affff and set text to black
-
-- TODO: big knobs texture too large => bug
 - TODO: check plugs CPU % when "resting"
 - TODO: check gui refresh for all plugins
 - TODO: pass valgrind for mem for all
