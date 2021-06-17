@@ -5,9 +5,10 @@ LockFree(legacy): LoFr(l)
 valgrind (check for mem corruption): valg
 lazy gui refresh: lgr
 gui: gui design in Inkscape
+guiP: gui fully integrated programmatically 
 ---
 
-BL-Air		    :	fea+,      ,optim, mem, bugs, LoFr    ,     , gui
+BL-Air		    :	fea+,      ,optim, mem, bugs, LoFr    ,     , gui, guiP
 BL-AutoGain	    :	fea+,      ,optim, mem, bugs, LoFr    ,     , gui
 BL-Bat		    :
 BL-Chroma	    :	fea+,      ,optim, mem, bugs, LoFr    , lgr , gui
@@ -48,4 +49,9 @@ BL-StereoPan	    :   (fea+)                                      , gui
 BL-StereoWidth	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui -- bug clicks ?
 BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui
 
----
+===
+- TODO: bubble help
+- TODO: manuals
+- TODO: code clean of all the plugins
+===
+- TODO: test plugins with DaVinci Resolve Video Editor / Fairlight (see Eugene mail)

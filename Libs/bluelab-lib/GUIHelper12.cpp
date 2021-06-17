@@ -12,7 +12,10 @@
 #include <BLUtilsPlug.h>
 
 #include <IBitmapControlAnim.h>
+
 #include <IHelpButtonControl.h>
+#include <IHelpButtonControl2.h>
+
 #include <IRadioButtonsControl.h>
 #include <IGUIResizeButtonControl.h>
 
@@ -88,6 +91,8 @@ GUIHelper12::GUIHelper12(Style style)
         mVumeterColor = IColor(255, 131 , 152, 214);
         mVumeterNeedleColor = IColor(255, 237, 120, 31);
         mVumeterNeedleDepth = 2.0;
+
+        mGraphSeparatorColor = IColor(255, 24, 24, 24);
     }
     
     if (style == STYLE_BLUELAB)
@@ -214,13 +219,15 @@ GUIHelper12::GUIHelper12(Style style)
         mMenuTextBGColor = IColor(0, 0, 0, 0);;
         mMenuTextFont = "font-regular";
         mMenuCaptionTextFont = "font-bold";
+
+        mGraphSeparatorColor = IColor(255, 24, 24, 24);
     }
 
     if (style == STYLE_BLUELAB_V3)
     {
         mCreateTitles = false;
 
-        mCreatePlugName = false;
+        mCreatePlugName = true; //false;
         mCreateLogo = false;
         //mCreateHelpButton = false;
         mCreateHelpButton = true;
@@ -244,7 +251,7 @@ GUIHelper12::GUIHelper12(Style style)
         // to get the same result (don't know why...)
         mValueTextSize = 19.0; //10.0;
         mValueTextOffsetX = -1.0;
-        mValueTextOffsetY = 31.0; //14.0;
+        mValueTextOffsetY = 27.0; //31.0; //14.0;
         //mValueTextColor = IColor(255, 235, 242, 250); //v3
         mValueTextColor = IColor(255, 147, 147, 147); //Design v3.6.8
         mValueTextFGColor = mValueTextColor;
@@ -255,7 +262,7 @@ GUIHelper12::GUIHelper12(Style style)
         
         mVersionTextSize = 13.0; //8.0; //12.0;
         mVersionTextOffsetX = 48.0; //100.0;
-        mVersionTextOffsetY = 7.0; //5.0; //3.0;
+        mVersionTextOffsetY = 8.0; //7.0; //5.0; //3.0;
         mVersionTextColor = IColor(255, 147, 147, 147);
         mVersionTextFont = "Roboto-Bold";
         
@@ -268,13 +275,13 @@ GUIHelper12::GUIHelper12(Style style)
         mAnimLogoSpeed = 0.5;
         
         mPlugNameOffsetX = 5.0;
-        mPlugNameOffsetY = 6.0;
+        mPlugNameOffsetY = 14.0; //6.0;
         
         mTrialOffsetX = 0.0;
         mTrialOffsetY = 7.0;
         
-        mHelpButtonOffsetX = -14.0; //-30.0; //-44.0;
-        mHelpButtonOffsetY = -10.0; //-4.0;
+        mHelpButtonOffsetX = -13.0; //-14.0; //-30.0; //-44.0;
+        mHelpButtonOffsetY = -11.0; //-10.0; //-4.0;
         
         mDemoTextSize = 10.0;
         mDemoTextOffsetX = 2.0;
@@ -351,6 +358,8 @@ GUIHelper12::GUIHelper12(Style style)
         mMenuTextBGColor = IColor(0, 0, 0, 0);;
         mMenuTextFont = "OpenSans-ExtraBold";
         mMenuCaptionTextFont = "Roboto-Bold";
+
+        mGraphSeparatorColor = IColor(255, 147, 147, 147);
     }
 }
 
@@ -898,7 +907,11 @@ GUIHelper12::CreateHelpButton(Plugin *plug, IGraphics *graphics,
     if (!mCreateHelpButton)
         return;
     
-    IBitmap bitmap = graphics->LoadBitmap(bmpFname, 1);
+    IBitmap bitmap;
+    if (mStyle != STYLE_BLUELAB_V3)
+        bitmap = graphics->LoadBitmap(bmpFname, 1);
+    else
+        bitmap = graphics->LoadBitmap(bmpFname, 2);
     
     float x = 0.0;
     float y = 0.0;
@@ -909,16 +922,23 @@ GUIHelper12::CreateHelpButton(Plugin *plug, IGraphics *graphics,
     {
         // Lower right corner
         x = graphics->Width() - bitmap.W() + mHelpButtonOffsetX;
-        y = graphics->Height() - bitmap.H() + mHelpButtonOffsetY;
+        y = graphics->Height() - bitmap.H()/bitmap.N() + mHelpButtonOffsetY;
     }
     
     char fullFileName[1024];
     GetManualFullPath(plug, graphics, manualFileName, fullFileName);
-    
-    IBitmapControl *control = new IHelpButtonControl(x, y, bitmap,
-                                                     kNoValIdx,
-                                                     fullFileName);
-    
+
+    IControl *control = NULL;
+
+    if (mStyle != STYLE_BLUELAB_V3)
+        control = new IHelpButtonControl(x, y, bitmap,
+                                         kNoValIdx,
+                                         fullFileName);
+    else
+        control = new IHelpButtonControl2(x, y, bitmap,
+                                          kNoValIdx,
+                                          fullFileName);
+                                             
 #if GUI_OBJECTS_SORTING
     mBackObjects.push_back(control);
 #else
@@ -955,14 +975,25 @@ GUIHelper12::CreatePlugName(Plugin *plug, IGraphics *graphics,
         x = mPlugNameOffsetX;
         y = mPlugNameOffsetY;
     }
-    
-    if (pos == BOTTOM)
+
+    if (mStyle != STYLE_BLUELAB_V3)
     {
-        // Lower left corner
-        x = mPlugNameOffsetX;
+        if (pos == BOTTOM)
+        {
+            // Lower left corner
+            x = mPlugNameOffsetX;
+            y = graphics->Height() - bmp.H() - mPlugNameOffsetY;
+            
+            y -= mTrialOffsetY;
+        }
+    }
+    else
+    {
+        // Center
+        int plugWidth = graphics->Width(); //plug->WindowWidth();
+        int titleWidth = bmp.W();
+        x = plugWidth/2 - titleWidth/2;
         y = graphics->Height() - bmp.H() - mPlugNameOffsetY;
-        
-        y -= mTrialOffsetY;
     }
     
     IBitmapControl *control = new IBitmapControl(x, y, bmp);
@@ -1595,6 +1626,12 @@ GUIHelper12::AttachToolTipControl(IGraphics *graphics)
 
     graphics->AttachToolTipControl(control);
     
+}
+
+void
+GUIHelper12::GetGraphSeparatorColor(IColor *sepColor)
+{
+    *sepColor = mGraphSeparatorColor;
 }
 
 float

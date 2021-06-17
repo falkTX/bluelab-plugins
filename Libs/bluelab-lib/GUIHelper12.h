@@ -200,13 +200,14 @@ public:
                         int nStates, Position pos);
     
     void CreatePlugName(Plugin *plug, IGraphics *graphics,
-                        const char *plugNameFname, Position pos);
+                        const char *plugNameFname,
+                        Position pos = GUIHelper12::BOTTOM);
 
     
     void CreateHelpButton(Plugin *plug, IGraphics *graphics,
                           const char *bmpFname,
                           const char *manualFileName,
-                          Position pos);
+                          Position pos = GUIHelper12::BOTTOM);
     void ShowHelp(Plugin *plug, IGraphics *graphics,
                   const char *manualFileName);
     
@@ -309,6 +310,9 @@ public:
     void GetCircleGDOffsetY(int *y);
 
     void AttachToolTipControl(IGraphics *graphics);
+
+    // Graph separator
+    void GetGraphSeparatorColor(IColor *sepColor);
     
 protected:
     void GetManualFullPath(Plugin *plug, IGraphics *graphics,
@@ -449,6 +453,9 @@ protected:
     IColor mMenuTextBGColor;
     char *mMenuTextFont;
     char *mMenuCaptionTextFont;
+
+    // Graph separator
+    IColor mGraphSeparatorColor;
 };
 
 #endif /* GUIHelper12_hpp */

@@ -146,6 +146,14 @@ v3.37
 => resized the widgets, but not inside every plugin)
 
 v3.38
+- export Air
+
+v3.39
+- export bg without knobs circle
+
+
+TODO: separator: more clear
+
 
 
 === TODO ===

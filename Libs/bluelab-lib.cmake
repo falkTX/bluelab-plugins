@@ -391,6 +391,8 @@ set(_bluelab-lib_src
   IGUIResizeButtonControl.h
   IHelpButtonControl.cpp
   IHelpButtonControl.h
+  IHelpButtonControl2.cpp
+  IHelpButtonControl2.h
   IKeyboardControl.h
   ISpatializerHandleControl.h
   ISpatializerHandleControl.cpp
