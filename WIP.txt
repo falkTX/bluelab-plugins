@@ -49,21 +49,3 @@ BL-StereoWidth	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui -- bug 
 BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui
 
 ---
-
-- IDEA: paint knobs (and checkbox etc.) with greenish blue (like for buttons) ?
-=> or change greenish blue of the buttons by dark blue or another blue
-- TODO: drop down menu, make items in lower case (no upper case as it is currently)
-First letter in upper case. Find a good font (see the font of the Ghost-X buttons)
-- TODO: rollover on help button
-- TODO: options (e.g radio button items) => put them in lower case?
-
-- TODO: for drop down menu, set blue to real rollover blue color
-rollover blue: 6a6affff and set text to black
-- TODO: check plugs CPU % when "resting"
-- TODO: check gui refresh for all plugins
-- TODO: pass valgrind for mem for all
-(already done for the last ones, update the list!)
----
-TODO GUI
----
-Spatializer: xy pad center lines are rounded at the end

@@ -123,19 +123,45 @@ v3.31
 - Wav3s
 
 v3.32
-- WIP
+- Added missing graduatins for small knobs for StereoWidth
+
+v3.33
+- Option items in lower case (radiobuttons items, drop down menus items etc.)
+
+v3.34
+- Smaller radiobuttons everywhere
+
+v3.35
+- rollover help button
+
+v3.36
+- use marine blue for painting inside controls (knobs, buttons etc.)
+instead of greenish blue for buttons and very dark blue for knobs
+
+v3.37
+- rollover buttons for StereoWidth graph mode
+- fixed width of all the buttons (gui resize, number buttons etc)
+=> set stroke width to 3 every time!
+(except for radio buttons and checkboxes => set to 4)
+=> resized the widgets, but not inside every plugin)
+
+v3.38
 
 
-fill knob: 181b25ff (very dark blue)
-fill buttons: 0e253bff (blue/green less sad)
-
-0e253bff
-knob orig color: 5252ffff
-new color: 6a6affff
-
-
-- TODO: StereoWidth additional controls
+=== TODO ===
+- TODO: drop down menu, make items in lower case (no upper case as it is currently)
+First letter in upper case. Find a good font (see the font of the Ghost-X buttons)
+- TODO: rollover on help button
+- TODO: programatically: adjust style of Ghost meters (borders etc.)
+- TODO: for drop down menu, set blue to real rollover blue color
+rollover blue: 6a6affff and set text to black
+- TODO: check plugs CPU % when "resting"
+- TODO: check gui refresh for all plugins
+- TODO: pass valgrind for mem for all
+(already done for the last ones, update the list!)
 - NOTE: blue for all widgets: lighter blue, not the BlueLab title one
-- IDEA: for GUI resize plugs, do not make many backgrounds
+Good to keep 2 blue: 1 for the logo, 1 for the "active" color and knob color
+- IDEA: for GUI resize plugs, do not make several backgrounds
 Just position programmatically "BlueLab + plugname", and "help button" (as bitmaps)
+- NOTE: Spatializer: xy pad center lines are rounded at the end
 
