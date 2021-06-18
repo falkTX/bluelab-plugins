@@ -150,10 +150,11 @@ v3.38
 
 v3.39
 - export bg without knobs circle
+- export autoGain
+- fixed AutoGain graph size
 
-
-TODO: separator: more clear
-
+v3.40
+- fixed small knob stroke width
 
 
 === TODO ===

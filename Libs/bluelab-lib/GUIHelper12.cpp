@@ -53,6 +53,13 @@
 // (detected with Ghost)
 #define FIX_RESIZE_GRAPH 1
 
+// Use a fixed height, so that plugs with "g" e.g
+// will be centered like plugs with only small letters
+// (plug name bitmap height can change depending on the letters of the plug name,
+// some letters like g ar taller than other, like a
+#define BLUELAB_V3_PLUG_NAME_HEIGHT 14
+
+
 GUIHelper12::GUIHelper12(Style style)
 {
     mStyle = style;
@@ -88,11 +95,13 @@ GUIHelper12::GUIHelper12(Style style)
         mVersionTextColor = IColor(255, 110 , 110, 110);
         mVersionTextFont = "font-regular";
         
-        mVumeterColor = IColor(255, 131 , 152, 214);
+        mVumeterColor = IColor(255, 131, 152, 214);
         mVumeterNeedleColor = IColor(255, 237, 120, 31);
         mVumeterNeedleDepth = 2.0;
 
         mGraphSeparatorColor = IColor(255, 24, 24, 24);
+
+        mCreateRadioLabels = true;
     }
     
     if (style == STYLE_BLUELAB)
@@ -163,7 +172,8 @@ GUIHelper12::GUIHelper12(Style style)
         mWatermarkTextOffsetY = 2.0;
         mWatermarkTextColor = IColor(255, 0, 128, 255);
         mWatermarkFont = "font-regular";
-        
+
+        mCreateRadioLabels = true;
         mRadioLabelTextSize = 15;
         mRadioLabelTextOffsetX = 6.0;
         mRadioLabelTextColor = IColor(255, 100, 100, 161);
@@ -266,7 +276,8 @@ GUIHelper12::GUIHelper12(Style style)
         mVersionTextColor = IColor(255, 147, 147, 147);
         mVersionTextFont = "Roboto-Bold";
         
-        mVumeterColor = IColor(255, 131 , 152, 214);
+        //mVumeterColor = IColor(255, 131 , 152, 214);
+        mVumeterColor = IColor(255, 106 , 106, 255);
         mVumeterNeedleColor = IColor(255, 237, 120, 31);
         mVumeterNeedleDepth = 2.0;
         
@@ -294,7 +305,8 @@ GUIHelper12::GUIHelper12(Style style)
         mWatermarkTextOffsetY = 2.0;
         mWatermarkTextColor = IColor(255, 0, 128, 255);
         mWatermarkFont = "font-regular";
-        
+
+        mCreateRadioLabels = false;
         mRadioLabelTextSize = 15;
         mRadioLabelTextOffsetX = 6.0;
         mRadioLabelTextColor = IColor(255, 100, 100, 161);
@@ -993,7 +1005,9 @@ GUIHelper12::CreatePlugName(Plugin *plug, IGraphics *graphics,
         int plugWidth = graphics->Width(); //plug->WindowWidth();
         int titleWidth = bmp.W();
         x = plugWidth/2 - titleWidth/2;
-        y = graphics->Height() - bmp.H() - mPlugNameOffsetY;
+
+        int plugNameHeight = BLUELAB_V3_PLUG_NAME_HEIGHT; // bmp.H()
+        y = graphics->Height() - plugNameHeight - mPlugNameOffsetY;
     }
     
     IBitmapControl *control = new IBitmapControl(x, y, bmp);
@@ -1059,76 +1073,82 @@ GUIHelper12::CreateRadioButtons(IGraphics *graphics,
         titleX = x + bitmap.W()/2;
     else if (titleAlign == EAlign::Far)
         titleX = x + bitmap.W();
-    
-    // Title
-    CreateTitle(graphics, titleX, y, title, SIZE_DEFAULT, titleAlign);
-    
-    // Radio labels
-    if (numButtons > 0)
+
+    if (mCreateTitles)
     {
-        if (!horizontalFlag)
+        // Title
+        CreateTitle(graphics, titleX, y, title, SIZE_DEFAULT, titleAlign);
+    }
+    
+    if (mCreateRadioLabels)
+    {
+        // Radio labels
+        if (numButtons > 0)
         {
-            int labelX = x;
-            if (align == EAlign::Far)
-                labelX = labelX - bitmap.W() - mRadioLabelTextOffsetX;
-            
-            if (align == EAlign::Near)
+            if (!horizontalFlag)
             {
-                labelX = labelX + bitmap.W() + mRadioLabelTextOffsetX;
-            }
-            
-            int spaceBetween = (size - numButtons*bitmap.H()/2)/(numButtons - 1);
-            int stepSize = bitmap.H()/2 + spaceBetween;
-            
-            for (int i = 0; i < numButtons; i++)
-            {
-                IText labelText(mRadioLabelTextSize,
-                                mRadioLabelTextColor,
-                                mLabelTextFont,
-                                align);
+                int labelX = x;
+                if (align == EAlign::Far)
+                    labelX = labelX - bitmap.W() - mRadioLabelTextOffsetX;
                 
-                int labelY = y + i*stepSize;
-                const char *labelStr = radioLabels[i];
-                CreateRadioLabelText(graphics,
-                                     labelX, labelY,
-                                     labelStr,
-                                     bitmap,
-                                     labelText,
-                                     align);
-            }
-        }
-        else
-        {
-            // NOTE: not really tested
-            
-            int labelY = x;
-            //if (titleAlign == IText::kAlignFar)
-            //    labelX = labelX - bitmap.W - RADIO_LABEL_TEXT_OFFSET;
-            
-            if (align == EAlign::Near)
-            {
-                // TODO: implement this
-            }
-            
-            int spaceBetween = (size - numButtons*bitmap.H()/2)/(numButtons - 1);
-            int stepSize = bitmap.H()/2 + spaceBetween;
-            
-            for (int i = 0; i < numButtons; i++)
-            {
-                // new
-                IText labelText(mRadioLabelTextSize,
-                                mRadioLabelTextColor,
-                                mLabelTextFont,
-                                align);
+                if (align == EAlign::Near)
+                {
+                    labelX = labelX + bitmap.W() + mRadioLabelTextOffsetX;
+                }
                 
-                int labelX = x + i*stepSize;
-                const char *labelStr = radioLabels[i];
-                CreateRadioLabelText(graphics,
-                                     labelX, labelY,
-                                     labelStr,
-                                     bitmap,
-                                     labelText,
-                                     align);
+                int spaceBetween = (size - numButtons*bitmap.H()/2)/(numButtons - 1);
+                int stepSize = bitmap.H()/2 + spaceBetween;
+                
+                for (int i = 0; i < numButtons; i++)
+                {
+                    IText labelText(mRadioLabelTextSize,
+                                    mRadioLabelTextColor,
+                                    mLabelTextFont,
+                                    align);
+                    
+                    int labelY = y + i*stepSize;
+                    const char *labelStr = radioLabels[i];
+                    CreateRadioLabelText(graphics,
+                                         labelX, labelY,
+                                         labelStr,
+                                         bitmap,
+                                         labelText,
+                                         align);
+                }
+            }
+            else
+            {
+                // NOTE: not really tested
+                
+                int labelY = x;
+                //if (titleAlign == IText::kAlignFar)
+                //    labelX = labelX - bitmap.W - RADIO_LABEL_TEXT_OFFSET;
+                
+                if (align == EAlign::Near)
+                {
+                    // TODO: implement this
+                }
+                
+                int spaceBetween = (size - numButtons*bitmap.H()/2)/(numButtons - 1);
+                int stepSize = bitmap.H()/2 + spaceBetween;
+                
+                for (int i = 0; i < numButtons; i++)
+                {
+                    // new
+                    IText labelText(mRadioLabelTextSize,
+                                    mRadioLabelTextColor,
+                                    mLabelTextFont,
+                                    align);
+                    
+                    int labelX = x + i*stepSize;
+                    const char *labelStr = radioLabels[i];
+                    CreateRadioLabelText(graphics,
+                                         labelX, labelY,
+                                         labelStr,
+                                         bitmap,
+                                         labelText,
+                                         align);
+                }
             }
         }
     }

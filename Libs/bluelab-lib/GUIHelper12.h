@@ -406,7 +406,8 @@ protected:
     float mWatermarkTextOffsetY;
     IColor mWatermarkTextColor;
     char *mWatermarkFont;
-    
+
+    bool mCreateRadioLabels;
     float mRadioLabelTextSize;
     float mRadioLabelTextOffsetX;
     IColor mRadioLabelTextColor;
