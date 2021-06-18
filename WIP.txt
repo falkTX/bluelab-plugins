@@ -9,9 +9,9 @@ guiP: gui fully integrated programmatically
 ---
 
 BL-Air		    :	fea+,      ,optim, mem, bugs, LoFr    ,     , gui, guiP
-BL-AutoGain	    :	fea+,      ,optim, mem, bugs, LoFr    ,     , gui
+BL-AutoGain	    :	fea+,      ,optim, mem, bugs, LoFr    ,     , gui, guiP
 BL-Bat		    :
-BL-Chroma	    :	fea+,      ,optim, mem, bugs, LoFr    , lgr , gui
+BL-Chroma	    :	fea+,      ,optim, mem, bugs, LoFr    , lgr , gui, guiP
 BL-Denoiser	    :	fea+,      ,optim, mem, bugs, LoFr    ,     , gui
 BL-DUET		    :
 BL-Envelope	    :	fea+,      ,optim, mem, bugs
@@ -53,5 +53,6 @@ BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui
 - TODO: bubble help
 - TODO: manuals
 - TODO: code clean of all the plugins
+- BUG: Chroma scroll jitter at min speed
 ===
 - TODO: test plugins with DaVinci Resolve Video Editor / Fairlight (see Eugene mail)

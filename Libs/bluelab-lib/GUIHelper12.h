@@ -452,9 +452,12 @@ protected:
     IColor mMenuTextColor;
     IColor mMenuTextFGColor;
     IColor mMenuTextBGColor;
+    IColor mMenuTextEntryFGColor;
+    IColor mMenuTextEntryBGColor;
     char *mMenuTextFont;
     char *mMenuCaptionTextFont;
-
+    IColor mMenuCellBGColor;
+    
     // Graph separator
     IColor mGraphSeparatorColor;
 };

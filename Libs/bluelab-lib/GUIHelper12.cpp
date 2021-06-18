@@ -366,11 +366,14 @@ GUIHelper12::GUIHelper12(Style style)
         // Menu
         mMenuTextSize = 16.0;
         mMenuTextColor = IColor(255, 248, 248, 248); 
-        mMenuTextFGColor = IColor(255, 248, 248, 248); 
-        mMenuTextBGColor = IColor(0, 0, 0, 0);;
+        mMenuTextFGColor = IColor(255, 147, 147, 147);
+        mMenuTextBGColor = IColor(0, 0, 0, 0);
+        mMenuTextEntryFGColor = IColor(255, 248, 248, 248);
+        mMenuTextEntryBGColor = IColor(0, 0, 0, 0);
         mMenuTextFont = "OpenSans-ExtraBold";
         mMenuCaptionTextFont = "Roboto-Bold";
-
+        mMenuCellBGColor = IColor(255, 106, 106, 255); 
+    
         mGraphSeparatorColor = IColor(255, 147, 147, 147);
     }
 }
@@ -1554,10 +1557,11 @@ GUIHelper12::CreateDropDownMenu(IGraphics *graphics,
     // Colors
     IColor bgColor = mMenuTextBGColor; // DEFAULT_FGCOLOR;
     IColor textFGColor = mMenuTextFGColor; // DEFAULT_TEXT_FGCOLOR;
-    IColor textEntryBGColor = mMenuTextBGColor; // DEFAULT_TEXTENTRY_BGCOLOR;
+    IColor textEntryBGColor = mMenuTextEntryBGColor; // DEFAULT_TEXTENTRY_BGCOLOR;
     textEntryBGColor.A = 255; // Not transparent menu
-    IColor textEntryFGColor = mMenuTextFGColor; // DEFAULT_TEXTENTRY_FGCOLOR;
-
+    IColor textEntryFGColor = mMenuTextEntryFGColor; // DEFAULT_TEXTENTRY_FGCOLOR;
+    IColor textEntryCellBackgroundColor = mMenuCellBGColor;
+    
     IText menuText(mMenuTextSize,
                    textFGColor, mMenuTextFont,
                    EAlign::Center, EVAlign::Middle,
@@ -1576,6 +1580,7 @@ GUIHelper12::CreateDropDownMenu(IGraphics *graphics,
     menu->SetItemColor(textEntryFGColor);
     menu->SetSeparatorColor(textEntryFGColor);
     menu->SetBorderStyle(textEntryFGColor, 2.0);
+    menu->SetCellBackgroundColor(textEntryCellBackgroundColor); // blue
     menu->SetDropShadow(false);
 
     IText captionText(mMenuTextSize,
