@@ -143,6 +143,15 @@ GraphControl12::GraphControl12(Plugin *pPlug, IGraphics *graphics,
     mSepY0Color[1] = 0;
     mSepY0Color[2] = 0;
     mSepY0Color[3] = 0;
+
+    // Right separator
+    mSeparatorX1 = false;
+    mSepX1LineWidth = 1.0;
+    
+    mSepX1Color[0] = 0;
+    mSepX1Color[1] = 0;
+    mSepX1Color[2] = 0;
+    mSepX1Color[3] = 0;
     
     // dB Scale
 	//mXdBScale = false;
@@ -341,6 +350,24 @@ GraphControl12::SetSeparatorY0(BL_GUI_FLOAT lineWidth, int color[4])
 }
 
 void
+GraphControl12::SetSeparatorX1(BL_GUI_FLOAT lineWidth, int color[4])
+{
+    if (mUseLegacyLock)
+        mMutex.Enter();
+    
+    mSeparatorX1 = true;
+    mSepX1LineWidth = lineWidth;
+    
+    for (int i = 0; i < 4; i++)
+        mSepX1Color[i] = color[i];
+    
+    mDataChanged = true;
+
+    if (mUseLegacyLock)
+        mMutex.Leave();
+}
+
+void
 GraphControl12::AddCurve(GraphCurve5 *curve)
 {
     curve->SetGraph(this);
@@ -531,6 +558,40 @@ GraphControl12::DrawSeparatorY0()
     
     nvgMoveTo(mVg, x0, yf);
     nvgLineTo(mVg, x1, yf);
+                    
+    nvgStroke(mVg);
+    
+    nvgRestore(mVg);
+}
+
+void
+GraphControl12::DrawSeparatorX1()
+{
+    if (!mSeparatorX1)
+        return;
+    
+    nvgSave(mVg);
+    nvgStrokeWidth(mVg, mSepX1LineWidth);
+    
+    int sepColor[4] = { mSepX1Color[0],  mSepX1Color[1],
+                        mSepX1Color[2], mSepX1Color[3] };
+    SWAP_COLOR(sepColor);
+    
+    nvgStrokeColor(mVg, nvgRGBA(sepColor[0], sepColor[1], sepColor[2], sepColor[3]));
+    
+    int width = this->mRECT.W();
+    int height = this->mRECT.H();
+    
+    // Draw a vertical line ath the bottom
+    nvgBeginPath(mVg);
+    
+    BL_GUI_FLOAT y0 = 0;
+    BL_GUI_FLOAT y1 = height;
+    
+    BL_GUI_FLOAT x = width - mSepX1LineWidth/2.0;
+    
+    nvgMoveTo(mVg, x, y0);
+    nvgLineTo(mVg, x, y1);
                     
     nvgStroke(mVg);
     
@@ -3006,6 +3067,7 @@ GraphControl12::DoDraw(IGraphics &graphics)
     CustomDrawersPostDraw();
     
     DrawSeparatorY0();
+    DrawSeparatorX1();
    
     DrawOverlayImage(graphics);
     

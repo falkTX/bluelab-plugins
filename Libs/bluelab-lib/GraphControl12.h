@@ -158,6 +158,7 @@ public:
     
     // Set a separator line at the bottom
     void SetSeparatorY0(BL_GUI_FLOAT lineWidth, int color[4]);
+    void SetSeparatorX1(BL_GUI_FLOAT lineWidth, int color[4]);
     
     void AddCurve(GraphCurve5 *curve);
     
@@ -186,6 +187,7 @@ public:
     void CustomDrawersPostDraw();
     
     void DrawSeparatorY0();
+    void DrawSeparatorX1();
     
     // Custom control
     void AddCustomControl(GraphCustomControl *customControl);
@@ -352,11 +354,17 @@ protected:
     
     // NanoVG
     NVGcontext *mVg;
-    
+
+    // Horizontal, bottom
     bool mSeparatorY0;
     BL_GUI_FLOAT mSepY0LineWidth;
     int mSepY0Color[4];
 
+    // Vertical, right
+    bool mSeparatorX1;
+    BL_GUI_FLOAT mSepX1LineWidth;
+    int mSepX1Color[4];
+    
     //
     GraphAxis2 *mHAxis;
     GraphAxis2 *mVAxis;

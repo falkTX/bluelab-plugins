@@ -12,7 +12,7 @@ BL-Air		    :	fea+,      ,optim, mem, bugs, LoFr    ,     , gui, guiP
 BL-AutoGain	    :	fea+,      ,optim, mem, bugs, LoFr    ,     , gui, guiP
 BL-Bat		    :
 BL-Chroma	    :	fea+,      ,optim, mem, bugs, LoFr    , lgr , gui, guiP
-BL-Denoiser	    :	fea+,      ,optim, mem, bugs, LoFr    ,     , gui
+BL-Denoiser	    :	fea+,      ,optim, mem, bugs, LoFr    ,     , gui, guiP
 BL-DUET		    :
 BL-Envelope	    :	fea+,      ,optim, mem, bugs
 BL-EQHack	    :	fea+,      ,optim, mem, bugs, LoFr    ,     , gui
@@ -49,8 +49,11 @@ BL-StereoPan	    :   (fea+)                                      , gui
 BL-StereoWidth	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui -- bug clicks ?
 BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui
 
+4/23
+
 ===
 - PROBLEM: gui resize buttons rollover color is not good
+- PROBLEM: EQHack, guess => curve jitters
 
 - TODO: bubble help
 - TODO: manuals
