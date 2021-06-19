@@ -16,10 +16,10 @@ BL-Denoiser	    :	fea+,      ,optim, mem, bugs, LoFr    ,     , gui, guiP
 BL-DUET		    :
 BL-Envelope	    :	fea+,      ,optim, mem, bugs
 BL-EQHack	    :	fea+,      ,optim, mem, bugs, LoFr    ,     , gui, guiP
-BL-Gain12	    :	fea+,      ,optim, mem, bugs,         ,     , gui
+BL-Gain12	    :	fea+,      ,optim, mem, bugs,         ,     , gui, guiP
 BL-Gain200	    :	fea+,      ,optim, mem, bugs
-BL-Gain24	    :	fea+,      ,optim, mem, bugs,         ,     , gui
-BL-Gain60	    :	fea+,      ,optim, mem, bugs,         ,     , gui
+BL-Gain24	    :	fea+,      ,optim, mem, bugs,         ,     , gui, guiP
+BL-Gain60	    :	fea+,      ,optim, mem, bugs,         ,     , gui, guiP
 BL-Ghost	    :	fea+,      ,optim, mem, bugs, LoFr(l) , lgr , gui
 BL-GhostViewer	    :   fea+,            , mem,     , LoFr    , lgr , gui
 BL-Impulses	    :   fea+,      ,optim, mem, bugs, LoFr(l) ,     , gui
@@ -49,7 +49,7 @@ BL-StereoPan	    :   (fea+)                                      , gui
 BL-StereoWidth	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui -- bug clicks ?
 BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui
 
-5/22
+8/19
 
 ===
 - PROBLEM: gui resize buttons rollover color is not good
