@@ -50,6 +50,8 @@ BL-StereoWidth	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui -- bug 
 BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui
 
 ===
+- PROBLEM: gui resize buttons rollover color is not good
+
 - TODO: bubble help
 - TODO: manuals
 - TODO: code clean of all the plugins
