@@ -481,6 +481,7 @@ protected:
     char *mMenuTextFont;
     char *mMenuCaptionTextFont;
     IColor mMenuCellBGColor;
+    IColor mMenuBorderColor;
     
     // Graph separator
     IColor mGraphSeparatorColor;

@@ -57,6 +57,7 @@ BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui
 And Ghost buttons (inpaint dir and selection dir) are too small
 - PROBLEM: Ghost: mouse wheel on graph => lazy gui refresh refreshes the whole window
 - PROBLEM: EQHack, guess => curve jitters
+- color of text in drop down menu: bright or medium?
 
 - TODO: bubble help
 - TODO: manuals
