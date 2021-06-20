@@ -256,6 +256,60 @@ ITabsBarControl::SelectTab(int tabNum)
 }
 
 void
+ITabsBarControl::SetBackgroundColor(const IColor &color)
+{
+    mBGColor = color;
+}
+
+void
+ITabsBarControl::SetTabEnabledColor(const IColor &color)
+{
+    mTabEnabledColor = color;
+}
+    
+void
+ITabsBarControl::SetTabDisabledColor(const IColor &color)
+{
+    mTabDisabledColor = color;
+}
+    
+void
+ITabsBarControl::SetTabLinesColor(const IColor &color)
+{
+    mTabLinesColor = color;
+}
+
+void
+ITabsBarControl::SetTabsRolloverColor(const IColor &color)
+{
+    mTabRolloverColor = color;
+}
+
+void
+ITabsBarControl::SetCrossColor(const IColor &color)
+{
+    mCrossColor = color;
+}
+
+void
+ITabsBarControl::SetCrossRolloverColor(const IColor &color)
+{
+    mCrossRolloverColor = color;
+}
+
+void
+ITabsBarControl::SetNameColor(const IColor &color)
+{
+    mNameColor = color;
+}
+
+void
+ITabsBarControl::SetCrossLineWidth(float width)
+{
+    mCrossLineWidth = width;
+}
+
+void
 ITabsBarControl::DrawBackground(IGraphics &g)
 {
     g.FillRect(mBGColor, mRECT);

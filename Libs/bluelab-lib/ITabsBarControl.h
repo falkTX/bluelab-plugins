@@ -35,7 +35,33 @@ class ITabsBarControl : public IControl
     
     void NewTab(const char *name);
     void SelectTab(int tabNum);
-        
+
+    // Colors
+    //
+    
+    // Bar background color 
+    void SetBackgroundColor(const IColor &color);
+    
+    // For the tab that is enabled
+    void SetTabEnabledColor(const IColor &color);
+    
+    // For the tab that is not enabled
+    void SetTabDisabledColor(const IColor &color);
+    
+    // Lines around tabs
+    void SetTabLinesColor(const IColor &color);
+
+    void SetTabsRolloverColor(const IColor &color);
+    
+    void SetCrossColor(const IColor &color);
+    
+    void SetCrossRolloverColor(const IColor &color);
+
+    void SetNameColor(const IColor &color);
+
+    // Style
+    void SetCrossLineWidth(float width);
+    
 protected:
     void DrawBackground(IGraphics &g);
     void DrawTabs(IGraphics &g);

@@ -53,6 +53,9 @@ BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui
 
 ===
 - PROBLEM: gui resize buttons rollover color is not good
+(use dark blue, a bit more clear than marine blue)
+And Ghost buttons (inpaint dir and selection dir) are too small
+- PROBLEM: Ghost: mouse wheel on graph => lazy gui refresh refreshes the whole window
 - PROBLEM: EQHack, guess => curve jitters
 
 - TODO: bubble help

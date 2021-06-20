@@ -55,6 +55,14 @@ public:
 
     void SetTimeMode(TimeMode mode);
     void SetFreqMode(FreqMode mode);
+
+    // Style
+    void SetTextFieldHSpacing(int spacing);
+    void SetTextFieldVSpacing(int spacing);
+
+    void SetBackgroundColor(const IColor &color);
+    void SetBorderColor(const IColor &color);
+    void SetBorderWidth(float borderWidth);
     
 protected:
     //
@@ -104,6 +112,15 @@ protected:
     BL_FLOAT mPrevSelFreqH;
 
     DisplayType mDisplayType;
+
+    // Style
+    int mTextFieldHSpacing;
+    int mTextFieldVSpacing;
+
+    IColor mBGColor;
+
+    IColor mBorderColor;
+    float mBorderWidth;
 };
 
 #endif

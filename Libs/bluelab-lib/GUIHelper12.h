@@ -44,6 +44,7 @@ class IXYPadControl;
 class IBLSwitchControl;
 class ITabsBarControl;
 class ISpatializerHandleControl;
+class IRadioButtonsControlCustom;
 
 class GUIHelper12
 {
@@ -158,7 +159,9 @@ public:
                                          const char *textStr, float size,
                                          const char *font,
                                          const IColor &color, EAlign align,
-                                         float offsetX = 0.0, float offsetY = 0.0);
+                                         float offsetX = 0.0, float offsetY = 0.0,
+                                         const IColor &borderColor = DEFAULT_BGCOLOR,
+                                         float borderWidth = -1.0);
     
     IBitmapControl *CreateBitmap(IGraphics *graphics,
                                  float x, float y,
@@ -225,6 +228,14 @@ public:
                            EAlign align = EAlign::Center,
                            EAlign titleAlign = EAlign::Center,
                            const char **radioLabels = NULL);
+
+    IRadioButtonsControlCustom *
+        CreateRadioButtonsCustom(IGraphics *graphics,
+                                 float x, float y,
+                                 const char *bitmapFnames[], int numButtons,
+                                 int bitmapNFrames,
+                                 float size, int paramIdx,
+                                 bool horizontalFlag);
     
     IControl *CreateGUIResizeButton(ResizeGUIPluginInterface *plug,
                                     IGraphics *graphics,
@@ -238,7 +249,7 @@ public:
                                    float x, float y,
                                    const char *bitmapFname,
                                    int paramIdx,
-                                   char *label,
+                                   char *label = NULL,
                                    bool toggleFlag = false);
 
     
@@ -268,7 +279,13 @@ public:
     // For overlay curves
     void GetGraphCurveColorBlack(int color[4]);
 
+    void GetGraphCurveDarkBlue(int color[4]);
+    void GetGraphCurveDarkBlueRollover(int color[4]);
     
+    void GetGraphCurveBlueEnabled(int color[4]);
+
+    void GetGraphCurveColorWhiteNames(int color[4]);
+
     static void ResetParameter(Plugin *plug, int paramIdx);
     
     // Refresh all the controls, from their values
@@ -438,6 +455,13 @@ protected:
     IColor mGraphCurveColorLightRed;
     
     IColor mGraphCurveColorBlack;
+
+    IColor mGraphCurveColorDarkBlue;
+    IColor mGraphCurveColorDarkBlueRollover;
+    
+    IColor mGraphCurveColorBlueEnabled;
+
+    IColor mGraphCurveColorWhiteNames;
     
     // Circle graph drawer
     float mCircleGDCircleLineWidth;

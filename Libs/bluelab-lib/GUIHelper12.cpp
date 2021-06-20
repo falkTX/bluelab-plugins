@@ -29,6 +29,7 @@
 #include <ITabsBarControl.h>
 #include <IBLTooltipControl.h>
 #include <ISpatializerHandleControl.h>
+#include <IRadioButtonsControlCustom.h>
 
 #include "GUIHelper12.h"
 
@@ -222,6 +223,13 @@ GUIHelper12::GUIHelper12(Style style)
         
         mGraphCurveColorBlack = IColor(255, 0, 0, 0);
 
+        mGraphCurveColorDarkBlue = IColor(255, 25, 25, 59);
+        mGraphCurveColorDarkBlueRollover = IColor(255, 40, 40, 94);
+
+        mGraphCurveColorBlueEnabled = IColor(255, 106 , 106, 255);
+
+        mGraphCurveColorWhiteNames = IColor(255, 209, 216, 223);
+        
         // Menu
         mMenuTextSize = 16.0;
         mMenuTextColor = IColor(255, 248, 248, 248);
@@ -353,6 +361,13 @@ GUIHelper12::GUIHelper12(Style style)
         
         mGraphCurveColorBlack = IColor(255, 0, 0, 0);
 
+        mGraphCurveColorDarkBlue = IColor(255, 25, 25, 59);
+        mGraphCurveColorDarkBlueRollover = IColor(255, 40, 40, 94);
+ 
+        mGraphCurveColorBlueEnabled = IColor(255, 106 , 106, 255);
+
+        mGraphCurveColorWhiteNames = IColor(255, 209, 216, 223);
+        
         // Circle drawer
         mCircleGDCircleLineWidth = 2.5; //3.0; //2.0;
         mCircleGDLinesWidth = 2.0; //1.5; //1.0;
@@ -670,7 +685,9 @@ GUIHelper12::CreateTextButton(IGraphics *graphics, float x, float y,
                               const char *textStr, float size,
                               const char *font,
                               const IColor &color, EAlign align,
-                              float offsetX, float offsetY)
+                              float offsetX, float offsetY,
+                              const IColor &borderColor,
+                              float borderWidth)
 {
     IText text(size, color, font, align);
     
@@ -681,7 +698,12 @@ GUIHelper12::CreateTextButton(IGraphics *graphics, float x, float y,
 
     
     ITextButtonControl *textControl = new ITextButtonControl(rect, paramIdx,
-                                                             textStr, text);
+                                                             textStr, text,
+                                                             DEFAULT_BGCOLOR,
+                                                             //color,
+                                                             false,
+                                                             borderColor,
+                                                             borderWidth);
     
     graphics->AttachControl(textControl);
     
@@ -1176,6 +1198,44 @@ GUIHelper12::CreateRadioButtons(IGraphics *graphics,
     return control;
 }
 
+IRadioButtonsControlCustom *
+GUIHelper12::CreateRadioButtonsCustom(IGraphics *graphics,
+                                      float x, float y,
+                                      const char *bitmapFnames[], int numButtons,
+                                      int bitmapNFrames,
+                                      float size, int paramIdx,
+                                      bool horizontalFlag)
+{
+#define MAX_NUM_BITMAPS 32
+    
+    if (numButtons< 1)
+        return NULL;
+    
+    IBitmap bitmaps[MAX_NUM_BITMAPS];
+
+    for (int i = 0; i < numButtons; i++)
+        bitmaps[i] = graphics->LoadBitmap(bitmapFnames[i], bitmapNFrames);
+    
+    // Buttons
+    IRECT rect(x, y, x + size, y + bitmaps[0].H()/bitmaps[0].N());
+    EDirection direction = EDirection::Horizontal;
+    if (!horizontalFlag)
+    {
+        rect = IRECT(x, y, x + bitmaps[0].W(), y + size);
+        
+        direction = EDirection::Vertical;
+    }
+    
+    IRadioButtonsControlCustom *control =
+        new IRadioButtonsControlCustom(rect,
+                                       paramIdx, numButtons,
+                                       bitmaps, direction);
+    
+    graphics->AttachControl(control);
+        
+    return control;
+}
+
 void
 GUIHelper12::ResetParameter(Plugin *plug, int paramIdx)
 {
@@ -1249,19 +1309,22 @@ GUIHelper12::CreateRolloverButton(IGraphics *graphics,
                                                                toggleFlag);
    
   graphics->AttachControl(control);
-  
-  // Add the label
-  ITextControl *text = CreateTitle(graphics,
-				   x + mButtonLabelTextOffsetX,
-				   y + bitmap.H()*1.5/((BL_FLOAT)bmpFrames) +
-				   mButtonLabelTextOffsetY,
-				   label,
-				   // NOTE: with small/default size, text is not well centered
-				   //Size::SIZE_DEFAULT,
-				   Size::SIZE_BIG,
-				   EAlign::Near);
 
-  control->LinkText(text, mTitleTextColor, mHilightTextColor);
+  if (label != NULL)
+  {
+      // Add the label
+      ITextControl *text = CreateTitle(graphics,
+                                       x + mButtonLabelTextOffsetX,
+                                       y + bitmap.H()*1.5/((BL_FLOAT)bmpFrames) +
+                                       mButtonLabelTextOffsetY,
+                                       label,
+                                       // NOTE: with small/default size, text is not well centered
+                                       //Size::SIZE_DEFAULT,
+                                       Size::SIZE_BIG,
+                                       EAlign::Near);
+
+      control->LinkText(text, mTitleTextColor, mHilightTextColor);
+  }
   
   return control;
 }
@@ -1407,10 +1470,46 @@ GUIHelper12::GetGraphCurveColorLightRed(int color[4])
 void
 GUIHelper12::GetGraphCurveColorBlack(int color[4])
 {
-  color[0] = mGraphCurveColorBlack.R;
-  color[1] = mGraphCurveColorBlack.G;
-  color[2] = mGraphCurveColorBlack.B;
-  color[3] = mGraphCurveColorBlack.A;
+    color[0] = mGraphCurveColorBlack.R;
+    color[1] = mGraphCurveColorBlack.G;
+    color[2] = mGraphCurveColorBlack.B;
+    color[3] = mGraphCurveColorBlack.A;
+}
+
+void
+GUIHelper12::GetGraphCurveDarkBlue(int color[4])
+{
+    color[0] = mGraphCurveColorDarkBlue.R;
+    color[1] = mGraphCurveColorDarkBlue.G;
+    color[2] = mGraphCurveColorDarkBlue.B;
+    color[3] = mGraphCurveColorDarkBlue.A;
+}
+
+void
+GUIHelper12::GetGraphCurveDarkBlueRollover(int color[4])
+{
+    color[0] = mGraphCurveColorDarkBlueRollover.R;
+    color[1] = mGraphCurveColorDarkBlueRollover.G;
+    color[2] = mGraphCurveColorDarkBlueRollover.B;
+    color[3] = mGraphCurveColorDarkBlueRollover.A;
+}
+
+void
+GUIHelper12::GetGraphCurveBlueEnabled(int color[4])
+{
+    color[0] = mGraphCurveColorBlueEnabled.R;
+    color[1] = mGraphCurveColorBlueEnabled.G;
+    color[2] = mGraphCurveColorBlueEnabled.B;
+    color[3] = mGraphCurveColorBlueEnabled.A;
+}
+
+void
+GUIHelper12::GetGraphCurveColorWhiteNames(int color[4])
+{
+    color[0] = mGraphCurveColorWhiteNames.R;
+    color[1] = mGraphCurveColorWhiteNames.G;
+    color[2] = mGraphCurveColorWhiteNames.B;
+    color[3] = mGraphCurveColorWhiteNames.A;
 }
 
 void
@@ -1540,6 +1639,20 @@ GUIHelper12::CreateTabsBar(IGraphics *graphics,
     IRECT bounds(x, y, w, h);
     ITabsBarControl *tabsBar = new ITabsBarControl(bounds);
 
+    if (mStyle == STYLE_BLUELAB_V3)
+    {
+        tabsBar->SetBackgroundColor(mGraphCurveColorDarkBlue);
+        tabsBar->SetTabEnabledColor(mGraphCurveColorBlueEnabled);
+        tabsBar->SetTabDisabledColor(mGraphCurveColorDarkBlue);
+        tabsBar->SetTabsRolloverColor(mGraphCurveColorDarkBlueRollover);
+        tabsBar->SetNameColor(mGraphCurveColorWhiteNames);
+        tabsBar->SetCrossColor(mValueTextColor);
+        tabsBar->SetCrossRolloverColor(mGraphCurveColorWhiteNames);
+        tabsBar->SetTabLinesColor(mValueTextColor);
+            
+        tabsBar->SetCrossLineWidth(2.0);
+    }
+    
     graphics->AttachControl(tabsBar);
 
     return tabsBar;

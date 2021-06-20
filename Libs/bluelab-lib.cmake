@@ -433,6 +433,8 @@ set(_bluelab-lib_src
   InstantCompressor.h
   IRadioButtonsControl.cpp
   IRadioButtonsControl.h
+  IRadioButtonsControlCustom.cpp
+  IRadioButtonsControlCustom.h
   IRolloverButtonControl.cpp
   IRolloverButtonControl.h
   IsophoteInpaint.cpp

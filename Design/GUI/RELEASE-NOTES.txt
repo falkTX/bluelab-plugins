@@ -154,7 +154,10 @@ v3.39
 - fixed AutoGain graph size
 
 v3.40
+- export Ghost
 - fixed small knob stroke width
+- aligned well ghost apply gain knob
+
 
 
 === TODO ===
