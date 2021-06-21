@@ -60,6 +60,10 @@ And Ghost buttons (inpaint dir and selection dir) are too small
 - color of text in drop down menu: bright or medium?
 - PROBLEM: color of the ghost meter text => need brighter?
 
+- BUG: GhostViewer: after gui resize, spectro meter gives wrong values
+- BUG: Chroma, GhostViewer: after gui resize, the time axis labels are shifted (check scroll speed)
+
+
 - TODO: bubble help
 - TODO: manuals
 - TODO: code clean of all the plugins

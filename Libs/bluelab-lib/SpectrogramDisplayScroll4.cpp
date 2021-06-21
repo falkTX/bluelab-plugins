@@ -533,7 +533,9 @@ SpectrogramDisplayScroll4::SetSpeedMod(int speedMod)
 {
     mSpeedMod = speedMod;
 
+#if 1
     if ((mTransport != NULL) && (mTransport->IsTransportPlaying()))
+#endif
     {
         Reset();
     
