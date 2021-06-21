@@ -35,6 +35,7 @@ public:
 
     // For rollover
     virtual void OnMouseOver(float x, float y, const IMouseMod &mod) override;
+    virtual void OnMouseOut() override;
     
     virtual void Draw(IGraphics &g) override;
     

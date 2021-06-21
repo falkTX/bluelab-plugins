@@ -137,6 +137,15 @@ IRadioButtonsControlCustom::OnMouseOver(float x, float y, const IMouseMod &mod)
 }
 
 void
+IRadioButtonsControlCustom::OnMouseOut()
+{
+    for (int i = 0; i < mMouseOver.size(); i++)
+        mMouseOver[i] = false;
+
+    SetDirty();
+}
+    
+void
 IRadioButtonsControlCustom::Draw(IGraphics &g)
 {
     int n = (int)mRECTs.size();
