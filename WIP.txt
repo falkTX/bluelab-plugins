@@ -23,7 +23,7 @@ BL-Gain60	    :	fea+,      ,optim, mem, bugs,         ,     , gui, guiP
 BL-Ghost	    :	fea+,      ,optim, mem, bugs, LoFr(l) , lgr , gui, guiP
 BL-GhostViewer	    :   fea+,            , mem,     , LoFr    , lgr , gui, guiP
 BL-Impulses	    :   fea+,      ,optim, mem, bugs, LoFr(l) ,     , gui, guiP
-BL-Infra	    :   fea+,      ,optim, mem, bugs, LoFr    ,     , gui
+BL-Infra	    :   fea+,      ,optim, mem, bugs, LoFr    ,     , gui, guiP
 BL-InfrasonicViewer :   fea+,      ,optim, mem, bugs, LoFr    , lgr , gui
 BL-InfraSynth	    :
 BL-LoFi		    :       ,      ,optim, mem, bugs, LoFr    ,     , gui
@@ -49,7 +49,7 @@ BL-StereoPan	    :   (fea+)                                      , gui
 BL-StereoWidth	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui -- bug clicks ?
 BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui
 
-11/16
+12/15
 
 ===
 - PROBLEM: gui resize buttons rollover color is not good
@@ -62,7 +62,7 @@ And Ghost buttons (inpaint dir and selection dir) are too small
 
 - BUG: GhostViewer: after gui resize, spectro meter gives wrong values
 - BUG: Chroma, GhostViewer: after gui resize, the time axis labels are shifted (check scroll speed)
-
+- BUG: Infra: purple curve is not displayed
 
 - TODO: bubble help
 - TODO: manuals
