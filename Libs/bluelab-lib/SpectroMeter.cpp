@@ -46,8 +46,7 @@ SpectroMeter::SpectroMeter(BL_FLOAT x, BL_FLOAT y,
     mTextFieldHSpacing = TEXT_FIELD_H_SPACING1;
     mTextFieldVSpacing = TEXT_FIELD_V_SPACING;
 
-    //mBGColor = IColor(255, 64, 64, 64);
-    mBGColor = IColor(255, 255, 0, 0);
+    mBGColor = IColor(255, 64, 64, 64);
 
     mBorderColor = IColor(255, 0, 0, 0);
     mBorderWidth = -1.0;

@@ -158,6 +158,8 @@ v3.40
 - fixed small knob stroke width
 - aligned well ghost apply gain knob
 
+v3.41
+- export GhostViewer
 
 
 === TODO ===
