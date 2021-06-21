@@ -1314,20 +1314,23 @@ GUIHelper12::CreateRolloverButton(IGraphics *graphics,
    
   graphics->AttachControl(control);
 
-  if (label != NULL)
+  if (mCreateTitles)
   {
-      // Add the label
-      ITextControl *text = CreateTitle(graphics,
-                                       x + mButtonLabelTextOffsetX,
-                                       y + bitmap.H()*1.5/((BL_FLOAT)bmpFrames) +
-                                       mButtonLabelTextOffsetY,
-                                       label,
-                                       // NOTE: with small/default size, text is not well centered
-                                       //Size::SIZE_DEFAULT,
-                                       Size::SIZE_BIG,
-                                       EAlign::Near);
-
-      control->LinkText(text, mTitleTextColor, mHilightTextColor);
+      if (label != NULL)
+      {
+          // Add the label
+          ITextControl *text = CreateTitle(graphics,
+                                           x + mButtonLabelTextOffsetX,
+                                           y + bitmap.H()*1.5/((BL_FLOAT)bmpFrames) +
+                                           mButtonLabelTextOffsetY,
+                                           label,
+                                           // NOTE: with small/default size, text is not well centered
+                                           //Size::SIZE_DEFAULT,
+                                           Size::SIZE_BIG,
+                                           EAlign::Near);
+          
+          control->LinkText(text, mTitleTextColor, mHilightTextColor);
+      }
   }
   
   return control;
