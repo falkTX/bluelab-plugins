@@ -30,7 +30,7 @@ BL-LoFi		    :       ,      ,optim, mem, bugs, LoFr    ,     , gui, guiP
 BL-OnsetDetect	    :
 BL-Panogram	    :   fea+,      ,optim, mem, bugs, LoFr    ,     , gui, guiP
 BL-PitchShift	    :   fea+,      ,optim, mem, bugs, (LoFr)  , lgr , gui, guiP 
-BL-Precedence	    :   (fea+)                                      , gui
+BL-Precedence	    :   (fea+)                                      , gui, guiP
 BL-Rebalance	    :	wip: upscaled model is training,      , lgr , gui
 BL-Reverb	    :
 BL-ReverbDepth	    :
@@ -49,7 +49,7 @@ BL-StereoPan	    :   (fea+)                                      , gui
 BL-StereoWidth	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui -- bug clicks ?
 BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui
 
-16/11
+17/10
 
 ===
 TODO: do not hardcode knob size for svg knobs
@@ -62,6 +62,7 @@ And Ghost buttons (inpaint dir and selection dir) are too small
 - PROBLEM: EQHack, guess => curve jitters
 - color of text in drop down menu: bright or medium?
 - PROBLEM: color of the ghost meter text => need brighter?
+- PROBLEM: Panogram: down arrow icon is not well readable
 
 - BUG: GhostViewer: after gui resize, spectro meter gives wrong values
 - BUG: Chroma, GhostViewer: after gui resize, the time axis labels are shifted (check scroll speed)
