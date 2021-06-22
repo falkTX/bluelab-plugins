@@ -161,6 +161,9 @@ v3.40
 v3.41
 - export GhostViewer
 
+v3.42
+- export SampleDelay
+
 
 === TODO ===
 - TODO: drop down menu, make items in lower case (no upper case as it is currently)

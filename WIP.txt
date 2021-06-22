@@ -34,7 +34,7 @@ BL-Precedence	    :   (fea+)                                      , gui, guiP
 BL-Rebalance	    :	wip: upscaled model is training,      , lgr , gui, guiP
 BL-Reverb	    :
 BL-ReverbDepth	    :
-BL-SampleDelay	    :   (fea+)                                      , gui
+BL-SampleDelay	    :   (fea+)                                      , gui, guiP
 BL-SASViewer	    : 
 BL-Saturate	    :   fea+                                  , lgr , gui
 BL-Shaper	    :   fea+,     , optim, mem, bugs,  LoFr   , lgr , gui
@@ -49,7 +49,7 @@ BL-StereoPan	    :   (fea+)                                      , gui
 BL-StereoWidth	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui -- bug clicks ?
 BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui
 
-18/9
+19/8
 
 ===
 TODO: do not hardcode knob size for svg knobs
