@@ -84,6 +84,8 @@ public:
     //
     int GetHistoryIndex();
     int GetLatency();
+
+    void SetModelNum(int modelNum);
     
 protected:
     void ComputeMasks(WDL_TypedBuf<BL_FLOAT> masks[NUM_STEM_SOURCES],
@@ -119,7 +121,8 @@ protected:
     WDL_TypedBuf<BL_FLOAT> mMasks[NUM_STEM_SOURCES];
     
     // DNNs
-    DNNModel2 *mModel;
+    DNNModel2 *mModels[NUM_MODELS];
+    int mModelNum;
     
     //deque<WDL_TypedBuf<BL_FLOAT> > mMixCols;
     bl_queue<WDL_TypedBuf<BL_FLOAT> > mMixCols;

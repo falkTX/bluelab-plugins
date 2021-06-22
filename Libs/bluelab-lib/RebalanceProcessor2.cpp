@@ -315,10 +315,17 @@ SetSpectrogramDisplay(SpectrogramDisplayScroll4 *spectroDisplay)
 }
 
 void
-RebalanceProcessor2::RecomputeSpectrogram()
+RebalanceProcessor2::RecomputeSpectrogram(bool recomputeMasks)
 {
     if (mDetectProcessObjs[0] != NULL)
-        mDetectProcessObjs[0]->RecomputeSpectrogram();
+        mDetectProcessObjs[0]->RecomputeSpectrogram(recomputeMasks);
+}
+
+void
+RebalanceProcessor2::SetModelNum(int modelNum)
+{
+    if (mMaskPred != NULL)
+        mMaskPred->SetModelNum(modelNum);
 }
 
 void

@@ -73,7 +73,7 @@ public:
 
     int GetLatency();
 
-    void RecomputeSpectrogram();
+    void RecomputeSpectrogram(bool recomputeMasks = false);
     
 protected:
     void AddSpectrogramLine(const WDL_TypedBuf<BL_FLOAT> &magns,
@@ -112,7 +112,7 @@ protected:
     int mNumInputCols;
     
     // Keep the history of input data
-    // So we can get exactly the same correponding the the
+    // So we can get exactly the same corresponding the the
     // correct location of the mask
     //deque<WDL_TypedBuf<WDL_FFT_COMPLEX> > mSamplesHistory;
     bl_queue<WDL_TypedBuf<WDL_FFT_COMPLEX> > mSamplesHistory;
@@ -127,6 +127,9 @@ protected:
     bl_queue<WDL_TypedBuf<BL_FLOAT> > mMasksHistory[NUM_STEM_SOURCES];
     bl_queue<WDL_TypedBuf<WDL_FFT_COMPLEX> > mSignalHistory;
 
+    // For recomputing spectrogram when also mask changes
+    bl_queue<WDL_TypedBuf<WDL_FFT_COMPLEX> > mRawSignalHistory;
+    
 private:
     // Tmp buffers
     WDL_TypedBuf<WDL_FFT_COMPLEX> mTmpBuf0;
@@ -149,6 +152,10 @@ private:
     WDL_TypedBuf<BL_FLOAT> mTmpBuf17;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf18[NUM_STEM_SOURCES];
     WDL_TypedBuf<BL_FLOAT> mTmpBuf19;
+    vector<WDL_TypedBuf<WDL_FFT_COMPLEX> *> mTmpBuf20;
+    WDL_TypedBuf<WDL_FFT_COMPLEX> mTmpBuf21;
+    WDL_TypedBuf<WDL_FFT_COMPLEX> mTmpBuf22;
+    bl_queue<WDL_TypedBuf<WDL_FFT_COMPLEX> > mTmpBuf23;
 };
 
 #endif /* defined(__BL_Rebalance__RebalanceProcessFftObjComp4__) */

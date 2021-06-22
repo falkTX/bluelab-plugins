@@ -115,7 +115,7 @@ RebalanceMaskPredictorComp5::RebalanceMaskPredictorComp5(int bufferSize,
     //CreateModel(MODEL_16X, resourcePath, &mModels[2]);
     //CreateModel(MODEL_32X, resourcePath, &mModels[3]);
     
-    CreateModel(MODEL_NAME, resourcePath, &mModels[0]);
+    CreateModel(MODEL0_NAME, resourcePath, &mModels[0]);
 #else // WIN32
     //mModels[0q] = new DNNModelDarknet();
     //mModels[1] = new DNNModelDarknet();
@@ -130,7 +130,7 @@ RebalanceMaskPredictorComp5::RebalanceMaskPredictorComp5(int bufferSize,
 #if 0 // iPlug1
     mModels[0] = new DNNModelDarknet();
     //mModels[0]->LoadWin(graphics, MODEL_ID, WEIGHTS_ID);
-    mModels[0]->LoadWin(graphics, MODEL_FN, WEIGHTS_FN);
+    mModels[0]->LoadWin(graphics, MODEL0_FN, WEIGHTS0_FN);
 #endif
 
     // New
@@ -139,7 +139,7 @@ RebalanceMaskPredictorComp5::RebalanceMaskPredictorComp5(int bufferSize,
 
     const char* resourcePath = resPath.Get();
 
-    CreateModel(MODEL_NAME, resourcePath, &mModels[0]);
+    CreateModel(MODEL0_NAME, resourcePath, &mModels[0]);
 #endif
    
     InitMixCols();

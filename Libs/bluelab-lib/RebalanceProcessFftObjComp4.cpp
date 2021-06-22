@@ -252,6 +252,17 @@ RebalanceProcessFftObjComp4::
 ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
                  const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer)
 {
+    int numCols = ComputeSpectroNumCols();
+    
+    // Keep input signal history
+    if (mRawSignalHistory.size() < numCols)
+        mRawSignalHistory.push_back(*ioBuffer);
+    else
+    {
+        mRawSignalHistory.freeze();
+        mRawSignalHistory.push_pop(*ioBuffer);
+    }
+    
     // Mix
     WDL_TypedBuf<WDL_FFT_COMPLEX> &mixBuffer = mTmpBuf0;
     //mixBuffer = *ioBuffer;
@@ -305,7 +316,7 @@ ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     for (int i = 0; i < NUM_STEM_SOURCES; i++)
         mMaskPred->GetMask(i, &masks[i]);
 
-    int numCols = ComputeSpectroNumCols();
+    //int numCols = ComputeSpectroNumCols();
     
     // Keep mask and signal histories
     if (mSignalHistory.size() < numCols)
@@ -464,8 +475,34 @@ RebalanceProcessFftObjComp4::ComputeInverseDB(WDL_TypedBuf<BL_FLOAT> *magns)
 }
 
 void
-RebalanceProcessFftObjComp4::RecomputeSpectrogram()
-{    
+RebalanceProcessFftObjComp4::RecomputeSpectrogram(bool recomputeMasks)
+{
+    if (recomputeMasks)
+    {
+        // Reprocess globally the previous input signal 
+        bl_queue<WDL_TypedBuf<WDL_FFT_COMPLEX> > &rawSignalHistoryCopy = mTmpBuf23;
+        rawSignalHistoryCopy = mRawSignalHistory;
+        
+        for (int i = 0; i < rawSignalHistoryCopy.size(); i++)
+        {
+            WDL_TypedBuf<WDL_FFT_COMPLEX> &signal = mTmpBuf21;
+            signal = rawSignalHistoryCopy[i];
+
+            //
+            vector<WDL_TypedBuf<WDL_FFT_COMPLEX> *> &signalVec = mTmpBuf20;
+            signalVec.resize(1);
+            signalVec[0] = &signal;
+
+            mMaskPred->ProcessInputFft(&signalVec, NULL);
+
+            //
+            ProcessFftBuffer(&signal, NULL);
+        }
+
+        // We have finished with recompting everything
+        return;
+    }
+    
     // Keep lines, and add them all at once at the end 
     vector<WDL_TypedBuf<BL_FLOAT> > &magnsVec = mTmpBuf11;
     vector<WDL_TypedBuf<BL_FLOAT> > &phasesVec = mTmpBuf12;
@@ -480,11 +517,11 @@ RebalanceProcessFftObjComp4::RecomputeSpectrogram()
 
         //WDL_TypedBuf<BL_FLOAT> masks[NUM_STEM_SOURCES];
         WDL_TypedBuf<BL_FLOAT> *masks = mTmpBuf18;
-        for (int j = 0; j < NUM_STEM_SOURCES; j++)
-        {
-            masks[j] = mMasksHistory[j][i];
-        }
 
+        // Do not recompute masks, re-use current ones
+        for (int j = 0; j < NUM_STEM_SOURCES; j++)
+            masks[j] = mMasksHistory[j][i];
+                
         WDL_TypedBuf<WDL_FFT_COMPLEX> &result = mTmpBuf14;
         WDL_TypedBuf<BL_FLOAT> &magns = mTmpBuf15;
         WDL_TypedBuf<BL_FLOAT> &phases = mTmpBuf16;

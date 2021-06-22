@@ -67,7 +67,9 @@ public:
     // Debug
     void SetDbgThreshold(BL_FLOAT thrs);
 
-    void RecomputeSpectrogram();
+    void RecomputeSpectrogram(bool recomputeMasks = false);
+
+    void SetModelNum(int modelNum);
     
 protected:
     bool

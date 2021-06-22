@@ -26,7 +26,9 @@
 // GOOD: must be kepts to 1 too
 #define FIX_ADJUST_OUT_RESAMPLING 1
 
-#define MODEL_NAME "rebalance"
+#define NUM_MODELS 2
+#define MODEL0_NAME "rebalance0"
+#define MODEL1_NAME "rebalance1"
 
 #define NUM_STEM_SOURCES 4
 

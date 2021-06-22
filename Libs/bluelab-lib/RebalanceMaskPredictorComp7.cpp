@@ -81,12 +81,12 @@ RebalanceMaskPredictorComp7::RebalanceMaskPredictorComp7(int bufferSize,
     
     const char *resourcePath = resPath.Get();
     
-    CreateModel(MODEL_NAME, resourcePath, &mModel);
+    CreateModel(MODEL0_NAME, resourcePath, &mModel);
     
 #else // WIN32
     //mModel = new DNNModelDarknetMc();
     mModel = new DNNModelDarknet();
-    mModel->LoadWin(graphics, MODEL_FN, WEIGHTS_FN);
+    mModel->LoadWin(graphics, MODEL0_FN, WEIGHTS0_FN);
 #endif
     
     InitMixCols();

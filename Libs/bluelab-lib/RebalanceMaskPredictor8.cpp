@@ -56,7 +56,9 @@ RebalanceMaskPredictor8::RebalanceMaskPredictor8(int bufferSize,
                                                  MASK_STACK_DEPTH);
 #endif
 
-    mModel = NULL;
+    for (int i = 0; i < NUM_MODELS; i++)
+        mModels[i] = NULL;
+    mModelNum = 0;
     
 #ifndef WIN32
     WDL_String resPath;
@@ -64,11 +66,15 @@ RebalanceMaskPredictor8::RebalanceMaskPredictor8(int bufferSize,
     
     const char *resourcePath = resPath.Get();
     
-    CreateModel(MODEL_NAME, resourcePath, &mModel);
+    CreateModel(MODEL0_NAME, resourcePath, &mModels[0]);
+    CreateModel(MODEL1_NAME, resourcePath, &mModels[1]);
     
 #else // WIN32
-    mModel = new DNNModelDarknet();
-    mModel->LoadWin(graphics, MODEL_FN, WEIGHTS_FN);
+    mModels[0] = new DNNModelDarknet();
+    mModels[0]->LoadWin(graphics, MODEL0_FN, WEIGHTS0_FN);
+
+    mModels[1] = new DNNModelDarknet();
+    mModels[1]->LoadWin(graphics, MODEL1_FN, WEIGHTS1_FN);
 #endif
     
     InitMixCols();
@@ -81,8 +87,11 @@ RebalanceMaskPredictor8::RebalanceMaskPredictor8(int bufferSize,
 
 RebalanceMaskPredictor8::~RebalanceMaskPredictor8()
 {
-    if (mModel != NULL)
-        delete mModel;
+    for (int i = 0; i < NUM_MODELS; i++)
+    {
+        if (mModels[i] != NULL)
+            delete mModels[i];
+    }
     
     delete mMelScale;
     delete mScale;
@@ -268,6 +277,15 @@ RebalanceMaskPredictor8::GetLatency()
 }
 
 void
+RebalanceMaskPredictor8::SetModelNum(int modelNum)
+{
+    if (modelNum >= NUM_MODELS)
+        return;
+    
+    mModelNum = modelNum;
+}
+
+void
 RebalanceMaskPredictor8::
 ColumnsToBuffer(WDL_TypedBuf<BL_FLOAT> *buf,
                 //const deque<WDL_TypedBuf<BL_FLOAT> > &cols)
@@ -302,7 +320,7 @@ ComputeMasks(WDL_TypedBuf<BL_FLOAT> masks[NUM_STEM_SOURCES],
         if (mMaskPredictStepNum++ % mPredictModulo == 0)
         {
             vector<WDL_TypedBuf<BL_FLOAT> > &masks0v = mTmpBuf7;
-            mModel->Predict(mixBufHisto, &masks0v);
+            mModels[mModelNum]->Predict(mixBufHisto, &masks0v);
             for (int i = 0; i < NUM_STEM_SOURCES; i++)
                 masks0[i] = masks0v[i];
         
@@ -319,7 +337,7 @@ ComputeMasks(WDL_TypedBuf<BL_FLOAT> masks[NUM_STEM_SOURCES],
     else
     {
         vector<WDL_TypedBuf<BL_FLOAT> > &masks0v = mTmpBuf8;
-        mModel->Predict(mixBufHisto, &masks0v);
+        mModels[mModelNum]->Predict(mixBufHisto, &masks0v);
         
         for (int i = 0; i < NUM_STEM_SOURCES; i++)
             masks0[i] = masks0v[i];
