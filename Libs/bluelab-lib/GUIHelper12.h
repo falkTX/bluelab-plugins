@@ -190,7 +190,7 @@ public:
                             const char *handleBitmapFname,
                             const char *tfBitmapFname,
                             int paramIdx,
-                            float valueYOffset);
+                            float valueXOffset, float valueYOffset);
     
     void CreateVersion(Plugin *plug, IGraphics *graphics,
                        const char *versionStr);

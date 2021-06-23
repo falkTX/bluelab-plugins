@@ -164,6 +164,12 @@ v3.41
 v3.42
 - export SampleDelay
 
+v3.43
+- Spatializer adjustements (aborted)
+
+v3.44
+- Spatializer adjustement
+
 
 === TODO ===
 - TODO: drop down menu, make items in lower case (no upper case as it is currently)

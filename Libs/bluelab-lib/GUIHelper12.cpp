@@ -767,7 +767,7 @@ GUIHelper12::CreateSpatializerHandle(IGraphics *graphics,
                                      const char *handleBitmapFname,
                                      const char *tfBitmapFname,
                                      int paramIdx,
-                                     float valueYOffset)
+                                     float valueXOffset, float valueYOffset)
 {
     IBitmap handleBitmap = graphics->LoadBitmap(handleBitmapFname, 1);
 
@@ -779,7 +779,8 @@ GUIHelper12::CreateSpatializerHandle(IGraphics *graphics,
 
     // Text field
     CreateValue(graphics,
-                x + rect.W()/2, y + rect.H() + valueYOffset,
+                x + rect.W()/2 + valueXOffset,
+                y + rect.H() + valueYOffset,
                 tfBitmapFname, paramIdx);
     
     return result;

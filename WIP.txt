@@ -40,7 +40,7 @@ BL-Saturate	    :   fea+                                  , lgr , gui, guiP
 BL-Shaper	    :   fea+,     , optim, mem, bugs,  LoFr   , lgr , gui, guiP
 BL-Sine		    :   fea+,     , optim, mem, bugs, (LoFr)        , gui, guiP
 BL-SoundMetaViewer  :
-BL-Spatializer	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui
+BL-Spatializer	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP
 BL-SpectralDiff	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui
 BL-SpectroExpe	    :
 BL-SpectrumView	    :
@@ -49,10 +49,10 @@ BL-StereoPan	    :   (fea+)                                      , gui
 BL-StereoWidth	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui -- bug clicks ?
 BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui
 
-22/5
+23/4
 
 ===
-TODO: do not hardcode knob size for svg knobs
+- TODO: big code clean of plugins code
 
 - InfrasonicViewer: "2.7Hz", or "2.7 Hz" ?
 - PROBLEM: gui resize buttons rollover color is not good
