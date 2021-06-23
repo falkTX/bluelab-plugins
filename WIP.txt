@@ -47,9 +47,7 @@ BL-SpectrumView	    :
 BL-StereoDeReverb   :
 BL-StereoPan	    :   (fea+)                                      , gui, guiP
 BL-StereoWidth	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP
-BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui
-
-26/1
+BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP
 
 ===
 - TODO: big code clean of plugins code
@@ -72,7 +70,6 @@ And Ghost buttons (inpaint dir and selection dir) are too small
 
 - TODO: bubble help
 - TODO: manuals
-- TODO: code clean of all the plugins
-- BUG: Chroma scroll jitter at min speed
+- BUG: Chroma scroll jitters at min speed
 ===
 - TODO: test plugins with DaVinci Resolve Video Editor / Fairlight (see Eugene mail)
