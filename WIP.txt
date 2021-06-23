@@ -46,10 +46,10 @@ BL-SpectroExpe	    :
 BL-SpectrumView	    :
 BL-StereoDeReverb   :
 BL-StereoPan	    :   (fea+)                                      , gui, guiP
-BL-StereoWidth	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui -- bug clicks ?
+BL-StereoWidth	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP
 BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui
 
-25/2
+26/1
 
 ===
 - TODO: big code clean of plugins code
@@ -68,6 +68,7 @@ And Ghost buttons (inpaint dir and selection dir) are too small
 - BUG: Chroma, GhostViewer: after gui resize, the time axis labels are shifted (check scroll speed)
 - BUG: InfrasonicViewer: resize gui without playing => spectro meter gets a wrong shift
 - BUG: Panogram: same (time axis, resize gui)
+- BUG: StereoWidth clicks
 
 - TODO: bubble help
 - TODO: manuals
