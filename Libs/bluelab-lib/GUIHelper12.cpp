@@ -1692,7 +1692,7 @@ GUIHelper12::CreateDropDownMenu(IGraphics *graphics,
                    textEntryBGColor,
                    textEntryFGColor);
     
-    // Popup menu for colormap
+    // Popup menu e.g for colormap
     // NOTE: the popup menu seems to be managed for CaptionControl automatically,
     // if we have an enum parameter
     graphics->AttachPopupMenuControl(menuText/*DEFAULT_LABEL_TEXT*/);
