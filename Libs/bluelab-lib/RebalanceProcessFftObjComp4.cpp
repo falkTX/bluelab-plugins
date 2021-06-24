@@ -26,7 +26,8 @@
 
 #include "RebalanceProcessFftObjComp4.h"
 
-// Post normalize, so that when everything is set to default, the plugin is transparent
+// Post normalize, so that when everything is set to default,
+// the plugin is transparent
 #define POST_NORMALIZE 1
 
 //#define SPECTRO_NUM_COLS 2048/4 //64
@@ -59,8 +60,7 @@ RebalanceProcessFftObjComp4(int bufferSize, int oversampling,
     
     mNumInputCols = numInputCols;
 
-    mSpectrogram = new BLSpectrogram4(sampleRate,
-                                      SPECTRO_HEIGHT/*bufferSize/4*/, -1);
+    mSpectrogram = new BLSpectrogram4(sampleRate, SPECTRO_HEIGHT, -1);
     
     mSpectroDisplay = NULL;
     
@@ -150,72 +150,54 @@ void
 RebalanceProcessFftObjComp4::SetVocal(BL_FLOAT vocal)
 {
     mMaskProcessor->SetVocalMix(vocal);
-
-    //RecomputeSpectrogram();
 }
 
 void
 RebalanceProcessFftObjComp4::SetBass(BL_FLOAT bass)
 {
     mMaskProcessor->SetBassMix(bass);
-
-    //RecomputeSpectrogram();
 }
 
 void
 RebalanceProcessFftObjComp4::SetDrums(BL_FLOAT drums)
 {
     mMaskProcessor->SetDrumsMix(drums);
-
-    //RecomputeSpectrogram();
 }
 
 void
 RebalanceProcessFftObjComp4::SetOther(BL_FLOAT other)
 {
     mMaskProcessor->SetOtherMix(other);
-
-    //RecomputeSpectrogram();
 }
 
 void
 RebalanceProcessFftObjComp4::SetVocalSensitivity(BL_FLOAT vocal)
 {
     mMaskProcessor->SetVocalSensitivity(vocal);
-
-    //RecomputeSpectrogram();
 }
 
 void
 RebalanceProcessFftObjComp4::SetBassSensitivity(BL_FLOAT bass)
 {
     mMaskProcessor->SetBassSensitivity(bass);
-
-    //RecomputeSpectrogram();
 }
 
 void
 RebalanceProcessFftObjComp4::SetDrumsSensitivity(BL_FLOAT drums)
 {
     mMaskProcessor->SetDrumsSensitivity(drums);
-
-    //RecomputeSpectrogram();
 }
 
 void
 RebalanceProcessFftObjComp4::SetOtherSensitivity(BL_FLOAT other)
 {
     mMaskProcessor->SetOtherSensitivity(other);
-
-    //RecomputeSpectrogram();
 }
 
 void
 RebalanceProcessFftObjComp4::SetContrast(BL_FLOAT contrast)
 {
     mMaskProcessor->SetContrast(contrast);
-
-    //RecomputeSpectrogram();
 }
 
 int
@@ -272,7 +254,6 @@ ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     
     // Mix
     WDL_TypedBuf<WDL_FFT_COMPLEX> &mixBuffer = mTmpBuf0;
-    //mixBuffer = *ioBuffer;
     BLUtils::TakeHalf(*ioBuffer, &mixBuffer);
     
 #if PROCESS_SIGNAL_DB
@@ -301,16 +282,10 @@ ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     
     // For soft masks
     // mMixCols is filled with zeros at the origin
-
-    //mMixColsComp.push_back(mixBuffer);
-    //mMixColsComp.pop_front();
     mMixColsComp.freeze();
     mMixColsComp.push_pop(mixBuffer);
     
     // History, to stay synchronized between input signal and masks
-
-    //mSamplesHistory.push_back(mixBuffer);
-    //mSamplesHistory.pop_front();
     mSamplesHistory.freeze();
     mSamplesHistory.push_pop(mixBuffer);
     
@@ -318,12 +293,9 @@ ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     if (histoIndex < mSamplesHistory.size())
         mixBuffer = mSamplesHistory[histoIndex];
 
-    //WDL_TypedBuf<BL_FLOAT> masks[NUM_STEM_SOURCES];
     WDL_TypedBuf<BL_FLOAT> *masks = mTmpBuf3;
     for (int i = 0; i < NUM_STEM_SOURCES; i++)
         mMaskPred->GetMask(i, &masks[i]);
-
-    //int numCols = ComputeSpectroNumCols();
     
     // Keep mask and signal histories
     if (mSignalHistory.size() < numCols)
@@ -333,8 +305,6 @@ ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
         mSignalHistory.freeze();
         mSignalHistory.push_pop(mixBuffer);
     }
-    //if (mSignalHistory.size() >= numCols)
-    //    mSignalHistory.pop_front();
 
     for (int i = 0; i < NUM_STEM_SOURCES; i++)
     {
@@ -345,9 +315,6 @@ ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
             mMasksHistory[i].freeze();
             mMasksHistory[i].push_pop(masks[i]);
         }
-        
-        //if (mMasksHistory[i].size() >= numCols)
-        //    mMasksHistory[i].pop_front();
     }
     
     // Adjust and apply mask
@@ -364,18 +331,12 @@ ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     WDL_TypedBuf<WDL_FFT_COMPLEX> &fftSamples = mTmpBuf7;
     fftSamples = result;
     
-    //fftSamples.Resize(fftSamples.GetSize()*2);
-    //BLUtilsFft::FillSecondFftHalf(&fftSamples);
     BLUtilsFft::FillSecondFftHalf(fftSamples, ioBuffer);
-    
-    // Result
-    //*ioBuffer = fftSamples;
 }
 
 void
 RebalanceProcessFftObjComp4::ResetSamplesHistory()
 {
-    //mSamplesHistory.clear();
     mSamplesHistory.resize(mNumInputCols);
     
     for (int i = 0; i < mNumInputCols; i++)
@@ -384,7 +345,6 @@ RebalanceProcessFftObjComp4::ResetSamplesHistory()
         samples.Resize(mBufferSize/2);
         BLUtils::FillAllZero(&samples);
         
-        //mSamplesHistory.push_back(samples);
         mSamplesHistory[i] = samples;
     }
 }
@@ -403,7 +363,6 @@ ApplyMask(const WDL_TypedBuf<WDL_FFT_COMPLEX> &inData,
 void
 RebalanceProcessFftObjComp4::ResetMixColsComp()
 {
-    //mMixColsComp.clear();
     mMixColsComp.resize(mNumInputCols);
     
     for (int i = 0; i < mNumInputCols; i++)
@@ -412,7 +371,6 @@ RebalanceProcessFftObjComp4::ResetMixColsComp()
         col.Resize(mBufferSize/2);
         BLUtils::FillAllZero(&col);
         
-        //mMixColsComp.push_back(col);
         mMixColsComp[i] = col;
     }
 }
@@ -541,6 +499,10 @@ RebalanceProcessFftObjComp4::RecomputeSpectrogram(bool recomputeMasks)
         // We have finished with recompting everything
         return;
     }
+
+    // Be sure to reset!
+    if (mSoftMasking != NULL)
+        mSoftMasking->Reset(mBufferSize, mOverlapping);
     
     // Keep lines, and add them all at once at the end 
     vector<WDL_TypedBuf<BL_FLOAT> > &magnsVec = mTmpBuf11;
@@ -564,7 +526,7 @@ RebalanceProcessFftObjComp4::RecomputeSpectrogram(bool recomputeMasks)
         WDL_TypedBuf<BL_FLOAT> &magns = mTmpBuf15;
         WDL_TypedBuf<BL_FLOAT> &phases = mTmpBuf16;
         ComputeResult(signal, masks, &result, &magns, &phases);
-
+        
         magnsVec[i] = magns;
         phasesVec[i] = phases;
     }
@@ -629,8 +591,6 @@ RebalanceProcessFftObjComp4::ComputeSpectroNumCols()
 void
 RebalanceProcessFftObjComp4::ResetSpectrogram()
 {
-    //mSoftMasking->Reset();
-
     if (mSoftMasking != NULL)
         mSoftMasking->Reset(mBufferSize, mOverlapping);
 
@@ -642,7 +602,7 @@ RebalanceProcessFftObjComp4::ResetSpectrogram()
     ResetMasksHistory();
     ResetSignalHistory();
 
-    // dont reset raw samples
+    // Don't reset raw samples
     
     int numCols = ComputeSpectroNumCols();
     mSpectrogram->Reset(mSampleRate, SPECTRO_HEIGHT, numCols);
