@@ -466,7 +466,9 @@ RebalanceMaskPredictor8::InitMixCols()
     for (int i = 0; i < mNumSpectroCols; i++)
     {
         WDL_TypedBuf<BL_FLOAT> &col = mTmpBuf9;
-        BLUtils::ResizeFillZeros(&col, REBALANCE_NUM_SPECTRO_FREQS);
+        //BLUtils::ResizeFillZeros(&col, REBALANCE_NUM_SPECTRO_FREQS);
+        col.Resize(REBALANCE_NUM_SPECTRO_FREQS);
+        BLUtils::FillAllZero(&col);
         
         //mMixCols.push_back(col);
         mMixCols[i] = col;

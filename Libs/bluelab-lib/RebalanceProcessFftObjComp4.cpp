@@ -103,29 +103,34 @@ RebalanceProcessFftObjComp4::Reset(int bufferSize, int oversampling,
     
     ResetSamplesHistory();
     ResetMixColsComp();
-    ResetRawRawHistory();
+
+    ResetMasksHistory();
+    ResetSignalHistory();
+
+    ResetRawSignalHistory();
     
     int numCols = ComputeSpectroNumCols();
-    
-    mSpectrogram->Reset(sampleRate,
-                        SPECTRO_HEIGHT/*bufferSize/4*/, numCols);
+    mSpectrogram->Reset(sampleRate, SPECTRO_HEIGHT, numCols);
 }
 
 void
 RebalanceProcessFftObjComp4::Reset()
-{    
-    mSoftMasking->Reset();
+{
+    if (mSoftMasking != NULL)
+        mSoftMasking->Reset();
    
     mMaskPred->Reset();
     
     ResetSamplesHistory();
     ResetMixColsComp();
-    ResetRawRawHistory();
+
+    ResetMasksHistory();
+    ResetSignalHistory();
+
+    ResetRawSignalHistory();
  
     int numCols = ComputeSpectroNumCols();
-    
-    mSpectrogram->Reset(mSampleRate,
-                        SPECTRO_HEIGHT/*mBufferSize/4*/, numCols);
+    mSpectrogram->Reset(mSampleRate, SPECTRO_HEIGHT, numCols);
 }
 
 BLSpectrogram4 *
@@ -376,7 +381,8 @@ RebalanceProcessFftObjComp4::ResetSamplesHistory()
     for (int i = 0; i < mNumInputCols; i++)
     {
         WDL_TypedBuf<WDL_FFT_COMPLEX> &samples = mTmpBuf8;
-        BLUtils::ResizeFillZeros(&samples, mBufferSize/2);
+        samples.Resize(mBufferSize/2);
+        BLUtils::FillAllZero(&samples);
         
         //mSamplesHistory.push_back(samples);
         mSamplesHistory[i] = samples;
@@ -403,7 +409,8 @@ RebalanceProcessFftObjComp4::ResetMixColsComp()
     for (int i = 0; i < mNumInputCols; i++)
     {
         WDL_TypedBuf<WDL_FFT_COMPLEX> &col = mTmpBuf9;
-        BLUtils::ResizeFillZeros(&col, mBufferSize/2);
+        col.Resize(mBufferSize/2);
+        BLUtils::FillAllZero(&col);
         
         //mMixColsComp.push_back(col);
         mMixColsComp[i] = col;
@@ -411,12 +418,29 @@ RebalanceProcessFftObjComp4::ResetMixColsComp()
 }
 
 void
-RebalanceProcessFftObjComp4::ResetRawRawHistory()
+RebalanceProcessFftObjComp4::ResetMasksHistory()
+{
+    for (int i = 0; i < NUM_STEM_SOURCES; i++)
+    {
+        mMasksHistory[i].unfreeze();
+        mMasksHistory[i].clear();
+    }
+}
+
+void
+RebalanceProcessFftObjComp4::ResetSignalHistory()
+{
+    mSignalHistory.unfreeze();
+    mSignalHistory.clear();
+}
+
+void
+RebalanceProcessFftObjComp4::ResetRawSignalHistory()
 {
     mRawSignalHistory.unfreeze();
     mRawSignalHistory.clear();
 }
-
+    
 void
 RebalanceProcessFftObjComp4::ApplySoftMasking(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioData,
                                               const WDL_TypedBuf<BL_FLOAT> &mask0)
@@ -488,10 +512,16 @@ RebalanceProcessFftObjComp4::RecomputeSpectrogram(bool recomputeMasks)
 {
     if (recomputeMasks)
     {
+        // Clear all
+        ResetSpectrogram();
+        
         // Reprocess globally the previous input signal 
         bl_queue<WDL_TypedBuf<WDL_FFT_COMPLEX> > &rawSignalHistoryCopy = mTmpBuf23;
         rawSignalHistoryCopy = mRawSignalHistory;
-        
+
+        // The reset the current one (it will be refilled during reocmputation) 
+        ResetRawSignalHistory();
+            
         for (int i = 0; i < rawSignalHistoryCopy.size(); i++)
         {
             WDL_TypedBuf<WDL_FFT_COMPLEX> &signal = mTmpBuf21;
@@ -507,7 +537,7 @@ RebalanceProcessFftObjComp4::RecomputeSpectrogram(bool recomputeMasks)
             //
             ProcessFftBuffer(&signal, NULL);
         }
-
+        
         // We have finished with recompting everything
         return;
     }
@@ -558,7 +588,8 @@ ComputeResult(const WDL_TypedBuf<WDL_FFT_COMPLEX> &mixBuffer,
               WDL_TypedBuf<BL_FLOAT> *resMagns,
               WDL_TypedBuf<BL_FLOAT> *resPhases)
 {
-    BLUtils::ResizeFillZeros(result, mixBuffer.GetSize());
+    result->Resize(mixBuffer.GetSize());
+    BLUtils::FillAllZero(result);
     
     WDL_TypedBuf<BL_FLOAT> &mask = mTmpBuf17;
     mMaskProcessor->Process(masks, &mask);
@@ -596,4 +627,27 @@ RebalanceProcessFftObjComp4::ComputeSpectroNumCols()
     numCols *= srCoeff;
     
     return numCols;
+}
+
+// Reset everything except the raw buffered samples
+void
+RebalanceProcessFftObjComp4::ResetSpectrogram()
+{
+    //mSoftMasking->Reset();
+
+    if (mSoftMasking != NULL)
+        mSoftMasking->Reset(mBufferSize, mOverlapping);
+
+    mMaskPred->Reset();
+    
+    ResetSamplesHistory();
+    ResetMixColsComp();
+
+    ResetMasksHistory();
+    ResetSignalHistory();
+
+    // dont reset raw samples
+    
+    int numCols = ComputeSpectroNumCols();
+    mSpectrogram->Reset(mSampleRate, SPECTRO_HEIGHT, numCols);
 }

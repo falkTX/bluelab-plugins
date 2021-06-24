@@ -81,7 +81,9 @@ protected:
     
     void ResetSamplesHistory();
     void ResetMixColsComp();
-    void ResetRawRawHistory();
+    void ResetMasksHistory();
+    void ResetSignalHistory();
+    void ResetRawSignalHistory();
     
     void ApplyMask(const WDL_TypedBuf<WDL_FFT_COMPLEX> &inData,
                    WDL_TypedBuf<WDL_FFT_COMPLEX> *outData,
@@ -99,7 +101,10 @@ protected:
                        WDL_TypedBuf<BL_FLOAT> *resPhases);
 
     int ComputeSpectroNumCols();
-    
+
+    // Reset everything except the raw buffered samples
+    void ResetSpectrogram();
+        
     //
     BL_FLOAT mSampleRate;
     
