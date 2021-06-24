@@ -64,9 +64,7 @@ public:
     void SetBorderColor(const IColor &color);
     void SetBorderWidth(float borderWidth);
     
-protected:
-    //
-    
+protected:    
     void UpdateTextBGColor();
 
     void ConvertToHMS(BL_FLOAT timeSec,

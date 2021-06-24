@@ -90,9 +90,7 @@ GraphTimeAxis6::Init(GraphControl12 *graph,
                      int maxNumLabels,
                      BL_FLOAT yOffset)
 {
-    mGraph = graph;
-    
-    graph->SetGraphTimeAxis(this);
+    SetGraph(graph);
     
     mGraphAxis = graphAxis;
     
@@ -152,6 +150,14 @@ GraphTimeAxis6::Reset(int bufferSize, BL_FLOAT timeDuration,
     BL_FLOAT oneLabelSeconds = (1.0/mMaxNumLabels)*timeDuration;
     Update(oneLabelSeconds*SS_COEFF);
 #endif
+}
+
+void
+GraphTimeAxis6::SetGraph(GraphControl12 *graph)
+{
+    mGraph = graph;
+
+    graph->SetGraphTimeAxis(this);
 }
 
 void

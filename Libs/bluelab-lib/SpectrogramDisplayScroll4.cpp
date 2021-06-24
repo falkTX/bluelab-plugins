@@ -26,17 +26,51 @@
 // Disable smooth scrolling, for debugging
 #define DEBUG_DISABLE_SMOOTH 0 //1
 
-SpectrogramDisplayScroll4::SpectrogramDisplayScroll4(Plugin *plug,
-                                                     BL_FLOAT delayPercent)
+SpectrogramDisplayScroll4::
+SpectrogramDisplayScroll4(Plugin *plug,
+                          SpectrogramDisplayScrollState *spectroState,
+                          BL_FLOAT delayPercent)
 {
     mPlug = plug;
 
-    mDelayPercent = delayPercent;
+    mState = spectroState;
+    if (mState == NULL)
+    {
+        mState = new SpectrogramDisplayScrollState();
+        
+        mState->mDelayPercent = delayPercent;
+        mState->mDelayTimeSecRight = 0.0;
+        mState->mDelayTimeSecLeft = 0.0;
+
+        mState->mSpectroLineDurationSec = 0.0;
+        mState->mSpectroTotalDurationSec = 0.0;
+        
+        mState->mSpectroTimeSec = 0.0;        
+        mState->mPrevOffsetSec = 0.0;
+
+        mState->mSpectrogram = NULL;
+
+        // Variable speed
+        mState->mSpeedMod = 1;
+        
+        // Fft params
+        mState->mBufferSize = 2048;
+        mState->mSampleRate = 44100.0;
+        mState->mOverlapping = 4; //0;
+    
+        //
+        mState->mTransport = NULL;
+    }
+
+    if (mState->mTransport != NULL)
+    {
+        mState->mTransport->SetListener(this);
+        mNeedRedraw = true;
+    }
     
     mVg = NULL;
     
     // Spectrogram
-    mSpectrogram = NULL;
     mNvgSpectroImage = 0;
     mNeedUpdateSpectrogram = true;
     mNeedUpdateSpectrogramData = true;
@@ -45,26 +79,12 @@ SpectrogramDisplayScroll4::SpectrogramDisplayScroll4(Plugin *plug,
     mNvgColormapImage = 0;
     
     mShowSpectrogram = true;
-    
-    mBufferSize = 2048;
-    mSampleRate = 44100.0;
-    mOverlapping = 4; //0;
-    
-    // Variable speed
-    mSpeedMod = 1;
-
-    mPrevOffsetSec = 0.0;
-
-    mTransport = NULL;
-
-    mDelayTimeSecLeft = 0.0;
-    mDelayTimeSecRight = 0.0;
 
     mViewOrientation = HORIZONTAL;
 
     mIsBypassed = false;
     
-    RecomputeParams();
+    RecomputeParams(false);
 
     mNeedRedraw = true;
     
@@ -75,8 +95,8 @@ SpectrogramDisplayScroll4::SpectrogramDisplayScroll4(Plugin *plug,
 
 SpectrogramDisplayScroll4::~SpectrogramDisplayScroll4()
 {
-    if (mTransport != NULL)
-        mTransport->SetListener(NULL);
+    if (mState->mTransport != NULL)
+        mState->mTransport->SetListener(NULL);
     
     if (mVg == NULL)
         return;
@@ -88,12 +108,18 @@ SpectrogramDisplayScroll4::~SpectrogramDisplayScroll4()
         nvgDeleteImage(mVg, mNvgColormapImage);
 }
 
+SpectrogramDisplayScroll4::SpectrogramDisplayScrollState *
+SpectrogramDisplayScroll4::GetState()
+{
+    return mState;
+}
+
 void
 SpectrogramDisplayScroll4::SetTransport(BLTransport *transport)
 {
-    mTransport = transport;
+    mState->mTransport = transport;
     
-    mTransport->SetListener(this);
+    mState->mTransport->SetListener(this);
 
     mNeedRedraw = true;
 }
@@ -109,7 +135,7 @@ SpectrogramDisplayScroll4::Reset()
     
     mNeedUpdateColormapData = true;
     
-    RecomputeParams();
+    RecomputeParams(true);
 
     mNeedRedraw = true;
 }
@@ -117,7 +143,7 @@ SpectrogramDisplayScroll4::Reset()
 void
 SpectrogramDisplayScroll4::ResetScroll()
 {    
-    RecomputeParams();
+    RecomputeParams(true);
 
     mNeedRedraw = true;
 }
@@ -129,19 +155,19 @@ SpectrogramDisplayScroll4::GetOffsetSec()
     return 0.0;
 #endif
     
-    if (mTransport == NULL)
+    if (mState->mTransport == NULL)
         return 0.0;
 
     // FIX: monitor, bypass => black margin the the right
     if (mIsBypassed)
         return 0.0;
     
-    BL_FLOAT currentTimeSec = mTransport->GetTransportElapsedSecTotal();
+    BL_FLOAT currentTimeSec = mState->mTransport->GetTransportElapsedSecTotal();
     
     if (currentTimeSec < 0.0)
         return 0.0;
     
-    BL_FLOAT offset = mSpectroTimeSec - currentTimeSec;
+    BL_FLOAT offset = mState->mSpectroTimeSec - currentTimeSec;
 
 #if DEBUG_DUMP
     BLDebug::AppendValue("offset.txt", offset);
@@ -168,8 +194,8 @@ SpectrogramDisplayScroll4::DoUpdateSpectrogram()
         // (for smooth scrolling), even if the data is not changed
         return true;
     
-    int w = mSpectrogram->GetNumCols();
-    int h = mSpectrogram->GetHeight();
+    int w = mState->mSpectrogram->GetNumCols();
+    int h = mState->mSpectrogram->GetHeight();
     
     int imageSize = w*h*4;
     
@@ -180,7 +206,8 @@ SpectrogramDisplayScroll4::DoUpdateSpectrogram()
             mSpectroImageData.Resize(imageSize);
             
             memset(mSpectroImageData.Get(), 0, imageSize);
-            bool updated = mSpectrogram->GetImageDataFloat(mSpectroImageData.Get());
+            bool updated =
+                mState->mSpectrogram->GetImageDataFloat(mSpectroImageData.Get());
             
             if (updated)
             {
@@ -206,7 +233,8 @@ SpectrogramDisplayScroll4::DoUpdateSpectrogram()
         {
                 memset(mSpectroImageData.Get(), 0, imageSize);
                 bool updated =
-                        mSpectrogram->GetImageDataFloat(mSpectroImageData.Get());
+                    mState->mSpectrogram->
+                    GetImageDataFloat(mSpectroImageData.Get());
                 if (updated)
                 {
                     // Spectrogram image
@@ -221,7 +249,7 @@ SpectrogramDisplayScroll4::DoUpdateSpectrogram()
     {
         // Colormap
         WDL_TypedBuf<unsigned int> &colorMapData = mTmpBuf0;
-        bool updated = mSpectrogram->GetColormapImageDataRGBA(&colorMapData);
+        bool updated = mState->mSpectrogram->GetColormapImageDataRGBA(&colorMapData);
         if (updated || (mNvgColormapImage == 0))
         {
             if ((colorMapData.GetSize() != mColormapImageData.GetSize()) ||
@@ -264,10 +292,10 @@ SpectrogramDisplayScroll4::PreDraw(NVGcontext *vg, int width, int height)
     
     BL_FLOAT offsetSec = GetOffsetSec();
     
-    if (std::fabs(offsetSec - mPrevOffsetSec) > BL_EPS)
+    if (std::fabs(offsetSec - mState->mPrevOffsetSec) > BL_EPS)
         mNeedRedraw = true;
     
-    mPrevOffsetSec = offsetSec;
+    mState->mPrevOffsetSec = offsetSec;
     
     BL_FLOAT offsetPixels = SecsToPixels(offsetSec, width);
     
@@ -295,14 +323,17 @@ SpectrogramDisplayScroll4::PreDraw(NVGcontext *vg, int width, int height)
     BL_FLOAT alpha = 1.0;
     NVGpaint imgPaint =
         nvgImagePattern(mVg,
-                        mSpectrogramBounds[0]*width + offsetPixels,
-                        mSpectrogramBounds[1]*height,
-                        (mSpectrogramBounds[2] - mSpectrogramBounds[0])*width,
-                        (mSpectrogramBounds[3] - mSpectrogramBounds[1])*height,
+                        mState->mSpectrogramBounds[0]*width + offsetPixels,
+                        mState->mSpectrogramBounds[1]*height,
+                        (mState->mSpectrogramBounds[2] -
+                         mState->mSpectrogramBounds[0])*width,
+                        (mState->mSpectrogramBounds[3] -
+                         mState->mSpectrogramBounds[1])*height,
                         0.0, mNvgSpectroImage, alpha);
     
-    BL_GUI_FLOAT b1f = mSpectrogramBounds[1]*height;
-    BL_GUI_FLOAT b3f = (mSpectrogramBounds[3] - mSpectrogramBounds[1])*height;
+    BL_GUI_FLOAT b1f = mState->mSpectrogramBounds[1]*height;
+    BL_GUI_FLOAT b3f = (mState->mSpectrogramBounds[3] -
+                        mState->mSpectrogramBounds[1])*height;
 
     // If ever we flip here (with GRAPH_CONTROL_FLIP_Y),
     // the spectrogram won't be displayed.
@@ -312,8 +343,8 @@ SpectrogramDisplayScroll4::PreDraw(NVGcontext *vg, int width, int height)
     {
         // Scale and translate the spectrogram image
         // in order to hide the borders (that are blinking black as data arrives)
-        BL_FLOAT leftDelayPix = SecsToPixels(mDelayTimeSecLeft, width);
-        BL_FLOAT rightDelayPix = SecsToPixels(mDelayTimeSecRight, width);
+        BL_FLOAT leftDelayPix = SecsToPixels(mState->mDelayTimeSecLeft, width);
+        BL_FLOAT rightDelayPix = SecsToPixels(mState->mDelayTimeSecRight, width);
         BL_FLOAT scale = ((BL_FLOAT)(width + leftDelayPix + rightDelayPix))/width;
         
         nvgTranslate(mVg, -leftDelayPix, 1.0);
@@ -321,9 +352,10 @@ SpectrogramDisplayScroll4::PreDraw(NVGcontext *vg, int width, int height)
         
         nvgBeginPath(mVg);
         nvgRect(mVg,
-                mSpectrogramBounds[0]*width + offsetPixels,
+                mState->mSpectrogramBounds[0]*width + offsetPixels,
                 b1f,
-                (mSpectrogramBounds[2] - mSpectrogramBounds[0])*width, b3f);
+                (mState->mSpectrogramBounds[2] -
+                 mState->mSpectrogramBounds[0])*width, b3f);
         
         nvgFillPaint(mVg, imgPaint);
         nvgFill(mVg);
@@ -332,8 +364,8 @@ SpectrogramDisplayScroll4::PreDraw(NVGcontext *vg, int width, int height)
     {
         // Scale and translate the spectrogram image
         // in order to hide the borders (that are blinking black as data arrives)
-        BL_FLOAT leftDelayPix = SecsToPixels(mDelayTimeSecLeft, height);
-        BL_FLOAT rightDelayPix = SecsToPixels(mDelayTimeSecRight, height);
+        BL_FLOAT leftDelayPix = SecsToPixels(mState->mDelayTimeSecLeft, height);
+        BL_FLOAT rightDelayPix = SecsToPixels(mState->mDelayTimeSecRight, height);
         BL_FLOAT scale = ((BL_FLOAT)(height + leftDelayPix + rightDelayPix))/height;
         
         nvgTranslate(mVg, width*0.5, height*0.5);
@@ -350,9 +382,10 @@ SpectrogramDisplayScroll4::PreDraw(NVGcontext *vg, int width, int height)
         
         nvgBeginPath(mVg);
         nvgRect(mVg,
-                mSpectrogramBounds[0]*width + offsetPixels,
+                mState->mSpectrogramBounds[0]*width + offsetPixels,
                 b1f,
-                (mSpectrogramBounds[2] - mSpectrogramBounds[0])*width, b3f);
+                (mState->mSpectrogramBounds[2] -
+                 mState->mSpectrogramBounds[0])*width, b3f);
         
         nvgFillPaint(mVg, imgPaint);
         nvgFill(mVg);
@@ -411,22 +444,22 @@ SpectrogramDisplayScroll4::SetSpectrogram(BLSpectrogram4 *spectro,
     // Just in case
     mSpectroImageData.Resize(0);
     
-    mSpectrogram = spectro;
+    mState->mSpectrogram = spectro;
     
     // Must "shift" the left of the spectrogram,
     // So we won't see the black column on the left
-    int numCols = mSpectrogram->GetNumCols();
+    int numCols = mState->mSpectrogram->GetNumCols();
     
     BL_FLOAT normLineSize = 0.0;
     
     if (numCols > 0)
         normLineSize = 1.0/((BL_FLOAT)numCols);
         
-    mSpectrogramBounds[0] = left;
-    mSpectrogramBounds[1] = top;
+    mState->mSpectrogramBounds[0] = left;
+    mState->mSpectrogramBounds[1] = top;
      // Avoids black column of 1 pixel on the right
-    mSpectrogramBounds[2] = right;
-    mSpectrogramBounds[3] = bottom;
+    mState->mSpectrogramBounds[2] = right;
+    mState->mSpectrogramBounds[3] = bottom;
     
     mShowSpectrogram = true;
     
@@ -434,10 +467,10 @@ SpectrogramDisplayScroll4::SetSpectrogram(BLSpectrogram4 *spectro,
     UpdateSpectrogram(true);
     
     // Check that it will be updated well when displaying
-    mSpectrogram->TouchData();
-    mSpectrogram->TouchColorMap();
+    mState->mSpectrogram->TouchData();
+    mState->mSpectrogram->TouchColorMap();
     
-    RecomputeParams();
+    RecomputeParams(true);
 
     mNeedRedraw = true;
 }
@@ -447,11 +480,11 @@ SpectrogramDisplayScroll4::SetFftParams(int bufferSize,
                                         int overlapping,
                                         BL_FLOAT sampleRate)
 {
-    mBufferSize = bufferSize; 
-    mOverlapping = overlapping;
-    mSampleRate = sampleRate;
+    mState->mBufferSize = bufferSize; 
+    mState->mOverlapping = overlapping;
+    mState->mSampleRate = sampleRate;
     
-    RecomputeParams();
+    RecomputeParams(true);
 
     mNeedRedraw = true;
 }
@@ -471,9 +504,9 @@ void
 SpectrogramDisplayScroll4::AddSpectrogramLineLF(const WDL_TypedBuf<BL_FLOAT> &magns,
                                                 const WDL_TypedBuf<BL_FLOAT> &phases)
 {    
-    mSpectrogram->AddLine(magns, phases);
+    mState->mSpectrogram->AddLine(magns, phases);
     
-    mSpectroTimeSec += mSpectroLineDurationSec;
+    mState->mSpectroTimeSec += mState->mSpectroLineDurationSec;
 
     mNeedRedraw = true;
 }
@@ -522,7 +555,7 @@ SpectrogramDisplayScroll4::UpdateColormap(bool flag)
 void
 SpectrogramDisplayScroll4::TransportPlayingChanged()
 {
-    RecomputeParams();
+    RecomputeParams(true);
 
     mNeedRedraw = true;
 }
@@ -531,15 +564,15 @@ SpectrogramDisplayScroll4::TransportPlayingChanged()
 void
 SpectrogramDisplayScroll4::SetSpeedMod(int speedMod)
 {
-    mSpeedMod = speedMod;
+    mState->mSpeedMod = speedMod;
 
 #if 1
-    if ((mTransport != NULL) && (mTransport->IsTransportPlaying()))
+    if ((mState->mTransport != NULL) && (mState->mTransport->IsTransportPlaying()))
 #endif
     {
         Reset();
     
-        RecomputeParams();
+        RecomputeParams(true);
     }
 
     mNeedRedraw = true;
@@ -548,18 +581,18 @@ SpectrogramDisplayScroll4::SetSpeedMod(int speedMod)
 int
 SpectrogramDisplayScroll4::GetSpeedMod()
 {
-    return mSpeedMod;
+    return mState->mSpeedMod;
 }
 
 void
 SpectrogramDisplayScroll4::GetTimeTransform(BL_FLOAT *timeOffsetSec,
                                             BL_FLOAT *timeScale)
 {
-    *timeOffsetSec = -mDelayTimeSecLeft;
+    *timeOffsetSec = -mState->mDelayTimeSecLeft;
 
-    *timeScale = mSpectroTotalDurationSec/(mSpectroTotalDurationSec +
-                                           mDelayTimeSecLeft +
-                                           mDelayTimeSecRight);
+    *timeScale = mState->mSpectroTotalDurationSec/(mState->mSpectroTotalDurationSec +
+                                                   mState->mDelayTimeSecLeft +
+                                                   mState->mDelayTimeSecRight);
 }
 
 void
@@ -568,9 +601,10 @@ SpectrogramDisplayScroll4::GetTimeBoundsNorm(BL_FLOAT *tn0, BL_FLOAT *tn1)
     // Also take offset into account => more accurate!
     BL_FLOAT offsetSec = GetOffsetSec();
 
-    *tn0 = (mDelayTimeSecLeft - offsetSec)/mSpectroTotalDurationSec;
-    *tn1 = (mSpectroTotalDurationSec - mDelayTimeSecRight - offsetSec)/
-        mSpectroTotalDurationSec;
+    *tn0 = (mState->mDelayTimeSecLeft - offsetSec)/mState->mSpectroTotalDurationSec;
+    *tn1 = (mState->mSpectroTotalDurationSec -
+            mState->mDelayTimeSecRight - offsetSec)/
+        mState->mSpectroTotalDurationSec;
 }
 
 void
@@ -592,37 +626,39 @@ SpectrogramDisplayScroll4::SetBypassed(bool flag)
 }
 
 void
-SpectrogramDisplayScroll4::RecomputeParams()
+SpectrogramDisplayScroll4::RecomputeParams(bool resetAll)
 {
-    if (mSpectrogram == NULL)
+    if (mState->mSpectrogram == NULL)
         return;
     
-    int spectroNumCols = mSpectrogram->GetNumCols();
+    int spectroNumCols = mState->mSpectrogram->GetNumCols();
     
-    mSpectroLineDurationSec =
-        mSpeedMod*((double)mBufferSize/mOverlapping)/mSampleRate;
+    mState->mSpectroLineDurationSec =
+        mState->mSpeedMod*((double)mState->mBufferSize/mState->mOverlapping)/
+        mState->mSampleRate;
     
-    mSpectroTotalDurationSec = spectroNumCols*mSpectroLineDurationSec;
+    mState->mSpectroTotalDurationSec = spectroNumCols*mState->mSpectroLineDurationSec;
 
 #if !DEBUG_DISABLE_SMOOTH
-    mDelayTimeSecRight = mSpectroTotalDurationSec*mDelayPercent*0.01;
+    mState->mDelayTimeSecRight =
+        mState->mSpectroTotalDurationSec*mState->mDelayPercent*0.01;
     // 1 single row => sometimes fails... (in debug only?)
     //mDelayTimeSecLeft = mSpectroLineDurationSec;
     // Bigger offset
-    mDelayTimeSecLeft = mDelayTimeSecRight;
+    mState->mDelayTimeSecLeft = mState->mDelayTimeSecRight;
 
     // HACK! So we are sure to avoid black line on the right
     // (and not to have too much delay when speed is slow)
-    mDelayTimeSecRight *= 4.0/mSpeedMod;
+    mState->mDelayTimeSecRight *= 4.0/mState->mSpeedMod;
 #endif
     
 #if 1
     // Ensure that the delay corresponds to enough spectro lines
     // (otherwise we would see black lines)
     BL_FLOAT delayNumColsL =
-        (mDelayTimeSecLeft/mSpectroTotalDurationSec)*spectroNumCols;
+        (mState->mDelayTimeSecLeft/mState->mSpectroTotalDurationSec)*spectroNumCols;
     BL_FLOAT delayNumColsR =
-        (mDelayTimeSecRight/mSpectroTotalDurationSec)*spectroNumCols;
+        (mState->mDelayTimeSecRight/mState->mSpectroTotalDurationSec)*spectroNumCols;
 
     const BL_FLOAT minNumLinesL = 2.0;
     const BL_FLOAT minNumLinesR = 2.0;
@@ -633,27 +669,30 @@ SpectrogramDisplayScroll4::RecomputeParams()
     if (delayNumColsL < minNumLinesL)
     {
         if (delayNumColsL > 0.0)
-            mDelayTimeSecLeft *= minNumLinesL/delayNumColsL;
+            mState->mDelayTimeSecLeft *= minNumLinesL/delayNumColsL;
     }
 #endif
     
     if (delayNumColsR < minNumLinesR)
     {
         if (delayNumColsR > 0.0)
-            mDelayTimeSecRight *= minNumLinesR/delayNumColsR;
+            mState->mDelayTimeSecRight *= minNumLinesR/delayNumColsR;
     }
 #endif
-    
-    mSpectroTimeSec = 0.0;
-    mPrevOffsetSec = 0.0;
+
+    if (resetAll)
+    {
+        mState->mSpectroTimeSec = 0.0;
+        mState->mPrevOffsetSec = 0.0;
+    }
 }
 
 BL_FLOAT
 SpectrogramDisplayScroll4::SecsToPixels(BL_FLOAT secs, BL_FLOAT width)
 {
     // NOTE: this coeff improves a small jittering!
-    BL_FLOAT coeff = 1.0/(1.0 - mDelayPercent*0.01);
-    BL_FLOAT pix = (secs/mSpectroTotalDurationSec)*width*coeff;
+    BL_FLOAT coeff = 1.0/(1.0 - mState->mDelayPercent*0.01);
+    BL_FLOAT pix = (secs/mState->mSpectroTotalDurationSec)*width*coeff;
     
     return pix;
 }

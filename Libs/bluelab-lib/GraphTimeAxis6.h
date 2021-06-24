@@ -52,6 +52,8 @@ public:
     void Reset(int bufferSize, BL_FLOAT timeDuration,
                int maxNumLabels, BL_FLOAT timeOffsetSec = 0.0);
 
+    void SetGraph(GraphControl12 *graph);
+    
     // Update directly from DAW transport
     void Update(BL_FLOAT currentTime);
 

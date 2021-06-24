@@ -42,6 +42,35 @@ class SpectrogramDisplayScroll4 : public GraphCustomDrawer,
                                   public TransportListener
 {
 public:
+    struct SpectrogramDisplayScrollState
+    {
+        BL_FLOAT mDelayPercent;
+        BL_FLOAT mDelayTimeSecRight; // From delay percent
+        BL_FLOAT mDelayTimeSecLeft;  // 1 single col, or more...
+
+        double mSpectroLineDurationSec;
+        double mSpectroTotalDurationSec;
+        
+        double mSpectroTimeSec;
+        
+        BL_FLOAT mPrevOffsetSec;
+
+        // Spectrogram
+        BLSpectrogram4 *mSpectrogram;
+        BL_FLOAT mSpectrogramBounds[4];
+
+        // Variable speed
+        int mSpeedMod;
+        
+        // Fft params
+        int mBufferSize;
+        int mOverlapping;
+        BL_FLOAT mSampleRate;
+
+        //
+        BLTransport *mTransport;
+    };
+    
     enum ViewOrientation
     {
         HORIZONTAL = 0,
@@ -50,10 +79,14 @@ public:
     
     // delayPercent: delay that we bufferize, to fix when the data is a bit late
     // It is a percent of the spectrogram full width
-    SpectrogramDisplayScroll4(Plugin *plug, BL_FLOAT delayPercent = 3.125/*25.0*/);
+    SpectrogramDisplayScroll4(Plugin *plug,
+                              SpectrogramDisplayScrollState *spectroState = NULL,
+                              BL_FLOAT delayPercent = (BL_FLOAT)3.125/*25.0*/);
     
     virtual ~SpectrogramDisplayScroll4();
 
+    SpectrogramDisplayScrollState *GetState();
+    
     void SetTransport(BLTransport *transport);
     
     void Reset();
@@ -111,7 +144,7 @@ public:
 protected:
     BL_FLOAT GetOffsetSec();
 
-    void RecomputeParams();
+    void RecomputeParams(bool resetAll);
 
     BL_FLOAT SecsToPixels(BL_FLOAT secs, BL_FLOAT width);
     
@@ -120,10 +153,6 @@ protected:
     
     // NanoVG
     NVGcontext *mVg;
-    
-    // Spectrogram
-    BLSpectrogram4 *mSpectrogram;
-    BL_FLOAT mSpectrogramBounds[4];
     
     int mNvgSpectroImage;
     WDL_TypedBuf<unsigned char> mSpectroImageData;
@@ -137,37 +166,17 @@ protected:
     // Colormap
     int mNvgColormapImage;
     WDL_TypedBuf<unsigned int> mColormapImageData;
-    
-    int mBufferSize;
-    int mOverlapping;
-    BL_FLOAT mSampleRate;
 
-    // Variable speed
-    int mSpeedMod;
-    
     // Get reference to plug, to know if the plug is currently playing
     Plugin *mPlug;
-    
-    BLTransport *mTransport;
-    
-    //
-    BL_FLOAT mDelayPercent;
-    BL_FLOAT mDelayTimeSecRight; // From delay percent
-    BL_FLOAT mDelayTimeSecLeft;  // 1 single col, or more...
-
-    double mSpectroLineDurationSec;
-    double mSpectroTotalDurationSec;
-
-    //
-    double mSpectroTimeSec;    
-
-    BL_FLOAT mPrevOffsetSec;
 
     ViewOrientation mViewOrientation;
 
     bool mIsBypassed;
 
     bool mNeedRedraw;
+
+    SpectrogramDisplayScrollState *mState;
     
     // Lock free
     struct SpectrogramLine
