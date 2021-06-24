@@ -139,6 +139,15 @@ IRadioButtonsControlCustom::OnMouseOver(float x, float y, const IMouseMod &mod)
 void
 IRadioButtonsControlCustom::OnMouseOut()
 {
+    bool prevMouseIn = false;
+    for (int i = 0; i < mMouseOver.size(); i++)
+    {
+        if (mMouseOver[i])
+            prevMouseIn = true;
+    }
+    if (!prevMouseIn)
+        return;
+    
     for (int i = 0; i < mMouseOver.size(); i++)
         mMouseOver[i] = false;
 
