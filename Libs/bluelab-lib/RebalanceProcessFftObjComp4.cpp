@@ -103,7 +103,8 @@ RebalanceProcessFftObjComp4::Reset(int bufferSize, int oversampling,
     
     ResetSamplesHistory();
     ResetMixColsComp();
-
+    ResetRawRawHistory();
+    
     int numCols = ComputeSpectroNumCols();
     
     mSpectrogram->Reset(sampleRate,
@@ -119,7 +120,8 @@ RebalanceProcessFftObjComp4::Reset()
     
     ResetSamplesHistory();
     ResetMixColsComp();
-
+    ResetRawRawHistory();
+ 
     int numCols = ComputeSpectroNumCols();
     
     mSpectrogram->Reset(mSampleRate,
@@ -406,6 +408,13 @@ RebalanceProcessFftObjComp4::ResetMixColsComp()
         //mMixColsComp.push_back(col);
         mMixColsComp[i] = col;
     }
+}
+
+void
+RebalanceProcessFftObjComp4::ResetRawRawHistory()
+{
+    mRawSignalHistory.unfreeze();
+    mRawSignalHistory.clear();
 }
 
 void

@@ -81,7 +81,8 @@ protected:
     
     void ResetSamplesHistory();
     void ResetMixColsComp();
-
+    void ResetRawRawHistory();
+    
     void ApplyMask(const WDL_TypedBuf<WDL_FFT_COMPLEX> &inData,
                    WDL_TypedBuf<WDL_FFT_COMPLEX> *outData,
                    const WDL_TypedBuf<BL_FLOAT> &masks);

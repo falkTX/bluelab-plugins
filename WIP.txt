@@ -50,6 +50,7 @@ BL-StereoWidth	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP
 BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP
 
 ===
+- TODO: test Ghost, plugin version (for scroll problems)
 - BUG: StereoWidth clicks
 
 - InfrasonicViewer: "2.7Hz", or "2.7 Hz" ?
