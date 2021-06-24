@@ -50,8 +50,8 @@ BL-StereoWidth	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP
 BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP
 
 ===
-- BUG: InfrasonicViewer: resize gui without playing => spectro meter gets a wrong shift
 - BUG: Panogram: same (time axis, resize gui)
+- TODO: Rebalance + time axis + spectro state 
 - BUG: StereoWidth clicks
 
 - InfrasonicViewer: "2.7Hz", or "2.7 Hz" ?
