@@ -50,7 +50,6 @@ BL-StereoWidth	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP
 BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP
 
 ===
-- BUG: Panogram: same (time axis, resize gui)
 - TODO: Rebalance + time axis + spectro state 
 - BUG: StereoWidth clicks
 
