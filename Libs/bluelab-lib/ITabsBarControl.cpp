@@ -466,6 +466,25 @@ ITabsBarControl::DrawTabNames(IGraphics &g)
 void
 ITabsBarControl::DisableAllRollover()
 {
+    bool isRollover = false;
+    for (int i = 0; i < mTabs.size(); i++)
+    {
+        Tab &t = mTabs[i];
+        if (t.IsTabRollover())
+        {
+            isRollover = true;
+            break;
+        }
+
+        if (t.IsCrossRollover())
+        {
+            isRollover = true;
+            break;
+        }
+    }
+    if (!isRollover)
+        return;
+    
     for (int i = 0; i < mTabs.size(); i++)
     {
         Tab &t = mTabs[i];
