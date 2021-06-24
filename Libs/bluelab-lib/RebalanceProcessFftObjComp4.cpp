@@ -554,7 +554,6 @@ RebalanceProcessFftObjComp4::RecomputeSpectrogram(bool recomputeMasks)
         WDL_TypedBuf<WDL_FFT_COMPLEX> &signal = mTmpBuf13;
         signal = mSignalHistory[i];
 
-        //WDL_TypedBuf<BL_FLOAT> masks[NUM_STEM_SOURCES];
         WDL_TypedBuf<BL_FLOAT> *masks = mTmpBuf18;
 
         // Do not recompute masks, re-use current ones
@@ -566,9 +565,6 @@ RebalanceProcessFftObjComp4::RecomputeSpectrogram(bool recomputeMasks)
         WDL_TypedBuf<BL_FLOAT> &phases = mTmpBuf16;
         ComputeResult(signal, masks, &result, &magns, &phases);
 
-        //AddSpectrogramLine(magns, phases);
-        //magnsVec.push_back(magns);
-        //phasesVec.push_back(phases);
         magnsVec[i] = magns;
         phasesVec[i] = phases;
     }
