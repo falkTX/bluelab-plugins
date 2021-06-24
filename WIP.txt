@@ -50,8 +50,6 @@ BL-StereoWidth	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP
 BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP
 
 ===
-
-- PROBLEM: EQHack, guess => curve jitters
 - BUG: GhostViewer: after gui resize, spectro meter gives wrong values
 - BUG: Chroma, GhostViewer: after gui resize, the time axis labels are shifted (check scroll speed)
 - BUG: InfrasonicViewer: resize gui without playing => spectro meter gets a wrong shift
