@@ -35,6 +35,8 @@
 // NOTE: can gain 10% CPU by setting to 1024
 // (but the display will be a bit too quick)
 #define NUM_POINTS 4096
+// Keep a sliding point set, for animation fluidity independently of block size
+#define NUM_POINTS_TO_CONSUME 512
 
 // Bounds
 //
@@ -95,6 +97,10 @@
 #define LISSAJOUS_SCALE 0.8
 
 #define OPTIM_QUAD_SAME_COLOR 1
+
+// Avoid re-sending many points for small buffer size
+// => simply wait that we have enough points
+#define OPTIM_SMALL_BLOCK_SIZE 1
 
 BLVectorscope::BLVectorscope(BLVectorscopePlug *plug,
                              BL_FLOAT sampleRate)
@@ -451,7 +457,8 @@ BLVectorscope::AddSamples(const vector<WDL_TypedBuf<BL_FLOAT> > &samples)
 {
     if (samples.size() != 2)
         return;
-    
+
+#if !OPTIM_SMALL_BLOCK_SIZE
     for (int i = 0; i < 2; i++)
     {
         mSamples[i].Add(samples[i].Get(), samples[i].GetSize());
@@ -463,6 +470,19 @@ BLVectorscope::AddSamples(const vector<WDL_TypedBuf<BL_FLOAT> > &samples)
             BLUtils::ConsumeLeft(&mSamples[i], numToConsume);
         }
     }
+#else
+    bool enoughPoints = true;
+    for (int i = 0; i < 2; i++)
+    {
+        mSamples[i].Add(samples[i].Get(), samples[i].GetSize());
+        if (mSamples[i].Available() < NUM_POINTS + NUM_POINTS_TO_CONSUME)
+            enoughPoints = false;
+    }
+
+    if (!enoughPoints)
+        // Not enough points, do nothing and wait next times...
+        return;
+#endif
     
     if (mMode == POLAR_SAMPLE)
     {
@@ -563,6 +583,19 @@ BLVectorscope::AddSamples(const vector<WDL_TypedBuf<BL_FLOAT> > &samples)
             BLUtils::MultValues(&polarSamples[1], (BL_FLOAT)SCALE_POLAR_Y);
             
             mCurves[SOURCE_MODE_ID]->SetValuesPoint(polarSamples[0], polarSamples[1]);
+        }
+    }
+
+    // Here, we are sure we had enough points
+    // We used them, now clear
+    for (int i = 0; i < 2; i++)
+    {
+        int numToConsume = NUM_POINTS_TO_CONSUME; //NUM_POINTS;
+        if (mSamples[i].Available() < numToConsume)
+            numToConsume = mSamples[i].Available();
+        if (numToConsume > 0)
+        {
+            BLUtils::ConsumeLeft(&mSamples[i], numToConsume);
         }
     }
 }
