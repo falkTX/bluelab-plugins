@@ -482,6 +482,19 @@ BLVectorscope::AddSamples(const vector<WDL_TypedBuf<BL_FLOAT> > &samples)
     if (!enoughPoints)
         // Not enough points, do nothing and wait next times...
         return;
+
+    // Check for too many points (would make crash with big block size
+    for (int i = 0; i < 2; i++)
+    {
+        if (mSamples[i].Available() > NUM_POINTS)
+        {
+            int numToConsume = mSamples[i].Available() - NUM_POINTS;
+            if (numToConsume > 0)
+            {
+                BLUtils::ConsumeLeft(&mSamples[i], numToConsume);
+            }
+        }
+    }
 #endif
     
     if (mMode == POLAR_SAMPLE)
