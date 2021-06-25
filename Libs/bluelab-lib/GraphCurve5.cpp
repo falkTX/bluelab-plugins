@@ -19,6 +19,14 @@
 
 #define CURVE_PIXEL_DENSITY 2.0
 
+// Avoid having a big stack of points or curves: we only need the last one!
+//
+// STEPS: test with StereoWidth, small buffer size e.g 32
+// => the perfs droped down a lot
+//
+// Result: we now have 0 or 1 command to apply, before we got ~100
+#define OPTIM_LOCK_FREE 1
+
 GraphCurve5::GraphCurve5(int numValues)
 {
     mGraph = NULL;
@@ -534,7 +542,16 @@ GraphCurve5::SetValuesPoint(const WDL_TypedBuf<BL_GUI_FLOAT> &xValues,
     cmd.mXValues = xValues;
     cmd.mYValues = yValues;
 
+#if !OPTIM_LOCK_FREE
     mLockFreeQueues[0].push(cmd);
+#else
+    if (mLockFreeQueues[0].empty())
+        mLockFreeQueues[0].push(cmd);
+    else
+    {
+        mLockFreeQueues[0].set(0, cmd);
+    }
+#endif
 }
 
 void
@@ -591,7 +608,14 @@ GraphCurve5::SetValuesPointEx(const WDL_TypedBuf<BL_GUI_FLOAT> &xValues,
     cmd.mScaleX = scaleX;
     cmd.mCenterFlag = centerFlag;
 
+#if !OPTIM_LOCK_FREE
     mLockFreeQueues[0].push(cmd);
+#else
+    if (mLockFreeQueues[0].empty())
+        mLockFreeQueues[0].push(cmd);
+    else
+        mLockFreeQueues[0].set(0, cmd);
+#endif
 }
 
 void
@@ -923,7 +947,14 @@ GraphCurve5::SetValues5(const WDL_TypedBuf<BL_GUI_FLOAT> &values,
     cmd.mApplyXScale = applyXScale;
     cmd.mApplyYScale = applyYScale;
 
+#if !OPTIM_LOCK_FREE
     mLockFreeQueues[0].push(cmd);
+#else
+    if (mLockFreeQueues[0].empty())
+        mLockFreeQueues[0].push(cmd);
+    else
+        mLockFreeQueues[0].set(0, cmd);
+#endif
 }
 
 // Avoid having undefined values
@@ -1443,21 +1474,37 @@ GraphCurve5::PushData()
     // which is called in GraphControl12::Draw()
     if (!mLockFreeQueues[0].empty())
         mNeedRedraw = true;
-    
+
+#if !OPTIM_LOCK_FREE
     mLockFreeQueues[1].push(mLockFreeQueues[0]);
+#else
+    if (mLockFreeQueues[1].empty())
+        mLockFreeQueues[1].push(mLockFreeQueues[0]);
+    else
+        mLockFreeQueues[1].set(0, mLockFreeQueues[0]);
+#endif
+    
     mLockFreeQueues[0].clear();
 }
 
 void
 GraphCurve5::PullData()
 {
+#if !OPTIM_LOCK_FREE
     mLockFreeQueues[2].push(mLockFreeQueues[1]);
+#else
+    if (mLockFreeQueues[2].empty())
+        mLockFreeQueues[2].push(mLockFreeQueues[1]);
+    else
+        mLockFreeQueues[1].set(0, mLockFreeQueues[1]);
+#endif
+    
     mLockFreeQueues[1].clear();
 }
 
 void
 GraphCurve5::ApplyData()
-{
+{    
     for (int i = 0; i < mLockFreeQueues[2].size(); i++)
     {
         Command &cmd = mTmpBuf10;

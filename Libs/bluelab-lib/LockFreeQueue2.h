@@ -25,9 +25,13 @@ class LockFreeQueue2
     
     void get(long index, T &value)
     { if (index < mSize) value = mQueue[index]; }
-
+    void set(long index, const T &value)
+    { if (index < mSize) mQueue[index] = value; }
+    
     void push(const LockFreeQueue2<T> &q)
     { for (int i = 0; i < q.mSize; i++) push(q.mQueue[i]); }
+    void set(long index, const LockFreeQueue2<T> &q)
+    { for (int i = 0; i < q.mSize; i++) set(index, q.mQueue[i]); }
     
  protected:
     vector<T> mQueue;
