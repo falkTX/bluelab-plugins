@@ -36,7 +36,9 @@
 #define COMP_MAX_RELEASE_TIME 2000.0
 
 // Adaptations for width boost
-#define FIX_WIDTH_BOOST 1
+//
+// NOTE: makes clicks when set to 1?
+#define FIX_WIDTH_BOOST 0 //1
 
 
 BLWidthAdjuster::BLWidthAdjuster(BL_FLOAT sampleRate)
@@ -202,9 +204,10 @@ BLWidthAdjuster::ApplyCompWidth(BL_FLOAT width, BL_FLOAT compGain,
     // Compress more at the end.
     BL_FLOAT c = 0.92;
     BL_FLOAT gainW = std::tan(compGain*c) - 0.1728954;
+#else
+    BL_FLOAT gainW = compGain;
 #endif
     
-    BL_FLOAT gainW = compGain;
     
     if (gainW < 0.0)
         gainW = 0.0;
