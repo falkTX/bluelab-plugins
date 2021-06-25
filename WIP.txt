@@ -51,9 +51,6 @@ BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP
 
 ===
 
-- TEST: StereoWidth: must double-check for clicks (after width adjuster fix)
-
-
 - InfrasonicViewer: "2.7Hz", or "2.7 Hz" ?
 - PROBLEM: gui resize buttons rollover color is not good
 (use dark blue, a bit more clear than marine blue)
