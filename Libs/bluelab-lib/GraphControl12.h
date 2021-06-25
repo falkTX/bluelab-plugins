@@ -191,7 +191,7 @@ public:
     
     // Custom control
     void AddCustomControl(GraphCustomControl *customControl);
-    
+
     void OnMouseDown(float x, float y, const IMouseMod &mod) override;
     void OnMouseUp(float x, float y, const IMouseMod &mod) override;
     void OnMouseDrag(float x, float y, float dX, float dY,
@@ -246,6 +246,10 @@ public:
     // Lock free
     void PushAllData();
     void PullAllData();
+
+    // Add controls over the graph, so they won't blink when the graph is redisplayed
+    void AddControlOverGraph(IControl *control);
+    void ClearControlsOverGraph();
     
 protected:
     void DoDraw(IGraphics &graphics);
@@ -333,6 +337,8 @@ protected:
                               const GraphAxis2 &axis,
                               BL_FLOAT *x, BL_FLOAT *y,
                               int *labelHAlign = NULL);
+
+    void DrawControlsOverGraph(IGraphics &graphics);
     
     //
     
@@ -424,6 +430,9 @@ private:
 
     bool mUseLegacyLock;
     WDL_Mutex mMutex;
+
+    // IControls over graph
+    vector<IControl *> mControlsOverGraph;
 };
 
 #endif // IGRAPHICS_NANOVG

@@ -230,7 +230,7 @@ GraphControl12::~GraphControl12()
         graphics->DeleteFBO(mFBO);
     }
 #endif
-
+    
     if (mUseLegacyLock)
         mMutex.Leave();
 }
@@ -2997,6 +2997,46 @@ GraphControl12::PullAllData()
 }
 
 void
+GraphControl12::AddControlOverGraph(IControl *control)
+{
+    //if (mUseLegacyLock)
+    mMutex.Enter();
+    
+    mControlsOverGraph.push_back(control);
+    
+    //if (mUseLegacyLock)
+    mMutex.Leave();
+}
+
+void
+GraphControl12::ClearControlsOverGraph()
+{
+    //if (mUseLegacyLock)
+    mMutex.Enter();
+    
+    mControlsOverGraph.clear();
+
+    //if (mUseLegacyLock)
+    mMutex.Leave();
+}
+
+void
+GraphControl12::DrawControlsOverGraph(IGraphics &graphics)
+{
+    //if (mUseLegacyLock)
+    mMutex.Enter();
+
+    for (int i = 0; i < mControlsOverGraph.size(); i++)
+    {
+        IControl *control = mControlsOverGraph[i];
+        control->Draw(graphics);
+    }
+
+    //if (mUseLegacyLock)
+    mMutex.Leave();
+}
+
+void
 GraphControl12::DoDraw(IGraphics &graphics)
 {
 #if DBG_DISABLE_DRAW
@@ -3070,7 +3110,9 @@ GraphControl12::DoDraw(IGraphics &graphics)
     DrawSeparatorX1();
    
     DrawOverlayImage(graphics);
-    
+
+    DrawControlsOverGraph(graphics);
+        
     nvgRestore(mVg);
 }
 

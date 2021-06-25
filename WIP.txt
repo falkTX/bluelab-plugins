@@ -50,7 +50,7 @@ BL-StereoWidth	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP
 BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP
 
 ===
-- BUG: StereoWidth: rollover number buttons are blinking
+
 - TEST: StereoWidth: must double-check for clicks (after width adjuster fix)
 
 
