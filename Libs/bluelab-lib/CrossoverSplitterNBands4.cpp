@@ -106,8 +106,8 @@ CrossoverSplitterNBands4::~CrossoverSplitterNBands4()
     }
     
 #if OPTIM_AVOID_NEW
-    delete mTmpResultCross;
-    delete mTmpResultCross2;
+    delete []mTmpResultCross;
+    delete []mTmpResultCross2;
 #endif
 }
 
@@ -205,7 +205,7 @@ CrossoverSplitterNBands4::Split(BL_FLOAT sample, BL_FLOAT result[])
     }
     
 #if !OPTIM_AVOID_NEW
-    delete resultCross;
+    delete []resultCross;
 #endif
     
 #if 0 // TEST
@@ -251,7 +251,7 @@ CrossoverSplitterNBands4::Split(const WDL_TypedBuf<BL_FLOAT> &samples,
     }
 
 #if !OPTIM_AVOID_NEW
-    delete r;
+    delete []r;
 #endif
 }
 #endif
@@ -316,7 +316,7 @@ CrossoverSplitterNBands4::CreateFilters(BL_FLOAT sampleRate)
         if (i == 0)
         {
             FILTER_2X_CLASS *filter =
-                    new FILTER_2X_CLASS(FILTER_TYPE_LOWPASS,
+                new FILTER_2X_CLASS(FILTER_TYPE_LOWPASS,
                                     mSampleRate,
                                     mCutoffFreqs[i]);
             mFilterChains[i].push_back(filter);
@@ -324,7 +324,7 @@ CrossoverSplitterNBands4::CreateFilters(BL_FLOAT sampleRate)
         else if (i == mNumBands - 1)
         {
             FILTER_2X_CLASS *filter =
-                    new FILTER_2X_CLASS(FILTER_TYPE_HIPASS,
+                new FILTER_2X_CLASS(FILTER_TYPE_HIPASS,
                                     mSampleRate,
                                     mCutoffFreqs[i - 1]);
             mFilterChains[i].push_back(filter);
@@ -332,15 +332,15 @@ CrossoverSplitterNBands4::CreateFilters(BL_FLOAT sampleRate)
         else
         {
             FILTER_2X_CLASS *filter =
-                    new FILTER_2X_CLASS(FILTER_TYPE_HIPASS,
+                new FILTER_2X_CLASS(FILTER_TYPE_HIPASS,
                                     mSampleRate,
                                     mCutoffFreqs[i - 1]);
             mFilterChains[i].push_back(filter);
             
             FILTER_2X_CLASS *filter2 =
-                    new FILTER_2X_CLASS(FILTER_TYPE_LOWPASS,
-                                   mSampleRate,
-                                   mCutoffFreqs[i]);
+                new FILTER_2X_CLASS(FILTER_TYPE_LOWPASS,
+                                    mSampleRate,
+                                    mCutoffFreqs[i]);
             mFilterChains[i].push_back(filter2);
         }
     }
@@ -358,7 +358,7 @@ CrossoverSplitterNBands4::CreateFilters(BL_FLOAT sampleRate)
         {
             TRANSPARENT_FILTER_CLASS *filter =
                 new TRANSPARENT_FILTER_CLASS(mSampleRate,
-                                           mCutoffFreqs[i + j + 1]);
+                                             mCutoffFreqs[i + j + 1]);
             
             mFilterChains[i].push_back(filter);
         }
@@ -376,9 +376,9 @@ CrossoverSplitterNBands4::CreateFilters(BL_FLOAT sampleRate)
         for (int j = 0; j < numAllPassFilters; j++)
         {
             FilterRBJNX *filter =
-            new FILTER_2X_CLASS(FILTER_TYPE_ALLPASS,
-                            mSampleRate,
-                            mCutoffFreqs[i + j + 1]);
+                new FILTER_2X_CLASS(FILTER_TYPE_ALLPASS,
+                                    mSampleRate,
+                                    mCutoffFreqs[i + j + 1]);
             
             mFilterChains[i].push_back(filter);
         }
