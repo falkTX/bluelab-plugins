@@ -390,10 +390,12 @@ GUIHelper12::GUIHelper12(Style style)
         //mMenuTextColor = IColor(255, 248, 248, 248);
         mMenuTextColor = IColor(255, 147, 147, 147);
         mMenuTextFGColor = IColor(255, 147, 147, 147);
-        mMenuTextBGColor = IColor(0, 0, 0, 0);
+        mMenuTextBGColor = IColor(0, 0, 0, 0); // Black
+        //mMenuTextBGColor = IColor(255, 25, 25, 59); // Dark blue
         //mMenuTextEntryFGColor = IColor(255, 248, 248, 248);
         mMenuTextEntryFGColor = IColor(255, 147, 147, 147);
-        mMenuTextEntryBGColor = IColor(0, 0, 0, 0);
+        //mMenuTextEntryBGColor = IColor(0, 0, 0, 0); // Black
+        mMenuTextEntryBGColor = IColor(255, 25, 25, 59); // Dark blue
         mMenuTextFont = "OpenSans-ExtraBold";
         mMenuCaptionTextFont = "Roboto-Bold";
         mMenuCellBGColor = IColor(255, 106, 106, 255); 
