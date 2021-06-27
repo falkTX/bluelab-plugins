@@ -35,7 +35,8 @@ class ITabsBarControl : public IControl
     
     void NewTab(const char *name);
     void SelectTab(int tabNum);
-
+    void CloseTab(int tabNum);
+    
     // Colors
     //
     

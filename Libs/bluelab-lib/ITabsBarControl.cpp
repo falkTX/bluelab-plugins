@@ -136,26 +136,11 @@ ITabsBarControl::OnMouseDown(float x, float y, const IMouseMod& mod)
 {
     // Chck if we clicked a cross, then in this case, close the corresponding tab
     int tabToClose = MouseOverCrossIdx(x, y);
-    
+
     if (tabToClose >= 0)
         // Clicked on a cross
     {
-        if (mListener != NULL)
-            mListener->OnTabClose(tabToClose);
-
-        if (mTabs[tabToClose].IsEnabled())
-            // Transmit enabled state before closing
-        {
-            // On the right by default
-            if (tabToClose + 1 <= mTabs.size() - 1)
-                mTabs[tabToClose + 1].SetEnabled(true);
-            // Then try on the left otherwise
-            else if (tabToClose - 1 >= 0)
-                mTabs[tabToClose - 1].SetEnabled(true);
-        }
-        
-        mTabs.erase(mTabs.begin() + tabToClose);
-        mDirty = true;
+        CloseTab(tabToClose);
 
         // Clicked on a cross done
         return;
@@ -252,6 +237,30 @@ ITabsBarControl::SelectTab(int tabNum)
 
     mTabs[tabNum].SetEnabled(true);
 
+    mDirty = true;
+}
+
+void
+ITabsBarControl::CloseTab(int tabNum)
+{
+    if (tabNum >= mTabs.size())
+        return;
+    
+    if (mListener != NULL)
+        mListener->OnTabClose(tabNum);
+    
+    if (mTabs[tabNum].IsEnabled())
+        // Transmit enabled state before closing
+    {
+        // On the right by default
+        if (tabNum + 1 <= mTabs.size() - 1)
+            mTabs[tabNum + 1].SetEnabled(true);
+        // Then try on the left otherwise
+        else if (tabNum - 1 >= 0)
+            mTabs[tabNum - 1].SetEnabled(true);
+    }
+    
+    mTabs.erase(mTabs.begin() + tabNum);
     mDirty = true;
 }
 
