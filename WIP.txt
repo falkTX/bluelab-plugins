@@ -51,13 +51,19 @@ BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP
 
 ===
 
-- InfrasonicViewer: "2.7Hz", or "2.7 Hz" ?
+- TODO: test a plugin with SmoothCurveDB and block size=32 (perf drop ?)
+- TODO: small knob: a bit more fat ? (there may be an error)
+- Ghost: vertical graph separator!
+
+sudo emacs /proc/sys/kernel/yama/ptrace_scope
+
 - PROBLEM: gui resize buttons rollover color is not good
 (use dark blue, a bit more clear than marine blue)
-And Ghost buttons (inpaint dir and selection dir) are too small
 - color of text in drop down menu: bright or medium?
 - PROBLEM: color of the ghost meter text => need brighter?
 - PROBLEM: Panogram: down arrow icon is not well readable
+- PROBLEM: Ghost buttons (inpaint dir and selection dir) are too small
+- InfrasonicViewer: "2.7Hz", or "2.7 Hz" ?
 
 - TODO: bubble help
 - TODO: manuals

@@ -294,11 +294,11 @@ SpectrogramDisplay3::DoUpdateSpectrogram()
                                (unsigned char *)mColorMapImageData.Get());
         }
     }
-    
+
     mNeedUpdateSpectrogram = false;
     mNeedUpdateSpectrogramData = false;
     mNeedUpdateBGSpectrogramData = false;
-
+    
     mNeedRedraw = true;
     
     return true;

@@ -122,7 +122,7 @@
 
 GraphControl12::GraphControl12(Plugin *pPlug, IGraphics *graphics,
                                IRECT pR, int paramIdx,
-                              const char *fontPath)
+                               const char *fontPath)
 	: IControl(pR, paramIdx),
 	mFontInitialized(false),
 	mAutoAdjustParamSmoother(1.0, 0.9),
