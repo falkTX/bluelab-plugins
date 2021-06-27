@@ -88,6 +88,8 @@ GUIHelper12::GUIHelper12(Style style)
         mValueTextBGColor = IColor(0, 0, 0, 0);
         mValueTextFont = "font-bold";
 
+        mValueTextColorLight = IColor(255, 209, 216, 223);
+        
         mVersionPosition = BOTTOM;
         
         mVersionTextSize = 12.0;
@@ -137,6 +139,8 @@ GUIHelper12::GUIHelper12(Style style)
         //mValueTextFont = "font-regular";
         mValueTextFont = "font-bold";
 
+        mValueTextColorLight = IColor(255, 209, 216, 223);
+        
         mVersionPosition = BOTTOM;
         
         mVersionTextSize = 12.0;
@@ -276,6 +280,8 @@ GUIHelper12::GUIHelper12(Style style)
         mValueTextBGColor = IColor(0, 0, 0, 0);
         mValueTextFont = "OpenSans-ExtraBold";
 
+        mValueTextColorLight = IColor(255, 209, 216, 223);
+        
         mVersionPosition = LOWER_RIGHT;
         
         mVersionTextSize = 13.0; //8.0; //12.0;
@@ -1341,6 +1347,12 @@ void
 GUIHelper12::GetValueTextColor(IColor *valueTextColor) const
 {
     *valueTextColor = mValueTextColor;
+}
+
+void
+GUIHelper12::GetValueTextColorLight(IColor *valueTextColor) const
+{
+    *valueTextColor = mValueTextColorLight;
 }
 
 void

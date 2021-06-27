@@ -254,6 +254,7 @@ public:
 
     
     void GetValueTextColor(IColor *valueTextColor) const;
+    void GetValueTextColorLight(IColor *valueTextColor) const;
     
     // Graph
     void GetGraphAxisColor(int color[4]);
@@ -387,6 +388,8 @@ protected:
     IColor mValueTextBGColor;
     char *mValueTextFont;
 
+    IColor mValueTextColorLight;
+    
     Position mVersionPosition;
     
     float mVersionTextSize;

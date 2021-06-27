@@ -83,7 +83,8 @@ SpectroMeter::GenerateUI(GUIHelper12 *guiHelper,
                          int offsetX, int offsetY)
 {
     IColor valueColor;
-    guiHelper->GetValueTextColor(&valueColor);
+    //guiHelper->GetValueTextColor(&valueColor);
+    guiHelper->GetValueTextColorLight(&valueColor);
 
     // Cursor pos
     mCursorPosTexts[0] =
