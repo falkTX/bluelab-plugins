@@ -170,6 +170,8 @@ v3.43
 v3.44
 - Spatializer adjustement
 
+v3.45
+- Rollover improvements
 
 === TODO ===
 - TODO: drop down menu, make items in lower case (no upper case as it is currently)

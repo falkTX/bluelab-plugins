@@ -51,16 +51,16 @@ BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP
 
 ===
 
-- TODO: test a plugin with SmoothCurveDB and block size=32 (perf drop ?)
-- TODO: small knob: a bit more fat ? (there may be an error)
+- TODO: improve rollover aspect
+- PROBLEM: Panogram: down arrow icon is not well readable
 
-sudo emacs /proc/sys/kernel/yama/ptrace_scope
+- TODO: test a plugin with SmoothCurveDB and block size=32 (perf drop ?)
 
 - PROBLEM: gui resize buttons rollover color is not good
 (use dark blue, a bit more clear than marine blue)
 - color of text in drop down menu: bright or medium?
 - PROBLEM: color of the ghost meter text => need brighter?
-- PROBLEM: Panogram: down arrow icon is not well readable
+
 - PROBLEM: Ghost buttons (inpaint dir and selection dir) are too small
 - InfrasonicViewer: "2.7Hz", or "2.7 Hz" ?
 
