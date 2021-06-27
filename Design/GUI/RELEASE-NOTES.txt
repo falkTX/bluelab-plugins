@@ -173,6 +173,13 @@ v3.44
 v3.45
 - Rollover improvements
 
+
+
+Rollover menu: 5c75eb
+Rollover buttons: 6a6affff
+Knobs: 617bf7
+
+
 === TODO ===
 - TODO: drop down menu, make items in lower case (no upper case as it is currently)
 First letter in upper case. Find a good font (see the font of the Ghost-X buttons)
