@@ -25,7 +25,7 @@ BL-Ghost	    :	fea+,      ,optim, mem, bugs, LoFr(l) , lgr , gui, guiP, tt
 BL-GhostViewer	    :   fea+,            , mem,     , LoFr    , lgr , gui, guiP, tt
 BL-Impulses	    :   fea+,      ,optim, mem, bugs, LoFr(l) ,     , gui, guiP, tt
 BL-Infra	    :   fea+,      ,optim, mem, bugs, LoFr    ,     , gui, guiP, tt
-BL-InfrasonicViewer :   fea+,      ,optim, mem, bugs, LoFr    , lgr , gui, guiP
+BL-InfrasonicViewer :   fea+,      ,optim, mem, bugs, LoFr    , lgr , gui, guiP, tt
 BL-InfraSynth	    :
 BL-LoFi		    :       ,      ,optim, mem, bugs, LoFr    ,     , gui, guiP
 BL-OnsetDetect	    :
