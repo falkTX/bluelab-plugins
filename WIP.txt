@@ -32,7 +32,7 @@ BL-OnsetDetect	    :
 BL-Panogram	    :   fea+,      ,optim, mem, bugs, LoFr    ,     , gui, guiP, tt
 BL-PitchShift	    :   fea+,      ,optim, mem, bugs, (LoFr)  , lgr , gui, guiP, tt 
 BL-Precedence	    :   (fea+)                                      , gui, guiP, tt
-BL-Rebalance	    :	wip: upscaled model is training,      , lgr , gui, guiP
+BL-Rebalance	    :	wip: upscaled model is training,      , lgr , gui, guiP, tt
 BL-Reverb	    :
 BL-ReverbDepth	    :
 BL-SampleDelay	    :   (fea+)                                      , gui, guiP
