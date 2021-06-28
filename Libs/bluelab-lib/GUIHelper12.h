@@ -20,6 +20,8 @@
 #include <IBLSwitchControl.h>
 #include <ITabsBarControl.h>*/
 
+#include <VumeterControl.h>
+
 #include "IPlug_include_in_plug_hdr.h"
 
 // Tooltipe delay: 0.5s
@@ -33,7 +35,8 @@ class IRadioButtonsControl;
 class IGUIResizeButtonControl;
 
 // TODO
-#define VumeterControl IBKnobControl
+//#define VumeterControl IBKnobControl
+//class VumeterControl;
 
 // GUIHelper12: from GUIHelper11, for GraphControl12
 //
@@ -128,7 +131,8 @@ public:
     VumeterControl *CreateVumeter(IGraphics *graphics,
                                   float x, float y,
                                   const char *bitmapFname, int nStates,
-                                  int paramIdx, const char *title = NULL);
+                                  int paramIdx, const char *title = NULL,
+                                  const char *tooltip = NULL);
     
     BLVumeterControl *CreateVumeterV(IGraphics *graphics,
                                      float x, float y,

@@ -577,7 +577,8 @@ VumeterControl *
 GUIHelper12::CreateVumeter(IGraphics *graphics,
                            float x, float y,
                            const char *bitmapFname, int nStates,
-                           int paramIdx, const char *title)
+                           int paramIdx, const char *title,
+                           const char *tooltip)
 {
     // TODO
     /*VumeterControl *vumeter = CreateKnob(graphics,
@@ -588,8 +589,20 @@ GUIHelper12::CreateVumeter(IGraphics *graphics,
     //graphics->AttachControl(vumeter);
     
     IBitmap bitmap = graphics->LoadBitmap(bitmapFname, nStates);
+
+#if 0
+    // Old version. Can't react to tooltips
     VumeterControl *vumeter = new IBKnobControl(x, y, bitmap, paramIdx);
     vumeter->SetInteractionDisabled(true);
+#endif
+
+#if 1
+    // New version. Reacts to tooltips, and not to the mouse 
+    VumeterControl *vumeter = new VumeterControl(x, y, bitmap, paramIdx);
+#endif
+    
+    if (tooltip != NULL)
+        vumeter->SetTooltip(tooltip);
     
     graphics->AttachControl(vumeter);
     
