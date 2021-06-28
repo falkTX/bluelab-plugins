@@ -38,7 +38,7 @@ BL-ReverbDepth	    :
 BL-SampleDelay	    :   (fea+)                                      , gui, guiP, tt
 BL-SASViewer	    : 
 BL-Saturate	    :   fea+                                  , lgr , gui, guiP, tt
-BL-Shaper	    :   fea+,     , optim, mem, bugs,  LoFr   , lgr , gui, guiP
+BL-Shaper	    :   fea+,     , optim, mem, bugs,  LoFr   , lgr , gui, guiP, tt
 BL-Sine		    :   fea+,     , optim, mem, bugs, (LoFr)        , gui, guiP
 BL-SoundMetaViewer  :
 BL-Spatializer	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP
