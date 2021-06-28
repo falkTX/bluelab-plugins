@@ -627,16 +627,20 @@ GUIHelper12::CreateVumeter2SidesV(IGraphics *graphics,
                                   float x, float y,
                                   const char *bitmapFname,
                                   int paramIdx, const char *title,
-                                  float marginMin, float marginMax)
+                                  float marginMin, float marginMax,
+                                  const char *tooltip)
 {
     // Background bitmap
     float width;
     float height;
-    CreateBitmap(graphics,
-                 x, y,
-                 bitmapFname,
-                 0.0f, 0.0f,
-                 &width, &height);
+    IBitmapControl *bitmap = CreateBitmap(graphics,
+                                          x, y,
+                                          bitmapFname,
+                                          0.0f, 0.0f,
+                                          &width, &height);
+
+    // For tooltips
+    bitmap->SetInteractionDisabled(false);
     
     // Margin
     x += marginMin;
@@ -646,7 +650,12 @@ GUIHelper12::CreateVumeter2SidesV(IGraphics *graphics,
     BLVumeter2SidesControl *result = new BLVumeter2SidesControl(rect,
                                                                 mVumeterColor,
                                                                 paramIdx);
+
+    if (tooltip != NULL)
+        bitmap->SetTooltip(tooltip);
+    
     result->SetInteractionDisabled(true);
+    
     graphics->AttachControl(result);
     
     return result;
@@ -1116,7 +1125,8 @@ GUIHelper12::CreateRadioButtons(IGraphics *graphics,
                                 bool horizontalFlag, const char *title,
                                 EAlign align,
                                 EAlign titleAlign,
-                                const char **radioLabels)
+                                const char **radioLabels,
+                                const char *tooltip)
 {
     IBitmap bitmap = graphics->LoadBitmap(bitmapFname, 2);
     
@@ -1219,6 +1229,9 @@ GUIHelper12::CreateRadioButtons(IGraphics *graphics,
         new IRadioButtonsControl(rect,
                                  paramIdx, numButtons,
                                  bitmap, direction);
+
+    if (tooltip != NULL)
+        control->SetTooltip(tooltip);
     
     graphics->AttachControl(control);
     

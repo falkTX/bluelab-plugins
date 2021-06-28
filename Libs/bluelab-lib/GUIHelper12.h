@@ -142,7 +142,8 @@ public:
                                                  int paramIdx,
                                                  const char *title = NULL,
                                                  float marginMin = 0.0,
-                                                 float marginMax = 0.0);
+                                                 float marginMax = 0.0,
+                                                 const char *tooltip = NULL);
     
     BLVumeterNeedleControl *CreateVumeterNeedleV(IGraphics *graphics,
                                                  float x, float y,
@@ -233,7 +234,8 @@ public:
                            bool horizontalFlag, const char *title,
                            EAlign align = EAlign::Center,
                            EAlign titleAlign = EAlign::Center,
-                           const char **radioLabels = NULL);
+                           const char **radioLabels = NULL,
+                           const char *tooltip = NULL);
 
     IRadioButtonsControlCustom *
         CreateRadioButtonsCustom(IGraphics *graphics,

@@ -5,11 +5,12 @@ LockFree(legacy): LoFr(l)
 valgrind (check for mem corruption): valg
 lazy gui refresh: lgr
 gui: gui design in Inkscape
-guiP: gui fully integrated programmatically 
+guiP: gui fully integrated programmatically
+tt: tooltips
 ---
 
-BL-Air		    :	fea+,      ,optim, mem, bugs, LoFr    ,     , gui, guiP
-BL-AutoGain	    :	fea+,      ,optim, mem, bugs, LoFr    ,     , gui, guiP
+BL-Air		    :	fea+,      ,optim, mem, bugs, LoFr    ,     , gui, guiP, tt
+BL-AutoGain	    :	fea+,      ,optim, mem, bugs, LoFr    ,     , gui, guiP, tt
 BL-Bat		    :
 BL-Chroma	    :	fea+,      ,optim, mem, bugs, LoFr    , lgr , gui, guiP
 BL-Denoiser	    :	fea+,      ,optim, mem, bugs, LoFr    ,     , gui, guiP
