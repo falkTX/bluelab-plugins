@@ -17,10 +17,10 @@ BL-Denoiser	    :	fea+,      ,optim, mem, bugs, LoFr    ,     , gui, guiP, tt
 BL-DUET		    :
 BL-Envelope	    :	fea+,      ,optim, mem, bugs
 BL-EQHack	    :	fea+,      ,optim, mem, bugs, LoFr    ,     , gui, guiP, tt
-BL-Gain12	    :	fea+,      ,optim, mem, bugs,         ,     , gui, guiP
+BL-Gain12	    :	fea+,      ,optim, mem, bugs,         ,     , gui, guiP, tt
 BL-Gain200	    :	fea+,      ,optim, mem, bugs
-BL-Gain24	    :	fea+,      ,optim, mem, bugs,         ,     , gui, guiP
-BL-Gain60	    :	fea+,      ,optim, mem, bugs,         ,     , gui, guiP
+BL-Gain24	    :	fea+,      ,optim, mem, bugs,         ,     , gui, guiP, tt
+BL-Gain60	    :	fea+,      ,optim, mem, bugs,         ,     , gui, guiP, tt
 BL-Ghost	    :	fea+,      ,optim, mem, bugs, LoFr(l) , lgr , gui, guiP
 BL-GhostViewer	    :   fea+,            , mem,     , LoFr    , lgr , gui, guiP
 BL-Impulses	    :   fea+,      ,optim, mem, bugs, LoFr(l) ,     , gui, guiP
