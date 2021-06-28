@@ -16,7 +16,7 @@ BL-Chroma	    :	fea+,      ,optim, mem, bugs, LoFr    , lgr , gui, guiP, tt
 BL-Denoiser	    :	fea+,      ,optim, mem, bugs, LoFr    ,     , gui, guiP, tt
 BL-DUET		    :
 BL-Envelope	    :	fea+,      ,optim, mem, bugs
-BL-EQHack	    :	fea+,      ,optim, mem, bugs, LoFr    ,     , gui, guiP
+BL-EQHack	    :	fea+,      ,optim, mem, bugs, LoFr    ,     , gui, guiP, tt
 BL-Gain12	    :	fea+,      ,optim, mem, bugs,         ,     , gui, guiP
 BL-Gain200	    :	fea+,      ,optim, mem, bugs
 BL-Gain24	    :	fea+,      ,optim, mem, bugs,         ,     , gui, guiP
