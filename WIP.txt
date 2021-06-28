@@ -35,7 +35,7 @@ BL-Precedence	    :   (fea+)                                      , gui, guiP, t
 BL-Rebalance	    :	wip: upscaled model is training,      , lgr , gui, guiP, tt
 BL-Reverb	    :
 BL-ReverbDepth	    :
-BL-SampleDelay	    :   (fea+)                                      , gui, guiP
+BL-SampleDelay	    :   (fea+)                                      , gui, guiP, tt
 BL-SASViewer	    : 
 BL-Saturate	    :   fea+                                  , lgr , gui, guiP
 BL-Shaper	    :   fea+,     , optim, mem, bugs,  LoFr   , lgr , gui, guiP
