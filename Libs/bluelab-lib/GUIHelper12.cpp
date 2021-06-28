@@ -1244,7 +1244,8 @@ GUIHelper12::CreateRadioButtonsCustom(IGraphics *graphics,
                                       const char *bitmapFnames[], int numButtons,
                                       int bitmapNFrames,
                                       float size, int paramIdx,
-                                      bool horizontalFlag)
+                                      bool horizontalFlag,
+                                      const char *tooltip)
 {
 #define MAX_NUM_BITMAPS 32
     
@@ -1270,6 +1271,9 @@ GUIHelper12::CreateRadioButtonsCustom(IGraphics *graphics,
         new IRadioButtonsControlCustom(rect,
                                        paramIdx, numButtons,
                                        bitmaps, direction);
+
+    if (tooltip != NULL)
+        control->SetTooltip(tooltip);
     
     graphics->AttachControl(control);
         
@@ -1338,7 +1342,8 @@ GUIHelper12::CreateRolloverButton(IGraphics *graphics,
                                   char *label,
                                   bool toggleFlag,
                                   bool toggleOffFlag,
-                                  bool disableDlbClick)
+                                  bool disableDlbClick,
+                                  const char *tooltip)
 {
   int bmpFrames = 3;
   
@@ -1355,7 +1360,10 @@ GUIHelper12::CreateRolloverButton(IGraphics *graphics,
                                                                toggleFlag,
                                                                toggleOffFlag,
                                                                disableDlbClick);
-   
+
+  if (tooltip != NULL)
+      control->SetTooltip(tooltip);
+  
   graphics->AttachControl(control);
 
   if (mCreateTitles)

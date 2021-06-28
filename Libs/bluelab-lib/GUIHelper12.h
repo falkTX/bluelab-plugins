@@ -243,7 +243,7 @@ public:
                                  const char *bitmapFnames[], int numButtons,
                                  int bitmapNFrames,
                                  float size, int paramIdx,
-                                 bool horizontalFlag);
+                                 bool horizontalFlag, const char *tooltip);
     
     IControl *CreateGUIResizeButton(ResizeGUIPluginInterface *plug,
                                     IGraphics *graphics,
@@ -261,7 +261,8 @@ public:
                                    char *label = NULL,
                                    bool toggleFlag = false,
                                    bool toggleOffFlag = true,
-                                   bool disableDlbClick = false);
+                                   bool disableDlbClick = false,
+                                   const char *tooltip = NULL);
 
     
     void GetValueTextColor(IColor *valueTextColor) const;

@@ -21,7 +21,7 @@ BL-Gain12	    :	fea+,      ,optim, mem, bugs,         ,     , gui, guiP, tt
 BL-Gain200	    :	fea+,      ,optim, mem, bugs
 BL-Gain24	    :	fea+,      ,optim, mem, bugs,         ,     , gui, guiP, tt
 BL-Gain60	    :	fea+,      ,optim, mem, bugs,         ,     , gui, guiP, tt
-BL-Ghost	    :	fea+,      ,optim, mem, bugs, LoFr(l) , lgr , gui, guiP
+BL-Ghost	    :	fea+,      ,optim, mem, bugs, LoFr(l) , lgr , gui, guiP, tt
 BL-GhostViewer	    :   fea+,            , mem,     , LoFr    , lgr , gui, guiP
 BL-Impulses	    :   fea+,      ,optim, mem, bugs, LoFr(l) ,     , gui, guiP
 BL-Infra	    :   fea+,      ,optim, mem, bugs, LoFr    ,     , gui, guiP
@@ -55,6 +55,9 @@ BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP
 - TODO: tooltips
 - TODO: manuals
 
+- TODO: Rebalance: try best model, with smaller step, not 32, but e.g 4
+(we see squares if we toggle off weiner filtering)
+
 - TODO: test a plugin with SmoothCurveDB and block size=32 (perf drop ?)
 
 - NOTE: colors set in app programatically, and colors exported from Inkscape
@@ -65,5 +68,8 @@ are not exactly the same (don't know why)
 - InfrasonicViewer: "2.7Hz", or "2.7 Hz" ?
 
 - BUG: Chroma scroll jitters at min speed
+
+- TODO(?): Ghost: SELECT DIR => SELECT TYPE
+
 ===
 - TODO: test plugins with DaVinci Resolve Video Editor / Fairlight (see Eugene mail)
