@@ -26,18 +26,26 @@ public:
                            const IBitmap &bitmap,
                            int paramIdx,
                            bool toggleFlag = true,
+                           bool toggleOffFlag = true,
+                           bool disableDblClick = false,
                            EBlend blend = EBlend::Default)
     : IBitmapControl(x, y, bitmap, paramIdx, blend),
       mToggleFlag(toggleFlag),
+      mToggleOffFlag(toggleOffFlag),
+      mDisableDblClick(disableDblClick),
       mText(NULL),
       mPrevMouseOut(false) {}
     
     IRolloverButtonControl(float x, float y,
                            const IBitmap &bitmap,
                            bool toggleFlag = true,
+                           bool toggleOffFlag = true,
+                           bool disableDblClick = false,
                            EBlend blend = EBlend::Default)
     : IBitmapControl(x, y, bitmap, kNoParameter, blend),
       mToggleFlag(toggleFlag),
+      mToggleOffFlag(toggleOffFlag),
+      mDisableDblClick(disableDblClick),
       mText(NULL),
       mPrevMouseOut(false) {}
     
@@ -52,6 +60,8 @@ public:
     virtual void OnMouseOver(float x, float y, const IMouseMod &mod) override;
     
     virtual void OnMouseOut() override;
+
+    virtual void OnMouseDblClick(float x, float y, const IMouseMod& mod) override;
     
     virtual void SetDisabled(bool disable) override;
 
@@ -61,6 +71,9 @@ public:
     
 protected:
     bool mToggleFlag;
+    bool mToggleOffFlag;
+
+    bool mDisableDblClick;
     
     ITextControl *mText;
     IColor mTextColor;

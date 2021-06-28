@@ -1305,7 +1305,9 @@ GUIHelper12::CreateRolloverButton(IGraphics *graphics,
                                   const char *bitmapFname,
                                   int paramIdx,
                                   char *label,
-                                  bool toggleFlag)
+                                  bool toggleFlag,
+                                  bool toggleOffFlag,
+                                  bool disableDlbClick)
 {
   int bmpFrames = 3;
   
@@ -1319,7 +1321,9 @@ GUIHelper12::CreateRolloverButton(IGraphics *graphics,
     
   IRolloverButtonControl *control = new IRolloverButtonControl(x, y, bitmap,
                                                                paramIdx,
-                                                               toggleFlag);
+                                                               toggleFlag,
+                                                               toggleOffFlag,
+                                                               disableDlbClick);
    
   graphics->AttachControl(control);
 

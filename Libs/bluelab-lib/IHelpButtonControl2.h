@@ -19,7 +19,8 @@ public:
     IHelpButtonControl2(float x, float y, const IBitmap &bitmap, int paramIdx,
                        const char *fileName,
                        EBlend blend = EBlend::Default)
-    : IRolloverButtonControl(x, y, bitmap, paramIdx, false, blend)
+    : IRolloverButtonControl(x, y, bitmap, paramIdx, false,
+                             true, false, blend)
     {
         sprintf(mFileName, "%s", fileName);
     }

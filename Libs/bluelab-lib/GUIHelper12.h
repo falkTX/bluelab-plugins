@@ -250,7 +250,9 @@ public:
                                    const char *bitmapFname,
                                    int paramIdx,
                                    char *label = NULL,
-                                   bool toggleFlag = false);
+                                   bool toggleFlag = false,
+                                   bool toggleOffFlag = true,
+                                   bool disableDlbClick = false);
 
     
     void GetValueTextColor(IColor *valueTextColor) const;

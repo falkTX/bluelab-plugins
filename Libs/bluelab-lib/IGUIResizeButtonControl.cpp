@@ -17,7 +17,8 @@ IGUIResizeButtonControl::IGUIResizeButtonControl(ResizeGUIPluginInterface *plug,
                                                  int paramIdx,
                                                  int guiSizeIdx,
                                                  EBlend blend)
-: IRolloverButtonControl(x, y, bitmap, paramIdx, false, blend)
+: IRolloverButtonControl(x, y, bitmap, paramIdx, false,
+                         true, false, blend)
 {
     mPlug = plug;
     
@@ -29,7 +30,8 @@ IGUIResizeButtonControl::IGUIResizeButtonControl(ResizeGUIPluginInterface *plug,
                                                  const IBitmap &bitmap,
                                                  int guiSizeIdx,
                                                  EBlend blend)
-: IRolloverButtonControl(x, y, bitmap, kNoParameter, false, blend)
+: IRolloverButtonControl(x, y, bitmap, kNoParameter, false,
+                         true, false, blend)
 {
     mPlug = plug;
     

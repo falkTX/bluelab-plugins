@@ -40,7 +40,7 @@ IRolloverButtonControl::OnMouseDown(float x, float y, const IMouseMod &mod)
     {
         // Force value change
         // (otherwise, the button would have worked only one time)
-        if (GetValue() > 0.5)
+        if ((GetValue() > 0.5) && mToggleOffFlag)
         {
             // Set hilight text before value
             // because SetValueFromUserInput() can lock the GUI by
@@ -120,6 +120,13 @@ IRolloverButtonControl::OnMouseOut()
         mDirty = true;
 
     mPrevMouseOut = true;
+}
+
+void
+IRolloverButtonControl::OnMouseDblClick(float x, float y, const IMouseMod& mod)
+{
+    if (!mDisableDblClick)
+        IBitmapControl::OnMouseDblClick(x, y, mod);
 }
 
 void
