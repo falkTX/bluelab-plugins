@@ -12,7 +12,7 @@ tt: tooltips
 BL-Air		    :	fea+,      ,optim, mem, bugs, LoFr    ,     , gui, guiP, tt
 BL-AutoGain	    :	fea+,      ,optim, mem, bugs, LoFr    ,     , gui, guiP, tt
 BL-Bat		    :
-BL-Chroma	    :	fea+,      ,optim, mem, bugs, LoFr    , lgr , gui, guiP
+BL-Chroma	    :	fea+,      ,optim, mem, bugs, LoFr    , lgr , gui, guiP, tt
 BL-Denoiser	    :	fea+,      ,optim, mem, bugs, LoFr    ,     , gui, guiP
 BL-DUET		    :
 BL-Envelope	    :	fea+,      ,optim, mem, bugs
