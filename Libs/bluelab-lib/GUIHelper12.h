@@ -182,7 +182,8 @@ public:
                                const char *handleBitmapFname,
                                int xParamIdx, int yParamIdx,
                                float borderSize = 0.0,
-                               bool reverseY = false);
+                               bool reverseY = false,
+                               const char *tooltip = NULL);
 
     // Circle around heads, for Spatializer
     // - (x, y) is the center
@@ -195,7 +196,8 @@ public:
                             const char *handleBitmapFname,
                             const char *tfBitmapFname,
                             int paramIdx,
-                            float valueXOffset, float valueYOffset);
+                            float valueXOffset, float valueYOffset,
+                            const char *tooltip = NULL);
     
     void CreateVersion(Plugin *plug, IGraphics *graphics,
                        const char *versionStr);

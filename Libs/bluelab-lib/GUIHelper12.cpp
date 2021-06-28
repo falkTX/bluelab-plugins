@@ -769,7 +769,8 @@ GUIHelper12::CreateXYPad(IGraphics *graphics,
                          const char *trackBitmapFname,
                          const char *handleBitmapFname,
                          int xParamIdx, int yParamIdx,
-                         float borderSize, bool reverseY)
+                         float borderSize, bool reverseY,
+                         const char *tooltip)
 {
     std::initializer_list<int> params( { xParamIdx, yParamIdx } );
     
@@ -780,6 +781,9 @@ GUIHelper12::CreateXYPad(IGraphics *graphics,
     IXYPadControl *result =
         new IXYPadControl(rect, params, trackBitmap, handleBitmap,
                           borderSize, reverseY);
+
+    if (tooltip != NULL)
+        result->SetTooltip(tooltip);
     
     graphics->AttachControl(result);
     
@@ -794,7 +798,8 @@ GUIHelper12::CreateSpatializerHandle(IGraphics *graphics,
                                      const char *handleBitmapFname,
                                      const char *tfBitmapFname,
                                      int paramIdx,
-                                     float valueXOffset, float valueYOffset)
+                                     float valueXOffset, float valueYOffset,
+                                     const char *tooltip)
 {
     IBitmap handleBitmap = graphics->LoadBitmap(handleBitmapFname, 1);
 
@@ -809,6 +814,9 @@ GUIHelper12::CreateSpatializerHandle(IGraphics *graphics,
                 x + rect.W()/2 + valueXOffset,
                 y + rect.H() + valueYOffset,
                 tfBitmapFname, paramIdx);
+
+    if (tooltip != NULL)
+        result->SetTooltip(tooltip);
     
     return result;
 }
