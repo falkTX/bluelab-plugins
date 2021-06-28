@@ -42,7 +42,7 @@ BL-Shaper	    :   fea+,     , optim, mem, bugs,  LoFr   , lgr , gui, guiP, tt
 BL-Sine		    :   fea+,     , optim, mem, bugs, (LoFr)        , gui, guiP, tt
 BL-SoundMetaViewer  :
 BL-Spatializer	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP, tt
-BL-SpectralDiff	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP
+BL-SpectralDiff	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP, tt
 BL-SpectroExpe	    :
 BL-SpectrumView	    :
 BL-StereoDeReverb   :
