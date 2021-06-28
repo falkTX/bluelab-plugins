@@ -31,7 +31,7 @@ BL-LoFi		    :       ,      ,optim, mem, bugs, LoFr    ,     , gui, guiP, tt
 BL-OnsetDetect	    :
 BL-Panogram	    :   fea+,      ,optim, mem, bugs, LoFr    ,     , gui, guiP, tt
 BL-PitchShift	    :   fea+,      ,optim, mem, bugs, (LoFr)  , lgr , gui, guiP, tt 
-BL-Precedence	    :   (fea+)                                      , gui, guiP
+BL-Precedence	    :   (fea+)                                      , gui, guiP, tt
 BL-Rebalance	    :	wip: upscaled model is training,      , lgr , gui, guiP
 BL-Reverb	    :
 BL-ReverbDepth	    :
