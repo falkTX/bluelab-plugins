@@ -22,6 +22,8 @@
 
 #include "IPlug_include_in_plug_hdr.h"
 
+// Tooltipe delay: 0.5s
+#define TOOLTIP_DELAY 0.5
 
 using namespace iplug;
 using namespace iplug::igraphics;
@@ -94,7 +96,8 @@ public:
                                    const char *title = NULL,
                                    Size titleSize = SIZE_DEFAULT,
                                    ICaptionControl **caption = NULL,
-                                   bool createValue = true);
+                                   bool createValue = true,
+                                   const char *tooltip = NULL);
     
 #ifdef IGRAPHICS_NANOVG
     GraphControl12 *CreateGraph(Plugin *plug, IGraphics *graphics,
@@ -119,7 +122,8 @@ public:
                                          int paramIdx,
                                          const char *title = NULL,
                                          Size titleSize = SIZE_DEFAULT,
-                                         bool clickToggleOff = true);
+                                         bool clickToggleOff = true,
+                                         const char *tooltip = NULL);
     
     VumeterControl *CreateVumeter(IGraphics *graphics,
                                   float x, float y,
@@ -210,7 +214,9 @@ public:
     void CreateHelpButton(Plugin *plug, IGraphics *graphics,
                           const char *bmpFname,
                           const char *manualFileName,
-                          Position pos = GUIHelper12::BOTTOM);
+                          Position pos = GUIHelper12::BOTTOM,
+                          const char *tooltip = NULL);
+    
     void ShowHelp(Plugin *plug, IGraphics *graphics,
                   const char *manualFileName);
     
@@ -490,6 +496,8 @@ protected:
     
     // Graph separator
     IColor mGraphSeparatorColor;
+
+    float mTooltipTextSize;
 };
 
 #endif /* GUIHelper12_hpp */

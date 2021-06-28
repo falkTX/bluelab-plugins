@@ -7,9 +7,10 @@ class IBLTooltipControl : public ITooltipControl
 {
  public:
     IBLTooltipControl(const IColor& BGColor = COLOR_WHITE,
-                      const IColor& BorderColor = COLOR_BLACK,
+                      const IColor& borderColor = COLOR_BLACK,
                       const IText& text = DEFAULT_TEXT)
-        : ITooltipControl(BGColor, text) {}
+    : ITooltipControl(BGColor, text),
+      mBorderColor(borderColor) {}
 
     void Draw(IGraphics& g) override
     {

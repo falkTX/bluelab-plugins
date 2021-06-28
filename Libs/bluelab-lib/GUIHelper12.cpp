@@ -402,6 +402,8 @@ GUIHelper12::GUIHelper12(Style style)
         mMenuBorderColor = IColor(255, 248, 248, 248);
             
         mGraphSeparatorColor = IColor(255, 147, 147, 147);
+
+        mTooltipTextSize = 18.0; //16.0; //20.0;
     }
 }
 
@@ -455,7 +457,8 @@ GUIHelper12::CreateKnobSVG(IGraphics *graphics,
                            const char *title,
                            Size titleSize,
                            ICaptionControl **caption,
-                           bool createValue)
+                           bool createValue,
+                           const char *tooltip)
 {
     const ISVG knobSVG = graphics->LoadSVG(svgFname);
     IRECT bounds(x, y, x + width, y + height);
@@ -481,6 +484,9 @@ GUIHelper12::CreateKnobSVG(IGraphics *graphics,
         if (caption != NULL)
             *caption = caption0;
     }
+
+    if (tooltip != NULL)
+        knob->SetTooltip(tooltip);
     
     return knob;
 }
@@ -552,13 +558,17 @@ GUIHelper12::CreateToggleButton(IGraphics *graphics,
                                 float x, float y,
                                 const char *bitmapFname,
                                 int paramIdx, const char *title,
-                                Size titleSize, bool clickToggleOff)
+                                Size titleSize, bool clickToggleOff,
+                                const char *tooltip)
 {
     IBLSwitchControl *button = CreateSwitchButton(graphics, x, y,
                                                   bitmapFname, 2,
                                                   paramIdx,
                                                   title, titleSize);
     button->SetClickToggleOff(clickToggleOff);
+
+    if (tooltip != NULL)
+        button->SetTooltip(tooltip);
     
     return button;
 }
@@ -952,7 +962,8 @@ void
 GUIHelper12::CreateHelpButton(Plugin *plug, IGraphics *graphics,
                               const char *bmpFname,
                               const char *manualFileName,
-                              Position pos)
+                              Position pos,
+                              const char *tooltip)
 {
     if (!mCreateHelpButton)
         return;
@@ -988,7 +999,10 @@ GUIHelper12::CreateHelpButton(Plugin *plug, IGraphics *graphics,
         control = new IHelpButtonControl2(x, y, bitmap,
                                           kNoValIdx,
                                           fullFileName);
-                                             
+
+    if (tooltip != NULL)
+        control->SetTooltip(tooltip);
+    
 #if GUI_OBJECTS_SORTING
     mBackObjects.push_back(control);
 #else
@@ -1789,7 +1803,14 @@ GUIHelper12::GetCircleGDOffsetY(int *x)
 void
 GUIHelper12::AttachToolTipControl(IGraphics *graphics)
 {
-    IBLTooltipControl *control = new IBLTooltipControl();
+    //IBLTooltipControl *control = new IBLTooltipControl();
+
+    IText text(mTooltipTextSize, //DEFAULT_TEXT_SIZE,
+               mValueTextColorLight);
+    IBLTooltipControl *control = new IBLTooltipControl(mGraphCurveColorDarkBlue,
+                                                       //mValueTextColorLight,
+                                                       mValueTextColor,
+                                                       text);
 
     graphics->AttachToolTipControl(control);
     
