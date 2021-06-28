@@ -251,7 +251,8 @@ public:
                                     const char *bitmapFname,
                                     int paramIdx,
                                     char *label,
-                                    int guiSizeIdx);
+                                    int guiSizeIdx,
+                                    const char *tooltip = NULL);
     
     IControl *CreateRolloverButton(IGraphics *graphics,
                                    float x, float y,
@@ -327,7 +328,8 @@ public:
                                         float width,
                                         int paramIdx,
                                         const char *title,
-                                        Size titleSize = SIZE_DEFAULT);
+                                        Size titleSize = SIZE_DEFAULT,
+                                        const char *tooltip = NULL);
     
     // Circle graph drawer
     void GetCircleGDCircleLineWidth(float *circleLineWidth);

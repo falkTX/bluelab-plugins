@@ -1294,7 +1294,8 @@ GUIHelper12::CreateGUIResizeButton(ResizeGUIPluginInterface *plug,
                                    const char *bitmapFname,
                                    int paramIdx,
                                    char *label,
-                                   int guiSizeIdx)
+                                   int guiSizeIdx,
+                                   const char *tooltip)
 {
     int bmpFrames = 3;
     
@@ -1310,6 +1311,9 @@ GUIHelper12::CreateGUIResizeButton(ResizeGUIPluginInterface *plug,
     IControl *control =
         new IGUIResizeButtonControl(plug, x, y, bitmap,
                                     paramIdx, guiSizeIdx);
+
+    if (tooltip != NULL)
+        control->SetTooltip(tooltip);
     
     graphics->AttachControl(control);
 
@@ -1716,7 +1720,8 @@ GUIHelper12::CreateDropDownMenu(IGraphics *graphics,
                                 float x, float y, float width,
                                 int paramIdx,
                                 const char *title,
-                                Size titleSize)
+                                Size titleSize,
+                                const char *tooltip)
 {
     float height = mMenuTextSize;
 
@@ -1762,6 +1767,9 @@ GUIHelper12::CreateDropDownMenu(IGraphics *graphics,
     IRECT rect(x, y, x + width, y + height);    
     ICaptionControl *control =
         new ICaptionControl(rect, paramIdx, captionText, bgColor, false);
+
+    if (tooltip != NULL)
+        control->SetTooltip(tooltip);
     
     graphics->AttachControl(control, kNoTag, "");
 
