@@ -52,7 +52,8 @@ BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP, tt
 
 ===
 
-- TODO: tooltips
+- TODO: All: different colors for curves ?
+
 - TODO: manuals
 
 - TODO: Rebalance: try best model, with smaller step, not 32, but e.g 4
