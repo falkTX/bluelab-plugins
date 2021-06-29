@@ -51,17 +51,6 @@ BL-StereoWidth	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP, 
 BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP, tt
 
 ===
-Denoiser: current: orange: ok!
-Air: current: purple harmo, cyan air: ok!
-AutoGain: current: greenish (for sc)
-SpectralDiff: current: greenish for diff (good ?)
-Infra: current: purple: good!
-cyan is not beautiful! => fixed!
-
-LoFi: curve white (change ?, see saturate)
-
-
-- TODO: All: different colors for curves ?
 
 - TODO: manuals
 
