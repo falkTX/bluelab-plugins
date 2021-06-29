@@ -374,6 +374,16 @@ GUIHelper12::GUIHelper12(Style style)
         mGraphCurveColorBlueEnabled = IColor(255, 106 , 106, 255);
 
         mGraphCurveColorWhiteNames = IColor(255, 209, 216, 223);
+
+        mGraphCurveColorOrange = IColor(255, 255, 128, 0);
+        //mGraphCurveColorLightBlueGreen = IColor(255, 128, 228, 235);
+        //mGraphCurveColorLightBlueGreen = IColor(255, 147, 215, 230);
+
+        // Real Cyan
+        //mGraphCurveColorCyan = IColor(255, 0, 255, 255);
+        // Fake Cyan
+        mGraphCurveColorFakeCyan = IColor(255, 49, 188, 255);
+        
         
         // Circle drawer
         mCircleGDCircleLineWidth = 2.5; //3.0; //2.0;
@@ -1596,6 +1606,24 @@ GUIHelper12::GetGraphCurveColorWhiteNames(int color[4])
     color[1] = mGraphCurveColorWhiteNames.G;
     color[2] = mGraphCurveColorWhiteNames.B;
     color[3] = mGraphCurveColorWhiteNames.A;
+}
+
+void
+GUIHelper12::GetGraphCurveColorOrange(int color[4])
+{
+    color[0] = mGraphCurveColorOrange.R;
+    color[1] = mGraphCurveColorOrange.G;
+    color[2] = mGraphCurveColorOrange.B;
+    color[3] = mGraphCurveColorOrange.A;
+}
+
+void
+GUIHelper12::GetGraphCurveColorFakeCyan(int color[4])
+{
+    color[0] = mGraphCurveColorFakeCyan.R;
+    color[1] = mGraphCurveColorFakeCyan.G;
+    color[2] = mGraphCurveColorFakeCyan.B;
+    color[3] = mGraphCurveColorFakeCyan.A;
 }
 
 void

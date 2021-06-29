@@ -305,6 +305,10 @@ public:
 
     void GetGraphCurveColorWhiteNames(int color[4]);
 
+    void GetGraphCurveColorOrange(int color[4]);
+    // Fake Cyan is more beautiful than real Cyan
+    void GetGraphCurveColorFakeCyan(int color[4]);
+    
     static void ResetParameter(Plugin *plug, int paramIdx);
     
     // Refresh all the controls, from their values
@@ -484,6 +488,9 @@ protected:
     IColor mGraphCurveColorBlueEnabled;
 
     IColor mGraphCurveColorWhiteNames;
+
+    IColor mGraphCurveColorOrange;
+    IColor mGraphCurveColorFakeCyan;
     
     // Circle graph drawer
     float mCircleGDCircleLineWidth;
