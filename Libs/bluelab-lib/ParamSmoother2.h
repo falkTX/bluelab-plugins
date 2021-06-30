@@ -84,6 +84,18 @@ public:
     {
         return (std::fabs(mZ - mTargetValue) < BL_EPS10);
     }
+
+    // Convert ms delay to smooth factor
+    //
+    // NOTE: the inverse computation is:
+    // ms = -2Pi/(ln(factor)*0.001*sampleRate)
+    static inline BL_FLOAT
+    ComputeSmoothFactor(BL_FLOAT smoothingTimeMs, BL_FLOAT sampleRate)
+    {
+        BL_FLOAT factor = std::exp(-(BL_FLOAT)TWO_PI/
+                                   (smoothingTimeMs * (BL_FLOAT)0.001 * sampleRate));
+        return factor;
+    }
     
 protected:
     BL_FLOAT mSmoothingTimeMs;

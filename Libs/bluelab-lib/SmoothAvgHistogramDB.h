@@ -41,7 +41,7 @@ public:
     void SetValues(const WDL_TypedBuf<BL_FLOAT> *values,
                    bool convertToDB = false);
     
-    void Reset();
+    void Reset(BL_FLOAT smoothCoeff = -1.0);
     
 protected:
     WDL_TypedBuf<BL_FLOAT> mData;

@@ -18,6 +18,10 @@
 
 #include "SmoothCurveDB.h"
 
+// Avoid having a big stack of curves: keep only the last one!
+// e.g with block size = 32, there was dozens of stacked curves to process
+#define OPTIM_LOCK_FREE 1
+
 SmoothCurveDB::SmoothCurveDB(GraphCurve5 *curve,
                              BL_FLOAT smoothFactor,
                              int size, BL_FLOAT defaultValue,
@@ -41,9 +45,10 @@ SmoothCurveDB::~SmoothCurveDB()
 }
 
 void
-SmoothCurveDB::Reset(BL_FLOAT sampleRate)
+SmoothCurveDB::Reset(BL_FLOAT sampleRate, BL_FLOAT smoothFactor)
 {
-    mHistogram->Reset();
+    // Smooth factor can change when DAW block size changes
+    mHistogram->Reset(smoothFactor);
 
     mSampleRate = sampleRate;
 }
@@ -73,7 +78,46 @@ SmoothCurveDB::SetValues(const WDL_TypedBuf<BL_FLOAT> &values, bool reset)
     curve.mValues = values;
     curve.mReset = reset;
 
-    mLockFreeQueues[0].push(curve);
+    // If reset, must keep the command anyway
+    if (reset)
+        mLockFreeQueues[0].push(curve);
+    else
+    {
+#if !OPTIM_LOCK_FREE
+        mLockFreeQueues[0].push(curve);
+#else
+        bool clearValues = ContainsClearValues(mLockFreeQueues[0]);
+        bool reset = ContainsCurveReset(mLockFreeQueues[0]);
+        
+        if (mLockFreeQueues[0].empty())
+            mLockFreeQueues[0].push(curve);
+        else
+        {
+            mLockFreeQueues[0].set(0, curve);
+        }
+
+        if (reset)
+        {
+            LockFreeCurve &c0 = mTmpBuf8;
+            mLockFreeQueues[0].get(0, c0);
+            c0.mReset = true;
+            mLockFreeQueues[0].set(0, c0);
+        }
+        
+        if (clearValues)
+        {
+            LockFreeCurve &c0 = mTmpBuf7;
+            mLockFreeQueues[0].get(0, c0);
+            if (c0.mCommand != LockFreeCurve::CLEAR_VALUES)
+            {
+                // Need to re-add a CLEAR_VALUES command, to not loose it
+                LockFreeCurve &curve0 = mTmpBuf6;
+                curve0.mCommand = LockFreeCurve::CLEAR_VALUES;
+                mLockFreeQueues[0].push(curve0);
+            }
+        }
+#endif
+    }
 }
     
 void
@@ -182,14 +226,78 @@ SmoothCurveDB::GetHistogramValuesDB(WDL_TypedBuf<BL_FLOAT> *values)
 void
 SmoothCurveDB::PushData()
 {
+#if !OPTIM_LOCK_FREE
     mLockFreeQueues[1].push(mLockFreeQueues[0]);
+#else
+    bool clearValues = ContainsClearValues(mLockFreeQueues[1]);
+    bool reset = ContainsCurveReset(mLockFreeQueues[1]);
+        
+    if (mLockFreeQueues[1].empty())
+        mLockFreeQueues[1].push(mLockFreeQueues[0]);
+    else
+        mLockFreeQueues[1].set(0, mLockFreeQueues[0]);
+
+    if (reset)
+    {
+        LockFreeCurve &c0 = mTmpBuf8;
+        mLockFreeQueues[1].get(0, c0);
+        c0.mReset = true;
+        mLockFreeQueues[1].set(0, c0);
+    }
+    
+    if (clearValues)
+    {
+        LockFreeCurve &c0 = mTmpBuf7;
+        mLockFreeQueues[1].get(0, c0);
+        if (c0.mCommand != LockFreeCurve::CLEAR_VALUES)
+        {
+            // Need to re-add a CLEAR_VALUES command, to not loose it
+            LockFreeCurve &curve0 = mTmpBuf6;
+            curve0.mCommand = LockFreeCurve::CLEAR_VALUES;
+            mLockFreeQueues[1].push(curve0);
+        }
+    }
+#endif
+    
     mLockFreeQueues[0].clear();
 }
 
 void
 SmoothCurveDB::PullData()
 {
+#if !OPTIM_LOCK_FREE
     mLockFreeQueues[2].push(mLockFreeQueues[1]);
+#else
+    bool clearValues = ContainsClearValues(mLockFreeQueues[2]);
+    bool reset = ContainsCurveReset(mLockFreeQueues[2]);
+    
+    if (mLockFreeQueues[2].empty())
+        mLockFreeQueues[2].push(mLockFreeQueues[1]);
+    else
+        mLockFreeQueues[2].set(0, mLockFreeQueues[1]);
+
+    if (reset)
+    {
+        LockFreeCurve &c0 = mTmpBuf8;
+        mLockFreeQueues[2].get(0, c0);
+        c0.mReset = true;
+        mLockFreeQueues[2].set(0, c0);
+    }
+    
+    if (clearValues)
+    {
+        LockFreeCurve &c0 = mTmpBuf7;
+        mLockFreeQueues[0].get(0, c0);
+        if (c0.mCommand != LockFreeCurve::CLEAR_VALUES)
+        {
+            // Need to re-add a CLEAR_VALUES command, to not loose it
+            LockFreeCurve &curve0 = mTmpBuf6;
+            curve0.mCommand = LockFreeCurve::CLEAR_VALUES;
+            mLockFreeQueues[2].push(curve0);
+        }
+    }
+#endif
+    
     mLockFreeQueues[1].clear();
 }
 
@@ -208,6 +316,36 @@ SmoothCurveDB::ApplyData()
     }
 
     mLockFreeQueues[2].clear();
+}
+
+bool
+SmoothCurveDB::ContainsClearValues(/*const*/LockFreeQueue2<LockFreeCurve> &q)
+{
+    for (int i = 0; i < q.size(); i++)
+    {
+        LockFreeCurve c;
+        q.get(i, c);
+
+        if (c.mCommand == LockFreeCurve::CLEAR_VALUES)
+            return true;
+    }
+
+    return false;
+}
+
+bool
+SmoothCurveDB::ContainsCurveReset(/*const*/LockFreeQueue2<LockFreeCurve> &q)
+{
+    for (int i = 0; i < q.size(); i++)
+    {
+        LockFreeCurve c;
+        q.get(i, c);
+
+        if ((c.mCommand == LockFreeCurve::SET_VALUES) && c.mReset)
+            return true;
+    }
+    
+    return false;
 }
 
 #endif

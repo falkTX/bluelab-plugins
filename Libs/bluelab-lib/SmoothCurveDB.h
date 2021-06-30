@@ -30,7 +30,7 @@ public:
     
     virtual ~SmoothCurveDB();
     
-    void Reset(BL_FLOAT sampleRate);
+    void Reset(BL_FLOAT sampleRate, BL_FLOAT smoothFactor = -1.0);
     void ClearValues();
     void ClearValuesLF();
     
@@ -71,7 +71,10 @@ protected:
     };
 
     LockFreeQueue2<LockFreeCurve> mLockFreeQueues[LOCK_FREE_NUM_BUFFERS];
-    
+
+    bool ContainsClearValues(/*const*/ LockFreeQueue2<LockFreeCurve> &q);
+    bool ContainsCurveReset(/*const*/ LockFreeQueue2<LockFreeCurve> &q);
+        
 private:
     // Tmp Buffers
     WDL_TypedBuf<BL_FLOAT> mTmpBuf0;
@@ -81,6 +84,8 @@ private:
     LockFreeCurve mTmpBuf4;
     LockFreeCurve mTmpBuf5;
     LockFreeCurve mTmpBuf6;
+    LockFreeCurve mTmpBuf7;
+    LockFreeCurve mTmpBuf8;
 };
 
 #endif

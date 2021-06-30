@@ -140,8 +140,11 @@ SmoothAvgHistogramDB::SetValues(const WDL_TypedBuf<BL_FLOAT> *values,
 }
 
 void
-SmoothAvgHistogramDB::Reset()
+SmoothAvgHistogramDB::Reset(BL_FLOAT smoothCoeff)
 {
+    if (smoothCoeff > 0.0)
+        mSmoothCoeff = smoothCoeff;
+            
     for (int i = 0; i < mData.GetSize(); i++)
         mData.Get()[i] = mDefaultValue;
 }
