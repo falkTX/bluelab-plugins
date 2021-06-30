@@ -52,10 +52,6 @@ BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP, tt
 
 ===
 
-- BUG: Air, block size 32 => curves jitter a lot
-=> and also other plugins with SmoothCurveDB: curves are not well smoothed, they jitter a lot
-
-
 - TODO: manuals
 
 - TODO: Rebalance: try best model, with smaller step, not 32, but e.g 4
