@@ -6,7 +6,9 @@
 //
 //
 
-#include "BLUtils.h"
+#include <BLUtils.h>
+#include <BLDebug.h>
+
 #include "SmoothAvgHistogramDB.h"
 
 
@@ -20,10 +22,23 @@ SmoothAvgHistogramDB::SmoothAvgHistogramDB(int size, BL_FLOAT smoothCoeff,
     
     mMindB = mindB;
     mMaxdB = maxdB;
-    
+
+#if 0 // Origin.
+      // For Air, after reset this makes the curve "fall from the top" 
     BL_FLOAT defaultValueDB = BLUtils::NormalizedYTodB(defaultValue, mMindB, mMaxdB);
-    
     mDefaultValue = defaultValueDB;
+#endif
+
+#if 1 // For Air e.g, so the default value is 0 and not > 1
+      // For Air, this makes the curve raise from the bottom (which is what we want)
+
+    // NOTE: defaultValue, minDB and maxDB are already in DB
+    // so no need to call AmpToDB!
+    //
+    // NOTE: mData is in "normalized DB" i.e db scale, but normalzied inside [0, 1]
+    //
+    mDefaultValue = (defaultValue - mMindB)/(mMaxdB - mMindB);
+#endif
     
     Reset();
 }
@@ -67,13 +82,13 @@ SmoothAvgHistogramDB::AddValues(const WDL_TypedBuf<BL_FLOAT> &values)
     normY.Resize(values.GetSize());
 
     BLUtils::NormalizedYTodB(values, mMindB, mMaxdB, &normY);
-                 
+    
     for (int i = 0; i < values.GetSize(); i++)
     {
         BL_FLOAT valDB = normY.Get()[i];
     
         BL_FLOAT newVal =
-        (1.0 - mSmoothCoeff) * valDB + mSmoothCoeff*mData.Get()[i];
+            (1.0 - mSmoothCoeff) * valDB + mSmoothCoeff*mData.Get()[i];
     
         mData.Get()[i] = newVal;
     }
