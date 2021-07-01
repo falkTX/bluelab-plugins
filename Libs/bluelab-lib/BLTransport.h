@@ -64,6 +64,8 @@ public:
     void PushData() override;
     void PullData() override;
     void ApplyData() override;
+
+    void SetUseLegacyLock(bool flag);
     
 protected:
     // Resynch progressively the estimated transport value
@@ -135,6 +137,8 @@ protected:
     // Later, add more if necessary
     TransportListener *mListener;
 
+    bool mUseLegacyLock;
+    
     // Lock free
     struct Command
     {

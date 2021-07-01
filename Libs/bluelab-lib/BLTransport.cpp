@@ -45,6 +45,8 @@ BLTransport::BLTransport(BL_FLOAT sampleRate)
 #endif
 
     mListener = NULL;
+
+    mUseLegacyLock = false;
 }
 
 BLTransport::~BLTransport()
@@ -102,6 +104,13 @@ BLTransport::SetTransportPlaying(bool transportPlaying,
                                  BL_FLOAT dawTransportValueSec,
                                  int blockSize)
 {
+    if (mUseLegacyLock)
+    {
+        SetTransportPlayingLF(transportPlaying, monitorOn,
+                              dawTransportValueSec, blockSize);
+        return;
+    }
+    
     Command &cmd = mTmpBuf1;
 
     cmd.mType = Command::SET_TRANSPORT_PLAYING;
@@ -236,6 +245,13 @@ BLTransport::Update()
 void
 BLTransport::SetDAWTransportValueSec(BL_FLOAT dawTransportValueSec)
 {
+    if (mUseLegacyLock)
+    {
+        SetDAWTransportValueSecLF(dawTransportValueSec);
+            
+        return;
+    }
+    
     Command &cmd = mTmpBuf2;
 
     cmd.mType = Command::SET_DAW_TRANSPORT_VALUE;
@@ -402,6 +418,9 @@ BLTransport::SetupTransportJustStarted(BL_FLOAT dawTransportValueSec)
 void
 BLTransport::PushData()
 {
+    if (mUseLegacyLock)
+        return;
+    
     mLockFreeQueues[1].push(mLockFreeQueues[0]);
     mLockFreeQueues[0].clear();
 }
@@ -409,6 +428,9 @@ BLTransport::PushData()
 void
 BLTransport::PullData()
 {
+    if (mUseLegacyLock)
+        return;
+    
     mLockFreeQueues[2].push(mLockFreeQueues[1]);
     mLockFreeQueues[1].clear();
 }
@@ -416,6 +438,9 @@ BLTransport::PullData()
 void
 BLTransport::ApplyData()
 {
+    if (mUseLegacyLock)
+        return;
+    
     for (int i = 0; i < mLockFreeQueues[2].size(); i++)
     {
         Command &cmd = mTmpBuf0;
@@ -433,4 +458,10 @@ BLTransport::ApplyData()
     }
 
     mLockFreeQueues[2].clear();
+}
+
+void
+BLTransport::SetUseLegacyLock(bool flag)
+{
+    mUseLegacyLock = flag;
 }
