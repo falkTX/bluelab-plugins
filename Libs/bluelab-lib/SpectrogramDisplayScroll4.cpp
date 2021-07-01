@@ -23,9 +23,6 @@
 
 #define DEBUG_DUMP 0 //1
 
-// Disable smooth scrolling, for debugging
-#define DEBUG_DISABLE_SMOOTH 0 //1
-
 SpectrogramDisplayScroll4::
 SpectrogramDisplayScroll4(Plugin *plug,
                           SpectrogramDisplayScrollState *spectroState,
@@ -60,6 +57,8 @@ SpectrogramDisplayScroll4(Plugin *plug,
     
         //
         mState->mTransport = NULL;
+
+        mState->mSmoothScrollDisabled = false;
     }
 
     if (mState->mTransport != NULL)
@@ -151,9 +150,8 @@ SpectrogramDisplayScroll4::ResetScroll()
 BL_FLOAT
 SpectrogramDisplayScroll4::GetOffsetSec()
 {
-#if DEBUG_DISABLE_SMOOTH
-    return 0.0;
-#endif
+    if (mState->mSmoothScrollDisabled)
+        return 0.0;
     
     if (mState->mTransport == NULL)
         return 0.0;
@@ -626,6 +624,12 @@ SpectrogramDisplayScroll4::SetBypassed(bool flag)
 }
 
 void
+SpectrogramDisplayScroll4::SetSmoothScrollDisabled(bool flag)
+{
+    mState->mSmoothScrollDisabled = flag;
+}
+
+void
 SpectrogramDisplayScroll4::RecomputeParams(bool resetAll)
 {
     if (mState->mSpectrogram == NULL)
@@ -639,18 +643,19 @@ SpectrogramDisplayScroll4::RecomputeParams(bool resetAll)
     
     mState->mSpectroTotalDurationSec = spectroNumCols*mState->mSpectroLineDurationSec;
 
-#if !DEBUG_DISABLE_SMOOTH
-    mState->mDelayTimeSecRight =
-        mState->mSpectroTotalDurationSec*mState->mDelayPercent*0.01;
-    // 1 single row => sometimes fails... (in debug only?)
-    //mDelayTimeSecLeft = mSpectroLineDurationSec;
-    // Bigger offset
-    mState->mDelayTimeSecLeft = mState->mDelayTimeSecRight;
-
-    // HACK! So we are sure to avoid black line on the right
-    // (and not to have too much delay when speed is slow)
-    mState->mDelayTimeSecRight *= 4.0/mState->mSpeedMod;
-#endif
+    if (!mState->mSmoothScrollDisabled)
+    {
+        mState->mDelayTimeSecRight =
+            mState->mSpectroTotalDurationSec*mState->mDelayPercent*0.01;
+        // 1 single row => sometimes fails... (in debug only?)
+        //mDelayTimeSecLeft = mSpectroLineDurationSec;
+        // Bigger offset
+        mState->mDelayTimeSecLeft = mState->mDelayTimeSecRight;
+        
+        // HACK! So we are sure to avoid black line on the right
+        // (and not to have too much delay when speed is slow)
+        mState->mDelayTimeSecRight *= 4.0/mState->mSpeedMod;
+    }
     
 #if 1
     // Ensure that the delay corresponds to enough spectro lines
@@ -659,10 +664,10 @@ SpectrogramDisplayScroll4::RecomputeParams(bool resetAll)
         (mState->mDelayTimeSecLeft/mState->mSpectroTotalDurationSec)*spectroNumCols;
     BL_FLOAT delayNumColsR =
         (mState->mDelayTimeSecRight/mState->mSpectroTotalDurationSec)*spectroNumCols;
-
+    
     const BL_FLOAT minNumLinesL = 2.0;
     const BL_FLOAT minNumLinesR = 2.0;
-
+    
 #if 1 // Also adjust the left channel?
       // => Set to 1 to fix a bug: InfraViewer: set freq accuracy to max,
       // then resize gui => black column on the left

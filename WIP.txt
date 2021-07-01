@@ -52,6 +52,8 @@ BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP, tt
 
 ===
 
+BUG: GhostViewer: play, hide it, show it => black border on the left + strange display
+
 - TODO: manuals
 
 - TODO: Rebalance: try best model, with smaller step, not 32, but e.g 4

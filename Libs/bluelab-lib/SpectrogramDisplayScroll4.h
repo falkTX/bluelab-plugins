@@ -69,6 +69,8 @@ public:
 
         //
         BLTransport *mTransport;
+
+        bool mSmoothScrollDisabled;
     };
     
     enum ViewOrientation
@@ -140,6 +142,8 @@ public:
     void SetViewOrientation(ViewOrientation orientation);
 
     void SetBypassed(bool flag);
+
+    void SetSmoothScrollDisabled(bool flag);
     
 protected:
     BL_FLOAT GetOffsetSec();
@@ -175,7 +179,7 @@ protected:
     bool mIsBypassed;
 
     bool mNeedRedraw;
-
+    
     SpectrogramDisplayScrollState *mState;
     
     // Lock free
