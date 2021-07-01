@@ -52,7 +52,15 @@ BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP, tt
 
 ===
 
-BUG: GhostViewer: play, hide it, show it => black border on the left + strange display
+SpectroScroll:
+Rebalance: bug buffered scrolling for time axis labels
+GhostViewer:
+Chroma:
+Panogram:
+InfrasonicViewer:
+
+- BUG: Rebalance: offline mode, play, switch to faster => sometimes black border
+
 
 - TODO: manuals
 
