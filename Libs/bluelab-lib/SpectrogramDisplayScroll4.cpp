@@ -9,7 +9,7 @@
 #ifdef IGRAPHICS_NANOVG
 
 #include <BLSpectrogram4.h>
-#include <UpTime.h>
+//#include <UpTime.h>
 #include <BLDebug.h>
 
 #include <BLUtils.h>
@@ -626,6 +626,11 @@ SpectrogramDisplayScroll4::SetBypassed(bool flag)
 void
 SpectrogramDisplayScroll4::SetSmoothScrollDisabled(bool flag)
 {
+    if (!flag && mState->mSmoothScrollDisabled)
+        // Just re-enabled
+        ResetScroll();
+
+    // Set the field
     mState->mSmoothScrollDisabled = flag;
 }
 
