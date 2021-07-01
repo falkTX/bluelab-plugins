@@ -70,6 +70,10 @@ public:
     void RecomputeSpectrogram(bool recomputeMasks = false);
 
     void SetModelNum(int modelNum);
+
+    // Default is 3, (i.e 32)
+    // 0 works best (do predict every step)
+    void SetPredictModuloNum(int modNum);
     
 protected:
     bool

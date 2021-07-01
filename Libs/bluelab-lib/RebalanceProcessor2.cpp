@@ -74,6 +74,7 @@ RebalanceProcessor2::InitDetect(const IPluginBase &plug,
                                             mNumSpectroCols,
                                             plug, graphics);
     mMaskPred->SetPredictModuloNum(REBALANCE_PREDICT_MODULO_NUM);
+    //mMaskPred->SetPredictModuloNum(0);
     
     if (mTargetFftObj == NULL)
     {
@@ -326,6 +327,12 @@ RebalanceProcessor2::SetModelNum(int modelNum)
 {
     if (mMaskPred != NULL)
         mMaskPred->SetModelNum(modelNum);
+}
+
+void
+RebalanceProcessor2::SetPredictModuloNum(int modNum)
+{
+    mMaskPred->SetPredictModuloNum(modNum);
 }
 
 void
