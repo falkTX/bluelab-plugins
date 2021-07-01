@@ -84,9 +84,6 @@ BLTransport::Reset()
 
     mResynchOffsetSecTotal = 0.0;
     mDiffSmootherTotal->ResetToTargetValue(0.0);
-
-    // NEW
-    //mNow = BLUtils::GetTimeMillisF();
 }
 
 void
