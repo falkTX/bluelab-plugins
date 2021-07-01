@@ -433,10 +433,12 @@ FilterBank::ApplyFilterBank(WDL_TypedBuf<BL_FLOAT> *result,
         {
             // NOTE: we previously check well bounds
             // so do not check here (may save some resources)
-            //if (i < 0)
-            //    continue;
-            //if (i >= magns.GetSize())
-            //    continue;
+
+            // NOTE2: after having passed valgrind, these tests look still necessary!
+            if (i < 0)
+                continue;
+            if (i >= magns.GetSize())
+                continue;
             
             // Apply the filter value
             resultData[m] += filterData[i]*magnsData[i];

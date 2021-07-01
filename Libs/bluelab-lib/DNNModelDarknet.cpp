@@ -59,6 +59,9 @@ extern "C" {
 // Was a test
 //#define SET_OTHER_TO_ZERO 0
 
+// For debugging memory
+#define DEBUG_NO_MODEL 0 //1
+
 // From bl-darknet/rebalance.c
 void
 amp_to_db_norm(float *buf, int size)
@@ -87,10 +90,12 @@ DNNModelDarknet::DNNModelDarknet()
 }
 
 DNNModelDarknet::~DNNModelDarknet()
-{   
+{
+#if !DEBUG_NO_MODEL
     if (mNet != NULL)
         free_network(mNet);
-
+#endif
+    
     delete mScale;
 
 #if DENORMAL_FLUSH_TO_ZERO
@@ -102,6 +107,10 @@ bool
 DNNModelDarknet::Load(const char *modelFileName,
                       const char *resourcePath)
 {
+#if DEBUG_NO_MODEL
+    return true;
+#endif
+    
 #ifdef WIN32
     return false;
 #endif
@@ -127,6 +136,10 @@ bool
 DNNModelDarknet::LoadWin(IGraphics &pGraphics,
                            const char *modelRcName, const char *weightsRcName)
 {
+#if DEBUG_NO_MODEL
+    return true;
+#endif
+    
 #ifdef WIN32
 
 #if 0 // iPlug1
@@ -221,7 +234,18 @@ DNNModelDarknet::SetMaskScale(int maskNum, BL_FLOAT scale)
 void
 DNNModelDarknet::Predict(const WDL_TypedBuf<BL_FLOAT> &input,
                          vector<WDL_TypedBuf<BL_FLOAT> > *masks)
-{    
+{
+#if DEBUG_NO_MODEL
+    masks->resize(NUM_STEMS);
+    for (int i = 0; i < NUM_STEMS; i++)
+    {
+        (*masks)[i].Resize(input.GetSize());
+        BLUtils::FillAllValue(&(*masks)[i], 0.25);
+    }
+    
+    return;
+#endif
+    
     WDL_TypedBuf<BL_FLOAT> &input0 = mTmpBuf0;
     input0 = input;
     
@@ -329,6 +353,10 @@ DNNModelDarknet::SetDbgThreshold(BL_FLOAT thrs)
 bool
 DNNModelDarknet::LoadWinTest(const char *modelFileName, const char *resourcePath)
 {
+#if DEBUG_NO_MODEL
+    return true;
+#endif
+    
     // NOTE: with the fmem implementation "funopen", there is a memory problem
     // in darknet fgetl().
     //Detected with valgrind during plugin scan.
