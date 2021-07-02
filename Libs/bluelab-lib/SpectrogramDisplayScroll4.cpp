@@ -294,6 +294,23 @@ SpectrogramDisplayScroll4::PreDraw(NVGcontext *vg, int width, int height)
         mNeedRedraw = true;
     
     mState->mPrevOffsetSec = offsetSec;
+
+    if ((mState->mPrevOffsetSec > mState->mDelayTimeSecLeft) ||
+        (-mState->mPrevOffsetSec > mState->mDelayTimeSecRight))
+        // Offset gets out of bounds, and will make black borders
+    {
+        // Hard reset the smooth scolling, so we will never have black borders
+        // (and most of all, black borders that stay and would only disappear by
+        // restarting playback
+        
+        ResetScroll();
+        
+        if (mState->mTransport != NULL)
+        {
+            mState->mTransport->HardResynch();
+            mState->mTransport->Reset();
+        }
+    }
     
     BL_FLOAT offsetPixels = SecsToPixels(offsetSec, width);
     
