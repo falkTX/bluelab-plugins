@@ -54,10 +54,8 @@ BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP, tt
 
 - TODO: manuals
 
-- TODO: Rebalance: try best model, with smaller step, not 32, but e.g 4
-(we see squares if we toggle off weiner filtering)
+- TODO: extensive tests on linux
 
-- TODO: test a plugin with SmoothCurveDB and block size=32 (perf drop ?)
 
 - NOTE: colors set in app programatically, and colors exported from Inkscape
 are not exactly the same (don't know why)
