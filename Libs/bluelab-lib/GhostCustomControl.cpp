@@ -422,7 +422,13 @@ GhostCustomControl::OnMouseOver(float x, float y, const IMouseMod &pMod)
 {
     mPlug->CursorMoved(x, y);
 }
-    
+
+void
+GhostCustomControl::OnMouseOut()
+{
+    mPlug->CursorOut();
+}
+
 bool
 GhostCustomControl::InsideSelection(int x, int y)
 {

@@ -61,6 +61,7 @@ public:
     bool PlaybackWasRestarted(unsigned long long delay);
 
     virtual void CursorMoved(BL_FLOAT x, BL_FLOAT y) = 0;
+    virtual void CursorOut() = 0;
         
 protected:
     unsigned long long mPrevUpTime;
