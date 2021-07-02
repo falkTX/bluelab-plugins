@@ -295,14 +295,22 @@ SpectrogramDisplayScroll4::PreDraw(NVGcontext *vg, int width, int height)
     
     mState->mPrevOffsetSec = offsetSec;
 
+#if 0
     if ((mState->mPrevOffsetSec > mState->mDelayTimeSecLeft) ||
         (-mState->mPrevOffsetSec > mState->mDelayTimeSecRight))
-        // Offset gets out of bounds, and will make black borders
+#endif
+#if 1
+    if ((mState->mPrevOffsetSec > mState->mDelayTimeSecLeft) ||
+        (-mState->mPrevOffsetSec > mState->mDelayTimeSecRight
+         - mState->mSpectroLineDurationSec))
+        // Take 1 spectrogram line additional bound
+        // (will avoid think black border on the right sometimes)
+#endif
+    // Offset gets out of bounds, and will make black borders
     {
         // Hard reset the smooth scolling, so we will never have black borders
         // (and most of all, black borders that stay and would only disappear by
-        // restarting playback
-        
+        // restarting playback   
         ResetScroll();
         
         if (mState->mTransport != NULL)
@@ -310,6 +318,14 @@ SpectrogramDisplayScroll4::PreDraw(NVGcontext *vg, int width, int height)
             mState->mTransport->HardResynch();
             mState->mTransport->Reset();
         }
+
+        // Recompute offset sec
+        offsetSec = GetOffsetSec();
+    
+        if (std::fabs(offsetSec - mState->mPrevOffsetSec) > BL_EPS)
+            mNeedRedraw = true;
+    
+        mState->mPrevOffsetSec = offsetSec;
     }
     
     BL_FLOAT offsetPixels = SecsToPixels(offsetSec, width);

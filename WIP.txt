@@ -59,6 +59,13 @@ Chroma:
 Panogram:
 InfrasonicViewer:
 
+TODO: check for all scroll plugs, for black borders gui resize
+(and recheck ghost viewer for GUI open close)
+TODO: check panogram vertical scroll
+
+- BUG: Ghost: time spectro meter changes every time while scrolling
+(even if the mouse is not on the graph)
+
 - BUG: Rebalance: offline mode, play, switch to faster => sometimes black border
 
 
