@@ -53,11 +53,16 @@ BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP, tt
 ===
 
 SpectroScroll:
-Rebalance: bug buffered scrolling for time axis labels
+Rebalance:
 GhostViewer:
 Chroma:
 Panogram:
 InfrasonicViewer:
+
+TESTS:
+- resize gui several times => no black border on the right
+- close gui / open gui => no buffered scrolling (spectro and time axis)
+- play just a little, hide gui, wait, show gui => spectro must have scrolled
 
 TODO: check for all scroll plugs, for black borders gui resize
 (and recheck ghost viewer for GUI open close)
