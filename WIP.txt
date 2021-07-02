@@ -52,28 +52,6 @@ BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP, tt
 
 ===
 
-SpectroScroll:
-Rebalance:
-GhostViewer:
-Chroma:
-Panogram:
-InfrasonicViewer:
-
-TESTS:
-- resize gui several times => no black border on the right
-- close gui / open gui => no buffered scrolling (spectro and time axis)
-- play just a little, hide gui, wait, show gui => spectro must have scrolled
-
-TODO: check for all scroll plugs, for black borders gui resize
-(and recheck ghost viewer for GUI open close)
-TODO: check panogram vertical scroll
-
-- BUG: Ghost: time spectro meter changes every time while scrolling
-(even if the mouse is not on the graph)
-
-- BUG: Rebalance: offline mode, play, switch to faster => sometimes black border
-
-
 - TODO: manuals
 
 - TODO: Rebalance: try best model, with smaller step, not 32, but e.g 4
