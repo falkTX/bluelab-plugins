@@ -54,12 +54,9 @@ BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP, tt, m
 
 ===
 
-
-- TODO: Ghost: fat tabs bar text (when tooltip)
+- TODO: extensive tests on linux
 
 - TODO: Rebalance: obfuscate .cfg ?
-
-- TODO: extensive tests on linux
 
 - BUG: Chroma scroll jitters at min speed
 => check very well smooth scrolling for all plugs
@@ -78,3 +75,5 @@ are not exactly the same (don't know why)
 
 ===
 - TODO: test plugins with DaVinci Resolve Video Editor / Fairlight (see Eugene mail)
+
+- TODO: Ghost: fat tabs bar text (when tooltip)
