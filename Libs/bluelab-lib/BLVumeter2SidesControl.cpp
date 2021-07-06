@@ -26,6 +26,8 @@ void
 BLVumeter2SidesControl::Draw(IGraphics& g)
 {
     BL_FLOAT val = GetValue();
+
+    val = 1.0 - val;
     
     // Fill the middle
     BL_FLOAT middle = mRECT.T + mRECT.H()*0.5;
@@ -34,8 +36,7 @@ BLVumeter2SidesControl::Draw(IGraphics& g)
     middleRect.T = middle - MIDDLE_SIZE/2;
     middleRect.B = middle + MIDDLE_SIZE/2;
     g.FillRect(mColor, middleRect);
-    
-    
+        
     // Fill the bar
     IRECT rect = mRECT;
     if (val > 0.5)
