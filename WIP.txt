@@ -1,3 +1,5 @@
+===
+DEV
 ---
 features+ : fea+
 LockFree: LoFr
@@ -8,9 +10,7 @@ gui: gui design in Inkscape
 guiP: gui fully integrated programmatically
 tt: tooltips
 m: updated manual
-
 ---
-
 BL-Air		    :	fea+,      ,optim, mem, bugs, LoFr    ,     , gui, guiP, tt, m
 BL-AutoGain	    :	fea+,      ,optim, mem, bugs, LoFr    ,     , gui, guiP, tt, m
 BL-Bat		    :
@@ -51,10 +51,71 @@ BL-StereoDeReverb   :
 BL-StereoPan	    :   (fea+)                                      , gui, guiP, tt, m
 BL-StereoWidth	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP, tt, m
 BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP, tt, m
-
 ===
 
+===
+TESTS (Linux)
+---
+func: functional tests
+(test all features in detail, remove/insert plug, close/open gui, open manual,
+automatize all parameters to constant values)
+---
+BL-Air		    :	func, 
+BL-AutoGain	    :	.
+BL-Bat		    :
+BL-Chroma	    :	.
+BL-Denoiser	    :	.
+BL-DUET		    :
+BL-Envelope	    :	
+BL-EQHack	    :	.
+BL-Gain12	    :	.
+BL-Gain200	    :	.
+BL-Gain24	    :	.
+BL-Gain60	    :	.
+BL-Ghost	    :	.
+BL-GhostViewer	    :   .
+BL-Impulses	    :   .
+BL-Infra	    :   .
+BL-InfrasonicViewer :   .
+BL-InfraSynth	    :
+BL-LoFi		    :   .
+BL-OnsetDetect	    :
+BL-Panogram	    :   .
+BL-PitchShift	    :   .
+BL-Precedence	    :   .
+BL-Rebalance	    :	.
+BL-Reverb	    :
+BL-ReverbDepth	    :
+BL-SampleDelay	    :   .
+BL-SASViewer	    : 
+BL-Saturate	    :   .
+BL-Shaper	    :   .
+BL-Sine		    :   .
+BL-SoundMetaViewer  :
+BL-Spatializer	    :   .
+BL-SpectralDiff	    :   .
+BL-SpectroExpe	    :
+BL-SpectrumView	    :
+BL-StereoDeReverb   :
+BL-StereoPan	    :   .
+BL-StereoWidth	    :   .
+BL-Wav3s	    :   .
+===
+
+
 - TODO: extensive tests on linux
+  - re-pass valgrind on all plugs, and test all features
+    (+ remove/insert plug + hide gui show gui)
+  - functional tests: test in detail each plug by hand, to see if everything works
+  - sample rate tests1: test every plug with 4 sample rates (features, by hand)
+  - sample rate test 2: test perfs with 4 sample rates
+  - sample rate tests: test every plug with 4 sample rates: test latency when bounce
+  - block size tests: test with 32, 512, 2048, 44, 99
+    	  - test clicks,
+	  - test latency whn dump
+	  - test perfs (no inacceptable perf explosion ?)
+  - later, test other DAWs on linux
+  
 
 - TODO: Rebalance: obfuscate .cfg ?
 
