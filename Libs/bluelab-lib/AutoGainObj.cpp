@@ -122,9 +122,12 @@ AutoGainObj::AutoGainObj(int bufferSize, int oversampling, int freqRes,
     
     // Smoothers
     BL_FLOAT defaultGain = 0.0;
-    mGainSmoother = new ParamSmoother(defaultGain, GAIN_SMOOTHER_SMOOTH_COEFF_MIN);
-    mScSamplesSmoother = new ParamSmoother(defaultGain, SAMPLES_SMOOTHER_SMOOTH_COEFF);
-    mInSamplesSmoother = new ParamSmoother(defaultGain, SAMPLES_SMOOTHER_SMOOTH_COEFF);
+    mGainSmoother =
+        new ParamSmoother(defaultGain, GAIN_SMOOTHER_SMOOTH_COEFF_MIN);
+    mScSamplesSmoother =
+        new ParamSmoother(defaultGain, SAMPLES_SMOOTHER_SMOOTH_COEFF);
+    mInSamplesSmoother =
+        new ParamSmoother(defaultGain, SAMPLES_SMOOTHER_SMOOTH_COEFF);
 }
 
 AutoGainObj::~AutoGainObj()
@@ -154,11 +157,27 @@ AutoGainObj::Reset()
     BL_FLOAT sampleRate = GetSampleRate();
     AWeighting::ComputeAWeights(&mAWeights, mAWeights.GetSize(), sampleRate);
 #endif
+
     
+#if 0 // Makes gain jump when changing mode
     mScSamplesSmoother->Reset();
     mInSamplesSmoother->Reset();
     mGainSmoother->Reset();
+#endif
 
+#if 1 // Fixed gain jump when changing mode
+    BL_FLOAT defaultGain = 0.0;
+
+    mScSamplesSmoother->Reset(defaultGain);
+    mScSamplesSmoother->Update();
+
+    mInSamplesSmoother->Reset(defaultGain);
+    mInSamplesSmoother->Update();
+    
+    mGainSmoother->Reset(defaultGain);
+    mGainSmoother->Update();
+#endif
+    
 #if 0 // NOTE: with this at 1, when no sc, the sc gain is always 0 until we turn the
       // sc gain knob again 
     // NEW
