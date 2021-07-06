@@ -54,7 +54,8 @@ BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP, tt, m
 
 ===
 
-- TODO: Ghost: grow tabs bar when gui resize
+
+- TODO: Ghost: fat tabs bar text (when tooltip)
 
 - TODO: Rebalance: obfuscate .cfg ?
 
