@@ -173,6 +173,8 @@ v3.44
 v3.45
 - Rollover improvements
 
+v3.46
+"infrasonicviewer" => "infrasonic-viewer"
 
 
 Rollover menu: 5c75eb

@@ -7,56 +7,59 @@ lazy gui refresh: lgr
 gui: gui design in Inkscape
 guiP: gui fully integrated programmatically
 tt: tooltips
+m: updated manual
+
 ---
 
-BL-Air		    :	fea+,      ,optim, mem, bugs, LoFr    ,     , gui, guiP, tt
-BL-AutoGain	    :	fea+,      ,optim, mem, bugs, LoFr    ,     , gui, guiP, tt
+BL-Air		    :	fea+,      ,optim, mem, bugs, LoFr    ,     , gui, guiP, tt, m
+BL-AutoGain	    :	fea+,      ,optim, mem, bugs, LoFr    ,     , gui, guiP, tt, m
 BL-Bat		    :
-BL-Chroma	    :	fea+,      ,optim, mem, bugs, LoFr    , lgr , gui, guiP, tt
-BL-Denoiser	    :	fea+,      ,optim, mem, bugs, LoFr    ,     , gui, guiP, tt
+BL-Chroma	    :	fea+,      ,optim, mem, bugs, LoFr    , lgr , gui, guiP, tt, m
+BL-Denoiser	    :	fea+,      ,optim, mem, bugs, LoFr    ,     , gui, guiP, tt, m
 BL-DUET		    :
 BL-Envelope	    :	fea+,      ,optim, mem, bugs
-BL-EQHack	    :	fea+,      ,optim, mem, bugs, LoFr    ,     , gui, guiP, tt
-BL-Gain12	    :	fea+,      ,optim, mem, bugs,         ,     , gui, guiP, tt
+BL-EQHack	    :	fea+,      ,optim, mem, bugs, LoFr    ,     , gui, guiP, tt, m
+BL-Gain12	    :	fea+,      ,optim, mem, bugs,         ,     , gui, guiP, tt, m
 BL-Gain200	    :	fea+,      ,optim, mem, bugs
-BL-Gain24	    :	fea+,      ,optim, mem, bugs,         ,     , gui, guiP, tt
-BL-Gain60	    :	fea+,      ,optim, mem, bugs,         ,     , gui, guiP, tt
-BL-Ghost	    :	fea+,      ,optim, mem, bugs, LoFr(l) , lgr , gui, guiP, tt
-BL-GhostViewer	    :   fea+,            , mem,     , LoFr    , lgr , gui, guiP, tt
-BL-Impulses	    :   fea+,      ,optim, mem, bugs, LoFr(l) ,     , gui, guiP, tt
-BL-Infra	    :   fea+,      ,optim, mem, bugs, LoFr    ,     , gui, guiP, tt
-BL-InfrasonicViewer :   fea+,      ,optim, mem, bugs, LoFr    , lgr , gui, guiP, tt
+BL-Gain24	    :	fea+,      ,optim, mem, bugs,         ,     , gui, guiP, tt, m
+BL-Gain60	    :	fea+,      ,optim, mem, bugs,         ,     , gui, guiP, tt, m
+BL-Ghost	    :	fea+,      ,optim, mem, bugs, LoFr(l) , lgr , gui, guiP, tt, m
+BL-GhostViewer	    :   fea+,            , mem,     , LoFr    , lgr , gui, guiP, tt, m
+BL-Impulses	    :   fea+,      ,optim, mem, bugs, LoFr(l) ,     , gui, guiP, tt, m
+BL-Infra	    :   fea+,      ,optim, mem, bugs, LoFr    ,     , gui, guiP, tt, m
+BL-InfrasonicViewer :   fea+,      ,optim, mem, bugs, LoFr    , lgr , gui, guiP, tt, m
 BL-InfraSynth	    :
-BL-LoFi		    :       ,      ,optim, mem, bugs, LoFr    ,     , gui, guiP, tt
+BL-LoFi		    :       ,      ,optim, mem, bugs, LoFr    ,     , gui, guiP, tt, m
 BL-OnsetDetect	    :
-BL-Panogram	    :   fea+,      ,optim, mem, bugs, LoFr    ,     , gui, guiP, tt
-BL-PitchShift	    :   fea+,      ,optim, mem, bugs, (LoFr)  , lgr , gui, guiP, tt 
-BL-Precedence	    :   (fea+)                                      , gui, guiP, tt
-BL-Rebalance	    :	wip: upscaled model is training,      , lgr , gui, guiP, tt
+BL-Panogram	    :   fea+,      ,optim, mem, bugs, LoFr    ,     , gui, guiP, tt, m
+BL-PitchShift	    :   fea+,      ,optim, mem, bugs, (LoFr)  , lgr , gui, guiP, tt, m
+BL-Precedence	    :   (fea+)                                      , gui, guiP, tt, m
+BL-Rebalance	    :	wip: upscaled model is training,      , lgr , gui, guiP, tt, m
 BL-Reverb	    :
 BL-ReverbDepth	    :
-BL-SampleDelay	    :   (fea+)                                      , gui, guiP, tt
+BL-SampleDelay	    :   (fea+)                                      , gui, guiP, tt, m
 BL-SASViewer	    : 
-BL-Saturate	    :   fea+                                  , lgr , gui, guiP, tt
-BL-Shaper	    :   fea+,     , optim, mem, bugs,  LoFr   , lgr , gui, guiP, tt
-BL-Sine		    :   fea+,     , optim, mem, bugs, (LoFr)        , gui, guiP, tt
+BL-Saturate	    :   fea+                                  , lgr , gui, guiP, tt, m
+BL-Shaper	    :   fea+,     , optim, mem, bugs,  LoFr   , lgr , gui, guiP, tt, m
+BL-Sine		    :   fea+,     , optim, mem, bugs, (LoFr)        , gui, guiP, tt, m
 BL-SoundMetaViewer  :
-BL-Spatializer	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP, tt
-BL-SpectralDiff	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP, tt
+BL-Spatializer	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP, tt, m
+BL-SpectralDiff	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP, tt, m
 BL-SpectroExpe	    :
 BL-SpectrumView	    :
 BL-StereoDeReverb   :
-BL-StereoPan	    :   (fea+)                                      , gui, guiP, tt
-BL-StereoWidth	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP, tt
-BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP, tt
+BL-StereoPan	    :   (fea+)                                      , gui, guiP, tt, m
+BL-StereoWidth	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP, tt, m
+BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP, tt, m
 
 ===
 
-- TODO: manuals
+- TODO: Ghost: grow tabs bar when gui resize
 
 - TODO: Rebalance: obfuscate .cfg ?
 
 - TODO: extensive tests on linux
+
 - BUG: Chroma scroll jitters at min speed
 => check very well smooth scrolling for all plugs
 - TODO: Rebalance: higher sample rates (extend mask?)
@@ -69,6 +72,8 @@ are not exactly the same (don't know why)
 - InfrasonicViewer: "2.7Hz", or "2.7 Hz" ?
 
 - TODO(?): Ghost: SELECT DIR => SELECT TYPE
+
+- MANUALS(?): check well ctrl and alt for linux
 
 ===
 - TODO: test plugins with DaVinci Resolve Video Editor / Fairlight (see Eugene mail)
