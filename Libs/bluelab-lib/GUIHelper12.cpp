@@ -662,8 +662,13 @@ GUIHelper12::CreateVumeter2SidesV(IGraphics *graphics,
                                           0.0f, 0.0f,
                                           &width, &height);
 
+    // No need, it is already set
     // For tooltips
-    bitmap->SetInteractionDisabled(false);
+    //bitmap->SetInteractionDisabled(false);
+
+    // For tooltips, as bitmaps have ingteraction disabled,
+    // we even need mouse over to be managed
+    bitmap->SetMouseOverWhenDisabled(true);
     
     // Margin
     x += marginMin;
@@ -674,10 +679,16 @@ GUIHelper12::CreateVumeter2SidesV(IGraphics *graphics,
                                                                 mVumeterColor,
                                                                 paramIdx);
 
+    // Put the tooltip on the bitmap only!
     if (tooltip != NULL)
         bitmap->SetTooltip(tooltip);
-    
+
+    // Will be overwritten in AutoGain
     result->SetInteractionDisabled(true);
+
+    // Ignore mouse, so mouse over will be transmitted to the bitmap under,
+    // and tooltip will appear from the bitmap
+    result->SetIgnoreMouse(true);
     
     graphics->AttachControl(result);
     
