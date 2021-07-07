@@ -19,7 +19,7 @@ class IBLTooltipControl : public ITooltipControl
         g.DrawRect(mBorderColor, innerRECT);
         g.DrawText(mText, mDisplayStr.Get(), mRECT.GetPadded(-2));
     }
-
+    
  protected:
     IColor mBorderColor;
 };

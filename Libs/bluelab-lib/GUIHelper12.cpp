@@ -1881,6 +1881,12 @@ GUIHelper12::GetCircleGDOffsetY(int *x)
 void
 GUIHelper12::AttachToolTipControl(IGraphics *graphics)
 {
+#if 0 // Default
+    graphics->AttachToolTipControl();
+
+    return;
+#endif
+    
     //IBLTooltipControl *control = new IBLTooltipControl();
 
     IText text(mTooltipTextSize, //DEFAULT_TEXT_SIZE,
