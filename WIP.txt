@@ -101,7 +101,9 @@ BL-StereoPan	    :   .
 BL-StereoWidth	    :   .
 BL-Wav3s	    :   .
 ===
-
+TODO: finish testing AutoGain (close/open gui)
+lauch a global build
+===
 
 - TODO: extensive tests on linux
   - re-pass valgrind on all plugs, and test all features
