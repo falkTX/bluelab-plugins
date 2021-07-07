@@ -61,7 +61,7 @@ func: functional tests
 automatize all parameters to constant values)
 ---
 BL-Air		    :	func, 
-BL-AutoGain	    :	.
+BL-AutoGain	    :	func,
 BL-Bat		    :
 BL-Chroma	    :	.
 BL-Denoiser	    :	.
@@ -100,9 +100,6 @@ BL-StereoDeReverb   :
 BL-StereoPan	    :   .
 BL-StereoWidth	    :   .
 BL-Wav3s	    :   .
-===
-TODO: finish testing AutoGain (close/open gui)
-lauch a global build
 ===
 
 - TODO: extensive tests on linux
