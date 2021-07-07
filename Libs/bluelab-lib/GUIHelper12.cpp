@@ -487,10 +487,10 @@ GUIHelper12::CreateKnobSVG(IGraphics *graphics,
     if (createValue)
     {
         ICaptionControl *caption0 =
-        CreateValue(graphics,
-                    x + width/2, y + height,
-                    tfBitmapFname,
-                    paramIdx);
+            CreateValue(graphics,
+                        x + width/2, y + height,
+                        tfBitmapFname,
+                        paramIdx);
         if (caption != NULL)
             *caption = caption0;
     }
