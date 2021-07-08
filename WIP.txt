@@ -59,6 +59,7 @@ TESTS (Linux)
 func: functional tests
 (test all features in detail, remove/insert plug, close/open gui, open manual,
 automatize all parameters to constant values)
+(check smooth scolling)
 ---
 BL-Air		    :	func, 
 BL-AutoGain	    :	func,
