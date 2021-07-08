@@ -458,10 +458,15 @@ SpectrogramDisplayScroll4::ApplyData()
 {
     for (int i = 0; i < mLockFreeQueues[2].size(); i++)
     {
-        SpectrogramLine &line = mTmpBuf1;
-        mLockFreeQueues[2].get(i, line);
+        Command &cmd = mTmpBuf1;
+        mLockFreeQueues[2].get(i, cmd);
 
-        AddSpectrogramLineLF(line.mMagns, line.mPhases);
+        if (cmd.mType == Command::ADD_SPECTROGRAM_LINE)
+            AddSpectrogramLineLF(cmd.mMagns, cmd.mPhases);
+        else if (cmd.mType == Command::SET_SPEED_MOD)
+            SetSpeedModLF(cmd.mSpeedMod);
+        else if (cmd.mType == Command::SET_BYPASSED)
+            SetBypassedLF(cmd.mBypassed);
     }
 
     mLockFreeQueues[2].clear();
@@ -524,11 +529,12 @@ void
 SpectrogramDisplayScroll4::AddSpectrogramLine(const WDL_TypedBuf<BL_FLOAT> &magns,
                                               const WDL_TypedBuf<BL_FLOAT> &phases)
 {
-    SpectrogramLine &line = mTmpBuf2;
-    line.mMagns = magns;
-    line.mPhases = phases;
+    Command &cmd = mTmpBuf2;
+    cmd.mType = Command::ADD_SPECTROGRAM_LINE;
+    cmd.mMagns = magns;
+    cmd.mPhases = phases;
     
-    mLockFreeQueues[0].push(line);
+    mLockFreeQueues[0].push(cmd);
 }
     
 void
@@ -591,10 +597,20 @@ SpectrogramDisplayScroll4::TransportPlayingChanged()
     mNeedRedraw = true;
 }
 
-// Variable speed
 void
 SpectrogramDisplayScroll4::SetSpeedMod(int speedMod)
 {
+    Command &cmd = mTmpBuf3;
+    cmd.mType = Command::SET_SPEED_MOD;
+    cmd.mSpeedMod = speedMod;
+    
+    mLockFreeQueues[0].push(cmd);
+}
+    
+// Variable speed
+void
+SpectrogramDisplayScroll4::SetSpeedModLF(int speedMod)
+{    
     mState->mSpeedMod = speedMod;
 
 #if 1
@@ -649,6 +665,16 @@ SpectrogramDisplayScroll4::SetViewOrientation(ViewOrientation orientation)
 
 void
 SpectrogramDisplayScroll4::SetBypassed(bool flag)
+{
+    Command &cmd = mTmpBuf4;
+    cmd.mType = Command::SET_BYPASSED;
+    cmd.mBypassed = flag;
+    
+    mLockFreeQueues[0].push(cmd);
+}
+
+void
+SpectrogramDisplayScroll4::SetBypassedLF(bool flag)
 {
     if (flag != mIsBypassed)
         mNeedRedraw = true;

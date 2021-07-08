@@ -154,6 +154,10 @@ protected:
     
     void AddSpectrogramLineLF(const WDL_TypedBuf<BL_FLOAT> &magns,
                               const WDL_TypedBuf<BL_FLOAT> &phases);
+
+    void SetBypassedLF(bool flag);
+
+    void SetSpeedModLF(int speedMod);
     
     // NanoVG
     NVGcontext *mVg;
@@ -183,18 +187,36 @@ protected:
     SpectrogramDisplayScrollState *mState;
     
     // Lock free
-    struct SpectrogramLine
+    struct Command
     {
+        enum Type
+        {
+            ADD_SPECTROGRAM_LINE = 0,
+            SET_SPEED_MOD,
+            SET_BYPASSED
+        };
+
+        Type mType;
+        
+        // For ADD_SPECTROGRAM_LINE
         WDL_TypedBuf<BL_FLOAT> mMagns;
         WDL_TypedBuf<BL_FLOAT> mPhases;
+
+        // For SET_SPEED_MOD
+        int mSpeedMod;
+
+        // For SET_BYPASSED
+        bool mBypassed;
     };
     
-    LockFreeQueue2<SpectrogramLine> mLockFreeQueues[LOCK_FREE_NUM_BUFFERS];
+    LockFreeQueue2<Command> mLockFreeQueues[LOCK_FREE_NUM_BUFFERS];
     
 private:
     WDL_TypedBuf<unsigned int> mTmpBuf0;
-    SpectrogramLine mTmpBuf1;
-    SpectrogramLine mTmpBuf2;
+    Command mTmpBuf1;
+    Command mTmpBuf2;
+    Command mTmpBuf3;
+    Command mTmpBuf4;
 };
 
 #endif // IGRAPHICS_NANOVG
