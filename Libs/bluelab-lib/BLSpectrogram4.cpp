@@ -65,6 +65,7 @@ BLSpectrogram4::BLSpectrogram4(BL_FLOAT sampleRate,
     
     mColorMap = NULL;
     mColorMapFactory = new ColorMapFactory(useGLSL, false);
+    mColorMapId = (ColorMapFactory::ColorMap)0;
     
     SetColorMap(ColorMapFactory::COLORMAP_BLUE);
 
@@ -299,6 +300,12 @@ BLSpectrogram4::SetFixedSize(bool flag)
 void
 BLSpectrogram4::SetColorMap(ColorMapFactory::ColorMap colorMapId)
 {
+    // Do not set again same colormap 
+    if ((mColorMap != NULL) && (colorMapId == mColorMapId))
+        return;
+
+    mColorMapId = colorMapId;
+    
     if (mColorMap != NULL)
         delete mColorMap;
     

@@ -197,6 +197,7 @@ protected:
     
     ColorMapFactory *mColorMapFactory;
     ColorMap4 *mColorMap;
+    ColorMapFactory::ColorMap mColorMapId;
     
     bool mProgressivePhaseUnwrap;
     
