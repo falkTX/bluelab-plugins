@@ -648,7 +648,7 @@ template float BLUtilsMath::ApplySigmoid(float t, float a);
 template double BLUtilsMath::ApplySigmoid(double t, double a);
 #endif
 
-#if 1 //Schlick method (more efficint
+#if 1 //Schlick method (more efficient)
 // gain
 template <typename FLOAT_TYPE>
 FLOAT_TYPE BLUtilsMath::ApplySigmoid(FLOAT_TYPE t, FLOAT_TYPE a)
