@@ -489,7 +489,7 @@ ImpulseResponseSet::DenoiseImpulseResponse(WDL_TypedBuf<BL_FLOAT> *impulseRespon
         }
     
         int id0 = i;
-        if (id0 < 0)
+        if (id0 < 0) // cppcheck: dead code block!
         {
             lastIndex = 0;
       

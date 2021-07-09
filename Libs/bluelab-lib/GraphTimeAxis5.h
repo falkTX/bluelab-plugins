@@ -65,7 +65,7 @@ protected:
     
     BL_FLOAT mTimeDuration;
     
-    // For example, one label every 1s, or one label every 0.5 sedons
+    // For example, one label every 1s, or one label every 0.5 seconss
     BL_FLOAT mSpacingSeconds;
     
     BL_FLOAT mCurrentTime;

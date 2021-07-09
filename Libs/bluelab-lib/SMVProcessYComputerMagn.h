@@ -20,14 +20,14 @@ public:
     
     virtual ~SMVProcessYComputerMagn();
     
-    virtual void Reset(BL_FLOAT sampleRate) {};
+    virtual void Reset(BL_FLOAT sampleRate) override {};
     
     void ComputeY(const WDL_TypedBuf<BL_FLOAT> magns[2],
                   const WDL_TypedBuf<BL_FLOAT> phases[2],
                   const WDL_TypedBuf<BL_FLOAT> phasesUnwrap[2],
-                  WDL_TypedBuf<BL_FLOAT> *resultY);
+                  WDL_TypedBuf<BL_FLOAT> *resultY) override;
     
-    Axis3D *CreateAxis();
+    Axis3D *CreateAxis() override;
     
 protected:
     Axis3DFactory2 *mAxisFactory;

@@ -16,7 +16,7 @@ public:
     
     virtual ~SaturateOverObj();
     
-    void ProcessSamplesBuffer(WDL_TypedBuf<BL_FLOAT> *ioBuffer);
+    void ProcessSamplesBuffer(WDL_TypedBuf<BL_FLOAT> *ioBuffer) override;
     
     void SetRatio(BL_FLOAT ratio);
     

@@ -215,7 +215,7 @@ public:
     void SetScrollDirection(ScrollDirection dir);
     
     // Inherited
-    void PreDraw(NVGcontext *vg, int width, int height);
+    void PreDraw(NVGcontext *vg, int width, int height) override;
     
     void ClearSlices();
     
@@ -292,7 +292,8 @@ public:
     void SetAxis(int idx, Axis3D *axis);
     
     // Axis PointProjector overwrite
-    void ProjectPoint(RC_FLOAT projP[3], const RC_FLOAT p[3], int width, int height);
+    void ProjectPoint(RC_FLOAT projP[3], const RC_FLOAT p[3],
+                      int width, int height) override;
     
     // Debug
     void SetRenderAlgo(RenderAlgo algo);

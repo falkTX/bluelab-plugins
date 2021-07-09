@@ -61,6 +61,17 @@ GraphTimeAxis6::GraphTimeAxis6(bool displayLines,
     mAxisDataAllocated = false;
 
     mTransport = NULL;
+
+    mBufferSize = 2048;
+    mTimeDuration = 1.0;
+    mMaxNumLabels = 10;
+    mTimeOffsetSec = 0.0;
+
+    for (int i = 0; i < MAX_NUM_LABELS; i++)
+    {
+        mHAxisData[i][0] = NULL;
+        mHAxisData[i][1] = NULL;
+    }
 }
 
 GraphTimeAxis6::~GraphTimeAxis6()

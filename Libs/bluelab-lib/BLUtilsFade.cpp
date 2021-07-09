@@ -146,7 +146,7 @@ BLUtilsFade::Fade(const WDL_TypedBuf<FLOAT_TYPE> &buf0,
                   FLOAT_TYPE fadeStart, FLOAT_TYPE fadeEnd,
                   FLOAT_TYPE startT, FLOAT_TYPE endT)
 {
-    int bufSize = buf0.GetSize() - 1;
+    //int bufSize = buf0.GetSize() - 1;
     
     int buf0Size = buf0.GetSize();
     FLOAT_TYPE *buf0Data = buf0.Get();

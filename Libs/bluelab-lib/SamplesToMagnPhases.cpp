@@ -10,6 +10,9 @@
 
 #include "SamplesToMagnPhases.h"
 
+// NOTE: cppcheck warans about out of bounds values
+// (don't know why...)
+
 SamplesToMagnPhases::SamplesToMagnPhases(vector<WDL_TypedBuf<BL_FLOAT> > *samples,
                                          FftProcessObj16 *fftObj,
                                          SpectroEditFftObj3 *spectroEditObjs[2],

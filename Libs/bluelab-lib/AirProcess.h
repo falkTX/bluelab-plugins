@@ -39,7 +39,7 @@ public:
     void Reset(int overlapping, int oversampling, BL_FLOAT sampleRate);
     
     void ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
-                          const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer);
+                          const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer) override;
     
     void SetThreshold(BL_FLOAT threshold);
     void SetMix(BL_FLOAT mix);
@@ -51,10 +51,10 @@ protected:
     
     void ComputeTransientness(const WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer);
     
-    int mBufferSize;
-    BL_FLOAT mOverlapping;
-    BL_FLOAT mOversampling;
-    BL_FLOAT mSampleRate;
+    //int mBufferSize;
+    //BL_FLOAT mOverlapping;
+    //BL_FLOAT mOversampling;
+    //BL_FLOAT mSampleRate;
     
     PartialTracker3 *mPartialTracker;
     

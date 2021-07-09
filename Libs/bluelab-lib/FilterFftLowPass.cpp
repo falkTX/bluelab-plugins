@@ -26,19 +26,20 @@ public:
     
     void Reset();
     
-    void Reset(int bufferSize, int overlapping, int oversampling, BL_FLOAT sampleRate);
+    void Reset(int bufferSize, int overlapping,
+               int oversampling, BL_FLOAT sampleRate) override;
     
     // Set cut freq
     void SetCutFreq(BL_FLOAT cutFreq);
     
     void ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
-                          const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer);
+                          const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer) override;
     
 protected:
-    int mBufferSize;
-    BL_FLOAT mOverlapping;
-    BL_FLOAT mOversampling;
-    BL_FLOAT mSampleRate;
+    //int mBufferSize;
+    //BL_FLOAT mOverlapping;
+    //BL_FLOAT mOversampling;
+    //BL_FLOAT mSampleRate;
     
     BL_FLOAT mCutFreq;
 };
@@ -48,9 +49,10 @@ FftLowPassProcess::FftLowPassProcess(int bufferSize,
                                      BL_FLOAT sampleRate)
 : ProcessObj(bufferSize)
 {
-    mBufferSize = bufferSize;
+    //mBufferSize = bufferSize;
     mOverlapping = overlapping;
-    mOversampling = oversampling;
+    //mOversampling = oversampling;
+    mFreqRes = oversampling;
     mSampleRate = sampleRate;
     
     //
@@ -62,7 +64,7 @@ FftLowPassProcess::~FftLowPassProcess() {}
 void
 FftLowPassProcess::Reset()
 {
-    Reset(mBufferSize, mOverlapping, mOversampling, mSampleRate);
+    Reset(mBufferSize, mOverlapping, mFreqRes/*mOversampling*/, mSampleRate);
 }
 
 void
@@ -71,7 +73,8 @@ FftLowPassProcess::Reset(int bufferSize, int overlapping,
 {
     mBufferSize = bufferSize;
     mOverlapping = overlapping;
-    mOversampling = oversampling;
+    //mOversampling = oversampling;
+    mFreqRes = oversampling;
     mSampleRate = sampleRate;
 }
 
@@ -117,6 +120,9 @@ FilterFftLowPass::FilterFftLowPass()
     mPrevSampleRate = -1.0;
     
     mBlockSize = 1024;
+
+    mFftSize = 1024;
+    mFC = 10.0;
 }
 
 FilterFftLowPass::~FilterFftLowPass()

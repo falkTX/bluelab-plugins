@@ -147,6 +147,7 @@ LinesRender2::LinesRender2()
     mShowAxes = false;
     
     mShowAdditionalLines = false;
+    mAdditionalLinesWidth = 1.0;
     
     mMustRecomputeProj = true;
     

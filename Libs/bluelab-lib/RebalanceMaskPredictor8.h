@@ -62,13 +62,14 @@ public:
     
     virtual ~RebalanceMaskPredictor8();
     
-    void Reset();
+    void Reset() override;
     
     void Reset(int bufferSize, int overlapping,
-               int oversampling, BL_FLOAT sampleRate);
+               int oversampling, BL_FLOAT sampleRate) override;
     
-    void ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamples,
-                         const vector<WDL_TypedBuf<WDL_FFT_COMPLEX> > *scBuffer);
+    void
+    ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamples,
+                    const vector<WDL_TypedBuf<WDL_FFT_COMPLEX> > *scBuffer) override;
     
     // Get the masks
     bool IsMaskAvailable();

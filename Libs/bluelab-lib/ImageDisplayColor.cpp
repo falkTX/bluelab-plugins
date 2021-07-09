@@ -32,6 +32,9 @@ ImageDisplayColor::ImageDisplayColor(NVGcontext *vg, Mode mode)
     mImageHeight = 0;
     
     mPrevImageSize = 0;
+
+    for (int i = 0; i < 4; i++)
+        mImageBounds[i] = 0.0;
 }
 
 ImageDisplayColor::~ImageDisplayColor()

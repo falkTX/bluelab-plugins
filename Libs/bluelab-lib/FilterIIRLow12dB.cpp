@@ -23,7 +23,13 @@
 
 // See: http://www.musicdsp.org/en/latest/Filters/27-resonant-iir-lowpass-12db-oct.html
 
-FilterIIRLow12dB::FilterIIRLow12dB() {}
+FilterIIRLow12dB::FilterIIRLow12dB()
+{
+    mR = 0.0;
+    mC = 0.0;
+    mVibraPos = 0.0;
+    mVibraSpeed = 0.0;
+}
 
 FilterIIRLow12dB::~FilterIIRLow12dB() {}
 

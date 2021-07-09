@@ -45,7 +45,8 @@ public:
     void ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamples,
                          const vector<WDL_TypedBuf<WDL_FFT_COMPLEX> > *scBuffer);
     
-    void Reset(int bufferSize, int oversampling, int freqRes, BL_FLOAT sampleRate);
+    void Reset(int bufferSize, int oversampling,
+               int freqRes, BL_FLOAT sampleRate) override;
     
     BLSpectrogram4 *GetSpectrogram();
     

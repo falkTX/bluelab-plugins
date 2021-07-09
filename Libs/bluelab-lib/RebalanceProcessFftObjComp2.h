@@ -47,7 +47,8 @@ public:
     
     virtual ~RebalanceProcessFftObjComp2();
     
-    void Reset(int bufferSize, int oversampling, int freqRes, BL_FLOAT sampleRate);
+    void Reset(int bufferSize, int oversampling,
+               int freqRes, BL_FLOAT sampleRate) override;
     
     void Reset();
     
@@ -55,8 +56,9 @@ public:
     void ResetResamplers();
 #endif
     
-    virtual void ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
-                                  const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer);
+    virtual void
+    ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
+                     const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer) override;
     
 #if FORCE_SAMPLE_RATE
     void ProcessSamplesPost(WDL_TypedBuf<BL_FLOAT> *ioBuffer);

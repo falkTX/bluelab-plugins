@@ -22,6 +22,8 @@ FilterRBJFeed::FilterRBJFeed(FilterRBJ *filter,
 FilterRBJFeed::FilterRBJFeed(const FilterRBJFeed &other)
 {
     mFilter = other.mFilter;
+
+    mNumPrevSamples = other.mNumPrevSamples;
 }
 
 FilterRBJFeed::~FilterRBJFeed() {}

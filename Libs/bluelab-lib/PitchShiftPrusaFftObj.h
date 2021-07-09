@@ -25,7 +25,8 @@ public:
 
     void ProcessSamplesPost(WDL_TypedBuf<BL_FLOAT> *ioBuffer) override;
     
-    void Reset(int bufferSize, int oversampling, int freqRes, BL_FLOAT sampleRate);
+    void Reset(int bufferSize, int oversampling,
+               int freqRes, BL_FLOAT sampleRate) override;
     
     void Reset();
     

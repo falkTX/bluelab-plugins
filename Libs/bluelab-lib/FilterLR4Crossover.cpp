@@ -18,7 +18,7 @@ class LRCrossoverFilter // LR4 crossover filter
 private:
     struct filterCoefficents
     {
-        BL_FLOAT a0, a1, a2, a3, a4;
+        BL_FLOAT a0 = 0.0, a1 = 0.0, a2 = 0.0, a3 = 0.0, a4 = 0.0;
     } lpco, hpco;
     
     BL_FLOAT b1co, b2co, b3co, b4co;
@@ -36,7 +36,14 @@ private:
     
 public:
     // Niko
-    LRCrossoverFilter() {}
+    LRCrossoverFilter()
+    {
+        b1co = 0.0;
+        b2co = 0.0;
+        b3co = 0.0;
+        b4co = 0.0;
+    }
+    
     LRCrossoverFilter(const LRCrossoverFilter &other)
     {
         lpco = other.lpco;

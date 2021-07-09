@@ -23,15 +23,15 @@ public:
     
     virtual ~FilterRBJ1X();
     
-    void SetCutoffFreq(BL_FLOAT freq);
+    void SetCutoffFreq(BL_FLOAT freq) override;
     
-    void SetSampleRate(BL_FLOAT sampleRate);
+    void SetSampleRate(BL_FLOAT sampleRate) override;
     
-    void SetQFactor(BL_FLOAT q);
+    void SetQFactor(BL_FLOAT q) override;
     
-    BL_FLOAT Process(BL_FLOAT sample);
+    BL_FLOAT Process(BL_FLOAT sample) override;
     
-    void Process(WDL_TypedBuf<BL_FLOAT> *ioSamples);
+    void Process(WDL_TypedBuf<BL_FLOAT> *ioSamples) override;
                  
 protected:
     void CalcFilterCoeffs();

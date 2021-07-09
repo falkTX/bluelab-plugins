@@ -13,7 +13,8 @@
 #include "FftConvolver2.h"
 
 FftConvolver2::FftConvolver2(int bufferSize, int oversampling, bool normalize,
-                             enum AnalysisMethod aMethod, enum SynthesisMethod sMethod)
+                             enum AnalysisMethod aMethod,
+                             enum SynthesisMethod sMethod)
 {
     mBufSize = bufferSize;
     mOversampling = oversampling;
@@ -46,6 +47,9 @@ FftConvolver2::FftConvolver2(int bufferSize, int oversampling, bool normalize,
     // Useful to keep the same volume even if we have oversampling > 2 with Hanning
     mAnalysisWinFactor = ComputeWinFactor(mAnalysisWindow);
     mSynthesisWinFactor = ComputeWinFactor(mSynthesisWindow);
+
+    // Unused...
+    mFirstProcess = true;
     
     Reset();
 }

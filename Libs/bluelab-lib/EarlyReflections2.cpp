@@ -34,6 +34,9 @@ OPTIM: read the "optimization" section of the article
 EarlyReflections2::Ray::Ray()
 {
     mDelay = new DelayObj4(1);
+
+    mPoint[0] = 0.0;
+    mPoint[1] = 0.0;
     
     mAttenCoeff = 1.0;
 }
@@ -314,18 +317,18 @@ EarlyReflections2::GenerateRays(vector<Ray> *newRays,
         // 4 sides in the room
         int startSide = 0; // Take 4 sides
         ///int startSide = 1; // Take only 3 sides (remove the nearest one)
-        for (int i = startSide; i < 4; i++)
+        for (int j = startSide; j < 4; j++)
         {
             // HACK: consider the room walls are aligned with axes
             
             // Corners
             BL_FLOAT rc0[2];
-            rc0[0] = roomCorners[i][0];
-            rc0[1] = roomCorners[i][1];
+            rc0[0] = roomCorners[j][0];
+            rc0[1] = roomCorners[j][1];
             
             BL_FLOAT rc1[2];
-            rc1[0] = roomCorners[(i + 1) % 4][0];
-            rc1[1] = roomCorners[(i + 1) % 4][1];
+            rc1[0] = roomCorners[(j + 1) % 4][0];
+            rc1[1] = roomCorners[(j + 1) % 4][1];
             
             // dx and dy
             BL_FLOAT dx = rc1[0] - rc0[0];

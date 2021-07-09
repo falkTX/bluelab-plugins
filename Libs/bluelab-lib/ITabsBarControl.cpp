@@ -443,7 +443,7 @@ void
 ITabsBarControl::DrawTabNames(IGraphics &g)
 {
     float tabSize = mRECT.W()/mTabs.size();
-    float y = mRECT.T + mRECT.H()*0.5;
+    //float y = mRECT.T + mRECT.H()*0.5;
     float margin = mRECT.H()*0.5;
     
     IText text(mFontSize, mNameColor, "Roboto-Bold", EAlign::Near);

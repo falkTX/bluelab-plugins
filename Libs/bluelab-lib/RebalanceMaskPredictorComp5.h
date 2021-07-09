@@ -70,9 +70,10 @@ public:
     
     virtual ~RebalanceMaskPredictorComp5();
     
-    void Reset();
+    void Reset() override;
     
-    void Reset(int bufferSize, int overlapping, int oversampling, BL_FLOAT sampleRate);
+    void Reset(int bufferSize, int overlapping,
+               int oversampling, BL_FLOAT sampleRate) override;
     
 #if FORCE_SAMPLE_RATE
     void ProcessInputSamplesPre(vector<WDL_TypedBuf<BL_FLOAT> * > *ioSamples,

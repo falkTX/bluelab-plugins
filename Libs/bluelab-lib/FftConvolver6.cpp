@@ -220,7 +220,7 @@ FftConvolver6::SetResponse(const WDL_TypedBuf<BL_FLOAT> *response)
 #if 1
     // Reset the result buffer
     //BLUtils::FillAllZero(&mResultBuf);
-    WDL_TypedBuf<BL_FLOAT> &zero = mTmpBuf0;
+    const WDL_TypedBuf<BL_FLOAT> &zero = mTmpBuf0;
     mTmpBuf0.Resize(mResultBuf.Available());
     BLUtils::FillAllZero(&mTmpBuf0);
     mResultBuf.SetFromBuf(0, mTmpBuf0.Get(), mTmpBuf0.GetSize());

@@ -30,7 +30,7 @@ public:
     bool IsOwnedByGraph() override { return true; }
     
     // Draw after everything
-    void PostDraw(NVGcontext *vg, int width, int height);
+    void PostDraw(NVGcontext *vg, int width, int height) override;
 
     void SetViewOrientation(ViewOrientation orientation);
 

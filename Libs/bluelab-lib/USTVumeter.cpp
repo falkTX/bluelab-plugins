@@ -37,13 +37,16 @@ USTVumeter::USTVumeter(BL_FLOAT sampleRate)
 {
     mBars[0] = NULL;
     mBars[1] = NULL;
+
+    mPeakBars[0] = NULL;
+    mPeakBars[1] = NULL;
     
     mBarTexts[0] = NULL;
     mBarTexts[1] = NULL;
     
     mDBText = NULL;
     mLUFSText = NULL;
-    
+        
     for (int i = 0; i < 2; i++)
         mProcess[i] = new USTVumeterProcess(sampleRate);
     
@@ -54,6 +57,9 @@ USTVumeter::USTVumeter(BL_FLOAT sampleRate)
         mLRSmoothers[i] = new ParamSmoother(0.0, 0.95);
 #endif
 
+    //mLRPeakSmoothers[0] = NULL;
+    //mLRPeakSmoothers[1] = NULL;
+    
 #if USE_PEAK_SMOOTHERS
     for (int i = 0; i < 2; i++)
         mLRPeakSmoothers[i] = new ParamSmoother(0.0, 0.95);
@@ -260,7 +266,7 @@ void
 USTVumeter::SetTextValues(BL_FLOAT gains[2])
 {
     // Quick and dirty compute mono gain
-    BL_FLOAT monoGain;
+    BL_FLOAT monoGain = 0.0;
     if (mMode == RMS)
     {
         // Take avg

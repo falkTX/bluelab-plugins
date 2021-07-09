@@ -34,20 +34,23 @@ public:
     
     virtual ~StereoWidthProcess3();
     
-    void Reset();
+    void Reset() override;
     
-    void Reset(int bufferSize, int overlapping, int oversampling, BL_FLOAT sampleRate);
+    void Reset(int bufferSize, int overlapping,
+               int oversampling, BL_FLOAT sampleRate) override;
     
     void SetWidthChange(BL_FLOAT widthChange);
     
     void SetFakeStereo(bool flag);
     
     // For simple algo
-    void ProcessInputSamplesPre(vector<WDL_TypedBuf<BL_FLOAT> * > *ioSamples,
-                                const vector<WDL_TypedBuf<BL_FLOAT> > *scBuffer);
+    void
+    ProcessInputSamplesPre(vector<WDL_TypedBuf<BL_FLOAT> * > *ioSamples,
+                           const vector<WDL_TypedBuf<BL_FLOAT> > *scBuffer) override;
     
-    void ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamples,
-                         const vector<WDL_TypedBuf<WDL_FFT_COMPLEX> > *scBuffer);
+    void
+    ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamples,
+                    const vector<WDL_TypedBuf<WDL_FFT_COMPLEX> > *scBuffer) override;
     
     // Get the result
     void GetWidthValues(WDL_TypedBuf<BL_FLOAT> *xValues,
@@ -64,10 +67,10 @@ protected:
     // ... because if we decrease at the maximum, the two magns channels
     // must be similar
     // (otherwise it vibrates !)
-    void ApplyWidthChange(WDL_TypedBuf<BL_FLOAT> *ioPhasesL,
-                          WDL_TypedBuf<BL_FLOAT> *ioPhasesR,
-                          WDL_TypedBuf<BL_FLOAT> *ioMagnsL,
+    void ApplyWidthChange(WDL_TypedBuf<BL_FLOAT> *ioMagnsL,
                           WDL_TypedBuf<BL_FLOAT> *ioMagnsR,
+                          WDL_TypedBuf<BL_FLOAT> *ioPhasesL,
+                          WDL_TypedBuf<BL_FLOAT> *ioPhasesR,
                           WDL_TypedBuf<BL_FLOAT> *outSourceRs,
                           WDL_TypedBuf<BL_FLOAT> *outSourceThetas);
     

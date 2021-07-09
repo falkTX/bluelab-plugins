@@ -82,7 +82,7 @@ ISpatializerHandleControl::OnMouseDrag(float x, float y, float dX, float dY,
         y = newY;
     }
 
-    float deltaX = x - mPrevX;
+    //float deltaX = x - mPrevX;
     float deltaY = y - mPrevY;
 
     // Manage well when hitting/releasing shift witing the same drag action
@@ -133,7 +133,7 @@ ISpatializerHandleControl::ParamToPixels(float val, float *x, float *y)
     float centerY = mRECT.T + mRECT.H()*0.5;
 
     float w = mRECT.W();
-    float h = mRECT.H();
+    //float h = mRECT.H();
 
     float rad = w*0.5;
 

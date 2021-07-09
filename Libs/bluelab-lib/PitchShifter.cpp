@@ -24,7 +24,7 @@ public:
     virtual ~PitchShiftOversampObj();
     
     void ProcessSamplesBuffer(vector<WDL_TypedBuf<BL_FLOAT> > &in,
-                                      vector<WDL_TypedBuf<BL_FLOAT> > *out);
+                              vector<WDL_TypedBuf<BL_FLOAT> > *out) override;
 
 protected:
     PitchShifter *mShifter;

@@ -165,8 +165,12 @@ SMVProcess4::SMVProcess4(int bufferSize,
     mSampleRate = sampleRate;
     
     // Smoothing
-    mSourceRsHisto = new SmoothAvgHistogram(bufferSize/2, TEMPORAL_DIST_SMOOTH_COEFF, 0.0);
-    mSourceThetasHisto = new SmoothAvgHistogram(bufferSize/2, TEMPORAL_DIST_SMOOTH_COEFF, 0.0);
+    mSourceRsHisto =
+        new SmoothAvgHistogram(bufferSize/2, TEMPORAL_DIST_SMOOTH_COEFF, 0.0);
+    mSourceThetasHisto =
+        new SmoothAvgHistogram(bufferSize/2, TEMPORAL_DIST_SMOOTH_COEFF, 0.0);
+
+    mPrevTime = 0.0;
     
     mProcessNum = 0;
     mDisplayRefreshRate = GetDisplayRefreshRate();
@@ -573,9 +577,9 @@ SMVProcess4::SetModeX(enum ModeX mode)
     if (xIsPolarNotScalable)
     {
         // If we ignore Y, create a dummy axis on Y
-        Axis3D *xAxis = mAxisFactory->CreateEmptyAxis(Axis3DFactory2::ORIENTATION_Y);
-        SetupAxis(xAxis);
-        mVolRender->SetAxis(1, xAxis);
+        Axis3D *xAxis2 = mAxisFactory->CreateEmptyAxis(Axis3DFactory2::ORIENTATION_Y);
+        SetupAxis(xAxis2);
+        mVolRender->SetAxis(1, xAxis2);
     }
     else
     {

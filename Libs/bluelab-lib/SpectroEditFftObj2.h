@@ -37,12 +37,14 @@ public:
     // In EDIT mode, replace the input samples buffer, provide by the app,
     // by the internal samples buffer, pointed at the mLineCount index
     void PreProcessSamplesBuffer(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
-                                 const WDL_TypedBuf<BL_FLOAT> *scBuffer);
+                                 const WDL_TypedBuf<BL_FLOAT> *scBuffer) override;
     
-    void ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
-                          const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer = NULL);
+    void
+    ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
+                     const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer = NULL) override;
     
-    void Reset(int bufferSize, int oversampling, int freqRes, BL_FLOAT sampleRate);
+    void Reset(int bufferSize, int oversampling,
+               int freqRes, BL_FLOAT sampleRate) override;
     
     void SetMode(Mode mode);
     

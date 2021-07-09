@@ -133,14 +133,14 @@ USTCorrelationComputer3::Process(BL_FLOAT l, BL_FLOAT r)
     BL_FLOAT ExR2 = 0.0;
     for (int i = 0; i < mXLXR.size(); i++)
     {
-        BL_FLOAT xLxR = mXLXR[i];
-        ExLxR += xLxR;
+        BL_FLOAT xLxR0 = mXLXR[i];
+        ExLxR += xLxR0;
         
-        BL_FLOAT xL2 = mXL2[i];
-        ExL2 += xL2;
+        BL_FLOAT xL20 = mXL2[i];
+        ExL2 += xL20;
         
-        BL_FLOAT xR2 = mXR2[i];
-        ExR2 += xR2;
+        BL_FLOAT xR20 = mXR2[i];
+        ExR2 += xR20;
     }
     
     if (mXLXR.size() > 0.0)

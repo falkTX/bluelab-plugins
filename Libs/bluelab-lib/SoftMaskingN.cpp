@@ -76,7 +76,7 @@ SoftMaskingN::Process(const WDL_TypedBuf<BL_FLOAT> &mixtureMagns,
     
         // Manage the history
         //
-        mMixtureHistory[k].push_back(mixtureMagnsSub);
+        mMixtureHistory[k].push_back(mixtureMagnsSub); // cppcheck alarming warning
         while (mMixtureHistory[k].size() > mHistorySize)
             mMixtureHistory[k].pop_front();
         

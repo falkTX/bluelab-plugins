@@ -42,13 +42,13 @@ public:
     void Reset();
     
     void Reset(int bufferSize, int overlapping,
-               int oversampling, BL_FLOAT sampleRate);
+               int oversampling, BL_FLOAT sampleRate) override;
     
     void ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
-                          const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer);
+                          const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer) override;
     
     void ProcessSamplesBufferWin(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
-                                 const WDL_TypedBuf<BL_FLOAT> *scBuffer);
+                                 const WDL_TypedBuf<BL_FLOAT> *scBuffer) override;
     
     void SetThreshold(BL_FLOAT threshold);
     

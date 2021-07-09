@@ -100,7 +100,8 @@ SpectralDiffObj::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     WDL_TypedBuf<WDL_FFT_COMPLEX> &halfScBuffer = mTmpBuf3;
     
     //BLUtils::TakeHalf(&halfScBuffer);
-    BLUtils::TakeHalf(*scBuffer, &halfScBuffer);
+    if (scBuffer != NULL)
+        BLUtils::TakeHalf(*scBuffer, &halfScBuffer);
     
     WDL_TypedBuf<BL_FLOAT> &scMagns = mTmpBuf4;
     WDL_TypedBuf<BL_FLOAT> &scPhases = mTmpBuf5;

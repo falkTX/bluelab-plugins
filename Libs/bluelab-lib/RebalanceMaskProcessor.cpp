@@ -14,6 +14,9 @@ using namespace std;
 
 RebalanceMaskProcessor::RebalanceMaskProcessor()
 {
+    for (int i = 0; i < NUM_STEM_SOURCES; i++)
+        mMixes[i] = 1.0;
+    
     // Parameters
     for (int i = 0; i < NUM_STEM_SOURCES; i++)
         mSensitivities[i] = 1.0;

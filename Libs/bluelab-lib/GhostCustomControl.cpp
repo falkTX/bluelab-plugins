@@ -244,13 +244,13 @@ GhostCustomControl::OnMouseDrag(float x, float y, float dX, float dY,
         {
 #define DRAG_WHEEL_COEFF 0.2
 
-            BL_FLOAT dY = y - mPrevMouseY;
+            BL_FLOAT dY2 = y - mPrevMouseY;
             mPrevMouseY = y;
             
-            dY *= -1.0;
-            dY *= DRAG_WHEEL_COEFF;
+            dY2 *= -1.0;
+            dY2 *= DRAG_WHEEL_COEFF;
             
-            OnMouseWheel(mStartDrag[0], mStartDrag[1], pMod, dY);
+            OnMouseWheel(mStartDrag[0], mStartDrag[1], pMod, dY2);
             
             return;
         }

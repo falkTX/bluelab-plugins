@@ -337,8 +337,8 @@ FastRTConvolver3::Process(const WDL_TypedBuf<BL_FLOAT> &samples,
     // (can be the case if the blockSize suddently changed)
     if (numOutValues < result->GetSize())
     {
-        int numZeros = result->GetSize() - numOutValues;
-        memset(&result->Get()[numOutValues], 0, numZeros*sizeof(BL_FLOAT));
+        int numZeros2 = result->GetSize() - numOutValues;
+        memset(&result->Get()[numOutValues], 0, numZeros2*sizeof(BL_FLOAT));
         
 #if FIX_VARIABLE_BUFFER_SIZE3_FADE
         

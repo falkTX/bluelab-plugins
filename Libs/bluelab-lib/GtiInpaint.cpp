@@ -29,6 +29,16 @@ GtiInpaint::GtiInpaint(int w, int h)
     // TEST
     ftsize = (width+1)*height2;
     //ftsize = width2*height2;
+    
+    fftIn = NULL;
+    fftOut = NULL;
+        
+    re = NULL;
+    im = NULL;
+    ret = NULL;
+    imt = NULL;
+    retmp = NULL;
+    imtmp = NULL;
 }
 
 GtiInpaint::~GtiInpaint() {}

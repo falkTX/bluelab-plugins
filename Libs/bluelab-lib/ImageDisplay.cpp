@@ -43,6 +43,9 @@ ImageDisplay::ImageDisplay(NVGcontext *vg, Mode mode)
     mContrast = 0.5;
     
     mColorMap = NULL;
+
+    for (int i = 0; i < 4; i++)
+        mImageBounds[i] = 0.0;
     
     SetColorMap(0);
 }

@@ -30,10 +30,10 @@ public:
                                       const WDL_TypedBuf<BL_FLOAT> &colorWeights);
     
     // Control
-    virtual void OnMouseDown(float x, float y, const IMouseMod &mod);
-    virtual void OnMouseUp(float x, float y, const IMouseMod &mod);
+    virtual void OnMouseDown(float x, float y, const IMouseMod &mod) override;
+    virtual void OnMouseUp(float x, float y, const IMouseMod &mod) override;
     virtual void OnMouseDrag(float x, float y, float dX, float dY,
-                             const IMouseMod &mod);
+                             const IMouseMod &mod) override;
 
 protected:
     void DistToDbScale(const WDL_TypedBuf<BL_FLOAT> &xValues,

@@ -316,14 +316,14 @@ GraphCurve5::PushValue(BL_GUI_FLOAT x, BL_GUI_FLOAT y)
         
         for (int i = 1; i < mNumValues + 1; i++)
         {
-            BL_GUI_FLOAT x = mXValues.Get()[i];
-            BL_GUI_FLOAT y = mYValues.Get()[i];
+            BL_GUI_FLOAT x2 = mXValues.Get()[i];
+            BL_GUI_FLOAT y2 = mYValues.Get()[i];
             
             //newXValues.Add(x);
             //newYValues.Add(y);
 
-            newXValues.Get()[i] = x;
-            newYValues.Get()[i] = y;
+            newXValues.Get()[i] = x2;
+            newYValues.Get()[i] = y2;
         }
         
         mXValues = newXValues;

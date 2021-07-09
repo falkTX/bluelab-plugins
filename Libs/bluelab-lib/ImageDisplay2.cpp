@@ -35,6 +35,9 @@ ImageDisplay2::ImageDisplay2(Mode mode)
     mPrevImageSize = 0;
     
     mNeedRedraw = false;
+
+    for (int i = 0; i < 4; i++)
+        mImageBounds[i] = 0.0;
 }
 
 ImageDisplay2::~ImageDisplay2()

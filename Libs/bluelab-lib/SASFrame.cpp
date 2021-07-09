@@ -227,17 +227,17 @@ SASFrame::ComputeSamplesSAS(WDL_TypedBuf<BL_FLOAT> *samples)
                 GetSASPartial(&partial, partialIndex, partialT);
                 //partial = mSASPartials[partialIndex]; // OLD
                 
-                BL_FLOAT freq = partial.mFreq;
+                BL_FLOAT freq2 = partial.mFreq;
                 
                 BL_FLOAT amp = DBToAmp(partial.mAmpDB);
                 BL_FLOAT samp = amp*sin(phase); // cos
                 
                 samp *= SYNTH_AMP_COEFF;
                 
-                if (freq >= SYNTH_MIN_FREQ)
+                if (freq2 >= SYNTH_MIN_FREQ)
                     samples->Get()[i] += samp;
                 
-                phase += 2.0*M_PI*freq/mSampleRate;
+                phase += 2.0*M_PI*freq2/mSampleRate;
             }
             
             mSASPartials[partialIndex].mPhase =/*+=*/ phase;

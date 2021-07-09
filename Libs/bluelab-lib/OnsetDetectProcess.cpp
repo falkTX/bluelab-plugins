@@ -16,14 +16,14 @@
 #include "OnsetDetectProcess.h"
 
 
-OnsetDetectProcess::OnsetDetectProcess(int bufferSize,
-                                       BL_FLOAT overlapping, BL_FLOAT oversampling,
-                                       BL_FLOAT sampleRate)
+OnsetDetectProcess::OnsetDetectProcess(int bufferSize, BL_FLOAT overlapping,
+                                       BL_FLOAT oversampling, BL_FLOAT sampleRate)
 : ProcessObj(bufferSize)
 {
-    mBufferSize = bufferSize;
+    //mBufferSize = bufferSize;
     mOverlapping = overlapping;
-    mOversampling = oversampling;
+    //mOversampling = oversampling;
+    mFreqRes = oversampling;
     
     mSampleRate = sampleRate;
     
@@ -38,7 +38,8 @@ OnsetDetectProcess::~OnsetDetectProcess()
 void
 OnsetDetectProcess::Reset()
 {
-    Reset(mBufferSize, mOverlapping, mOversampling, mSampleRate);
+    Reset(mBufferSize, mOverlapping,
+          mFreqRes/*mOversampling*/, mSampleRate);
 }
 
 void
@@ -48,7 +49,8 @@ OnsetDetectProcess::Reset(int bufferSize, int overlapping, int oversampling,
     mBufferSize = bufferSize;
     
     mOverlapping = overlapping;
-    mOversampling = oversampling;
+    //mOversampling = oversampling;
+    mFreqRes = oversampling;
     
     mSampleRate = sampleRate;
 }

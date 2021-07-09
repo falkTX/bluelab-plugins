@@ -57,6 +57,8 @@ BufProcessObjSmooth::BufProcessObjSmooth(BufProcessObj *obj0, BufProcessObj *obj
     mBufSize = bufSize;
     
     mParameter = NULL;
+
+    mFlushBufferCount = 0;
     
     Reset(oversampling, freqRes);
 }

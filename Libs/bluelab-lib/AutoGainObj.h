@@ -49,10 +49,10 @@ public:
     
     virtual ~AutoGainObj();
     
-    void Reset();
+    void Reset() override;
     
     void Reset(int bufferSize, int overlapping,
-               int oversampling, BL_FLOAT sampleRate);
+               int oversampling, BL_FLOAT sampleRate) override;
     
     void SetMode(Mode mode);
 

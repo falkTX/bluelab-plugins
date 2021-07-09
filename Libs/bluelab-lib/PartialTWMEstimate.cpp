@@ -377,7 +377,7 @@ PartialTWMEstimate::ComputeTWMError(const vector<PartialTracker3::Partial> &part
     BL_FLOAT Ek = 0.0;
     for (int i = 0; i < harmos.size(); i++)
     {
-        BL_FLOAT h = harmos[i];
+        BL_FLOAT h0 = harmos[i];
         
         // Find the nearest partial
         int nearestPartialIdx = -1;
@@ -386,7 +386,7 @@ PartialTWMEstimate::ComputeTWMError(const vector<PartialTracker3::Partial> &part
         {
             const PartialTracker3::Partial &partial = partials[j];
             
-            BL_FLOAT diff = std::fabs(partial.mFreq - h);
+            BL_FLOAT diff = std::fabs(partial.mFreq - h0);
             if (diff < minDiff)
             {
                 minDiff = diff;
@@ -396,8 +396,9 @@ PartialTWMEstimate::ComputeTWMError(const vector<PartialTracker3::Partial> &part
         
         if (nearestPartialIdx != -1)
         {
-            const PartialTracker3::Partial &nearestPartial = partials[nearestPartialIdx];
-            Ek += ComputeErrorK(nearestPartial, h, AmaxInv);
+            const PartialTracker3::Partial &nearestPartial =
+                partials[nearestPartialIdx];
+            Ek += ComputeErrorK(nearestPartial, h0, AmaxInv);
         }
     }
     
@@ -415,13 +416,13 @@ PartialTWMEstimate::ComputeTWMError(const vector<PartialTracker3::Partial> &part
         BL_FLOAT minDiff = INF;
         for (int j = 0; j < harmos.size(); j++)
         {
-            BL_FLOAT h = harmos[j];
+            BL_FLOAT h0 = harmos[j];
             
-            BL_FLOAT diff = std::fabs(partial.mFreq - h);
+            BL_FLOAT diff = std::fabs(partial.mFreq - h0);
             if (diff < minDiff)
             {
                 minDiff = diff;
-                nearestHarmo = h;
+                nearestHarmo = h0;
             }
         }
         

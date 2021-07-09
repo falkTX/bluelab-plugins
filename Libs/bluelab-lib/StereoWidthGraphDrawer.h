@@ -20,7 +20,7 @@ public:
     
     virtual ~StereoWidthGraphDrawer() {}
     
-    virtual void PostDraw(NVGcontext *vg, int width, int height);
+    virtual void PostDraw(NVGcontext *vg, int width, int height) override;
 };
 
 #endif // IGRAPHICS_NANOVG

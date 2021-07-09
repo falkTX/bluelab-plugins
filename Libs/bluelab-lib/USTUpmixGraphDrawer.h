@@ -23,7 +23,7 @@ public:
     virtual ~USTUpmixGraphDrawer();
     
     // GraphCustomDrawer
-    virtual void PreDraw(NVGcontext *vg, int width, int height);
+    virtual void PreDraw(NVGcontext *vg, int width, int height) override;
     
     //
     void SetGain(BL_FLOAT gain);
@@ -32,10 +32,10 @@ public:
     void SetBrillance(BL_FLOAT brillance);
     
     // GraphCustomControl
-    void OnMouseDown(float x, float y, const IMouseMod &mod);
-    void OnMouseUp(float x, float y, const IMouseMod &mod);
+    void OnMouseDown(float x, float y, const IMouseMod &mod) override;
+    void OnMouseUp(float x, float y, const IMouseMod &mod) override;
     void OnMouseDrag(float x, float y, float dX, float dY,
-                     const IMouseMod &mod);
+                     const IMouseMod &mod) override;
     
 protected:
     void DrawSource(NVGcontext *vg, int width, int height);

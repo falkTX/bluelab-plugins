@@ -125,6 +125,9 @@ USTDepthProcess3::USTDepthProcess3(BL_FLOAT sampleRate)
         mBypassReverbs[i] = new BLReverbSndF(sampleRate, REVERB_OPTIM);
         mBypassReverbs[i]->ApplyPreset(BYPASS_PRESET);
     }
+
+    mReverbIRs[0] = NULL;
+    mReverbIRs[1] = NULL;
     
 #if USE_REVER_IRS
     for (int i = 0; i < 2; i++)

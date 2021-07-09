@@ -56,6 +56,20 @@ public:
         {
             mSkipDisplayX = false;
             mSkipDisplayZ = false;
+
+            //
+            mX = 0.0;
+            mY = 0.0;
+            mZ = 0.0;
+        
+            mSize = 1.0;
+        
+            mR = 0;
+            mG = 0;
+            mB = 0;
+            mA = 0;
+        
+            mId = 0;
         }
         
         virtual ~Point() {}
@@ -89,7 +103,8 @@ public:
     
     virtual ~LinesRender2();
     
-    void ProjectPoint(BL_FLOAT projP[3], const BL_FLOAT p[3], int width, int height);
+    void ProjectPoint(BL_FLOAT projP[3], const BL_FLOAT p[3],
+                      int width, int height) override;
     
     void Init();
 

@@ -180,9 +180,9 @@ void
 HRTF::SetImpulseResponse(const WDL_TypedBuf<BL_FLOAT> *response,
                          int elevId, int azimId, int chan)
 {
-    if (elevId > NUM_ELEV)
+    if (elevId >= NUM_ELEV)
         return;
-    if (azimId > HRTF_NUM_AZIM)
+    if (azimId >= HRTF_NUM_AZIM)
         return;
     
     mImpulseResponses[elevId][azimId][chan] = new WDL_TypedBuf<BL_FLOAT>();

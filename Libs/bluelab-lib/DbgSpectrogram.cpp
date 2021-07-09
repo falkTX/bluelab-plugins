@@ -187,7 +187,7 @@ DbgSpectrogram::SavePPM(const char *filename, int maxValue)
     if (mMagns.empty())
         return;
     
-    vector<WDL_TypedBuf<BL_FLOAT> > phasesUnW;
+    //vector<WDL_TypedBuf<BL_FLOAT> > phasesUnW;
         
     char fullFilename[MAX_PATH];
     sprintf(fullFilename, "/Users/applematuer/Documents/BlueLabAudio-Debug/%s", filename);
@@ -196,7 +196,7 @@ DbgSpectrogram::SavePPM(const char *filename, int maxValue)
     
     // Header
     fprintf(file, "P3\n");
-    fprintf(file, "%ld %d\n", mMagns.size(), mMagns[0].GetSize());
+    fprintf(file, "%d %d\n", mMagns.size(), mMagns[0].GetSize());
     fprintf(file, "%d\n", maxValue);
     
     // Data
@@ -399,7 +399,7 @@ DbgSpectrogram::SavePPM32(const char *filename)
     
     // Header
     fprintf(magnsFile, "P3\n");
-    fprintf(magnsFile, "%ld %d\n", mMagns.size(), mMagns[0].GetSize());
+    fprintf(magnsFile, "%d %d\n", mMagns.size(), mMagns[0].GetSize());
     fprintf(magnsFile, "%d\n", maxValue);
     
     // Data

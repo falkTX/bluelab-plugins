@@ -57,14 +57,22 @@ BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP, tt, m
 TESTS (Linux)
 ---
 func: functional tests
-(test all features in detail, remove/insert plug, close/open gui, open manual,
-automatize all parameters to constant values)
+      - test all features in detail
+      - close/open gui
+      - remove/insert plug
+      - open manual
+      - automatize all parameters to constant values
+      
 (check smooth scolling)
+(check cppcheck)
+
+Spectroscroll4: Chroma, GhostViewer, InfrasonicViewer, Panogram, Rebalance,
+- TODO: check every plugin for processBlock/display race (and use LF chen necessary) 
 ---
 BL-Air		    :	func, 
 BL-AutoGain	    :	func,
 BL-Bat		    :
-BL-Chroma	    :	.
+BL-Chroma	    :	func,
 BL-Denoiser	    :	.
 BL-DUET		    :
 BL-Envelope	    :	
@@ -102,6 +110,10 @@ BL-StereoPan	    :   .
 BL-StereoWidth	    :   .
 BL-Wav3s	    :   .
 ===
+
+NOTES(cppcheck fixes): PitchShiftPrusa, EarlyRelfexion, PseudoStereoObj
+RebalanceMaskPredictorComp5: FORCE_SAMPLE_RATE macro error
+SamplestoMagnPhases: cppcheck error (out of bounds index)
 
 - TODO: extensive tests on linux
   - re-pass valgrind on all plugs, and test all features

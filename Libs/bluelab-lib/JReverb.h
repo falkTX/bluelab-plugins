@@ -48,9 +48,9 @@ public:
     
     virtual ~JReverb();
     
-    virtual BLReverb *Clone() const;
+    virtual BLReverb *Clone() const override;
     
-    void Reset(BL_FLOAT sampleRate, int blockSize);
+    void Reset(BL_FLOAT sampleRate, int blockSize) override;
     
     /// Returns the reverb's current parameters.
     const JReverbParams& GetParams() const;
@@ -80,12 +80,12 @@ public:
     // Mono
     void Process(const WDL_TypedBuf<BL_FLOAT> &input,
                  WDL_TypedBuf<BL_FLOAT> *outputL,
-                 WDL_TypedBuf<BL_FLOAT> *outputR);
+                 WDL_TypedBuf<BL_FLOAT> *outputR) override;
     
     // Stereo
     void Process(const WDL_TypedBuf<BL_FLOAT> inputs[2],
                  WDL_TypedBuf<BL_FLOAT> *outputL,
-                 WDL_TypedBuf<BL_FLOAT> *outputR);
+                 WDL_TypedBuf<BL_FLOAT> *outputR) override;
     
 private:
     

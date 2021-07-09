@@ -28,19 +28,19 @@ public:
     virtual ~DNNModelDarknet();
     
     bool Load(const char *modelFileName,
-              const char *resourcePath);
+              const char *resourcePath) override;
     
     // For WIN32
     bool LoadWin(IGraphics &pGraphics,
                  const char* modelRcName,
-                 const char* weightsRcName);
+                 const char* weightsRcName) override;
     
     void Predict(const WDL_TypedBuf<BL_FLOAT> &input,
-                 vector<WDL_TypedBuf<BL_FLOAT> > *masks);
+                 vector<WDL_TypedBuf<BL_FLOAT> > *masks) override;
     
     // TESTS
     //void SetDbgThreshold(BL_FLOAT thrs);
-    void SetMaskScale(int maskNum, BL_FLOAT scale);
+    void SetMaskScale(int maskNum, BL_FLOAT scale) override;
     
 protected:
     bool LoadWinTest(const char *modelFileName, const char *resourcePath);

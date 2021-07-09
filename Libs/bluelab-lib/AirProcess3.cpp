@@ -33,9 +33,10 @@ AirProcess3::AirProcess3(int bufferSize,
                          BL_FLOAT sampleRate)
 : ProcessObj(bufferSize)
 {
-    mBufferSize = bufferSize;
+    //mBufferSize = bufferSize;
     mOverlapping = overlapping;
-    mOversampling = oversampling;
+    //mOversampling = oversampling;
+    mFreqRes = oversampling;
     
     mSampleRate = sampleRate;
     
@@ -61,7 +62,7 @@ AirProcess3::~AirProcess3()
 void
 AirProcess3::Reset()
 {
-    Reset(mBufferSize, mOverlapping, mOversampling, mSampleRate);
+    Reset(mBufferSize, mOverlapping, mFreqRes/*mOversampling*/, mSampleRate);
 }
 
 void
@@ -71,8 +72,8 @@ AirProcess3::Reset(int bufferSize, int overlapping,
     mBufferSize = bufferSize;
     
     mOverlapping = overlapping;
-    mOversampling = oversampling;
-    
+    //mOversampling = oversampling;
+    mFreqRes = oversampling;
     mSampleRate = sampleRate;
     
     mPartialTracker->Reset(bufferSize, sampleRate);

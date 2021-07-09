@@ -883,10 +883,12 @@ SMVVolRender3::OnKeyUp(float x, float y, const IKeyPress& key)
             
         // Disable selection 2D
         mRayCaster->DisableSelection();
+
+        return true;
     }
     
-    if (cmdReleased)
-        return true;
+    //if (cmdReleased)
+    //     return true;
     
     return false;
 }

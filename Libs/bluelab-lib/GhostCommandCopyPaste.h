@@ -21,10 +21,10 @@ public:
     
     // Apply is paste
     void Apply(vector<WDL_TypedBuf<BL_FLOAT> > *magns,
-               vector<WDL_TypedBuf<BL_FLOAT> > *phases);
+               vector<WDL_TypedBuf<BL_FLOAT> > *phases) override;
     
     void Undo(vector<WDL_TypedBuf<BL_FLOAT> > *magns,
-              vector<WDL_TypedBuf<BL_FLOAT> > *phases);
+              vector<WDL_TypedBuf<BL_FLOAT> > *phases) override;
     
     bool IsPasteDone();
     

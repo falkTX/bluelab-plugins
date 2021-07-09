@@ -38,7 +38,8 @@ public:
     void ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
                           const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer = NULL);
     
-    void Reset(int bufferSize, int oversampling, int freqRes, BL_FLOAT sampleRate);
+    void Reset(int bufferSize, int oversampling,
+               int freqRes, BL_FLOAT sampleRate) override;
     
     void SetMode(Mode mode);
 

@@ -24,12 +24,14 @@ public:
     
     virtual ~RebalanceTestMultiObj();
     
-    void Reset();
+    void Reset() override;
     
-    void Reset(int bufferSize, int overlapping, int oversampling, double sampleRate);
+    void Reset(int bufferSize, int overlapping,
+               int oversampling, double sampleRate) override;
     
-    void ProcessResultFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamples,
-                          const vector<WDL_TypedBuf<WDL_FFT_COMPLEX> > *scBuffer);
+    void
+    ProcessResultFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamples,
+                     const vector<WDL_TypedBuf<WDL_FFT_COMPLEX> > *scBuffer) override;
     
 protected:
     double mSampleRate;

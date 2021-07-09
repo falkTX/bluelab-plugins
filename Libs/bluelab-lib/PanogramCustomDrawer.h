@@ -55,10 +55,10 @@ public:
     // you whant to draw
     
     // Draw before everything
-    void PreDraw(NVGcontext *vg, int width, int height) {}
+    void PreDraw(NVGcontext *vg, int width, int height) override {}
     
     // Draw after everything
-    void PostDraw(NVGcontext *vg, int width, int height);
+    void PostDraw(NVGcontext *vg, int width, int height) override;
     
     //
     void ClearBar();

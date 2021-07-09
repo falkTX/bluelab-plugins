@@ -27,7 +27,7 @@ public:
     };
     
     SpectroEditFftObj2EXPE(int bufferSize, int oversampling, int freqRes,
-                       BL_FLOAT sampleRate);
+                           BL_FLOAT sampleRate);
     
     virtual ~SpectroEditFftObj2EXPE();
     
@@ -37,10 +37,11 @@ public:
     // In EDIT mode, replace the input samples buffer, provide by the app,
     // by the internal samples buffer, pointed at the mLineCount index
     void PreProcessSamplesBuffer(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
-                                 const WDL_TypedBuf<BL_FLOAT> *scBuffer);
+                                 const WDL_TypedBuf<BL_FLOAT> *scBuffer) override;
     
-    void ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
-                          const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer = NULL);
+    void
+    ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
+                     const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer = NULL) override;
     
     void Reset(int oversampling, int freqRes, BL_FLOAT sampleRate);
     
@@ -107,7 +108,8 @@ protected:
     
     WDL_TypedBuf<BL_FLOAT> *mSamples;
     
-    BL_FLOAT mSelectionEnabled;
+    //BL_FLOAT mSelectionEnabled;
+    bool mSelectionEnabled;
     BL_FLOAT mDataSelection[4];
     
     bool mSelectionPlayFinished;

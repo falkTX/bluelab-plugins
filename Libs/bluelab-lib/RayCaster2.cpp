@@ -5268,9 +5268,9 @@ RayCaster2::ComputeCameraPosition(RC_FLOAT camPos[3], bool invertModel)
         modelMat = glm::inverse(modelMat);
         
         // Transform
-        glm::vec4 pos(camPos[0], camPos[1], camPos[2], 1.0);
+        glm::vec4 pos0(camPos[0], camPos[1], camPos[2], 1.0);
         
-        glm::vec4 v4 = modelMat*pos;
+        glm::vec4 v4 = modelMat*pos0;
         
         //#define EPS 1e-8
         if ((v4.w < -BL_EPS8) || (v4.w > BL_EPS8))

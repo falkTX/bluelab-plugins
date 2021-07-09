@@ -70,8 +70,8 @@ RCQuadTreeVisitor::Visit(RCQuadTree *node) const
     // (otherwise we will often have a single big colored rectangle on the screen)
     if (mMaxSize >= 0.0)
     {
-        RC_FLOAT size = node->mBBox[1][0] - node->mBBox[0][0];
-        if (size > mMaxSize)
+        RC_FLOAT size0 = node->mBBox[1][0] - node->mBBox[0][0];
+        if (size0 > mMaxSize)
             return false;
     }
     

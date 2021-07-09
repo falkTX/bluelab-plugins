@@ -68,6 +68,10 @@ SpectrogramView::SpectrogramView(BLSpectrogram4 *spectrogram,
     mSampleRate = sampleRate;
     
     mChannels = NULL;
+
+    mSelectionActive = false;
+    for (int i = 0; i < 4; i++)
+        mSelection[i] = 0.0;
     
     Reset();
 }
@@ -494,7 +498,7 @@ SpectrogramView::UpdateSpectrogramData(BL_FLOAT minNormX, BL_FLOAT maxNormX)
     // (for the moment, we manage only mono)
     
     vector<WDL_TypedBuf<BL_FLOAT> > dummySc;
-    vector<WDL_TypedBuf<BL_FLOAT> > dummyOut;
+    //vector<WDL_TypedBuf<BL_FLOAT> > dummyOut;
     
     int numChunks = viewNumLines*overlapping;
     if (viewNumLines < 1)

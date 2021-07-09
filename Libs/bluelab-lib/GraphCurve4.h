@@ -113,7 +113,8 @@ protected:
     BL_GUI_FLOAT mFillAlpha;
     // To fill over the curve
     BL_GUI_FLOAT mFillAlphaUp;
-    BL_GUI_FLOAT mFillAlphaUpFlag; // NEW, UST
+    //BL_GUI_FLOAT mFillAlphaUpFlag; // NEW, UST
+    bool mFillAlphaUpFlag; // NEW, UST
     
     CurveColor mFillColor;
     bool mFillColorSet;

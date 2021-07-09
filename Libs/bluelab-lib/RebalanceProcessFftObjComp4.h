@@ -49,7 +49,9 @@ public:
     
     virtual ~RebalanceProcessFftObjComp4();
     
-    void Reset(int bufferSize, int oversampling, int freqRes, BL_FLOAT sampleRate);
+    void Reset(int bufferSize, int oversampling,
+               int freqRes, BL_FLOAT sampleRate) override;
+    
     void Reset();
 
     BLSpectrogram4 *GetSpectrogram();
@@ -106,7 +108,7 @@ protected:
     void ResetSpectrogram();
         
     //
-    BL_FLOAT mSampleRate;
+    //BL_FLOAT mSampleRate;
     
     BLSpectrogram4 *mSpectrogram;
     SpectrogramDisplayScroll4 *mSpectroDisplay;

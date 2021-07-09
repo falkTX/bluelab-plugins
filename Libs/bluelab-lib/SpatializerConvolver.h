@@ -14,20 +14,19 @@ public:
   
   virtual ~SpatializerConvolver() {}
   
-  void Reset();
+  void Reset() override;
   
   void Reset(int oversampling, int freqRes);
   
-  // NEW
-  void SetBufferSize(int bufferSize);
+  void SetBufferSize(int bufferSize) override;
 
-  void Flush();
+  void Flush() override;
   
-  void SetParameter(void *param);
+  void SetParameter(void *param) override;
   
-  void *GetParameter();
+  void *GetParameter() override;
   
-  bool Process(BL_FLOAT *input, BL_FLOAT *output, int nFrames);
+  bool Process(BL_FLOAT *input, BL_FLOAT *output, int nFrames) override;
   
 protected:
   WDL_TypedBuf<BL_FLOAT> *mResponse;

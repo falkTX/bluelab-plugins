@@ -144,7 +144,8 @@ SASFrame3::SASFrame3(int bufferSize, BL_FLOAT sampleRate, int overlapping)
                                   overlapping, oversampling,
                                   sampleRate);
 #endif
-    
+
+    mTableSynth = NULL;
 #if COMPUTE_SAS_SAMPLES_TABLE
     BL_FLOAT minFreq = 20.0;
     mTableSynth = new WavetableSynth(bufferSize, overlapping,
@@ -503,17 +504,17 @@ SASFrame3::ComputeSamplesSAS(WDL_TypedBuf<BL_FLOAT> *samples)
                 BL_FLOAT partialT = ((BL_FLOAT)i)/(samples->GetSize()/mOverlapping);
                 GetSASPartial(&partial, partialIndex, partialT);
                 
-                BL_FLOAT freq = partial.mFreq;
+                BL_FLOAT freq2 = partial.mFreq;
                 
                 // Apply warping and col here avoids many clips
-                //freq = ApplyNormWarping(freq);
-                //BL_FLOAT col = ApplyColor(freq);
+                //freq2 = ApplyNormWarping(freq2);
+                //BL_FLOAT col = ApplyColor(freq2);
                 
                 // Better: interpolate over time
                 // (with this, it avoids vertical spectrogram leaks)
                 // (the spectrogram is very neat
-                freq = ApplyNormWarping(freq, partialT);
-                BL_FLOAT col = ApplyColor(freq, partialT);
+                freq2 = ApplyNormWarping(freq2, partialT);
+                BL_FLOAT col = ApplyColor(freq2, partialT);
                 
                 BL_FLOAT amp = partial.mAmp*col;
                 
@@ -523,10 +524,10 @@ SASFrame3::ComputeSamplesSAS(WDL_TypedBuf<BL_FLOAT> *samples)
                 
                 samp *= SYNTH_AMP_COEFF;
                 
-                if (freq >= SYNTH_MIN_FREQ)
+                if (freq2 >= SYNTH_MIN_FREQ)
                     samples->Get()[i] += samp;
                 
-                phase += 2.0*M_PI*freq/mSampleRate;
+                phase += 2.0*M_PI*freq2/mSampleRate;
             }
             
             mSASPartials[partialIndex].mPhase = phase;
@@ -643,16 +644,16 @@ SASFrame3::ComputeSamplesSAS2(WDL_TypedBuf<BL_FLOAT> *samples)
                 
                 // Compute freq and partial amp
                 //
-                BL_FLOAT freq;
+                BL_FLOAT freq2;
                 BL_FLOAT amp;
                 if (prevPartial != NULL)
                 {
-                    freq = (1.0 - t)*prevPartial->mFreq + t*partial.mFreq;
+                    freq2 = (1.0 - t)*prevPartial->mFreq + t*partial.mFreq;
                     amp = (1.0 - t)*prevPartialAmp + t*partialAmp;
                 }
                 else
                 {
-                    freq = partial.mFreq;
+                    freq2 = partial.mFreq;
                     
                     // New partial, fade in amp
                     
@@ -664,7 +665,7 @@ SASFrame3::ComputeSamplesSAS2(WDL_TypedBuf<BL_FLOAT> *samples)
                     amp = t0*partialAmp;
                 }
                 
-                freq *= w;
+                freq2 *= w;
             
                 BL_FLOAT samp;
                 SIN_LUT_GET(SAS_FRAME_SIN_LUT, samp, phase);
@@ -672,10 +673,10 @@ SASFrame3::ComputeSamplesSAS2(WDL_TypedBuf<BL_FLOAT> *samples)
                 samp *= amp*col;
                 samp *= SYNTH_AMP_COEFF;
                 
-                if (freq >= SYNTH_MIN_FREQ)
+                if (freq2 >= SYNTH_MIN_FREQ)
                     samples->Get()[i] += samp;
                 
-                phase += phaseCoeff*freq;
+                phase += phaseCoeff*freq2;
             }
             
             // Compute next phase
@@ -942,15 +943,15 @@ SASFrame3::ComputeSamplesSAS4(WDL_TypedBuf<BL_FLOAT> *samples)
                 if (binIdxc < mColor.GetSize() - 1)
                 {
 #if INTERP_COLOR_WARPING
-                    BL_FLOAT t0 = binIdxc - (int)binIdxc;
+                    BL_FLOAT t02 = binIdxc - (int)binIdxc;
                     
                     BL_FLOAT col00 = mPrevColor.Get()[(int)binIdxc];
                     BL_FLOAT col01 = mPrevColor.Get()[((int)binIdxc) + 1];
-                    BL_FLOAT col0 = (1.0 - t0)*col00 + t0*col01;
+                    BL_FLOAT col0 = (1.0 - t02)*col00 + t02*col01;
                     
                     BL_FLOAT col10 = mColor.Get()[(int)binIdxc];
                     BL_FLOAT col11 = mColor.Get()[((int)binIdxc) + 1];
-                    BL_FLOAT col1 = (1.0 - t0)*col10 + t0*col11;
+                    BL_FLOAT col1 = (1.0 - t02)*col10 + t02*col11;
 #else
                     binIdxc = bl_round(binIdxc);
                     
@@ -1436,7 +1437,7 @@ SASFrame3::ComputeSamplesSASOverlap(WDL_TypedBuf<BL_FLOAT> *samples)
             SASPartial partial = mSASPartials[partialIndex];
             for (int i = 0; i < samples->GetSize(); i++)
             {
-                BL_FLOAT freq = partial.mFreq;
+                BL_FLOAT freq2 = partial.mFreq;
                 
                 BL_FLOAT amp = partial.mAmp;
                 
@@ -1445,10 +1446,10 @@ SASFrame3::ComputeSamplesSASOverlap(WDL_TypedBuf<BL_FLOAT> *samples)
                 samp *= amp;
                 samp *= SYNTH_AMP_COEFF;
                 
-                if (freq >= SYNTH_MIN_FREQ)
+                if (freq2 >= SYNTH_MIN_FREQ)
                     samples->Get()[i] += samp;
                 
-                phase += 2.0*M_PI*freq/mSampleRate;
+                phase += 2.0*M_PI*freq2/mSampleRate;
             }
             
             mSASPartials[partialIndex].mPhase =/*+=*/ phase;
@@ -1508,21 +1509,21 @@ SASFrame3::ComputeFftSAS(WDL_TypedBuf<BL_FLOAT> *samples)
             }
             
             // Freq
-            BL_FLOAT freq = 0.0;
+            BL_FLOAT freq2 = 0.0;
             if (partialIndex < mPrevSASPartials.size())
-                freq = mPrevSASPartials[partialIndex].mFreq;
-            freq = ApplyNormWarping(freq);
+                freq2 = mPrevSASPartials[partialIndex].mFreq;
+            freq2 = ApplyNormWarping(freq2);
                 
             // Magn
             BL_FLOAT magn = 0.0;
             if (partialIndex < mPrevSASPartials.size())
             {
                 magn = mPrevSASPartials[partialIndex].mAmp;
-                magn = magn;
+                //magn = magn; // ??
             }
             
             // Color
-            BL_FLOAT col = ApplyColor(freq);
+            BL_FLOAT col = ApplyColor(freq2);
             magn *= col;
             
             // Phase
@@ -1531,9 +1532,9 @@ SASFrame3::ComputeFftSAS(WDL_TypedBuf<BL_FLOAT> *samples)
                 phase = mPrevSASPartials[partialIndex].mPhase;
             
             // Fill the fft
-            if (freq >= SYNTH_MIN_FREQ)
+            if (freq2 >= SYNTH_MIN_FREQ)
             {
-                BL_FLOAT binNum = freq/hzPerBin;
+                BL_FLOAT binNum = freq2/hzPerBin;
                 binNum = bl_round(binNum);
                 if (binNum < 0)
                     binNum = 0;
@@ -1546,7 +1547,7 @@ SASFrame3::ComputeFftSAS(WDL_TypedBuf<BL_FLOAT> *samples)
             
             // Update the phases
             int numSamples = samples->GetSize()/mOverlapping;
-            phase += numSamples*2.0*M_PI*freq/mSampleRate;
+            phase += numSamples*2.0*M_PI*freq2/mSampleRate;
             mSASPartials[partialIndex].mPhase = phase;
         }
                     
@@ -1613,21 +1614,21 @@ SASFrame3::ComputeFftSASFreqAdjust(WDL_TypedBuf<BL_FLOAT> *samples)
             }
             
             // Freq
-            BL_FLOAT freq = 0.0;
+            BL_FLOAT freq2 = 0.0;
             if (partialIndex < mPrevSASPartials.size())
-                freq = mPrevSASPartials[partialIndex].mFreq;
-            freq = ApplyNormWarping(freq);
+                freq2 = mPrevSASPartials[partialIndex].mFreq;
+            freq2 = ApplyNormWarping(freq2);
             
             // Magn
             BL_FLOAT magn = 0.0;
             if (partialIndex < mPrevSASPartials.size())
             {
                 magn = mPrevSASPartials[partialIndex].mAmp;
-                magn = magn;
+                //magn = magn; // ??
             }
             
             // Color
-            BL_FLOAT col = ApplyColor(freq);
+            BL_FLOAT col = ApplyColor(freq2);
             magn *= col;
             
             // Phase
@@ -1636,9 +1637,9 @@ SASFrame3::ComputeFftSASFreqAdjust(WDL_TypedBuf<BL_FLOAT> *samples)
                 phase = mPrevSASPartials[partialIndex].mPhase;
             
             // Fill the fft
-            if (freq >= SYNTH_MIN_FREQ)
+            if (freq2 >= SYNTH_MIN_FREQ)
             {
-                BL_FLOAT binNum = freq/hzPerBin;
+                BL_FLOAT binNum = freq2/hzPerBin;
                 binNum = bl_round(binNum);
                 if (binNum < 0)
                     binNum = 0;
@@ -1649,12 +1650,12 @@ SASFrame3::ComputeFftSASFreqAdjust(WDL_TypedBuf<BL_FLOAT> *samples)
                 phases.Get()[(int)binNum] = phase;
                 
                 // Set real freq
-                realFreqs.Get()[(int)binNum] = freq;
+                realFreqs.Get()[(int)binNum] = freq2;
             }
             
             // Update the phases
             int numSamples = samples->GetSize()/mOverlapping;
-            phase += numSamples*2.0*M_PI*freq/mSampleRate;
+            phase += numSamples*2.0*M_PI*freq2/mSampleRate;
             if (partialIndex < mSASPartials.size()) // Tmp fix...
                 mSASPartials[partialIndex].mPhase = phase;
         }
@@ -1720,10 +1721,10 @@ SASFrame3::ComputeSamplesSASTable(WDL_TypedBuf<BL_FLOAT> *samples)
             }
             
             // Freq
-            BL_FLOAT freq = 0.0;
+            BL_FLOAT freq2 = 0.0;
             if (partialIndex < mPrevSASPartials.size())
-                freq = mPrevSASPartials[partialIndex].mFreq;
-            freq = ApplyNormWarping(freq);
+                freq2 = mPrevSASPartials[partialIndex].mFreq;
+            freq2 = ApplyNormWarping(freq2);
             
             // Magn
             BL_FLOAT amp = 0.0;
@@ -1733,7 +1734,7 @@ SASFrame3::ComputeSamplesSASTable(WDL_TypedBuf<BL_FLOAT> *samples)
             }
             
             // Color
-            BL_FLOAT col = ApplyColor(freq);
+            BL_FLOAT col = ApplyColor(freq2);
             amp *= col;
             
             amp *= SYNTH_AMP_COEFF;
@@ -1744,18 +1745,18 @@ SASFrame3::ComputeSamplesSASTable(WDL_TypedBuf<BL_FLOAT> *samples)
                 phase = mPrevSASPartials[partialIndex].mPhase;
             
             // Fill the fft
-            if (freq >= SYNTH_MIN_FREQ)
+            if (freq2 >= SYNTH_MIN_FREQ)
             {
                 WDL_TypedBuf<BL_FLOAT> freqBuffer;
                 freqBuffer.Resize(mBufferSize/mOverlapping);
-                mTableSynth->GetSamplesLinear(&freqBuffer, freq, amp);
+                mTableSynth->GetSamplesLinear(&freqBuffer, freq2, amp);
                 
                 BLUtils::AddValues(samples, freqBuffer);
             }
             
             // Update the phases
             int numSamples = samples->GetSize()/mOverlapping;
-            phase += numSamples*2.0*M_PI*freq/mSampleRate;
+            phase += numSamples*2.0*M_PI*freq2/mSampleRate;
             mSASPartials[partialIndex].mPhase = phase;
         }
         
@@ -1811,10 +1812,10 @@ SASFrame3::ComputeSamplesSASTable2(WDL_TypedBuf<BL_FLOAT> *samples)
                 BL_FLOAT partialT = ((BL_FLOAT)i)/(samples->GetSize()/mOverlapping);
                 GetSASPartial(&partial, partialIndex, partialT);
                 
-                BL_FLOAT freq = partial.mFreq;
+                BL_FLOAT freq2 = partial.mFreq;
                 
-                freq = ApplyNormWarping(freq, partialT);
-                BL_FLOAT col = ApplyColor(freq, partialT);
+                freq2 = ApplyNormWarping(freq2, partialT);
+                BL_FLOAT col = ApplyColor(freq2, partialT);
                 
                 BL_FLOAT amp = partial.mAmp;
                 amp  *= col;
@@ -1822,9 +1823,9 @@ SASFrame3::ComputeSamplesSASTable2(WDL_TypedBuf<BL_FLOAT> *samples)
                 amp *= SYNTH_AMP_COEFF;
                 
                 // Get from the wavetable
-                if (freq >= SYNTH_MIN_FREQ)
+                if (freq2 >= SYNTH_MIN_FREQ)
                 {
-                    BL_FLOAT samp = mTableSynth->GetSampleNearest(i, freq, amp);
+                    BL_FLOAT samp = mTableSynth->GetSampleNearest(i, freq2, amp);
                     samples->Get()[i] += samp;
                 }
             }

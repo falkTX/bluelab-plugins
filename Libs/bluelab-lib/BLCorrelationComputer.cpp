@@ -69,9 +69,11 @@ BLCorrelationComputer::Process(const WDL_TypedBuf<BL_FLOAT> samples[2],
                                  bool ponderateDist)
 {
 #define RT_SMOOTH 1
-    
+
+#if !RT_SMOOTH
     BL_FLOAT result = 0.0;
     BL_FLOAT sumDist = 0.0;
+#endif
     
     for (int i = 0; i < samples[0].GetSize(); i++)
     {
@@ -81,7 +83,7 @@ BLCorrelationComputer::Process(const WDL_TypedBuf<BL_FLOAT> samples[2],
         BL_FLOAT angle = std::atan2(r, l);
         BL_FLOAT dist = 0.0;
         if (ponderateDist)
-	  dist = std::sqrt(l*l + r*r);
+            dist = std::sqrt(l*l + r*r);
         
         // Check and fix [-pi/2, pi/2], because atan 2 can
         // return values outside
@@ -122,8 +124,10 @@ BLCorrelationComputer::Process(const WDL_TypedBuf<BL_FLOAT> samples[2],
         {
             // Ponderate with distance;
             corr *= dist;
-        
+
+#if !RT_SMOOTH
             sumDist += dist;
+#endif
         }
         
 #if !RT_SMOOTH

@@ -22,13 +22,16 @@
 // Post normalize, so that when everything is set to default, the plugin is transparent
 #define POST_NORMALIZE 1
 
-RebalanceProcessFftObjComp2::RebalanceProcessFftObjComp2(int bufferSize,
-                                                         MASK_PREDICTOR_CLASS *maskPred)
+RebalanceProcessFftObjComp2::
+RebalanceProcessFftObjComp2(int bufferSize,
+                            MASK_PREDICTOR_CLASS *maskPred)
 : ProcessObj(bufferSize)
 {
     mMaskPred = maskPred;
     
     //mMode = RebalanceMode::SOFT;
+
+    mMode = RebalanceMode::HARD; //
     
 #if FORCE_SAMPLE_RATE
     mSampleRate = SAMPLE_RATE;
@@ -361,8 +364,9 @@ RebalanceProcessFftObjComp2::InitResamplers()
 #endif
 
 void
-RebalanceProcessFftObjComp2::ApplySoftMasks(WDL_TypedBuf<WDL_FFT_COMPLEX> masksResult[4],
-                                            const WDL_TypedBuf<BL_FLOAT> masksSource[4])
+RebalanceProcessFftObjComp2::
+ApplySoftMasks(WDL_TypedBuf<WDL_FFT_COMPLEX> masksResult[4],
+               const WDL_TypedBuf<BL_FLOAT> masksSource[4])
 {
     if (masksSource[0].GetSize() == 0)
         return;

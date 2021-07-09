@@ -22,7 +22,7 @@ public:
     
     void SetMaxSize(RC_FLOAT maxSize);
     
-    bool Visit(RCQuadTree *node) const;
+    bool Visit(RCQuadTree *node) const override;
     
     static void TagBoundaries(RCQuadTree *root);
     

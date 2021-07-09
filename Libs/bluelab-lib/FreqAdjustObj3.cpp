@@ -36,6 +36,8 @@
 FreqAdjustObj3::FreqAdjustObj3(int bufferSize, int overlapping, int oversampling,
                                BL_FLOAT sampleRate)
 {
+    mMustSetLastPhases = true;
+    
     Reset(bufferSize, overlapping, oversampling, sampleRate);
 }
 

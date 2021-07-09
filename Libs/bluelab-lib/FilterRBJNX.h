@@ -29,15 +29,15 @@ public:
     
     virtual ~FilterRBJNX();
     
-    void SetCutoffFreq(BL_FLOAT freq);
+    void SetCutoffFreq(BL_FLOAT freq) override;
     
-    void SetQFactor(BL_FLOAT q); // NEW
+    void SetQFactor(BL_FLOAT q) override; // NEW
     
-    void SetSampleRate(BL_FLOAT sampleRate);
+    void SetSampleRate(BL_FLOAT sampleRate) override;
     
-    BL_FLOAT Process(BL_FLOAT sample);
+    BL_FLOAT Process(BL_FLOAT sample) override;
     
-    void Process(WDL_TypedBuf<BL_FLOAT> *ioSamples);
+    void Process(WDL_TypedBuf<BL_FLOAT> *ioSamples) override;
     
 protected:
     void CalcFilterCoeffs();

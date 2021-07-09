@@ -4648,12 +4648,12 @@ BLUtils::PrepareMatchingValueSorted(WDL_TypedBuf<FLOAT_TYPE> *srcValues,
         WDL_TypedBuf<FLOAT_TYPE> sortedDstValues;
         sortedDstValues.Resize(values.size());
         
-        FLOAT_TYPE *dstValuesData = dstValues->Get();
+        FLOAT_TYPE *dstValuesData2 = dstValues->Get();
         
         for (int i = 0; i < values.size(); i++)
         {
             FLOAT_TYPE val = values[i].mDstValue;
-            dstValuesData[i] = val;
+            dstValuesData2[i] = val;
         }
     }
 }
@@ -6921,7 +6921,7 @@ BLUtils::SmoothDataPyramid(WDL_TypedBuf<FLOAT_TYPE> *result,
         // Divide by 2
         
         int xCoordinatesSize = xCoordinates.GetSize();
-        FLOAT_TYPE *xCoordinatesData = xCoordinates.Get();
+        FLOAT_TYPE *xCoordinatesData2 = xCoordinates.Get();
         int yCoordinatesSize = yCoordinates.GetSize();
         FLOAT_TYPE *yCoordinatesData = yCoordinates.Get();
         FLOAT_TYPE *newXCoordinatesData = newXCoordinates.Get();
@@ -6930,10 +6930,10 @@ BLUtils::SmoothDataPyramid(WDL_TypedBuf<FLOAT_TYPE> *result,
         for (int i = 0; i < xCoordinatesSize; i += 2)
         {
             // x
-            FLOAT_TYPE x0 = xCoordinatesData[i];
+            FLOAT_TYPE x0 = xCoordinatesData2[i];
             FLOAT_TYPE x1 = x0;
             if (i + 1 < xCoordinatesSize)
-                x1 = xCoordinatesData[i + 1];
+                x1 = xCoordinatesData2[i + 1];
             
             // y
             FLOAT_TYPE y0 = yCoordinatesData[i];
@@ -6964,14 +6964,14 @@ BLUtils::SmoothDataPyramid(WDL_TypedBuf<FLOAT_TYPE> *result,
     // Put the low LOD values into the result
     
     int xCoordinatesSize = xCoordinates.GetSize();
-    //FLOAT_TYPE *xCoordinatesData = xCoordinates.Get();
+    FLOAT_TYPE *xCoordinatesData3 = xCoordinates.Get();
     FLOAT_TYPE *yCoordinatesData = yCoordinates.Get();
     int resultSize = result->GetSize();
     FLOAT_TYPE *resultData = result->Get();
     
     for (int i = 0; i < xCoordinatesSize; i++)
     {
-        FLOAT_TYPE x = xCoordinatesData[i];
+        FLOAT_TYPE x = xCoordinatesData3[i];
         FLOAT_TYPE y = yCoordinatesData[i];
         
         x = bl_round(x);
@@ -8870,7 +8870,7 @@ BLUtils::SetBufResize(WDL_TypedBuf<FLOAT_TYPE> *dstBuffer,
     // FIX: fix crash Ghost (SA, load file, zoom -> crash)
     if (numToCopy < 0)
     {
-        numToCopy = 0;
+        //numToCopy = 0;
         
         return;
     }

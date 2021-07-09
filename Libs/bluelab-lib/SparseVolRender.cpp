@@ -83,9 +83,11 @@ public:
     
     virtual ~VolRenderPointMerger();
     
-    virtual bool IsMergeable(const SparseVolRender::Point &p0, const SparseVolRender::Point &p1) const;
+    virtual bool IsMergeable(const SparseVolRender::Point &p0,
+                             const SparseVolRender::Point &p1) const override;
     
-    virtual void Merge(const vector<SparseVolRender::Point> &points, SparseVolRender::Point *res) const;
+    virtual void Merge(const vector<SparseVolRender::Point> &points,
+                       SparseVolRender::Point *res) const override;
     
     void SetAlphaCoeff(BL_FLOAT alphaCoeff);
     

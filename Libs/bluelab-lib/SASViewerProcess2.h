@@ -116,10 +116,10 @@ protected:
     void DisplayWarping();
     
     //
-    int mBufferSize;
-    BL_FLOAT mOverlapping;
-    BL_FLOAT mOversampling;
-    BL_FLOAT mSampleRate;
+    //int mBufferSize;
+    //BL_FLOAT mOverlapping;
+    //BL_FLOAT mOversampling;
+    //BL_FLOAT mSampleRate;
     
     //
     WDL_TypedBuf<BL_FLOAT> mCurrentMagns;

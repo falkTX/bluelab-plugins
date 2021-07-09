@@ -87,9 +87,10 @@ public:
     
     void SetMode(Mode mode);
     
-    void OnMouseDown(float x, float y, const IMouseMod &mod);
-    void OnMouseUp(float x, float y, const IMouseMod &mod);
-    void OnMouseDrag(float x, float y, float dX, float dY, const IMouseMod &mod);
+    void OnMouseDown(float x, float y, const IMouseMod &mod) override;
+    void OnMouseUp(float x, float y, const IMouseMod &mod) override;
+    void OnMouseDrag(float x, float y,
+                     float dX, float dY, const IMouseMod &mod) override;
 
     void SetGraphs(GraphControl12 *graph0,
                    GraphControl12 *graph1,

@@ -48,7 +48,8 @@ protected:
     
     void GetConditioningPoints(const BL_FLOAT *mask,int *cond,int condw);
     
-    void EstimateAdsnModel(BL_FLOAT *u, const BL_FLOAT *mask, BL_FLOAT *meanu, BL_FLOAT *t);
+    void EstimateAdsnModel(BL_FLOAT *u, const BL_FLOAT *mask,
+                           BL_FLOAT *meanu, BL_FLOAT *t);
     
     void Cgd(int *cond,BL_FLOAT *rhs,BL_FLOAT *x,BL_FLOAT ep,int imax);
     

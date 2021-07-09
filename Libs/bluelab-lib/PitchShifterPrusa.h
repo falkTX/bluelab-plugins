@@ -20,19 +20,19 @@ class PitchShifterPrusa : public PitchShifterInterface
     PitchShifterPrusa();
     virtual ~PitchShifterPrusa();
 
-    void Reset(BL_FLOAT sampleRate, int blockSize);
+    void Reset(BL_FLOAT sampleRate, int blockSize) override;
 
     void Process(vector<WDL_TypedBuf<BL_FLOAT> > &in,
-                 vector<WDL_TypedBuf<BL_FLOAT> > *out);
+                 vector<WDL_TypedBuf<BL_FLOAT> > *out) override;
     
-    void SetNumChannels(int nchans) {}
-    void SetFactor(BL_FLOAT factor);
+    void SetNumChannels(int nchans) override {}
+    void SetFactor(BL_FLOAT factor) override;
     // Set the buffer size: 0 or 1
-    void SetQuality(int quality);
+    void SetQuality(int quality) override;
 
-    void SetTransBoost(BL_FLOAT transBoost) {}
+    void SetTransBoost(BL_FLOAT transBoost) override {}
 
-    int ComputeLatency(int blockSize);
+    int ComputeLatency(int blockSize) override;
     
 protected:
     void InitFft(BL_FLOAT sampleRate);

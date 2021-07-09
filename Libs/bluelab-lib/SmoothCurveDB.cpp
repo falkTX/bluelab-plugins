@@ -87,7 +87,7 @@ SmoothCurveDB::SetValues(const WDL_TypedBuf<BL_FLOAT> &values, bool reset)
         mLockFreeQueues[0].push(curve);
 #else
         bool clearValues = ContainsClearValues(mLockFreeQueues[0]);
-        bool reset = ContainsCurveReset(mLockFreeQueues[0]);
+        bool reset0 = ContainsCurveReset(mLockFreeQueues[0]);
         
         if (mLockFreeQueues[0].empty())
             mLockFreeQueues[0].push(curve);
@@ -96,7 +96,7 @@ SmoothCurveDB::SetValues(const WDL_TypedBuf<BL_FLOAT> &values, bool reset)
             mLockFreeQueues[0].set(0, curve);
         }
 
-        if (reset)
+        if (reset0)
         {
             LockFreeCurve &c0 = mTmpBuf8;
             mLockFreeQueues[0].get(0, c0);

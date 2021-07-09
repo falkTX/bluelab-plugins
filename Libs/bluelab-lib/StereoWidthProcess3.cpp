@@ -116,12 +116,16 @@ StereoWidthProcess3::StereoWidthProcess3(int bufferSize,
     mWidthChange = 0.0;
     
     mFakeStereo = false;
-    
+
+    mDisplayMode = SIMPLE;
+        
     GenerateRandomCoeffs(bufferSize/2);
     
     // Smoothing
-    mSourceRsHisto = new SmoothAvgHistogram(bufferSize/2, TEMPORAL_DIST_SMOOTH_COEFF, 0.0);
-    mSourceThetasHisto = new SmoothAvgHistogram(bufferSize/2, TEMPORAL_DIST_SMOOTH_COEFF, 0.0);
+    mSourceRsHisto =
+        new SmoothAvgHistogram(bufferSize/2, TEMPORAL_DIST_SMOOTH_COEFF, 0.0);
+    mSourceThetasHisto =
+        new SmoothAvgHistogram(bufferSize/2, TEMPORAL_DIST_SMOOTH_COEFF, 0.0);
     
     mProcessNum = 0;
     mDisplayRefreshRate = GetDisplayRefreshRate();
@@ -432,11 +436,11 @@ StereoWidthProcess3::SetDisplayMode(enum DisplayMode mode)
 
 void
 StereoWidthProcess3::ApplyWidthChange(WDL_TypedBuf<BL_FLOAT> *ioMagnsL,
-                                     WDL_TypedBuf<BL_FLOAT> *ioMagnsR,
-                                     WDL_TypedBuf<BL_FLOAT> *ioPhasesL,
-                                     WDL_TypedBuf<BL_FLOAT> *ioPhasesR,
-                                     WDL_TypedBuf<BL_FLOAT> *outSourceRs,
-                                     WDL_TypedBuf<BL_FLOAT> *outSourceThetas)
+                                      WDL_TypedBuf<BL_FLOAT> *ioMagnsR,
+                                      WDL_TypedBuf<BL_FLOAT> *ioPhasesL,
+                                      WDL_TypedBuf<BL_FLOAT> *ioPhasesR,
+                                      WDL_TypedBuf<BL_FLOAT> *outSourceRs,
+                                      WDL_TypedBuf<BL_FLOAT> *outSourceThetas)
 {
     WDL_TypedBuf<BL_FLOAT> freqs;
     BLUtilsFft::FftFreqs(&freqs, ioPhasesL->GetSize(), mSampleRate);

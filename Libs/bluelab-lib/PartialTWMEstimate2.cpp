@@ -748,7 +748,7 @@ PartialTWMEstimate2::ComputeTWMError(const vector<PartialTracker3::Partial> &par
     {
         for (int i = 0; i < harmos.size(); i++)
         {
-            BL_FLOAT h = harmos[i];
+            BL_FLOAT h0 = harmos[i];
         
             // Find the nearest partial
             int nearestPartialIdx = -1;
@@ -757,7 +757,7 @@ PartialTWMEstimate2::ComputeTWMError(const vector<PartialTracker3::Partial> &par
             {
                 const PartialTracker3::Partial &partial = partials[j];
             
-                BL_FLOAT diff = std::fabs(partial.mFreq - h);
+                BL_FLOAT diff = std::fabs(partial.mFreq - h0);
                 if (diff < minDiff)
                 {
                     minDiff = diff;
@@ -767,8 +767,9 @@ PartialTWMEstimate2::ComputeTWMError(const vector<PartialTracker3::Partial> &par
         
             if (nearestPartialIdx != -1)
             {
-                const PartialTracker3::Partial &nearestPartial = partials[nearestPartialIdx];
-                En += ComputeErrorN(nearestPartial, h, AmaxInv);
+                const PartialTracker3::Partial &nearestPartial =
+                    partials[nearestPartialIdx];
+                En += ComputeErrorN(nearestPartial, h0, AmaxInv);
             }
         }
         
@@ -787,13 +788,13 @@ PartialTWMEstimate2::ComputeTWMError(const vector<PartialTracker3::Partial> &par
         BL_FLOAT minDiff = INF;
         for (int j = 0; j < harmos.size(); j++)
         {
-            BL_FLOAT h = harmos[j];
+            BL_FLOAT h0 = harmos[j];
             
-            BL_FLOAT diff = std::fabs(partial.mFreq - h);
+            BL_FLOAT diff = std::fabs(partial.mFreq - h0);
             if (diff < minDiff)
             {
                 minDiff = diff;
-                nearestHarmo = h;
+                nearestHarmo = h0;
             }
         }
         
@@ -826,10 +827,11 @@ PartialTWMEstimate2::ComputeTWMError(const vector<PartialTracker3::Partial> &par
 // Optimized nearest freq find
 // Gain: 60ms => 40ms (30%)
 BL_FLOAT
-PartialTWMEstimate2::ComputeTWMError2(const vector<PartialTracker3::Partial> &partials,
-                                      const vector<BL_FLOAT> &partialFreqs,
-                                      BL_FLOAT testFreq, BL_FLOAT maxFreqHarmo,
-                                      BL_FLOAT AmaxInv)
+PartialTWMEstimate2::
+ComputeTWMError2(const vector<PartialTracker3::Partial> &partials,
+                 const vector<BL_FLOAT> &partialFreqs,
+                 BL_FLOAT testFreq, BL_FLOAT maxFreqHarmo,
+                 BL_FLOAT AmaxInv)
 {
     if (partials.empty())
         return 0.0;
@@ -853,14 +855,15 @@ PartialTWMEstimate2::ComputeTWMError2(const vector<PartialTracker3::Partial> &pa
     BL_FLOAT En = 0.0;
     for (int i = 0; i < harmos.size(); i++)
     {
-        BL_FLOAT h = harmos[i];
+        BL_FLOAT h0 = harmos[i];
         
         // Find the nearest partial
-        int nearestPartialIdx = FindNearestIndex(partialFreqs, h);
+        int nearestPartialIdx = FindNearestIndex(partialFreqs, h0);
         if (nearestPartialIdx != -1)
         {
-            const PartialTracker3::Partial &nearestPartial = partials[nearestPartialIdx];
-            En += ComputeErrorN(nearestPartial, h, AmaxInv);
+            const PartialTracker3::Partial &nearestPartial =
+                partials[nearestPartialIdx];
+            En += ComputeErrorN(nearestPartial, h0, AmaxInv);
         }
     }
     
@@ -996,14 +999,14 @@ PartialTWMEstimate2::ComputeTWMError3(const vector<PartialTracker3::Partial> &pa
     BL_FLOAT En = 0.0;
     for (int i = 0; i < harmos.size(); i++)
     {
-        BL_FLOAT h = harmos[i];
+        BL_FLOAT h0 = harmos[i];
         
         // Find the nearest partial
-        int nearestPartialIdx = FindNearestIndex(partialFreqs, h);
+        int nearestPartialIdx = FindNearestIndex(partialFreqs, h0);
         if (nearestPartialIdx != -1)
         {
             const PartialTracker3::Partial &nearestPartial = partials[nearestPartialIdx];
-            En += ComputeErrorN2(nearestPartial, h, aNorms[nearestPartialIdx]/*AmaxInv*//*, fnps[i]*/);
+            En += ComputeErrorN2(nearestPartial, h0, aNorms[nearestPartialIdx]/*AmaxInv*//*, fnps[i]*/);
         }
         
 #if DEBUG_NUM_LOOPS

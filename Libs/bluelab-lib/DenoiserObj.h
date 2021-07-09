@@ -36,7 +36,8 @@ public:
     
     virtual ~DenoiserObj();
     
-    void Reset(int bufferSize, int oversampling, int freqRes, BL_FLOAT sampleRate);
+    void Reset(int bufferSize, int oversampling,
+               int freqRes, BL_FLOAT sampleRate) override;
     
     void SetThreshold(BL_FLOAT threshold);
     
@@ -132,8 +133,8 @@ protected:
     void ResampleNoisePattern();
 #endif
 
-    int mBufferSize;
-    int mOverlapping;
+    //int mBufferSize;
+    //int mOverlapping;
     
     WDL_TypedBuf<BL_FLOAT> mSignalBuf;
     WDL_TypedBuf<BL_FLOAT> mNoiseBuf;

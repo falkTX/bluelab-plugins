@@ -181,6 +181,7 @@ GraphControl12::GraphControl12(Plugin *pPlug, IGraphics *graphics,
     
 #if USE_FBO
     mFBO = NULL;
+    mInitialFBO = 0;
 #endif
 
     mDataChanged = true;
@@ -1120,10 +1121,10 @@ GraphControl12::DrawAxis(GraphAxis2 *axis, bool horizontal, bool lineLabelFlag)
                                                axisLinesOverlayColor[2],
                                                axisLinesOverlayColor[3]));
                         
-                        BL_GUI_FLOAT y0 = 0.0;
-                        BL_GUI_FLOAT y1 = height;
+                        //BL_GUI_FLOAT y0 = 0.0;
+                        //BL_GUI_FLOAT y1 = height;
                         
-                        BL_GUI_FLOAT y0f = y0;
+                        BL_GUI_FLOAT y0f = y0; // variable shadows more global
                         BL_GUI_FLOAT y1f = y1;
 #if GRAPH_CONTROL_FLIP_Y
                         y0f = height - y0f;
@@ -1316,9 +1317,10 @@ GraphControl12::DrawAxis(GraphAxis2 *axis, bool horizontal, bool lineLabelFlag)
                                                axisLinesOverlayColor[2],
                                                axisLinesOverlayColor[3]));
                         
-                        BL_GUI_FLOAT x0 = 0.0;
-                        BL_GUI_FLOAT x1 = width;
-                        
+                        //BL_GUI_FLOAT x0 = 0.0;
+                        //BL_GUI_FLOAT x1 = width;
+
+                        // cppcheck warning: shadows outer variable
                         BL_GUI_FLOAT yf = y + OVERLAY_OFFSET;
 #if GRAPH_CONTROL_FLIP_Y
                         yf = height - yf;
@@ -2032,7 +2034,7 @@ GraphControl12::DrawFillCurveSVH(GraphCurve5 *curve)
     if (curve->mFillAlphaUpFlag)
     // Fill the upper area with specific alpha
     {
-        int height = this->mRECT.H();
+        //int height = this->mRECT.H();
         
         int sFillColorUp[4] = { (int)(curve->mColor[0]*255), (int)(curve->mColor[1]*255),
                                 (int)(curve->mColor[2]*255), (int)(curve->mFillAlphaUp*255) };
@@ -2042,8 +2044,8 @@ GraphControl12::DrawFillCurveSVH(GraphCurve5 *curve)
         
         nvgBeginPath(mVg);
         
-        BL_GUI_FLOAT x0 = 0;
-        BL_GUI_FLOAT x1 = width;
+        //BL_GUI_FLOAT x0 = 0;
+        //BL_GUI_FLOAT x1 = width;
         BL_GUI_FLOAT y0 = height;
         BL_GUI_FLOAT y1 = val;
         

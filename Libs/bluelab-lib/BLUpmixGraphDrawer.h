@@ -29,12 +29,13 @@ public:
     virtual ~BLUpmixGraphDrawer();
     
     // GraphCustomDrawer
-    virtual void PreDraw(NVGcontext *vg, int width, int height);
+    virtual void PreDraw(NVGcontext *vg, int width, int height) override;
     
     // GraphCustomControl
-    void OnMouseDown(float x, float y, const IMouseMod &mod);
-    void OnMouseUp(float x, float y, const IMouseMod &mod);
-    void OnMouseDrag(float x, float y, float dX, float dY, const IMouseMod &mod);
+    void OnMouseDown(float x, float y, const IMouseMod &mod) override;
+    void OnMouseUp(float x, float y, const IMouseMod &mod) override;
+    void OnMouseDrag(float x, float y,
+                     float dX, float dY, const IMouseMod &mod) override;
     
     //
     void SetGain(BL_FLOAT gain);

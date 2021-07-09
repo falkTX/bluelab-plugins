@@ -146,14 +146,14 @@ PseudoStereoObj::ProcessSamples(const WDL_TypedBuf<BL_FLOAT> &sampsIn,
         BL_FLOAT a2 = mFilter1->Process(a1);
     
         //
-        for (int i = 0; i < mMode; i++)
+        for (int j = 0; j < mMode; j++)
         {
 #if 0
             a1 = mFilter0->Process(a1);
             a2 = mFilter1->Process(a1);
 #else
-            a1 = mModeFilters[i][0]->Process(a1);
-            a2 = mModeFilters[i][1]->Process(a1);
+            a1 = mModeFilters[j][0]->Process(a1);
+            a2 = mModeFilters[j][1]->Process(a1);
 #endif
         }
         

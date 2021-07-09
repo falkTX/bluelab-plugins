@@ -19,12 +19,12 @@ public:
     
     virtual ~SMVProcessColComputerMagn();
     
-    virtual void Reset(BL_FLOAT sampleRate) {};
+    virtual void Reset(BL_FLOAT sampleRate) override {};
     
     void ComputeCol(const WDL_TypedBuf<BL_FLOAT> magns[2],
                     const WDL_TypedBuf<BL_FLOAT> phases[2],
                     const WDL_TypedBuf<BL_FLOAT> phasesUnwrap[2],
-                    WDL_TypedBuf<BL_FLOAT> *resultCol);
+                    WDL_TypedBuf<BL_FLOAT> *resultCol) override;
 };
 
 #endif /* defined(__BL_SoundMetaViewer__SMVProcessColComputerMagn__) */

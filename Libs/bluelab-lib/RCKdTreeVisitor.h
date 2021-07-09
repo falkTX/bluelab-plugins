@@ -20,7 +20,7 @@ public:
     
     virtual ~RCKdTreeVisitor();
     
-    bool Visit(RCKdTree *node) const;
+    bool Visit(RCKdTree *node) const override;
     
     void SetMaxSize(RC_FLOAT maxSize);
     

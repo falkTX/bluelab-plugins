@@ -55,13 +55,14 @@ public:
     virtual void SetLineMode(LinesRender2::Mode mode);
     
     // Control
-    virtual void OnMouseDown(float x, float y, const IMouseMod &mod);
-    virtual void OnMouseUp(float x, float y, const IMouseMod &mod);
+    virtual void OnMouseDown(float x, float y, const IMouseMod &mod) override;
+    virtual void OnMouseUp(float x, float y, const IMouseMod &mod) override;
     virtual void OnMouseDrag(float x, float y, float dX, float dY,
-                             const IMouseMod &mod);
-    virtual void/*bool*/ OnMouseDblClick(float x, float y, const IMouseMod &mod);
+                             const IMouseMod &mod) override;
+    virtual void/*bool*/ OnMouseDblClick(float x, float y,
+                                         const IMouseMod &mod) override;
     virtual void OnMouseWheel(float x, float y,
-                              const IMouseMod &mod, float d);
+                              const IMouseMod &mod, float d) override;
     
     // Parameters
     virtual void SetSpeed(BL_FLOAT speed);

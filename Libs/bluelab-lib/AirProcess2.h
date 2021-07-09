@@ -44,10 +44,11 @@ public:
     
     void Reset();
     
-    void Reset(int bufferSize, int overlapping, int oversampling, BL_FLOAT sampleRate);
+    void Reset(int bufferSize, int overlapping,
+               int oversampling, BL_FLOAT sampleRate) override;
     
     void ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
-                          const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer);
+                          const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer) override;
     
     void SetThreshold(BL_FLOAT threshold);
     void SetMix(BL_FLOAT mix);
@@ -62,10 +63,10 @@ protected:
     void DetectPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
                         const WDL_TypedBuf<BL_FLOAT> &phases);
     
-    int mBufferSize;
-    BL_FLOAT mOverlapping;
-    BL_FLOAT mOversampling;
-    BL_FLOAT mSampleRate;
+    /*int mBufferSize;
+      BL_FLOAT mOverlapping;
+      BL_FLOAT mOversampling;
+      BL_FLOAT mSampleRate; */
     
     //PartialTracker3 *mPartialTracker;
     //PartialTracker4 *mPartialTracker;

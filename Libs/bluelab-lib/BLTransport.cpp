@@ -135,8 +135,10 @@ BLTransport::SetTransportPlayingLF(bool transportPlaying,
     bool transportJustStarted = ((transportPlaying && !mIsTransportPlaying) ||
                                  (monitorOn && !mIsMonitorOn));
 
+#if 0
     bool transportJustStopped = ((mIsTransportPlaying || mIsMonitorOn) &&
                                  (!transportPlaying && !monitorOn));
+#endif
     
     bool loopDetected = (dawTransportValueSec < mDAWCurrentTransportValueSecLoop);
     

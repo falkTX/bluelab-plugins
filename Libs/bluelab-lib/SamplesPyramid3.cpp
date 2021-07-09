@@ -64,6 +64,8 @@ SamplesPyramid3::SamplesPyramid3(int maxLevel)
     mSamplesPyramid.resize(mMaxPyramidLevel + 1);
 #endif
 
+    mRemainToPop = 0;
+    
     ResetTmpBuffers();
 }
 

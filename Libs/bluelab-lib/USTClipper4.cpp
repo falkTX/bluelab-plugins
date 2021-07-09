@@ -93,7 +93,7 @@ public:
     
     void Reset(BL_FLOAT sampleRate, int blockSize);
     
-    void ProcessSamplesBuffer(WDL_TypedBuf<BL_FLOAT> *ioBuffer);
+    void ProcessSamplesBuffer(WDL_TypedBuf<BL_FLOAT> *ioBuffer) override;
     
     void SetClipValue(BL_FLOAT clipValue);
     

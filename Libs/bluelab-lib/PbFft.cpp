@@ -160,7 +160,12 @@ PbFft::FFT2D(COMPLEX **c,int nx,int ny,int dir)
     if (real == NULL || imag == NULL)
         return(FALSE);
     if (!Powerof2(nx,&m,&twopm) || twopm != nx)
+    {
+        free(real);
+        free(imag);
+    
         return(FALSE);
+    }
     for (j=0;j<ny;j++) {
         for (i=0;i<nx;i++) {
             real[i] = c[i][j].real;
@@ -181,7 +186,12 @@ PbFft::FFT2D(COMPLEX **c,int nx,int ny,int dir)
     if (real == NULL || imag == NULL)
         return(FALSE);
     if (!Powerof2(ny,&m,&twopm) || twopm != ny)
+    {
+        free(real);
+        free(imag);
+    
         return(FALSE);
+    }
     for (i=0;i<nx;i++) {
         for (j=0;j<ny;j++) {
             real[j] = c[i][j].real;

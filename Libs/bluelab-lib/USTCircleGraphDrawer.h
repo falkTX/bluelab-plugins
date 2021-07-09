@@ -21,7 +21,7 @@ public:
     
     virtual ~USTCircleGraphDrawer() {}
     
-    virtual void PreDraw(NVGcontext *vg, int width, int height);
+    virtual void PreDraw(NVGcontext *vg, int width, int height) override;
 };
 
 #endif // IGRAPHICS_NANOVG

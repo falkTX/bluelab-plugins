@@ -524,7 +524,7 @@ GUIHelper12::CreateGraph(Plugin *plug, IGraphics *graphics,
     
     if (overlayFname != NULL)
     {
-        const char *resPath = graphics->GetSharedResourcesSubPath();
+        //const char *resPath = graphics->GetSharedResourcesSubPath();
         
         char bmpPath[MAX_PATH];
         sprintf(bmpPath, "%s/%s", resPath, overlayFname);

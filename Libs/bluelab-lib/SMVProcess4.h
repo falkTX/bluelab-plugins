@@ -93,7 +93,7 @@ public:
     
     virtual ~SMVProcess4();
     
-    void Reset();
+    void Reset() override;
     
     void Reset(int overlapping, int oversampling, BL_FLOAT sampleRate);
     

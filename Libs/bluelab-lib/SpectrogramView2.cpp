@@ -51,6 +51,10 @@ SpectrogramView2::SpectrogramView2(BLSpectrogram4 *spectro,
     mBounds[1] = y0;
     mBounds[2] = x1;
     mBounds[3] = y1;
+
+    mSelectionActive = false;
+    for (int i = 0; i < 4; i++)
+        mSelection[i] = 0.0;
     
     mSampleRate = sampleRate;
     

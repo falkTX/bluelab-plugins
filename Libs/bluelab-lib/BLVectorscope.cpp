@@ -112,6 +112,12 @@ BLVectorscope::BLVectorscope(BLVectorscopePlug *plug,
     
     for (int i = 0; i < NUM_MODES; i++)
         mCurves[i] = new GraphCurve5(NUM_POINTS);
+
+    mCircleDrawerPolarSamples = NULL;
+    mCircleDrawerFireworks = NULL;
+    mLissajousDrawer = NULL;
+    mUpmixDrawer = NULL;
+    mCircleDrawerSource = NULL;
     
     mFireworks = new BLFireworks(sampleRate);
     
@@ -528,11 +534,11 @@ BLVectorscope::AddSamples(const vector<WDL_TypedBuf<BL_FLOAT> > &samples)
         {
             WDL_TypedBuf<BL_FLOAT> *lissajousSamples = mTmpBuf2;
 
-            WDL_TypedBuf<BL_FLOAT> *samples = mTmpBuf3;
-            BLUtils::FastQueueToBuf(mSamples[0], &samples[0]);
-            BLUtils::FastQueueToBuf(mSamples[1], &samples[1]);
+            WDL_TypedBuf<BL_FLOAT> *samples2 = mTmpBuf3;
+            BLUtils::FastQueueToBuf(mSamples[0], &samples2[0]);
+            BLUtils::FastQueueToBuf(mSamples[1], &samples2[1]);
             
-            BLVectorscopeProcess::ComputeLissajous(samples/*mSamples*/,
+            BLVectorscopeProcess::ComputeLissajous(samples2/*mSamples*/,
                                                    lissajousSamples, true);
             
             // Scale so that we stay in the square (even in diagonal)

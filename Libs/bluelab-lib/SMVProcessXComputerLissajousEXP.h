@@ -24,7 +24,7 @@ public:
     
     virtual ~SMVProcessXComputerLissajousEXP();
     
-    virtual void Reset(BL_FLOAT sampleRate);
+    virtual void Reset(BL_FLOAT sampleRate) override;
     
     void ComputeX(const WDL_TypedBuf<BL_FLOAT> samples[2],
                   const WDL_TypedBuf<BL_FLOAT> magns[2],
@@ -33,9 +33,9 @@ public:
                   WDL_TypedBuf<BL_FLOAT> *resultY = NULL,
                   bool *isPolar = NULL,
                   BL_FLOAT polarCenter[2] = NULL,
-                  bool *isScalable = NULL);
+                  bool *isScalable = NULL) override;
     
-    Axis3D *CreateAxis();
+    Axis3D *CreateAxis() override;
     
 protected:
     // Here just for tests

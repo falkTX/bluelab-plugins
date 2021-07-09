@@ -22,10 +22,12 @@ public:
     
     virtual ~SimpleSpectrogramFftObj();
     
-    void ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
-                          const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer = NULL);
+    void
+    ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
+                     const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer = NULL) override;
     
-    void Reset(int bufferSize, int oversampling, int freqRes, BL_FLOAT sampleRate);
+    void Reset(int bufferSize, int oversampling,
+               int freqRes, BL_FLOAT sampleRate) override;
     
     BLSpectrogram4 *GetSpectrogram();
     

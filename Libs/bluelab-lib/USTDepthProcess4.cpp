@@ -109,6 +109,9 @@ USTDepthProcess4::USTDepthProcess4(BL_FLOAT sampleRate)
         mBypassReverbs[i]->SetSampleRate(sampleRate);
         mBypassReverbs[i]->SetParams(bypassParams);
     }
+
+    mPreDelays[0] = NULL;
+    mPreDelays[1] = NULL;
     
 #if USE_PREDELAY
     BL_FLOAT delay = (PREDELAY_MS/1000.0)*sampleRate;
@@ -119,7 +122,12 @@ USTDepthProcess4::USTDepthProcess4(BL_FLOAT sampleRate)
 #if USE_POST_STEREO_WIDEN
     mStereoWiden = new USTStereoWidener();
 #endif
-  
+
+    for (int i = 0; i < 2; i++)
+    {
+        mSincBandFilters[i] = NULL;
+    }
+    
 #if USE_SINC_FILTER
     for (int i = 0; i < 2; i++)
     {
@@ -174,6 +182,9 @@ USTDepthProcess4::USTDepthProcess4(const USTDepthProcess4 &other)
     {
         mBypassReverbs[i] = new JReverb(*other.mBypassReverbs[i]);
     }
+
+    mPreDelays[0] = NULL;
+    mPreDelays[1] = NULL;
     
 #if USE_PREDELAY
     mPreDelays[0] = new DelayObj4(*other.mPreDelays[0]);

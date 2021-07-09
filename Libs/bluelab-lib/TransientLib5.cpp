@@ -1281,8 +1281,8 @@ TransientLib5::ComputeTransientness6(const WDL_TypedBuf<BL_FLOAT> &magns,
     BL_FLOAT TRANS_COEFF_FREQ_TR6_GLOBAL =
         TRANS_COEFF_FREQ_TR6*TRANS_COEFF_GLOBAL_TR6;
 
-    int prevPhasesSize = prevPhases->GetSize();
-    BL_FLOAT *prevPhasesBuf = prevPhases->Get();
+    //int prevPhasesSize = prevPhases->GetSize();
+    //BL_FLOAT *prevPhasesBuf = prevPhases->Get();
     BL_FLOAT *phasesBuf = phases.Get();
     
     BL_FLOAT TRANS_COEFF_AMP_TR6_GLOBAL =
@@ -1318,8 +1318,11 @@ TransientLib5::ComputeTransientness6(const WDL_TypedBuf<BL_FLOAT> &magns,
         BL_FLOAT ampWeight = 0.0;
         
         //if ((prevPhases != NULL) && (prevPhases->GetSize() == sampleIds.GetSize()))
-        if ((prevPhases != NULL) && (prevPhasesSize == sampleIdsSize))
+        if ((prevPhases != NULL) && (prevPhases->GetSize() == sampleIdsSize))
         {
+            int prevPhasesSize = prevPhases->GetSize();
+            BL_FLOAT *prevPhasesBuf = prevPhases->Get();
+    
             // Use additional method: compute derivative of phase over time
             // This is a very good indicator of transientness !
             

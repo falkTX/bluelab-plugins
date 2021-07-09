@@ -375,14 +375,14 @@ RebalanceMaskStack2::GetMaskWeightedAvg(bl_queue<WDL_TypedBuf<BL_FLOAT> > *mask,
             for (int j = 0; j < line0Size; j++)
             {
                 //int index = i + j*mask->size();
-                int index = i + j*maskSize;
+                int index0 = i + j*maskSize;
                 
                 //BL_FLOAT val = line0.Get()[j];
                 BL_FLOAT val = line0Data[j];
                 if (val > 0.0)
                 {
-                    sumData[index] += val*w;
-                    sumWeightsData[index] += w;
+                    sumData[index0] += val*w;
+                    sumWeightsData[index0] += w;
                 }
             }
         }
@@ -408,10 +408,10 @@ RebalanceMaskStack2::GetMaskWeightedAvg(bl_queue<WDL_TypedBuf<BL_FLOAT> > *mask,
         
         for (int j = 0; j < line0Size; j++)
         {
-            int index = i + j*maskSize;
-            if (sumWeightsData[index] > 0.0)
+            int index0 = i + j*maskSize;
+            if (sumWeightsData[index0] > 0.0)
             {
-                BL_FLOAT avg = sumData[index]/sumWeightsData[index];
+                BL_FLOAT avg = sumData[index0]/sumWeightsData[index0];
         
                 line0Data[j] = avg;
             }
@@ -568,9 +568,9 @@ RebalanceMaskStack2::GetLineAvg(WDL_TypedBuf<BL_FLOAT> *line, int lineNum)
         {
             const bl_queue<WDL_TypedBuf<BL_FLOAT> > &mask = mStack[j];
             
-            const WDL_TypedBuf<BL_FLOAT> &line = mask[lineNum];
+            const WDL_TypedBuf<BL_FLOAT> &line0 = mask[lineNum];
                 
-            BL_FLOAT val = line.Get()[i];
+            BL_FLOAT val = line0.Get()[i];
             if (val > 0.0)
             {
                 sum += val;

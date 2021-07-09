@@ -27,7 +27,10 @@
 #define PUSH_POP_POW_TWO 1
 
 
-SamplesPyramid::SamplesPyramid() {}
+SamplesPyramid::SamplesPyramid()
+{
+    mRemainToPop = 0;
+}
 
 SamplesPyramid::~SamplesPyramid() {}
 

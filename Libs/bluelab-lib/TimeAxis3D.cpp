@@ -23,9 +23,13 @@
 
 TimeAxis3D::TimeAxis3D(Axis3D *axis)
 {
-     mAxis = axis;
+    mAxis = axis;
     
     mCurrentTime = 0.0;
+    
+    mBufferSize = 2048;
+    mTimeDuration = 1.0;
+    mSpacingSeconds = 1.0;
 }
 
 TimeAxis3D::~TimeAxis3D() {}

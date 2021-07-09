@@ -34,7 +34,7 @@ public:
     bool IsOwnedByGraph() override { return true; }
     
     // Draw after everything
-    void PostDraw(NVGcontext *vg, int width, int height);
+    void PostDraw(NVGcontext *vg, int width, int height) override;
     
     //
     void ClearBar();
@@ -69,7 +69,7 @@ public:
     // Normalized inside selection
     void SetSelPlayBarPos(BL_FLOAT pos);
 
-    bool NeedRedraw();
+    bool NeedRedraw() override;
         
 protected:
     void DrawBar(NVGcontext *vg, int width, int height);

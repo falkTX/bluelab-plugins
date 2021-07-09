@@ -53,10 +53,10 @@ SASViewerProcess::SASViewerProcess(int bufferSize,
                                    BL_FLOAT sampleRate)
 : ProcessObj(bufferSize)
 {
-    mBufferSize = bufferSize;
+    //mBufferSize = bufferSize;
     mOverlapping = overlapping;
-    mOversampling = oversampling;
-    
+    //mOversampling = oversampling;
+    mFreqRes = oversampling;
     mSampleRate = sampleRate;
     
     mSASViewerRender = NULL;
@@ -111,7 +111,7 @@ SASViewerProcess::~SASViewerProcess()
 void
 SASViewerProcess::Reset()
 {
-    Reset(mOverlapping, mOversampling, mSampleRate);
+    Reset(mOverlapping, mFreqRes/*mOversampling*/, mSampleRate);
     
     mSASFrame->Reset(mSampleRate);
     mScSASFrame->Reset(mSampleRate);
@@ -123,7 +123,8 @@ SASViewerProcess::Reset(int overlapping, int oversampling,
                         BL_FLOAT sampleRate)
 {
     mOverlapping = overlapping;
-    mOversampling = oversampling;
+    //mOversampling = oversampling;
+    mFreqRes = oversampling;
     
     mSampleRate = sampleRate;
     
@@ -1016,16 +1017,16 @@ SASViewerProcess::DisplayTracking()
             // Set color
             for (int j = 0; j < mPartialLines.size(); j++)
             {
-                LinesRender2::Line &line = mPartialLines[j];
+                LinesRender2::Line &line2 = mPartialLines[j];
                 
-                if (!line.mPoints.empty())
+                if (!line2.mPoints.empty())
                 {
-                    line.mColor[0] = color[0];
-                    line.mColor[1] = color[1];
-                    line.mColor[2] = color[2];
+                    line2.mColor[0] = color[0];
+                    line2.mColor[1] = color[1];
+                    line2.mColor[2] = color[2];
                     
                     //IdToColor(line.mPoints[0].mId, line.mColor);
-                    line.mColor[3] = 255; // alpha
+                    line2.mColor[3] = 255; // alpha
                 }
             }
             
@@ -1265,29 +1266,31 @@ SASViewerProcess::CreateLines(vector<vector<LinesRender2::Point> > *partialLines
                     LinesRender2::Point p0 = line0[idx0];
                     
 #if 1
-                    int divisor = mSASViewerRender->GetNumSlices() - 1;
-                    if (divisor <= 0)
-                        divisor = 1;
+                    int divisor2 = mSASViewerRender->GetNumSlices() - 1;
+                    if (divisor2 <= 0)
+                        divisor2 = 1;
                     
-                    BL_FLOAT z = ((BL_FLOAT)k)/divisor;
+                    BL_FLOAT z2 = ((BL_FLOAT)k)/divisor2;
                     
                     // Hack to display well blue tracking lines
                     // even when mPartialsPoints is not full
                     if (mPartialsPoints.size() < mSASViewerRender->GetNumSlices())
                     // Not fully filled
                     {
-                        BL_FLOAT coeff = ((BL_FLOAT)mSASViewerRender->GetNumSlices())/mPartialsPoints.size();
-                        z = 1.0 - 1.0/coeff + z;
+                        BL_FLOAT coeff =
+                            ((BL_FLOAT)mSASViewerRender->GetNumSlices())/
+                            mPartialsPoints.size();
+                        z2 = 1.0 - 1.0/coeff + z2;
                     }
 #endif
                     
 #if 0
-                    BL_FLOAT z = 0.0;
+                    BL_FLOAT z2 = 0.0;
                     if (mPartialsPoints.size() > 1)
-                        z = ((BL_FLOAT)k)/(mPartialsPoints.size() - 1);
+                        z2 = ((BL_FLOAT)k)/(mPartialsPoints.size() - 1);
 #endif
                     
-                    p0.mZ = z;
+                    p0.mZ = z2;
                     
                     partialLine.push_back(p0);
                 }

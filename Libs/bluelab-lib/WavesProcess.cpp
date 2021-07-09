@@ -23,9 +23,10 @@ WavesProcess::WavesProcess(int bufferSize,
                            BL_FLOAT sampleRate)
 : ProcessObj(bufferSize)
 {
-    mBufferSize = bufferSize;
+    //mBufferSize = bufferSize;
     mOverlapping = overlapping;
-    mOversampling = oversampling;
+    //mOversampling = oversampling;
+    mFreqRes = oversampling;
     
     mSampleRate = sampleRate;
     
@@ -37,7 +38,7 @@ WavesProcess::~WavesProcess() {}
 void
 WavesProcess::Reset()
 {
-    Reset(mBufferSize, mOverlapping, mOversampling, mSampleRate);
+    Reset(mBufferSize, mOverlapping, mFreqRes/*mOversampling*/, mSampleRate);
 }
 
 void
@@ -47,7 +48,8 @@ WavesProcess::Reset(int bufferSize, int overlapping, int oversampling,
     mBufferSize = bufferSize;
     
     mOverlapping = overlapping;
-    mOversampling = oversampling;
+    //mOversampling = oversampling;
+    mFreqRes = oversampling;
     
     mSampleRate = sampleRate;
     

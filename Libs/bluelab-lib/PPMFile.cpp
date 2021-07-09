@@ -43,6 +43,7 @@ PPMFile::ReadPPM(const char *filename)
     //read image format
     if (!fgets(buff, sizeof(buff), fp))
     {
+        fclose(fp);
         return NULL;
     }
     
@@ -50,7 +51,7 @@ PPMFile::ReadPPM(const char *filename)
     if (buff[0] != 'P' || buff[1] != '6')
     {
         fprintf(stderr, "Invalid image format (must be 'P6')\n");
-        
+        fclose(fp);
         return NULL;
     }
     
@@ -59,7 +60,7 @@ PPMFile::ReadPPM(const char *filename)
     if (!img)
     {
         fprintf(stderr, "Unable to allocate memory\n");
-        
+        fclose(fp);
         return NULL;
     }
     
@@ -81,7 +82,7 @@ PPMFile::ReadPPM(const char *filename)
     if (fscanf(fp, "%d %d", &img->w, &img->h) != 2)
     {
         fprintf(stderr, "Invalid image size (error loading '%s')\n", filename);
-        
+        fclose(fp);
         return NULL;
     }
     
@@ -89,7 +90,7 @@ PPMFile::ReadPPM(const char *filename)
     if (fscanf(fp, "%d", &rgb_comp_color) != 1)
     {
         fprintf(stderr, "Invalid rgb component (error loading '%s')\n", filename);
-        
+        fclose(fp);
         return NULL;
     }
     
@@ -97,7 +98,7 @@ PPMFile::ReadPPM(const char *filename)
     if (rgb_comp_color!= RGB_COMPONENT_COLOR)
     {
         fprintf(stderr, "'%s' does not have 8-bits components\n", filename);
-        
+        fclose(fp);
         return NULL;
     }
     
@@ -116,7 +117,7 @@ PPMFile::ReadPPM(const char *filename)
     if (fread(img->data, 3 * img->w, img->h, fp) != img->h)
     {
         fprintf(stderr, "Error loading image '%s'\n", filename);
-        
+        fclose(fp);
         return NULL;
     }
     

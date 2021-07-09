@@ -187,11 +187,11 @@ PanogramPlayFftObj::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
         //
         if (mHostIsPlaying && mSelectionEnabled)
         {
-            WDL_TypedBuf<BL_FLOAT> &magns = mTmpBuf5;
-            magns.Resize(ioBuffer->GetSize()/2);
+            WDL_TypedBuf<BL_FLOAT> &magns0 = mTmpBuf5;
+            magns0.Resize(ioBuffer->GetSize()/2);
             
-            WDL_TypedBuf<BL_FLOAT> &phases = mTmpBuf6;
-            phases.Resize(ioBuffer->GetSize()/2);
+            WDL_TypedBuf<BL_FLOAT> &phases0 = mTmpBuf6;
+            phases0.Resize(ioBuffer->GetSize()/2);
             
             //
             int lineCount = (mDataSelection[0] + mDataSelection[2])/2.0;
@@ -200,14 +200,14 @@ PanogramPlayFftObj::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
             ShiftXPlayBar(&lineCount);
 #endif
             
-            GetDataLineMask(mCurrentMagns, &magns, lineCount);
-            GetDataLineMask(mCurrentPhases, &phases, lineCount);
+            GetDataLineMask(mCurrentMagns, &magns0, lineCount);
+            GetDataLineMask(mCurrentPhases, &phases0, lineCount);
 
-            //BLUtils::MagnPhaseToComplex(ioBuffer, magns, phases); 
+            //BLUtils::MagnPhaseToComplex(ioBuffer, magns0, phases0); 
             //BLUtils::ResizeFillZeros(ioBuffer, ioBuffer->GetSize()*2);
             //BLUtils::FillSecondFftHalf(ioBuffer);
 
-            BLUtilsComp::MagnPhaseToComplex(&ioBuffer0, magns, phases);
+            BLUtilsComp::MagnPhaseToComplex(&ioBuffer0, magns0, phases0);
             BLUtils::SetBuf(ioBuffer, ioBuffer0);
             BLUtilsFft::FillSecondFftHalf(ioBuffer);
         }

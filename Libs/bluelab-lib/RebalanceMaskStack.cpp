@@ -216,9 +216,9 @@ RebalanceMaskStack::GetLineAvg(WDL_TypedBuf<BL_FLOAT> *line, int lineNum)
         {
             const deque<WDL_TypedBuf<BL_FLOAT> > &mask = mStack[j];
             
-            const WDL_TypedBuf<BL_FLOAT> &line = mask[lineNum];
+            const WDL_TypedBuf<BL_FLOAT> &line0 = mask[lineNum];
                 
-            BL_FLOAT val = line.Get()[i];
+            BL_FLOAT val = line0.Get()[i];
             if (val > 0.0)
             {
                 sum += val;

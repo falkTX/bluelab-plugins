@@ -62,6 +62,10 @@
 ProcessObj::ProcessObj(int bufferSize)
 {
     mBufferSize = bufferSize;
+
+    mOverlapping = 4;
+    mFreqRes = 1;
+    mSampleRate = 44100.0;
 }
     
 ProcessObj::~ProcessObj() {}
@@ -314,6 +318,8 @@ ProcessObjChannel::ProcessObjChannel(ProcessObj *processObj, int bufferSize)
     mOverlapping = 1;
     mFreqRes = 1;
     mSampleRate = 44100.0;
+
+    mEnergy0 = 0.0;
     
     mShift = mBufferSize/mOverlapping;
     

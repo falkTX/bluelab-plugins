@@ -322,11 +322,11 @@ USTWidthAdjuster7::Update(BL_FLOAT l, BL_FLOAT r)
         // And feed with prev samples
         for (int i = 0; i < mSamplesHistory[0].size(); i++)
         {
-            BL_FLOAT l = mSamplesHistory[0][i];
-            BL_FLOAT r = mSamplesHistory[1][i];
+            BL_FLOAT l0 = mSamplesHistory[0][i];
+            BL_FLOAT r0 = mSamplesHistory[1][i];
             
-            BL_FLOAT lW0 = l;
-            BL_FLOAT rW0 = r;
+            BL_FLOAT lW0 = l0;
+            BL_FLOAT rW0 = r0;
             
             mStereoWidener->StereoWiden(&lW0, &rW0, mCurrentSmoothWidth);
             

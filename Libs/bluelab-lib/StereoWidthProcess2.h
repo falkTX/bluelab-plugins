@@ -62,7 +62,7 @@ public:
     
     // For simple algo
     void ProcessInputSamplesPre(vector<WDL_TypedBuf<BL_FLOAT> * > *ioSamples);
-    
+     
     void ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamples);
     
     // Get the result
@@ -80,10 +80,10 @@ protected:
     // ... because if we decrease at the maximum, the two magns channels
     // must be similar
     // (otherwise it vibrates !)
-    void ApplyWidthChange(WDL_TypedBuf<BL_FLOAT> *ioPhasesL,
-                          WDL_TypedBuf<BL_FLOAT> *ioPhasesR,
-                          WDL_TypedBuf<BL_FLOAT> *ioMagnsL,
+    void ApplyWidthChange(WDL_TypedBuf<BL_FLOAT> *ioMagnsL,
                           WDL_TypedBuf<BL_FLOAT> *ioMagnsR,
+                          WDL_TypedBuf<BL_FLOAT> *ioPhasesL,
+                          WDL_TypedBuf<BL_FLOAT> *ioPhasesR,
                           WDL_TypedBuf<BL_FLOAT> *outSourceRs,
                           WDL_TypedBuf<BL_FLOAT> *outSourceThetas);
     

@@ -41,13 +41,13 @@ ZoomCustomControl::OnMouseDrag(float x, float y, float dX, float dY,
 #endif
         // Alt-drag => zoom
     {
-        BL_FLOAT dY = y - mPrevMouseY;
+        BL_FLOAT dY0 = y - mPrevMouseY;
         mPrevMouseY = y;
         
-        dY *= -1.0;
-        dY *= DRAG_WHEEL_COEFF;
+        dY0 *= -1.0;
+        dY0 *= DRAG_WHEEL_COEFF;
         
-        OnMouseWheel(mStartDrag[0], mStartDrag[1], pMod, dY);
+        OnMouseWheel(mStartDrag[0], mStartDrag[1], pMod, dY0);
     }
 }
     

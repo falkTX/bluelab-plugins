@@ -76,6 +76,8 @@ SineSynth2::SineSynth2(int bufferSize, BL_FLOAT sampleRate, int overlapping)
     mBufferSize = bufferSize;
     mSampleRate = sampleRate;
     mOverlapping = overlapping;
+
+    mTableSynth = NULL;
     
 #if COMPUTE_SAS_SAMPLES_TABLE
     BL_FLOAT minFreq = 20.0;

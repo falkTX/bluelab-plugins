@@ -203,13 +203,13 @@ SASViewerRender::OnMouseDrag(float x, float y, float dX, float dY,
         
 #define DRAG_WHEEL_COEFF 0.2
         
-        BL_FLOAT dY = y - mPrevDrag[0];
+        BL_FLOAT dY2 = y - mPrevDrag[0];
         mPrevDrag[0] = y;
         
-        dY *= -1.0;
-        dY *= DRAG_WHEEL_COEFF;
+        dY2 *= -1.0;
+        dY2 *= DRAG_WHEEL_COEFF;
         
-        OnMouseWheel(mPrevDrag[0], mPrevDrag[1], mod, dY);
+        OnMouseWheel(mPrevDrag[0], mPrevDrag[1], mod, dY2);
         
         return;
     }

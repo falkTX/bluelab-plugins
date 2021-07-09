@@ -138,12 +138,17 @@ USTVectorscope5::USTVectorscope5(USTPluginInterface *plug, BL_FLOAT sampleRate)
 
     mMode = POLAR_SAMPLE; // NEW (the mode was not initialized)
 
+    mCircleDrawerPolarSamples = NULL;
+    mCircleDrawerFireworks = NULL;
+    mLissajousDrawer = NULL;
+    mUpmixDrawer = NULL;
+    
     // Curves
     mGraph0Curve = NULL;
     mGraph1Curve = NULL;
     mGraph2Curves[0] = NULL;
     mGraph2Curves[1] = NULL;
-
+    
     CreateCurves();
 }
 

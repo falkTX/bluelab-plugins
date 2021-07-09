@@ -31,7 +31,7 @@ protected:
 };
 
 PitchShiftSmbOversampObj::PitchShiftSmbOversampObj(PitchShifterSmb *shifter,
-                                             int oversampling)
+                                                   int oversampling)
 : OversampProcessObj5(oversampling, 44100.0, true)
 {
     mShifter = shifter;
@@ -57,6 +57,8 @@ PitchShifterSmb::PitchShifterSmb()
     mShift = 1.0;
 
     mOversampling = 1;
+
+    mOversampObj = NULL;
     
 #if USE_OVERSAMP_OBJ
     mOversampling = 4; //1;

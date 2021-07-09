@@ -71,11 +71,12 @@ public:
 
     void Reset();
 
-    void Reset(int bufferSize, int oversampling, int freqRes, BL_FLOAT sampleRate);
+    void Reset(int bufferSize, int oversampling,
+               int freqRes, BL_FLOAT sampleRate) override;
     
 #if FORCE_SAMPLE_RATE
     void ProcessInputSamplesPre(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
-                                const WDL_TypedBuf<BL_FLOAT> *scBuffer);
+                                const WDL_TypedBuf<BL_FLOAT> *scBuffer) override;
 #endif
 
     void SetPrecision(BL_FLOAT precision);
@@ -85,20 +86,20 @@ public:
     void SetFreqAmpRatio(BL_FLOAT ratio);
     
     void ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
-                          const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer);
+                          const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer) override;
     
 #if !FORCE_SAMPLE_RATE_KEEP_QUALITY
     void ProcessSamplesBuffer(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
-                              WDL_TypedBuf<BL_FLOAT> *scBuffer);
+                              WDL_TypedBuf<BL_FLOAT> *scBuffer) override;
 #endif
     
 #if FORCE_SAMPLE_RATE
-    void ProcessSamplesPost(WDL_TypedBuf<BL_FLOAT> *ioBuffer);
+    void ProcessSamplesPost(WDL_TypedBuf<BL_FLOAT> *ioBuffer) override;
 #endif
 
     //
     void ProcessSamplesBufferEnergy(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
-                                    const WDL_TypedBuf<BL_FLOAT> *scBuffer);
+                                    const WDL_TypedBuf<BL_FLOAT> *scBuffer) override;
     
     void GetCurrentTransientness(WDL_TypedBuf<BL_FLOAT> *outTransientness);
     

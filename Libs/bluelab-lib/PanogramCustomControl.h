@@ -36,10 +36,10 @@ public:
     
     void SetSpectrogramDisplay(SpectrogramDisplayScroll4 *spectroDisplay);
     
-    virtual void OnMouseDown(float x, float y, const IMouseMod &mod);
-    virtual void OnMouseUp(float x, float y, const IMouseMod &mod);
+    virtual void OnMouseDown(float x, float y, const IMouseMod &mod) override;
+    virtual void OnMouseUp(float x, float y, const IMouseMod &mod) override;
     virtual void OnMouseDrag(float x, float y, float dX, float dY,
-                             const IMouseMod &mod);
+                             const IMouseMod &mod) override;
     
     void GetSelection(BL_FLOAT selection[4]);
     void SetSelection(BL_FLOAT x0, BL_FLOAT y0,

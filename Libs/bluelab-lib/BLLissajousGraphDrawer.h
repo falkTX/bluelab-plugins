@@ -26,7 +26,7 @@ public:
     
     virtual ~BLLissajousGraphDrawer();
     
-    virtual void PreDraw(NVGcontext *vg, int width, int height);
+    virtual void PreDraw(NVGcontext *vg, int width, int height) override;
     
 protected:
     BL_FLOAT mScale;

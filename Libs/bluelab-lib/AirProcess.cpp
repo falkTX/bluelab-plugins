@@ -28,10 +28,10 @@ AirProcess::AirProcess(int bufferSize,
                        BL_FLOAT sampleRate)
 : ProcessObj(bufferSize)
 {
-    mBufferSize = bufferSize;
+    //mBufferSize = bufferSize;
     mOverlapping = overlapping;
-    mOversampling = oversampling;
-    
+    //mOversampling = oversampling;
+    mFreqRes = oversampling;
     mSampleRate = sampleRate;
     
     mPartialTracker = new PartialTracker3(bufferSize, sampleRate, overlapping);
@@ -71,7 +71,7 @@ AirProcess::~AirProcess()
 void
 AirProcess::Reset()
 {
-    Reset(mOverlapping, mOversampling, mSampleRate);
+    Reset(mOverlapping, mFreqRes/*mOversampling*/, mSampleRate);
     
     // Transient
     mSPRatio.Resize(0);
@@ -79,11 +79,11 @@ AirProcess::Reset()
 }
 
 void
-AirProcess::Reset(int overlapping, int oversampling,
-                  BL_FLOAT sampleRate)
+AirProcess::Reset(int overlapping, int oversampling, BL_FLOAT sampleRate)
 {
     mOverlapping = overlapping;
-    mOversampling = oversampling;
+    //mOversampling = oversampling;
+    mFreqRes = oversampling;
     
     mSampleRate = sampleRate;
 }

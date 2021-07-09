@@ -53,10 +53,10 @@ public:
     
     virtual ~USTVectorscope5();
 
-    void OnMouseDown(float x, float y, const IMouseMod &mod);
-    void OnMouseUp(float x, float y, const IMouseMod &mod);
+    void OnMouseDown(float x, float y, const IMouseMod &mod) override;
+    void OnMouseUp(float x, float y, const IMouseMod &mod) override;
     void OnMouseDrag(float x, float y, float dX, float dY,
-                     const IMouseMod &mod);
+                     const IMouseMod &mod) override;
     
     void Reset(BL_FLOAT sampleRate);
 

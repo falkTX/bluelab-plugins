@@ -359,7 +359,9 @@ PitchShiftPrusaFftObj::PropagatePhasesPrusa(const Frame &frame0, Frame *frame1)
             t.mMagn = magn1;
             t.mBinIdx = i;
             t.mTimeIdx = (unsigned char)1;
-            
+
+            t.mIsValid = (unsigned char)1; // NEW
+                
             //tho.push_back(t);
             tho[thoIdx++] = t;
         }

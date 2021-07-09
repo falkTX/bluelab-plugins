@@ -39,15 +39,15 @@ public:
     
     virtual ~FilterTransparentRBJ2X();
     
-    void SetCutoffFreq(BL_FLOAT freq);
+    void SetCutoffFreq(BL_FLOAT freq) override;
     
-    void SetQFactor(BL_FLOAT q);
+    void SetQFactor(BL_FLOAT q) override;
     
-    void SetSampleRate(BL_FLOAT sampleRate);
+    void SetSampleRate(BL_FLOAT sampleRate) override;
     
-    BL_FLOAT Process(BL_FLOAT sample);
+    BL_FLOAT Process(BL_FLOAT sample) override;
     
-    void Process(WDL_TypedBuf<BL_FLOAT> *ioSamples);
+    void Process(WDL_TypedBuf<BL_FLOAT> *ioSamples) override;
                  
 protected:
     BL_FLOAT mSampleRate;

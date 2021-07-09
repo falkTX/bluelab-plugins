@@ -37,7 +37,7 @@ IsophoteInpaint::Channel::Channel(int w, int h)
 
 IsophoteInpaint::Channel::~Channel()
 {
-    delete mData;
+    delete []mData;
 }
 
 BL_FLOAT

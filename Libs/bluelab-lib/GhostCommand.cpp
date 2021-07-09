@@ -4,6 +4,9 @@ GhostCommand::GhostCommand(BL_FLOAT sampleRate)
 {
     mSampleRate = sampleRate;
 
+    for (int i = 0; i < 4; i++)
+        mSelection[i] = 0.0;
+    
     mScale = new Scale();
 }
 

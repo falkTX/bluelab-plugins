@@ -42,9 +42,10 @@ SASViewerProcess2::SASViewerProcess2(int bufferSize,
                                      BL_FLOAT sampleRate)
 : ProcessObj(bufferSize)
 {
-    mBufferSize = bufferSize;
+    //mBufferSize = bufferSize;
     mOverlapping = overlapping;
-    mOversampling = oversampling;
+    //mOversampling = oversampling;
+    mFreqRes = oversampling;
     
     mSampleRate = sampleRate;
     
@@ -80,7 +81,7 @@ SASViewerProcess2::~SASViewerProcess2()
 void
 SASViewerProcess2::Reset()
 {
-    Reset(mOverlapping, mOversampling, mSampleRate);
+    Reset(mOverlapping, mFreqRes/*mOversampling*/, mSampleRate);
     
     mSASFrame->Reset(mSampleRate);
 }
@@ -90,7 +91,8 @@ SASViewerProcess2::Reset(int overlapping, int oversampling,
                          BL_FLOAT sampleRate)
 {
     mOverlapping = overlapping;
-    mOversampling = oversampling;
+    //mOversampling = oversampling;
+    mFreqRes = oversampling;
     
     mSampleRate = sampleRate;
     
@@ -476,9 +478,9 @@ SASViewerProcess2::DisplayTracking()
             // Set color
             for (int j = 0; j < mPartialLines.size(); j++)
             {
-                LinesRender2::Line &line = mPartialLines[j];
+                LinesRender2::Line &line2 = mPartialLines[j];
                 
-                if (!line.mPoints.empty())
+                if (!line2.mPoints.empty())
                 {
                     // Default
                     //line.mColor[0] = color[0];
@@ -486,9 +488,9 @@ SASViewerProcess2::DisplayTracking()
                     //line.mColor[2] = color[2];
                     
                     // Debug
-                    IdToColor(line.mPoints[0].mId, line.mColor);
+                    IdToColor(line2.mPoints[0].mId, line2.mColor);
                     
-                    line.mColor[3] = 255; // alpha
+                    line2.mColor[3] = 255; // alpha
                 }
             }
             

@@ -60,7 +60,7 @@ protected:
     bool mHasJustReset;
     
     //
-    // Stuff fors flushing the buffers before switching
+    // Stuff for flushing the buffers before switching
     // back to only one obj processor
     //
     

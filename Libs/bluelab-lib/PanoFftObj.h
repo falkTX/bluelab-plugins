@@ -25,10 +25,12 @@ public:
     
     virtual ~PanoFftObj();
     
-    void ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamples,
-                         const vector<WDL_TypedBuf<WDL_FFT_COMPLEX> > *scBuffer);
+    void
+    ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamples,
+                    const vector<WDL_TypedBuf<WDL_FFT_COMPLEX> > *scBuffer) override;
     
-    void Reset(int bufferSize, int oversampling, int freqRes, BL_FLOAT sampleRate);
+    void Reset(int bufferSize, int oversampling,
+               int freqRes, BL_FLOAT sampleRate) override;
     
     BLSpectrogram4 *GetSpectrogram();
     
@@ -43,7 +45,7 @@ protected:
     void MagnsToPanoLine(const WDL_TypedBuf<BL_FLOAT> magns[2],
                          WDL_TypedBuf<BL_FLOAT> *panoLine);
     
-    
+    //
     BLSpectrogram4 *mSpectrogram;
     
     SpectrogramDisplayScroll *mSpectroDisplay;

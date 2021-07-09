@@ -32,6 +32,9 @@ SpectrogramDisplay::SpectrogramDisplay(NVGcontext *vg)
     mNeedUpdateSpectrogram = false;
     mNeedUpdateSpectrogramData = false;
     mNvgColormapImage = 0;
+
+    for (int i = 0; i < 4; i++)
+        mSpectrogramBounds[i] = 0.0;
     
     mNeedUpdateSpectrogramFullData = false;
     mNvgSpectroFullImage = 0;

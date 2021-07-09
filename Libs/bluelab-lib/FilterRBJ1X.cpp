@@ -34,6 +34,8 @@ FilterRBJ1X::FilterRBJ1X(const FilterRBJ1X &other)
     mType = other.mType;
     mSampleRate = other.mSampleRate;
     mCutoffFreq = other.mCutoffFreq;
+
+    mQFactor = 0.707;
     
     mFilter = new CFxRbjFilter();
     

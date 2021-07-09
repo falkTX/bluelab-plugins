@@ -25,19 +25,19 @@ public:
     
     virtual ~USTDepthReverbTest();
     
-    virtual BLReverb *Clone() const;
+    virtual BLReverb *Clone() const override;
 
-    virtual void Reset(BL_FLOAT sampleRate, int blockSize);
+    virtual void Reset(BL_FLOAT sampleRate, int blockSize) override;
 
     // Mono
     virtual void Process(const WDL_TypedBuf<BL_FLOAT> &input,
                          WDL_TypedBuf<BL_FLOAT> *outputL,
-                         WDL_TypedBuf<BL_FLOAT> *outputR);
+                         WDL_TypedBuf<BL_FLOAT> *outputR) override;
 
     // Stereo
     virtual void Process(const WDL_TypedBuf<BL_FLOAT> inputs[2],
                          WDL_TypedBuf<BL_FLOAT> *outputL,
-                         WDL_TypedBuf<BL_FLOAT> *outputR);
+                         WDL_TypedBuf<BL_FLOAT> *outputR) override;
     
     //
     void SetUseReverbTail(bool flag);

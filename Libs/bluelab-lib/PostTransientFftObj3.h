@@ -48,16 +48,17 @@ public:
     
     virtual ~PostTransientFftObj3();
     
-    void Reset();
+    void Reset() override;
     
-    void Reset(int bufferSize, int overlapping, int freqRes, BL_FLOAT sampleRate);
+    void Reset(int bufferSize, int overlapping,
+               int freqRes, BL_FLOAT sampleRate) override;
     
     // Set the synthesis energy of the inner object only
-    void SetKeepSynthesisEnergy(int channelNum, bool flag);
+    void SetKeepSynthesisEnergy(int channelNum, bool flag) override;
 
     void SetTransBoost(BL_FLOAT factor);
     
-    void ResultSamplesWinReady();
+    void ResultSamplesWinReady() override;
     
 protected:
     int GetNumChannels();
@@ -65,7 +66,7 @@ protected:
     TransientShaperFftObj3 *GetTransObj(int channelNum);
     
     void AddSamples(const vector<WDL_TypedBuf<BL_FLOAT> > &inputs,
-                    const vector<WDL_TypedBuf<BL_FLOAT> > &scInputs);
+                    const vector<WDL_TypedBuf<BL_FLOAT> > &scInputs) override;
 
     //
     BL_FLOAT mTransBoost;

@@ -348,6 +348,14 @@ StereoWidthProcess2::StereoWidthProcess2(IGraphics *pGraphics,
     mWidthChange = 0.0;
     
     mFakeStereo = false;
+
+    mDisplayMode = SIMPLE;
+    mHrtf = NULL;
+    for (int i = 0; i < NUM_HRTF_SLICES; i++)
+    {
+        mConvolvers[i][0] = NULL;
+        mConvolvers[i][1] = NULL;
+    }
     
     GenerateRandomCoeffs(bufferSize/2);
     
@@ -657,11 +665,11 @@ StereoWidthProcess2::SetDisplayMode(enum DisplayMode mode)
 
 void
 StereoWidthProcess2::ApplyWidthChange(WDL_TypedBuf<BL_FLOAT> *ioMagnsL,
-                                     WDL_TypedBuf<BL_FLOAT> *ioMagnsR,
-                                     WDL_TypedBuf<BL_FLOAT> *ioPhasesL,
-                                     WDL_TypedBuf<BL_FLOAT> *ioPhasesR,
-                                     WDL_TypedBuf<BL_FLOAT> *outSourceRs,
-                                     WDL_TypedBuf<BL_FLOAT> *outSourceThetas)
+                                      WDL_TypedBuf<BL_FLOAT> *ioMagnsR,
+                                      WDL_TypedBuf<BL_FLOAT> *ioPhasesL,
+                                      WDL_TypedBuf<BL_FLOAT> *ioPhasesR,
+                                      WDL_TypedBuf<BL_FLOAT> *outSourceRs,
+                                      WDL_TypedBuf<BL_FLOAT> *outSourceThetas)
 {
     WDL_TypedBuf<BL_FLOAT> freqs;
     BLUtilsFft::FftFreqs(&freqs, ioPhasesL->GetSize(), mSampleRate);

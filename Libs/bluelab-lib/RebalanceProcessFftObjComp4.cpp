@@ -94,7 +94,7 @@ RebalanceProcessFftObjComp4::Reset(int bufferSize, int oversampling,
 {
     ProcessObj::Reset(bufferSize, oversampling, freqRes, sampleRate);
 
-    mSampleRate = sampleRate;
+    //mSampleRate = sampleRate;
     
     if (mSoftMasking != NULL)
         mSoftMasking->Reset(bufferSize, oversampling);

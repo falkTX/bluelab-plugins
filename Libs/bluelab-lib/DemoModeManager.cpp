@@ -28,7 +28,10 @@
 #define DEMO_LABEL_X_V2 166
 #define DEMO_LABEL_Y_V2 18
 
-DemoModeManager::DemoModeManager() {}
+DemoModeManager::DemoModeManager()
+{
+    mBitmapControl = NULL;
+}
 
 DemoModeManager::~DemoModeManager() {}
 

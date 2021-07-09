@@ -44,8 +44,9 @@ public:
     
     virtual ~RebalanceDumpFftObj();
     
-    virtual void ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
-                                  const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer);
+    virtual void
+    ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
+                     const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer) override;
     
     // Addition, for normalized masks
     

@@ -7,6 +7,12 @@ GhostCommandCopyPaste::GhostCommandCopyPaste(BL_FLOAT sampleRate)
 {
     mIsPasteDone = false;
 
+    for (int i = 0; i < 4; i++)
+        mCopiedSelection[i] = 0.0;
+
+    for (int i = 0; i < 4; i++)
+        mPastedSelection[i] = 0.0;
+    
     mSrcTrackNumSamples = -1;
     mDstTrackNumSamples = -1;
 }

@@ -35,9 +35,10 @@ AirProcess2::AirProcess2(int bufferSize,
                          BL_FLOAT sampleRate)
 : ProcessObj(bufferSize)
 {
-    mBufferSize = bufferSize;
+    //mBufferSize = bufferSize;
     mOverlapping = overlapping;
-    mOversampling = oversampling;
+    //mOversampling = oversampling;
+    mFreqRes = oversampling;
     
     mSampleRate = sampleRate;
     
@@ -82,7 +83,7 @@ AirProcess2::~AirProcess2()
 void
 AirProcess2::Reset()
 {
-    Reset(mBufferSize, mOverlapping, mOversampling, mSampleRate);
+    Reset(mBufferSize, mOverlapping, mFreqRes/*mOversampling*/, mSampleRate);
 }
 
 void
@@ -92,7 +93,8 @@ AirProcess2::Reset(int bufferSize, int overlapping, int oversampling,
     mBufferSize = bufferSize;
     
     mOverlapping = overlapping;
-    mOversampling = oversampling;
+    //mOversampling = oversampling;
+    mFreqRes = oversampling;
     
     mSampleRate = sampleRate;
     
@@ -255,10 +257,10 @@ AirProcess2::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer0,
         WDL_TypedBuf<WDL_FFT_COMPLEX> *result = mTmpBuf10;
         for (int i = 0; i < 2; i++)
         {
-            WDL_TypedBuf<WDL_FFT_COMPLEX> &fftSamples0 = mTmpBuf11;
-            fftSamples0 = fftSamples;
+            WDL_TypedBuf<WDL_FFT_COMPLEX> &fftSamples2 = mTmpBuf11;
+            fftSamples2 = fftSamples;
             WDL_TypedBuf<WDL_FFT_COMPLEX> &inMask = mTmpBuf12;
-            inMask = fftSamples;
+            inMask = fftSamples2;
             
             if (i == 0)
                 BLUtils::MultValues(&inMask, noiseRatio);
@@ -266,14 +268,14 @@ AirProcess2::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer0,
                 BLUtils::MultValues(&inMask, harmoRatio);
             
             WDL_TypedBuf<WDL_FFT_COMPLEX> &softMask = mTmpBuf13;
-            mSoftMaskingComps[i]->ProcessCentered(&fftSamples0,
+            mSoftMaskingComps[i]->ProcessCentered(&fftSamples2,
                                                   &inMask, &softMask);
         
             if (mSoftMaskingComps[i]->IsProcessingEnabled())
             {
                 // We have a shift of the input samples in ProcessCentered(),
                 // Must update (shift) input samples to take it into account.
-                result[i] = fftSamples0;
+                result[i] = fftSamples2;
                 BLUtils::MultValues(&result[i], softMask);
             }
             else // Soft masking disabled

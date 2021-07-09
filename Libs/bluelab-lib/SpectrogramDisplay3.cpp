@@ -57,6 +57,9 @@ SpectrogramDisplay3::SpectrogramDisplay3(SpectrogramDisplayState *state)
     mNeedUpdateSpectrogram = false;
     mNeedUpdateSpectrogramData = false;
     mNvgColorMapImage = 0;
+
+    for (int i = 0; i < 4; i++)
+        mSpectrogramBounds[i] = 0.0;
     
     mNeedUpdateBGSpectrogramData = false;
     
@@ -278,8 +281,8 @@ SpectrogramDisplay3::DoUpdateSpectrogram()
         bool updated = mSpectrogram->GetColormapImageDataRGBA(&mColorMapImageData);
         if (mNvgColorMapImage == 0)
         {        
-            if (mNvgColorMapImage != 0)
-                nvgDeleteImage(mVg, mNvgColorMapImage);
+            //if (mNvgColorMapImage != 0)
+            //    nvgDeleteImage(mVg, mNvgColorMapImage);
         
             mNvgColorMapImage =
             nvgCreateImageRGBA(mVg,

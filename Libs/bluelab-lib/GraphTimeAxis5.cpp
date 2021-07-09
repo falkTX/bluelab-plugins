@@ -57,6 +57,10 @@ GraphTimeAxis5::GraphTimeAxis5(bool displayLines, bool roundToIntLabels)
     mDisplayLines = displayLines;
     
     mRoundToIntLabels = roundToIntLabels;
+
+    mBufferSize = 2048;
+    mTimeDuration = 1.0;
+    mSpacingSeconds = 1.0;
     
     mMustUpdate = true;
 }

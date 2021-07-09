@@ -88,9 +88,10 @@ InfraProcess::InfraProcess(int bufferSize,
                            BL_FLOAT sampleRate)
 : ProcessObj(bufferSize)
 {
-    mBufferSize = bufferSize;
+    //mBufferSize = bufferSize;
     mOverlapping = overlapping;
-    mOversampling = oversampling;
+    //mOversampling = oversampling;
+    mFreqRes = oversampling;
     
     mSampleRate = sampleRate;
     
@@ -149,7 +150,8 @@ InfraProcess::~InfraProcess()
 void
 InfraProcess::Reset()
 {
-    Reset(mBufferSize, mOverlapping, mOversampling, mSampleRate);
+    Reset(mBufferSize, mOverlapping,
+          mFreqRes/*mOversampling*/, mSampleRate);
 }
 
 void
@@ -159,7 +161,8 @@ InfraProcess::Reset(int bufferSize, int overlapping, int oversampling,
     mBufferSize = bufferSize;
     
     mOverlapping = overlapping;
-    mOversampling = oversampling;
+    //mOversampling = oversampling;
+    mFreqRes = oversampling;
     
     mSampleRate = sampleRate;
     

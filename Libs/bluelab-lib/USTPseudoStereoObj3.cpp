@@ -60,6 +60,8 @@ USTPseudoStereoObj3::USTPseudoStereoObj3(BL_FLOAT sampleRate, BL_FLOAT width)
     
     //int blockSize = PSO3_BUFFER_SIZE;
     //mConvolver->Reset(blockSize);
+
+    mDelayObj = NULL;
     
 #if USE_DELAY
     mDelayObj = new DelayObj4(1);

@@ -72,13 +72,12 @@ SpectroEditFftObj::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
             GetData(mLines, &magns);
             GetData(mPhases, &phases);
         }
-    }
-    
-    // Incremenent only when playing
-    // in order to have the playbar not moving
-    // when we don't play !
-    if (mMode == PLAY)
+
+        // Incremenent only when playing
+        // in order to have the playbar not moving
+        // when we don't play !
         mLineCount++;
+    }
     
     BLUtilsComp::MagnPhaseToComplex(ioBuffer, magns, phases);
     

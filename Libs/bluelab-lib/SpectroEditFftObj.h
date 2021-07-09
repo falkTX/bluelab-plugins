@@ -29,8 +29,9 @@ public:
     
     virtual ~SpectroEditFftObj();
     
-    void ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
-                          const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer = NULL);
+    void
+    ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
+                     const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer = NULL) override;
     
     void Reset(int oversampling, int freqRes, BL_FLOAT sampleRate);
     
@@ -91,7 +92,8 @@ protected:
     // Keep the phases too, to be able to reconstruct the signal
     vector<WDL_TypedBuf<BL_FLOAT> > mPhases;
     
-    BL_FLOAT mSelectionEnabled;
+    //BL_FLOAT mSelectionEnabled;
+    bool mSelectionEnabled;
     BL_FLOAT mDataSelection[4];
     
     bool mSelectionPlayFinished;

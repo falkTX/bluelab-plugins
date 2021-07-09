@@ -38,6 +38,9 @@ GraphFader3::GraphFader3(GraphControl11 *graphControl,
     
     mCurveIsPoints = false;
     mPointsAsLines = false;
+
+    for (int i = 0; i < 3; i++)
+        mCurveColor[i] = 0;
     
     Reset();
 }

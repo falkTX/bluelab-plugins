@@ -21,7 +21,7 @@ public:
     virtual ~PanoGraphDrawer();
     
     // Draw after everything
-    void PostDraw(NVGcontext *vg, int width, int height);
+    void PostDraw(NVGcontext *vg, int width, int height) override;
 };
 
 #endif // IGRAPHICS_NANOVG

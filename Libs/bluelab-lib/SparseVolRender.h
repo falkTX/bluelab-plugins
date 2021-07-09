@@ -101,7 +101,7 @@ public:
     void SetNumPointsSlice(int numPointsSlice);
     
     // Inherited
-    void PreDraw(NVGcontext *vg, int width, int height);
+    void PreDraw(NVGcontext *vg, int width, int height) override;
     
     void ClearSlices();
     

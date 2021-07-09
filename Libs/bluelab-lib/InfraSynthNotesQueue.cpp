@@ -44,6 +44,8 @@ InfraSynthNotesQueue::InfraSynthNotesQueue(BL_FLOAT sampleRate)
     mOscSync = false;
     
     mGenNoise = true;
+
+    mInfraSynthProcess = NULL;
 }
 
 InfraSynthNotesQueue::~InfraSynthNotesQueue()
@@ -223,8 +225,8 @@ InfraSynthNotesQueue::ReleaseNote(int keyNumber)
 
 BL_FLOAT
 InfraSynthNotesQueue::NextSample(BL_FLOAT *resPhantomSamp,
-                       BL_FLOAT *resSubSamp,
-                       BL_FLOAT *resNoiseSamp)
+                                 BL_FLOAT *resSubSamp,
+                                 BL_FLOAT *resNoiseSamp)
 {
     BL_FLOAT samp = 0.0;
     
@@ -233,7 +235,7 @@ InfraSynthNotesQueue::NextSample(BL_FLOAT *resPhantomSamp,
     if (resSubSamp != NULL)
         *resSubSamp = 0.0;
     
-    vector<SineSynthSimple::Partial> partials;
+    //vector<SineSynthSimple::Partial> partials;
     
 #if !OPTIM_APPLY_PARAM_SHAPE
     BL_FLOAT mainOscMix = BLUtils::ApplyParamShape(mMainOscMix, 0.5);

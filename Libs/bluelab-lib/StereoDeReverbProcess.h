@@ -25,16 +25,19 @@ public:
     
     virtual ~StereoDeReverbProcess();
     
-    void Reset(int bufferSize, int oversampling, int freqRes, BL_FLOAT sampleRate);
+    void Reset(int bufferSize, int oversampling,
+               int freqRes, BL_FLOAT sampleRate) override;
     
-    void ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamples,
-                         const vector<WDL_TypedBuf<WDL_FFT_COMPLEX> > *scBuffer);
+    void
+    ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamples,
+                    const vector<WDL_TypedBuf<WDL_FFT_COMPLEX> > *scBuffer) override;
     
 #if 0
     // For Phase Aliasing Correction
     // See: file:///Users/applematuer/Downloads/1-s2.0-S1063520313000043-main.pdf
-    void ProcessInputSamplesWin(vector<WDL_TypedBuf<BL_FLOAT> * > *ioSamples,
-                                const vector<WDL_TypedBuf<BL_FLOAT> > *scBuffer);
+    void
+    ProcessInputSamplesWin(vector<WDL_TypedBuf<BL_FLOAT> * > *ioSamples,
+                           const vector<WDL_TypedBuf<BL_FLOAT> > *scBuffer) override;
 #endif
     
     void SetMix(BL_FLOAT mix);
