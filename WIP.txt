@@ -115,6 +115,47 @@ NOTES(cppcheck fixes): PitchShiftPrusa, EarlyRelfexion, PseudoStereoObj
 RebalanceMaskPredictorComp5: FORCE_SAMPLE_RATE macro error
 SamplestoMagnPhases: cppcheck error (out of bounds index)
 
+cppcheck:
+- TODO: re-test the following fetaures after having passed cppcheck
+
+- Chroma: re-test play/monitor/stop + spectro + time axis
+- GhostViewer: re-test play/monitor/stop + spectro + time axis
+- InfrasonicViewer: re-test play/monitor/stop + spectro + time axis
+- Rebalance: re-test play/monitor/stop + spectro + time axis
+- Rebalance: re-test sound: ok
+- Air: re-check sound and Reset()
+- StereoWidth: re-check vectorscope displays
+- StereoWidth: re-test pseudo-stereo
+- Denoiser: re-check sound and Reset()
+- PitchShift: re-test post transient
+- PitchShift: re-test freq adjust obj (startup)
+- PitchShift: re-test Prusa (mistake fixed)
+- PitchShift: smb, re-test stereo phases correction
+- Spatializer: re-test hrtf (bounds)
+- Spatializer: re-test xy pad
+- re-test filters sound (crossover etc)
+- re-test convolver
+- Ghost: re-test Ghost commands
+- Ghost: re-test selection
+- Ghost: re-test quickly samples pyramid
+- Ghost: re-test edition, quickly
+- Ghost: re-test spectrogram display
+- Ghost: re-test SpectrogramView
+- re-test graph axes/graph curves
+- re-test graph time axis
+- Infra: re-test sound
+- Panogram: re-test freeze/play (when selecting everything)
+- SAS: re-test resynthesis + pitch estimate!!
+- SoundMetaViewer: re-test the different modes
+- smooth curve db: re-test reset
+- SpectralDiff: test when no side chain
+- Wav3s: re-test lines render
+- Wav3s: re-test time axis 3D
+- re-test Wav3s, display from sound
+- Wav3s: re-test mouse wheel -> zoom
+- Shaper: re-test sound (transient lib)
+
+
 - TODO: extensive tests on linux
   - re-pass valgrind on all plugs, and test all features
     (+ remove/insert plug + hide gui show gui)
