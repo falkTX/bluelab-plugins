@@ -56,7 +56,6 @@ BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP, tt, m
 ===
 TESTS (Linux)
 ---
-- TODO: check Air WetFreq smoothing
 - TODO: check Chroma smooth scolling at speed x4!!
 - TODO: check every plugin for processBlock/display race (and use LF chen necessary)
 Spectroscroll4: Chroma, GhostViewer, InfrasonicViewer, Panogram, Rebalance,
