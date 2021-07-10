@@ -43,9 +43,12 @@ public:
     
     virtual ~ParamSmoother2() {}
     
-    inline void Reset(BL_FLOAT sampleRate)
+    inline void Reset(BL_FLOAT sampleRate, BL_FLOAT smoothingTimeMs = -1.0)
     {
         mSampleRate = sampleRate;
+
+        if (smoothingTimeMs >= 0.0)
+            mSmoothingTimeMs = smoothingTimeMs;
         
         mA = std::exp(-(BL_FLOAT)TWO_PI/
                       (mSmoothingTimeMs * (BL_FLOAT)0.001 * sampleRate));
