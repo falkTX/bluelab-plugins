@@ -481,6 +481,15 @@ LinesRender2::DoDrawLinesFreq(NVGcontext *vg, const vector<vector<Point> > &poin
     
     for (int i = 0; i < points.size(); i++)
     {
+#if FIX_JITTER_LOW_DENSITY
+        // Do not draw the first line (it has not been projected previously)
+        if (mMode == LINES_FREQ)
+        {
+            if (i == 0)
+                continue;
+        }
+#endif
+        
         const vector<Point> &points0 = points[i];
         
         nvgBeginPath(vg);
@@ -922,7 +931,7 @@ LinesRender2::ProjectSlices(vector<vector<Point> > *points,
         iOffset = std::fmod((BL_FLOAT)mNumLinesAdded, iCoeff);
 
 #if FIX_JITTER_LOW_DENSITY
-    // FIX: fixes well jumps/sparkles with low density just geater than the minimum
+    // FIX: fixes well jumps/sparkles with low density just greater than the minimum
     // This fixes everything except the first line
     if (mMode == LINES_FREQ)
         iOffset = -iOffset;
