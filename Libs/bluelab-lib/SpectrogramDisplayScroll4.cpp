@@ -600,6 +600,9 @@ SpectrogramDisplayScroll4::TransportPlayingChanged()
 void
 SpectrogramDisplayScroll4::SetSpeedMod(int speedMod)
 {
+    //if (mState->mSpeedMod == speedMod)
+    //    return;
+    
     Command &cmd = mTmpBuf3;
     cmd.mType = Command::SET_SPEED_MOD;
     cmd.mSpeedMod = speedMod;
@@ -666,6 +669,10 @@ SpectrogramDisplayScroll4::SetViewOrientation(ViewOrientation orientation)
 void
 SpectrogramDisplayScroll4::SetBypassed(bool flag)
 {
+    if (flag == mIsBypassed)
+        // Nothing to do
+        return;
+        
     Command &cmd = mTmpBuf4;
     cmd.mType = Command::SET_BYPASSED;
     cmd.mBypassed = flag;
