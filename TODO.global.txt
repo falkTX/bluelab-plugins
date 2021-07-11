@@ -406,3 +406,11 @@ NOTE: there was the idea of menus instead of checkboxes
 => let's keep it like this! :)
 
 SVGKnobs: must center them in the page
+
+==== Linux vsynch ===
+https://wiki.archlinux.org/title/Xfwm
+https://forum.xfce.org/viewtopic.php?id=13233
+Query:
+xfconf-query -c xfwm4 -p /general/vblank_mode
+Set: edit the file:
+/home/niko/.config/xfce4/xfconf/xfce-perchannel-xml/xfwm4.xml

@@ -55,61 +55,62 @@ BL-Wav3s	    :   fea+, valg, optim, mem, bugs, (LoFr)  , lgr , gui, guiP, tt, m
 
 ===
 TESTS (Linux)
----
-- IDEA: Chroma: v-synch ?
-- TODO: check Chroma smooth scolling at speed x4!!
+===
+
 - TODO: check every plugin for processBlock/display race (and use LF chen necessary)
 Spectroscroll4: Chroma, GhostViewer, InfrasonicViewer, Panogram, Rebalance,
 
+===
+cppck: passed cpp check on all plugs and fixed and re-tested
 func: functional tests
       - test all features in detail
       - close/open gui
       - remove/insert plug
       - open manual
       - automatize all parameters to constant values
-cppcheck: passed cpp check on all plugs and fixed and re-tested
+
 
 ---
-BL-Air		    :	func, 
-BL-AutoGain	    :	func,
+BL-Air		    :	cppck, func
+BL-AutoGain	    :	cppck, func, 
 BL-Bat		    :
-BL-Chroma	    :	func,
-BL-Denoiser	    :	.
+BL-Chroma	    :	cppck, func,  
+BL-Denoiser	    :	cppck, 
 BL-DUET		    :
 BL-Envelope	    :	
-BL-EQHack	    :	.
-BL-Gain12	    :	.
-BL-Gain200	    :	.
-BL-Gain24	    :	.
-BL-Gain60	    :	.
-BL-Ghost	    :	.
-BL-GhostViewer	    :   .
-BL-Impulses	    :   .
-BL-Infra	    :   .
-BL-InfrasonicViewer :   .
+BL-EQHack	    :	cppck, 
+BL-Gain12	    :	cppck, 
+BL-Gain200	    :	cppck, 
+BL-Gain24	    :	cppck, 
+BL-Gain60	    :	cppck, 
+BL-Ghost	    :	cppck, 
+BL-GhostViewer	    :   cppck, 
+BL-Impulses	    :   cppck, 
+BL-Infra	    :   cppck, 
+BL-InfrasonicViewer :   cppck, 
 BL-InfraSynth	    :
-BL-LoFi		    :   .
+BL-LoFi		    :   cppck, 
 BL-OnsetDetect	    :
-BL-Panogram	    :   .
-BL-PitchShift	    :   .
-BL-Precedence	    :   .
-BL-Rebalance	    :	.
+BL-Panogram	    :   cppck, 
+BL-PitchShift	    :   cppck, 
+BL-Precedence	    :   cppck, 
+BL-Rebalance	    :	cppck, 
 BL-Reverb	    :
 BL-ReverbDepth	    :
-BL-SampleDelay	    :   .
+BL-SampleDelay	    :   cppck, 
 BL-SASViewer	    : 
-BL-Saturate	    :   .
-BL-Shaper	    :   .
-BL-Sine		    :   .
+BL-Saturate	    :   cppck, 
+BL-Shaper	    :   cppck, 
+BL-Sine		    :   cppck, 
 BL-SoundMetaViewer  :
-BL-Spatializer	    :   .
-BL-SpectralDiff	    :   .
+BL-Spatializer	    :   cppck, 
+BL-SpectralDiff	    :   cppck, 
 BL-SpectroExpe	    :
 BL-SpectrumView	    :
 BL-StereoDeReverb   :
-BL-StereoPan	    :   .
-BL-StereoWidth	    :   .
-BL-Wav3s	    :   .
+BL-StereoPan	    :   cppck, 
+BL-StereoWidth	    :   cppck, 
+BL-Wav3s	    :   cppck, 
 ===
 
 - TODO: extensive tests on linux
