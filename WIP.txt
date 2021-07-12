@@ -69,7 +69,6 @@ func: functional tests
       - open manual
       - automatize all parameters to constant values
 
-
 ---
 BL-Air		    :	cppck, func
 BL-AutoGain	    :	cppck, func, 
@@ -83,7 +82,7 @@ BL-Gain12	    :	cppck, func,
 BL-Gain200	    :	
 BL-Gain24	    :	cppck, func,
 BL-Gain60	    :	cppck, func,
-BL-Ghost	    :	cppck, 
+BL-Ghost	    :	cppck, func,
 BL-GhostViewer	    :   cppck, 
 BL-Impulses	    :   cppck, 
 BL-Infra	    :   cppck, 
