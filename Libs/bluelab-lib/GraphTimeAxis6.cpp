@@ -188,6 +188,12 @@ GraphTimeAxis6::GetMinMaxTime(BL_FLOAT *minTimeSec, BL_FLOAT *maxTimeSec)
     *maxTimeSec = mCurrentTime + mTimeOffsetSec;
 }
 
+BL_FLOAT
+GraphTimeAxis6::GetTimeDuration() const
+{
+    return mTimeDuration;
+}
+
 void
 GraphTimeAxis6::Update(BL_FLOAT currentTime)
 {

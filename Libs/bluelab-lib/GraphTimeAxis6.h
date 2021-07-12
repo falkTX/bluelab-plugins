@@ -61,6 +61,7 @@ public:
     
     // Time in seconds
     void GetMinMaxTime(BL_FLOAT *minTimeSec, BL_FLOAT *maxTimeSec);
+    BL_FLOAT GetTimeDuration() const;
     
     static BL_FLOAT ComputeTimeDuration(int numBuffers, int bufferSize,
                                         int oversampling, BL_FLOAT sampleRate);
