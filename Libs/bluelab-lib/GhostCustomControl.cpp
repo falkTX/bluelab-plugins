@@ -44,6 +44,8 @@ GhostCustomControl::GhostCustomControl(GhostPluginInterface *plug)
     mPrevMouseDown = false;
     
     mMiniView = NULL;
+
+    mMouseIsOver = false;
 }
 
 void
@@ -90,6 +92,8 @@ SetSelectionType(GhostPluginInterface::SelectionType selectionType)
 void
 GhostCustomControl::OnMouseDown(float x, float y, const IMouseMod &pMod)
 {
+    mMouseIsOver = true;
+    
     if (mSpectroDisplay == NULL)
         return;
     if (mMiniView == NULL)
@@ -154,6 +158,8 @@ GhostCustomControl::OnMouseDown(float x, float y, const IMouseMod &pMod)
 void
 GhostCustomControl::OnMouseUp(float x, float y, const IMouseMod &pMod)
 {
+    mMouseIsOver = true;
+    
     if (mPlug->GetMode() != GhostPluginInterface::EDIT)
         return;
     
@@ -209,6 +215,8 @@ void
 GhostCustomControl::OnMouseDrag(float x, float y, float dX, float dY,
                                 const IMouseMod &pMod)
 {
+    mMouseIsOver = true;
+    
     mPlug->CursorMoved(x, y);
     
     if (mPlug->GetMode() != GhostPluginInterface::EDIT)
@@ -373,6 +381,8 @@ GhostCustomControl::OnMouseDrag(float x, float y, float dX, float dY,
 void
 GhostCustomControl::OnMouseDblClick(float x, float y, const IMouseMod &pMod)
 {
+    mMouseIsOver = true;
+    
     int width;
     int height;
     mPlug->GetGraphSize(&width, &height);
@@ -389,6 +399,8 @@ GhostCustomControl::OnMouseDblClick(float x, float y, const IMouseMod &pMod)
 void
 GhostCustomControl::OnMouseWheel(float x, float y, const IMouseMod &pMod, float d)
 {
+    mMouseIsOver = true;
+    
     if (mPlug->GetMode() != GhostPluginInterface::EDIT)
         return;
     
@@ -421,12 +433,16 @@ void
 GhostCustomControl::OnMouseOver(float x, float y, const IMouseMod &pMod)
 {
     mPlug->CursorMoved(x, y);
+
+    mMouseIsOver = true;
 }
 
 void
 GhostCustomControl::OnMouseOut()
 {
     mPlug->CursorOut();
+
+    mMouseIsOver = false;
 }
 
 bool
@@ -545,6 +561,12 @@ GhostCustomControl::UpdateSelection(bool updateCenterPos)
                            updateCenterPos);
 }
 
+bool
+GhostCustomControl::IsMouseOver() const
+{
+    return mMouseIsOver;
+}
+    
 void
 GhostCustomControl::UpdateSelectionType()
 {

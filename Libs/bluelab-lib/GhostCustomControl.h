@@ -52,6 +52,8 @@ public:
     // Refresh the selection (for example after zoom)
     void UpdateSelection(bool updateCenterPos);
 
+    bool IsMouseOver() const;
+    
 protected:
     bool InsideSelection(int x, int y);
     
@@ -92,6 +94,8 @@ protected:
     bool mPrevMouseDown;
     
     MiniView2 *mMiniView;
+
+    bool mMouseIsOver;
 };
 
 #endif
