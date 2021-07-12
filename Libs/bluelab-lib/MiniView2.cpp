@@ -19,7 +19,8 @@
 #define BOTTOM_BORDER_OFFSET 3 //2
 
 MiniView2::MiniView2(int maxNumPoints,
-                     BL_FLOAT x0, BL_FLOAT y0, BL_FLOAT x1, BL_FLOAT y1)
+                     BL_FLOAT x0, BL_FLOAT y0, BL_FLOAT x1, BL_FLOAT y1,
+                     State *state)
 {
     mBounds[0] = x0;
     mBounds[1] = y0;
@@ -27,12 +28,24 @@ MiniView2::MiniView2(int maxNumPoints,
     mBounds[3] = y1;
     
     mMaxNumPoints = maxNumPoints;
-    
-    mMinNormX = 0.0;
-    mMaxNormX = 1.0;
+
+    mState = state;
+    if (mState == NULL)
+    {
+        mState = new State();
+        
+        mState->mMinNormX = 0.0;
+        mState->mMaxNormX = 1.0;
+    }
 }
 
 MiniView2::~MiniView2() {}
+
+MiniView2::State *
+MiniView2::GetState()
+{
+    return mState;
+}
 
 void
 //MiniView2::PreDraw(NVGcontext *vg, int width, int height)
@@ -65,15 +78,15 @@ MiniView2::PostDraw(NVGcontext *vg, int width, int height)
     // FIX: the bottom miniview border was not displayed
     b3f -= BOTTOM_BORDER_OFFSET;
     
-    nvgMoveTo(vg, (mBounds[0] + mMinNormX*boundsSizeX)*width +
+    nvgMoveTo(vg, (mBounds[0] + mState->mMinNormX*boundsSizeX)*width +
               BORDER_OFFSET_WIDTH, b1f);
-    nvgLineTo(vg, (mBounds[0] + mMaxNormX*boundsSizeX)*width /*-*/+
+    nvgLineTo(vg, (mBounds[0] + mState->mMaxNormX*boundsSizeX)*width /*-*/+
               BORDER_OFFSET_WIDTH, b1f);
-    nvgLineTo(vg, (mBounds[0] + mMaxNormX*boundsSizeX)*width /*-*/+
+    nvgLineTo(vg, (mBounds[0] + mState->mMaxNormX*boundsSizeX)*width /*-*/+
               BORDER_OFFSET_WIDTH, b3f);
-    nvgLineTo(vg, (mBounds[0] + mMinNormX*boundsSizeX)*width +
+    nvgLineTo(vg, (mBounds[0] + mState->mMinNormX*boundsSizeX)*width +
               BORDER_OFFSET_WIDTH, b3f);
-    nvgLineTo(vg, (mBounds[0] + mMinNormX*boundsSizeX)*width +
+    nvgLineTo(vg, (mBounds[0] + mState->mMinNormX*boundsSizeX)*width +
               BORDER_OFFSET_WIDTH, b1f);
     
     nvgStroke(vg);
@@ -143,8 +156,8 @@ MiniView2::GetWaveForm(WDL_TypedBuf<BL_FLOAT> *waveform)
 void
 MiniView2::SetBounds(BL_FLOAT minNormX, BL_FLOAT maxNormX)
 {
-    mMinNormX = minNormX;
-    mMaxNormX = maxNormX;
+    mState->mMinNormX = minNormX;
+    mState->mMaxNormX = maxNormX;
 }
 
 BL_FLOAT
@@ -152,7 +165,7 @@ MiniView2::GetDrag(int dragX, int width)
 {
     BL_FLOAT dx = ((BL_FLOAT)-dragX)/width;
     
-    BL_FLOAT res = dx/(mMaxNormX - mMinNormX);
+    BL_FLOAT res = dx/(mState->mMaxNormX - mState->mMinNormX);
     
     return res;
 }

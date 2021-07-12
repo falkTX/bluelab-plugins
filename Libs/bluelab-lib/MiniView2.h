@@ -21,11 +21,20 @@ class NVGcontext;
 class MiniView2 : public GraphCustomDrawer
 {
 public:
+    struct State
+    {
+        BL_FLOAT mMinNormX;
+        BL_FLOAT mMaxNormX;
+    };
+    
     MiniView2(int maxNumPoints,
-             BL_FLOAT x0, BL_FLOAT y0, BL_FLOAT x1, BL_FLOAT y1);
+              BL_FLOAT x0, BL_FLOAT y0, BL_FLOAT x1, BL_FLOAT y1,
+              State *state = NULL);
     
     virtual ~MiniView2();
 
+    State *GetState();
+    
     void PostDraw(NVGcontext *vg, int width, int height) override;
     
     bool IsPointInside(int x, int y, int width, int height);
@@ -44,9 +53,8 @@ protected:
     int mMaxNumPoints;
     
     WDL_TypedBuf<BL_FLOAT> mWaveForm;
-    
-    BL_FLOAT mMinNormX;
-    BL_FLOAT mMaxNormX;
+
+    State *mState;
 };
 
 #endif
