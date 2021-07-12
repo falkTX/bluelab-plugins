@@ -75,14 +75,14 @@ BL-Air		    :	cppck, func
 BL-AutoGain	    :	cppck, func, 
 BL-Bat		    :
 BL-Chroma	    :	cppck, func,  
-BL-Denoiser	    :	cppck, 
+BL-Denoiser	    :	cppck, func
 BL-DUET		    :
 BL-Envelope	    :	
-BL-EQHack	    :	cppck, 
-BL-Gain12	    :	cppck, 
-BL-Gain200	    :	cppck, 
-BL-Gain24	    :	cppck, 
-BL-Gain60	    :	cppck, 
+BL-EQHack	    :	cppck, func,
+BL-Gain12	    :	cppck, func,
+BL-Gain200	    :	
+BL-Gain24	    :	cppck, func,
+BL-Gain60	    :	cppck, func,
 BL-Ghost	    :	cppck, 
 BL-GhostViewer	    :   cppck, 
 BL-Impulses	    :   cppck, 
@@ -125,6 +125,8 @@ BL-Wav3s	    :   cppck,
 	  - test latency whn dump
 	  - test perfs (no inacceptable perf explosion ?)
   - later, test other DAWs on linux
+  - test vst3
+  - test presets
   
 
 - TODO: Rebalance: obfuscate .cfg ?
