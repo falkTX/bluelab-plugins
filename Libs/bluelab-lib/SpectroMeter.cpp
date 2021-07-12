@@ -410,7 +410,8 @@ SpectroMeter::FreqToStr(BL_FLOAT freqHz, char buf[256])
     // NOTE: add a whitespace at the end, so the text doesn't touch the right border
     
     if (mFreqMode == SPECTRO_METER_FREQ_HZ)
-        sprintf(buf, "%g Hz  ", freqHz);
+        //sprintf(buf, "%g Hz  ", freqHz);
+        sprintf(buf, "%.1f Hz  ", freqHz);
     else if (mFreqMode == SPECTRO_METER_FREQ_BIN)
     {
         int binNum = (freqHz/(mSampleRate*0.5))*(mBufferSize*0.5);
