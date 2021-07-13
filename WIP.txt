@@ -88,9 +88,9 @@ BL-Impulses	    :   cppck, func,
 BL-Infra	    :   cppck, func,
 BL-InfrasonicViewer :   cppck, func,
 BL-InfraSynth	    :
-BL-LoFi		    :   cppck, 
+BL-LoFi		    :   cppck, func 
 BL-OnsetDetect	    :
-BL-Panogram	    :   cppck, 
+BL-Panogram	    :   cppck, func, 
 BL-PitchShift	    :   cppck, 
 BL-Precedence	    :   cppck, 
 BL-Rebalance	    :	cppck, 
