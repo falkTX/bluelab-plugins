@@ -63,11 +63,11 @@ Spectroscroll4: Chroma, GhostViewer, InfrasonicViewer, Panogram, Rebalance,
 ===
 cppck: passed cpp check on all plugs and fixed and re-tested
 func: functional tests
-      - test all features in detail
       - close/open gui
       - remove/insert plug
       - open manual
       - automatize all parameters to constant values
+      - test all features in detail
 
 ---
 BL-Air		    :	cppck, func
@@ -83,9 +83,9 @@ BL-Gain200	    :
 BL-Gain24	    :	cppck, func,
 BL-Gain60	    :	cppck, func,
 BL-Ghost	    :	cppck, func,
-BL-GhostViewer	    :   cppck, 
-BL-Impulses	    :   cppck, 
-BL-Infra	    :   cppck, 
+BL-GhostViewer	    :   cppck, func,
+BL-Impulses	    :   cppck, func, 
+BL-Infra	    :   cppck, func,
 BL-InfrasonicViewer :   cppck, 
 BL-InfraSynth	    :
 BL-LoFi		    :   cppck, 
