@@ -34,7 +34,8 @@ public:
     
     void Reset(int bufferSize, BL_FLOAT sampleRate);
     void SetMaxFreq(BL_FLOAT maxFreq);
-
+    BL_FLOAT GetMaxFreq() const;
+    
     // To avoid data race in some cases
     // Use this mechanism to postpone reset in the GUI thread, e.g in OnIdle()
     // If called from plug OnReset(), this mechanism is not necessary

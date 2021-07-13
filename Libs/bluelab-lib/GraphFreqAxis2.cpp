@@ -346,6 +346,12 @@ GraphFreqAxis2::SetMaxFreq(BL_FLOAT maxFreq)
     Update();
 }
 
+BL_FLOAT
+GraphFreqAxis2::GetMaxFreq() const
+{
+    return mMaxFreq;
+}
+
 void
 GraphFreqAxis2::SetResetParams(int bufferSize, BL_FLOAT sampleRate)
 {
