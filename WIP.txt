@@ -92,17 +92,17 @@ BL-LoFi		    :   cppck, func
 BL-OnsetDetect	    :
 BL-Panogram	    :   cppck, func, 
 BL-PitchShift	    :   cppck, func,
-BL-Precedence	    :   cppck, 
-BL-Rebalance	    :	cppck, 
+BL-Precedence	    :   cppck, func,
+BL-Rebalance	    :	cppck, func,
 BL-Reverb	    :
 BL-ReverbDepth	    :
-BL-SampleDelay	    :   cppck, 
+BL-SampleDelay	    :   cppck, func,
 BL-SASViewer	    : 
-BL-Saturate	    :   cppck, 
-BL-Shaper	    :   cppck, 
-BL-Sine		    :   cppck, 
+BL-Saturate	    :   cppck, func,
+BL-Shaper	    :   cppck, func,
+BL-Sine		    :   cppck, func,
 BL-SoundMetaViewer  :
-BL-Spatializer	    :   cppck, 
+BL-Spatializer	    :   cppck, func,
 BL-SpectralDiff	    :   cppck, 
 BL-SpectroExpe	    :
 BL-SpectrumView	    :
@@ -127,7 +127,8 @@ BL-Wav3s	    :   cppck,
   - test vst3
   - test presets
   - test sound with headphones  
-
+  - test different buffer size and check if perfs drop too much
+  
 - TODO: Rebalance: obfuscate .cfg ?
 
 - BUG: Chroma scroll jitters at min speed
