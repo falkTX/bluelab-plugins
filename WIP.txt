@@ -103,7 +103,7 @@ BL-Shaper	    :   cppck, func,
 BL-Sine		    :   cppck, func,
 BL-SoundMetaViewer  :
 BL-Spatializer	    :   cppck, func,
-BL-SpectralDiff	    :   cppck, 
+BL-SpectralDiff	    :   cppck, func, 
 BL-SpectroExpe	    :
 BL-SpectrumView	    :
 BL-StereoDeReverb   :
