@@ -28,7 +28,7 @@ public:
                               int *outNewGUIHeight) = 0;
     
     void ApplyGUIResize(int guiSizeIdx);
-    
+
 protected:
     void GUIResizeParamChange(int paramNum,
                               int params[], IGUIResizeButtonControl *buttons[],
