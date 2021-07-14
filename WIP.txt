@@ -91,7 +91,7 @@ BL-InfraSynth	    :
 BL-LoFi		    :   cppck, func 
 BL-OnsetDetect	    :
 BL-Panogram	    :   cppck, func, 
-BL-PitchShift	    :   cppck, 
+BL-PitchShift	    :   cppck, func,
 BL-Precedence	    :   cppck, 
 BL-Rebalance	    :	cppck, 
 BL-Reverb	    :
