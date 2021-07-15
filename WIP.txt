@@ -69,25 +69,26 @@ func: functional tests (vst2)
       - automatize all parameters to constant values
       - test all features in detail
 pre: test presets (vst2)
+bsp: buffer size 32, check perfs (+ quickly checked functioning) 
 
 ---
-BL-Air		    :	cppck, func, pre
-BL-AutoGain	    :	cppck, func, pre
+BL-Air		    :	cppck, func, pre, bsp,
+BL-AutoGain	    :	cppck, func, pre, bsp,
 BL-Bat		    :
-BL-Chroma	    :	cppck, func, pre,
-BL-Denoiser	    :	cppck, func, pre,
+BL-Chroma	    :	cppck, func, pre, bsp,
+BL-Denoiser	    :	cppck, func, pre, bsp,
 BL-DUET		    :
 BL-Envelope	    :	
-BL-EQHack	    :	cppck, func, pre,
-BL-Gain12	    :	cppck, func, pre,
+BL-EQHack	    :	cppck, func, pre, bsp,
+BL-Gain12	    :	cppck, func, pre, bsp,
 BL-Gain200	    :	
-BL-Gain24	    :	cppck, func, pre,
-BL-Gain60	    :	cppck, func, pre,
-BL-Ghost	    :	cppck, func, pre,
+BL-Gain24	    :	cppck, func, pre, bsp,
+BL-Gain60	    :	cppck, func, pre, bsp,
+BL-Ghost	    :	cppck, func, pre, bsp,
 BL-GhostViewer	    :   cppck, func, pre,
 BL-Impulses	    :   cppck, func, pre,
 BL-Infra	    :   cppck, func, pre,
-BL-InfrasonicViewer :   cppck, func, 
+BL-InfrasonicViewer :   cppck, func, pre,
 BL-InfraSynth	    :
 BL-LoFi		    :   cppck, func, pre, 
 BL-OnsetDetect	    :
