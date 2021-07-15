@@ -90,7 +90,7 @@ BL-Impulses	    :   cppck, func, pre, bsp,
 BL-Infra	    :   cppck, func, pre, bsp,
 BL-InfrasonicViewer :   cppck, func, pre, bsp,
 BL-InfraSynth	    :
-BL-LoFi		    :   cppck, func, pre, 
+BL-LoFi		    :   cppck, func, pre, bsp,
 BL-OnsetDetect	    :
 BL-Panogram	    :   cppck, func, pre,
 BL-PitchShift	    :   cppck, func, pre,
@@ -100,7 +100,7 @@ BL-Reverb	    :
 BL-ReverbDepth	    :
 BL-SampleDelay	    :   cppck, func, pre,
 BL-SASViewer	    : 
-BL-Saturate	    :   cppck, func, pre,
+BL-Saturate	    :   cppck, func, pre, bsp,
 BL-Shaper	    :   cppck, func, pre,
 BL-Sine		    :   cppck, func, pre,
 BL-SoundMetaViewer  :
