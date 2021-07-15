@@ -88,7 +88,7 @@ BL-Ghost	    :	cppck, func, pre, bsp,
 BL-GhostViewer	    :   cppck, func, pre, bsp,
 BL-Impulses	    :   cppck, func, pre, bsp,
 BL-Infra	    :   cppck, func, pre, bsp,
-BL-InfrasonicViewer :   cppck, func, pre,
+BL-InfrasonicViewer :   cppck, func, pre, bsp,
 BL-InfraSynth	    :
 BL-LoFi		    :   cppck, func, pre, 
 BL-OnsetDetect	    :
