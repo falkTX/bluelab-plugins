@@ -72,19 +72,29 @@ public:
     static void AppendShortData(const char *filename, const short data);
     
     template <typename FLOAT_TYPE>
-    static void DumpData2D(const char *filename, const FLOAT_TYPE *data, int width, int height);
+    static void DumpData2D(const char *filename, const FLOAT_TYPE *data,
+                           int width, int height);
     
-    static void DumpComplexData(const char *filenameMagn, const char *filenamePhase, const WDL_FFT_COMPLEX *buf, int size);
+    static void DumpComplexData(const char *filenameMagn,
+                                const char *filenamePhase,
+                                const WDL_FFT_COMPLEX *buf, int size);
     
-    static void DumpRawComplexData(const char *filenameRe, const char *filenameImag, const WDL_FFT_COMPLEX *buf, int size);
+    static void DumpRawComplexData(const char *filenameRe,
+                                   const char *filenameImag,
+                                   const WDL_FFT_COMPLEX *buf, int size);
     
     template <typename FLOAT_TYPE>
-    static void DumpPhases(const char *filename, const WDL_TypedBuf<FLOAT_TYPE> &data);
+    static void DumpPhases(const char *filename,
+                           const WDL_TypedBuf<FLOAT_TYPE> &data);
     
     template <typename FLOAT_TYPE>
     static void DumpPhases(const char *filename, const FLOAT_TYPE *data, int size);
 
     static bool ExitAfter(Plugin *plug, int numSeconds);
+
+    // To be called from ProcessBlock
+    static double ComputeRealSampleRate(double *prevTime, double *prevSR,
+                                        int nFrames);
 };
 
 #endif /* defined(__Denoiser__BLDebug__) */

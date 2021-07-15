@@ -417,3 +417,30 @@ BLDebug::ExitAfter(Plugin *plug, int numSeconds)
 
     return false;
 }
+
+double
+BLDebug::ComputeRealSampleRate(double *prevTime, double *prevSR, int nFrames)
+{
+    
+    double now = BLUtils::GetTimeMillisF();
+    if (*prevTime < 0.0)
+    {
+        *prevTime = now;
+        
+        return 0.0;
+    }
+    
+    double elapsed = now - *prevTime;
+    *prevTime = now;
+    double elapsedSec = elapsed*0.001;
+    double rate = nFrames/elapsedSec;
+
+    if (*prevSR < 0.0)
+        *prevSR = rate;
+    
+#define SMOOTH_FAC 0.95
+    rate = (*prevSR)*SMOOTH_FAC + rate*(1.0 - SMOOTH_FAC);
+    *prevSR = rate;
+
+    return rate;
+}
