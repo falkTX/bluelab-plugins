@@ -62,60 +62,58 @@ Spectroscroll4: Chroma, GhostViewer, InfrasonicViewer, Panogram, Rebalance,
 
 ===
 cppck: passed cpp check on all plugs and fixed and re-tested
-func: functional tests
+func: functional tests (vst2)
       - close/open gui
       - remove/insert plug
       - open manual
       - automatize all parameters to constant values
       - test all features in detail
+pre: test presets (vst2)
 
 ---
-BL-Air		    :	cppck, func
-BL-AutoGain	    :	cppck, func, 
+BL-Air		    :	cppck, func, pre
+BL-AutoGain	    :	cppck, func, pre
 BL-Bat		    :
-BL-Chroma	    :	cppck, func,  
-BL-Denoiser	    :	cppck, func
+BL-Chroma	    :	cppck, func, pre,
+BL-Denoiser	    :	cppck, func, pre,
 BL-DUET		    :
 BL-Envelope	    :	
-BL-EQHack	    :	cppck, func,
-BL-Gain12	    :	cppck, func,
+BL-EQHack	    :	cppck, func, pre,
+BL-Gain12	    :	cppck, func, pre,
 BL-Gain200	    :	
-BL-Gain24	    :	cppck, func,
-BL-Gain60	    :	cppck, func,
-BL-Ghost	    :	cppck, func,
-BL-GhostViewer	    :   cppck, func,
-BL-Impulses	    :   cppck, func, 
-BL-Infra	    :   cppck, func,
-BL-InfrasonicViewer :   cppck, func,
+BL-Gain24	    :	cppck, func, pre,
+BL-Gain60	    :	cppck, func, pre,
+BL-Ghost	    :	cppck, func, pre,
+BL-GhostViewer	    :   cppck, func, pre,
+BL-Impulses	    :   cppck, func, pre,
+BL-Infra	    :   cppck, func, pre,
+BL-InfrasonicViewer :   cppck, func, 
 BL-InfraSynth	    :
-BL-LoFi		    :   cppck, func 
+BL-LoFi		    :   cppck, func, pre, 
 BL-OnsetDetect	    :
-BL-Panogram	    :   cppck, func, 
-BL-PitchShift	    :   cppck, func,
-BL-Precedence	    :   cppck, func,
-BL-Rebalance	    :	cppck, func,
+BL-Panogram	    :   cppck, func, pre,
+BL-PitchShift	    :   cppck, func, pre,
+BL-Precedence	    :   cppck, func, pre,
+BL-Rebalance	    :	cppck, func, pre,
 BL-Reverb	    :
 BL-ReverbDepth	    :
-BL-SampleDelay	    :   cppck, func,
+BL-SampleDelay	    :   cppck, func, pre,
 BL-SASViewer	    : 
-BL-Saturate	    :   cppck, func,
-BL-Shaper	    :   cppck, func,
-BL-Sine		    :   cppck, func,
+BL-Saturate	    :   cppck, func, pre,
+BL-Shaper	    :   cppck, func, pre,
+BL-Sine		    :   cppck, func, pre,
 BL-SoundMetaViewer  :
-BL-Spatializer	    :   cppck, func,
-BL-SpectralDiff	    :   cppck, func, 
+BL-Spatializer	    :   cppck, func, pre,
+BL-SpectralDiff	    :   cppck, func, pre,
 BL-SpectroExpe	    :
 BL-SpectrumView	    :
 BL-StereoDeReverb   :
-BL-StereoPan	    :   cppck, func,
-BL-StereoWidth	    :   cppck, func,
-BL-Wav3s	    :   cppck, func,
+BL-StereoPan	    :   cppck, func, pre,
+BL-StereoWidth	    :   cppck, func, pre,
+BL-Wav3s	    :   cppck, func, pre,
 ===
 
 - TODO: extensive tests on linux
-  - re-pass valgrind on all plugs, and test all features
-    (+ remove/insert plug + hide gui show gui)
-  - functional tests: test in detail each plug by hand, to see if everything works
   - sample rate tests1: test every plug with 4 sample rates (features, by hand)
   - sample rate test 2: test perfs with 4 sample rates
   - sample rate tests: test every plug with 4 sample rates: test latency when bounce
@@ -128,6 +126,8 @@ BL-Wav3s	    :   cppck, func,
   - test presets
   - test sound with headphones  
   - test different buffer size and check if perfs drop too much
+  - valgrind (at the end)
+  - test in release
   
 - TODO: Rebalance: obfuscate .cfg ?
 
