@@ -8,6 +8,8 @@ FftProcessBufObj::FftProcessBufObj(int bufferSize, int oversampling, int freqRes
 : ProcessObj(bufferSize)
 {
     ProcessObj::Reset(bufferSize, oversampling, freqRes, sampleRate);
+
+    mMagnsBufValid = false;
 }
 
 FftProcessBufObj::~FftProcessBufObj() {}
@@ -20,6 +22,8 @@ FftProcessBufObj::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     //BLUtils::TakeHalf(&mCurrentBuf);
 
     BLUtils::TakeHalf(*ioBuffer, &mCurrentBuf);
+
+    mMagnsBufValid = false;
 }
 
 void
@@ -31,7 +35,20 @@ FftProcessBufObj::GetComplexBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer)
 void
 FftProcessBufObj::GetBuffer(WDL_TypedBuf<BL_FLOAT> *ioBuffer)
 {
+    // Avoid recomputing magns if nothing changed
+    // Useful e.g for block size = 32
+    if (mMagnsBufValid)
+    {
+        *ioBuffer = mCurrentMagnsBuf;
+
+        return;
+    }
+    
     ioBuffer->Resize(mCurrentBuf.GetSize());
     for (int i = 0; i < mCurrentBuf.GetSize(); i++)
         ioBuffer->Get()[i] = COMP_MAGN(mCurrentBuf.Get()[i]);
+
+    // Update
+    mCurrentMagnsBuf = *ioBuffer;
+    mMagnsBufValid = true;
 }

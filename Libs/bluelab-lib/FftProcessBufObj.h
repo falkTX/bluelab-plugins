@@ -21,7 +21,10 @@ public:
   void GetBuffer(WDL_TypedBuf<BL_FLOAT> *ioBuffer);
   
 private:
-  WDL_TypedBuf<WDL_FFT_COMPLEX> mCurrentBuf;
+    WDL_TypedBuf<WDL_FFT_COMPLEX> mCurrentBuf;
+
+    bool mMagnsBufValid;
+    WDL_TypedBuf<BL_FLOAT> mCurrentMagnsBuf;
 };
 
 #endif
