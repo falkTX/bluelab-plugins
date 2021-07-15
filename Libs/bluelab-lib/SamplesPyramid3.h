@@ -43,8 +43,9 @@ public:
     void Reset();
     
     void SetValues(const WDL_TypedBuf<BL_FLOAT> &samples);
-    
-    void PushValues(const WDL_TypedBuf<BL_FLOAT> &samples);
+
+    // Return the number of pushed samples
+    long PushValues(const WDL_TypedBuf<BL_FLOAT> &samples);
     
     void PopValues(long numSamples);
     

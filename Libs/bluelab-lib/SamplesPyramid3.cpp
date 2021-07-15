@@ -25,6 +25,12 @@
 // (improvement of PUSH_POP_POW_TWO)
 #define FIX_PUSH_POP_POW_TWO 1
 
+// Minimum samples to push
+// If we have less samples to push every time, due to smalle buffer size (e.g 32),
+// we make sure not to decimate a lot each time, and not to get 0 samples
+// near the top of the pyramid
+#define MIN_SAMPLES_PUSH 512
+
 // Num samples to overlap at level 0,
 // to avoid discontinuities
 // (will decrease when going deeper in the pyramid)
@@ -157,7 +163,7 @@ SamplesPyramid3::SetValues(const WDL_TypedBuf<BL_FLOAT> &samples0)
     //DBG_DisplayMemory();
 }
 
-void
+long
 SamplesPyramid3::PushValues(const WDL_TypedBuf<BL_FLOAT> &inSamples)
 {
     WDL_TypedBuf<SP_FLOAT> samples;
@@ -182,6 +188,10 @@ SamplesPyramid3::PushValues(const WDL_TypedBuf<BL_FLOAT> &inSamples)
         numToAdd /= 2;
 #endif
 
+    if (numToAdd < MIN_SAMPLES_PUSH)
+        // We don't have enough buffered input samples 
+        return 0;
+    
     WDL_TypedBuf<SP_FLOAT> &samples0 = mTmpBuf6;
     BLUtils::FastQueueToBuf(mPushBuf, &samples0, numToAdd);
 
@@ -262,6 +272,8 @@ SamplesPyramid3::PushValues(const WDL_TypedBuf<BL_FLOAT> &inSamples)
         if (pyramidLevel > mMaxPyramidLevel)
             break;
     }
+
+    return numToAdd;
 }
 
 void
