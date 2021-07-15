@@ -107,9 +107,9 @@ BL-SpectralDiff	    :   cppck, func,
 BL-SpectroExpe	    :
 BL-SpectrumView	    :
 BL-StereoDeReverb   :
-BL-StereoPan	    :   cppck, 
-BL-StereoWidth	    :   cppck, 
-BL-Wav3s	    :   cppck, 
+BL-StereoPan	    :   cppck, func,
+BL-StereoWidth	    :   cppck, func,
+BL-Wav3s	    :   cppck, func,
 ===
 
 - TODO: extensive tests on linux
