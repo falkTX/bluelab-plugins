@@ -168,7 +168,8 @@ GraphTimeAxis6::SetGraph(GraphControl12 *graph)
 {
     mGraph = graph;
 
-    graph->SetGraphTimeAxis(this);
+    if (graph != NULL)
+        graph->SetGraphTimeAxis(this);
 }
 
 void
