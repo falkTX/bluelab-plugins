@@ -84,7 +84,7 @@ BL-Gain12	    :	cppck, func, pre, bsp,
 BL-Gain200	    :	
 BL-Gain24	    :	cppck, func, pre, bsp,
 BL-Gain60	    :	cppck, func, pre, bsp,
-BL-Ghost	    :	cppck, func, pre, bsp, BUG: block size / selection 
+BL-Ghost	    :	cppck, func, pre, bsp, 
 BL-GhostViewer	    :   cppck, func, pre, bsp,
 BL-Impulses	    :   cppck, func, pre, bsp,
 BL-Infra	    :   cppck, func, pre, bsp,
