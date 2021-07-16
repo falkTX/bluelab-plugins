@@ -2057,7 +2057,7 @@ bool
 FftProcessObj16::Process(const vector<WDL_TypedBuf<BL_FLOAT> > &inputs,
                          const vector<WDL_TypedBuf<BL_FLOAT> > &scInputs,
                          vector<WDL_TypedBuf<BL_FLOAT> > *outputs)
-{    
+{
     vector<WDL_TypedBuf<BL_FLOAT> > &inputs0 = mTmpBuf20;
     if (inputs.size() > 0)
         inputs0 = inputs;
@@ -2401,9 +2401,9 @@ FftProcessObj16::ComputeFft(const WDL_TypedBuf<BL_FLOAT> &samples,
     // and WDL_FFT has strange results when all the input samples are null
     if (BLUtils::IsAllZero(samples))
     {
-          BLUtils::FillAllZero(fftSamples);
+        BLUtils::FillAllZero(fftSamples);
 	
-          return;
+        return;
     }
 
     BL_FLOAT coeff = 1.0;
@@ -2525,6 +2525,14 @@ FftProcessObj16::ComputeInverseFft(const WDL_TypedBuf<WDL_FFT_COMPLEX> &fftSampl
     tmpFftBuf.Resize(bufSize);
     
     iFftSamples->Resize(fftSamples.GetSize());
+
+    // NEW
+    if (BLUtilsComp::IsAllZeroComp(fftSamples))
+	{
+		BLUtils::FillAllZero(iFftSamples);
+        
+		return;
+	}
     
     for (int i = 0; i < bufSize; i++)
     {
@@ -2565,6 +2573,17 @@ FftProcessObj16::ComputeInverseFft(const WDL_TypedBuf<BL_FLOAT> &fftSamplesReal,
         (tmpBuffer != NULL) ? *tmpBuffer : tmpBuf0;
     
     fftSamples.Resize(fftSamplesReal.GetSize());
+
+    // NEW
+    if (BLUtils::IsAllZero(fftSamplesReal))
+    {
+        ifftSamplesReal->Resize(fftSamplesReal.GetSize());
+        
+        BLUtils::FillAllZero(ifftSamplesReal);
+	
+        return;
+    }
+    
     for (int i = 0; i < fftSamplesReal.GetSize(); i++)
     {
         BL_FLOAT val = fftSamplesReal.Get()[i];

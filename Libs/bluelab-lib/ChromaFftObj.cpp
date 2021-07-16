@@ -256,7 +256,8 @@ ChromaFftObj::MagnsToCromaLine(const WDL_TypedBuf<BL_FLOAT> &magns,
     }
     
     // Smooth the chroma line
-    if (mSmoothWin.GetSize() == 0)
+    //if (mSmoothWin.GetSize() == 0)
+    if (mSmoothWin.GetSize() != chromaLine->GetSize()/12)
     {
         int winSize = chromaLine->GetSize()/12;
         Window::MakeHanning(winSize, &mSmoothWin);
@@ -324,7 +325,8 @@ ChromaFftObj::MagnsToCromaLine(const WDL_TypedBuf<BL_FLOAT> &magns,
         divisor = chromaLine->GetSize();
     
     // Smooth the chroma line
-    if (mSmoothWin.GetSize() == 0)
+    //if (mSmoothWin.GetSize() == 0)
+    if (mSmoothWin.GetSize() != chromaLine->GetSize()/divisor)
     {
         int windowSize = chromaLine->GetSize()/divisor;
         Window::MakeHanning(windowSize, &mSmoothWin);

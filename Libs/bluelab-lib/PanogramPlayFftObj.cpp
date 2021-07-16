@@ -327,7 +327,7 @@ PanogramPlayFftObj::GetSelPlayPosition()
 
 void
 PanogramPlayFftObj::SetNumCols(int numCols)
-{
+{   
     if (numCols != mNumCols)
     {
         mNumCols = numCols;

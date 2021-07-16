@@ -302,7 +302,8 @@ PanogramFftObj::MagnsToPanoLine(const WDL_TypedBuf<BL_FLOAT> magns[2],
         divisor = panoLine->GetSize();
     
     // Smooth the Pano line
-    if (mSmoothWin.GetSize() == 0)
+    //if (mSmoothWin.GetSize() == 0)
+    if (mSmoothWin.GetSize() != panoLine->GetSize()/divisor)
     {
         Window::MakeHanning(panoLine->GetSize()/divisor, &mSmoothWin);
     }
