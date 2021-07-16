@@ -556,6 +556,29 @@ BLUtilsPlug::GetPlugIOBuffers(Plugin *plug,
 }
 #endif
 
+void
+BLUtilsPlug::GetPlugNumIO(Plugin *plug,
+                          const double **inputs, const double **outputs,
+                          int *nIn, int *nOut)
+{
+    *nIn = 0;
+    *nOut = 0;
+
+    // Inputs
+    for (int i = 0; i < 2; i++)
+    {
+        if (plug->IsChannelConnected(kInput, i) && (inputs[i] != NULL))
+            *nIn++;
+    }
+            
+    // Outputs
+    for (int i = 0; i < 2; i++)
+    {
+        if (plug->IsChannelConnected(kOutput, i) && (outputs[i] != NULL))
+            *nOut++;
+    }
+}
+
 bool
 BLUtilsPlug::GetIOBuffers(int index, double *in[2], double *out[2],
                           double **inBuf, double **outBuf)

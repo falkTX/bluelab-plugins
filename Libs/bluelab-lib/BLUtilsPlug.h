@@ -28,7 +28,11 @@ class BLUtilsPlug
                                  vector<WDL_TypedBuf<BL_FLOAT> > *inp,
                                  vector<WDL_TypedBuf<BL_FLOAT> > *scIn,
                                  vector<WDL_TypedBuf<BL_FLOAT> > *outp);
-    
+
+    static void GetPlugNumIO(Plugin *plug,
+                             const double **inputs, const double **outputs,
+                             int *nIn, int *nOut);
+        
     // Touch plug param for automation to be written
     static void TouchPlugParam(Plugin *plug, int paramIdx);
 
@@ -52,7 +56,7 @@ class BLUtilsPlug
                              vector<WDL_TypedBuf<double> > &out,
                              WDL_TypedBuf<double> **inBuf,
                              WDL_TypedBuf<double> **outBuf);
-    
+
     static bool PlugIOAllZero(double *inputs[2], double *outputs[2], int nFrames);
     
     static bool PlugIOAllZero(const vector<WDL_TypedBuf<BL_FLOAT> > &inputs,
