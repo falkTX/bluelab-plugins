@@ -320,7 +320,7 @@ PanogramPlayFftObj::GetSelPlayPosition()
 #endif
     
     BL_FLOAT res = ((BL_FLOAT)(lineCount - mDataSelection[0]))/
-                          (mDataSelection[2] - mDataSelection[0]);
+        (mDataSelection[2] - mDataSelection[0]);
     
     return res;
 }
