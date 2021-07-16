@@ -84,7 +84,7 @@ BL-Gain12	    :	cppck, func, pre, bsp,
 BL-Gain200	    :	
 BL-Gain24	    :	cppck, func, pre, bsp,
 BL-Gain60	    :	cppck, func, pre, bsp,
-BL-Ghost	    :	cppck, func, pre, bsp,
+BL-Ghost	    :	cppck, func, pre, bsp, BUG: block size / selection 
 BL-GhostViewer	    :   cppck, func, pre, bsp,
 BL-Impulses	    :   cppck, func, pre, bsp,
 BL-Infra	    :   cppck, func, pre, bsp,
@@ -92,7 +92,7 @@ BL-InfrasonicViewer :   cppck, func, pre, bsp,
 BL-InfraSynth	    :
 BL-LoFi		    :   cppck, func, pre, bsp,
 BL-OnsetDetect	    :
-BL-Panogram	    :   cppck, func, pre,
+BL-Panogram	    :   cppck, func, pre, BUG WIP
 BL-PitchShift	    :   cppck, func, pre,
 BL-Precedence	    :   cppck, func, pre,
 BL-Rebalance	    :	cppck, func, pre,
@@ -114,6 +114,7 @@ BL-StereoWidth	    :   cppck, func, pre,
 BL-Wav3s	    :   cppck, func, pre,
 ===
 
+- TODO next: test samplerate 88200
 - TODO: extensive tests on linux
   - sample rate tests1: test every plug with 4 sample rates (features, by hand)
   - sample rate test 2: test perfs with 4 sample rates
