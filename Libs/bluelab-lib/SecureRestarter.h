@@ -40,7 +40,7 @@ public:
 protected:
     bool mFirstTime;
     
-    int mPrevNFrames;
+    int mPrevNumSamplesToFade;
     WDL_TypedBuf<BL_FLOAT> mHanning;
 };
 

@@ -12,12 +12,14 @@
 
 #include "SecureRestarter.h"
 
+// Limit the number of samples to fade
+#define NUM_SAMPLES_FADE 32
 
 SecureRestarter::SecureRestarter()
 {
     mFirstTime = true;
     
-    mPrevNFrames = -1;
+    mPrevNumSamplesToFade = -1;
 }
 
 SecureRestarter::~SecureRestarter() {}
@@ -36,16 +38,20 @@ SecureRestarter::Process(BL_FLOAT *buf0, BL_FLOAT *buf1, int nFrames)
 {
     if (mFirstTime)
     {
+        int numSamplesToFade = NUM_SAMPLES_FADE;
+        if (nFrames < numSamplesToFade)
+            numSamplesToFade = nFrames;
+        
         // Make Hanning if necessary 
-        if (mPrevNFrames != nFrames)
+        if (numSamplesToFade != mPrevNumSamplesToFade)
         {
-            Window::MakeHanning(nFrames, &mHanning);
-            
-            mPrevNFrames = nFrames;
+            Window::MakeHanning(numSamplesToFade, &mHanning);
+
+            mPrevNumSamplesToFade = numSamplesToFade;
         }
         
         // Half Hanning (on the first half of the buffers)
-        for (int i = 0; i < nFrames/2; i++)
+        for (int i = 0; i < numSamplesToFade/2; i++)
         {
             if (buf0 != NULL)
                 buf0[i] *= mHanning.Get()[i];
@@ -73,15 +79,19 @@ SecureRestarter::Process(vector<WDL_TypedBuf<BL_FLOAT> > &bufs)
     
     const WDL_TypedBuf<BL_FLOAT> &buf0 = bufs[0];
     int nFrames = buf0.GetSize();
-    
+
+    int numSamplesToFade = NUM_SAMPLES_FADE;
+    if (nFrames < numSamplesToFade)
+        numSamplesToFade = nFrames;
+        
     if (mFirstTime)
     {
         // Make Hanning if necessary
-        if (mPrevNFrames != nFrames)
+        if (mPrevNumSamplesToFade != numSamplesToFade)
         {
-            Window::MakeHanning(nFrames, &mHanning);
+            Window::MakeHanning(numSamplesToFade, &mHanning);
             
-            mPrevNFrames = nFrames;
+            mPrevNumSamplesToFade = numSamplesToFade;
         }
         
         for (int j = 0; j < bufs.size(); j++)
@@ -89,9 +99,9 @@ SecureRestarter::Process(vector<WDL_TypedBuf<BL_FLOAT> > &bufs)
             WDL_TypedBuf<BL_FLOAT> &buf = bufs[j];
             
             // Half Hanning (on the first half of the buffers)
-            for (int i = 0; i < nFrames/2; i++)
+            for (int i = 0; i < numSamplesToFade/2; i++)
             {
-                if (buf.GetSize() == nFrames)
+                if (i < buf.GetSize())
                     buf.Get()[i] *= mHanning.Get()[i];
             }
         }
