@@ -111,10 +111,10 @@ BL-SpectrumView	    :
 BL-StereoDeReverb   :
 BL-StereoPan	    :   cppck, func, pre, bsp,
 BL-StereoWidth	    :   cppck, func, pre, bsp,
-BL-Wav3s	    :   cppck, func, pre,
+BL-Wav3s	    :   cppck, func, pre, bsp
 ===
 
-- TODO next: test samplerate 88200
+- TODO next: test samplerate!
   - test 88200
   - test start 44100, then switch to 88200
   
