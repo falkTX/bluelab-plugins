@@ -285,7 +285,7 @@ FastRTConvolver3::Process(const WDL_TypedBuf<BL_FLOAT> &samples,
             mConvEngine->Advance(nAvail);
 #endif
         }
-        else
+        else // BYPASS
         {
             outBuf = inBuf;
         }

@@ -207,7 +207,7 @@ BLWidthAdjuster::ApplyCompWidth(BL_FLOAT width, BL_FLOAT compGain,
 #else
     BL_FLOAT gainW = compGain;
 #endif
-        
+    
     if (gainW < 0.0)
         gainW = 0.0;
     
