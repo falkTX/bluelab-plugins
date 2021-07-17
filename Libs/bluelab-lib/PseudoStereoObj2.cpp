@@ -232,7 +232,8 @@ PseudoStereoObj2::GenerateIR(WDL_TypedBuf<BL_FLOAT> *ir)
     Hl.Resize(ir->GetSize());
     for (int i = 0; i < Hl.GetSize(); i++)
     {
-        BL_FLOAT wr = mWidth*mWidth*R.Get()[i];
+        //BL_FLOAT wr = mWidth*mWidth*R.Get()[i];
+        BL_FLOAT wr = mWidth*R.Get()[i];
         BL_FLOAT at = std::atan(wr);
         
         BL_FLOAT h = 1.0/2.0 + (1.0/M_PI)*at;
