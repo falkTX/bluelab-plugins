@@ -24,10 +24,11 @@ void
 BLCorrelationComputer2::Reset(BL_FLOAT sampleRate)
 {
     mSampleRate = sampleRate;
+    
     mCorrelation = 0.0;
     
     mHistorySize = mSmoothTimeMs*0.001*mSampleRate;
-
+    
     mXLXR.unfreeze();
     mXL2.unfreeze();
     mXR2.unfreeze();

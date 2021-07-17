@@ -49,9 +49,9 @@ BLWidthAdjuster::BLWidthAdjuster(BL_FLOAT sampleRate)
     mUserWidth = 0.0;
     
     mSampleRate = sampleRate;
-    
-    mCorrComputer = new BLCorrelationComputer2(sampleRate,
-                                               CORRELATION_SMOOTH_TIME_MS);
+
+    mCorrComputer =
+        new BLCorrelationComputer2(sampleRate, CORRELATION_SMOOTH_TIME_MS);
     
     mStereoWidener = new BLStereoWidener(sampleRate);
     
@@ -95,7 +95,7 @@ BLWidthAdjuster::Reset(BL_FLOAT sampleRate)
     mLimitedWidth = mUserWidth;
     
     mSampleRate = sampleRate;
-    
+
     mCorrComputer->Reset(sampleRate);
     
     mComp->Reset(sampleRate);
@@ -207,8 +207,7 @@ BLWidthAdjuster::ApplyCompWidth(BL_FLOAT width, BL_FLOAT compGain,
 #else
     BL_FLOAT gainW = compGain;
 #endif
-    
-    
+        
     if (gainW < 0.0)
         gainW = 0.0;
     
