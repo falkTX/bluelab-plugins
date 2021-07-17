@@ -19,15 +19,18 @@ class SpectralDiffObj : public ProcessObj
     void ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
                           const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer = NULL);
     
-    void GetSignal0BufferSpect(WDL_TypedBuf<BL_FLOAT> *ioBuffer);
-    void GetSignal1BufferSpect(WDL_TypedBuf<BL_FLOAT> *ioBuffer);
-    void GetDiffSpect(WDL_TypedBuf<BL_FLOAT> *ioBuffer);
+    bool GetSignal0BufferSpect(WDL_TypedBuf<BL_FLOAT> *ioBuffer);
+    bool GetSignal1BufferSpect(WDL_TypedBuf<BL_FLOAT> *ioBuffer);
+    bool GetDiffSpect(WDL_TypedBuf<BL_FLOAT> *ioBuffer);
     
  protected:
     WDL_TypedBuf<BL_FLOAT> mOutSignal0;
     WDL_TypedBuf<BL_FLOAT> mOutSignal1;
     WDL_TypedBuf<BL_FLOAT> mOutDiff;
 
+    // Optim
+    bool mCurveChanged[3];
+    
 private:
     // Tmp buffers
     WDL_TypedBuf<WDL_FFT_COMPLEX> mTmpBuf0;

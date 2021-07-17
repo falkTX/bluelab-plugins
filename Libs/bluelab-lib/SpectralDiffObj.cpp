@@ -9,6 +9,10 @@ SpectralDiffObj::SpectralDiffObj(int bufferSize, int oversampling, int freqRes,
 : ProcessObj(bufferSize)
 {
     ProcessObj::Reset(bufferSize, oversampling, freqRes, sampleRate);
+
+    mCurveChanged[0] = false;
+    mCurveChanged[1] = false;
+    mCurveChanged[2] = false;
 }
 
 SpectralDiffObj::~SpectralDiffObj() {}
@@ -138,6 +142,10 @@ SpectralDiffObj::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     
     // Result
     mOutDiff = resultMagns;
+
+    mCurveChanged[0] = true;
+    mCurveChanged[1] = true;
+    mCurveChanged[2] = true;
     
 #if !NO_SOUND_OUTPUT
     BLUtils::MagnPhaseToComplex(ioBuffer, resultMagnsSym, signalPhases);
@@ -145,20 +153,38 @@ SpectralDiffObj::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
 #endif
 }
 
-void
+bool
 SpectralDiffObj::GetSignal0BufferSpect(WDL_TypedBuf<BL_FLOAT> *ioBuffer)
 {
+    bool res = mCurveChanged[0];
+    
     *ioBuffer = mOutSignal0;
+
+    mCurveChanged[0] = false;
+
+    return res;
 }
 
-void
+bool
 SpectralDiffObj::GetSignal1BufferSpect(WDL_TypedBuf<BL_FLOAT> *ioBuffer)
 {
+    bool res = mCurveChanged[1];
+    
     *ioBuffer = mOutSignal1;
+
+    mCurveChanged[1] = false;
+
+    return res;
 }
 
-void
+bool
 SpectralDiffObj::GetDiffSpect(WDL_TypedBuf<BL_FLOAT> *ioBuffer)
 {
+    bool res = mCurveChanged[2];
+    
     *ioBuffer = mOutDiff;
+
+    mCurveChanged[2] = false;
+
+    return res;
 }
