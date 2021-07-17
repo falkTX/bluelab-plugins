@@ -10,6 +10,12 @@ Bufferizer::Bufferizer(int bufferSize)
 Bufferizer::~Bufferizer() {}
 
 void
+Bufferizer::Reset()
+{
+    mValues.Resize(0);
+}
+
+void
 Bufferizer::AddValues(const WDL_TypedBuf<BL_FLOAT> &values)
 {
   mValues.Add(values.Get(), values.GetSize());

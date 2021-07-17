@@ -31,6 +31,7 @@
 #define DEFAULT_SMOOTH_TIME_MS 100.0
 
 class CParamSmooth;
+class Bufferizer;
 class BLCorrelationComputer2
 {
 public:
@@ -69,6 +70,13 @@ protected:
     BL_FLOAT mSumXLXR;
     BL_FLOAT mSumXL2;
     BL_FLOAT mSumXR2;
+
+    // Use bufferizers, to feed and compute the object with constant buffer size
+    Bufferizer *mBufferizers[2];
+    bool mGotFirstBuffer;
+
+private:
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf0[2];
 };
 
 #endif /* defined(__UST__BLCorrelationComputer2__) */

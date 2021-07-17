@@ -6,19 +6,38 @@
 //
 //
 
+#include <Bufferizer.h>
 
 #include "BLCorrelationComputer2.h"
+
+// Tested with StereoWidth correlation meter
+// May avoid values jittering a little
+#define USE_BUFFERIZER 1 //0
+#define INPUT_BUFFER_SIZE 512
 
 BLCorrelationComputer2::BLCorrelationComputer2(BL_FLOAT sampleRate,
                                                BL_FLOAT smoothTimeMs)
 {
     mSampleRate = sampleRate;
     mSmoothTimeMs = smoothTimeMs;
+
+#if USE_BUFFERIZER
+    for (int i = 0; i < 2; i++)
+        mBufferizers[i] = new Bufferizer(INPUT_BUFFER_SIZE);
+    
+    mGotFirstBuffer = false;
+#endif
     
     Reset(sampleRate);
 }
 
-BLCorrelationComputer2::~BLCorrelationComputer2() {}
+BLCorrelationComputer2::~BLCorrelationComputer2()
+{
+#if USE_BUFFERIZER
+    for (int i = 0; i < 2; i++)
+        delete mBufferizers[i];
+#endif
+}
 
 void
 BLCorrelationComputer2::Reset(BL_FLOAT sampleRate)
@@ -57,6 +76,13 @@ BLCorrelationComputer2::Reset(BL_FLOAT sampleRate)
     mSumXLXR = 0.0;
     mSumXL2 = 0.0;
     mSumXR2 = 0.0;
+
+#if USE_BUFFERIZER
+    for (int i = 0; i < 2; i++)
+        mBufferizers[i]->Reset();
+    
+    mGotFirstBuffer = false;
+#endif
 }
 
 void
@@ -67,7 +93,7 @@ BLCorrelationComputer2::Reset()
 }
 
 void
-BLCorrelationComputer2::Process(const WDL_TypedBuf<BL_FLOAT> samples[2])
+BLCorrelationComputer2::Process(const WDL_TypedBuf<BL_FLOAT> samples0[2])
 {
 #if 0 // origin
     // Fill the history
@@ -101,6 +127,49 @@ BLCorrelationComputer2::Process(const WDL_TypedBuf<BL_FLOAT> samples[2])
     }
 #endif
 
+    // Use bufferizer?
+    WDL_TypedBuf<BL_FLOAT> *samples = mTmpBuf0;
+    samples[0] = samples0[0];
+    samples[1] = samples0[1];
+
+#if USE_BUFFERIZER
+    for (int i = 0; i < 2; i++)
+        mBufferizers[i]->AddValues(samples0[i]);
+    
+    // Be sure to totally flush the bufferizer
+    // Will avoid indefinitely growing the bufferizer if the block size is greater
+    // than the bufferizer capacity.
+    bool stopFlush = false;
+    // Test if we have gotten samples from the bufferizer
+    bool buffered = false;
+    while(!stopFlush)
+    {
+        for (int i = 0; i < 2; i++)
+        {
+            bool res = mBufferizers[i]->GetBuffer(&samples[i]);
+            if (res)
+                buffered = true;
+
+            if (!res)
+            {
+                stopFlush = true;
+                break;
+            }
+        }
+    }
+
+    if (!buffered && mGotFirstBuffer)
+        // Keep the previous value computed from the bufferizer
+        return;
+    
+    if (buffered)
+        mGotFirstBuffer = true;
+#endif
+    
+    // Here, either we have samples from the bufferizer,
+    // or we are at the beginning a,d we start computing correlation from
+    // the few samples we have
+    
     // Fill the history
     for (int i = 0; i < samples[0].GetSize(); i++)
     {

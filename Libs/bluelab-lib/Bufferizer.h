@@ -12,7 +12,9 @@ public:
   Bufferizer(int bufferSize);
   
   virtual ~Bufferizer();
-  
+
+  void Reset();
+    
   void AddValues(const WDL_TypedBuf<BL_FLOAT> &values);
   
   bool GetBuffer(WDL_TypedBuf<BL_FLOAT> *buffer);
