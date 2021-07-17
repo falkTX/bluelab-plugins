@@ -261,7 +261,7 @@ USTCorrelationComputer2::Process(const WDL_TypedBuf<BL_FLOAT> samples[2],
 #if !FIX_ATAN2_RETURN
 //TODO: optimize this !
 void
-USTCorrelationComputer2::Process(BL_FLOAT l, BL_FLOAT r)
+qUSTCorrelationComputer2::Process(BL_FLOAT l, BL_FLOAT r)
 {
 #if FIX_IGNORE_SILENCE
     // Ignore silence

@@ -108,7 +108,7 @@ int
 PseudoStereoObj2::GetLatency()
 {
     int latency = mConvolverL->GetLatency();
-    
+
     return latency;
 }
 
