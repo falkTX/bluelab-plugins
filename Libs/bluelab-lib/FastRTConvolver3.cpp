@@ -78,7 +78,9 @@ FastRTConvolver3::FastRTConvolver3(int bufferSize, BL_FLOAT sampleRate,
     impulse.impulses[0] = mCurrentIr;
     
     //int res = mConvEngine->SetImpulse(&impulse, int maxfft_size=0, int known_blocksize=0, int max_imp_size=0, int impulse_offset=0, int latency_allowed=0);
+
     mConvEngine->SetImpulse(&impulse);
+    //mConvEngine->SetImpulse(&impulse, 0, mBlockSize);
 #endif
 }
 
@@ -108,6 +110,7 @@ FastRTConvolver3::FastRTConvolver3(const FastRTConvolver3 &other)
     impulse.impulses[0] = mCurrentIr;
     
     mConvEngine->SetImpulse(&impulse);
+    //mConvEngine->SetImpulse(&impulse, 0, mBlockSize);
 #endif
 }
 
@@ -151,6 +154,7 @@ FastRTConvolver3::Reset(BL_FLOAT sampleRate, int blockSize)
     impulse.impulses[0] = mCurrentIr;
     
     mConvEngine->SetImpulse(&impulse); //, 0, mBlockSize);
+    //mConvEngine->SetImpulse(&impulse, 0, mBlockSize);
 #endif
 }
 
@@ -201,6 +205,7 @@ FastRTConvolver3::SetIR(const WDL_TypedBuf<BL_FLOAT> &ir)
     impulse.impulses[0] = mCurrentIr;
     
     mConvEngine->SetImpulse(&impulse); //, 0, mBlockSize);
+    //mConvEngine->SetImpulse(&impulse, 0, mBlockSize);
 #endif
 }
 

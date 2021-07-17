@@ -140,7 +140,7 @@ USTWidthAdjuster9::SetSmoothFactor(BL_FLOAT factor)
     mSmoothFactor = factor;
     
     BL_FLOAT releaseTime = COMP_MIN_RELEASE_TIME +
-                            mSmoothFactor*(COMP_MAX_RELEASE_TIME - COMP_MIN_RELEASE_TIME);
+        mSmoothFactor*(COMP_MAX_RELEASE_TIME - COMP_MIN_RELEASE_TIME);
     
     mComp->SetRelease(releaseTime);
 }
