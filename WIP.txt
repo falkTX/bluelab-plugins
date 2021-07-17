@@ -84,7 +84,7 @@ BL-Gain12	    :	cppck, func, pre, bsp,
 BL-Gain200	    :	
 BL-Gain24	    :	cppck, func, pre, bsp,
 BL-Gain60	    :	cppck, func, pre, bsp,
-BL-Ghost	    :	cppck, func, pre, bsp, 
+BL-Ghost	    :	cppck, func, pre, bsp, BUG: wavescale/miniview
 BL-GhostViewer	    :   cppck, func, pre, bsp,
 BL-Impulses	    :   cppck, func, pre, bsp,
 BL-Infra	    :   cppck, func, pre, bsp,
@@ -92,29 +92,32 @@ BL-InfrasonicViewer :   cppck, func, pre, bsp,
 BL-InfraSynth	    :
 BL-LoFi		    :   cppck, func, pre, bsp,
 BL-OnsetDetect	    :
-BL-Panogram	    :   cppck, func, pre, TODO: re-test a last time to validate
-BL-PitchShift	    :   cppck, func, pre,
-BL-Precedence	    :   cppck, func, pre,
-BL-Rebalance	    :	cppck, func, pre,
+BL-Panogram	    :   cppck, func, pre, bsp,
+BL-PitchShift	    :   cppck, func, pre, bsp,
+BL-Precedence	    :   cppck, func, pre, bsp,
+BL-Rebalance	    :	cppck, func, pre, bsp,
 BL-Reverb	    :
 BL-ReverbDepth	    :
-BL-SampleDelay	    :   cppck, func, pre,
+BL-SampleDelay	    :   cppck, func, pre, bsp,
 BL-SASViewer	    : 
 BL-Saturate	    :   cppck, func, pre, bsp,
-BL-Shaper	    :   cppck, func, pre,
-BL-Sine		    :   cppck, func, pre,
+BL-Shaper	    :   cppck, func, pre, bsp,
+BL-Sine		    :   cppck, func, pre, bsp,
 BL-SoundMetaViewer  :
-BL-Spatializer	    :   cppck, func, pre,
-BL-SpectralDiff	    :   cppck, func, pre,
+BL-Spatializer	    :   cppck, func, pre, bsp,
+BL-SpectralDiff	    :   cppck, func, pre, bsp,
 BL-SpectroExpe	    :
 BL-SpectrumView	    :
 BL-StereoDeReverb   :
-BL-StereoPan	    :   cppck, func, pre,
+BL-StereoPan	    :   cppck, func, pre, bsp,
 BL-StereoWidth	    :   cppck, func, pre,
 BL-Wav3s	    :   cppck, func, pre,
 ===
 
 - TODO next: test samplerate 88200
+  - test 88200
+  - test start 44100, then switch to 88200
+  
 - TODO: extensive tests on linux
   - sample rate tests1: test every plug with 4 sample rates (features, by hand)
   - sample rate test 2: test perfs with 4 sample rates
