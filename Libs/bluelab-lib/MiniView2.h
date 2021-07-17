@@ -48,6 +48,8 @@ public:
     BL_FLOAT GetDrag(int dragX, int width);
     
 protected:
+    void DrawBackground(NVGcontext *vg, int width, int height);
+    
     BL_FLOAT mBounds[4];
     
     int mMaxNumPoints;

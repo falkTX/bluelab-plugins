@@ -51,6 +51,10 @@ void
 //MiniView2::PreDraw(NVGcontext *vg, int width, int height)
 MiniView2::PostDraw(NVGcontext *vg, int width, int height)
 {
+    // Draw black background, this will avoid that the graph big waveform
+    // is drawn over the miniview
+    //DrawBackground(vg, width, height);
+    
     nvgSave(vg);
     
     BL_FLOAT strokeWidth = 2.0;
@@ -168,6 +172,30 @@ MiniView2::GetDrag(int dragX, int width)
     BL_FLOAT res = dx/(mState->mMaxNormX - mState->mMinNormX);
     
     return res;
+}
+
+// Note used
+//
+// Draw black background, this will avoid that the graph big waveform
+// is drawn over the miniview
+void
+MiniView2::DrawBackground(NVGcontext *vg, int width, int height)
+{
+    nvgSave(vg);
+    
+    int color[4] = { 255, 0, 255, 255 };   
+    SWAP_COLOR(color);
+    nvgFillColor(vg, nvgRGBA(color[0], color[1], color[2], color[3]));
+    
+    nvgBeginPath(vg);
+    
+    nvgRect(vg, mBounds[0]*width, mBounds[1]*height,
+            1.0*width, //(mBounds[2] - mBounds[0])*width,
+            (mBounds[3] - mBounds[1])*height);
+            
+    nvgFill(vg);
+    
+    nvgRestore(vg);
 }
 
 #endif // IGRAPHICS_NANOVG
