@@ -92,7 +92,7 @@ BL-InfrasonicViewer :   cppck, func, pre, bsp,
 BL-InfraSynth	    :
 BL-LoFi		    :   cppck, func, pre, bsp,
 BL-OnsetDetect	    :
-BL-Panogram	    :   cppck, func, pre, BUG WIP
+BL-Panogram	    :   cppck, func, pre, TODO: re-test a last time to validate
 BL-PitchShift	    :   cppck, func, pre,
 BL-Precedence	    :   cppck, func, pre,
 BL-Rebalance	    :	cppck, func, pre,
