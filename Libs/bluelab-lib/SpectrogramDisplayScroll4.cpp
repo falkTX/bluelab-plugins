@@ -24,12 +24,9 @@
 #define DEBUG_DUMP 0 //1
 
 SpectrogramDisplayScroll4::
-SpectrogramDisplayScroll4(Plugin *plug,
-                          SpectrogramDisplayScrollState *spectroState,
+SpectrogramDisplayScroll4(SpectrogramDisplayScrollState *spectroState,
                           BL_FLOAT delayPercent)
 {
-    mPlug = plug;
-
     mState = spectroState;
     if (mState == NULL)
     {
@@ -161,7 +158,6 @@ SpectrogramDisplayScroll4::GetOffsetSec()
         return 0.0;
     
     BL_FLOAT currentTimeSec = mState->mTransport->GetTransportElapsedSecTotal();
-    
     if (currentTimeSec < 0.0)
         return 0.0;
     

@@ -24,8 +24,6 @@ using namespace std;
 #include "IPlug_include_in_plug_hdr.h"
 
 
-using namespace iplug;
-
 // From SpectrogramDisplay
 //
 // Removed specificities that were for Ghost
@@ -81,8 +79,7 @@ public:
     
     // delayPercent: delay that we bufferize, to fix when the data is a bit late
     // It is a percent of the spectrogram full width
-    SpectrogramDisplayScroll4(Plugin *plug,
-                              SpectrogramDisplayScrollState *spectroState = NULL,
+    SpectrogramDisplayScroll4(SpectrogramDisplayScrollState *spectroState = NULL,
                               BL_FLOAT delayPercent = (BL_FLOAT)3.125/*25.0*/);
     
     virtual ~SpectrogramDisplayScroll4();
@@ -174,9 +171,6 @@ protected:
     // Colormap
     int mNvgColormapImage;
     WDL_TypedBuf<unsigned int> mColormapImageData;
-
-    // Get reference to plug, to know if the plug is currently playing
-    Plugin *mPlug;
 
     ViewOrientation mViewOrientation;
 
