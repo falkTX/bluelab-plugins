@@ -7,7 +7,7 @@
 //
 
 #include <SmoothAvgHistogram.h>
-#include <ParamSmoother.h>
+#include <ParamSmoother2.h>
 
 #include <BLUtils.h>
 #include <BLUtilsPlug.h>
@@ -38,13 +38,13 @@
 
 // With that, we have lag (it seems...)
 // With 0, we have jumps in volume
-#define GAIN_SMOOTHER_SMOOTH_COEFF_MIN 0.9 // 3.11ms at 44100Hz
-#define GAIN_SMOOTHER_SMOOTH_COEFF_MAX 0.99 // 32.64ms at 44100Hz
+#define GAIN_SMOOTHER_SMOOTH_MIN_MS 3.11 //0.9 // 3.11ms at 44100Hz
+#define GAIN_SMOOTHER_SMOOTH_MAX_MS 32.64 //0.99 // 32.64ms at 44100Hz
 
 // With 0.9, we have too much lag !
 // With 0.5, this looks good
 // (and this make a better vumeter display)
-#define SAMPLES_SMOOTHER_SMOOTH_COEFF 0.5 // 0.47ms at 44100Hz
+#define SAMPLES_SMOOTHER_SMOOTH_MS 0.47 //0.5 // 0.47ms at 44100Hz
 
 // Problem: do not cover the whole range when changing the sc gain knob
 //#define CONSTANT_SC_BASE -80
@@ -122,12 +122,12 @@ AutoGainObj2::AutoGainObj2(int bufferSize, int oversampling, int freqRes,
     
     // Smoothers
     BL_FLOAT defaultGain = 0.0;
-    mGainSmoother =
-        new ParamSmoother(defaultGain, GAIN_SMOOTHER_SMOOTH_COEFF_MIN);
-    mScSamplesSmoother =
-        new ParamSmoother(defaultGain, SAMPLES_SMOOTHER_SMOOTH_COEFF);
-    mInSamplesSmoother =
-        new ParamSmoother(defaultGain, SAMPLES_SMOOTHER_SMOOTH_COEFF);
+    mGainSmoother = new ParamSmoother2(sampleRate, defaultGain,
+                                       GAIN_SMOOTHER_SMOOTH_MIN_MS);
+    mScSamplesSmoother = new ParamSmoother2(sampleRate, defaultGain,
+                                            SAMPLES_SMOOTHER_SMOOTH_MS);
+    mInSamplesSmoother = new ParamSmoother2(sampleRate, defaultGain,
+                                            SAMPLES_SMOOTHER_SMOOTH_MS);
 }
 
 AutoGainObj2::~AutoGainObj2()
@@ -151,10 +151,11 @@ AutoGainObj2::Reset()
     mAvgHistoScIn->Reset();
     
     mAvgHistoOut->Reset();
+
+    BL_FLOAT sampleRate = mSampleRate;
     
 #if USE_AWEIGHTING
     // Sample rate may have changed
-    BL_FLOAT sampleRate = GetSampleRate();
     AWeighting::ComputeAWeights(&mAWeights, mAWeights.GetSize(), sampleRate);
 #endif
 
@@ -168,14 +169,17 @@ AutoGainObj2::Reset()
 #if 1 // Fixed gain jump when changing mode
     BL_FLOAT defaultGain = 0.0;
 
-    mScSamplesSmoother->Reset(defaultGain);
-    mScSamplesSmoother->Update();
+    mScSamplesSmoother->Reset(sampleRate);
+    mScSamplesSmoother->ResetToTargetValue(defaultGain);
+    //mScSamplesSmoother->Update();
 
-    mInSamplesSmoother->Reset(defaultGain);
-    mInSamplesSmoother->Update();
+    mInSamplesSmoother->Reset(sampleRate);
+    mInSamplesSmoother->ResetToTargetValue(defaultGain);
+    //mInSamplesSmoother->Update();
     
-    mGainSmoother->Reset(defaultGain);
-    mGainSmoother->Update();
+    mGainSmoother->Reset(sampleRate);
+    mGainSmoother->ResetToTargetValue(defaultGain);
+    //mGainSmoother->Update();
 #endif
     
 #if 0 // NOTE: with this at 1, when no sc, the sc gain is always 0 until we turn the
@@ -220,15 +224,16 @@ AutoGainObj2::Reset(int bufferSize, int overlapping,
     
 #if USE_AWEIGHTING
     // Sample rate may have changed
-    BL_FLOAT sampleRate = GetSampleRate();
+    //BL_FLOAT sampleRate = GetSampleRate();
     AWeighting::ComputeAWeights(&mAWeights, mAWeights.GetSize(), sampleRate);
 #endif
-    
-    mScSamplesSmoother->Reset();
-    mInSamplesSmoother->Reset();
-    
-    mGainSmoother->Reset();
 
+#if 1
+    mScSamplesSmoother->Reset(sampleRate);
+    mInSamplesSmoother->Reset(sampleRate);
+    mGainSmoother->Reset(sampleRate);
+#endif
+    
 #if 0 // NOTE: with this at 1, when no sc, the sc gain is always 0 until we turn the
       // sc gain knob again 
     // NEW
@@ -776,9 +781,11 @@ AutoGainObj2::ComputeOutGainSpectAux(const WDL_TypedBuf<BL_FLOAT> &dbIn,
         outGain = mMaxGain;
     
     // Smooth the output gain (may add a lag)
-    mGainSmoother->SetNewValue(outGain);
-    mGainSmoother->Update();
-    outGain = mGainSmoother->GetCurrentValue();
+    //mGainSmoother->SetNewValue(outGain);
+    //mGainSmoother->Update();
+    //outGain = mGainSmoother->GetCurrentValue();
+    mGainSmoother->SetTargetValue(outGain);
+    outGain = mGainSmoother->Process();
     
     WDL_TypedBuf<BL_FLOAT> &newAvgIn = mTmpBuf18;
     newAvgIn = avgIn;
@@ -804,9 +811,11 @@ AutoGainObj2::ComputeInGainSamples(const WDL_TypedBuf<BL_FLOAT> &monoIn)
     BL_FLOAT inAvg = BLUtils::ComputeRMSAvg/*2*/(monoIn.Get(), monoIn.GetSize());
     BL_FLOAT inGain = BLUtils::AmpToDB(inAvg, (BL_FLOAT)BL_EPS, (BL_FLOAT)DB_INF);
     
-    mInSamplesSmoother->SetNewValue(inGain);
-    mInSamplesSmoother->Update();
-    inGain = mInSamplesSmoother->GetCurrentValue();
+    //mInSamplesSmoother->SetNewValue(inGain);
+    //mInSamplesSmoother->Update();
+    //inGain = mInSamplesSmoother->GetCurrentValue();
+    mInSamplesSmoother->SetTargetValue(inGain);
+    inGain = mInSamplesSmoother->Process();
     
     return inGain;
 }
@@ -820,9 +829,11 @@ AutoGainObj2::ComputeInGainFft(const WDL_TypedBuf<BL_FLOAT> &monoIn)
     BL_FLOAT inMax = BLUtils::ComputeMax(monoIn.Get(), monoIn.GetSize());
     BL_FLOAT inGain = BLUtils::AmpToDB(inMax, (BL_FLOAT)BL_EPS, (BL_FLOAT)DB_INF);
     
-    mInSamplesSmoother->SetNewValue(inGain);
-    mInSamplesSmoother->Update();
-    inGain = mInSamplesSmoother->GetCurrentValue();
+    //mInSamplesSmoother->SetNewValue(inGain);
+    //mInSamplesSmoother->Update();
+    //inGain = mInSamplesSmoother->GetCurrentValue();
+    mInSamplesSmoother->SetTargetValue(inGain);
+    inGain = mInSamplesSmoother->Process();
     
     return inGain;
 }
@@ -855,9 +866,11 @@ AutoGainObj2::ComputeOutGainRMS(const vector<WDL_TypedBuf<BL_FLOAT> > &inSamples
     BL_FLOAT sideChainAvg = BLUtils::ComputeRMSAvg2(sideChain.Get(), sideChain.GetSize());
     BL_FLOAT scGain = BLUtils::AmpToDB(sideChainAvg, (BL_FLOAT)BL_EPS, (BL_FLOAT)DB_INF);
     
-    mScSamplesSmoother->SetNewValue(scGain);
-    mScSamplesSmoother->Update();
-    scGain = mScSamplesSmoother->GetCurrentValue();
+    //mScSamplesSmoother->SetNewValue(scGain);
+    //mScSamplesSmoother->Update();
+    //scGain = mScSamplesSmoother->GetCurrentValue();
+    mScSamplesSmoother->SetTargetValue(scGain);
+    scGain = mScSamplesSmoother->Process();
     
     WDL_TypedBuf<BL_FLOAT> &monoIn = mTmpBuf20;
     if (inSamples.size() > 0)
@@ -873,9 +886,11 @@ AutoGainObj2::ComputeOutGainRMS(const vector<WDL_TypedBuf<BL_FLOAT> > &inSamples
     BL_FLOAT inAvg = BLUtils::ComputeRMSAvg2(monoIn.Get(), monoIn.GetSize());
     BL_FLOAT inGain = BLUtils::AmpToDB(inAvg, (BL_FLOAT)BL_EPS, (BL_FLOAT)DB_INF);
     
-    mInSamplesSmoother->SetNewValue(inGain);
-    mInSamplesSmoother->Update();
-    inGain = mInSamplesSmoother->GetCurrentValue();
+    //mInSamplesSmoother->SetNewValue(inGain);
+    //mInSamplesSmoother->Update();
+    //inGain = mInSamplesSmoother->GetCurrentValue();
+    mInSamplesSmoother->SetTargetValue(inGain);
+    inGain = mInSamplesSmoother->Process();
     
     BL_FLOAT outGain = 0.0;
     
@@ -904,9 +919,11 @@ AutoGainObj2::ComputeOutGainRMS(const vector<WDL_TypedBuf<BL_FLOAT> > &inSamples
         outGain = mMaxGain;
     
     // Smooth the output gain (may add a lag)
-    mGainSmoother->SetNewValue(outGain);
-    mGainSmoother->Update();
-    outGain = mGainSmoother->GetCurrentValue();
+    //mGainSmoother->SetNewValue(outGain);
+    //mGainSmoother->Update();
+    //outGain = mGainSmoother->GetCurrentValue();
+    mGainSmoother->SetTargetValue(outGain);
+    outGain = mGainSmoother->Process();
     
     return outGain;
 }
@@ -1024,14 +1041,15 @@ AutoGainObj2::SetGainSmooth(BL_FLOAT gainSmooth)
     // This was in percent
     //BL_FLOAT coeff = gainSmooth/100.0;
     BL_FLOAT coeff = gainSmooth;
-    
+
     // Set shape
     coeff = pow(coeff, SHAPE_EXP);
     
-    BL_FLOAT smooth = (1.0 - coeff)*GAIN_SMOOTHER_SMOOTH_COEFF_MIN +
-    coeff*GAIN_SMOOTHER_SMOOTH_COEFF_MAX;
+    BL_FLOAT smoothMs = (1.0 - coeff)*GAIN_SMOOTHER_SMOOTH_MIN_MS +
+        coeff*GAIN_SMOOTHER_SMOOTH_MAX_MS;
     
-    mGainSmoother->SetSmoothCoeff(smooth);
+    //mGainSmoother->SetSmoothCoeff(smooth);
+    mGainSmoother->Reset(mSampleRate, smoothMs);
 }
 
 void

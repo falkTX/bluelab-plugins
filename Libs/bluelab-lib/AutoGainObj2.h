@@ -36,7 +36,7 @@ using namespace std;
 // - use ParamSmoother2, to be able to adapt to different sample rates
 
 class SmoothAvgHistogram;
-class ParamSmoother;
+class ParamSmoother2;
 class AutoGainObj2 : public MultichannelProcess
 {
 public:
@@ -163,9 +163,9 @@ protected:
     WDL_TypedBuf<BL_FLOAT> mAWeights;
     
     //
-    ParamSmoother *mScSamplesSmoother;
-    ParamSmoother *mInSamplesSmoother;
-    ParamSmoother *mGainSmoother;
+    ParamSmoother2 *mScSamplesSmoother;
+    ParamSmoother2 *mInSamplesSmoother;
+    ParamSmoother2 *mGainSmoother;
     
     //
     int mBufferSize;
