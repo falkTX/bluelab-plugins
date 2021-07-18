@@ -14,8 +14,10 @@ set(_bluelab-lib_src
   AnticlickObj.h
   AudioFile.cpp
   AudioFile.h
-  AutoGainObj.cpp
-  AutoGainObj.h
+  #AutoGainObj.cpp
+  #AutoGainObj.h
+  AutoGainObj2.cpp
+  AutoGainObj2.h
   AvgHistogram.cpp
   AvgHistogram.h
   AWeighting.cpp

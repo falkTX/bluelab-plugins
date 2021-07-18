@@ -1,5 +1,5 @@
 //
-//  AutoGainObj.cpp
+//  AutoGainObj2.cpp
 //  BL-AutoGain-macOS
 //
 //  Created by applematuer on 11/26/20.
@@ -17,7 +17,7 @@
 
 #include <BLDebug.h>
 
-#include "AutoGainObj.h"
+#include "AutoGainObj2.h"
 
 #define DB_INF -120.0
 
@@ -60,9 +60,9 @@
 #define FIX_COMPUTE_IN_GAIN 0 //1
 
 
-AutoGainObj::AutoGainObj(int bufferSize, int oversampling, int freqRes,
-                         BL_FLOAT sampleRate,
-                         BL_FLOAT minGain, BL_FLOAT maxGain)
+AutoGainObj2::AutoGainObj2(int bufferSize, int oversampling, int freqRes,
+                           BL_FLOAT sampleRate,
+                           BL_FLOAT minGain, BL_FLOAT maxGain)
 : MultichannelProcess()
 {
     MultichannelProcess::Reset(bufferSize, oversampling, freqRes, sampleRate);
@@ -130,7 +130,7 @@ AutoGainObj::AutoGainObj(int bufferSize, int oversampling, int freqRes,
         new ParamSmoother(defaultGain, SAMPLES_SMOOTHER_SMOOTH_COEFF);
 }
 
-AutoGainObj::~AutoGainObj()
+AutoGainObj2::~AutoGainObj2()
 {
     delete mAvgHistoIn;
     delete mAvgHistoScIn;
@@ -143,7 +143,7 @@ AutoGainObj::~AutoGainObj()
 }
 
 void
-AutoGainObj::Reset()
+AutoGainObj2::Reset()
 {
     MultichannelProcess::Reset();
     
@@ -200,8 +200,8 @@ AutoGainObj::Reset()
 }
 
 void
-AutoGainObj::Reset(int bufferSize, int overlapping,
-                   int oversampling, BL_FLOAT sampleRate)
+AutoGainObj2::Reset(int bufferSize, int overlapping,
+                    int oversampling, BL_FLOAT sampleRate)
 {
     MultichannelProcess::Reset(bufferSize, overlapping, oversampling, sampleRate);
     
@@ -251,45 +251,45 @@ AutoGainObj::Reset(int bufferSize, int overlapping,
 }
 
 void
-AutoGainObj::SetMode(Mode mode)
+AutoGainObj2::SetMode(Mode mode)
 {
     mMode = mode;
 }
 
 #if USE_LEGACY_SILENCE_THRESHOLD
 void
-AutoGainObj::SetThreshold(BL_FLOAT threshold)
+AutoGainObj2::SetThreshold(BL_FLOAT threshold)
 {
     mThreshold = threshold;
 }
 #endif
 
 void
-AutoGainObj::SetPrecision(BL_FLOAT precision)
+AutoGainObj2::SetPrecision(BL_FLOAT precision)
 {
     mPrecision = precision;
 }
 
 void
-AutoGainObj::SetDryWet(BL_FLOAT dryWet)
+AutoGainObj2::SetDryWet(BL_FLOAT dryWet)
 {
     mDryWet = dryWet;
 }
 
 BL_FLOAT
-AutoGainObj::GetGain()
+AutoGainObj2::GetGain()
 {
     return mGain;
 }
 
 void
-AutoGainObj::SetGain(BL_FLOAT gain)
+AutoGainObj2::SetGain(BL_FLOAT gain)
 {
     mGain = gain;
 }
 
 void
-AutoGainObj::SetScGain(BL_FLOAT gain)
+AutoGainObj2::SetScGain(BL_FLOAT gain)
 {
     mScGain = gain;
 
@@ -300,8 +300,8 @@ AutoGainObj::SetScGain(BL_FLOAT gain)
 }
 
 void
-AutoGainObj::ProcessInputSamplesWin(vector<WDL_TypedBuf<BL_FLOAT> * > *ioSamples,
-                                    const vector<WDL_TypedBuf<BL_FLOAT> > *scBuffer)
+AutoGainObj2::ProcessInputSamplesWin(vector<WDL_TypedBuf<BL_FLOAT> * > *ioSamples,
+                                     const vector<WDL_TypedBuf<BL_FLOAT> > *scBuffer)
 {
     // If no sidechain, create dummy sidechain buffers,
     // with a constant value
@@ -342,8 +342,8 @@ AutoGainObj::ProcessInputSamplesWin(vector<WDL_TypedBuf<BL_FLOAT> * > *ioSamples
 }
 
 void
-AutoGainObj::ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamples0,
-                             const vector<WDL_TypedBuf<WDL_FFT_COMPLEX> > *scBuffer)
+AutoGainObj2::ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamples0,
+                              const vector<WDL_TypedBuf<WDL_FFT_COMPLEX> > *scBuffer)
 {
 #if SKIP_FIRST_FRAME
     // For Protools (sidechain latency not well managed)
@@ -469,27 +469,27 @@ AutoGainObj::ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamp
 }
 
 void
-AutoGainObj::GetCurveSignal0(WDL_TypedBuf<BL_FLOAT> *signal0)
+AutoGainObj2::GetCurveSignal0(WDL_TypedBuf<BL_FLOAT> *signal0)
 {
     *signal0 = mCurveSignal0;
 }
 
 void
-AutoGainObj::GetCurveSignal1(WDL_TypedBuf<BL_FLOAT> *signal1)
+AutoGainObj2::GetCurveSignal1(WDL_TypedBuf<BL_FLOAT> *signal1)
 {
     *signal1 = mCurveSignal1;
 }
 void
-AutoGainObj::GetCurveResult(WDL_TypedBuf<BL_FLOAT> *result)
+AutoGainObj2::GetCurveResult(WDL_TypedBuf<BL_FLOAT> *result)
 {
     *result = mCurveResult;
 }
 
 #if 0 // Origin version
 void
-AutoGainObj::ApplyGain(const vector<WDL_TypedBuf<BL_FLOAT> > &inSamples,
-                       vector<WDL_TypedBuf<BL_FLOAT> > *outSamples,
-                       BL_FLOAT gainDB)
+AutoGainObj2::ApplyGain(const vector<WDL_TypedBuf<BL_FLOAT> > &inSamples,
+                        vector<WDL_TypedBuf<BL_FLOAT> > *outSamples,
+                        BL_FLOAT gainDB)
 {
     if (inSamples.empty())
         return;
@@ -510,9 +510,9 @@ AutoGainObj::ApplyGain(const vector<WDL_TypedBuf<BL_FLOAT> > &inSamples,
 #endif
 #if 1 // optim version
 void
-AutoGainObj::ApplyGain(const vector<WDL_TypedBuf<BL_FLOAT> > &inSamples,
-                       vector<WDL_TypedBuf<BL_FLOAT> > *outSamples,
-                       BL_FLOAT gainDB)
+AutoGainObj2::ApplyGain(const vector<WDL_TypedBuf<BL_FLOAT> > &inSamples,
+                        vector<WDL_TypedBuf<BL_FLOAT> > *outSamples,
+                        BL_FLOAT gainDB)
 {
     if (inSamples.empty())
         return;
@@ -537,8 +537,8 @@ AutoGainObj::ApplyGain(const vector<WDL_TypedBuf<BL_FLOAT> > &inSamples,
 #endif
 
 void
-AutoGainObj::ApplyGainConstantSc(BL_FLOAT *scConstantValue,
-                                 BL_FLOAT gainDB)
+AutoGainObj2::ApplyGainConstantSc(BL_FLOAT *scConstantValue,
+                                  BL_FLOAT gainDB)
 {
     BL_FLOAT gain = DBToAmp(gainDB);
     
@@ -547,9 +547,9 @@ AutoGainObj::ApplyGainConstantSc(BL_FLOAT *scConstantValue,
 
 #if 0 // origin version
 void
-AutoGainObj::ApplyDryWet(const vector<WDL_TypedBuf<BL_FLOAT> > &inSamples,
-                         vector<WDL_TypedBuf<BL_FLOAT> > *outSamples,
-                         BL_FLOAT dryWet)
+AutoGainObj2::ApplyDryWet(const vector<WDL_TypedBuf<BL_FLOAT> > &inSamples,
+                          vector<WDL_TypedBuf<BL_FLOAT> > *outSamples,
+                          BL_FLOAT dryWet)
 {
     if (inSamples.empty())
         return;
@@ -573,9 +573,9 @@ AutoGainObj::ApplyDryWet(const vector<WDL_TypedBuf<BL_FLOAT> > &inSamples,
 #endif
 #if 1 // Optim version
 void
-AutoGainObj::ApplyDryWet(const vector<WDL_TypedBuf<BL_FLOAT> > &inSamples,
-                         vector<WDL_TypedBuf<BL_FLOAT> > *outSamples,
-                         BL_FLOAT dryWet)
+AutoGainObj2::ApplyDryWet(const vector<WDL_TypedBuf<BL_FLOAT> > &inSamples,
+                          vector<WDL_TypedBuf<BL_FLOAT> > *outSamples,
+                          BL_FLOAT dryWet)
 {
     if (inSamples.empty())
         return;
@@ -603,8 +603,8 @@ AutoGainObj::ApplyDryWet(const vector<WDL_TypedBuf<BL_FLOAT> > &inSamples,
 
 // Stereo to mono with Fft: valid ?
 BL_FLOAT
-AutoGainObj::ComputeOutGainSpect(const vector<WDL_TypedBuf<BL_FLOAT> > &inSamples,
-                                 const vector<WDL_TypedBuf<BL_FLOAT> > &scIn)
+AutoGainObj2::ComputeOutGainSpect(const vector<WDL_TypedBuf<BL_FLOAT> > &inSamples,
+                                  const vector<WDL_TypedBuf<BL_FLOAT> > &scIn)
 {
     if (scIn.empty())
         return 0.0;
@@ -649,7 +649,7 @@ AutoGainObj::ComputeOutGainSpect(const vector<WDL_TypedBuf<BL_FLOAT> > &inSample
 }
 
 BL_FLOAT
-AutoGainObj::
+AutoGainObj2::
 ComputeOutGainSpectConstantSc(const vector<WDL_TypedBuf<BL_FLOAT> > &inSamples,
                               BL_FLOAT constantScValue)
 {
@@ -702,9 +702,9 @@ ComputeOutGainSpectConstantSc(const vector<WDL_TypedBuf<BL_FLOAT> > &inSamples,
 }
 
 BL_FLOAT
-AutoGainObj::ComputeOutGainSpectAux(const WDL_TypedBuf<BL_FLOAT> &dbIn,
-                                    const WDL_TypedBuf<BL_FLOAT> &dbSc,
-                                    BL_FLOAT inGain)
+AutoGainObj2::ComputeOutGainSpectAux(const WDL_TypedBuf<BL_FLOAT> &dbIn,
+                                     const WDL_TypedBuf<BL_FLOAT> &dbSc,
+                                     BL_FLOAT inGain)
 {
 #if USE_AWEIGHTING
     // Lazy evaluation
@@ -799,7 +799,7 @@ AutoGainObj::ComputeOutGainSpectAux(const WDL_TypedBuf<BL_FLOAT> &dbIn,
 
 // With samples, compute the RMS
 BL_FLOAT
-AutoGainObj::ComputeInGainSamples(const WDL_TypedBuf<BL_FLOAT> &monoIn)
+AutoGainObj2::ComputeInGainSamples(const WDL_TypedBuf<BL_FLOAT> &monoIn)
 {
     BL_FLOAT inAvg = BLUtils::ComputeRMSAvg/*2*/(monoIn.Get(), monoIn.GetSize());
     BL_FLOAT inGain = BLUtils::AmpToDB(inAvg, (BL_FLOAT)BL_EPS, (BL_FLOAT)DB_INF);
@@ -815,7 +815,7 @@ AutoGainObj::ComputeInGainSamples(const WDL_TypedBuf<BL_FLOAT> &monoIn)
 // (we can't compute the RMS over frequencies, imagine a single pure sine wave,
 // if we compute the RMS, the computed gain will be very small)
 BL_FLOAT
-AutoGainObj::ComputeInGainFft(const WDL_TypedBuf<BL_FLOAT> &monoIn)
+AutoGainObj2::ComputeInGainFft(const WDL_TypedBuf<BL_FLOAT> &monoIn)
 {
     BL_FLOAT inMax = BLUtils::ComputeMax(monoIn.Get(), monoIn.GetSize());
     BL_FLOAT inGain = BLUtils::AmpToDB(inMax, (BL_FLOAT)BL_EPS, (BL_FLOAT)DB_INF);
@@ -830,8 +830,8 @@ AutoGainObj::ComputeInGainFft(const WDL_TypedBuf<BL_FLOAT> &monoIn)
 #if 0
 // Note used anymore!
 BL_FLOAT
-AutoGainObj::ComputeOutGainRMS(const vector<WDL_TypedBuf<BL_FLOAT> > &inSamples,
-                               const vector<WDL_TypedBuf<BL_FLOAT> > &scIn)
+AutoGainObj2::ComputeOutGainRMS(const vector<WDL_TypedBuf<BL_FLOAT> > &inSamples,
+                                const vector<WDL_TypedBuf<BL_FLOAT> > &scIn)
 {
     if (scIn.empty())
         return 0.0;
@@ -913,8 +913,8 @@ AutoGainObj::ComputeOutGainRMS(const vector<WDL_TypedBuf<BL_FLOAT> > &inSamples,
 #endif
 
 BL_FLOAT
-AutoGainObj::ComputeFftGain(const WDL_TypedBuf<BL_FLOAT> &avgIn,
-                            const WDL_TypedBuf<BL_FLOAT> &avgSc)
+AutoGainObj2::ComputeFftGain(const WDL_TypedBuf<BL_FLOAT> &avgIn,
+                             const WDL_TypedBuf<BL_FLOAT> &avgSc)
 {
     WDL_TypedBuf<BL_FLOAT> &diff = mTmpBuf21;
     diff.Resize(avgIn.GetSize());
@@ -942,8 +942,8 @@ AutoGainObj::ComputeFftGain(const WDL_TypedBuf<BL_FLOAT> &avgIn,
 #if USE_LEGACY_SILENCE_THRESHOLD
 // Compute by difference in dB
 BL_FLOAT
-AutoGainObj::ComputeFftGain2(const WDL_TypedBuf<BL_FLOAT> &avgIn,
-                             const WDL_TypedBuf<BL_FLOAT> &avgSc)
+AutoGainObj2::ComputeFftGain2(const WDL_TypedBuf<BL_FLOAT> &avgIn,
+                              const WDL_TypedBuf<BL_FLOAT> &avgSc)
 {
     // Add the diff only if both input and sidechain ore below
     // the silence threshold
@@ -981,8 +981,8 @@ AutoGainObj::ComputeFftGain2(const WDL_TypedBuf<BL_FLOAT> &avgIn,
 // Ponderate diff by dB position
 // NOTE: seems to work very well, and no need to use a silence threshold parameter!
 BL_FLOAT
-AutoGainObj::ComputeFftGain3(const WDL_TypedBuf<BL_FLOAT> &avgIn,
-                             const WDL_TypedBuf<BL_FLOAT> &avgSc)
+AutoGainObj2::ComputeFftGain3(const WDL_TypedBuf<BL_FLOAT> &avgIn,
+                              const WDL_TypedBuf<BL_FLOAT> &avgSc)
 {
     // Add the diff only if both input and sidechain ore below
     // the silence threshold
@@ -1017,7 +1017,7 @@ AutoGainObj::ComputeFftGain3(const WDL_TypedBuf<BL_FLOAT> &avgIn,
 }
 
 void
-AutoGainObj::SetGainSmooth(BL_FLOAT gainSmooth)
+AutoGainObj2::SetGainSmooth(BL_FLOAT gainSmooth)
 {
 #define SHAPE_EXP 0.125
     
@@ -1035,9 +1035,9 @@ AutoGainObj::SetGainSmooth(BL_FLOAT gainSmooth)
 }
 
 void
-AutoGainObj::BoundScCurve(WDL_TypedBuf<BL_FLOAT> *curve,
-                          BL_FLOAT mindB, BL_FLOAT maxdB,
-                          BL_FLOAT scGain)
+AutoGainObj2::BoundScCurve(WDL_TypedBuf<BL_FLOAT> *curve,
+                           BL_FLOAT mindB, BL_FLOAT maxdB,
+                           BL_FLOAT scGain)
 {
     for (int i = 0; i < curve->GetSize(); i++)
     {
@@ -1057,8 +1057,8 @@ AutoGainObj::BoundScCurve(WDL_TypedBuf<BL_FLOAT> *curve,
 }
 
 void
-AutoGainObj::UpdateGraphReadMode(const vector<WDL_TypedBuf<BL_FLOAT> > &in,
-                                 const vector<WDL_TypedBuf<BL_FLOAT> > &out)
+AutoGainObj2::UpdateGraphReadMode(const vector<WDL_TypedBuf<BL_FLOAT> > &in,
+                                  const vector<WDL_TypedBuf<BL_FLOAT> > &out)
 {
     // In
     WDL_TypedBuf<BL_FLOAT> &monoIn = mTmpBuf22;
