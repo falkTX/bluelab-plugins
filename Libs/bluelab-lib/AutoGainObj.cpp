@@ -28,7 +28,7 @@
 // WARNING: mofify the result compared to all at -120dB
 #define DB_INF2 -200.0
 
-#define SMOOTH_HISTO_COEFF 0.8
+#define SMOOTH_HISTO_COEFF 0.8 // 0.63849ms at 44100Hz
 #define HISTO_DEFAULT_VALUE -60.0
 
 // Debug: test bigger buffer size for high SR

@@ -14,8 +14,8 @@ set(_bluelab-lib_src
   AnticlickObj.h
   AudioFile.cpp
   AudioFile.h
-  #AutoGainObj.cpp
-  #AutoGainObj.h
+  AutoGainObj.cpp
+  AutoGainObj.h
   AutoGainObj2.cpp
   AutoGainObj2.h
   AvgHistogram.cpp
@@ -692,9 +692,11 @@ set(_bluelab-lib_src
   SinLUT2.h
   SinLUT.h
   SmoothAvgHistogram.cpp
+  SmoothAvgHistogram.h
+  SmoothAvgHistogram2.cpp
+  SmoothAvgHistogram2.h
   SmoothAvgHistogramDB.cpp
   SmoothAvgHistogramDB.h
-  SmoothAvgHistogram.h
   SmoothCurveDB.cpp
   SmoothCurveDB.h
   Smoother.cpp

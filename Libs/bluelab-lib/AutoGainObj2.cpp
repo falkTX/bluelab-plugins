@@ -6,7 +6,7 @@
 //
 //
 
-#include <SmoothAvgHistogram.h>
+#include <SmoothAvgHistogram2.h>
 #include <ParamSmoother2.h>
 
 #include <BLUtils.h>
@@ -28,8 +28,11 @@
 // WARNING: mofify the result compared to all at -120dB
 #define DB_INF2 -200.0
 
-#define SMOOTH_HISTO_COEFF 0.8
+//#define SMOOTH_HISTO_COEFF 0.8 // 0.63849ms at 44100Hz
+//#define SMOOTH_HISTO_COEFF 0.8944 // 0.63849ms at 88200Hz
+#define SMOOTH_HISTO_MS 0.63849 // 0.8 at 44100Hz
 #define HISTO_DEFAULT_VALUE -60.0
+
 
 // Debug: test bigger buffer size for high SR
 #define TEST_BUFFERS_SIZE 0
@@ -100,24 +103,24 @@ AutoGainObj2::AutoGainObj2(int bufferSize, int oversampling, int freqRes,
     
 #if !TEST_BUFFERS_SIZE
     //
-    mAvgHistoIn = new SmoothAvgHistogram(bufferSize/2,
-                                         SMOOTH_HISTO_COEFF, HISTO_DEFAULT_VALUE);
-    mAvgHistoScIn = new SmoothAvgHistogram(bufferSize/2,
-                                           SMOOTH_HISTO_COEFF, HISTO_DEFAULT_VALUE);
+    mAvgHistoIn = new SmoothAvgHistogram2(sampleRate, bufferSize/2,
+                                          SMOOTH_HISTO_MS, HISTO_DEFAULT_VALUE);
+    mAvgHistoScIn = new SmoothAvgHistogram2(sampleRate, bufferSize/2,
+                                            SMOOTH_HISTO_MS, HISTO_DEFAULT_VALUE);
     
     
-    mAvgHistoOut = new SmoothAvgHistogram(bufferSize/2,
-                                          SMOOTH_HISTO_COEFF, HISTO_DEFAULT_VALUE);
+    mAvgHistoOut = new SmoothAvgHistogram2(sampleRate, bufferSize/2,
+                                           SMOOTH_HISTO_MS, HISTO_DEFAULT_VALUE);
 #else
     //
-    mAvgHistoIn = new SmoothAvgHistogram(bufferSize/2,
-                                         SMOOTH_HISTO_COEFF, HISTO_DEFAULT_VALUE);
-    mAvgHistoScIn = new SmoothAvgHistogram(bufferSize/2,
-                                           SMOOTH_HISTO_COEFF, HISTO_DEFAULT_VALUE);
+    mAvgHistoIn = new SmoothAvgHistogram2(sampleRate, bufferSize/2,
+                                          SMOOTH_HISTO_MS, HISTO_DEFAULT_VALUE);
+    mAvgHistoScIn = new SmoothAvgHistogram2(sampleRate, bufferSize/2,
+                                            SMOOTH_HISTO_MS, HISTO_DEFAULT_VALUE);
     
     
-    mAvgHistoOut = new SmoothAvgHistogram(bufferSize/2,
-                                          SMOOTH_HISTO_COEFF, HISTO_DEFAULT_VALUE);
+    mAvgHistoOut = new SmoothAvgHistogram2(sampleRate, bufferSize/2,
+                                           SMOOTH_HISTO_MS, HISTO_DEFAULT_VALUE);
 #endif
     
     // Smoothers
@@ -146,13 +149,13 @@ void
 AutoGainObj2::Reset()
 {
     MultichannelProcess::Reset();
-    
-    mAvgHistoIn->Reset();
-    mAvgHistoScIn->Reset();
-    
-    mAvgHistoOut->Reset();
 
     BL_FLOAT sampleRate = mSampleRate;
+        
+    mAvgHistoIn->Reset(sampleRate);
+    mAvgHistoScIn->Reset(sampleRate);
+    
+    mAvgHistoOut->Reset(sampleRate);
     
 #if USE_AWEIGHTING
     // Sample rate may have changed
@@ -213,9 +216,9 @@ AutoGainObj2::Reset(int bufferSize, int overlapping,
     mSampleRate = sampleRate;
     
 #if !TEST_BUFFERS_SIZE
-    mAvgHistoIn->Reset();
-    mAvgHistoScIn->Reset();
-    mAvgHistoOut->Reset();
+    mAvgHistoIn->Reset(sampleRate);
+    mAvgHistoScIn->Reset(sampleRate);
+    mAvgHistoOut->Reset(sampleRate);
 #else
     mAvgHistoIn->Resize(bufferSize/2);
     mAvgHistoScIn->Resize(bufferSize/2);
@@ -711,12 +714,13 @@ AutoGainObj2::ComputeOutGainSpectAux(const WDL_TypedBuf<BL_FLOAT> &dbIn,
                                      const WDL_TypedBuf<BL_FLOAT> &dbSc,
                                      BL_FLOAT inGain)
 {
+    BL_FLOAT sampleRate = mSampleRate;
+            
 #if USE_AWEIGHTING
     // Lazy evaluation
     // (bacause we don't know nFrames at the beginning)
     if (mAWeights.GetSize() != nFrames/2)
     {
-        BL_FLOAT sampleRate = GetSampleRate();
         // We take half of the size of the fft
         AWeighting::ComputeAWeights(&mAWeights, inMagns.GetSize(), sampleRate);
     }
@@ -728,7 +732,7 @@ AutoGainObj2::ComputeOutGainSpectAux(const WDL_TypedBuf<BL_FLOAT> &dbIn,
     
 #if FIX_START_JUMP
     if (mHasJustReset)
-        mAvgHistoScIn->Reset(dbSc);
+        mAvgHistoScIn->Reset(sampleRate, dbSc);
 #endif
     
     mAvgHistoScIn->AddValues(dbSc);
@@ -737,7 +741,7 @@ AutoGainObj2::ComputeOutGainSpectAux(const WDL_TypedBuf<BL_FLOAT> &dbIn,
     
 #if FIX_START_JUMP
     if (mHasJustReset)
-        mAvgHistoIn->Reset(dbIn);
+        mAvgHistoIn->Reset(sampleRate, dbIn);
     
     mHasJustReset = false;
 #endif
@@ -1100,10 +1104,12 @@ AutoGainObj2::UpdateGraphReadMode(const vector<WDL_TypedBuf<BL_FLOAT> > &in,
     
     WDL_TypedBuf<BL_FLOAT> &dbIn = mTmpBuf23;
     BLUtils::AmpToDB(&dbIn, monoIn, (BL_FLOAT)BL_EPS, (BL_FLOAT)DB_INF);
+
+    BL_FLOAT sampleRate = mSampleRate;
     
 #if FIX_START_JUMP
     if (mHasJustReset)
-        mAvgHistoIn->Reset(dbIn);
+        mAvgHistoIn->Reset(sampleRate, dbIn);
 #endif
     
     mAvgHistoIn->AddValues(dbIn);
@@ -1127,7 +1133,7 @@ AutoGainObj2::UpdateGraphReadMode(const vector<WDL_TypedBuf<BL_FLOAT> > &in,
     
 #if FIX_START_JUMP
     if (mHasJustReset)
-        mAvgHistoOut->Reset(dbOut);
+        mAvgHistoOut->Reset(sampleRate, dbOut);
     
     mHasJustReset = false;
 #endif

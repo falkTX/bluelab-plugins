@@ -35,7 +35,7 @@ using namespace std;
 // AutoGainObj2: from AutoGainObj
 // - use ParamSmoother2, to be able to adapt to different sample rates
 
-class SmoothAvgHistogram;
+class SmoothAvgHistogram2;
 class ParamSmoother2;
 class AutoGainObj2 : public MultichannelProcess
 {
@@ -153,11 +153,11 @@ protected:
     BL_FLOAT mScConstantValue;
     
     //
-    SmoothAvgHistogram *mAvgHistoIn;
-    SmoothAvgHistogram *mAvgHistoScIn;
+    SmoothAvgHistogram2 *mAvgHistoIn;
+    SmoothAvgHistogram2 *mAvgHistoScIn;
     
     // For read mode
-    SmoothAvgHistogram *mAvgHistoOut;
+    SmoothAvgHistogram2 *mAvgHistoOut;
     
     //
     WDL_TypedBuf<BL_FLOAT> mAWeights;
