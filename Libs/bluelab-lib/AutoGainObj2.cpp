@@ -1042,19 +1042,19 @@ AutoGainObj2::SetGainSmooth(BL_FLOAT gainSmooth)
     //BL_FLOAT coeff = gainSmooth/100.0;
     BL_FLOAT coeff = gainSmooth;
 
+#if 0 // No need shape anymore since ParamSmoother2
     // Set shape
     coeff = pow(coeff, SHAPE_EXP);
-
-    // 0.982530
-    // 18.6ms
+#endif
+    
+    // Coeff = 0.5
+    // smooth factor = 0.982530
+    // time ms = ?
     
     BL_FLOAT smoothMs = (1.0 - coeff)*GAIN_SMOOTHER_SMOOTH_MIN_MS +
         coeff*GAIN_SMOOTHER_SMOOTH_MAX_MS;
-
-    //smoothMs = 18.6;
     
     //mGainSmoother->SetSmoothCoeff(smooth);
-
     //mGainSmoother->Reset(mSampleRate, smoothMs);
     
     mGainSmoother->SetSmoothTimeMs(smoothMs);
