@@ -69,11 +69,12 @@ func: functional tests (vst2)
       - automatize all parameters to constant values
       - test all features in detail
 pre: test presets (vst2)
-bsp: block size 32, check perfs (+ quickly checked functioning) 
+bsp: block size (perfs) - block size 32, check perfs (+ quickly checked functioning) 
+sr: sample rate - switch 44100Hz/88200Hz (test: perfs, features, param smooth, curves)
 
 ---
-BL-Air		    :	cppck, func, pre, bsp,
-BL-AutoGain	    :	cppck, func, pre, bsp,
+BL-Air		    :	cppck, func, pre, bsp, sr,
+BL-AutoGain	    :	cppck, func, pre, bsp, sr,
 BL-Bat		    :
 BL-Chroma	    :	cppck, func, pre, bsp,
 BL-Denoiser	    :	cppck, func, pre, bsp,
@@ -84,7 +85,7 @@ BL-Gain12	    :	cppck, func, pre, bsp,
 BL-Gain200	    :	
 BL-Gain24	    :	cppck, func, pre, bsp,
 BL-Gain60	    :	cppck, func, pre, bsp,
-BL-Ghost	    :	cppck, func, pre, bsp,
+BL-Ghost	    :	cppck, func, pre, bsp, ## BUG: reload from file ## check spectro meter
 BL-GhostViewer	    :   cppck, func, pre, bsp,
 BL-Impulses	    :   cppck, func, pre, bsp,
 BL-Infra	    :   cppck, func, pre, bsp,
@@ -114,10 +115,14 @@ BL-StereoWidth	    :   cppck, func, pre, bsp,
 BL-Wav3s	    :   cppck, func, pre, bsp
 ===
 
+- TODO: check spectro meter, the display in samples is maybe false
+
 - TODO next: test samplerate!
   - test 88200
   - test start 44100, then switch to 88200
-  
+
+- TODO: check with weird block size
+
 - TODO: extensive tests on linux
   - sample rate tests1: test every plug with 4 sample rates (features, by hand)
   - sample rate test 2: test perfs with 4 sample rates
