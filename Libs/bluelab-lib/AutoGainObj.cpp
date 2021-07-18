@@ -38,13 +38,13 @@
 
 // With that, we have lag (it seems...)
 // With 0, we have jumps in volume
-#define GAIN_SMOOTHER_SMOOTH_COEFF_MIN 0.9 // 3.11ms at 44100Hz
-#define GAIN_SMOOTHER_SMOOTH_COEFF_MAX 0.99 // 32.64ms at 44100Hz
+#define GAIN_SMOOTHER_SMOOTH_COEFF_MIN 0.9 // 1.3522ms at 44100Hz
+#define GAIN_SMOOTHER_SMOOTH_COEFF_MAX 0.99 // 14.1762ms at 44100Hz
 
 // With 0.9, we have too much lag !
 // With 0.5, this looks good
 // (and this make a better vumeter display)
-#define SAMPLES_SMOOTHER_SMOOTH_COEFF 0.5 // 0.47ms at 44100Hz
+#define SAMPLES_SMOOTHER_SMOOTH_COEFF 0.5 // 0.205549ms at 44100Hz
 
 // Problem: do not cover the whole range when changing the sc gain knob
 //#define CONSTANT_SC_BASE -80

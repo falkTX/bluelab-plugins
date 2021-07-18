@@ -102,6 +102,7 @@ public:
     //
     // NOTE: the inverse computation is:
     // ms = -2Pi/(ln(factor)*0.001*sampleRate)
+    // WARNING: uses ln(), not log()!
     static inline BL_FLOAT
     ComputeSmoothFactor(BL_FLOAT smoothingTimeMs, BL_FLOAT sampleRate)
     {

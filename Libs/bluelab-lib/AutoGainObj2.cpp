@@ -38,13 +38,13 @@
 
 // With that, we have lag (it seems...)
 // With 0, we have jumps in volume
-#define GAIN_SMOOTHER_SMOOTH_MIN_MS 3.11 //0.9 // 3.11ms at 44100Hz
-#define GAIN_SMOOTHER_SMOOTH_MAX_MS 32.64 //0.99 // 32.64ms at 44100Hz
+#define GAIN_SMOOTHER_SMOOTH_MIN_MS 1.3522 //coeff:0.9 // 1.3522ms at 44100Hz
+#define GAIN_SMOOTHER_SMOOTH_MAX_MS 14.1762 //coeff:0.99 // 14.1762ms at 44100Hz
 
 // With 0.9, we have too much lag !
 // With 0.5, this looks good
 // (and this make a better vumeter display)
-#define SAMPLES_SMOOTHER_SMOOTH_MS 0.47 //0.5 // 0.47ms at 44100Hz
+#define SAMPLES_SMOOTHER_SMOOTH_MS 0.205549 //0.5 // 0.205549ms at 44100Hz
 
 // Problem: do not cover the whole range when changing the sc gain knob
 //#define CONSTANT_SC_BASE -80
@@ -1044,9 +1044,14 @@ AutoGainObj2::SetGainSmooth(BL_FLOAT gainSmooth)
 
     // Set shape
     coeff = pow(coeff, SHAPE_EXP);
+
+    // 0.982530
+    // 18.6ms
     
     BL_FLOAT smoothMs = (1.0 - coeff)*GAIN_SMOOTHER_SMOOTH_MIN_MS +
         coeff*GAIN_SMOOTHER_SMOOTH_MAX_MS;
+
+    //smoothMs = 18.6;
     
     //mGainSmoother->SetSmoothCoeff(smooth);
 
