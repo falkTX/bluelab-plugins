@@ -10,9 +10,6 @@
 
 #include "SmoothAvgHistogram2.h"
 
-//#define RESET_VALUE -1e16
-
-
 SmoothAvgHistogram2::SmoothAvgHistogram2(BL_FLOAT sampleRate, int size,
                                          BL_FLOAT smoothTimeMs,
                                          BL_FLOAT defaultValue)
@@ -33,11 +30,6 @@ SmoothAvgHistogram2::~SmoothAvgHistogram2() {}
 void
 SmoothAvgHistogram2::AddValue(int index, BL_FLOAT val)
 {
-    //if (mData.Get()[index] < RESET_VALUE/2.0)
-    //    // Initialize
-    //    mData.Get()[index] = val;
-    //else
-    
     BL_FLOAT newVal = (1.0 - mSmoothCoeff) * val + mSmoothCoeff*mData.Get()[index];
     mData.Get()[index] = newVal;
 }
@@ -52,19 +44,12 @@ SmoothAvgHistogram2::AddValues(const WDL_TypedBuf<BL_FLOAT> &values)
     const BL_FLOAT *valuesData = values.Get();
     BL_FLOAT *data = mData.Get();
     
-    //for (int i = 0; i < values.GetSize(); i++)
     for (int i = 0; i < valuesSize; i++)
     {
-        //BL_FLOAT val = values.Get()[i];
         BL_FLOAT val = valuesData[i];
         
-        //if (mData.Get()[i] < RESET_VALUE / 2)
-        //    // Initialize
-        //    mData.Get()[i] = val;
-        //else
-        
         BL_FLOAT newVal = (1.0 - mSmoothCoeff) * val + mSmoothCoeff*mData.Get()[i];
-        //mData.Get()[i] = newVal;
+        
         data[i] = newVal;
     }
 }
@@ -77,15 +62,10 @@ SmoothAvgHistogram2::GetValues(WDL_TypedBuf<BL_FLOAT> *values)
     int dataSize = mData.GetSize();
     BL_FLOAT *valuesData = values->Get();
     
-    //for (int i = 0; i < mData.GetSize(); i++)
     for (int i = 0; i < dataSize; i++)
     {
-        //BL_FLOAT val = 0.0;
-        
-        //if (mData.Get()[i] > RESET_VALUE/2)
         BL_FLOAT val = mData.Get()[i];
         
-        //values->Get()[i] = val;
         valuesData[i] = val;
     }
 }

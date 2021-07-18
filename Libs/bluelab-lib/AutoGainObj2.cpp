@@ -33,7 +33,6 @@
 #define SMOOTH_HISTO_MS 0.63849 // 0.8 at 44100Hz
 #define HISTO_DEFAULT_VALUE -60.0
 
-
 // Debug: test bigger buffer size for high SR
 #define TEST_BUFFERS_SIZE 0
 
@@ -149,47 +148,28 @@ void
 AutoGainObj2::Reset()
 {
     MultichannelProcess::Reset();
-
-    BL_FLOAT sampleRate = mSampleRate;
         
-    mAvgHistoIn->Reset(sampleRate);
-    mAvgHistoScIn->Reset(sampleRate);
+    mAvgHistoIn->Reset(mSampleRate);
+    mAvgHistoScIn->Reset(mSampleRate);
     
-    mAvgHistoOut->Reset(sampleRate);
+    mAvgHistoOut->Reset(mSampleRate);
     
 #if USE_AWEIGHTING
     // Sample rate may have changed
-    AWeighting::ComputeAWeights(&mAWeights, mAWeights.GetSize(), sampleRate);
-#endif
-
-    
-#if 0 // Makes gain jump when changing mode
-    mScSamplesSmoother->Reset();
-    mInSamplesSmoother->Reset();
-    mGainSmoother->Reset();
+    AWeighting::ComputeAWeights(&mAWeights, mAWeights.GetSize(), mSampleRate);
 #endif
 
 #if 1 // Fixed gain jump when changing mode
     BL_FLOAT defaultGain = 0.0;
 
-    mScSamplesSmoother->Reset(sampleRate);
+    mScSamplesSmoother->Reset(mSampleRate);
     mScSamplesSmoother->ResetToTargetValue(defaultGain);
-    //mScSamplesSmoother->Update();
 
-    mInSamplesSmoother->Reset(sampleRate);
+    mInSamplesSmoother->Reset(mSampleRate);
     mInSamplesSmoother->ResetToTargetValue(defaultGain);
-    //mInSamplesSmoother->Update();
     
-    mGainSmoother->Reset(sampleRate);
+    mGainSmoother->Reset(mSampleRate);
     mGainSmoother->ResetToTargetValue(defaultGain);
-    //mGainSmoother->Update();
-#endif
-    
-#if 0 // NOTE: with this at 1, when no sc, the sc gain is always 0 until we turn the
-      // sc gain knob again 
-    // NEW
-    mGain = 0.0;
-    mScGain = 0.0;
 #endif
     
 #if SKIP_FIRST_FRAME
@@ -227,7 +207,6 @@ AutoGainObj2::Reset(int bufferSize, int overlapping,
     
 #if USE_AWEIGHTING
     // Sample rate may have changed
-    //BL_FLOAT sampleRate = GetSampleRate();
     AWeighting::ComputeAWeights(&mAWeights, mAWeights.GetSize(), sampleRate);
 #endif
 
@@ -235,13 +214,6 @@ AutoGainObj2::Reset(int bufferSize, int overlapping,
     mScSamplesSmoother->Reset(sampleRate);
     mInSamplesSmoother->Reset(sampleRate);
     mGainSmoother->Reset(sampleRate);
-#endif
-    
-#if 0 // NOTE: with this at 1, when no sc, the sc gain is always 0 until we turn the
-      // sc gain knob again 
-    // NEW
-    mGain = 0.0;
-    mScGain = 0.0;
 #endif
     
 #if SKIP_FIRST_FRAME
@@ -377,16 +349,12 @@ AutoGainObj2::ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSam
     
     for (int i = 0; i < ioFftSamples0->size(); i++)
     {
-        // NOTE: not optimal for memory
-        //BLUtils::TakeHalf((*ioFftSamples)[i]);
         BLUtils::TakeHalf(*(*ioFftSamples0)[i], &ioFftSamples[i]);
         
         WDL_TypedBuf<BL_FLOAT> &magns = mTmpBuf29;
         WDL_TypedBuf<BL_FLOAT> &phases = mTmpBuf30;
         BLUtilsComp::ComplexToMagnPhase(&magns, &phases, ioFftSamples[i]);
         
-        //in.push_back(magns);
-        //inPhases.push_back(phases);
         in[i] = magns;
         inPhases[i] = phases;
     }
@@ -402,14 +370,12 @@ AutoGainObj2::ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSam
         
         for (int i = 0; i < scBufferCopy.size(); i++)
         {
-            //BLUtils::TakeHalf(&scBufferCopy[i]);
             BLUtils::TakeHalf((*scBuffer)[i], &scBufferCopy[i]);
             
             WDL_TypedBuf<BL_FLOAT> &magns = mTmpBuf4;
             WDL_TypedBuf<BL_FLOAT> &phases = mTmpBuf5;
             BLUtilsComp::ComplexToMagnPhase(&magns, &phases, scBufferCopy[i]);
             
-            //scIn.push_back(magns);
             scIn[i] = magns;
         }
     }
@@ -464,12 +430,6 @@ AutoGainObj2::ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSam
     {
         BLUtilsComp::MagnPhaseToComplex(&ioFftSamples[i], out[i], outPhases[i]);
 
-        // NOTE: not optimal for memory
-        //BLUtils::ResizeFillZeros((*ioFftSamples)[i], (*ioFftSamples)[i]->GetSize()*2);
-        //BLUtils::FillSecondFftHalf((*ioFftSamples)[i]);
-
-        //memcpy((*ioFftSamples0)[i]->Get(), ioFftSamples[i].Get(),
-        //       ioFftSamples[i].GetSize()*sizeof(WDL_FFT_COMPLEX));
         BLUtils::SetBuf((*ioFftSamples0)[i], ioFftSamples[i]);
         
         BLUtilsFft::FillSecondFftHalf((*ioFftSamples0)[i]);
@@ -573,7 +533,8 @@ AutoGainObj2::ApplyDryWet(const vector<WDL_TypedBuf<BL_FLOAT> > &inSamples,
                 BL_FLOAT drySample = inSamples[j].Get()[i];
                 BL_FLOAT wetSample = (*outSamples)[j].Get()[i];
                 
-                (*outSamples)[j].Get()[i] = (1.0 - dryWet)*drySample + dryWet*wetSample;
+                (*outSamples)[j].Get()[i] =
+                    (1.0 - dryWet)*drySample + dryWet*wetSample;
             }
         }
     }
@@ -598,7 +559,6 @@ AutoGainObj2::ApplyDryWet(const vector<WDL_TypedBuf<BL_FLOAT> > &inSamples,
             BL_FLOAT *outSamplesData = (*outSamples)[j].Get();
             for (int i = 0; i < nFrames; i++)
             {
-        
                 BL_FLOAT drySample = inSamplesData[i];
                 BL_FLOAT wetSample = outSamplesData[i];
                 
@@ -713,16 +673,14 @@ BL_FLOAT
 AutoGainObj2::ComputeOutGainSpectAux(const WDL_TypedBuf<BL_FLOAT> &dbIn,
                                      const WDL_TypedBuf<BL_FLOAT> &dbSc,
                                      BL_FLOAT inGain)
-{
-    BL_FLOAT sampleRate = mSampleRate;
-            
+{            
 #if USE_AWEIGHTING
     // Lazy evaluation
     // (bacause we don't know nFrames at the beginning)
     if (mAWeights.GetSize() != nFrames/2)
     {
         // We take half of the size of the fft
-        AWeighting::ComputeAWeights(&mAWeights, inMagns.GetSize(), sampleRate);
+        AWeighting::ComputeAWeights(&mAWeights, inMagns.GetSize(), mSampleRate);
     }
     
     // Apply A-weighting
@@ -732,7 +690,7 @@ AutoGainObj2::ComputeOutGainSpectAux(const WDL_TypedBuf<BL_FLOAT> &dbIn,
     
 #if FIX_START_JUMP
     if (mHasJustReset)
-        mAvgHistoScIn->Reset(sampleRate, dbSc);
+        mAvgHistoScIn->Reset(mSampleRate, dbSc);
 #endif
     
     mAvgHistoScIn->AddValues(dbSc);
@@ -741,7 +699,7 @@ AutoGainObj2::ComputeOutGainSpectAux(const WDL_TypedBuf<BL_FLOAT> &dbIn,
     
 #if FIX_START_JUMP
     if (mHasJustReset)
-        mAvgHistoIn->Reset(sampleRate, dbIn);
+        mAvgHistoIn->Reset(mSampleRate, dbIn);
     
     mHasJustReset = false;
 #endif
@@ -785,9 +743,6 @@ AutoGainObj2::ComputeOutGainSpectAux(const WDL_TypedBuf<BL_FLOAT> &dbIn,
         outGain = mMaxGain;
     
     // Smooth the output gain (may add a lag)
-    //mGainSmoother->SetNewValue(outGain);
-    //mGainSmoother->Update();
-    //outGain = mGainSmoother->GetCurrentValue();
     mGainSmoother->SetTargetValue(outGain);
     outGain = mGainSmoother->Process();
     
@@ -815,9 +770,6 @@ AutoGainObj2::ComputeInGainSamples(const WDL_TypedBuf<BL_FLOAT> &monoIn)
     BL_FLOAT inAvg = BLUtils::ComputeRMSAvg/*2*/(monoIn.Get(), monoIn.GetSize());
     BL_FLOAT inGain = BLUtils::AmpToDB(inAvg, (BL_FLOAT)BL_EPS, (BL_FLOAT)DB_INF);
     
-    //mInSamplesSmoother->SetNewValue(inGain);
-    //mInSamplesSmoother->Update();
-    //inGain = mInSamplesSmoother->GetCurrentValue();
     mInSamplesSmoother->SetTargetValue(inGain);
     inGain = mInSamplesSmoother->Process();
     
@@ -833,9 +785,6 @@ AutoGainObj2::ComputeInGainFft(const WDL_TypedBuf<BL_FLOAT> &monoIn)
     BL_FLOAT inMax = BLUtils::ComputeMax(monoIn.Get(), monoIn.GetSize());
     BL_FLOAT inGain = BLUtils::AmpToDB(inMax, (BL_FLOAT)BL_EPS, (BL_FLOAT)DB_INF);
     
-    //mInSamplesSmoother->SetNewValue(inGain);
-    //mInSamplesSmoother->Update();
-    //inGain = mInSamplesSmoother->GetCurrentValue();
     mInSamplesSmoother->SetTargetValue(inGain);
     inGain = mInSamplesSmoother->Process();
     
@@ -867,12 +816,11 @@ AutoGainObj2::ComputeOutGainRMS(const vector<WDL_TypedBuf<BL_FLOAT> > &inSamples
     else
         sideChain.Resize(0);
     
-    BL_FLOAT sideChainAvg = BLUtils::ComputeRMSAvg2(sideChain.Get(), sideChain.GetSize());
-    BL_FLOAT scGain = BLUtils::AmpToDB(sideChainAvg, (BL_FLOAT)BL_EPS, (BL_FLOAT)DB_INF);
+    BL_FLOAT sideChainAvg =
+        BLUtils::ComputeRMSAvg2(sideChain.Get(), sideChain.GetSize());
+    BL_FLOAT scGain =
+        BLUtils::AmpToDB(sideChainAvg, (BL_FLOAT)BL_EPS, (BL_FLOAT)DB_INF);
     
-    //mScSamplesSmoother->SetNewValue(scGain);
-    //mScSamplesSmoother->Update();
-    //scGain = mScSamplesSmoother->GetCurrentValue();
     mScSamplesSmoother->SetTargetValue(scGain);
     scGain = mScSamplesSmoother->Process();
     
@@ -890,9 +838,6 @@ AutoGainObj2::ComputeOutGainRMS(const vector<WDL_TypedBuf<BL_FLOAT> > &inSamples
     BL_FLOAT inAvg = BLUtils::ComputeRMSAvg2(monoIn.Get(), monoIn.GetSize());
     BL_FLOAT inGain = BLUtils::AmpToDB(inAvg, (BL_FLOAT)BL_EPS, (BL_FLOAT)DB_INF);
     
-    //mInSamplesSmoother->SetNewValue(inGain);
-    //mInSamplesSmoother->Update();
-    //inGain = mInSamplesSmoother->GetCurrentValue();
     mInSamplesSmoother->SetTargetValue(inGain);
     inGain = mInSamplesSmoother->Process();
     
@@ -923,9 +868,6 @@ AutoGainObj2::ComputeOutGainRMS(const vector<WDL_TypedBuf<BL_FLOAT> > &inSamples
         outGain = mMaxGain;
     
     // Smooth the output gain (may add a lag)
-    //mGainSmoother->SetNewValue(outGain);
-    //mGainSmoother->Update();
-    //outGain = mGainSmoother->GetCurrentValue();
     mGainSmoother->SetTargetValue(outGain);
     outGain = mGainSmoother->Process();
     
@@ -981,7 +923,6 @@ AutoGainObj2::ComputeFftGain2(const WDL_TypedBuf<BL_FLOAT> &avgIn,
         if (scVal < mThreshold)
             continue;
         
-        //BL_FLOAT diff = inVal - scVal;
         BL_FLOAT diff = scVal - inVal;
         avgDiff += diff;
         avgNumValues++;
@@ -1043,7 +984,6 @@ AutoGainObj2::SetGainSmooth(BL_FLOAT gainSmooth)
 #define SHAPE_EXP 0.125
     
     // This was in percent
-    //BL_FLOAT coeff = gainSmooth/100.0;
     BL_FLOAT coeff = gainSmooth;
 
 #if 0 // No need shape anymore since ParamSmoother2
@@ -1057,9 +997,6 @@ AutoGainObj2::SetGainSmooth(BL_FLOAT gainSmooth)
     
     BL_FLOAT smoothMs = (1.0 - coeff)*GAIN_SMOOTHER_SMOOTH_MIN_MS +
         coeff*GAIN_SMOOTHER_SMOOTH_MAX_MS;
-    
-    //mGainSmoother->SetSmoothCoeff(smooth);
-    //mGainSmoother->Reset(mSampleRate, smoothMs);
     
     mGainSmoother->SetSmoothTimeMs(smoothMs);
 }
@@ -1104,12 +1041,10 @@ AutoGainObj2::UpdateGraphReadMode(const vector<WDL_TypedBuf<BL_FLOAT> > &in,
     
     WDL_TypedBuf<BL_FLOAT> &dbIn = mTmpBuf23;
     BLUtils::AmpToDB(&dbIn, monoIn, (BL_FLOAT)BL_EPS, (BL_FLOAT)DB_INF);
-
-    BL_FLOAT sampleRate = mSampleRate;
     
 #if FIX_START_JUMP
     if (mHasJustReset)
-        mAvgHistoIn->Reset(sampleRate, dbIn);
+        mAvgHistoIn->Reset(mSampleRate, dbIn);
 #endif
     
     mAvgHistoIn->AddValues(dbIn);
@@ -1133,7 +1068,7 @@ AutoGainObj2::UpdateGraphReadMode(const vector<WDL_TypedBuf<BL_FLOAT> > &in,
     
 #if FIX_START_JUMP
     if (mHasJustReset)
-        mAvgHistoOut->Reset(sampleRate, dbOut);
+        mAvgHistoOut->Reset(mSampleRate, dbOut);
     
     mHasJustReset = false;
 #endif

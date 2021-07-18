@@ -14,8 +14,7 @@
 #include <BLTypes.h>
 
 // SmoothAvgHistogram2: from SmoothAvgHistogram
-// Take the smoothness param as time in millis, and adapts to sample rate
-
+// - take the smoothness param as time in millis, and adapts to sample rate
 class SmoothAvgHistogram2
 {
 public:
