@@ -23,10 +23,13 @@
 #define MIN_SMOOTH_DIVISOR 12.0
 #define MAX_SMOOTH_DIVISOR 48.0
 
+// NOTE: no need anymore
+// (fixed automatically by prev improvements)
+//
 // FIX: fixed bad display with high sample rates
 // (and this, without resampling signal (USE_RESAMPLER) )
 // USE_RESAMPLER was bad for Panogram, because in Panogram, we need to play the sound
-#define FIX_BAD_DISPLAY_HIGH_SAMPLERATES 1
+#define FIX_BAD_DISPLAY_HIGH_SAMPLERATES 0 //1
 
 // When left and right magns are 0, the indices are pushed at the extreme left
 #define FIX_EPS_MAGNS 1
@@ -193,21 +196,21 @@ PanogramFftObj::GetNumCols()
 int
 PanogramFftObj::GetNumColsAdd()
 {
-#if FIX_BAD_DISPLAY_HIGH_SAMPLERATES
     // NEW
     // Prefer this, so the scroll speed won't be modified when
     // the overlapping changes
     int numCols = mBufferSize/(32/mOverlapping);
-    
+
+#if FIX_BAD_DISPLAY_HIGH_SAMPLERATES
     // Adjust to the sample rate to avoid scrolling
     // 2 times faster when we go from 44100 to 88200
     //
     BL_FLOAT srCoeff = mSampleRate/44100.0;
     srCoeff = bl_round(srCoeff);
     numCols *= srCoeff;
+#endif
     
     return numCols;
-#endif
 }
 
 void
