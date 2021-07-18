@@ -56,6 +56,16 @@ public:
         //mZ = 0.0;
         mZ = mTargetValue;
     }
+
+    // Set smooth time, but without resetting
+    inline void SetSmoothTimeMs(BL_FLOAT smoothingTimeMs)
+    {
+        mSmoothingTimeMs = smoothingTimeMs;
+        
+        mA = std::exp(-(BL_FLOAT)TWO_PI/
+                      (mSmoothingTimeMs * (BL_FLOAT)0.001 * mSampleRate));
+        mB = 1.0 - mA;
+    }
     
     inline void SetTargetValue(BL_FLOAT val)
     {

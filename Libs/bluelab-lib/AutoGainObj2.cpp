@@ -1049,7 +1049,10 @@ AutoGainObj2::SetGainSmooth(BL_FLOAT gainSmooth)
         coeff*GAIN_SMOOTHER_SMOOTH_MAX_MS;
     
     //mGainSmoother->SetSmoothCoeff(smooth);
-    mGainSmoother->Reset(mSampleRate, smoothMs);
+
+    //mGainSmoother->Reset(mSampleRate, smoothMs);
+    
+    mGainSmoother->SetSmoothTimeMs(smoothMs);
 }
 
 void
