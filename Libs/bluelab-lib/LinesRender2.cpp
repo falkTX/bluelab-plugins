@@ -611,6 +611,45 @@ LinesRender2::DoDrawLinesTime(NVGcontext *vg, const vector<vector<Point> > &poin
 }
 
 void
+LinesRender2::DoDrawLineSimple(NVGcontext *vg, const vector<Point> &points,
+                               unsigned char inColor[4], BL_FLOAT lineWidth)
+{
+    if (points.empty())
+        return;
+    
+    unsigned char color0[4] = { inColor[0], inColor[1], inColor[2], inColor[3] };
+    
+    SWAP_COLOR(color0);
+    
+    NVGcolor color =  nvgRGBA(color0[0], color0[1], color0[2], color0[3]);
+    
+    nvgStrokeColor(vg, color);
+    nvgFillColor(vg, color);
+    
+    nvgStrokeWidth(vg, lineWidth);
+        
+    nvgBeginPath(vg);    
+    for (int i = 0; i < points.size(); i++)
+    {
+        const Point &p = points[i];
+                        
+        BL_FLOAT x = p.mX;
+        BL_FLOAT y = p.mY;
+            
+        BL_GUI_FLOAT yf = y;
+#if GRAPH_CONTROL_FLIP_Y
+        yf = mViewHeight - y;
+#endif
+        if (i == 0)
+            nvgMoveTo(vg, x, yf);
+        else
+            nvgLineTo(vg, x, yf);
+    }
+    
+    nvgStroke(vg);
+}
+
+void
 LinesRender2::DoDrawPoints(NVGcontext *vg, const vector<vector<Point> > &points,
                            BL_FLOAT inPointSize)
 {
@@ -1278,16 +1317,11 @@ LinesRender2::DrawAdditionalLines(NVGcontext *vg, int width, int height)
     ProjectAdditionalLines(&lines, width, height); // Was commented
     //ProjectAdditionalLines2(&lines, width, height); // Buggy
 
-    vector<vector<Point> > &line0 = mTmpBuf13;
-    line0.resize(lines.size());
-    
     for (int i = 0; i < lines.size(); i++)
     {
         Line &line = lines[i];
-        
-        line0[i] = line.mPoints;
-        
-        DoDrawLinesFreq(vg, line0, line.mColor, mAdditionalLinesWidth);
+                
+        DoDrawLineSimple(vg, line.mPoints, line.mColor, mAdditionalLinesWidth);
     }
 }
 

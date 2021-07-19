@@ -217,7 +217,10 @@ protected:
     
     void DoDrawLinesTime(NVGcontext *vg, const vector<vector<Point> > &points,
                          unsigned char inColor[4], BL_FLOAT lineWidth);
-    
+
+    void DoDrawLineSimple(NVGcontext *vg, const vector<Point> &points,
+                          unsigned char inColor[4], BL_FLOAT lineWidth);
+        
     void DoDrawGrid(NVGcontext *vg, const vector<vector<Point> > &points,
                     unsigned char inColor[4], BL_FLOAT lineWidth);
     

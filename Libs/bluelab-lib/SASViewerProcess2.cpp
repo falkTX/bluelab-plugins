@@ -443,7 +443,7 @@ SASViewerProcess2::DisplayTracking()
         
         // Add lines corresponding to the well tracked partials
         vector<PartialTracker5::Partial> partials = mCurrentNormPartials;
-        
+
         // Create blue lines from trackers
         vector<LinesRender2::Point> line;
         for (int i = 0; i < partials.size(); i++)
@@ -463,15 +463,18 @@ SASViewerProcess2::DisplayTracking()
             
             line.push_back(p);
         }
-        
-        int numSlices = mSASViewerRender->GetNumSlices();
 
         //
+        int numSlices = mSASViewerRender->GetNumSlices();
         
         // Keep track of the points we pop
         vector<LinesRender2::Point> prevPoints;
+        // Initialize, just in case
+        if (!mPartialsPoints.empty())
+            prevPoints = mPartialsPoints[0];
         
         mPartialsPoints.push_back(line);
+        
         while(mPartialsPoints.size() > numSlices)
         {
             prevPoints = mPartialsPoints[0];
