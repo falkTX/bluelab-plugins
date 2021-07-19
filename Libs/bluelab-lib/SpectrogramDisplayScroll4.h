@@ -141,7 +141,9 @@ public:
     void SetBypassed(bool flag);
 
     void SetSmoothScrollDisabled(bool flag);
-    
+
+    void SetUseLegacyLock(bool flag);
+        
 protected:
     BL_FLOAT GetOffsetSec();
 
@@ -204,6 +206,8 @@ protected:
     };
     
     LockFreeQueue2<Command> mLockFreeQueues[LOCK_FREE_NUM_BUFFERS];
+
+    bool mUseLegacyLock;
     
 private:
     WDL_TypedBuf<unsigned int> mTmpBuf0;

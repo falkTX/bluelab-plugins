@@ -76,7 +76,9 @@ GraphCurve5::GraphCurve5(int numValues)
     mNumValues = numValues;
     mXValues.Resize(mNumValues);
     mYValues.Resize(mNumValues);
-    
+
+    mUseLegacyLock = false;
+        
     ClearValues();
     
     FillAllYValues(0.0);
@@ -537,6 +539,13 @@ void
 GraphCurve5::SetValuesPoint(const WDL_TypedBuf<BL_GUI_FLOAT> &xValues,
                               const WDL_TypedBuf<BL_GUI_FLOAT> &yValues)
 {
+    if (mUseLegacyLock)
+    {
+        SetValuesPointLF(xValues, yValues);
+            
+        return;
+    }
+    
     Command &cmd = mTmpBuf9;
     cmd.mType = Command::SET_VALUES_POINT;
     cmd.mXValues = xValues;
@@ -599,6 +608,13 @@ GraphCurve5::SetValuesPointEx(const WDL_TypedBuf<BL_GUI_FLOAT> &xValues,
                               const WDL_TypedBuf<BL_GUI_FLOAT> &yValues,
                               bool singleScale, bool scaleX, bool centerFlag)
 {
+    if (mUseLegacyLock)
+    {
+        SetValuesPointExLF(xValues, yValues, singleScale, scaleX, centerFlag);
+    
+        return;
+    }
+    
     Command &cmd = mTmpBuf9;
     cmd.mType = Command::SET_VALUES_POINT_EX;
     cmd.mXValues = xValues;
@@ -941,6 +957,13 @@ void
 GraphCurve5::SetValues5(const WDL_TypedBuf<BL_GUI_FLOAT> &values,
                         bool applyXScale, bool applyYScale)
 {
+    if (mUseLegacyLock)
+    {
+        SetValues5LF(values, applyXScale, applyYScale);
+            
+        return;
+    }
+    
     Command &cmd = mTmpBuf9;
     cmd.mType = Command::SET_VALUES5;
     cmd.mValues = values;
@@ -1538,6 +1561,12 @@ void
 GraphCurve5::DrawDone()
 {
     mNeedRedraw = false;
+}
+
+void
+GraphCurve5::SetUseLegacyLock(bool flag)
+{
+    mUseLegacyLock = flag;
 }
 
 #endif

@@ -32,10 +32,8 @@ public:
     
     void Reset(BL_FLOAT sampleRate, BL_FLOAT smoothFactor = -1.0);
     void ClearValues();
-    void ClearValuesLF();
     
     void SetValues(const WDL_TypedBuf<BL_FLOAT> &values, bool reset = false);
-    void SetValuesLF(const WDL_TypedBuf<BL_FLOAT> &values, bool reset = false);
     
     void GetHistogramValues(WDL_TypedBuf<BL_FLOAT> *values);
     void GetHistogramValuesDB(WDL_TypedBuf<BL_FLOAT> *values);
@@ -44,8 +42,13 @@ public:
     void PushData() override;
     void PullData() override;
     void ApplyData() override;
+
+    void SetUseLegacyLock(bool flag);
     
 protected:
+    void ClearValuesLF();
+    void SetValuesLF(const WDL_TypedBuf<BL_FLOAT> &values, bool reset = false);
+    
     SmoothAvgHistogramDB *mHistogram;
     
     GraphCurve5 *mCurve;
@@ -74,7 +77,9 @@ protected:
 
     bool ContainsClearValues(/*const*/ LockFreeQueue2<LockFreeCurve> &q);
     bool ContainsCurveReset(/*const*/ LockFreeQueue2<LockFreeCurve> &q);
-        
+
+    bool mUseLegacyLock;
+    
 private:
     // Tmp Buffers
     WDL_TypedBuf<BL_FLOAT> mTmpBuf0;

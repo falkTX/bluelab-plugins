@@ -79,6 +79,8 @@ SpectrogramDisplayScroll4(SpectrogramDisplayScrollState *spectroState,
     mViewOrientation = HORIZONTAL;
 
     mIsBypassed = false;
+
+    mUseLegacyLock = false;
     
     RecomputeParams(false);
 
@@ -525,6 +527,13 @@ void
 SpectrogramDisplayScroll4::AddSpectrogramLine(const WDL_TypedBuf<BL_FLOAT> &magns,
                                               const WDL_TypedBuf<BL_FLOAT> &phases)
 {
+    if (mUseLegacyLock)
+    {
+        AddSpectrogramLineLF(magns, phases);
+
+        return;
+    }
+    
     Command &cmd = mTmpBuf2;
     cmd.mType = Command::ADD_SPECTROGRAM_LINE;
     cmd.mMagns = magns;
@@ -598,6 +607,13 @@ SpectrogramDisplayScroll4::SetSpeedMod(int speedMod)
 {
     //if (mState->mSpeedMod == speedMod)
     //    return;
+
+    if (mUseLegacyLock)
+    {
+        SetSpeedModLF(speedMod);
+        
+        return;
+    }
     
     Command &cmd = mTmpBuf3;
     cmd.mType = Command::SET_SPEED_MOD;
@@ -668,7 +684,14 @@ SpectrogramDisplayScroll4::SetBypassed(bool flag)
     if (flag == mIsBypassed)
         // Nothing to do
         return;
+
+    if (mUseLegacyLock)
+    {
+        SetBypassedLF(flag);
         
+        return;
+    }
+    
     Command &cmd = mTmpBuf4;
     cmd.mType = Command::SET_BYPASSED;
     cmd.mBypassed = flag;
@@ -694,6 +717,12 @@ SpectrogramDisplayScroll4::SetSmoothScrollDisabled(bool flag)
 
     // Set the field
     mState->mSmoothScrollDisabled = flag;
+}
+
+void
+SpectrogramDisplayScroll4::SetUseLegacyLock(bool flag)
+{
+    mUseLegacyLock = flag;
 }
 
 void

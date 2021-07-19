@@ -37,6 +37,8 @@ SmoothCurveDB::SmoothCurveDB(GraphCurve5 *curve,
     mCurve = curve;
 
     mSampleRate = sampleRate;
+
+    mUseLegacyLock = false;
 }
 
 SmoothCurveDB::~SmoothCurveDB()
@@ -56,6 +58,13 @@ SmoothCurveDB::Reset(BL_FLOAT sampleRate, BL_FLOAT smoothFactor)
 void
 SmoothCurveDB::ClearValues()
 {
+    if (mUseLegacyLock)
+    {
+        ClearValuesLF();
+        
+        return;
+    }
+    
     LockFreeCurve &curve = mTmpBuf6;
     curve.mCommand = LockFreeCurve::CLEAR_VALUES;
 
@@ -73,6 +82,13 @@ SmoothCurveDB::ClearValuesLF()
 void
 SmoothCurveDB::SetValues(const WDL_TypedBuf<BL_FLOAT> &values, bool reset)
 {
+    if (mUseLegacyLock)
+    {
+        SetValuesLF(values, reset);
+            
+        return;
+    }
+    
     LockFreeCurve &curve = mTmpBuf4;
     curve.mCommand = LockFreeCurve::SET_VALUES;
     curve.mValues = values;
@@ -316,6 +332,12 @@ SmoothCurveDB::ApplyData()
     }
 
     mLockFreeQueues[2].clear();
+}
+
+void
+SmoothCurveDB::SetUseLegacyLock(bool flag)
+{
+    mUseLegacyLock = flag;
 }
 
 bool

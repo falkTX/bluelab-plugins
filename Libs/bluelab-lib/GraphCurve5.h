@@ -123,19 +123,13 @@ public:
     
     void SetValuesPoint(const WDL_TypedBuf<BL_GUI_FLOAT> &xValues,
                         const WDL_TypedBuf<BL_GUI_FLOAT> &yValues);
-    void SetValuesPointLF(const WDL_TypedBuf<BL_GUI_FLOAT> &xValues,
-                          const WDL_TypedBuf<BL_GUI_FLOAT> &yValues);
     
     // For UST
     void SetValuesPointEx(const WDL_TypedBuf<BL_GUI_FLOAT> &xValues,
                           const WDL_TypedBuf<BL_GUI_FLOAT> &yValues,
                           bool singleScale = false, bool scaleX = true,
                           bool centerFlag = false);
-    void SetValuesPointExLF(const WDL_TypedBuf<BL_GUI_FLOAT> &xValues,
-                            const WDL_TypedBuf<BL_GUI_FLOAT> &yValues,
-                            bool singleScale = false, bool scaleX = true,
-                            bool centerFlag = false);
-    
+
     void SetColorWeight(const WDL_TypedBuf<BL_GUI_FLOAT> &colorWeights);
     
     
@@ -160,9 +154,7 @@ public:
     // OPTIM: unroll the code inside, to avoid too many computation
     void SetValues5(const WDL_TypedBuf<BL_GUI_FLOAT> &values,
                     bool applyXScale = true, bool applyYScale = true);
-    void SetValues5LF(const WDL_TypedBuf<BL_GUI_FLOAT> &values,
-                      bool applyXScale = true, bool applyYScale = true);
-    
+
     // Use simple decimation
     void SetValuesDecimateSimple(const WDL_TypedBuf<BL_GUI_FLOAT> *values);
     
@@ -219,6 +211,8 @@ public:
 
     bool NeedRedraw();
     void DrawDone();
+
+    void SetUseLegacyLock(bool flag);
     
 protected:
     friend class GraphControl12;
@@ -234,6 +228,15 @@ protected:
     
     void NotifyGraph();
 
+    // Lock free mechanism
+    void SetValuesPointLF(const WDL_TypedBuf<BL_GUI_FLOAT> &xValues,
+                          const WDL_TypedBuf<BL_GUI_FLOAT> &yValues);
+    void SetValuesPointExLF(const WDL_TypedBuf<BL_GUI_FLOAT> &xValues,
+                            const WDL_TypedBuf<BL_GUI_FLOAT> &yValues,
+                            bool singleScale = false, bool scaleX = true,
+                            bool centerFlag = false);
+    void SetValues5LF(const WDL_TypedBuf<BL_GUI_FLOAT> &values,
+                      bool applyXScale = true, bool applyYScale = true);
     
     //
     friend class GraphControl12;
@@ -355,6 +358,8 @@ protected:
     LockFreeQueue2<Command> mLockFreeQueues[LOCK_FREE_NUM_BUFFERS];
 
     bool mNeedRedraw;
+
+    bool mUseLegacyLock;
     
 private:
     // Tmp buffers
