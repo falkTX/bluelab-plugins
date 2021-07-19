@@ -168,11 +168,19 @@ LinesRender2::LinesRender2()
     mDbgForceDensityNumSlices = false;
 
     mNeedRedraw = true;
+
+    mUseLegacyLock = false;
     
     Init();
 }
 
 LinesRender2::~LinesRender2() {}
+
+void
+LinesRender2::SetUseLegacyLock(bool flag)
+{
+    mUseLegacyLock = flag;
+}
 
 void
 LinesRender2::ProjectPoint(BL_FLOAT projP[3],
@@ -712,6 +720,13 @@ LinesRender2::MustAddSlice()
 void
 LinesRender2::AddSlice(const vector<Point> &points)
 {
+    if (mUseLegacyLock)
+    {
+        AddSliceLF(points);
+
+        return;
+    }
+    
 #if 0
     if (!mDisplayAllSlices)
     {

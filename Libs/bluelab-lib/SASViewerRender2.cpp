@@ -38,6 +38,8 @@ SASViewerRender2::SASViewerRender2(SASViewerPluginInterface *plug,
     {
         mLinesRenders[i] = new LinesRender2();
         mLinesRenders[i]->SetMode(LinesRender2::LINES_FREQ);
+
+        mLinesRenders[i]->SetUseLegacyLock(true);
     }
     
     mCurrentMode = SASViewerProcess2::TRACKING;

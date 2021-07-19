@@ -102,6 +102,8 @@ public:
     LinesRender2();
     
     virtual ~LinesRender2();
+
+    void SetUseLegacyLock(bool flag);
     
     void ProjectPoint(BL_FLOAT projP[3], const BL_FLOAT p[3],
                       int width, int height) override;
@@ -314,6 +316,8 @@ protected:
     LockFreeQueue2<Slice> mLockFreeQueues[LOCK_FREE_NUM_BUFFERS];
 
     bool mNeedRedraw;
+
+    bool mUseLegacyLock;
     
 private:
     // Tmp buffers
