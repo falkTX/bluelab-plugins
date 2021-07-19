@@ -70,17 +70,17 @@ func: functional tests (vst2)
       - test all features in detail
 pre: test presets (vst2)
 bsp: block size (perfs) - block size 32, check perfs (+ quickly checked functioning) 
-sr: sample rate - switch 44100Hz/88200Hz (test: perfs, features, param smooth, curves)
+sr: sample rate - switch 44100Hz/88200Hz (test: perfs, features, param smooth, curves smooth, curves freq scale)
 
 ---
 BL-Air		    :	cppck, func, pre, bsp, sr,
 BL-AutoGain	    :	cppck, func, pre, bsp, sr,
 BL-Bat		    :
-BL-Chroma	    :	cppck, func, pre, bsp, # perfs? features? etc...
-BL-Denoiser	    :	cppck, func, pre, bsp,
+BL-Chroma	    :	cppck, func, pre, bsp, sr,
+BL-Denoiser	    :	cppck, func, pre, bsp, sr 
 BL-DUET		    :
 BL-Envelope	    :	
-BL-EQHack	    :	cppck, func, pre, bsp,
+BL-EQHack	    :	cppck, func, pre, bsp, sr,
 BL-Gain12	    :	cppck, func, pre, bsp,
 BL-Gain200	    :	
 BL-Gain24	    :	cppck, func, pre, bsp,
