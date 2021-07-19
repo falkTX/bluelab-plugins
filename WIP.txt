@@ -115,12 +115,14 @@ BL-StereoWidth	    :   cppck, func, pre, bsp,
 BL-Wav3s	    :   cppck, func, pre, bsp
 ===
 
-- TODO: check spectro meter, the display in samples is maybe false
 
-- TODO next: test samplerate!
+- TODO: REFACT legacy lock: protected: funcLF(), and check flag mUseLegacyLock
+like in LinesRender2
+
+- WIP: test samplerate!
   - test 88200
-  - test start 44100, then switch to 88200
-
+  - next: test 48000Hz
+  
 - TODO: check with weird block size
 
 - TODO: extensive tests on linux
