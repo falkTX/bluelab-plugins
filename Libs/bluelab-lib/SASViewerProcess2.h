@@ -141,7 +141,6 @@ protected:
     
     // For tracking display
     deque<vector<LinesRender2::Point> > mPartialsPoints;
-    long int mAddNum;
     
     // Keep an history, to avoid recomputing the whole lines each time
     // With this, we compute only the new extremity of the line
@@ -149,6 +148,9 @@ protected:
     
     //
     bool mShowTrackingLines;
+
+    long int mAddNum;
+    bool mSkipAdd;
 };
 
 #endif // IGRAPHICS_NANOVG

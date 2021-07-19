@@ -67,6 +67,7 @@ SASViewerProcess2::SASViewerProcess2(int bufferSize,
     
     // For additional lines
     mAddNum = 0;
+    mSkipAdd = false;
     
     mShowTrackingLines = true;
 }
@@ -328,8 +329,17 @@ SASViewerProcess2::SetTimeSmoothNoiseCoeff(BL_FLOAT coeff)
 void
 SASViewerProcess2::Display()
 {
-    DisplayTracking();
+    if (mSASViewerRender != NULL)
+    {
+        int speed = mSASViewerRender->GetSpeed();
+        mSkipAdd = ((mAddNum++ % speed) != 0);
+    }
     
+    if (mSkipAdd)
+        return;
+    
+    DisplayTracking();
+     
     DisplayHarmo();
     
     DisplayNoise();
@@ -341,6 +351,8 @@ SASViewerProcess2::Display()
     DisplayColor();
     
     DisplayWarping();
+
+    
 }
 
 void
@@ -423,13 +435,9 @@ SASViewerProcess2::DisplayTracking()
     if (mSASViewerRender != NULL)
     {
         mSASViewerRender->ShowTrackingLines(TRACKING, mShowTrackingLines);
-
-        int speed = mSASViewerRender->GetSpeed();
-        bool skipAdd = (mAddNum++ % speed != 0);
         
         // Add the magnitudes
-        if (!skipAdd)
-            mSASViewerRender->AddData(TRACKING, mCurrentMagns);
+        mSASViewerRender->AddData(TRACKING, mCurrentMagns);
         
         mSASViewerRender->SetLineMode(TRACKING, LinesRender2::LINES_FREQ);
         
@@ -457,47 +465,47 @@ SASViewerProcess2::DisplayTracking()
         }
         
         int numSlices = mSASViewerRender->GetNumSlices();
-        if (!skipAdd)
+
+        //
+        
+        // Keep track of the points we pop
+        vector<LinesRender2::Point> prevPoints;
+        
+        mPartialsPoints.push_back(line);
+        while(mPartialsPoints.size() > numSlices)
         {
-            // Keep track of the points we pop
-            vector<LinesRender2::Point> prevPoints;
+            prevPoints = mPartialsPoints[0];
             
-            mPartialsPoints.push_back(line);
-            while(mPartialsPoints.size() > numSlices)
-            {
-                prevPoints = mPartialsPoints[0];
-                
-                mPartialsPoints.pop_front();
-            }
-            
-            CreateLines(prevPoints);
-            
-            // It is cool like that: lite blue with alpha
-            //unsigned char color[4] = { 64, 64, 255, 255 };
-            
-            // Set color
-            for (int j = 0; j < mPartialLines.size(); j++)
-            {
-                LinesRender2::Line &line2 = mPartialLines[j];
-                
-                if (!line2.mPoints.empty())
-                {
-                    // Default
-                    //line.mColor[0] = color[0];
-                    //line.mColor[1] = color[1];
-                    //line.mColor[2] = color[2];
-                    
-                    // Debug
-                    IdToColor(line2.mPoints[0].mId, line2.mColor);
-                    
-                    line2.mColor[3] = 255; // alpha
-                }
-            }
-            
-            //BL_FLOAT lineWidth = 4.0;
-            BL_FLOAT lineWidth = 1.5;
-            mSASViewerRender->SetAdditionalLines(TRACKING, mPartialLines, lineWidth);
+            mPartialsPoints.pop_front();
         }
+        
+        CreateLines(prevPoints);
+        
+        // It is cool like that: lite blue with alpha
+        //unsigned char color[4] = { 64, 64, 255, 255 };
+        
+        // Set color
+        for (int j = 0; j < mPartialLines.size(); j++)
+        {
+            LinesRender2::Line &line2 = mPartialLines[j];
+            
+            if (!line2.mPoints.empty())
+            {
+                // Default
+                //line.mColor[0] = color[0];
+                //line.mColor[1] = color[1];
+                //line.mColor[2] = color[2];
+                
+                // Debug
+                IdToColor(line2.mPoints[0].mId, line2.mColor);
+                
+                line2.mColor[3] = 255; // alpha
+            }
+        }
+            
+        //BL_FLOAT lineWidth = 4.0;
+        BL_FLOAT lineWidth = 1.5;
+        mSASViewerRender->SetAdditionalLines(TRACKING, mPartialLines, lineWidth);
     }
 }
 
