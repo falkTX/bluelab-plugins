@@ -51,6 +51,8 @@ public:
         int mBGSpectroImageHeight;
         
         WDL_TypedBuf<unsigned char> mBGSpectroImageData;
+
+        int mSpeedMod;
     };
     
     SpectrogramDisplay3(SpectrogramDisplayState *spectroTransform);
@@ -123,6 +125,10 @@ public:
     void SetAlpha(BL_FLOAT alpha);
     
     void ClearBGSpectrogram();
+
+    // Only set to adapt scrolling to sample rate
+    void SetSpeedMod(int speedMod);
+    int GetSpeedMod();
     
 protected:
     void ApplyZoomAdjustFactor(BL_FLOAT *zoom, BL_FLOAT *tx,

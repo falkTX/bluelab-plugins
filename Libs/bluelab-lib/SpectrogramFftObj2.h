@@ -57,6 +57,8 @@ public:
 #if CONSTANT_SPEED_FEATURE
     void SetConstantSpeed(bool flag);
 #endif
+
+    int GetAddStep();
     
 protected:
     void AddSpectrogramLine(const WDL_TypedBuf<BL_FLOAT> &magns,

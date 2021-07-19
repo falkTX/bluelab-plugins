@@ -45,6 +45,8 @@ SpectrogramDisplay3::SpectrogramDisplay3(SpectrogramDisplayState *state)
         // Zoom adjust for background
         mState->mZoomAdjustFactorBG = 1.0;
         mState->mZoomAdjustOffsetBG = 0.0;
+
+        mState->mSpeedMod = 1;
     }
     
     mVg = NULL;
@@ -719,6 +721,18 @@ SpectrogramDisplay3::ClearBGSpectrogram()
     }
     
     mNeedRedraw = true;
+}
+
+void
+SpectrogramDisplay3::SetSpeedMod(int speedMod)
+{
+    mState->mSpeedMod = speedMod;
+}
+
+int
+SpectrogramDisplay3::GetSpeedMod()
+{
+    return mState->mSpeedMod;
 }
 
 void

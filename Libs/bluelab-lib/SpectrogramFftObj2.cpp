@@ -154,6 +154,12 @@ SpectrogramFftObj2::SetConstantSpeed(bool flag)
 }
 #endif
 
+int
+SpectrogramFftObj2::GetAddStep()
+{
+    return mAddStep;
+}
+
 void
 SpectrogramFftObj2::AddSpectrogramLine(const WDL_TypedBuf<BL_FLOAT> &magns,
                                        const WDL_TypedBuf<BL_FLOAT> &phases)
