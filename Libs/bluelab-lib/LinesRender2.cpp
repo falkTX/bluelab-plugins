@@ -1275,8 +1275,8 @@ LinesRender2::DrawAdditionalLines(NVGcontext *vg, int width, int height)
 
     vector<Line> &lines = mTmpBuf12;
     lines = mAdditionalLines;
-    //ProjectAdditionalLines(&lines, width, height); // Was commented
-    ProjectAdditionalLines2(&lines, width, height); // Buggy
+    ProjectAdditionalLines(&lines, width, height); // Was commented
+    //ProjectAdditionalLines2(&lines, width, height); // Buggy
 
     vector<vector<Point> > &line0 = mTmpBuf13;
     line0.resize(lines.size());

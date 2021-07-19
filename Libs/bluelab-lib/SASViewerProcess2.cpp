@@ -423,9 +423,13 @@ SASViewerProcess2::DisplayTracking()
     if (mSASViewerRender != NULL)
     {
         mSASViewerRender->ShowTrackingLines(TRACKING, mShowTrackingLines);
+
+        int speed = mSASViewerRender->GetSpeed();
+        bool skipAdd = (mAddNum++ % speed != 0);
         
         // Add the magnitudes
-        mSASViewerRender->AddData(TRACKING, mCurrentMagns);
+        if (!skipAdd)
+            mSASViewerRender->AddData(TRACKING, mCurrentMagns);
         
         mSASViewerRender->SetLineMode(TRACKING, LinesRender2::LINES_FREQ);
         
@@ -453,9 +457,6 @@ SASViewerProcess2::DisplayTracking()
         }
         
         int numSlices = mSASViewerRender->GetNumSlices();
-        int speed = mSASViewerRender->GetSpeed();
-        
-        bool skipAdd = (mAddNum++ % speed != 0);
         if (!skipAdd)
         {
             // Keep track of the points we pop
@@ -571,7 +572,7 @@ SASViewerProcess2::DisplayAmplitude()
 
 void
 SASViewerProcess2::DisplayFrequency()
-{
+{    
 #define FREQ_Y_COEFF 40.0 //10.0
     
     BL_FLOAT freq = mSASFrame->GetFrequency();
