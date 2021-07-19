@@ -85,8 +85,8 @@ BL-Gain12	    :	cppck, func, pre, bsp, sr,
 BL-Gain200	    :	
 BL-Gain24	    :	cppck, func, pre, bsp, sr,
 BL-Gain60	    :	cppck, func, pre, bsp, sr,
-BL-Ghost	    :	cppck, func, pre, bsp, # TODO: test app features a bit more 
-BL-GhostViewer	    :   cppck, func, pre, bsp,
+BL-Ghost	    :	cppck, func, pre, bsp, sr,
+BL-GhostViewer	    :   cppck, func, pre, bsp, # TODO!
 BL-Impulses	    :   cppck, func, pre, bsp,
 BL-Infra	    :   cppck, func, pre, bsp,
 BL-InfrasonicViewer :   cppck, func, pre, bsp,
