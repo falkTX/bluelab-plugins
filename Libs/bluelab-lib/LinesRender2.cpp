@@ -1275,9 +1275,8 @@ LinesRender2::DrawAdditionalLines(NVGcontext *vg, int width, int height)
 
     vector<Line> &lines = mTmpBuf12;
     lines = mAdditionalLines;
-    //ProjectAdditionalLines(&lines, width, height);
-    
-    ProjectAdditionalLines2(&lines, width, height);
+    //ProjectAdditionalLines(&lines, width, height); // Was commented
+    ProjectAdditionalLines2(&lines, width, height); // Buggy
 
     vector<vector<Point> > &line0 = mTmpBuf13;
     line0.resize(lines.size());
@@ -1288,8 +1287,7 @@ LinesRender2::DrawAdditionalLines(NVGcontext *vg, int width, int height)
         
         line0[i] = line.mPoints;
         
-        DoDrawLinesFreq(vg, line0, line.mColor,
-                        mAdditionalLinesWidth);
+        DoDrawLinesFreq(vg, line0, line.mColor, mAdditionalLinesWidth);
     }
 }
 
@@ -1353,7 +1351,11 @@ LinesRender2::ProjectAdditionalLines2(vector<Line> *lines, int width, int height
         for (int j = 0; j < line.mPoints.size(); j += (int)step)
         {
             LinesRender2::Point p = line.mPoints[j];
-            
+
+            // TEST
+            //p.mSkipDisplayX = false;
+            //p.mSkipDisplayZ = false;
+                
 #if 1 // For SASViewer, TRACKING mode
             p.mZ = 1.0 - p.mZ;
 #endif
@@ -1403,10 +1405,23 @@ LinesRender2::ProjectAdditionalLines2(vector<Line> *lines, int width, int height
                 newLine.mPoints[pointIdx++] = p;
             }
         }
+
+#if 1 // FIX: this fixes bad point at the end (this made draw "star" shapes)
+        // Just to be sure...
+        // To eliminate potential invalid points at the end
+        newLine.mPoints.resize(pointIdx);
+#endif
         
+#if 1 //0 //1 // ORIG
         line = newLine;
-        
         ProjectPoints(&line.mPoints, width, height);
+#endif
+        
+#if 0 //1 //0 //1 // TEST
+        ProjectPoints(&newLine.mPoints, width, height);
+        (*lines)[i] = newLine;;
+#endif
+        
     }
 }
 

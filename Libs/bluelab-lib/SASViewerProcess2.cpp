@@ -17,7 +17,6 @@
 
 #include <SASViewerRender2.h>
 
-#include <PartialTracker3.h>
 #include <SASFrame3.h>
 
 #include "SASViewerProcess2.h"
