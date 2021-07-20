@@ -109,13 +109,18 @@ SASViewerProcess3::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
                                     const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer)
 
 {
-    WDL_TypedBuf<WDL_FFT_COMPLEX> fftSamples = *ioBuffer;
+    //WDL_TypedBuf<WDL_FFT_COMPLEX> fftSamples = *ioBuffer;
+
+    WDL_TypedBuf<WDL_FFT_COMPLEX> &fftSamples0 = mTmpBuf0;
+    fftSamples0 = *ioBuffer;
     
     // Take half of the complexes
-    BLUtils::TakeHalf(&fftSamples);
+    //BLUtils::TakeHalf(&fftSamples);
+    WDL_TypedBuf<WDL_FFT_COMPLEX> &fftSamples = mTmpBuf1;
+    BLUtils::TakeHalf(fftSamples0, &fftSamples);
     
-    WDL_TypedBuf<BL_FLOAT> magns;
-    WDL_TypedBuf<BL_FLOAT> phases;
+    WDL_TypedBuf<BL_FLOAT> &magns = mTmpBuf2;
+    WDL_TypedBuf<BL_FLOAT> &phases = mTmpBuf3;
     BLUtilsComp::ComplexToMagnPhase(&magns, &phases, fftSamples);
     
     // DetectPartials
@@ -150,7 +155,7 @@ SASViewerProcess3::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
         
         mSASFrame->SetPartials(partials);
         
-        WDL_TypedBuf<BL_FLOAT> noise;
+        WDL_TypedBuf<BL_FLOAT> &noise = mTmpBuf4;
         mPartialTracker->GetNoiseEnvelope(&noise);
         
         mSASFrame->SetNoiseEnvelope(noise);
@@ -162,7 +167,7 @@ SASViewerProcess3::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
         }
         
 #if OUT_HARMO_EXTRACTED_ENV
-        WDL_TypedBuf<BL_FLOAT> harmo;
+        WDL_TypedBuf<BL_FLOAT> &harmo = mTmpBuf5;
         mPartialTracker->GetHarmonicEnvelope(&harmo);
         
         if (mEnableOutHarmo)
@@ -177,9 +182,11 @@ SASViewerProcess3::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     }
     
     // For noise envelope
-    BLUtilsComp::MagnPhaseToComplex(ioBuffer, magns, phases);
-    ioBuffer->Resize(ioBuffer->GetSize()*2);
-    BLUtilsFft::FillSecondFftHalf(ioBuffer);
+    //BLUtilsComp::MagnPhaseToComplex(ioBuffer, magns, phases);
+    //ioBuffer->Resize(ioBuffer->GetSize()*2);
+    //BLUtilsFft::FillSecondFftHalf(ioBuffer);
+    BLUtilsComp::MagnPhaseToComplex(&fftSamples, magns, phases);
+    BLUtilsFft::FillSecondFftHalf(fftSamples, ioBuffer);
 }
 
 void

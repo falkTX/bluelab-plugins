@@ -156,6 +156,14 @@ protected:
     bool mSkipAdd;
 
     bool mDebugPartials;
+
+private:
+    WDL_TypedBuf<WDL_FFT_COMPLEX> mTmpBuf0;
+    WDL_TypedBuf<WDL_FFT_COMPLEX> mTmpBuf1;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf2;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf3;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf4;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf5;
 };
 
 #endif // IGRAPHICS_NANOVG
