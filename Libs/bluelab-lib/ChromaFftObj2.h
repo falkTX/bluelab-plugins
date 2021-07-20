@@ -41,7 +41,7 @@ class ChromaFftObj2 : public ProcessObj
 {
 public:
     ChromaFftObj2(int bufferSize, int oversampling, int freqRes,
-                 BL_FLOAT sampleRate);
+                  BL_FLOAT sampleRate);
     
     virtual ~ChromaFftObj2();
     
@@ -79,7 +79,7 @@ protected:
     void MagnsToChromaLineFreqs(const WDL_TypedBuf<BL_FLOAT> &magns,
                                 const WDL_TypedBuf<BL_FLOAT> &realFreqs,
                                 WDL_TypedBuf<BL_FLOAT> *chromaLine,
-				HistoMaskLine2 *maskLine = NULL);
+                                HistoMaskLine2 *maskLine = NULL);
 #endif
     
     BL_FLOAT ComputeC0Freq();

@@ -24,7 +24,8 @@ using namespace std;
 // SASFrame4: when restarted developing, in order to make SASSynth
 // Try to improve frequency computation, using same thenique as in Chroma
 
-class PartialsToFreq5;
+//class PartialsToFreq5;
+class PartialsToFreq6;
 class FreqAdjustObj3;
 class WavetableSynth;
 class SASFrame4
@@ -60,6 +61,9 @@ public:
     
     void Reset(BL_FLOAT sampleRate);
     
+    void Reset(int bufferSize, int oversampling,
+               int freqRes, BL_FLOAT sampleRate);
+        
     void SetMinAmpDB(BL_FLOAT ampDB);
     
     void SetSynthMode(enum SynthMode mode);
@@ -69,6 +73,10 @@ public:
     
     void SetNoiseEnvelope(const WDL_TypedBuf<BL_FLOAT> &noiseEnv);
     void GetNoiseEnvelope(WDL_TypedBuf<BL_FLOAT> *noiseEnv) const;
+
+    // Keep input magns (will be used to compute frequency)
+    void SetInputData(const WDL_TypedBuf<BL_FLOAT> &magns,
+                      const WDL_TypedBuf<BL_FLOAT> &phases);
     
     // Get
     BL_FLOAT GetAmplitude() const;
@@ -193,6 +201,10 @@ protected:
     int mOverlapping;
     
     WDL_TypedBuf<BL_FLOAT> mNoiseEnvelope;
+
+    // Input signal, not processed
+    WDL_TypedBuf<BL_FLOAT> mInputMagns;
+    WDL_TypedBuf<BL_FLOAT> mInputPhases;
     
     WDL_TypedBuf<BL_FLOAT> mColor;
     WDL_TypedBuf<BL_FLOAT> mNormWarping;
@@ -207,7 +219,8 @@ protected:
     
     BL_FLOAT mPitch;
     
-    PartialsToFreq5 *mPartialsToFreq;
+    //PartialsToFreq5 *mPartialsToFreq;
+    PartialsToFreq6 *mPartialsToFreq;
     
     FreqAdjustObj3 *mFreqObj;
     

@@ -124,6 +124,8 @@ set(_bluelab-lib_src
   ChromaFftObj2.h
   ChromaFftObj.cpp
   ChromaFftObj.h
+  ChromagramObj.h
+  ChromagramObj.cpp
   ChunkHelper.cpp
   CMA2Smoother.cpp
   CMA2Smoother.h
@@ -524,6 +526,8 @@ set(_bluelab-lib_src
   PartialsToFreq4.h
   PartialsToFreq5.cpp
   PartialsToFreq5.h
+  PartialsToFreq6.cpp
+  PartialsToFreq6.h
   PartialsToFreqCepstrum.cpp
   PartialsToFreqCepstrum.h
   PartialsToFreq.cpp

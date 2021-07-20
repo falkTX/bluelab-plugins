@@ -81,22 +81,25 @@ SASViewerProcess3::~SASViewerProcess3()
 void
 SASViewerProcess3::Reset()
 {
-    Reset(mOverlapping, mFreqRes/*mOversampling*/, mSampleRate);
+    Reset(mBufferSize, mOverlapping, mFreqRes, mSampleRate);
     
-    mSASFrame->Reset(mSampleRate);
+    //mSASFrame->Reset(mSampleRate);
 }
 
 void
-SASViewerProcess3::Reset(int overlapping, int oversampling,
-                         BL_FLOAT sampleRate)
+SASViewerProcess3::Reset(int bufferSize, int overlapping,
+                         int oversampling, BL_FLOAT sampleRate)
 {
+    mBufferSize = bufferSize;
+    
     mOverlapping = overlapping;
     //mOversampling = oversampling;
     mFreqRes = oversampling;
     
     mSampleRate = sampleRate;
     
-    mSASFrame->Reset(sampleRate);
+    //mSASFrame->Reset(sampleRate);
+    mSASFrame->Reset(bufferSize, overlapping, oversampling, sampleRate);
 }
 
 void
@@ -121,7 +124,10 @@ SASViewerProcess3::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     
     //
     mPartialTracker->GetPreProcessedMagns(&mCurrentMagns);
-    
+
+    //
+    mSASFrame->SetInputData(magns, phases);
+        
     // Silence
     BLUtils::FillAllZero(&magns);
     

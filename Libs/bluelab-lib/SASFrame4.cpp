@@ -9,7 +9,8 @@
 #include <SASViewerProcess.h>
 
 //#include <PartialsToFreqCepstrum.h>
-#include <PartialsToFreq5.h>
+//#include <PartialsToFreq5.h>
+#include <PartialsToFreq6.h>
 
 #include <FreqAdjustObj3.h>
 
@@ -136,7 +137,8 @@ SASFrame4::SASFrame4(int bufferSize, BL_FLOAT sampleRate, int overlapping)
     mScale = new Scale();
     
     //mPartialsToFreq = new PartialsToFreqCepstrum(bufferSize, sampleRate);
-    mPartialsToFreq = new PartialsToFreq5(bufferSize, sampleRate);
+    //mPartialsToFreq = new PartialsToFreq5(bufferSize, sampleRate);
+    mPartialsToFreq = new PartialsToFreq6(bufferSize, overlapping, 1, sampleRate);
     
 #if COMPUTE_SAS_FFT_FREQ_ADJUST
     int oversampling = 1;
@@ -193,6 +195,18 @@ SASFrame4::Reset(BL_FLOAT sampleRate)
 #if COMPUTE_SAS_SAMPLES_TABLE
     mTableSynth->Reset(sampleRate);
 #endif
+
+    mPartialsToFreq->Reset(mBufferSize, mOverlapping, 1, sampleRate);
+}
+
+void
+SASFrame4::Reset(int bufferSize, int oversampling,
+                 int freqRes, BL_FLOAT sampleRate)
+{
+    mBufferSize = bufferSize;
+    mOverlapping = oversampling;
+    
+    Reset(sampleRate);
 }
 
 void
@@ -236,6 +250,14 @@ void
 SASFrame4::GetNoiseEnvelope(WDL_TypedBuf<BL_FLOAT> *noiseEnv) const
 {
     *noiseEnv = mNoiseEnvelope;
+}
+
+void
+SASFrame4::SetInputData(const WDL_TypedBuf<BL_FLOAT> &magns,
+                        const WDL_TypedBuf<BL_FLOAT> &phases)
+{
+    mInputMagns = magns;
+    mInputPhases = phases;
 }
 
 BL_FLOAT
@@ -1949,7 +1971,8 @@ SASFrame4::ComputeAmplitude()
 void
 SASFrame4::ComputeFrequency()
 {
-    BL_FLOAT freq = mPartialsToFreq->ComputeFrequency(mPartials);
+    BL_FLOAT freq =
+        mPartialsToFreq->ComputeFrequency(mInputMagns, mInputPhases, mPartials);
     
     mFrequency = freq;
     
