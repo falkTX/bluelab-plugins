@@ -252,12 +252,13 @@ ChromagramObj::MagnsToChromaLineFreqs(const WDL_TypedBuf<BL_FLOAT> &magns,
 
 BL_FLOAT
 ChromagramObj::ChromaToFreq(BL_FLOAT chromaVal, BL_FLOAT minFreq) const
-{
+{    
     BL_FLOAT c0Freq = ComputeC0Freq();
+
     BL_FLOAT toneMult = std::pow(2.0, 1.0/12.0);
 
     // Inverse computation done in chromagram
-    BL_FLOAT freq0 = c0Freq*exp((chromaVal - 0.5)*log(toneMult));
+    BL_FLOAT freq0 = c0Freq*exp((chromaVal*12.0 - 0.5)*log(toneMult));
 
     BL_FLOAT freq = freq0;
     while(freq < minFreq)

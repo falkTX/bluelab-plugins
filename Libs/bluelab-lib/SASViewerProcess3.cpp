@@ -70,6 +70,8 @@ SASViewerProcess3::SASViewerProcess3(int bufferSize,
     mSkipAdd = false;
     
     mShowTrackingLines = true;
+
+    mDebugPartials = false;
 }
 
 SASViewerProcess3::~SASViewerProcess3()
@@ -319,6 +321,12 @@ SASViewerProcess3::DBG_SetDbgParam(BL_FLOAT param)
 }
 
 void
+SASViewerProcess3::DBG_SetDebugPartials(bool flag)
+{
+    mDebugPartials = flag;
+}
+
+void
 SASViewerProcess3::SetTimeSmoothCoeff(BL_FLOAT coeff)
 {
     if (mPartialTracker != NULL)
@@ -514,6 +522,12 @@ SASViewerProcess3::DisplayTracking()
             
         //BL_FLOAT lineWidth = 4.0;
         BL_FLOAT lineWidth = 1.5;
+        if (!mDebugPartials)
+        {
+            //lineWidth = 1.5;
+            lineWidth = 4.0;
+        }
+        
         mSASViewerRender->SetAdditionalLines(TRACKING, mPartialLines, lineWidth);
     }
 }

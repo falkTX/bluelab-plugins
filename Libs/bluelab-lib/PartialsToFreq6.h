@@ -23,8 +23,12 @@ using namespace std;
 // to a new class
 // (will be useful if need filtering frequency)
 //
-// PartialsToFreq6: use chromagram technique, to first find the note,
-// then find the partial closest to this note (to try to be more robust)
+// PartialsToFreq6: compute freq from chroma, and adjust to the right octave,
+// depending on the partials freqs
+//
+// VERY GOOD! (this is a real improvement over the standardly used algorithm!)
+// => the freq from chroma is really more smooth than the tracked partial data
+// => and it represents the pitch rellay more accurately than partial tracking
 class PartialTWMEstimate3;
 class ChromagramObj;
 class PartialsToFreq6
@@ -55,8 +59,27 @@ protected:
     void ThresholdPartials(vector<PartialTracker5::Partial> *partials);
     void ThresholdPartialsRelative(vector<PartialTracker5::Partial> *partials);
 
-    BL_FLOAT FindClosestPartialFreq(BL_FLOAT refFreq0,
+    // From computed chroma freq, choose the best partial freq
+    BL_FLOAT FindClosestPartialFreq(BL_FLOAT inFreq,
                                     const vector<PartialTracker5::Partial> &partials);
+
+    // Keep the chroma freq, but adjust to the right octave,
+    // depending on the partials freqs
+    //
+    // VERY GOOD!
+    // => the freq from chroma is really more smooth than the tracked partial data
+    // => and it represents the pitch rellay more accurately than partial tracking
+    BL_FLOAT FindBestOctave(BL_FLOAT inFreq,
+                            const vector<PartialTracker5::Partial> &partials);
+
+    // Keep the chroma freq, but adjust to the right octave,
+    // depending on roughtly detected partials (on the fly)
+    //
+    // VERY GOOD!
+    // => the freq from chroma is really more smooth than the tracked partial data
+    // => and it represents the pitch rellay more accurately than partial tracking
+    BL_FLOAT FindBestOctave2(BL_FLOAT inFreq,
+                             const WDL_TypedBuf<BL_FLOAT> &magns);
     
     //
     int mBufferSize;

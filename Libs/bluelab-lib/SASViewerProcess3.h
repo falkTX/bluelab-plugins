@@ -82,6 +82,8 @@ public:
     
     // Debug
     void DBG_SetDbgParam(BL_FLOAT param);
+
+    void DBG_SetDebugPartials(bool flag);
     
     void SetTimeSmoothNoiseCoeff(BL_FLOAT coeff);
     
@@ -152,6 +154,8 @@ protected:
 
     long int mAddNum;
     bool mSkipAdd;
+
+    bool mDebugPartials;
 };
 
 #endif // IGRAPHICS_NANOVG
