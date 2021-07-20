@@ -655,15 +655,21 @@ set(_bluelab-lib_src
   SASFrame2.h
   SASFrame3.cpp
   SASFrame3.h
+  SASFrame4.cpp
+  SASFrame4.h
   SASFrame.cpp
   SASFrame.h
   SASViewerPluginInterface.h
   SASViewerProcess2.cpp
   SASViewerProcess2.h
+  SASViewerProcess3.cpp
+  SASViewerProcess3.h
   SASViewerProcess.cpp
   SASViewerProcess.h
   SASViewerRender2.cpp
   SASViewerRender2.h
+  SASViewerRender3.cpp
+  SASViewerRender3.h
   SASViewerRender.cpp
   SASViewerRender.h
   SaturateOverObj.cpp
