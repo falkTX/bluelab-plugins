@@ -389,7 +389,7 @@ BL_FLOAT
 PartialsToFreq6::FindBestOctave2(BL_FLOAT inFreq,
                                  const WDL_TypedBuf<BL_FLOAT> &magns)
 {
-    BLDebug::AppendValue("min-partial.txt", 0.0);
+    //BLDebug::AppendValue("min-partial.txt", 0.0);
 
 #if 0 // Very naive method, does not work well
     // Compute max amplitude
