@@ -357,6 +357,7 @@ protected:
                           const vector<Partial> &partials,
                           int bufferSize);
 
+    int DenormBinIndex(int idx);
     
     //
     

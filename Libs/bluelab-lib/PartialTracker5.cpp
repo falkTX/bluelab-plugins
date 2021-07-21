@@ -129,6 +129,9 @@ using namespace std;
 
 #define USE_FILTER_BANKS 1
 
+// NEW
+#define DENORM_PARTIAL_INDICES 1
+
 unsigned long PartialTracker5::Partial::mCurrentId = 0;
 
 
@@ -1295,21 +1298,25 @@ PartialTracker5::GluePartialBarbs(const WDL_TypedBuf<BL_FLOAT> &magns,
                         }
                         else
                         {
-                            BL_FLOAT hf = ComputePeakHigherFoot(magns,
-                                                              otherPartial.mLeftIndex,
-                                                              otherPartial.mRightIndex);
+                            BL_FLOAT hf =
+                                ComputePeakHigherFoot(magns,
+                                                      otherPartial.mLeftIndex,
+                                                      otherPartial.mRightIndex);
                             
                             
-                            BL_FLOAT lf = ComputePeakLowerFoot(magns,
-                                                             currentPartial.mLeftIndex,
-                                                             currentPartial.mRightIndex);
+                            BL_FLOAT lf =
+                                ComputePeakLowerFoot(magns,
+                                                     currentPartial.mLeftIndex,
+                                                     currentPartial.mRightIndex);
                             
                             if ((hf > lf) && (hf < currentPartial.mAmp))
                                 inTheMiddle = true;
                             
                             // Check that the barb is on the right side
-                            BL_FLOAT curLeftFoot = magns.Get()[currentPartial.mLeftIndex];
-                            BL_FLOAT curRightFoot = magns.Get()[currentPartial.mRightIndex];
+                            BL_FLOAT curLeftFoot =
+                                magns.Get()[currentPartial.mLeftIndex];
+                            BL_FLOAT curRightFoot =
+                                magns.Get()[currentPartial.mRightIndex];
                             if (curLeftFoot < curRightFoot)
                                 onTheSide = true;
                         }
@@ -2487,6 +2494,12 @@ PartialTracker5::DenormPartials(vector<PartialTracker5::Partial> *partials)
         // Y
         partial.mAmp = mScale->ApplyScale(mYScaleInv, partial.mAmp,
                                           (BL_FLOAT)MIN_AMP_DB, (BL_FLOAT)0.0);
+
+#if DENORM_PARTIAL_INDICES
+        partial.mLeftIndex = DenormBinIndex(partial.mLeftIndex);
+        partial.mPeakIndex = DenormBinIndex(partial.mPeakIndex);
+        partial.mRightIndex = DenormBinIndex(partial.mRightIndex);
+#endif
     }
 }
 
@@ -2650,3 +2663,22 @@ PartialTracker5::ReserveTmpBufs()
     mTmpPartials17.reserve(reserveSize);
     mTmpPartials18.reserve(reserveSize);
 }
+
+int
+PartialTracker5::DenormBinIndex(int idx)
+{
+    BL_FLOAT freq = ((BL_FLOAT)idx)/(mBufferSize*0.5);
+    freq = mScale->ApplyScale(mXScaleInv, freq, (BL_FLOAT)0.0,
+                              (BL_FLOAT)(mSampleRate*0.5));
+
+    BL_FLOAT res = freq*(mBufferSize*0.5);
+
+    int resi = bl_round(res);
+    if (resi < 0)
+        resi = 0;
+    if (resi > mBufferSize*0.5 - 1)
+        resi = mBufferSize*0.5 - 1;
+
+    return resi;
+}
+    
