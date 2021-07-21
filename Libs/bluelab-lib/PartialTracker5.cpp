@@ -1145,7 +1145,8 @@ PartialTracker5::DetectPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
 #if COMPUTE_PEAKS_AVG
                     // Make smooth partials change
                     // But makes wobble in the sound volume
-                    BL_FLOAT peakIndexF = ComputePeakIndexAvg(magns, leftIndex, rightIndex);
+                    BL_FLOAT peakIndexF =
+                        ComputePeakIndexAvg(magns, leftIndex, rightIndex);
 #endif
 #if COMPUTE_PEAKS_PARABOLA
                     // Won't work well with peaks with almost flat top ?
