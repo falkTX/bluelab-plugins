@@ -1401,9 +1401,6 @@ SASFrame4::ComputeSamplesSAS6(WDL_TypedBuf<BL_FLOAT> *samples)
 void
 SASFrame4::ComputeSamplesSAS7(WDL_TypedBuf<BL_FLOAT> *samples)
 {
-    // TEST DEBUG
-    //mFrequency = 350.0;
-    
     BLUtils::FillAllZero(samples);
     
     // First time: initialize the partials
@@ -1555,8 +1552,7 @@ SASFrame4::ComputeSamplesSAS7(WDL_TypedBuf<BL_FLOAT> *samples)
 }
 
 BL_FLOAT
-SASFrame4::GetColor(const WDL_TypedBuf<BL_FLOAT> &color,
-                    BL_FLOAT binIdx)
+SASFrame4::GetColor(const WDL_TypedBuf<BL_FLOAT> &color, BL_FLOAT binIdx)
 {
     BL_FLOAT col = 0.0;
     if (binIdx < color.GetSize() - 1)
@@ -2279,6 +2275,11 @@ SASFrame4::ComputeColorAux()
         
         if (((int)idx >= 0) && ((int)idx < mColor.GetSize()))
             mColor.Get()[(int)idx] = amp;
+
+        // TEST: with this and sines example, the first partial has the right gain
+        // Without this, the first synth partial amp is lower 
+        if (i == 0)
+            mColor.Get()[0] = amp;
     }
     
 #if COLOR_CUT_MISSING_PARTIALS
@@ -2299,7 +2300,7 @@ SASFrame4::ComputeColorAux()
         freq += mFrequency;
     }
 #endif
-
+    
     // Avoid interpolating to the last partial value to 0
     // Would make color where ther eis no sound otherwise
     // (e.g example with just some sine waves is false)
@@ -2387,12 +2388,22 @@ SASFrame4::ComputeNormWarpingAux()
 
     BL_FLOAT freq0 = mFrequency;
 
-    // TEST
-    //if (!mPartials.empty())
-    //    freq0 = mPartials[0].mFreq;
+    // NOTE: This is different, is it better?
+    // Set to 0 for good Vox Oooh!
+#if 0 //1 // Use first partial frequency, instead of mFrequency
+    // mFrequency has been gotten from chroma feature, and for inharmonic sound,
+    // it may be e abit different than the first partial freq
+    if (!mPartials.empty())
+        freq0 = mPartials[0].mFreq;
+#endif
     
+#if 0
     // Put the values we have
-    for (int i = /*1*/0; i < mPartials.size(); i++)
+    for (int i = 0; i < mPartials.size(); i++)
+#else
+    // Skip the first partial, so it will always have warping=1 
+    for (int i = 1; i < mPartials.size(); i++)
+#endif
     {
         const PartialTracker5::Partial &p = mPartials[i];
     
@@ -2413,19 +2424,16 @@ SASFrame4::ComputeNormWarpingAux()
         if ((idx > 0) && (idx < mNormWarping.GetSize()))
             mNormWarping.Get()[(int)idx] = normWarp;
     }
-
-    //BLDebug::DumpData("warp0.txt", mNormWarping);
     
     // Avoid warping the first partial
     FillFirstValues(&mNormWarping, mPartials, 1.0);
 
-    //BLDebug::DumpData("warp1.txt", mNormWarping);
+    // NEW
+    FillLastValues(&mNormWarping, mPartials, 1.0);
     
     // Fill all the other value
     bool extendBounds = false;
     BLUtils::FillMissingValues(&mNormWarping, extendBounds, undefinedValue);
-
-    //BLDebug::DumpData("warp2.txt", mNormWarping);
 }
 
 BL_FLOAT
@@ -2791,7 +2799,7 @@ SASFrame4::FillLastValues(WDL_TypedBuf<BL_FLOAT> *values,
                           const vector<PartialTracker5::Partial> &partials,
                           BL_FLOAT val)
 {
-    // First, find the last bin idex
+    // First, find the last bin index
     int maxIdx = -1;
     for (int i = 0; i < partials.size(); i++)
     {
