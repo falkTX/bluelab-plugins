@@ -51,7 +51,8 @@ SIN_LUT_CREATE(SAS_FRAME_SIN_LUT, 4096);
 //
 // Avoids jumps in envelope
 #define COLOR_SMOOTH_COEFF 0.5
-#define WARPING_SMOOTH_COEFF 0.5
+// WARPING 0.9 improves "bowl"
+#define WARPING_SMOOTH_COEFF 0.9 //0.5
 // NOTE: for the moment, smooting freq in only for debugging
 #define FREQ_SMOOTH_COEFF 0.0
 
