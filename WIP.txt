@@ -88,7 +88,7 @@ BL-Gain60	    :	cppck, func, pre, bsp, sr,
 BL-Ghost	    :	cppck, func, pre, bsp, sr,
 BL-GhostViewer	    :   cppck, func, pre, bsp, # TODO!
 BL-Impulses	    :   cppck, func, pre, bsp,
-BL-Infra	    :   cppck, func, pre, bsp,
+BL-Infra	    :   cppck, func, pre, bsp, # TODO: check for regression denorm idx
 BL-InfrasonicViewer :   cppck, func, pre, bsp,
 BL-InfraSynth	    :
 BL-LoFi		    :   cppck, func, pre, bsp,
