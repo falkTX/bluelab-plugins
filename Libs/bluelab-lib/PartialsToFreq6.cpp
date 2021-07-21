@@ -154,7 +154,7 @@ PartialsToFreq6::ComputeFrequency(const WDL_TypedBuf<BL_FLOAT> &magns,
     
 #if 0 //1 //0 // TEST: Good!
     BL_FLOAT freq = freq0;
-    while(freq < 100.0/*300.0*/)
+    while(freq < 200.0/*100.0*//*300.0*/)
         freq *= 2.0;
 #endif
         

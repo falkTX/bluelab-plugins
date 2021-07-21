@@ -91,7 +91,7 @@ SIN_LUT_CREATE(SAS_FRAME_SIN_LUT, 4096);
 
 // Interpolate partials to color in DB
 // Better, for example with a single sine wave, at low freq
-#define COLOR_DB_INTERP 1
+#define COLOR_DB_INTERP 1 // ??
 
 // Set to 0 for optimization
 //
@@ -296,7 +296,9 @@ SASFrame4::GetNormWarping(WDL_TypedBuf<BL_FLOAT> *warping) const
 {
     *warping = mNormWarping;
 
+    BLUtils::AddValues(warping, -1.0);
     BLUtils::MultValues(warping, mWarpingFactor);
+    BLUtils::AddValues(warping, 1.0);
 }
 
 void
@@ -1605,7 +1607,12 @@ SASFrame4::GetWarping(const WDL_TypedBuf<BL_FLOAT> &warping,
         w = (1.0 - t)*w0 + t*w1;
     }
 
+    // Warping is center on 1
+    w -= 1.0;
+    
     w *= mWarpingFactor;
+
+    w += 1.0;
     
     return w;
 }
