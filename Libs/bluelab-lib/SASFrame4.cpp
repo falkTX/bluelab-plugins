@@ -2491,10 +2491,10 @@ SASFrame4::GetFreq(BL_FLOAT freq0, BL_FLOAT freq1, BL_FLOAT t)
     // Method 1: simple
     //BL_FLOAT freq = (1.0 - t)*freq0 + t*freq1;
     
+#if INTERP_RESCALE
     // Method 2: mel scale
     BL_FLOAT maxFreq = mSampleRate*0.5;
-
-#if INTERP_RESCALE
+    
     freq0 = mScale->ApplyScale(Scale::MEL, freq0/maxFreq, (BL_FLOAT)0.0, maxFreq);
     freq1 = mScale->ApplyScale(Scale::MEL, freq1/maxFreq, (BL_FLOAT)0.0, maxFreq);
 #endif
