@@ -621,8 +621,8 @@ InfraProcess2::GenerateSubPartials(const vector<PartialTracker5::Partial> &parti
 
 void
 InfraProcess2::IncreaseInitialFreq(WDL_TypedBuf<BL_FLOAT> *result,
-                                  const WDL_TypedBuf<BL_FLOAT> &magns,
-                                  const vector<PartialTracker5::Partial> &partials)
+                                   const WDL_TypedBuf<BL_FLOAT> &magns,
+                                   const vector<PartialTracker5::Partial> &partials)
 {
     result->Resize(magns.GetSize());
     BLUtils::FillAllZero(result);
