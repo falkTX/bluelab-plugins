@@ -2295,6 +2295,35 @@ SASFrame4::ComputeColorAux()
         freq += mFrequency;
     }
 #endif
+
+#if 1 // Avoid interpolating to the last partial value to 0
+      // Would make color where ther eis no sound otherwise
+      // (e.g example with just some sine waves is false)
+
+    // First, find tha last bin idex
+    int maxPartialIdx = -1;
+    for (int i = 0; i < mPartials.size(); i++)
+    {
+        const PartialTracker5::Partial &p = mPartials[i];
+ 
+        // Dead or zombie: do not use for color enveloppe
+        // (this is important !)
+        if (p.mState != PartialTracker5::Partial::ALIVE)
+            continue;
+
+        if (p.mRightIndex > maxPartialIdx)
+            maxPartialIdx = p.mRightIndex;
+    }
+
+    // Then fill with zeros after this index
+    if (maxPartialIdx > 0)
+    {
+        for (int i = maxPartialIdx + 1; i < mColor.GetSize(); i++)
+        {
+            mColor.Get()[i] = mMinAmpDB;
+        }
+    }            
+#endif
     
     // Fill al the other value
     bool extendBounds = false;
