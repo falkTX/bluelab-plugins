@@ -12,8 +12,6 @@ using namespace std;
 #include <BLUtils.h>
 #include <BLUtilsMath.h>
 
-#include <PartialTWMEstimate3.h>
-
 #include <ChromagramObj.h>
 
 #include <BLDebug.h>
@@ -50,8 +48,6 @@ PartialsToFreq6::PartialsToFreq6(int bufferSize, int oversampling,
 {
     mBufferSize = bufferSize;
     mSampleRate = sampleRate;
-    
-    mEstimate = new PartialTWMEstimate3(bufferSize, sampleRate);
 
     mChromaObj = new ChromagramObj(bufferSize, oversampling,
                                    freqRes, sampleRate);
@@ -70,8 +66,6 @@ PartialsToFreq6::PartialsToFreq6(int bufferSize, int oversampling,
 
 PartialsToFreq6::~PartialsToFreq6()
 {
-    delete mEstimate;
-
     delete mChromaObj;
 }
 
@@ -83,46 +77,7 @@ PartialsToFreq6::Reset(int bufferSize, int oversampling,
 }
 
 void
-PartialsToFreq6::SetHarmonicSoundFlag(bool flag)
-{
-    mEstimate->SetHarmonicSoundFlag(flag);
-}
-
-#if 0
-BL_FLOAT
-PartialsToFreq6::ComputeFrequency(const WDL_TypedBuf<BL_FLOAT> &magns,
-                                  const WDL_TypedBuf<BL_FLOAT> &phases,
-                                  const vector<PartialTracker5::Partial> &partials)
-{
-    vector<PartialTracker5::Partial> partials0 = partials;
-    
-#if THRESHOLD_PARTIALS
-    ThresholdPartials(&partials0);
-#endif
-
-#if THRESHOLD_PARTIALS_RELATIVE
-    ThresholdPartialsRelative(&partials0);
-#endif
- 
-    if (partials0.empty())
-    {
-        BL_FLOAT freq = 0.0;
-        
-        return freq;
-    }
-    
-    if (partials0.size() == 1)
-    {
-        BL_FLOAT freq = partials0[0].mFreq;
-        
-        return freq;
-    }
-    
-    BL_FLOAT freq = mEstimate->Estimate(partials0);
-    
-    return freq;
-}
-#endif
+PartialsToFreq6::SetHarmonicSoundFlag(bool flag) {}
 
 BL_FLOAT
 PartialsToFreq6::ComputeFrequency(const WDL_TypedBuf<BL_FLOAT> &magns,

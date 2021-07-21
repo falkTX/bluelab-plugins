@@ -118,21 +118,11 @@ public:
 protected:
     void ComputeSamplesPartials(WDL_TypedBuf<BL_FLOAT> *samples);
     
-    void ComputeSamplesSAS(WDL_TypedBuf<BL_FLOAT> *samples);
-    // Optim
-    void ComputeSamplesSAS2(WDL_TypedBuf<BL_FLOAT> *samples);
-    // Avoid clicks
-    void ComputeSamplesSAS3(WDL_TypedBuf<BL_FLOAT> *samples);
-    // Optim
-    void ComputeSamplesSAS4(WDL_TypedBuf<BL_FLOAT> *samples);
-    // Optim
-    void ComputeSamplesSAS5(WDL_TypedBuf<BL_FLOAT> *samples);
-    // Refact
-    void ComputeSamplesSAS6(WDL_TypedBuf<BL_FLOAT> *samples);
     BL_FLOAT GetColor(const WDL_TypedBuf<BL_FLOAT> &color, BL_FLOAT binIdx);
     BL_FLOAT GetWarping(const WDL_TypedBuf<BL_FLOAT> &warping, BL_FLOAT binIdx);
 
-    void ComputeSamplesSAS7(WDL_TypedBuf<BL_FLOAT> *samples);
+    // Was "ComputeSamplesSAS7"
+    void ComputeSamplesSAS(WDL_TypedBuf<BL_FLOAT> *samples);
     
     void ComputeFftSAS(WDL_TypedBuf<BL_FLOAT> *samples);
     void ComputeFftSASFreqAdjust(WDL_TypedBuf<BL_FLOAT> *samples);
@@ -145,12 +135,9 @@ protected:
     // Compute steps
     //
     void ComputeAmplitude();
-    
     void ComputeFrequency();
-    
     void ComputeColor();
     void ComputeColorAux();
-    
     void ComputeNormWarping();
     void ComputeNormWarpingAux();
     
@@ -170,17 +157,7 @@ protected:
 
     void GetSASPartial(SASPartial *result, int index, BL_FLOAT t);
     
-    // Estimate the fundamental frequency
-    BL_FLOAT TWMEstimate(const vector<PartialTracker5::Partial> &partials);
-    BL_FLOAT ComputeTWMError(const vector<PartialTracker5::Partial> &partials,
-                           BL_FLOAT testFreq);
-    BL_FLOAT ComputeErrorK(const PartialTracker5::Partial &partial,
-                         BL_FLOAT harmo, BL_FLOAT Amax);
-    BL_FLOAT ComputeErrorN(const PartialTracker5::Partial &partial,
-                         BL_FLOAT harmo, BL_FLOAT Amax);
-    BL_FLOAT GetNearestHarmonic(BL_FLOAT freq, BL_FLOAT refFreq);
-    
-    
+    //
     BL_FLOAT GetFreq(BL_FLOAT freq0, BL_FLOAT freq1, BL_FLOAT t);
     BL_FLOAT GetAmp(BL_FLOAT amp0, BL_FLOAT amp1, BL_FLOAT t);
     BL_FLOAT GetCol(BL_FLOAT col0, BL_FLOAT col1, BL_FLOAT t);

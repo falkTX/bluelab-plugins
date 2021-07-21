@@ -29,7 +29,6 @@ using namespace std;
 // VERY GOOD! (this is a real improvement over the standardly used algorithm!)
 // => the freq from chroma is really more smooth than the tracked partial data
 // => and it represents the pitch rellay more accurately than partial tracking
-class PartialTWMEstimate3;
 class ChromagramObj;
 class PartialsToFreq6
 {
@@ -86,8 +85,6 @@ protected:
     BL_FLOAT mSampleRate;
 
     ChromagramObj *mChromaObj;
-    
-    PartialTWMEstimate3 *mEstimate; // Unused ?
 
 private:
     WDL_TypedBuf<BL_FLOAT> mTmpBuf0;
