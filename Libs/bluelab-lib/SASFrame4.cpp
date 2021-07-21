@@ -154,6 +154,9 @@ SASFrame4::SASFrame4(int bufferSize, BL_FLOAT sampleRate, int overlapping)
 #endif
     
     mMinAmpDB = -120.0;
+
+    mSynthEvenPartials = true;
+    mSynthOddPartials = true;
 }
 
 SASFrame4::~SASFrame4()
@@ -218,6 +221,18 @@ void
 SASFrame4::SetSynthMode(enum SynthMode mode)
 {
     mSynthMode = mode;
+}
+
+void
+SASFrame4::SetSynthEvenPartials(bool flag)
+{
+    mSynthEvenPartials = flag;
+}
+
+void
+SASFrame4::SetSynthOddPartials(bool flag)
+{
+    mSynthOddPartials = flag;
 }
 
 void
@@ -525,6 +540,25 @@ SASFrame4::ComputeSamplesSAS(WDL_TypedBuf<BL_FLOAT> *samples)
     int partialIndex = 0;
     while((partialFreq < mSampleRate/2.0) && (partialIndex < SYNTH_MAX_NUM_PARTIALS))
     {
+        if (partialIndex > 0)
+        {
+            if ((!mSynthEvenPartials) && (partialIndex % 2 == 0))
+            {
+                partialIndex++;
+                partialFreq = mFrequency*mFreqFactor*(partialIndex + 1);
+                
+                continue;
+            }
+
+            if ((!mSynthOddPartials) && (partialIndex % 2 == 1))
+            {
+                partialIndex++;
+                partialFreq = mFrequency*mFreqFactor*(partialIndex + 1);
+                
+                continue;
+            }
+        }
+        
         if (partialFreq > SYNTH_MIN_FREQ)
         {
             // Current and prev partials
@@ -612,15 +646,9 @@ SASFrame4::ComputeSamplesSAS(WDL_TypedBuf<BL_FLOAT> *samples)
             mSASPartials[partialIndex].mPhase = phase;
         }
         
-        partialIndex++;
-#if 1 //0 //1 // Orig
+        partialIndex++;            
+            
         partialFreq = mFrequency*mFreqFactor*(partialIndex + 1);
-#endif
-        
-#if 0 //1 //0 // TEST for bowl
-        //partialFreq *= 2.0;
-        partialFreq = mFrequency*mFreqFactor*(partialIndex*2 + 1);
-#endif
     }
     
     // At the end, apply amplitude
@@ -1182,12 +1210,6 @@ void
 SASFrame4::SetWarpingFactor(BL_FLOAT factor)
 {
     mWarpingFactor = factor;
-}
-
-void
-SASFrame4::SetHarmonicSoundFlag(bool flag)
-{
-    mPartialsToFreq->SetHarmonicSoundFlag(flag);
 }
 
 bool

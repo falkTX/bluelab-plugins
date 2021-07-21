@@ -74,10 +74,10 @@ public:
     void SetColorFactor(BL_FLOAT factor);
     void SetWarpingFactor(BL_FLOAT factor);
     
-    void SetHarmonicSoundFlag(bool flag);
-    
     void SetSynthMode(SASFrame4::SynthMode mode);
-
+    void SetSynthEvenPartials(bool flag);
+    void SetSynthOddPartials(bool flag);
+    
     void SetHarmoNoiseMix(BL_FLOAT mix);
     
     void SetTimeSmoothCoeff(BL_FLOAT coeff);
@@ -137,9 +137,7 @@ protected:
     
     SASFrame4 *mSASFrame;
     
-    Mode mMode;
     BL_FLOAT mThreshold;
-    bool mHarmonicFlag;
 
     BL_FLOAT mHarmoNoiseMix;
     

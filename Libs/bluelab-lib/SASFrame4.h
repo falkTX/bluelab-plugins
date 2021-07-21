@@ -67,6 +67,8 @@ public:
     void SetMinAmpDB(BL_FLOAT ampDB);
     
     void SetSynthMode(enum SynthMode mode);
+    void SetSynthEvenPartials(bool flag);
+    void SetSynthOddPartials(bool flag);
     
     // De-normalized partials
     void SetPartials(const vector<PartialTracker5::Partial> &partials);
@@ -104,8 +106,6 @@ public:
     void SetFreqFactor(BL_FLOAT factor);
     void SetColorFactor(BL_FLOAT factor);
     void SetWarpingFactor(BL_FLOAT factor);
-    
-    void SetHarmonicSoundFlag(bool flag);
     
     bool ComputeSamplesFlag();
     bool ComputeSamplesPostFlag();
@@ -174,6 +174,8 @@ protected:
     
     //
     SynthMode mSynthMode;
+    bool mSynthEvenPartials;
+    bool mSynthOddPartials;
     
     // Tracked partials
     BL_FLOAT mPrevAmplitude;

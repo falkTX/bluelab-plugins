@@ -58,10 +58,7 @@ SASViewerProcess3::SASViewerProcess3(int bufferSize,
     mSASFrame->SetMinAmpDB(minAmpDB);
     
     mThreshold = -60.0;
-    mHarmonicFlag = false;
     
-    mMode = TRACKING;
-
     mHarmoNoiseMix = 1.0;
     
     // For additional lines
@@ -321,16 +318,21 @@ SASViewerProcess3::SetWarpingFactor(BL_FLOAT factor)
 }
 
 void
-SASViewerProcess3::SetHarmonicSoundFlag(bool flag)
-{
-    mHarmonicFlag = flag;
-    mSASFrame->SetHarmonicSoundFlag(flag);
-}
-
-void
 SASViewerProcess3::SetSynthMode(SASFrame4::SynthMode mode)
 {
     mSASFrame->SetSynthMode(mode);
+}
+
+void
+SASViewerProcess3::SetSynthEvenPartials(bool flag)
+{
+    mSASFrame->SetSynthEvenPartials(flag);
+}
+
+void
+SASViewerProcess3::SetSynthOddPartials(bool flag)
+{
+    mSASFrame->SetSynthOddPartials(flag);
 }
 
 void
