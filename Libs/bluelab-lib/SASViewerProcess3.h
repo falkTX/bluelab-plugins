@@ -78,8 +78,7 @@ public:
     
     void SetSynthMode(SASFrame4::SynthMode mode);
 
-    void SetEnableOutHarmo(bool flag);
-    void SetEnableOutNoise(bool flag);
+    void SetHarmoNoiseMix(BL_FLOAT mix);
     
     void SetTimeSmoothCoeff(BL_FLOAT coeff);
     
@@ -141,9 +140,8 @@ protected:
     Mode mMode;
     BL_FLOAT mThreshold;
     bool mHarmonicFlag;
-    
-    bool mEnableOutHarmo;
-    bool mEnableOutNoise;
+
+    BL_FLOAT mHarmoNoiseMix;
     
     // For tracking display
     deque<vector<LinesRender2::Point> > mPartialsPoints;

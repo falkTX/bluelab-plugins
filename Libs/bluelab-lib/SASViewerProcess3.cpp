@@ -61,9 +61,8 @@ SASViewerProcess3::SASViewerProcess3(int bufferSize,
     mHarmonicFlag = false;
     
     mMode = TRACKING;
-    
-    mEnableOutHarmo = true;
-    mEnableOutNoise = true;
+
+    mHarmoNoiseMix = 1.0;
     
     // For additional lines
     mAddNum = 0;
@@ -154,28 +153,31 @@ SASViewerProcess3::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
         mPartialTracker->DenormPartials(&partials);
         
         mSASFrame->SetPartials(partials);
+
+        BL_FLOAT noiseCoeff;
+        BL_FLOAT harmoCoeff;
+        BLUtils::MixParamToCoeffs(mHarmoNoiseMix, &noiseCoeff, &harmoCoeff);
         
         WDL_TypedBuf<BL_FLOAT> &noise = mTmpBuf4;
         mPartialTracker->GetNoiseEnvelope(&noise);
         
         mSASFrame->SetNoiseEnvelope(noise);
-        if (mEnableOutNoise)
-        {
-            mPartialTracker->DenormData(&noise);
-            
-            magns = noise;
-        }
+        
+        mPartialTracker->DenormData(&noise);
+
+        BLUtils::MultValues(&noise, noiseCoeff);
+        
+        magns = noise;
         
 #if OUT_HARMO_EXTRACTED_ENV
         WDL_TypedBuf<BL_FLOAT> &harmo = mTmpBuf5;
         mPartialTracker->GetHarmonicEnvelope(&harmo);
         
-        if (mEnableOutHarmo)
-        {
-            mPartialTracker->DenormData(&harmo);
-            
-            BLUtils::AddValues(&magns, harmo);
-        }
+        mPartialTracker->DenormData(&harmo);
+
+        BLUtils::MultValues(&harmo, harmoCoeff);
+        
+        BLUtils::AddValues(&magns, harmo);
 #endif
         
         Display();
@@ -200,27 +202,29 @@ SASViewerProcess3::ProcessSamplesBuffer(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
     // (because it doesn't use overlap)
     WDL_TypedBuf<BL_FLOAT> samplesBuffer;
     BLUtils::ResizeFillZeros(&samplesBuffer, ioBuffer->GetSize());
-    
+
+    BL_FLOAT noiseCoeff;
+    BL_FLOAT harmoCoeff;
+    BLUtils::MixParamToCoeffs(mHarmoNoiseMix, &noiseCoeff, &harmoCoeff);
+        
 #if OUT_HARMO_SAS_FRAME
     // Compute the samples from partials
     mSASFrame->ComputeSamplesResynth(&samplesBuffer);
+
+    BLUtils::MultValues(&samplesBuffer, harmoCoeff);
     
-    if (mEnableOutHarmo)
-    {
-        // ioBuffer may already contain noise
-        BLUtils::AddValues(ioBuffer, samplesBuffer);
-    }
+    // ioBuffer may already contain noise
+    BLUtils::AddValues(ioBuffer, samplesBuffer);
 #endif
     
 #if OUT_HARMO_INPUT_PARTIALS
     // Compute the samples from partials
     mSASFrame->ComputeSamples(&samplesBuffer);
+
+    BLUtils::MultValues(&samplesBuffer, harmoCoeff);
     
-    if (mEnableOutHarmo)
-    {
-        // ioBuffer may already contain noise
-        BLUtils::AddValues(ioBuffer, samplesBuffer);
-    }
+    // ioBuffer may already contain noise
+    BLUtils::AddValues(ioBuffer, samplesBuffer);
 #endif
 }
 
@@ -237,26 +241,29 @@ SASViewerProcess3::ProcessSamplesPost(WDL_TypedBuf<BL_FLOAT> *ioBuffer)
     //BLUtils::ResizeFillZeros(&samplesBuffer, ioBuffer->GetSize());
     samplesBuffer.Resize(ioBuffer->GetSize());
     BLUtils::FillAllZero(&samplesBuffer);
-    
+
+    BL_FLOAT noiseCoeff;
+    BL_FLOAT harmoCoeff;
+    BLUtils::MixParamToCoeffs(mHarmoNoiseMix, &noiseCoeff, &harmoCoeff);
+        
 #if OUT_HARMO_SAS_FRAME
     // Compute the samples from partials
     mSASFrame->ComputeSamplesResynthPost(&samplesBuffer);
-    if (mEnableOutHarmo)
-    {
-        // ioBuffer may already contain noise
-        BLUtils::AddValues(ioBuffer, samplesBuffer);
-    }
+
+    BLUtils::MultValues(&samplesBuffer, harmoCoeff);
+    
+    // ioBuffer may already contain noise
+    BLUtils::AddValues(ioBuffer, samplesBuffer);
 #endif
     
 #if OUT_HARMO_INPUT_PARTIALS
     // Compute the samples from partials
     mSASFrame->ComputeSamplesPost(&samplesBuffer);
+
+    BLUtils::MultValues(&samplesBuffer, harmoCoeff);
     
-    if (mEnableOutHarmo)
-    {
-        // ioBuffer may already contain noise
-        BLUtils::AddValues(ioBuffer, samplesBuffer);
-    }
+    // ioBuffer may already contain noise
+    BLUtils::AddValues(ioBuffer, samplesBuffer);
 #endif
 }
 
@@ -327,15 +334,9 @@ SASViewerProcess3::SetSynthMode(SASFrame4::SynthMode mode)
 }
 
 void
-SASViewerProcess3::SetEnableOutHarmo(bool flag)
+SASViewerProcess3::SetHarmoNoiseMix(BL_FLOAT mix)
 {
-    mEnableOutHarmo = flag;
-}
-
-void
-SASViewerProcess3::SetEnableOutNoise(bool flag)
-{
-    mEnableOutNoise = flag;
+    mHarmoNoiseMix = mix;
 }
 
 void
