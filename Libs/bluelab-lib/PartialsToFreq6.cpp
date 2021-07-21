@@ -53,15 +53,9 @@ PartialsToFreq6::PartialsToFreq6(int bufferSize, int oversampling,
                                    freqRes, sampleRate);
     // Max smoothness
     mChromaObj->SetSharpness(1.0);
-    // DEBUG: for hte example "oohoo", tune in order to not have a cut due to modulo
+    // DEBUG: for the example "oohoo", tune in order to not have a cut due to modulo
     mChromaObj->SetATune(440.0);
     //mChromaObj->SetATune(698.46); // F (half one actave higher, to avoid cut)
-                         
-    /*BLDebug::ResetFile("chroma0.txt");
-      BLDebug::ResetFile("freq0.txt");
-      BLDebug::ResetFile("freq.txt");
-      BLDebug::ResetFile("min-partial.txt");
-      BLDebug::ResetFile("min-partial0.txt");*/
 }
 
 PartialsToFreq6::~PartialsToFreq6()
@@ -95,12 +89,8 @@ PartialsToFreq6::ComputeFrequency(const WDL_TypedBuf<BL_FLOAT> &magns,
     //BL_FLOAT maxChroma = BLUtils::FindMaxValue(chromaLine);
     int maxChromaIdx = BLUtils::FindMaxIndex(chromaLine);
     BL_FLOAT maxChroma = ((BL_FLOAT)maxChromaIdx)/chromaLine.GetSize();
-     
-    //BLDebug::AppendValue("chroma0.txt", maxChroma);
     
     BL_FLOAT freq0 = mChromaObj->ChromaToFreq(maxChroma, MIN_FREQ);
-
-    //BLDebug::AppendValue("freq0.txt", freq0);
     
     // Find closest partial (not working well)
 #if 0 //1
@@ -121,8 +111,6 @@ PartialsToFreq6::ComputeFrequency(const WDL_TypedBuf<BL_FLOAT> &magns,
     // This is a bit hackish, but looks efficient
     BL_FLOAT freq = FindBestOctave2(freq0, magns);
 #endif
-    
-    //BLDebug::AppendValue("freq.txt", freq);
     
     return freq;
 }
@@ -298,14 +286,6 @@ BL_FLOAT
 PartialsToFreq6::FindBestOctave(BL_FLOAT inFreq,
                                 const vector<PartialTracker5::Partial> &partials)
 {
-    /*if (partials.empty())
-      {
-      BLDebug::AppendValue("min-partial.txt", 0.0);
-      BLDebug::AppendValue("min-partial0.txt", 0.0);
-      
-      return 0.0;
-      }*/
-    
     vector<PartialTracker5::Partial> partials0 = partials;
     sort(partials0.begin(), partials0.end(), PartialTracker5::Partial::FreqLess);
 
@@ -323,13 +303,6 @@ PartialsToFreq6::FindBestOctave(BL_FLOAT inFreq,
             break;
         }
     }
-        
-    /*if (minIdx >= 0)
-      BLDebug::AppendValue("min-partial.txt", partials0[minIdx].mFreq);
-      
-      if (!partials0.empty())
-      BLDebug::AppendValue("min-partial0.txt", partials0[0].mFreq);
-    */
     
     BL_FLOAT freq = inFreq;
     while(freq < minFreq*PREV_PARTIAL_COEFF)
@@ -344,8 +317,6 @@ BL_FLOAT
 PartialsToFreq6::FindBestOctave2(BL_FLOAT inFreq,
                                  const WDL_TypedBuf<BL_FLOAT> &magns)
 {
-    //BLDebug::AppendValue("min-partial.txt", 0.0);
-
 #if 0 // Very naive method, does not work well
     // Compute max amplitude
     // And consider this is the peak of the main partial
@@ -392,8 +363,6 @@ PartialsToFreq6::FindBestOctave2(BL_FLOAT inFreq,
     if (minFreq < 0.0)
         return inFreq;
 #endif
-    
-    //BLDebug::AppendValue("min-partial.txt", minFreq);
     
     BL_FLOAT freq = inFreq;
     while(freq < minFreq*PREV_PARTIAL_COEFF)
