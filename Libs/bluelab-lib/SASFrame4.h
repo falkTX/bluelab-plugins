@@ -28,6 +28,7 @@ using namespace std;
 class PartialsToFreq6;
 class FreqAdjustObj3;
 class WavetableSynth;
+class OnsetDetector;
 class SASFrame4
 {
 public:
@@ -227,6 +228,8 @@ protected:
     BL_FLOAT mMinAmpDB;
 
     Scale *mScale;
+
+    OnsetDetector *mOnsetDetector;
 };
 
 #endif /* defined(__BL_SASViewer__SASFrame4__) */

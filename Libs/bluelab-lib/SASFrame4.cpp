@@ -30,6 +30,8 @@
 
 #include <Scale.h>
 
+#include <OnsetDetector.h>
+
 #include "SASFrame4.h"
 
 
@@ -91,6 +93,12 @@ SIN_LUT_CREATE(SAS_FRAME_SIN_LUT, 4096);
 
 // Origin: 1
 #define FILL_ZERO_FIRST_LAST_VALUES 1
+
+// Use OnsetDetector to avoir generating garbage harmonics when a transient appears
+#define DETECT_TRANSIENTS_ONSET 1
+#define ONSET_THRESHOLD 0.94
+//#define ONSET_VALUE_THRESHOLD 0.0012
+#define ONSET_VALUE_THRESHOLD 0.06
 
 SASFrame4::SASPartial::SASPartial()
 {
@@ -158,6 +166,12 @@ SASFrame4::SASFrame4(int bufferSize, BL_FLOAT sampleRate, int overlapping)
 
     mSynthEvenPartials = true;
     mSynthOddPartials = true;
+
+    mOnsetDetector = NULL;
+#if DETECT_TRANSIENTS_ONSET
+    mOnsetDetector = new OnsetDetector();
+    mOnsetDetector->SetThreshold(ONSET_THRESHOLD);
+#endif
 }
 
 SASFrame4::~SASFrame4()
@@ -173,6 +187,10 @@ SASFrame4::~SASFrame4()
 #endif
 
     delete mScale;
+
+#if DETECT_TRANSIENTS_ONSET
+    delete mOnsetDetector;
+#endif
 }
 
 void
@@ -508,6 +526,13 @@ SASFrame4::ComputeSamplesPartials(WDL_TypedBuf<BL_FLOAT> *samples)
 void
 SASFrame4::ComputeSamplesSAS(WDL_TypedBuf<BL_FLOAT> *samples)
 {
+#if DETECT_TRANSIENTS_ONSET
+    mOnsetDetector->Detect(mInputMagns);
+    BL_FLOAT onsetValue = mOnsetDetector->GetCurrentOnsetValue();
+    
+    bool transientDetected = (onsetValue > ONSET_VALUE_THRESHOLD);
+#endif
+    
     BLUtils::FillAllZero(samples);
     
     // First time: initialize the partials
@@ -635,8 +660,12 @@ SASFrame4::ComputeSamplesSAS(WDL_TypedBuf<BL_FLOAT> *samples)
                 
                 if (freq >= SYNTH_MIN_FREQ)
                 {
-                    samples->Get()[i] += samp*col;
-                    ampDenoms.Get()[i] += col;
+                    // Generate samples only if not on an transient
+                    if (!transientDetected)
+                    {
+                        samples->Get()[i] += samp*col;
+                        ampDenoms.Get()[i] += col;
+                    }
                 }
                 
                 t += tStep;
@@ -674,6 +703,12 @@ SASFrame4::ComputeSamplesSAS(WDL_TypedBuf<BL_FLOAT> *samples)
     }
     
     mPrevAmplitude = mAmplitude;
+
+    if (transientDetected)
+    {
+        // Set the volumes to 0, for next step, to avoid click
+        mPrevAmplitude = 0.0;
+    }
     
     mPrevSASPartials = mSASPartials;
 }
