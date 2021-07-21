@@ -93,6 +93,14 @@ SIN_LUT_CREATE(SAS_FRAME_SIN_LUT, 4096);
 // Better, for example with a single sine wave, at low freq
 #define COLOR_DB_INTERP 1
 
+// Set to 0 for optimization
+//
+// Origin: interpolate everything in db or mel scale
+//
+// Optim: this looks to work well when set to 0
+// Perfs: 26% => 17%CPU
+#define INTERP_RESCALE 0 // Origin: 1
+
 SASFrame4::SASPartial::SASPartial()
 {
     mFreq = 0.0;
@@ -1383,12 +1391,16 @@ SASFrame4::GetColor(const WDL_TypedBuf<BL_FLOAT> &color,
         //col = (1.0 - t)*col0 + t*col1;
         
         // Method 2: interpolate in dB
+#if INTERP_RESCALE
         col0 = mScale->ApplyScale(Scale::DB, col0, mMinAmpDB, (BL_FLOAT)0.0);
         col1 = mScale->ApplyScale(Scale::DB, col1, mMinAmpDB, (BL_FLOAT)0.0);
+#endif
         
         col = (1.0 - t)*col0 + t*col1;
-        
+
+#if INTERP_RESCALE
         col = mScale->ApplyScale(Scale::DB_INV, col, mMinAmpDB, (BL_FLOAT)0.0);
+#endif
     }
     
     return col;
@@ -2481,13 +2493,18 @@ SASFrame4::GetFreq(BL_FLOAT freq0, BL_FLOAT freq1, BL_FLOAT t)
     
     // Method 2: mel scale
     BL_FLOAT maxFreq = mSampleRate*0.5;
+
+#if INTERP_RESCALE
     freq0 = mScale->ApplyScale(Scale::MEL, freq0/maxFreq, (BL_FLOAT)0.0, maxFreq);
     freq1 = mScale->ApplyScale(Scale::MEL, freq1/maxFreq, (BL_FLOAT)0.0, maxFreq);
+#endif
     
     BL_FLOAT freq = (1.0 - t)*freq0 + t*freq1;
-    
-    freq = mScale->ApplyScale(Scale::MEL_INV, freq, (BL_FLOAT)0.0, maxFreq);
+
+#if INTERP_RESCALE
+    freq = mScale->ApplyScale(Scale::MEL_INV, freq, (BL_FLOAT)0.0, maxFreq);    
     freq *= maxFreq;
+#endif
     
     return freq;
 }
@@ -2499,12 +2516,16 @@ SASFrame4::GetAmp(BL_FLOAT amp0, BL_FLOAT amp1, BL_FLOAT t)
     //BL_FLOAT amp = (1.0 - t)*amp0 + t*amp1;
     
     // Method 2: (if amp is not already in dB)
+#if INTERP_RESCALE
     amp0 = mScale->ApplyScale(Scale::DB, amp0, mMinAmpDB, (BL_FLOAT)0.0);
     amp1 = mScale->ApplyScale(Scale::DB, amp1, mMinAmpDB, (BL_FLOAT)0.0);
+#endif
     
     BL_FLOAT amp = (1.0 - t)*amp0 + t*amp1;
-    
+
+#if INTERP_RESCALE
     amp = mScale->ApplyScale(Scale::DB_INV, amp, mMinAmpDB, (BL_FLOAT)0.0);
+#endif
     
     return amp;
 }
@@ -2516,12 +2537,16 @@ SASFrame4::GetCol(BL_FLOAT col0, BL_FLOAT col1, BL_FLOAT t)
     //BL_FLOAT col = (1.0 - t)*col0 + t*col1;
     
     // Method 2: (if col is not already in dB)
+#if INTERP_RESCALE
     col0 = mScale->ApplyScale(Scale::DB, col0, mMinAmpDB, (BL_FLOAT)0.0);
     col1 = mScale->ApplyScale(Scale::DB, col1, mMinAmpDB, (BL_FLOAT)0.0);
+#endif
     
     BL_FLOAT col = (1.0 - t)*col0 + t*col1;
-    
+
+#if INTERP_RESCALE
     col = mScale->ApplyScale(Scale::DB_INV, col, mMinAmpDB, (BL_FLOAT)0.0);
+#endif
     
     return col;
 }
