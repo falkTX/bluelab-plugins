@@ -101,6 +101,9 @@ SIN_LUT_CREATE(SAS_FRAME_SIN_LUT, 4096);
 // Perfs: 26% => 17%CPU
 #define INTERP_RESCALE 0 // Origin: 1
 
+// Origin: 1
+#define FILL_ZERO_FIRST_LAST_VALUES 1
+
 SASFrame4::SASPartial::SASPartial()
 {
     mFreq = 0.0;
@@ -1497,6 +1500,9 @@ SASFrame4::ComputeSamplesSAS7(WDL_TypedBuf<BL_FLOAT> *samples)
                 // Color
                 BL_FLOAT col = GetCol(col0, col1, t);
 
+                // DEBUG
+                //col = 1.0;
+                
                 // Sample
                 
                 // Not 100% perfect (partials les neat)
@@ -1522,7 +1528,14 @@ SASFrame4::ComputeSamplesSAS7(WDL_TypedBuf<BL_FLOAT> *samples)
         }
         
         partialIndex++;
+#if 1 //0 //1 // Orig
         partialFreq = mFrequency*mFreqFactor*(partialIndex + 1);
+#endif
+        
+#if 0 //1 //0 // TEST for bowl
+        //partialFreq *= 2.0;
+        partialFreq = mFrequency*mFreqFactor*(partialIndex*2 + 1);
+#endif
     }
     
     // At the end, apply amplitude
@@ -2300,11 +2313,13 @@ SASFrame4::ComputeColorAux()
         freq += mFrequency;
     }
 #endif
-    
+
+#if FILL_ZERO_FIRST_LAST_VALUES
     // Avoid interpolating to the last partial value to 0
     // Would make color where ther eis no sound otherwise
     // (e.g example with just some sine waves is false)
     FillLastValues(&mColor, mPartials, mMinAmpDB);
+#endif
     
     // Fill al the other value
     bool extendBounds = false;
@@ -2411,25 +2426,26 @@ SASFrame4::ComputeNormWarpingAux()
         if (p.mState != PartialTracker5::Partial::ALIVE)
             continue;
         
-        BL_FLOAT idx = p.mFreq/hzPerBin;
-        
-        // TODO: make an interpolation, it is not so good to align to bins
-        idx = bl_round(idx);
-        
         BL_FLOAT freq = mPartials[i].mFreq;
         BL_FLOAT freq1 = BLUtilsMath::FindNearestHarmonic(freq, freq0);
         
         BL_FLOAT normWarp = freq/freq1;
+
+        BL_FLOAT idx = p.mFreq/hzPerBin;
+        // TODO: make an interpolation, it is not so good to align to bins
+        idx = bl_round(idx);
         
         if ((idx > 0) && (idx < mNormWarping.GetSize()))
             mNormWarping.Get()[(int)idx] = normWarp;
     }
-    
+
+#if FILL_ZERO_FIRST_LAST_VALUES
     // Avoid warping the first partial
     FillFirstValues(&mNormWarping, mPartials, 1.0);
 
     // NEW
     FillLastValues(&mNormWarping, mPartials, 1.0);
+#endif
     
     // Fill all the other value
     bool extendBounds = false;
