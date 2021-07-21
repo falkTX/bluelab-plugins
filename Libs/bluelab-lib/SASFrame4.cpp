@@ -1494,16 +1494,12 @@ SASFrame4::ComputeSamplesSAS7(WDL_TypedBuf<BL_FLOAT> *samples)
                 // Freq
                 BL_FLOAT freq = GetFreq(prevPartial.mFreq, partial.mFreq, t);
                 
-                // Warping
-                // DEBUG: disabled for the moment
-                // NOTE: this is buggy for the moment => makes jumps
-                //freq *= w;
+                // Warping: this is buggy for the moment => makes jumps
+                freq *= w;
+                //freq /= w;
 
                 // Color
                 BL_FLOAT col = GetCol(col0, col1, t);
-                
-                // DEBUG
-                //col = 1.0; //
                 
                 // Sample
                 
