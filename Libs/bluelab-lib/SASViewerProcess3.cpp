@@ -290,9 +290,27 @@ SASViewerProcess3::SetThreshold(BL_FLOAT threshold)
 }
 
 void
-SASViewerProcess3::SetPitch(BL_FLOAT pitch)
+SASViewerProcess3::SetAmpFactor(BL_FLOAT factor)
 {
-    mSASFrame->SetPitch(pitch);
+    mSASFrame->SetAmpFactor(factor);
+}
+
+void
+SASViewerProcess3::SetFreqFactor(BL_FLOAT factor)
+{
+    mSASFrame->SetFreqFactor(factor);
+}
+
+void
+SASViewerProcess3::SetColorFactor(BL_FLOAT factor)
+{
+    mSASFrame->SetColorFactor(factor);
+}
+
+void
+SASViewerProcess3::SetWarpingFactor(BL_FLOAT factor)
+{
+    mSASFrame->SetWarpingFactor(factor);
 }
 
 void

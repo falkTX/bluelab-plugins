@@ -100,7 +100,10 @@ public:
     
     void ComputeFftPartials(WDL_TypedBuf<BL_FLOAT> *samples);
     
-    void SetPitch(BL_FLOAT pitch);
+    void SetAmpFactor(BL_FLOAT factor);
+    void SetFreqFactor(BL_FLOAT factor);
+    void SetColorFactor(BL_FLOAT factor);
+    void SetWarpingFactor(BL_FLOAT factor);
     
     void SetHarmonicSoundFlag(bool flag);
     
@@ -128,6 +131,8 @@ protected:
     void ComputeSamplesSAS6(WDL_TypedBuf<BL_FLOAT> *samples);
     BL_FLOAT GetColor(const WDL_TypedBuf<BL_FLOAT> &color, BL_FLOAT binIdx);
     BL_FLOAT GetWarping(const WDL_TypedBuf<BL_FLOAT> &warping, BL_FLOAT binIdx);
+
+    void ComputeSamplesSAS7(WDL_TypedBuf<BL_FLOAT> *samples);
     
     void ComputeFftSAS(WDL_TypedBuf<BL_FLOAT> *samples);
     void ComputeFftSASFreqAdjust(WDL_TypedBuf<BL_FLOAT> *samples);
@@ -217,7 +222,10 @@ protected:
     vector<SASPartial> mSASPartials;
     vector<SASPartial> mPrevSASPartials;
     
-    BL_FLOAT mPitch;
+    BL_FLOAT mAmpFactor;
+    BL_FLOAT mFreqFactor;
+    BL_FLOAT mColorFactor;
+    BL_FLOAT mWarpingFactor;
     
     //PartialsToFreq5 *mPartialsToFreq;
     PartialsToFreq6 *mPartialsToFreq;

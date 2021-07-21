@@ -69,7 +69,10 @@ public:
     
     void SetThreshold(BL_FLOAT threshold);
     
-    void SetPitch(BL_FLOAT pitch);
+    void SetAmpFactor(BL_FLOAT factor);
+    void SetFreqFactor(BL_FLOAT factor);
+    void SetColorFactor(BL_FLOAT factor);
+    void SetWarpingFactor(BL_FLOAT factor);
     
     void SetHarmonicSoundFlag(bool flag);
     

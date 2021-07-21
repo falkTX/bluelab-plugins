@@ -140,7 +140,10 @@ SASFrame4::SASFrame4(int bufferSize, BL_FLOAT sampleRate, int overlapping)
     mFrequency = 0.0;
     mPrevFrequency = -1.0;
     
-    mPitch = 1.0;
+    mAmpFactor = 1.0;
+    mFreqFactor = 1.0;
+    mColorFactor = 1.0;
+    mWarpingFactor = 1.0;
 
     mScale = new Scale();
     
@@ -271,25 +274,29 @@ SASFrame4::SetInputData(const WDL_TypedBuf<BL_FLOAT> &magns,
 BL_FLOAT
 SASFrame4::GetAmplitude() const
 {
-    return mAmplitude;
+    return mAmplitude*mAmpFactor;
 }
 
 BL_FLOAT
 SASFrame4::GetFrequency() const
 {
-    return mFrequency;
+    return mFrequency*mFreqFactor;
 }
 
 void
 SASFrame4::GetColor(WDL_TypedBuf<BL_FLOAT> *color) const
 {
     *color = mColor;
+
+    BLUtils::MultValues(color, mColorFactor);
 }
 
 void
 SASFrame4::GetNormWarping(WDL_TypedBuf<BL_FLOAT> *warping) const
 {
     *warping = mNormWarping;
+
+    BLUtils::MultValues(warping, mWarpingFactor);
 }
 
 void
@@ -408,7 +415,8 @@ SASFrame4::ComputeSamplesResynthPost(WDL_TypedBuf<BL_FLOAT> *samples)
         //ComputeSamplesSAS3(samples);
         //ComputeSamplesSAS4(samples);
         //ComputeSamplesSAS5(samples);
-        ComputeSamplesSAS6(samples);
+        //ComputeSamplesSAS6(samples); // orig
+        ComputeSamplesSAS7(samples); // new
     }
 #endif
     
@@ -499,7 +507,7 @@ SASFrame4::ComputeSamplesSAS(WDL_TypedBuf<BL_FLOAT> *samples)
     BL_FLOAT amp0 = GetAmplitude();
     BL_FLOAT freq0 = GetFrequency();
     
-    freq0 *= mPitch;
+    freq0 *= mFreqFactor;
     
     // Sort partials by amplitude, in order to play the highest amplitudes ?
     BL_FLOAT freq = freq0;
@@ -587,7 +595,7 @@ SASFrame4::ComputeSamplesSAS2(WDL_TypedBuf<BL_FLOAT> *samples)
     BL_FLOAT amp0 = GetAmplitude();
     BL_FLOAT freq0 = GetFrequency();
     
-    freq0 *= mPitch;
+    freq0 *= mFreqFactor;
     
     // Optim
     BL_FLOAT phaseCoeff = 2.0*M_PI/mSampleRate;
@@ -750,7 +758,7 @@ SASFrame4::ComputeSamplesSAS3(WDL_TypedBuf<BL_FLOAT> *samples)
     BL_FLOAT hzPerBinInv = 1.0/hzPerBin;
     
     // Sort partials by amplitude, in order to play the highest amplitudes ?
-    BL_FLOAT partialFreq = mFrequency*mPitch;
+    BL_FLOAT partialFreq = mFrequency*mFreqFactor;
     int partialIndex = 0;
     while((partialFreq < mSampleRate/2.0) && (partialIndex < SYNTH_MAX_NUM_PARTIALS))
     {
@@ -867,7 +875,7 @@ SASFrame4::ComputeSamplesSAS3(WDL_TypedBuf<BL_FLOAT> *samples)
         }
         
         partialIndex++;
-        partialFreq = mFrequency*mPitch*(partialIndex + 1);
+        partialFreq = mFrequency*mFreqFactor*(partialIndex + 1);
     }
     
     mPrevSASPartials = mSASPartials;
@@ -904,7 +912,7 @@ SASFrame4::ComputeSamplesSAS4(WDL_TypedBuf<BL_FLOAT> *samples)
     BL_FLOAT hzPerBinInv = 1.0/hzPerBin;
     
     // Sort partials by amplitude, in order to play the highest amplitudes ?
-    BL_FLOAT partialFreq = mFrequency*mPitch;
+    BL_FLOAT partialFreq = mFrequency*mFreqFactor;
     int partialIndex = 0;
     while((partialFreq < mSampleRate/2.0) && (partialIndex < SYNTH_MAX_NUM_PARTIALS))
     {
@@ -1019,7 +1027,7 @@ SASFrame4::ComputeSamplesSAS4(WDL_TypedBuf<BL_FLOAT> *samples)
         }
         
         partialIndex++;
-        partialFreq = mFrequency*mPitch*(partialIndex + 1);
+        partialFreq = mFrequency*mFreqFactor*(partialIndex + 1);
     }
     
     mPrevSASPartials = mSASPartials;
@@ -1063,7 +1071,7 @@ SASFrame4::ComputeSamplesSAS5(WDL_TypedBuf<BL_FLOAT> *samples)
     BL_FLOAT hzPerBinInv = 1.0/hzPerBin;
     
     // Sort partials by amplitude, in order to play the highest amplitudes ?
-    BL_FLOAT partialFreq = mFrequency*mPitch;
+    BL_FLOAT partialFreq = mFrequency*mFreqFactor;
     int partialIndex = 0;
     while((partialFreq < mSampleRate/2.0) && (partialIndex < SYNTH_MAX_NUM_PARTIALS))
     {
@@ -1116,7 +1124,7 @@ SASFrame4::ComputeSamplesSAS5(WDL_TypedBuf<BL_FLOAT> *samples)
                 // Color will be 0, no need to synthetize samples
             {
                 partialIndex++;
-                partialFreq = mFrequency*mPitch*(partialIndex + 1);
+                partialFreq = mFrequency*mFreqFactor*(partialIndex + 1);
                 
                 continue;
             }
@@ -1197,7 +1205,7 @@ SASFrame4::ComputeSamplesSAS5(WDL_TypedBuf<BL_FLOAT> *samples)
         }
         
         partialIndex++;
-        partialFreq = mFrequency*mPitch*(partialIndex + 1);
+        partialFreq = mFrequency*mFreqFactor*(partialIndex + 1);
     }
     
     mPrevSASPartials = mSASPartials;
@@ -1249,7 +1257,7 @@ SASFrame4::ComputeSamplesSAS6(WDL_TypedBuf<BL_FLOAT> *samples)
     BL_FLOAT hzPerBinInv = 1.0/hzPerBin;
     
     // Sort partials by amplitude, in order to play the highest amplitudes ?
-    BL_FLOAT partialFreq = mFrequency*mPitch;
+    BL_FLOAT partialFreq = mFrequency*mFreqFactor;
     int partialIndex = 0;
     while((partialFreq < mSampleRate/2.0) && (partialIndex < SYNTH_MAX_NUM_PARTIALS))
     {
@@ -1287,7 +1295,7 @@ SASFrame4::ComputeSamplesSAS6(WDL_TypedBuf<BL_FLOAT> *samples)
             // Color will be 0, no need to synthetize samples
             {
                 partialIndex++;
-                partialFreq = mFrequency*mPitch*(partialIndex + 1);
+                partialFreq = mFrequency*mFreqFactor*(partialIndex + 1);
                 
                 // TODO: update phase!!
                 
@@ -1346,7 +1354,181 @@ SASFrame4::ComputeSamplesSAS6(WDL_TypedBuf<BL_FLOAT> *samples)
         }
         
         partialIndex++;
-        partialFreq = mFrequency*mPitch*(partialIndex + 1);
+        partialFreq = mFrequency*mFreqFactor*(partialIndex + 1);
+    }
+    
+    // At the end, apply amplitude
+    //
+    BL_FLOAT tStep = 1.0/(samples->GetSize() - 1);
+    BL_FLOAT t = 0.0;
+    for (int i = 0; i < samples->GetSize(); i++)
+    {
+        BL_FLOAT s = samples->Get()[i];
+        BL_FLOAT d = ampDenoms.Get()[i];
+        
+        if (d < BL_EPS)
+            continue;
+        
+        BL_FLOAT amp = GetAmp(mPrevAmplitude, mAmplitude, t);
+        
+        BL_FLOAT a = amp*(s/d);
+        
+        samples->Get()[i] = a;
+        
+        t += tStep;
+    }
+    
+    mPrevAmplitude = mAmplitude;
+    
+    mPrevSASPartials = mSASPartials;
+}
+
+// ComputeSamplesSAS2
+// Optim
+// Gain (by suppressing loops): 74 => 57ms (~20%)
+//
+// ComputeSamplesSAS3: avoid tiny clicks (not audible)
+//
+// ComputeSamplesSAS4: optimize more
+//
+// ComputeSamplesSAS5: optimize more
+//
+// ComputeSamplesSAS6: Refact and try to debug
+//
+// ComputeSamplesSAS7: copy (new)
+void
+SASFrame4::ComputeSamplesSAS7(WDL_TypedBuf<BL_FLOAT> *samples)
+{
+    // TEST DEBUG
+    //mFrequency = 350.0;
+    
+    BLUtils::FillAllZero(samples);
+    
+    // First time: initialize the partials
+    if (mSASPartials.empty())
+    {
+        mSASPartials.resize(SYNTH_MAX_NUM_PARTIALS);
+    }
+    
+    if (mPrevSASPartials.empty())
+        mPrevSASPartials = mSASPartials;
+    
+    if (mPrevColor.GetSize() != mColor.GetSize())
+        mPrevColor = mColor;
+    
+    if (mPrevNormWarping.GetSize() != mNormWarping.GetSize())
+        mPrevNormWarping = mNormWarping;
+    
+    // For applying amplitude the correct way
+    // Keep a denominator for each sample.
+    WDL_TypedBuf<BL_FLOAT> ampDenoms;
+    ampDenoms.Resize(samples->GetSize());
+    BLUtils::FillAllZero(&ampDenoms);
+    
+    // Optim
+    BL_FLOAT phaseCoeff = 2.0*M_PI/mSampleRate;
+    BL_FLOAT hzPerBin = mSampleRate/mBufferSize;
+    BL_FLOAT hzPerBinInv = 1.0/hzPerBin;
+    
+    // Sort partials by amplitude, in order to play the highest amplitudes ?
+    BL_FLOAT partialFreq = mFrequency*mFreqFactor;
+    int partialIndex = 0;
+    while((partialFreq < mSampleRate/2.0) && (partialIndex < SYNTH_MAX_NUM_PARTIALS))
+    {
+        if (partialFreq > SYNTH_MIN_FREQ)
+        {
+            // Current and prev partials
+            SASPartial &partial = mSASPartials[partialIndex];
+            partial.mFreq = partialFreq;
+            partial.mAmp = mAmplitude;
+            
+            const SASPartial &prevPartial = mPrevSASPartials[partialIndex];
+            
+            // Current phase
+            BL_FLOAT phase = prevPartial.mPhase;
+            
+            // Bin param
+            BL_FLOAT binIdx = partialFreq*hzPerBinInv;
+            
+            // TODO: here, try a mel scale for binIdxc and prevBinIdxc, internally
+            
+            // Warping
+            BL_FLOAT w0 = GetWarping(mPrevNormWarping, binIdx);
+            BL_FLOAT w1 = GetWarping(mNormWarping, binIdx);
+            
+            // Color
+            BL_FLOAT prevBinIdxc = w0*prevPartial.mFreq*hzPerBinInv;
+            BL_FLOAT binIdxc = w1*partial.mFreq*hzPerBinInv;
+            
+            // TODO: here, try a mel scale for binIdxc and prevBinIdxc, internally
+            
+            BL_FLOAT col0 = GetColor(mPrevColor, prevBinIdxc);
+            BL_FLOAT col1 = GetColor(mColor, binIdxc);
+            
+            if ((col0 < BL_EPS) && (col1 < BL_EPS))
+            // Color will be 0, no need to synthetize samples
+            {
+                partialIndex++;
+                partialFreq = mFrequency*mFreqFactor*(partialIndex + 1);
+                
+                // TODO: update phase!!
+                
+                continue;
+            }
+            
+            // Loop
+            //
+            BL_FLOAT t = 0.0;
+            BL_FLOAT tStep = 1.0/(samples->GetSize() - 1);
+            for (int i = 0; i < samples->GetSize(); i++)
+            {
+                // Compute norm warping
+                BL_FLOAT w = 1.0;
+                if (binIdx < mNormWarping.GetSize() - 1)
+                {
+                    w = (1.0 - t)*w0 + t*w1;
+                }
+                
+                // Freq
+                BL_FLOAT freq = GetFreq(prevPartial.mFreq, partial.mFreq, t);
+                
+                // Warping
+                // DEBUG: disabled for the moment
+                // NOTE: this is buggy for the moment => makes jumps
+                //freq *= w;
+
+                // Color
+                BL_FLOAT col = GetCol(col0, col1, t);
+                
+                // DEBUG
+                //col = 1.0; //
+                
+                // Sample
+                
+                // Not 100% perfect (partials les neat)
+                //BL_FLOAT samp;
+                //SIN_LUT_GET(SAS_FRAME_SIN_LUT, samp, phase);
+                
+                // Better quality.
+                // No "blurb" between frequencies
+                BL_FLOAT samp = std::sin(phase);
+                
+                if (freq >= SYNTH_MIN_FREQ)
+                {
+                    samples->Get()[i] += samp*col;
+                    ampDenoms.Get()[i] += col;
+                }
+                
+                t += tStep;
+                phase += phaseCoeff*freq;
+            }
+            
+            // Compute next phase
+            mSASPartials[partialIndex].mPhase = phase;
+        }
+        
+        partialIndex++;
+        partialFreq = mFrequency*mFreqFactor*(partialIndex + 1);
     }
     
     // At the end, apply amplitude
@@ -1402,6 +1584,8 @@ SASFrame4::GetColor(const WDL_TypedBuf<BL_FLOAT> &color,
         col = mScale->ApplyScale(Scale::DB_INV, col, mMinAmpDB, (BL_FLOAT)0.0);
 #endif
     }
+
+    col *= mColorFactor;
     
     return col;
 }
@@ -1420,6 +1604,8 @@ SASFrame4::GetWarping(const WDL_TypedBuf<BL_FLOAT> &warping,
         
         w = (1.0 - t)*w0 + t*w1;
     }
+
+    w *= mWarpingFactor;
     
     return w;
 }
@@ -1437,7 +1623,7 @@ SASFrame4::ComputeSamplesSASOverlap(WDL_TypedBuf<BL_FLOAT> *samples)
     BL_FLOAT amp0 = GetAmplitude();
     BL_FLOAT freq0 = GetFrequency();
     
-    freq0 *= mPitch;
+    freq0 *= mFreqFactor;
     
     // Sort partials by amplitude, in order to play the highest amplitudes ?
     BL_FLOAT freq = freq0;
@@ -1509,7 +1695,7 @@ SASFrame4::ComputeFftSAS(WDL_TypedBuf<BL_FLOAT> *samples)
     BL_FLOAT amp0 = GetAmplitude();
     BL_FLOAT freq0 = GetFrequency();
     
-    freq0 *= mPitch;
+    freq0 *= mFreqFactor;
     
     // Fft
     WDL_TypedBuf<BL_FLOAT> magns;
@@ -1611,7 +1797,7 @@ SASFrame4::ComputeFftSASFreqAdjust(WDL_TypedBuf<BL_FLOAT> *samples)
     BL_FLOAT amp0 = GetAmplitude();
     BL_FLOAT freq0 = GetFrequency();
     
-    freq0 *= mPitch;
+    //freq0 *= mFreqFactor;
     
     // Fft
     WDL_TypedBuf<BL_FLOAT> magns;
@@ -1730,7 +1916,7 @@ SASFrame4::ComputeSamplesSASTable(WDL_TypedBuf<BL_FLOAT> *samples)
     BL_FLOAT amp0 = GetAmplitude();
     BL_FLOAT freq0 = GetFrequency();
     
-    freq0 *= mPitch;
+    freq0 *= mFreqFactor;
     
     // Sort partials by amplitude, in order to play the highest amplitudes ?
     BL_FLOAT freq = freq0;
@@ -1815,7 +2001,7 @@ SASFrame4::ComputeSamplesSASTable2(WDL_TypedBuf<BL_FLOAT> *samples)
     BL_FLOAT amp0 = GetAmplitude();
     BL_FLOAT freq0 = GetFrequency();
     
-    freq0 *= mPitch;
+    //freq0 *= mFreqFactor;
     
     // Sort partials by amplitude, in order to play the highest amplitudes ?
     BL_FLOAT freq = freq0;
@@ -1885,9 +2071,27 @@ SASFrame4::ComputeSamplesSASTable2(WDL_TypedBuf<BL_FLOAT> *samples)
 }
 
 void
-SASFrame4::SetPitch(BL_FLOAT pitch)
+SASFrame4::SetAmpFactor(BL_FLOAT factor)
 {
-    mPitch = pitch;
+    mAmpFactor = factor;
+}
+
+void
+SASFrame4::SetFreqFactor(BL_FLOAT factor)
+{
+    mFreqFactor = factor;
+}
+
+void
+SASFrame4::SetColorFactor(BL_FLOAT factor)
+{
+    mColorFactor = factor;
+}
+
+void
+SASFrame4::SetWarpingFactor(BL_FLOAT factor)
+{
+    mWarpingFactor = factor;
 }
 
 void
@@ -2505,6 +2709,8 @@ SASFrame4::GetFreq(BL_FLOAT freq0, BL_FLOAT freq1, BL_FLOAT t)
     freq = mScale->ApplyScale(Scale::MEL_INV, freq, (BL_FLOAT)0.0, maxFreq);    
     freq *= maxFreq;
 #endif
+
+    //freq *= mFreqFactor;
     
     return freq;
 }
@@ -2526,6 +2732,8 @@ SASFrame4::GetAmp(BL_FLOAT amp0, BL_FLOAT amp1, BL_FLOAT t)
 #if INTERP_RESCALE
     amp = mScale->ApplyScale(Scale::DB_INV, amp, mMinAmpDB, (BL_FLOAT)0.0);
 #endif
+
+    amp *= mAmpFactor;
     
     return amp;
 }
