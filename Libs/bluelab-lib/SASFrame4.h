@@ -189,7 +189,12 @@ protected:
     void FillLastValues(WDL_TypedBuf<BL_FLOAT> *values,
                         const vector<PartialTracker5::Partial> &partials,
                         BL_FLOAT val);
-        
+
+    // Fill everything bfore the first partial with value
+    void FillFirstValues(WDL_TypedBuf<BL_FLOAT> *values,
+                         const vector<PartialTracker5::Partial> &partials,
+                         BL_FLOAT val);
+    
     //
     SynthMode mSynthMode;
     

@@ -1496,11 +1496,10 @@ SASFrame4::ComputeSamplesSAS7(WDL_TypedBuf<BL_FLOAT> *samples)
                 
                 // Warping: this is buggy for the moment => makes jumps
                 freq *= w;
-                //freq /= w;
 
                 // Color
                 BL_FLOAT col = GetCol(col0, col1, t);
-                
+
                 // Sample
                 
                 // Not 100% perfect (partials les neat)
@@ -2238,18 +2237,22 @@ SASFrame4::ComputeColorAux()
     
     if (mFrequency < BL_EPS)
     {
-        BLUtils::FillAllZero(&mColor);
+        //BLUtils::FillAllZero(&mColor);
+        BLUtils::FillAllValue(&mColor, mMinAmpDB);
         
         return;
     }
     
     // Will interpolate values between the partials
-    BL_FLOAT undefinedValue = -1.0;
+    //BL_FLOAT undefinedValue = -1.0;
+    BL_FLOAT undefinedValue = -300; // -300dB
     BLUtils::FillAllValue(&mColor, undefinedValue);
     
     // Fix bounds at 0
-    mColor.Get()[0] = 0.0;
-    mColor.Get()[mBufferSize/2 - 1] = 0.0;
+    //mColor.Get()[0] = 0.0;
+    //mColor.Get()[mBufferSize/2 - 1] = 0.0;
+    mColor.Get()[0] = mMinAmpDB;
+    mColor.Get()[mBufferSize/2 - 1] = mMinAmpDB;
     
     BL_FLOAT hzPerBin = mSampleRate/mBufferSize;
     
@@ -2289,7 +2292,8 @@ SASFrame4::ComputeColorAux()
             if (idx >= mColor.GetSize())
                 break;
             
-            mColor.Get()[(int)idx] = 0.0;
+            //mColor.Get()[(int)idx] = 0.0;
+            mColor.Get()[(int)idx] = mMinAmpDB;
         }
         
         freq += mFrequency;
@@ -2300,7 +2304,7 @@ SASFrame4::ComputeColorAux()
     // Would make color where ther eis no sound otherwise
     // (e.g example with just some sine waves is false)
     FillLastValues(&mColor, mPartials, mMinAmpDB);
-        
+    
     // Fill al the other value
     bool extendBounds = false;
     BLUtils::FillMissingValues(&mColor, extendBounds, undefinedValue);
@@ -2337,14 +2341,15 @@ SASFrame4::ComputeNormWarping()
     
     if (prevWarping.GetSize() != mNormWarping.GetSize())
         return;
-    
+
     // Smooth
     for (int i = 0; i < mNormWarping.GetSize(); i++)
     {
         BL_FLOAT warp = mNormWarping.Get()[i];
         BL_FLOAT prevWarp = prevWarping.Get()[i];
         
-        BL_FLOAT result = WARPING_SMOOTH_COEFF*prevWarp + (1.0 - WARPING_SMOOTH_COEFF)*warp;
+        BL_FLOAT result = WARPING_SMOOTH_COEFF*prevWarp +
+            (1.0 - WARPING_SMOOTH_COEFF)*warp;
         
         mNormWarping.Get()[i] = result;
     }
@@ -2379,7 +2384,12 @@ SASFrame4::ComputeNormWarpingAux()
     
     // Fundamental frequency
     BL_FLOAT hzPerBin = mSampleRate/mBufferSize;
+
     BL_FLOAT freq0 = mFrequency;
+
+    // TEST
+    //if (!mPartials.empty())
+    //    freq0 = mPartials[0].mFreq;
     
     // Put the values we have
     for (int i = /*1*/0; i < mPartials.size(); i++)
@@ -2403,10 +2413,19 @@ SASFrame4::ComputeNormWarpingAux()
         if ((idx > 0) && (idx < mNormWarping.GetSize()))
             mNormWarping.Get()[(int)idx] = normWarp;
     }
+
+    //BLDebug::DumpData("warp0.txt", mNormWarping);
     
-    // Fill al the other value
+    // Avoid warping the first partial
+    FillFirstValues(&mNormWarping, mPartials, 1.0);
+
+    //BLDebug::DumpData("warp1.txt", mNormWarping);
+    
+    // Fill all the other value
     bool extendBounds = false;
     BLUtils::FillMissingValues(&mNormWarping, extendBounds, undefinedValue);
+
+    //BLDebug::DumpData("warp2.txt", mNormWarping);
 }
 
 BL_FLOAT
@@ -2772,8 +2791,8 @@ SASFrame4::FillLastValues(WDL_TypedBuf<BL_FLOAT> *values,
                           const vector<PartialTracker5::Partial> &partials,
                           BL_FLOAT val)
 {
-    // First, find tha last bin idex
-    int maxPartialIdx = -1;
+    // First, find the last bin idex
+    int maxIdx = -1;
     for (int i = 0; i < partials.size(); i++)
     {
         const PartialTracker5::Partial &p = partials[i];
@@ -2783,17 +2802,48 @@ SASFrame4::FillLastValues(WDL_TypedBuf<BL_FLOAT> *values,
         if (p.mState != PartialTracker5::Partial::ALIVE)
             continue;
         
-        if (p.mRightIndex > maxPartialIdx)
-            maxPartialIdx = p.mRightIndex;
+        if (p.mRightIndex > maxIdx)
+            maxIdx = p.mRightIndex;
     }
     
     // Then fill with zeros after this index
-    if (maxPartialIdx > 0)
+    if (maxIdx > 0)
     {
-        for (int i = maxPartialIdx + 1; i < values->GetSize(); i++)
+        for (int i = maxIdx + 1; i < values->GetSize(); i++)
         {
             values->Get()[i] = val;
         }
     }            
 }
+
+void
+SASFrame4::FillFirstValues(WDL_TypedBuf<BL_FLOAT> *values,
+                           const vector<PartialTracker5::Partial> &partials,
+                           BL_FLOAT val)
+{
+    // First, find the last bin idex
+    int minIdx = values->GetSize() - 1;
+    for (int i = 0; i < partials.size(); i++)
+    {
+        const PartialTracker5::Partial &p = partials[i];
+
+        // Dead or zombie: do not use for color enveloppe
+        // (this is important !)
+        if (p.mState != PartialTracker5::Partial::ALIVE)
+            continue;
+        
+        //if (p.mLeftIndex < minIdx)
+        //    minIdx = p.mLeftIndex;
+        if (p.mRightIndex < minIdx)
+            minIdx = p.mRightIndex;
+    }
     
+    // Then fill with zeros after this index
+    if (minIdx < values->GetSize() - 1)
+    {
+        for (int i = 0; i <= minIdx; i++)
+        {
+            values->Get()[i] = val;
+        }
+    }            
+}
