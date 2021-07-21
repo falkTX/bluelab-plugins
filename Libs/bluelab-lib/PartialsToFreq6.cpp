@@ -96,13 +96,7 @@ PartialsToFreq6::ComputeFrequency(const WDL_TypedBuf<BL_FLOAT> &magns,
 #if 0 //1
     BL_FLOAT freq = FindClosestPartialFreq(freq0, partials);
 #endif
-    
-#if 0 //1 //0 // TEST: Good!
-    BL_FLOAT freq = freq0;
-    while(freq < 200.0/*100.0*//*300.0*/)
-        freq *= 2.0;
-#endif
-        
+            
 #if 0 //1 // Good, but if tracker loose tracking on lowest partial, this gives error
     BL_FLOAT freq = FindBestOctave(freq0, partials);
 #endif
@@ -110,6 +104,13 @@ PartialsToFreq6::ComputeFrequency(const WDL_TypedBuf<BL_FLOAT> &magns,
 #if 1 // Good. Do not use prev tracked partials
     // This is a bit hackish, but looks efficient
     BL_FLOAT freq = FindBestOctave2(freq0, magns);
+#endif
+
+#if 0 //1 // TEST: Good!
+    // Hedger trimmer: choose 100 (but this is still not perfect at all) 
+    /*BL_FLOAT*/ freq = freq0;
+    while(freq < 100.0/*200.0*//*100.0*//*300.0*/)
+        freq *= 2.0;
 #endif
     
     return freq;
