@@ -184,7 +184,12 @@ protected:
     BL_FLOAT GetFreq(BL_FLOAT freq0, BL_FLOAT freq1, BL_FLOAT t);
     BL_FLOAT GetAmp(BL_FLOAT amp0, BL_FLOAT amp1, BL_FLOAT t);
     BL_FLOAT GetCol(BL_FLOAT col0, BL_FLOAT col1, BL_FLOAT t);
-    
+
+    // Fill everything after the last partial with value
+    void FillLastValues(WDL_TypedBuf<BL_FLOAT> *values,
+                        const vector<PartialTracker5::Partial> &partials,
+                        BL_FLOAT val);
+        
     //
     SynthMode mSynthMode;
     

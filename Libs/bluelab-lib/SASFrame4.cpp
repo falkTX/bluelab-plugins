@@ -2296,35 +2296,11 @@ SASFrame4::ComputeColorAux()
     }
 #endif
 
-#if 1 // Avoid interpolating to the last partial value to 0
-      // Would make color where ther eis no sound otherwise
-      // (e.g example with just some sine waves is false)
-
-    // First, find tha last bin idex
-    int maxPartialIdx = -1;
-    for (int i = 0; i < mPartials.size(); i++)
-    {
-        const PartialTracker5::Partial &p = mPartials[i];
- 
-        // Dead or zombie: do not use for color enveloppe
-        // (this is important !)
-        if (p.mState != PartialTracker5::Partial::ALIVE)
-            continue;
-
-        if (p.mRightIndex > maxPartialIdx)
-            maxPartialIdx = p.mRightIndex;
-    }
-
-    // Then fill with zeros after this index
-    if (maxPartialIdx > 0)
-    {
-        for (int i = maxPartialIdx + 1; i < mColor.GetSize(); i++)
-        {
-            mColor.Get()[i] = mMinAmpDB;
-        }
-    }            
-#endif
-    
+    // Avoid interpolating to the last partial value to 0
+    // Would make color where ther eis no sound otherwise
+    // (e.g example with just some sine waves is false)
+    FillLastValues(&mColor, mPartials, mMinAmpDB);
+        
     // Fill al the other value
     bool extendBounds = false;
     BLUtils::FillMissingValues(&mColor, extendBounds, undefinedValue);
@@ -2790,3 +2766,34 @@ SASFrame4::GetCol(BL_FLOAT col0, BL_FLOAT col1, BL_FLOAT t)
     
     return col;
 }
+
+void
+SASFrame4::FillLastValues(WDL_TypedBuf<BL_FLOAT> *values,
+                          const vector<PartialTracker5::Partial> &partials,
+                          BL_FLOAT val)
+{
+    // First, find tha last bin idex
+    int maxPartialIdx = -1;
+    for (int i = 0; i < partials.size(); i++)
+    {
+        const PartialTracker5::Partial &p = partials[i];
+        
+        // Dead or zombie: do not use for color enveloppe
+        // (this is important !)
+        if (p.mState != PartialTracker5::Partial::ALIVE)
+            continue;
+        
+        if (p.mRightIndex > maxPartialIdx)
+            maxPartialIdx = p.mRightIndex;
+    }
+    
+    // Then fill with zeros after this index
+    if (maxPartialIdx > 0)
+    {
+        for (int i = maxPartialIdx + 1; i < values->GetSize(); i++)
+        {
+            values->Get()[i] = val;
+        }
+    }            
+}
+    
