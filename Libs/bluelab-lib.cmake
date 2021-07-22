@@ -558,6 +558,8 @@ set(_bluelab-lib_src
   PhaseCorrectObj.h
   PhasesDiff.cpp
   PhasesDiff.h
+  PhasesEstimPrusa.cpp
+  PhasesEstimPrusa.h
   PhasesUnwrapper.cpp
   PhasesUnwrapper.h
   PitchShifterBLSmb.cpp
