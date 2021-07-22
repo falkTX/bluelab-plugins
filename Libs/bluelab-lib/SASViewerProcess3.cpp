@@ -19,6 +19,8 @@
 
 #include <SASFrame4.h>
 
+#include <PhasesEstimPrusa.h>
+
 #include "SASViewerProcess3.h"
 
 
@@ -35,6 +37,9 @@
 #define OUT_HARMO_EXTRACTED_ENV 0 //1
 // Use input partials (not modified by color etc.)
 #define OUT_HARMO_INPUT_PARTIALS 0 //1
+
+// Does not improve transients at all (result is identical)
+#define USE_PRUSA_PHASES_ESTIM 0 //1
 
 SASViewerProcess3::SASViewerProcess3(int bufferSize,
                                      BL_FLOAT overlapping, BL_FLOAT oversampling,
@@ -68,20 +73,33 @@ SASViewerProcess3::SASViewerProcess3(int bufferSize,
     mShowTrackingLines = true;
 
     mDebugPartials = false;
+
+    mPhasesEstim = NULL;
+#if USE_PRUSA_PHASES_ESTIM
+    mPhasesEstim = new PhasesEstimPrusa(bufferSize, overlapping, 1, sampleRate);
+#endif
 }
 
 SASViewerProcess3::~SASViewerProcess3()
 {
     delete mPartialTracker;
     delete mSASFrame;
+
+#if USE_PRUSA_PHASES_ESTIM
+    delete mPhasesEstim;
+#endif
 }
 
 void
 SASViewerProcess3::Reset()
 {
     Reset(mBufferSize, mOverlapping, mFreqRes, mSampleRate);
-    
+
     //mSASFrame->Reset(mSampleRate);
+
+#if USE_PRUSA_PHASES_ESTIM
+    mPhasesEstim->Reset();
+#endif
 }
 
 void
@@ -98,6 +116,10 @@ SASViewerProcess3::Reset(int bufferSize, int overlapping,
     
     //mSASFrame->Reset(sampleRate);
     mSASFrame->Reset(bufferSize, overlapping, oversampling, sampleRate);
+
+#if USE_PRUSA_PHASES_ESTIM
+    mPhasesEstim->Reset(mBufferSize, mOverlapping, mFreqRes, mSampleRate);
+#endif
 }
 
 void
@@ -130,6 +152,10 @@ SASViewerProcess3::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
 
     //
     mSASFrame->SetInputData(magns, phases);
+
+    //#if USE_PRUSA_PHASES_ESTIM
+    //mPhasesEstim->Process(magns, &phases);
+    //#endif
         
     // Silence
     BLUtils::FillAllZero(&magns);
@@ -164,7 +190,12 @@ SASViewerProcess3::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
 
         BLUtils::MultValues(&noise, noiseCoeff);
         
+        // Noise!
         magns = noise;
+
+#if USE_PRUSA_PHASES_ESTIM
+        mPhasesEstim->Process(magns, &phases);
+#endif
         
 #if OUT_HARMO_EXTRACTED_ENV
         WDL_TypedBuf<BL_FLOAT> &harmo = mTmpBuf5;

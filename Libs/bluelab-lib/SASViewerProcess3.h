@@ -25,6 +25,7 @@ using namespace std;
 class PartialTracker5;
 class SASFrame4;
 class SASViewerRender3;
+class PhasesEstimPrusa;
 class SASViewerProcess3 : public ProcessObj
 {
 public:
@@ -156,6 +157,8 @@ protected:
 
     bool mDebugPartials;
 
+    PhasesEstimPrusa *mPhasesEstim;
+    
 private:
     WDL_TypedBuf<WDL_FFT_COMPLEX> mTmpBuf0;
     WDL_TypedBuf<WDL_FFT_COMPLEX> mTmpBuf1;
