@@ -365,8 +365,9 @@ InfraProcess::DetectPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
 
 // Generate higher partials
 void
-InfraProcess::GeneratePhantomPartials(const vector<PartialTracker3::Partial> &partials,
-                                      vector<PartialTracker3::Partial> *newPartials)
+InfraProcess::
+GeneratePhantomPartials(const vector<PartialTracker3::Partial> &partials,
+                        vector<PartialTracker3::Partial> *newPartials)
 {
     newPartials->clear();
     
@@ -505,7 +506,8 @@ InfraProcess::IncreaseInitialFreq(WDL_TypedBuf<BL_FLOAT> *result,
         if (i > p.mPeakIndex)
         {
             if (p.mRightIndex - p.mPeakIndex > 0)
-                coeff = ((BL_FLOAT)(p.mRightIndex - i))/(p.mRightIndex - p.mPeakIndex);
+                coeff = ((BL_FLOAT)(p.mRightIndex - i))/
+                    (p.mRightIndex - p.mPeakIndex);
             else
                 coeff = 0.0;
         }

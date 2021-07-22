@@ -813,7 +813,8 @@ PartialTracker5::SmoothNoiseEnvelopeTime(WDL_TypedBuf<BL_FLOAT> *noise)
         BL_FLOAT val = noise->Get()[i];
         BL_FLOAT prevVal = mPrevNoiseEnvelope.Get()[i];
         
-        BL_FLOAT newVal = (1.0 - NOISE_SMOOTH_TIME_COEFF)*val + NOISE_SMOOTH_TIME_COEFF*prevVal;
+        BL_FLOAT newVal =
+            (1.0 - NOISE_SMOOTH_TIME_COEFF)*val + NOISE_SMOOTH_TIME_COEFF*prevVal;
         
         noise->Get()[i] = newVal;
     }
@@ -1174,7 +1175,7 @@ PartialTracker5::DetectPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
                                                               p.mLeftIndex,
                                                               p.mRightIndex);
 #endif
-                    
+
                     p.mPeakIndex = bl_round(peakIndexF);
                     if (p.mPeakIndex < 0)
                         p.mPeakIndex = 0;
