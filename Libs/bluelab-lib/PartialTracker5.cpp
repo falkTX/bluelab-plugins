@@ -2012,18 +2012,24 @@ PartialTracker5::ComputePeakIndexParabola(const WDL_TypedBuf<BL_FLOAT> &magns,
                                           int peakIndex)
 {
     if ((peakIndex - 1 < 0) || (peakIndex + 1 >= magns.GetSize()))
-    {
         return peakIndex;
-    }
     
     // magns are in DB
     // => no need to convert !
     BL_FLOAT alpha = magns.Get()[peakIndex - 1];
     BL_FLOAT beta = magns.Get()[peakIndex];
     BL_FLOAT gamma = magns.Get()[peakIndex + 1];
+
+    // Will avoid wrong negative result
+    if ((beta < alpha) || (beta < gamma))
+        return peakIndex;
     
     // Center
-    BL_FLOAT c = 0.5*((alpha - gamma)/(alpha - 2.0*beta + gamma));
+    BL_FLOAT denom = (alpha - 2.0*beta + gamma);
+    if (std::fabs(denom) < BL_EPS)
+        return peakIndex;
+    
+    BL_FLOAT c = 0.5*((alpha - gamma)/denom);
     
     BL_FLOAT result = peakIndex + c;
     
@@ -2741,17 +2747,22 @@ PartialTracker5::ComputeAccurateFreqs(vector<Partial> *partials)
         Partial &p = (*partials)[i];
 
         // First, find the left and right indices, scaled to linear
-        BL_FLOAT leftIndexF = ((BL_FLOAT)p.mLeftIndex)/(mBufferSize*0.5 - 1);
-        BL_FLOAT rightIndexF = ((BL_FLOAT)p.mRightIndex)/(mBufferSize*0.5 - 1);
+        BL_FLOAT leftIndexF = ((BL_FLOAT)p.mLeftIndex)/(mBufferSize*0.5);
+        BL_FLOAT rightIndexF = ((BL_FLOAT)p.mRightIndex)/(mBufferSize*0.5);
 
         leftIndexF = mScale->ApplyScale(mXScaleInv, leftIndexF, (BL_FLOAT)0.0,
                                         (BL_FLOAT)(mSampleRate*0.5));
         rightIndexF = mScale->ApplyScale(mXScaleInv, rightIndexF, (BL_FLOAT)0.0,
                                          (BL_FLOAT)(mSampleRate*0.5));
 
-        int leftIndex = leftIndexF*(mBufferSize*0.5 - 1);
-        int rightIndex = rightIndexF*(mBufferSize*0.5 - 1);
+        BL_FLOAT leftIndex0 = leftIndexF*(mBufferSize*0.5);
+        BL_FLOAT rightIndex0 = rightIndexF*(mBufferSize*0.5);
 
+        // Necessary to round(), otherwise we have the risk to have several peaks in
+        // the range [leftIndex, leftIndex] (due to inaccurate L/R bounds)
+        int leftIndex = bl_round(leftIndex0);
+        int rightIndex = bl_round(rightIndex0);
+        
         // Then find the integer peak index, still in ilear scale
         // Use the raw magns we previously kept (possibly time smoothed) 
         int peakIndex = BLUtils::FindMaxIndex(mLinearMagns, leftIndex, rightIndex);
@@ -2761,7 +2772,7 @@ PartialTracker5::ComputeAccurateFreqs(vector<Partial> *partials)
         // Make smooth partials change
         // But makes wobble in the sound volume
         BL_FLOAT peakIndexF = ComputePeakIndexParabola(mLinearMagns, peakIndex);
-
+        
         // NOTE: this seemed to be a mistake, fixed here by a hack
         //
         // Then adjust to be centered on the bins (the magic comes here :)
@@ -2772,7 +2783,7 @@ PartialTracker5::ComputeAccurateFreqs(vector<Partial> *partials)
         p.mPeakIndex = bl_round(peakIndexF);
         
         // Get the normalized frequency (linear scale)
-        BL_FLOAT peakFreq = peakIndexF/(mBufferSize*0.5 - 1);
+        BL_FLOAT peakFreq = peakIndexF/(mBufferSize*0.5);
                         
         // Rescale it to the current scale
         peakFreq = mScale->ApplyScale(mXScale, peakFreq, (BL_FLOAT)0.0,
@@ -2787,14 +2798,14 @@ PartialTracker5::ComputeAccurateFreqs(vector<Partial> *partials)
         // NOTE: not sure this computation is very exact...
         //
         // Update the partial peak index (just in case)
-        BL_FLOAT newPeakIndex = peakFreq*(mBufferSize*0.5 - 1);
+        BL_FLOAT newPeakIndex = peakFreq*(mBufferSize*0.5);
         p.mPeakIndex = bl_round(newPeakIndex);
         if (p.mPeakIndex < 0)
             p.mPeakIndex = 0;
         
-        int maxDetectIndex = mCurrentMagns.GetSize() - 1;
+        int maxDetectIndex = mCurrentMagns.GetSize();
         if (mMaxDetectFreq > 0.0)
-            maxDetectIndex = mMaxDetectFreq*(mBufferSize*0.5 - 1);
+            maxDetectIndex = mMaxDetectFreq*(mBufferSize*0.5);
         if (maxDetectIndex > mCurrentMagns.GetSize() - 1)
             maxDetectIndex = mCurrentMagns.GetSize() - 1;
         if (p.mPeakIndex > maxDetectIndex)
