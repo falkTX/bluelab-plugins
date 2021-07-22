@@ -107,6 +107,9 @@ SIN_LUT_CREATE(SAS_FRAME_SIN_LUT, 4096);
 #define ONSET_HISTORY_HACK 1
 #define ONSET_HISTORY_HACK_SIZE 3
 
+// Limit the maximum values that the detected warping can take
+#define LIMIT_WARPING_MAX 1
+
 #define DEBUG_DUMP_VALUES 0 //1
 
 SASFrame4::SASPartial::SASPartial()
@@ -1635,6 +1638,13 @@ SASFrame4::ComputeNormWarpingAux()
         
         BL_FLOAT normWarp = freq/freq1;
 
+#if LIMIT_WARPING_MAX
+        // Discard too high warping values, that can come to short invalid partials
+        // spread randomly
+        if ((normWarp < 0.8) || (normWarp > 1.25))
+            continue;
+#endif
+        
         //BL_FLOAT idx = p.mFreq/hzPerBin;
         BL_FLOAT idx = freq1/hzPerBin;
         // TODO: make an interpolation, it is not so good to align to bins
