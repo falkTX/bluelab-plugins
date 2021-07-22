@@ -709,15 +709,12 @@ SASFrame4::ComputeSamplesSAS(WDL_TypedBuf<BL_FLOAT> *samples)
                 // Freq
                 BL_FLOAT freq = GetFreq(prevPartial.mFreq, partial.mFreq, t);
                 
-                // Warping: this is buggy for the moment => makes jumps
+                // Warping
                 freq *= w;
 
                 // Color
                 BL_FLOAT col = GetCol(col0, col1, t);
 
-                // DEBUG
-                //col = 1.0;
-                
                 // Sample
                 
                 // Not 100% perfect (partials les neat)
@@ -1422,6 +1419,17 @@ SASFrame4::ComputeFrequency()
         mPrevFrequency = freq;
         mFrequency = freq;
     }
+
+#if 0
+    // DEBUG
+    if (mPartials.size() == 4)
+    {
+        fprintf(stderr, "%g   [ %g %g %g %g ]\n",
+                mFrequency,
+                mPartials[0].mFreq, mPartials[1].mFreq,
+                mPartials[2].mFreq, mPartials[3].mFreq);
+    }
+#endif
 }
 
 void
@@ -1605,8 +1613,11 @@ SASFrame4::ComputeNormWarpingAux()
     // Fundamental frequency
     BL_FLOAT hzPerBin = mSampleRate/mBufferSize;
 
+    // Adjust on chroma-computed frequency
     BL_FLOAT freq0 = mFrequency;
 
+    // Adjust of first pratial frequency
+    //
     // NOTE: This is different, is it better?
     // Set to 0 for good Vox Oooh!
 #if 0 //1 // Use first partial frequency, instead of mFrequency
@@ -1616,7 +1627,7 @@ SASFrame4::ComputeNormWarpingAux()
         freq0 = mPartials[0].mFreq;
 #endif
     
-#if 0
+#if 1 // Must adjust the also on the first partial, if ref freq is chroma-computed
     // Put the values we have
     for (int i = 0; i < mPartials.size(); i++)
 #else
@@ -1644,9 +1655,11 @@ SASFrame4::ComputeNormWarpingAux()
     }
 
 #if FILL_ZERO_FIRST_LAST_VALUES
+#if 0 // Keep the first partial warping of reference is chroma-compute freq
     // Avoid warping the first partial
     FillFirstValues(&mNormWarping, mPartials, 1.0);
-
+#endif
+    
     // NEW
     FillLastValues(&mNormWarping, mPartials, 1.0);
 #endif
