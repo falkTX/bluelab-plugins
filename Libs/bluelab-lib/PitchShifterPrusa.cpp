@@ -51,6 +51,7 @@
 // Was for Smb (not tested for Prusa (seems we don't need it)
 #define FIX_BAD_SOUND_MONO 0 //1
 
+// TODO: maybe use new PhasesEstimPrusa
 //
 PitchShifterPrusa::PitchShifterPrusa()
 {

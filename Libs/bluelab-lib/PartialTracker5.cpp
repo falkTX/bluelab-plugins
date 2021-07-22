@@ -2076,9 +2076,10 @@ PartialTracker5::FindPartialById(const vector<PartialTracker5::Partial> &partial
 
 // Use method similar to SAS
 void
-PartialTracker5::AssociatePartials(const vector<PartialTracker5::Partial> &prevPartials,
-                                   vector<PartialTracker5::Partial> *currentPartials,
-                                   vector<PartialTracker5::Partial> *remainingPartials)
+PartialTracker5::
+AssociatePartials(const vector<PartialTracker5::Partial> &prevPartials,
+                  vector<PartialTracker5::Partial> *currentPartials,
+                  vector<PartialTracker5::Partial> *remainingPartials)
 {
     // Sort current partials and prev partials by decreasing amplitude
     vector<Partial> &currentPartialsSort = mTmpPartials14;
