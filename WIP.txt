@@ -85,8 +85,8 @@ BL-Gain12	    :	cppck, func, pre, bsp, sr,
 BL-Gain200	    :	
 BL-Gain24	    :	cppck, func, pre, bsp, sr,
 BL-Gain60	    :	cppck, func, pre, bsp, sr,
-BL-Ghost	    :	cppck, func, pre, bsp, sr,
-BL-GhostViewer	    :   cppck, func, pre, bsp, # TODO!
+BL-Ghost	    :	cppck, func, pre, bsp, sr,# TODO: no save options to track (+)
+BL-GhostViewer	    :   cppck, func, pre, bsp, # TODO/WIP!
 BL-Impulses	    :   cppck, func, pre, bsp,
 BL-Infra	    :   cppck, func, pre, bsp, # TODO: check for regression denorm idx
 BL-InfrasonicViewer :   cppck, func, pre, bsp,
