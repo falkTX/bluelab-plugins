@@ -44,7 +44,8 @@ using namespace std;
 // Good for narrow partials, but process flat partial tops badly
 #define COMPUTE_PEAKS_PARABOLA 0
 #define COMPUTE_PEAKS_SIMPLE   0
-// Advance method in 2 steps. VERY GOOD!
+// Advance method in 2 steps.
+// Good at least for mel and value stability, but inaccurate
 #define COMPUTE_PEAKS_HALF_PROMINENCE_AVG 1
 
 // With 1, that made more defined partials
@@ -256,6 +257,10 @@ PartialTracker5::PartialTracker5(int bufferSize, BL_FLOAT sampleRate,
     
     mDbgParam = 1.0;
 
+    // Default behavior, computed frequencies are not very accurate
+    // (e.g ~6/8Hz accuracy)
+    mComputeAccurateFreqs = false;
+    
     // Optim
     ComputeAWeights(bufferSize/2, sampleRate);
     
@@ -304,6 +309,12 @@ PartialTracker5::Reset(int bufferSize, BL_FLOAT sampleRate)
     ReserveTmpBufs();
 }
 
+void
+PartialTracker5::SetComputeAccurateFreqs(bool flag)
+{
+    mComputeAccurateFreqs = flag;
+}
+
 BL_FLOAT
 PartialTracker5::GetMinAmpDB()
 {
@@ -322,6 +333,9 @@ PartialTracker5::SetData(const WDL_TypedBuf<BL_FLOAT> &magns,
 {
     mCurrentMagns = magns;
     mCurrentPhases = phases;
+
+    // Not smoothed (will be overwritten later)
+    //mLinearMagns = magns;
     
     PreProcess(&mCurrentMagns, &mCurrentPhases);
 }
@@ -341,6 +355,9 @@ PartialTracker5::DetectPartials()
     vector<Partial> &partials = mTmpPartials0;
     partials.resize(0);
     DetectPartials(magns0, mCurrentPhases, &partials);
+
+    if (mComputeAccurateFreqs)
+        ComputeAccurateFreqs(&partials);
     
     SuppressZeroFreqPartials(&partials);
     
@@ -1149,67 +1166,70 @@ PartialTracker5::DetectPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
                     Partial p;
                     p.mLeftIndex = leftIndex;
                     p.mRightIndex = rightIndex;
-                    
+
+                    if (!mComputeAccurateFreqs) // Do not recompute 2 times!
+                    {
 #if COMPUTE_PEAKS_AVG
-                    // Make smooth partials change
-                    // But makes wobble in the sound volume
-                    BL_FLOAT peakIndexF =
-                        ComputePeakIndexAvg(magns, leftIndex, rightIndex);
+                        // Make smooth partials change
+                        // But makes wobble in the sound volume
+                        BL_FLOAT peakIndexF =
+                            ComputePeakIndexAvg(magns, leftIndex, rightIndex);
 #endif
 #if COMPUTE_PEAKS_PARABOLA
-                    // Won't work well with peaks with almost flat top ?
-                    //
-                    // Make smooth partials change
-                    // But makes wobble in the sound volume
-                    BL_FLOAT peakIndexF = ComputePeakIndexParabola(magns, peakIndex);
+                        // Won't work well with peaks with almost flat top ?
+                        //
+                        // Make smooth partials change
+                        // But makes wobble in the sound volume
+                        BL_FLOAT peakIndexF =
+                            ComputePeakIndexParabola(magns, peakIndex);
 #endif
                     
 #if COMPUTE_PEAKS_SIMPLE
-                    BL_FLOAT peakIndexF = (leftIndex + rightIndex)*0.5;
+                        BL_FLOAT peakIndexF = (leftIndex + rightIndex)*0.5;
 #endif
 
-                    // VERY GOOD!
 #if COMPUTE_PEAKS_HALF_PROMINENCE_AVG
-                    BL_FLOAT peakIndexF =
+                        BL_FLOAT peakIndexF =
                             ComputePeakIndexHalfProminenceAvg(magns,
                                                               peakIndex,
                                                               p.mLeftIndex,
                                                               p.mRightIndex);
 #endif
 
-                    p.mPeakIndex = bl_round(peakIndexF);
-                    if (p.mPeakIndex < 0)
-                        p.mPeakIndex = 0;
+                        p.mPeakIndex = bl_round(peakIndexF);
+                        if (p.mPeakIndex < 0)
+                            p.mPeakIndex = 0;
                     
-                    if (p.mPeakIndex > maxDetectIndex)
-                        p.mPeakIndex = maxDetectIndex;
+                        if (p.mPeakIndex > maxDetectIndex)
+                            p.mPeakIndex = maxDetectIndex;
 
-                    // Remainder: freq is normalized here
-                    BL_FLOAT peakFreq = peakIndexF/(mBufferSize*0.5);
-                    p.mFreq = peakFreq;
+                        // Remainder: freq is normalized here
+                        BL_FLOAT peakFreq = peakIndexF/(mBufferSize*0.5);
+                        p.mFreq = peakFreq;
                     
-                    // Kalman
-                    //
-                    // Update the estimate with the first value
-                    //p.mKf.updateEstimate(p.mFreq);
-                    p.mKf.initEstimate(p.mFreq);
+                        // Kalman
+                        //
+                        // Update the estimate with the first value
+                        //p.mKf.updateEstimate(p.mFreq);
+                        p.mKf.initEstimate(p.mFreq);
                     
-                    // For predicted freq to be freq for the first value
-                    p.mPredictedFreq = p.mFreq;
-                    
-                    // Default value. Will be overwritten
-                    //BL_FLOAT peakAmp = magns.Get()[(int)peakIndexF];
+                        // For predicted freq to be freq for the first value
+                        p.mPredictedFreq = p.mFreq;
+                        
+                        // Default value. Will be overwritten
+                        //BL_FLOAT peakAmp = magns.Get()[(int)peakIndexF];
                     
 #if !INTERPOLATE_PHASES
-                    // Magn
-                    p.mAmp = ComputePeakAmpInterp(magns, peakFreq);
-                    
-                    // Phase
-                    p.mPhase = phases.Get()[(int)peakIndexF];
+                        // Magn
+                        p.mAmp = ComputePeakAmpInterp(magns, peakFreq);
+                        
+                        // Phase
+                        p.mPhase = phases.Get()[(int)peakIndexF];
 #else
-                    ComputePeakMagnPhaseInterp(magns, phases, peakFreq,
-                                               &p.mAmp, &p.mPhase);
+                        ComputePeakMagnPhaseInterp(magns, phases, peakFreq,
+                                                   &p.mAmp, &p.mPhase);
 #endif
+                    } // end mComputeAccurateFreqs
                     
                     outPartials->push_back(p);
                 }
@@ -1571,8 +1591,9 @@ PartialTracker5::ComputePeakProminence(const WDL_TypedBuf<BL_FLOAT> &magns,
 }
 
 BL_FLOAT
-PartialTracker5::ComputePeakIndexHalfProminenceAvg(const WDL_TypedBuf<BL_FLOAT> &magns,
-                                                   int peakIndex, int leftIndex, int rightIndex)
+PartialTracker5::
+ComputePeakIndexHalfProminenceAvg(const WDL_TypedBuf<BL_FLOAT> &magns,
+                                  int peakIndex, int leftIndex, int rightIndex)
 {
     // First step: find float indices corresponding to the half prominence
     //
@@ -1990,7 +2011,7 @@ BL_FLOAT
 PartialTracker5::ComputePeakIndexParabola(const WDL_TypedBuf<BL_FLOAT> &magns,
                                           int peakIndex)
 {
-    if ((peakIndex - 1 < 0) || (peakIndex >= magns.GetSize()))
+    if ((peakIndex - 1 < 0) || (peakIndex + 1 >= magns.GetSize()))
     {
         return peakIndex;
     }
@@ -2359,7 +2380,7 @@ PartialTracker5::PreProcessDataX(WDL_TypedBuf<BL_FLOAT> *data)
 }
 
 void
-PartialTracker5::PreProcessDataXY(WDL_TypedBuf<BL_FLOAT> *data)
+PartialTracker5::PreProcessDataY(WDL_TypedBuf<BL_FLOAT> *data)
 {
     // Y
 #if 0 // one by one
@@ -2376,10 +2397,16 @@ PartialTracker5::PreProcessDataXY(WDL_TypedBuf<BL_FLOAT> *data)
     
     // Better tracking on high frequencies with this!
     PreProcessAWeighting(data, true);
-    
-    PreProcessDataX(data);
 }
 
+void
+PartialTracker5::PreProcessDataXY(WDL_TypedBuf<BL_FLOAT> *data)
+{
+    // Origin: process Y first
+    PreProcessDataY(data);
+    PreProcessDataX(data);
+}
+    
 // Unwrap phase before converting to mel => more correct!
 void
 PartialTracker5::PreProcess(WDL_TypedBuf<BL_FLOAT> *magns,
@@ -2388,6 +2415,11 @@ PartialTracker5::PreProcess(WDL_TypedBuf<BL_FLOAT> *magns,
     // ORIGIN: smooth only magns
     // NOTE: tested smooting on complex => gave more noisy result
     PreProcessTimeSmooth(magns);
+
+    // Use time smooth on raw magns too
+    // (time smoothed, but linearly scaled)
+    mLinearMagns = *magns;
+    PreProcessDataY(&mLinearMagns); // We want raw data in dB (just keep linear on x)
     
 #if SQUARE_MAGNS
     BLUtils::ComputeSquare(magns);
@@ -2692,4 +2724,101 @@ PartialTracker5::DenormBinIndex(int idx)
 
     return resi;
 }
+
+// NOTE: freq/index conversions should use (bufferSize*0.5 - 1) as a factor...
+void
+PartialTracker5::ComputeAccurateFreqs(vector<Partial> *partials)
+{    
+    // The most accurate frequencies are acheived using linear scale on x,
+    // db scale on y, and parabola peak finding,
+    // (and with and offset of 0.5 to get centered on bins) <- mistake ?
+
+    // With this method, we get an accuracy of less than 1Hz!
     
+    // Compute the frequencies using this most accurate method
+    for (int i = 0; i < partials->size(); i++)
+    {
+        Partial &p = (*partials)[i];
+
+        // First, find the left and right indices, scaled to linear
+        BL_FLOAT leftIndexF = ((BL_FLOAT)p.mLeftIndex)/(mBufferSize*0.5 - 1);
+        BL_FLOAT rightIndexF = ((BL_FLOAT)p.mRightIndex)/(mBufferSize*0.5 - 1);
+
+        leftIndexF = mScale->ApplyScale(mXScaleInv, leftIndexF, (BL_FLOAT)0.0,
+                                        (BL_FLOAT)(mSampleRate*0.5));
+        rightIndexF = mScale->ApplyScale(mXScaleInv, rightIndexF, (BL_FLOAT)0.0,
+                                         (BL_FLOAT)(mSampleRate*0.5));
+
+        int leftIndex = leftIndexF*(mBufferSize*0.5 - 1);
+        int rightIndex = rightIndexF*(mBufferSize*0.5 - 1);
+
+        // Then find the integer peak index, still in ilear scale
+        // Use the raw magns we previously kept (possibly time smoothed) 
+        int peakIndex = BLUtils::FindMaxIndex(mLinearMagns, leftIndex, rightIndex);
+
+        // Won't work well with peaks with almost flat top ?
+        //
+        // Make smooth partials change
+        // But makes wobble in the sound volume
+        BL_FLOAT peakIndexF = ComputePeakIndexParabola(mLinearMagns, peakIndex);
+
+        // NOTE: this seemed to be a mistake, fixed here by a hack
+        //
+        // Then adjust to be centered on the bins (the magic comes here :)
+        // => this way we get the right result
+        //peakIndexF = peakIndexF + 0.5;
+
+        // Update the partial peak index (just in case)
+        p.mPeakIndex = bl_round(peakIndexF);
+        
+        // Get the normalized frequency (linear scale)
+        BL_FLOAT peakFreq = peakIndexF/(mBufferSize*0.5 - 1);
+                        
+        // Rescale it to the current scale
+        peakFreq = mScale->ApplyScale(mXScale, peakFreq, (BL_FLOAT)0.0,
+                                     (BL_FLOAT)(mSampleRate*0.5));
+
+        // And finally, update the partial
+        p.mFreq = peakFreq;
+
+        // Some updates
+        //
+
+        // NOTE: not sure this computation is very exact...
+        //
+        // Update the partial peak index (just in case)
+        BL_FLOAT newPeakIndex = peakFreq*(mBufferSize*0.5 - 1);
+        p.mPeakIndex = bl_round(newPeakIndex);
+        if (p.mPeakIndex < 0)
+            p.mPeakIndex = 0;
+        
+        int maxDetectIndex = mCurrentMagns.GetSize() - 1;
+        if (mMaxDetectFreq > 0.0)
+            maxDetectIndex = mMaxDetectFreq*(mBufferSize*0.5 - 1);
+        if (maxDetectIndex > mCurrentMagns.GetSize() - 1)
+            maxDetectIndex = mCurrentMagns.GetSize() - 1;
+        if (p.mPeakIndex > maxDetectIndex)
+            p.mPeakIndex = maxDetectIndex;
+    
+        // Kalman
+        
+        // Update the estimate with the first value
+        //p.mKf.updateEstimate(p.mFreq);
+        p.mKf.initEstimate(p.mFreq);
+                    
+        // For predicted freq to be freq for the first value
+        p.mPredictedFreq = p.mFreq;
+
+        // (Re)compute amp more accurately
+#if !INTERPOLATE_PHASES
+        // Magn
+        p.mAmp = ComputePeakAmpInterp(mCurrentMagns, peakFreq);
+                    
+        // Phase
+        p.mPhase = mCurrentPhases.Get()[(int)peakIndexF];
+#else
+        ComputePeakMagnPhaseInterp(mCurrentMagns, mCurrentPhases, peakFreq,
+                                   &p.mAmp, &p.mPhase);
+#endif
+    }
+}

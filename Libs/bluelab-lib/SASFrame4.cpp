@@ -1419,17 +1419,6 @@ SASFrame4::ComputeFrequency()
         mPrevFrequency = freq;
         mFrequency = freq;
     }
-
-#if 0
-    // DEBUG
-    if (mPartials.size() == 4)
-    {
-        fprintf(stderr, "%g   [ %g %g %g %g ]\n",
-                mFrequency,
-                mPartials[0].mFreq, mPartials[1].mFreq,
-                mPartials[2].mFreq, mPartials[3].mFreq);
-    }
-#endif
 }
 
 void

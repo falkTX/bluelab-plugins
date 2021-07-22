@@ -120,6 +120,8 @@ public:
     void Reset();
     
     void Reset(int bufferSize, BL_FLOAT sampleRate);
+
+    void SetComputeAccurateFreqs(bool flag);
     
     BL_FLOAT GetMinAmpDB();
     
@@ -161,6 +163,9 @@ public:
     
     // For processing result warping for example
     void PreProcessDataX(WDL_TypedBuf<BL_FLOAT> *data);
+
+    //
+    void PreProcessDataY(WDL_TypedBuf<BL_FLOAT> *data);
     
     // For processing result color for example, just before display
     void PreProcessDataXY(WDL_TypedBuf<BL_FLOAT> *data);
@@ -362,6 +367,8 @@ protected:
                           int bufferSize);
 
     int DenormBinIndex(int idx);
+
+    void ComputeAccurateFreqs(vector<Partial> *partials);
     
     //
     
@@ -374,6 +381,8 @@ protected:
     //
     WDL_TypedBuf<BL_FLOAT> mCurrentMagns;
     WDL_TypedBuf<BL_FLOAT> mCurrentPhases;
+
+    WDL_TypedBuf<BL_FLOAT> mLinearMagns;
     
     deque<vector<Partial> > mPartials;
     
@@ -414,6 +423,8 @@ protected:
 
     // Optim
     WDL_TypedBuf<BL_FLOAT> mAWeights;
+
+    bool mComputeAccurateFreqs;
     
 private:
     // Tmp buffers

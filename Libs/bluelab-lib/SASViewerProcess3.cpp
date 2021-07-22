@@ -61,7 +61,8 @@ SASViewerProcess3::SASViewerProcess3(int bufferSize,
     mSASViewerRender = NULL;
     
     mPartialTracker = new PartialTracker5(bufferSize, sampleRate, overlapping);
-    
+    mPartialTracker->SetComputeAccurateFreqs(true);
+        
     BL_FLOAT minAmpDB = mPartialTracker->GetMinAmpDB();
     
     mSASFrame = new SASFrame4(bufferSize, sampleRate, overlapping);
@@ -191,6 +192,16 @@ SASViewerProcess3::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
         
         vector<PartialTracker5::Partial> partials = normPartials;
         mPartialTracker->DenormPartials(&partials);
+
+#if 0 //1 // DEBUG
+        for (int i = 0; i < partials.size(); i++)
+        {
+            const PartialTracker5::Partial &p = partials[i];
+
+            fprintf(stderr, "detect - freq: %g\n", p.mFreq);
+        }
+        fprintf(stderr, "\n");
+#endif
         
         mSASFrame->SetPartials(partials);
 
