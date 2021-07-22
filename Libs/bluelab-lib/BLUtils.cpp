@@ -5140,6 +5140,38 @@ template int BLUtils::FindMaxIndex(const WDL_TypedBuf<float> &values);
 template int BLUtils::FindMaxIndex(const WDL_TypedBuf<double> &values);
 
 template <typename FLOAT_TYPE>
+int
+BLUtils::FindMaxIndex(const WDL_TypedBuf<FLOAT_TYPE> &values,
+                      int startIdx, int endIdx)
+{
+    int maxIndex = -1;
+    FLOAT_TYPE maxValue = -BL_INF;
+    
+    int valuesSize = values.GetSize();
+    FLOAT_TYPE *valuesData = values.Get();
+
+    if (endIdx > valuesSize - 1)
+        endIdx = valuesSize - 1;
+    
+    for (int i = startIdx; i <= endIdx; i++)
+    {
+        FLOAT_TYPE value = valuesData[i];
+        
+        if (value > maxValue)
+        {
+            maxValue = value;
+            maxIndex = i;
+        }
+    }
+    
+    return maxIndex;
+}
+template int BLUtils::FindMaxIndex(const WDL_TypedBuf<float> &values,
+                                   int startIdx, int endIdx);
+template int BLUtils::FindMaxIndex(const WDL_TypedBuf<double> &values,
+                                   int startIdx, int endIdx);
+
+template <typename FLOAT_TYPE>
 FLOAT_TYPE
 BLUtils::FindMaxValue(const WDL_TypedBuf<FLOAT_TYPE> &values)
 {

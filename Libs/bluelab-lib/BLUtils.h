@@ -647,6 +647,11 @@ public:
     
     template <typename FLOAT_TYPE>
     static int FindMaxIndex(const WDL_TypedBuf<FLOAT_TYPE> &values);
+
+    // Start and end idx are included in the search
+    template <typename FLOAT_TYPE>
+    static int FindMaxIndex(const WDL_TypedBuf<FLOAT_TYPE> &values,
+                            int startIdx, int endIdx);
     
     template <typename FLOAT_TYPE>
     static FLOAT_TYPE FindMaxValue(const WDL_TypedBuf<FLOAT_TYPE> &values);
