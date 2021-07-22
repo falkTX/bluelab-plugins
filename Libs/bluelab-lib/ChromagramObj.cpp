@@ -81,9 +81,9 @@ ChromagramObj::MagnsToChromaLine(const WDL_TypedBuf<BL_FLOAT> &magns,
 #endif
 
 #if !USE_FREQ_OBJ
-      MagnsToChromaLine(magns, chromaLine);
+    MagnsToChromaLine(magns, chromaLine);
 #else
-      MagnsToChromaLineFreqs(magns, realFreqs, chromaLine);
+    MagnsToChromaLineFreqs(magns, realFreqs, chromaLine);
 #endif
 }
 

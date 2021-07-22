@@ -41,6 +41,11 @@
 // Does not improve transients at all (result is identical)
 #define USE_PRUSA_PHASES_ESTIM 0 //1
 
+// That was for debugging
+// NOTE: the first time partials appears, we must wait 1 frame before
+// getting them, after filtering (filtering needs 2 rows of partials)
+#define FORCE_NON_FILTERED_FIRTS_PARTIALS 0 // 1
+
 SASViewerProcess3::SASViewerProcess3(int bufferSize,
                                      BL_FLOAT overlapping, BL_FLOAT oversampling,
                                      BL_FLOAT sampleRate)
@@ -144,6 +149,13 @@ SASViewerProcess3::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     // DetectPartials
     mPartialTracker->SetData(magns, phases);
     mPartialTracker->DetectPartials();
+
+#if FORCE_NON_FILTERED_FIRTS_PARTIALS
+     // Try to provide the first partials, even is they are not yet filtered
+    vector<PartialTracker5::Partial> rawPartials;
+    mPartialTracker->GetPartialsRAW(&rawPartials);
+#endif
+    
     mPartialTracker->ExtractNoiseEnvelope();
     mPartialTracker->FilterPartials();
     
@@ -164,6 +176,11 @@ SASViewerProcess3::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     {
         vector<PartialTracker5::Partial> normPartials;
         mPartialTracker->GetPartials(&normPartials);
+
+#if FORCE_NON_FILTERED_FIRTS_PARTIALS
+        if (normPartials.empty())
+            normPartials = rawPartials;
+#endif
         
         mCurrentNormPartials = normPartials;
         

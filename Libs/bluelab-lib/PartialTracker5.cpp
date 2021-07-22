@@ -991,6 +991,12 @@ PartialTracker5::GetPartials(vector<Partial> *partials)
 }
 
 void
+PartialTracker5::GetPartialsRAW(vector<Partial> *partials)
+{
+    *partials = mResult;
+}
+
+void
 PartialTracker5::ClearResult()
 {
     mResult.clear();
@@ -2158,9 +2164,10 @@ AssociatePartials(const vector<PartialTracker5::Partial> &prevPartials,
 
 // Use PARSHL method
 void
-PartialTracker5::AssociatePartialsPARSHL(const vector<PartialTracker5::Partial> &prevPartials,
-                                         vector<PartialTracker5::Partial> *currentPartials,
-                                         vector<PartialTracker5::Partial> *remainingPartials)
+PartialTracker5::
+AssociatePartialsPARSHL(const vector<PartialTracker5::Partial> &prevPartials,
+                        vector<PartialTracker5::Partial> *currentPartials,
+                        vector<PartialTracker5::Partial> *remainingPartials)
 {
     // Sort current partials and prev partials by increasing frequency
     sort(currentPartials->begin(), currentPartials->end(), Partial::FreqLess);

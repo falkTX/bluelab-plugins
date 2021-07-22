@@ -95,7 +95,8 @@ SIN_LUT_CREATE(SAS_FRAME_SIN_LUT, 4096);
 #define FILL_ZERO_FIRST_LAST_VALUES 1
 
 // Use OnsetDetector to avoid generating garbage harmonics when a transient appears
-#define DETECT_TRANSIENTS_ONSET 1 //0 //1
+#define ENABLE_ONSET_DETECTION 1
+#define DETECT_TRANSIENTS_ONSET 0 //1
 #define ONSET_THRESHOLD 0.94
 //#define ONSET_VALUE_THRESHOLD 0.0012
 //#define ONSET_VALUE_THRESHOLD 0.06
@@ -106,7 +107,7 @@ SIN_LUT_CREATE(SAS_FRAME_SIN_LUT, 4096);
 #define ONSET_HISTORY_HACK 1
 #define ONSET_HISTORY_HACK_SIZE 3
 
-#define DEBUG_DUMP_VALUE 1
+#define DEBUG_DUMP_VALUES 0 //1
 
 SASFrame4::SASPartial::SASPartial()
 {
@@ -176,18 +177,27 @@ SASFrame4::SASFrame4(int bufferSize, BL_FLOAT sampleRate, int overlapping)
     mSynthOddPartials = true;
 
     mOnsetDetector = NULL;
-#if DETECT_TRANSIENTS_ONSET
+#if ENABLE_ONSET_DETECTION
     mOnsetDetector = new OnsetDetector();
     mOnsetDetector->SetThreshold(ONSET_THRESHOLD);
 #endif
 
-#if DEBUG_DUMP_VALUE
-#if DETECT_TRANSIENTS_ONSET
+#if DEBUG_DUMP_VALUES
+
+    BLDebug::ResetFile("magns.txt");
+    BLDebug::ResetFile("noise.txt");
+    BLDebug::ResetFile("color.txt");
+    BLDebug::ResetFile("warping.txt");
+    
+#if ENABLE_ONSET_DETECTION
     BLDebug::ResetFile("onset.txt");
 #endif
+
     BLDebug::ResetFile("freq.txt");
     BLDebug::ResetFile("amp.txt");
     BLDebug::ResetFile("nump.txt");
+
+    BLDebug::ResetFile("color-factor.txt");
 #endif
 }
 
@@ -205,7 +215,7 @@ SASFrame4::~SASFrame4()
 
     delete mScale;
 
-#if DETECT_TRANSIENTS_ONSET
+#if ENABLE_ONSET_DETECTION
     delete mOnsetDetector;
 #endif
 }
@@ -553,14 +563,28 @@ SASFrame4::ComputeSamplesPartials(WDL_TypedBuf<BL_FLOAT> *samples)
 void
 SASFrame4::ComputeSamplesSAS(WDL_TypedBuf<BL_FLOAT> *samples)
 {
-#if DEBUG_DUMP_VALUE
+#if DEBUG_DUMP_VALUES
+    BL_FLOAT avgInputMagns = BLUtils::ComputeAvg(mInputMagns);
+    BLDebug::AppendValue("magns.txt", avgInputMagns);
+
+    BL_FLOAT avgNoiseEnv = BLUtils::ComputeAvg(mNoiseEnvelope);
+    BLDebug::AppendValue("noise.txt", avgNoiseEnv);
+
+    BL_FLOAT avgColor = BLUtils::ComputeAvg(mColor);
+    BLDebug::AppendValue("color.txt", avgColor);
+
+    BL_FLOAT avgWarping = BLUtils::ComputeAvg(mNormWarping);
+    BLDebug::AppendValue("warping.txt", avgWarping);
+    
     BLDebug::AppendValue("freq.txt", mFrequency);
     BLDebug::AppendValue("amp.txt", mAmplitude);
     BLDebug::AppendValue("nump.txt", (BL_FLOAT)mPartials.size());
+
+    BLDebug::AppendValue("color-factor.txt", mColorFactor);
 #endif
     
     bool transientDetected = false;
-#if DETECT_TRANSIENTS_ONSET
+#if ENABLE_ONSET_DETECTION
 #if !ONSET_HISTORY_HACK
     mOnsetDetector->Detect(mInputMagns); // Origin
 #else
@@ -568,11 +592,13 @@ SASFrame4::ComputeSamplesSAS(WDL_TypedBuf<BL_FLOAT> *samples)
 #endif
     
     BL_FLOAT onsetValue = mOnsetDetector->GetCurrentOnsetValue();
-    
-    transientDetected = (onsetValue > ONSET_VALUE_THRESHOLD);
 
-#if DEBUG_DUMP_VALUE
+#if DEBUG_DUMP_VALUES
     BLDebug::AppendValue("onset.txt", onsetValue);
+#endif
+    
+#if DETECT_TRANSIENTS_ONSET
+    transientDetected = (onsetValue > ONSET_VALUE_THRESHOLD);
 #endif
     
 #endif

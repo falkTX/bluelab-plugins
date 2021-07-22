@@ -137,6 +137,10 @@ public:
     void FilterPartials();
     
     void GetPartials(vector<Partial> *partials);
+
+    // NEW
+    // For getting current partials before filtering
+    void GetPartialsRAW(vector<Partial> *partials);
     
     void ClearResult();
     
