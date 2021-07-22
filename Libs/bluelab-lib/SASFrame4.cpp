@@ -94,11 +94,19 @@ SIN_LUT_CREATE(SAS_FRAME_SIN_LUT, 4096);
 // Origin: 1
 #define FILL_ZERO_FIRST_LAST_VALUES 1
 
-// Use OnsetDetector to avoir generating garbage harmonics when a transient appears
-#define DETECT_TRANSIENTS_ONSET 1
+// Use OnsetDetector to avoid generating garbage harmonics when a transient appears
+#define DETECT_TRANSIENTS_ONSET 1 //0 //1
 #define ONSET_THRESHOLD 0.94
 //#define ONSET_VALUE_THRESHOLD 0.0012
-#define ONSET_VALUE_THRESHOLD 0.06
+//#define ONSET_VALUE_THRESHOLD 0.06
+//#define ONSET_VALUE_THRESHOLD 0.001 // Works ("bowl": takes the two peaks)
+#define ONSET_VALUE_THRESHOLD 0.0025 // Works ("bowl": only take the main peak)
+
+// Shift, so the onset peaks are in synch with mAmplitude 
+#define ONSET_HISTORY_HACK 1
+#define ONSET_HISTORY_HACK_SIZE 3
+
+#define DEBUG_DUMP_VALUE 1
 
 SASFrame4::SASPartial::SASPartial()
 {
@@ -172,6 +180,15 @@ SASFrame4::SASFrame4(int bufferSize, BL_FLOAT sampleRate, int overlapping)
     mOnsetDetector = new OnsetDetector();
     mOnsetDetector->SetThreshold(ONSET_THRESHOLD);
 #endif
+
+#if DEBUG_DUMP_VALUE
+#if DETECT_TRANSIENTS_ONSET
+    BLDebug::ResetFile("onset.txt");
+#endif
+    BLDebug::ResetFile("freq.txt");
+    BLDebug::ResetFile("amp.txt");
+    BLDebug::ResetFile("nump.txt");
+#endif
 }
 
 SASFrame4::~SASFrame4()
@@ -228,6 +245,10 @@ SASFrame4::Reset(int bufferSize, int oversampling,
     mOverlapping = oversampling;
     
     Reset(sampleRate);
+
+#if ONSET_HISTORY_HACK
+    mInputMagnsHistory.clear();
+#endif
 }
 
 void
@@ -291,6 +312,12 @@ SASFrame4::SetInputData(const WDL_TypedBuf<BL_FLOAT> &magns,
 {
     mInputMagns = magns;
     mInputPhases = phases;
+
+#if ONSET_HISTORY_HACK
+    mInputMagnsHistory.push_back(mInputMagns);
+    if (mInputMagnsHistory.size() > ONSET_HISTORY_HACK_SIZE)
+        mInputMagnsHistory.pop_front();
+#endif
 }
 
 BL_FLOAT
@@ -526,11 +553,28 @@ SASFrame4::ComputeSamplesPartials(WDL_TypedBuf<BL_FLOAT> *samples)
 void
 SASFrame4::ComputeSamplesSAS(WDL_TypedBuf<BL_FLOAT> *samples)
 {
+#if DEBUG_DUMP_VALUE
+    BLDebug::AppendValue("freq.txt", mFrequency);
+    BLDebug::AppendValue("amp.txt", mAmplitude);
+    BLDebug::AppendValue("nump.txt", (BL_FLOAT)mPartials.size());
+#endif
+    
+    bool transientDetected = false;
 #if DETECT_TRANSIENTS_ONSET
-    mOnsetDetector->Detect(mInputMagns);
+#if !ONSET_HISTORY_HACK
+    mOnsetDetector->Detect(mInputMagns); // Origin
+#else
+    mOnsetDetector->Detect(mInputMagnsHistory[0]);
+#endif
+    
     BL_FLOAT onsetValue = mOnsetDetector->GetCurrentOnsetValue();
     
-    bool transientDetected = (onsetValue > ONSET_VALUE_THRESHOLD);
+    transientDetected = (onsetValue > ONSET_VALUE_THRESHOLD);
+
+#if DEBUG_DUMP_VALUE
+    BLDebug::AppendValue("onset.txt", onsetValue);
+#endif
+    
 #endif
     
     BLUtils::FillAllZero(samples);
@@ -1319,11 +1363,13 @@ SASFrame4::ComputeAmplitude()
     // Amp must not be in dB, but direct!
     //mPrevAmplitude = mAmplitude;
     mAmplitude = 0.0;
+
+    const vector<PartialTracker5::Partial> &partials = mPartials;
     
     BL_FLOAT amplitude = 0.0;
-    for (int i = 0; i < mPartials.size(); i++)
+    for (int i = 0; i < partials.size(); i++)
     {
-        const PartialTracker5::Partial &p = mPartials[i];
+        const PartialTracker5::Partial &p = partials[i];
         
         BL_FLOAT amp = p.mAmp;
         amplitude += amp;

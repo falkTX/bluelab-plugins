@@ -200,6 +200,9 @@ protected:
     // Input signal, not processed
     WDL_TypedBuf<BL_FLOAT> mInputMagns;
     WDL_TypedBuf<BL_FLOAT> mInputPhases;
+
+    // HACK
+    deque<WDL_TypedBuf<BL_FLOAT> > mInputMagnsHistory;
     
     WDL_TypedBuf<BL_FLOAT> mColor;
     WDL_TypedBuf<BL_FLOAT> mNormWarping;
