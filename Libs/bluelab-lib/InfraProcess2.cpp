@@ -115,6 +115,7 @@ InfraProcess2::InfraProcess2(int bufferSize,
     mSampleRate = sampleRate;
     
     mPartialTracker = new PartialTracker5(bufferSize, sampleRate, overlapping);
+    mPartialTracker->SetComputeAccurateFreqs(true); // NEW
     
     mPartialTracker->SetMaxDetectFreq(MAX_DETECT_FREQ);
     
