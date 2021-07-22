@@ -54,7 +54,7 @@ SIN_LUT_CREATE(SAS_FRAME_SIN_LUT, 4096);
 // Avoids jumps in envelope
 #define COLOR_SMOOTH_COEFF 0.5
 // WARPING 0.9 improves "bowl"
-#define WARPING_SMOOTH_COEFF 0.9 //0.5
+#define WARPING_SMOOTH_COEFF 0.0 //0.9 //0.5
 // NOTE: for the moment, smooting freq in only for debugging
 #define FREQ_SMOOTH_COEFF 0.0
 
@@ -1635,7 +1635,8 @@ SASFrame4::ComputeNormWarpingAux()
         
         BL_FLOAT normWarp = freq/freq1;
 
-        BL_FLOAT idx = p.mFreq/hzPerBin;
+        //BL_FLOAT idx = p.mFreq/hzPerBin;
+        BL_FLOAT idx = freq1/hzPerBin;
         // TODO: make an interpolation, it is not so good to align to bins
         idx = bl_round(idx);
         
