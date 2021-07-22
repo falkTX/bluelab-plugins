@@ -246,6 +246,7 @@ PartialTracker5::PartialTracker5(int bufferSize, BL_FLOAT sampleRate,
     mYScale = Scale::DB;
     
     //
+    //mXScaleInv = Scale::LINEAR;
     //mXScaleInv = Scale::MEL_INV;
     mXScaleInv = Scale::MEL_FILTER_INV;
     mYScaleInv = Scale::DB_INV;

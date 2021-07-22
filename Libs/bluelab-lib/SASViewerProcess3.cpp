@@ -161,7 +161,7 @@ SASViewerProcess3::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     
     //
     mPartialTracker->GetPreProcessedMagns(&mCurrentMagns);
-
+            
     //
     mSASFrame->SetInputData(magns, phases);
 
@@ -176,7 +176,7 @@ SASViewerProcess3::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     {
         vector<PartialTracker5::Partial> normPartials;
         mPartialTracker->GetPartials(&normPartials);
-
+            
 #if FORCE_NON_FILTERED_FIRTS_PARTIALS
         if (normPartials.empty())
             normPartials = rawPartials;
