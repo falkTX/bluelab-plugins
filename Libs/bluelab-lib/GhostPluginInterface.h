@@ -47,6 +47,7 @@ public:
     virtual void DoCutCopyCommand() = 0;
     virtual void DoGainCommand() = 0;
     virtual void DoReplaceCommand() = 0;
+    virtual void DoReplaceCopyCommand() = 0;
     virtual void DoCopyCommand() = 0;
     virtual void DoPasteCommand() = 0;
     virtual void UndoLastCommand() = 0;
