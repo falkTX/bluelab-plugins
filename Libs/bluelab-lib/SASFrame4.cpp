@@ -359,9 +359,9 @@ SASFrame4::GetNormWarping(WDL_TypedBuf<BL_FLOAT> *warping) const
 {
     *warping = mNormWarping;
 
-    BLUtils::AddValues(warping, -1.0);
+    BLUtils::AddValues(warping, (BL_FLOAT)-1.0);
     BLUtils::MultValues(warping, mWarpingFactor);
-    BLUtils::AddValues(warping, 1.0);
+    BLUtils::AddValues(warping, (BL_FLOAT)1.0);
 }
 
 void
