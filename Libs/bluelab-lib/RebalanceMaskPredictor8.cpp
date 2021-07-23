@@ -351,9 +351,17 @@ ComputeMasks(WDL_TypedBuf<BL_FLOAT> masks[NUM_STEM_SOURCES],
 #if !USE_MASK_STACK_METHOD2
         mMaskStacks[i]->GetMaskAvg(&masks0[i]);
 #else
+        
+#if 1 // ORIGIN
         // Seems good!
         int index = GetHistoryIndex();
         mMaskStacks[i]->GetMaskWeightedAvg(&masks0[i], index);
+#endif
+#if 0 // Was a test
+        int index = GetHistoryIndex();
+        mMaskStacks[i]->GetMaskStdev(&masks0[i], index);
+#endif
+        
 #endif
     }
 #endif

@@ -23,6 +23,8 @@ using namespace iplug;
 class BLDebug
 {
 public:
+    static const char *GetDebugBaseFile();
+    
     static void AppendMessage(const char *filename, const char *message);
     
     template <typename FLOAT_TYPE>

@@ -9,6 +9,10 @@
 #include <BLUtils.h>
 #include <BLUtilsMath.h>
 
+#include <BLBitmap.h>
+#include <BLDebug.h>
+#include <BLUtilsFile.h>
+
 #include "RebalanceMaskStack2.h"
 
 #define VARIANCE2_HISTORY_SIZE 8
@@ -16,6 +20,7 @@
 // GOOD
 #define OPTIM_STACK_WEIGHTED_AVG 1
 
+#define DBG_DUMP_STACK 0 //1
 
 RebalanceMaskStack2::RebalanceMaskStack2(int width, int stackDepth)
 {
@@ -80,6 +85,15 @@ RebalanceMaskStack2::GetMaskVariance2(WDL_TypedBuf<BL_FLOAT> *mask)
     bl_queue<WDL_TypedBuf<BL_FLOAT> > &q = mTmpBuf4;
     q.freeze(); // TEST
     GetMaskVariance2(&q);
+    QueToBuffer(mask, q);
+}
+
+void
+RebalanceMaskStack2::GetMaskStdev(WDL_TypedBuf<BL_FLOAT> *mask, int index)
+{
+    bl_queue<WDL_TypedBuf<BL_FLOAT> > &q = mTmpBuf3;
+    q.freeze(); // TEST
+    GetMaskStdev(&q, index);
     QueToBuffer(mask, q);
 }
 
@@ -341,6 +355,10 @@ RebalanceMaskStack2::GetMaskWeightedAvg(bl_queue<WDL_TypedBuf<BL_FLOAT> > *mask,
     WDL_TypedBuf<BL_FLOAT> &sumWeights = mTmpBuf8;
     sumWeights.Resize(numValues);
     BLUtils::FillAllZero(&sumWeights);
+
+#if DBG_DUMP_STACK
+    DBG_DumpMaskStack();
+#endif
     
     // Compute the sums
     //
@@ -415,6 +433,111 @@ RebalanceMaskStack2::GetMaskWeightedAvg(bl_queue<WDL_TypedBuf<BL_FLOAT> > *mask,
         
                 line0Data[j] = avg;
             }
+        }
+    }
+}
+
+// This works, but doesn't improve results a lot
+// (improves a very few)
+//
+// NOTE: performances not tested at all
+void
+RebalanceMaskStack2::GetMaskStdev(bl_queue<WDL_TypedBuf<BL_FLOAT> > *mask,
+                                  int index)
+{    
+    if (mStack.empty())
+    {
+        mask->resize(0);
+        
+        return;
+    }
+    
+    if (mStack[0].empty())
+    {
+        mask->resize(0);
+        
+        return;
+    }
+    
+    mask->resize(mStack[0].size());
+    for (int i = 0; i < mask->size(); i++)
+    {
+        (*mask)[i].Resize(mStack[0][0].GetSize());
+        BLUtils::FillAllZero(&(*mask)[i]);
+    }
+
+#if DBG_DUMP_STACK
+    DBG_DumpMaskStack();
+#endif
+    
+    for (int i = 0; i < mStack[0].size(); i++)
+    {
+#if OPTIM_STACK_WEIGHTED_AVG
+        if ((index >= 0) && (i != index))
+            continue;
+#endif
+        
+        for (int j = 0; j < mStack[0][0].GetSize(); j++)
+        {
+            // Compute avg
+            BL_FLOAT sum = 0.0;
+            int numVals = 0;
+            for (int k = 0; k < mStack.size(); k++)
+            {
+                BL_FLOAT val = mStack[k][i].Get()[j];
+
+                if (val >= 0.0)
+                {
+                    sum += val;
+                    numVals++;
+                }
+            }
+
+            BL_FLOAT avg = 0.0;
+            if (numVals > 0)
+                avg = sum/numVals;
+
+            // Compute sddev
+            BL_FLOAT sumDiff2 = 0.0;
+            for (int k = 0; k < mStack.size(); k++)
+            {
+                BL_FLOAT val = mStack[k][i].Get()[j];
+
+                if (val >= 0.0)
+                    sumDiff2 += (val - avg)*(val - avg);
+                    //sumDiff2 += std::fabs(val - avg);
+            }
+
+            BL_FLOAT stdev = 0.0;
+            if (numVals > 0)
+            {
+                stdev = sqrt(sumDiff2/numVals);
+                //stdev = sumDiff2/numVals;
+            }
+
+            // Finally, sum the values only if they are not over stdev
+            BL_FLOAT resultSum = 0.0;
+            int numResults = 0;
+            for (int k = 0; k < mStack.size(); k++)
+            {
+                BL_FLOAT val = mStack[k][i].Get()[j];
+
+                if (val >= 0.0)
+                {
+                    if (std::fabs(val - avg) < stdev)   
+                    {
+                        resultSum += val;
+                        numResults++;
+                    }
+                }
+            }
+
+            BL_FLOAT resultVal = 0.0;
+            if (numResults > 0)
+                resultVal = resultSum/numResults;
+
+            // Then apply the result
+            (*mask)[i].Get()[j] = resultVal;
         }
     }
 }
@@ -624,5 +747,52 @@ RebalanceMaskStack2::QueToBuffer(WDL_TypedBuf<BL_FLOAT> *buf,
             
             buf->Get()[bufIndex] = col.Get()[i];
         }
+    }
+}
+
+void
+RebalanceMaskStack2::DBG_DumpMaskStack()
+{
+#define COLOR_COEFF 255.0
+
+    static int count = 0;
+    fprintf(stderr, "step: %d\n", count++);
+    
+    //if (count == 765)
+    if (count == 693)
+    {
+        if (!mStack.empty() && !mStack[0].empty())
+        {
+            BLBitmap *bmp = new BLBitmap(mStack[0].size(), mStack[0][0].GetSize(), 1);
+            unsigned char *bmpData = (unsigned char *)bmp->GetData();
+            
+            for (int k = 0; k < mStack.size(); k++)
+            {
+                const bl_queue<WDL_TypedBuf<BL_FLOAT> > &mask = mStack[k];
+                
+                for (int k0 = 0; k0 < mask.size(); k0++)
+                {
+                    const WDL_TypedBuf<BL_FLOAT> &line = mask[k0];
+                    
+                    for (int k1 = 0; k1 < line.GetSize(); k1++)
+                    {
+                        BL_FLOAT v = line.Get()[k1];
+                        bmpData[k0 + k1*mask.size()] = v*COLOR_COEFF;
+                    }
+                }
+                
+                // Save
+                const char *baseFile = BLDebug::GetDebugBaseFile();
+                
+                char fileName[FILENAME_SIZE];
+                sprintf(fileName, "%smask-%d.png", baseFile, k);
+                
+                BLBitmap::Save(bmp, fileName);
+            }
+
+            delete bmp;
+        }
+
+        exit(0);
     }
 }

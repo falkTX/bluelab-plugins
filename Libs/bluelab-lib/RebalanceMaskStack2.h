@@ -38,6 +38,9 @@ public:
     void GetMaskWeightedAvg(WDL_TypedBuf<BL_FLOAT> *mask, int index = -1);
     // Not so bad, but worse
     void GetMaskVariance2(WDL_TypedBuf<BL_FLOAT> *mask);
+
+    // Compute standard deviation, and discard value if greater than stdev
+    void GetMaskStdev(WDL_TypedBuf<BL_FLOAT> *mask, int index = -1);
     
     void GetLineAvg(WDL_TypedBuf<BL_FLOAT> *line, int lineNum);
                  
@@ -49,6 +52,7 @@ protected:
     void GetMaskVariance(bl_queue<WDL_TypedBuf<BL_FLOAT> > *mask);
     void GetMaskWeightedAvg(bl_queue<WDL_TypedBuf<BL_FLOAT> > *mask, int index = -1);
     void GetMaskVariance2(bl_queue<WDL_TypedBuf<BL_FLOAT> > *mask);
+    void GetMaskStdev(bl_queue<WDL_TypedBuf<BL_FLOAT> > *mask, int index = -1);
     
     void BufferToQue(bl_queue<WDL_TypedBuf<BL_FLOAT> > *que,
                      const WDL_TypedBuf<BL_FLOAT> &buffer,
@@ -61,6 +65,8 @@ protected:
     BL_FLOAT ComputeVariance(const bl_queue<WDL_TypedBuf<BL_FLOAT> > &history,
                              int index);
 
+
+    void DBG_DumpMaskStack();
     
     //
     int mWidth;

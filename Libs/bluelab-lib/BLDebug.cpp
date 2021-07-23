@@ -28,6 +28,12 @@
 #define BASE_FILE "/home/niko/Documents/BlueLabAudio-Debug/"
 #endif
 
+const char *
+BLDebug::GetDebugBaseFile()
+{
+    return BASE_FILE;
+}
+
 void
 BLDebug::AppendMessage(const char *filename, const char *message)
 {

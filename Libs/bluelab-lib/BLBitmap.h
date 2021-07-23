@@ -27,6 +27,7 @@ public:
     
     // Load from file
     static BLBitmap *Load(const char *fileName);
+    
     // Save
     static void Save(const BLBitmap *bmp, const char *fileName);
     
