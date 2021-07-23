@@ -141,6 +141,7 @@ protected:
     void ComputeColorAux();
     void ComputeNormWarping();
     void ComputeNormWarpingAux();
+    void ComputeNormWarpingAux2();
     
     // Simple version
     BL_FLOAT ApplyNormWarping(BL_FLOAT freq);
@@ -233,6 +234,13 @@ protected:
     Scale *mScale;
 
     OnsetDetector *mOnsetDetector;
+
+    struct PartialAux
+    {
+        BL_FLOAT mFreq;
+        BL_FLOAT mWarping;
+        int mPartialAge;
+    };
 };
 
 #endif /* defined(__BL_SASViewer__SASFrame4__) */

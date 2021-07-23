@@ -1557,7 +1557,8 @@ SASFrame4::ComputeNormWarping()
     
     WDL_TypedBuf<BL_FLOAT> prevWarping = mNormWarping;
     
-    ComputeNormWarpingAux();
+    //ComputeNormWarpingAux();
+    ComputeNormWarpingAux2();
     
     if (prevWarping.GetSize() != mNormWarping.GetSize())
         return;
@@ -1652,6 +1653,186 @@ SASFrame4::ComputeNormWarpingAux()
         
         if ((idx > 0) && (idx < mNormWarping.GetSize()))
             mNormWarping.Get()[(int)idx] = normWarp;
+    }
+
+#if FILL_ZERO_FIRST_LAST_VALUES
+#if 0 // Keep the first partial warping of reference is chroma-compute freq
+    // Avoid warping the first partial
+    FillFirstValues(&mNormWarping, mPartials, 1.0);
+#endif
+    
+    // NEW
+    FillLastValues(&mNormWarping, mPartials, 1.0);
+#endif
+    
+    // Fill all the other value
+    bool extendBounds = false;
+    BLUtils::FillMissingValues(&mNormWarping, extendBounds, undefinedValue);
+}
+
+// Problem: when incorrect partials are briefly detected, they affect warping a lot
+// Solution: take each theorical synth partials, and find the closest detected
+// partial to compute the norma warping (and ignore other partials)
+// => a lot more robust for low thresholds, when we have many partials
+//
+// NOTE: this is not still perfect if we briefly loose the tracking
+void
+SASFrame4::ComputeNormWarpingAux2()
+{
+    // Init
+
+    int maxNumPartials = SYNTH_MAX_NUM_PARTIALS;
+    //BL_FLOAT minFreq = 20.0;
+    //int maxNumPartials = mSampleRate*0.5/minFreq;
+    
+    vector<PartialAux> theoricalPartials;
+    theoricalPartials.resize(maxNumPartials);
+    for (int i = 0; i < theoricalPartials.size(); i++)
+    {
+        theoricalPartials[i].mFreq = (i + 1)*mFrequency;
+        theoricalPartials[i].mWarping = -1.0;
+        theoricalPartials[i].mPartialAge = -1;
+    }
+    
+    // Compute best match
+    for (int i = 0; i < theoricalPartials.size(); i++)
+    {
+        PartialAux &pa = theoricalPartials[i];
+        
+        for (int j = 0; j < mPartials.size(); j++)
+        {
+            const PartialTracker5::Partial &p = mPartials[j];
+
+            // Do no add to warping if dead or zombie
+            if (p.mState != PartialTracker5::Partial::ALIVE)
+                continue;
+        
+            if (p.mFreq < pa.mFreq*0.5)
+                continue;
+            if (p.mFreq > pa.mFreq*2.0)
+                break;
+
+            BL_FLOAT w = p.mFreq/pa.mFreq;
+            
+#if LIMIT_WARPING_MAX
+            // Discard too high warping values,
+            // that can come to short invalid partials
+            // spread randomly
+            if ((w < 0.8) || (w > 1.25))
+                continue;
+#endif
+
+#if 1
+            // Keep smallest warping
+            if ((pa.mWarping < 0.0) ||
+                (std::fabs(w - 1.0) < std::fabs(pa.mWarping - 1.0)))
+                pa.mWarping = w;
+#endif
+
+#if 0 // Bad if we briefly loose the tracking of a long partial
+            // Keep biggest age, then smallest warping
+            if (pa.mWarping < 0.0)
+            {
+                if (p.mAge >= pa.mPartialAge)
+                {
+                    if ((p.mAge > pa.mPartialAge) ||
+                        (std::fabs(w - 1.0) < std::fabs(pa.mWarping - 1.0)))
+                    {
+                        pa.mWarping = w;
+                        pa.mPartialAge = p.mAge;
+                    }
+                }
+            }
+#endif
+        }
+    }
+
+    // Fill missing partials values
+    // (in case no matchin detected partial was found for a given theorical partial)
+    for (int i = 0; i < theoricalPartials.size(); i++)
+    {
+        PartialAux &pa = theoricalPartials[i];
+
+        if (pa.mWarping < 0.0)
+            // Not defined
+        {
+            BL_FLOAT leftWarp = -1.0;
+            int leftIdx = -1;
+            for (int j = i - 1; j >= 0; j--)
+            {
+                const PartialAux &paL = theoricalPartials[j];
+                if (paL.mWarping > 0.0)
+                {
+                    leftWarp = paL.mWarping;
+                    leftIdx = j;
+                    break;
+                }
+            }
+
+            BL_FLOAT rightWarp = -1.0;
+            int rightIdx = -1;
+            for (int j = i + 1; j < theoricalPartials.size(); j++)
+            {
+                const PartialAux &paR = theoricalPartials[j];
+                if (paR.mWarping > 0.0)
+                {
+                    rightWarp = paR.mWarping;
+                    rightIdx = j;
+                    break;
+                }
+            }
+
+            if ((leftWarp > 0.0) && (rightWarp > 0.0))
+            {
+                BL_FLOAT t = (i - leftIdx)/(rightIdx - leftIdx);
+                BL_FLOAT w = (1.0 - t)*leftWarp + t*rightWarp;
+
+                pa.mWarping = w;
+            }
+        }
+    }
+    
+    
+    // Fill the warping envelope
+    //
+    
+    mNormWarping.Resize(mBufferSize/2);
+    
+    if (mFrequency < BL_EPS)
+    {
+        BLUtils::FillAllValue(&mNormWarping, (BL_FLOAT)1.0);
+        
+        return;
+    }
+    
+    // Will interpolate values between the partials
+    BL_FLOAT undefinedValue = -1.0;
+    BLUtils::FillAllValue(&mNormWarping, undefinedValue);
+    
+    // Fix bounds at 1
+    mNormWarping.Get()[0] = 1.0;
+    mNormWarping.Get()[mBufferSize/2 - 1] = 1.0;
+    
+    if (mPartials.size() < 2)
+    {
+        BLUtils::FillAllValue(&mNormWarping, (BL_FLOAT)1.0);
+        
+        return;
+    }
+    
+    // Fundamental frequency
+    BL_FLOAT hzPerBin = mSampleRate/mBufferSize;
+
+    for (int i = 0; i < theoricalPartials.size(); i++)
+    {
+        PartialAux &pa = theoricalPartials[i];
+        
+        BL_FLOAT idx = pa.mFreq/hzPerBin;
+        // TODO: make an interpolation ?
+        idx = bl_round(idx);
+        
+        if ((idx > 0) && (idx < mNormWarping.GetSize()))
+            mNormWarping.Get()[(int)idx] = pa.mWarping;
     }
 
 #if FILL_ZERO_FIRST_LAST_VALUES
