@@ -350,7 +350,8 @@ SASFrame4::GetColor(WDL_TypedBuf<BL_FLOAT> *color) const
 {
     *color = mColor;
 
-    BLUtils::MultValues(color, mColorFactor);
+    //BLUtils::MultValues(color, mColorFactor);
+    ApplyColorFactor(color, mColorFactor);
 }
 
 void
@@ -807,7 +808,8 @@ SASFrame4::GetColor(const WDL_TypedBuf<BL_FLOAT> &color, BL_FLOAT binIdx)
 #endif
     }
 
-    col *= mColorFactor;
+    //col *= mColorFactor;
+    col = ApplyColorFactor(col, mColorFactor);
     
     return col;
 }
@@ -1451,22 +1453,29 @@ SASFrame4::ComputeColor()
 void
 SASFrame4::ComputeColorAux()
 {
+#if !COLOR_DB_INTERP
+    BL_FLOAT minColorValue = 0.0;
+    BL_FLOAT undefinedValue = -1.0; // -300dB
+#else
+    BL_FLOAT minColorValue = mMinAmpDB;
+    BL_FLOAT undefinedValue = -300.0; // -300dB
+#endif
+    
     mColor.Resize(mBufferSize/2);
     
     if (mFrequency < BL_EPS)
     {
-        BLUtils::FillAllValue(&mColor, mMinAmpDB);
+        BLUtils::FillAllValue(&mColor, minColorValue);
         
         return;
     }
     
     // Will interpolate values between the partials
-    BL_FLOAT undefinedValue = -300; // -300dB
     BLUtils::FillAllValue(&mColor, undefinedValue);
     
     // Fix bounds at 0
-    mColor.Get()[0] = mMinAmpDB;
-    mColor.Get()[mBufferSize/2 - 1] = mMinAmpDB;
+    mColor.Get()[0] = minColorValue;
+    mColor.Get()[mBufferSize/2 - 1] = minColorValue;
     
     BL_FLOAT hzPerBin = mSampleRate/mBufferSize;
     
@@ -1511,7 +1520,7 @@ SASFrame4::ComputeColorAux()
             if (idx >= mColor.GetSize())
                 break;
             
-            mColor.Get()[(int)idx] = mMinAmpDB;
+            mColor.Get()[(int)idx] = minColorValue;
         }
         
         freq += mFrequency;
@@ -1522,7 +1531,7 @@ SASFrame4::ComputeColorAux()
     // Avoid interpolating to the last partial value to 0
     // Would make color where ther eis no sound otherwise
     // (e.g example with just some sine waves is false)
-    FillLastValues(&mColor, mPartials, mMinAmpDB);
+    FillLastValues(&mColor, mPartials, minColorValue);
 #endif
     
     // Fill al the other value

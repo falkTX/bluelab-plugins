@@ -173,7 +173,11 @@ protected:
     void FillFirstValues(WDL_TypedBuf<BL_FLOAT> *values,
                          const vector<PartialTracker5::Partial> &partials,
                          BL_FLOAT val);
+
+    static BL_FLOAT ApplyColorFactor(BL_FLOAT color, BL_FLOAT factor);
+    static void ApplyColorFactor(WDL_TypedBuf<BL_FLOAT> *color, BL_FLOAT factor);
     
+                          
     //
     SynthMode mSynthMode;
     bool mSynthEvenPartials;
