@@ -2263,3 +2263,36 @@ SASFrame4::FillFirstValues(WDL_TypedBuf<BL_FLOAT> *values,
         }
     }            
 }
+
+BL_FLOAT
+SASFrame4::ApplyColorFactor(BL_FLOAT color, BL_FLOAT factor)
+{
+#if 0
+    // Naive
+    BL_FLOAT res = color*factor;
+#endif
+
+#if 1
+    // Sigmoid
+    BL_FLOAT a = factor*0.5;
+    if (a < BL_EPS)
+        a = BL_EPS;
+    if (a > 1.0 - BL_EPS)
+        a = 1.0 - BL_EPS;
+
+    BL_FLOAT res = BLUtilsMath::ApplySigmoid(color, a);
+#endif
+        
+    return res;
+}
+
+void
+SASFrame4::ApplyColorFactor(WDL_TypedBuf<BL_FLOAT> *color, BL_FLOAT factor)
+{
+    for (int i = 0; i < color->GetSize(); i++)
+    {
+        BL_FLOAT col = color->Get()[i];
+        col = ApplyColorFactor(col, factor);
+        color->Get()[i] = col;
+    }
+}
