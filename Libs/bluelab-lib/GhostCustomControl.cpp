@@ -78,7 +78,8 @@ SetSelectionType(GhostPluginInterface::SelectionType selectionType)
         return;
     
     mSelectionType = selectionType;
-    
+
+#if 0
     // Update the selection !
     // For example, if we were in RECTANGULAR and we go in HORIZONTAL,
     // the selection will grow !
@@ -86,7 +87,7 @@ SetSelectionType(GhostPluginInterface::SelectionType selectionType)
     mPlug->UpdateSelection(mSelection[0], mSelection[1],
                            mSelection[2], mSelection[3],
                            false);
-
+#endif
 }
 
 void
@@ -335,8 +336,10 @@ GhostCustomControl::OnMouseDrag(float x, float y, float dX, float dY,
                 
                 mPlug->SelectionChanged();
             }
-        
+
+#if 0
             UpdateSelectionType();
+#endif
             
             mPlug->UpdateSelection(mSelection[0], mSelection[1],
                                    mSelection[2], mSelection[3],
@@ -415,10 +418,12 @@ GhostCustomControl::OnMouseWheel(float x, float y, const IMouseMod &pMod, float 
     
     BL_FLOAT zoomChange = 1.0 + d*WHEEL_ZOOM_STEP;
     mPlug->UpdateZoom(zoomChange);
-    
+
+#if 0
     // For hozizontal selection, grow the selection to the
     // extremities if necessary when zooming
     UpdateSelectionType();
+#endif
     
     bool isSelectionActive = mPlug->IsSelectionActive();
         
