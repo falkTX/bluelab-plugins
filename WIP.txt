@@ -61,16 +61,16 @@ TESTS (Linux)
 Spectroscroll4: Chroma, GhostViewer, InfrasonicViewer, Panogram, Rebalance,
 
 ===
-cppck: passed cpp check on all plugs and fixed and re-tested
-func: functional tests (vst2)
+- cppck: passed cpp check on all plugs and fixed and re-tested
+- func: functional tests (vst2)
       - close/open gui
       - remove/insert plug
       - open manual
       - automatize all parameters to constant values
       - test all features in detail
-pre: test presets (vst2)
-bsp: block size (perfs) - block size 32, check perfs (+ quickly checked functioning) 
-sr: sample rate - switch 44100Hz/88200Hz (test: perfs, features, param smooth, curves smooth, curves freq scale)
+- pre: test presets (vst2)
+- bsp: block size(perfs) - block size 32, check perfs (+ quickly checked functioning) 
+- sr: sample rate - switch 44100Hz/88200Hz (test: perfs, features, param smooth, curves smooth, curves freq scale)
 
 ---
 BL-Air		    :	cppck, func, pre, bsp, sr,
