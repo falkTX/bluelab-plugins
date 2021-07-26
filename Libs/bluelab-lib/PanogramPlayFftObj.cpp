@@ -224,6 +224,9 @@ PanogramPlayFftObj::Reset(int bufferSize, int oversampling,
     
     mSelectionEnabled = false;
     mSelectionPlayFinished = false;
+
+    // Be sure to clear the previous data
+    ClearData();
 }
 
 void
@@ -338,16 +341,6 @@ PanogramPlayFftObj::SetNumCols(int numCols)
         mCurrentPhases.resize(mNumCols);
         mCurrentPhases.freeze();
         
-        WDL_TypedBuf<BL_FLOAT> &zeros = mTmpBuf7;
-        zeros.Resize(mBufferSize/2);
-        BLUtils::FillAllZero(&zeros);
-    
-        for (int i = 0; i < mNumCols; i++)
-        {
-            mCurrentMagns[i] = zeros;
-            mCurrentPhases[i] = zeros;
-        }
-        
 #if FIX_NO_SOUND_FIRST_DE_FREEZE
         /*mMaskLines.clear();
         
@@ -357,10 +350,10 @@ PanogramPlayFftObj::SetNumCols(int numCols)
           mMaskLines.push_back(maskLine);
           }*/
 
-        HistoMaskLine2 maskLine(mBufferSize);
         mMaskLines.resize(mNumCols);
-        mMaskLines.clear(maskLine);
 #endif
+
+        ClearData();
     }
 }
 
@@ -538,4 +531,23 @@ PanogramPlayFftObj::ShiftXSelection(BL_FLOAT *xValue)
     }
     
     return true;
+}
+
+void
+PanogramPlayFftObj::ClearData()
+{
+    WDL_TypedBuf<BL_FLOAT> &zeros = mTmpBuf7;
+    zeros.Resize(mBufferSize/2);
+    BLUtils::FillAllZero(&zeros);
+    
+    for (int i = 0; i < mNumCols; i++)
+    {
+        mCurrentMagns[i] = zeros;
+        mCurrentPhases[i] = zeros;
+    }
+
+#if FIX_NO_SOUND_FIRST_DE_FREEZE
+    HistoMaskLine2 maskLine(mBufferSize);
+    mMaskLines.clear(maskLine);
+#endif
 }

@@ -83,7 +83,9 @@ protected:
     // on the sound
     bool ShiftXPlayBar(int *xValue);
     bool ShiftXSelection(BL_FLOAT *xValue);
-    
+
+    void ClearData();
+        
     //
     long mLineCount;
     
