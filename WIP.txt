@@ -91,9 +91,9 @@ BL-Impulses	    :   cppck, func, pre, bsp, sr,
 BL-Infra	    :   cppck, func, pre, bsp, sr,
 BL-InfrasonicViewer :   cppck, func, pre, bsp, sr,
 BL-InfraSynth	    :
-BL-LoFi		    :   cppck, func, pre, bsp, 
+BL-LoFi		    :   cppck, func, pre, bsp, sr,
 BL-OnsetDetect	    :
-BL-Panogram	    :   cppck, func, pre, bsp, # BUG: freeze + play at 88200Hz
+BL-Panogram	    :   cppck, func, pre, bsp,
 BL-PitchShift	    :   cppck, func, pre, bsp,
 BL-Precedence	    :   cppck, func, pre, bsp,
 BL-Rebalance	    :	cppck, func, pre, bsp, # BUG: scroll too fast at 88200Hz (+)
