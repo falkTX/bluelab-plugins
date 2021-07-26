@@ -141,7 +141,7 @@ BLTransport::SetTransportPlayingLF(bool transportPlaying,
 #endif
     
     bool loopDetected = (dawTransportValueSec < mDAWCurrentTransportValueSecLoop);
-    
+
     if (transportJustStarted)
         // Play just started  
     {    
