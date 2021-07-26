@@ -201,7 +201,7 @@ PanogramFftObj::GetNumColsAdd()
     // the overlapping changes
     int numCols = mBufferSize/(32/mOverlapping);
 
-#if FIX_BAD_DISPLAY_HIGH_SAMPLERATES
+#if 1 //FIX_BAD_DISPLAY_HIGH_SAMPLERATES
     // Adjust to the sample rate to avoid scrolling
     // 2 times faster when we go from 44100 to 88200
     //
