@@ -93,7 +93,7 @@ BL-InfrasonicViewer :   cppck, func, pre, bsp, sr,
 BL-InfraSynth	    :
 BL-LoFi		    :   cppck, func, pre, bsp, sr,
 BL-OnsetDetect	    :
-BL-Panogram	    :   cppck, func, pre, bsp,
+BL-Panogram	    :   cppck, func, pre, bsp, sr,
 BL-PitchShift	    :   cppck, func, pre, bsp,
 BL-Precedence	    :   cppck, func, pre, bsp,
 BL-Rebalance	    :	cppck, func, pre, bsp, # BUG: scroll too fast at 88200Hz (+)
