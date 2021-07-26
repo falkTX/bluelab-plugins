@@ -6,6 +6,7 @@
 #include <StereoPhasesProcess.h>
 
 #include <BLUtilsPlug.h>
+#include <BLUtilsMath.h>
 
 #include "PitchShifterPrusa.h"
 
@@ -67,6 +68,9 @@ PitchShifterPrusa::PitchShifterPrusa()
     mSampleRate = 44100.0;
     mFactor = 1.0;
 
+    mQuality = 0;
+    UpdateQuality();
+    
     InitFft(mSampleRate);
 }
 
@@ -90,6 +94,8 @@ PitchShifterPrusa::Reset(BL_FLOAT sampleRate, int blockSize)
 {
     mSampleRate = sampleRate;
 
+    UpdateQuality();
+    
     // Sample rate has changed, and we can have variable buffer size
     InitFft(mSampleRate);
 
@@ -176,20 +182,8 @@ PitchShifterPrusa::SetQuality(int quality)
     }
 #endif
 
-    // Change buffer size
-    switch(quality)
-    {
-        case 0:
-            mBufferSize = BUFFER_SIZE_0;
-            break;
-            
-        case 1:
-            mBufferSize = BUFFER_SIZE_1;
-            break;
-            
-        default:
-            break;
-    }
+    mQuality = quality;
+    UpdateQuality();
     
     //InitFft(mSampleRate);
     Reset(mSampleRate, -1); // Block size is not used anyway
@@ -253,5 +247,28 @@ PitchShifterPrusa::InitFft(BL_FLOAT sampleRate)
 #if ADJUST_STEREO_PHASES
         mPhasesProcess->Reset(mBufferSize, mOversampling, FREQ_RES, sampleRate);
 #endif
+    }
+}
+
+void
+PitchShifterPrusa::UpdateQuality()
+{
+    BL_FLOAT sampleRateCoeff = mSampleRate/44100.0;
+    int sampleRateCoeffI = (int)sampleRateCoeff;
+    sampleRateCoeffI = BLUtilsMath::NextPowerOfTwo(sampleRateCoeffI);
+        
+    // Change buffer size
+    switch(mQuality)
+    {
+        case 0:
+            mBufferSize = BUFFER_SIZE_0*sampleRateCoeff;
+            break;
+            
+        case 1:
+            mBufferSize = BUFFER_SIZE_1*sampleRateCoeff;
+            break;
+            
+        default:
+            break;
     }
 }

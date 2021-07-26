@@ -37,6 +37,8 @@ class PitchShifterPrusa : public PitchShifterInterface
 protected:
     void InitFft(BL_FLOAT sampleRate);
 
+    void UpdateQuality();
+    
     //
     BL_FLOAT mSampleRate;
     // Not used anymore
@@ -55,6 +57,8 @@ protected:
     FftProcessObj16 *mFftObj;
     
     StereoPhasesProcess *mPhasesProcess;
+
+    int mQuality;
 };
 
 #endif
