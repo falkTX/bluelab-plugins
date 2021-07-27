@@ -99,29 +99,23 @@ BL-Precedence	    :   cppck, func, pre, bsp, sr,
 BL-Rebalance	    :	cppck, func, pre, bsp, sr,
 BL-Reverb	    :
 BL-ReverbDepth	    :
-BL-SampleDelay	    :   cppck, func, pre, bsp,
+BL-SampleDelay	    :   cppck, func, pre, bsp, sr,
 BL-SASViewer	    : 
-BL-Saturate	    :   cppck, func, pre, bsp,
-BL-Shaper	    :   cppck, func, pre, bsp,
-BL-Sine		    :   cppck, func, pre, bsp,
+BL-Saturate	    :   cppck, func, pre, bsp, sr,
+BL-Shaper	    :   cppck, func, pre, bsp, sr,
+BL-Sine		    :   cppck, func, pre, bsp, sr,
 BL-SoundMetaViewer  :
-BL-Spatializer	    :   cppck, func, pre, bsp,
-BL-SpectralDiff	    :   cppck, func, pre, bsp,
+BL-Spatializer	    :   cppck, func, pre, bsp, sr,
+BL-SpectralDiff	    :   cppck, func, pre, bsp, sr,
 BL-SpectroExpe	    :
 BL-SpectrumView	    :
 BL-StereoDeReverb   :
-BL-StereoPan	    :   cppck, func, pre, bsp,
-BL-StereoWidth	    :   cppck, func, pre, bsp,
-BL-Wav3s	    :   cppck, func, pre, bsp
+BL-StereoPan	    :   cppck, func, pre, bsp, sr,
+BL-StereoWidth	    :   cppck, func, pre, bsp, sr,
+BL-Wav3s	    :   cppck, func, pre, bsp, sr
 ===
 
-
-- TODO: REFACT legacy lock: protected: funcLF(), and check flag mUseLegacyLock
-like in LinesRender2
-
-- WIP: test samplerate!
-  - test 88200
-  - next: test 48000Hz
+- TODO: quickly test all samplerates!
   
 - TODO: check with weird block size
 
