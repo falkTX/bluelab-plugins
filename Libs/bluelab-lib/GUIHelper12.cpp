@@ -993,7 +993,7 @@ GUIHelper12::GetManualFullPath(Plugin *plug, IGraphics *graphics,
 #else
     // On windows, we must load the resource from dll, save it to the temp file
     // before re-opening it
-    WDL_TypedBuf<uint8_t> resBuf = graphics->LoadResource(MANUAL_FN, "RCDATA");
+    WDL_TypedBuf<uint8_t> resBuf = graphics->LoadResource(MANUAL_FN, "PDF"); // "RCDATA");
     long resSize = resBuf.GetSize();
     if (resSize == 0)
         return;
