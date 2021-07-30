@@ -11,6 +11,7 @@
 #include <GraphSwapColor.h>
 
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
 
 #include "USTCircleGraphDrawer.h"
 

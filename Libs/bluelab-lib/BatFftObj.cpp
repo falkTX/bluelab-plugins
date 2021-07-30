@@ -12,6 +12,7 @@
 #include <Window.h>
 
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
 #include <BLUtilsComp.h>
 #include <BLUtilsFft.h>
 

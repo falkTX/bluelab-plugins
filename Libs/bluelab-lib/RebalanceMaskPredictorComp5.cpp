@@ -135,7 +135,7 @@ RebalanceMaskPredictorComp5::RebalanceMaskPredictorComp5(int bufferSize,
 
     // New
     WDL_String resPath;
-    BLUtils::GetFullPlugResourcesPath(plug, &resPath);
+    BLUtilsPlug::GetFullPlugResourcesPath(plug, &resPath);
 
     const char* resourcePath = resPath.Get();
 

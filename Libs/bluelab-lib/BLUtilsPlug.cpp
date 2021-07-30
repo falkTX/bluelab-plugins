@@ -195,7 +195,7 @@ BLUtilsPlug::GetPlugIOBuffers(Plugin *plug,
 // iPlug2
 bool
 BLUtilsPlug::GetPlugIOBuffers(Plugin *plug,
-                              sample **inputs, sample **outputs, int nFrames,
+                              double **inputs, double**outputs, int nFrames,
                               vector<WDL_TypedBuf<BL_FLOAT> > *inp,
                               vector<WDL_TypedBuf<BL_FLOAT> > *scInp,
                               vector<WDL_TypedBuf<BL_FLOAT> > *outp)

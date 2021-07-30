@@ -84,9 +84,11 @@ RebalanceMaskPredictorComp6::RebalanceMaskPredictorComp6(int bufferSize,
     CreateModel(MODEL0_NAME, resourcePath, &mModel);
     
 #else // WIN32
+#if 0 // Disabled for Windows compilation
     //mModel = new DNNModelDarknetMc();
     mModel = new DNNModelDarknet();
     mModel->LoadWin(graphics, MODEL0_FN, WEIGHTS0_FN);
+#endif
 #endif
     
     InitMixCols();

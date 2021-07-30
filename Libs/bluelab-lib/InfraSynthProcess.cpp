@@ -14,6 +14,7 @@ using namespace std;
 #include <FilterIIRLow12dB.h>
 
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
 
 #include "InfraSynthProcess.h"
 

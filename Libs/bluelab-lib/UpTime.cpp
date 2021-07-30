@@ -64,15 +64,19 @@ double
 UpTime::GetUpTimeF()
 {
 #ifdef WIN32
- TODO: use higher performance counter instead!
- (we must be accurate near 1us for spectrogram/graphaxis smooth scroll
-  )
-        See: https://docs.microsoft.com/en-us/windows/win32/winmsg/about-timers
-    and https://docs.microsoft.com/en-us/windows/win32/api/profileapi/nf-profileapi-queryperformancecounter
+ // TODO: use higher performance counter instead!
+ // (we must be accurate near 1us for spectrogram/graphaxis smooth scroll
+//        See: https://docs.microsoft.com/en-us/windows/win32/winmsg/about-timers
+//    and https://docs.microsoft.com/en-us/windows/win32/api/profileapi/nf-profileapi-queryperformancecounter
     
     // Change for launching on Windows Xp (For Lars, StereoWidth)
     // (Not integrated with the latest iPlug1 version of StereoWidth)
+
+    // GetTickCount64() is just not limited to "up to 49.7 days"
+    // Otherwise this should be the same
     //return GetTickCount64();
+
+    // Use GetTickCount() not 64, to stay compatible with Windows Xp
     return GetTickCount();
 #else
     

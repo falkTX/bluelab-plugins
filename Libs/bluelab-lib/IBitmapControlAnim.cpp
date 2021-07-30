@@ -7,7 +7,9 @@
 //
 
 #include <UpTime.h>
+
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
 
 #include "IBitmapControlAnim.h"
 

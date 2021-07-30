@@ -8,7 +8,9 @@
 
 #include <USTProcess.h>
 #include <Window.h>
+
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
 
 #include <FftProcessObj16.h>
 #include <SourcePos.h>

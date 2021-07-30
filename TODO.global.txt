@@ -414,3 +414,11 @@ Query:
 xfconf-query -c xfwm4 -p /general/vblank_mode
 Set: edit the file:
 /home/niko/.config/xfce4/xfconf/xfce-perchannel-xml/xfwm4.xml
+
+=== Compil windows
+include all files from bluelab-lib
+
+EXTRA_ALL_DEFS => _HAS_STD_BYTE=0
+
+<INI_PARSER_INC_PATH>$(IPLUG2_ROOT)\..\Libs\ini_parser</INI_PARSER_INC_PATH>
+$(INI_PARSER_INC_PATH);

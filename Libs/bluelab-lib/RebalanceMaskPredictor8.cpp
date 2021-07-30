@@ -70,11 +70,26 @@ RebalanceMaskPredictor8::RebalanceMaskPredictor8(int bufferSize,
     CreateModel(MODEL1_NAME, resourcePath, &mModels[1]);
     
 #else // WIN32
+    // Model 0
     mModels[0] = new DNNModelDarknet();
-    mModels[0]->LoadWin(graphics, MODEL0_FN, WEIGHTS0_FN);
 
+    // Name
+    char cfg0[255];
+    sprintf(cfg0, "%s.cfg", MODEL0_NAME);
+    char weights0[255];
+    sprintf(cfg0, "%s.weights", MODEL0_NAME);
+
+    mModels[0]->LoadWin(graphics, cfg0, weights0);
+
+    // Model 1
     mModels[1] = new DNNModelDarknet();
-    mModels[1]->LoadWin(graphics, MODEL1_FN, WEIGHTS1_FN);
+
+    char cfg1[255];
+    sprintf(cfg1, "%s.cfg", MODEL1_NAME);
+    char weights1[255];
+    sprintf(weights1, "%s.weights", MODEL1_NAME);
+
+    mModels[1]->LoadWin(graphics, cfg1, weights1);
 #endif
     
     InitMixCols();

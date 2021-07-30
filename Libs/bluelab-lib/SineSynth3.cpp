@@ -18,6 +18,7 @@
 #include <SinLUT2.h>
 
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
 
 #include "SineSynth3.h"
 

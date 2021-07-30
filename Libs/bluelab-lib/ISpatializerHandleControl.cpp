@@ -1,3 +1,5 @@
+#include <BLUtilsMath.h>
+
 #include "ISpatializerHandleControl.h"
 
 ISpatializerHandleControl::

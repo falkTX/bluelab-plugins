@@ -12,7 +12,9 @@
 #include <cmath>
 
 #include <PPMFile.h>
+
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
 
 #include "GtiInpaint.h"
 

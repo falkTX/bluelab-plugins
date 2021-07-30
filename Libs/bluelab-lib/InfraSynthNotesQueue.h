@@ -8,7 +8,7 @@ using namespace std;
 
 #include <BLTypes.h>
 
-#include <Oscillator.h>
+#include "Oscillator.h"
 #include <EnvelopeGenerator3.h>
 
 #include <SineSynthSimple.h>

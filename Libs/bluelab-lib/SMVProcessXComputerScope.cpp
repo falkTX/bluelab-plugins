@@ -10,6 +10,7 @@
 
 #include <Axis3DFactory2.h>
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
 
 #include "SMVProcessXComputerScope.h"
 

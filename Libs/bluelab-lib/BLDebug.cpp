@@ -9,7 +9,8 @@
 #include <stdio.h>
 #include <math.h>
 
-#include <BLUtils.h> // For M_PI
+#include <BLUtils.h>
+#include <BLUtilsMath.h> // For M_PI
 #include <BLUtilsComp.h>
 
 #include <BLDebug.h>

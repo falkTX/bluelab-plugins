@@ -2,6 +2,7 @@
 #define DECIMATOR_H
 
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
 
 // Polyphase decimation filter.
 //

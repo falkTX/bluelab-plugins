@@ -10,7 +10,9 @@
 
 #include <USTProcess.h>
 #include <USTStereoWidener.h>
+
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
 
 #include "PseudoStereoObj.h"
 

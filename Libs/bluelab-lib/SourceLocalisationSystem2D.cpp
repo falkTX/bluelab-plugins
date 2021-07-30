@@ -10,6 +10,7 @@
 
 #include <BLUtils.h>
 #include <BLUtilsComp.h>
+#include <BLUtilsMath.h>
 
 #include <BLDebug.h>
 

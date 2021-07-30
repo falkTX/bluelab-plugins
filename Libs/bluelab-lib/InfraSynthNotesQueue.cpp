@@ -1,4 +1,5 @@
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
 
 #include "InfraSynthNotesQueue.h"
 

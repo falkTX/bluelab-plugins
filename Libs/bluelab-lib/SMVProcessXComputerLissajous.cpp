@@ -9,6 +9,7 @@
 #ifdef IGRAPHICS_NANOVG
 
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
 
 #include <Axis3DFactory2.h>
 

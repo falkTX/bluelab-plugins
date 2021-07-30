@@ -7,6 +7,7 @@
 //
 
 #include <BLUtils.h>
+#include <BLUtilsMath.h>
 
 #include "SMVProcessColComputerMidSide.h"
 

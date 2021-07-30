@@ -9,7 +9,7 @@
 #include <darknet.h>
 
 extern "C" {
-#include <bl_utils.h>
+#include "../darknet/src/bl_utils.h"
 }
 
 extern "C" {
