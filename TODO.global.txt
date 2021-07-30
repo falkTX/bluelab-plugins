@@ -416,9 +416,23 @@ Set: edit the file:
 /home/niko/.config/xfce4/xfconf/xfce-perchannel-xml/xfwm4.xml
 
 === Compil windows
+increment version
+
 include all files from bluelab-lib
 
+add bl_uptime to IGraphics project in VC
+add denormal to darknet
+add resample_layer to darknet
+add convoengine to WDL
+add smbPitchShift folder and files
+
+config/
 EXTRA_ALL_DEFS => _HAS_STD_BYTE=0
 
 <INI_PARSER_INC_PATH>$(IPLUG2_ROOT)\..\Libs\ini_parser</INI_PARSER_INC_PATH>
 $(INI_PARSER_INC_PATH);
+
+copy bl-show-resources-win.py to plugin (or make it global?)
+
+call bl-show-resources-win.py, and update resources in main.rc
+(special case for the long path manual, need to modif config.h too)
