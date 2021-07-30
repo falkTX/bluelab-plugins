@@ -34,12 +34,17 @@ using namespace std;
 #include <Debug.h>
 #endif
 
+
 // FBO rendering
 // Avoids blinking
 // NOTE: disable on linux? Looked useless since fixes in mDataChanged
 // NOTE: when disabled, bugs in Ghost app when zooming
 // (zoomed graph goes over the knobs)
+#ifndef WIN32
 #define USE_FBO 1 //0
+#else // WIN32
+#define USE_FBO 0
+#endif
 
 // Font size
 #define FONT_SIZE 14.0

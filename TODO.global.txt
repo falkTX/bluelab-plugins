@@ -436,3 +436,8 @@ copy bl-show-resources-win.py to plugin (or make it global?)
 
 call bl-show-resources-win.py, and update resources in main.rc
 (special case for the long path manual, need to modif config.h too)
+
+define IGRAPHICS_DISABLE_VSYNC in config file
+
+===
+Info: Debug -> "enable windows debug heap allocator"
