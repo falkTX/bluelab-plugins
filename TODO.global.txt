@@ -417,6 +417,7 @@ Set: edit the file:
 
 === Compil windows
 
+- apply modifs to makedist-win.bat from Chroma (don't overwrite!!)
 - replace the new postbuild-win.bat script from BL-Chroma
 - copy bl-show-resources-win.py to plugin (or make it global?)
 
@@ -431,7 +432,6 @@ EXTRA_ALL_DEFS => _HAS_STD_BYTE=0
 $(INI_PARSER_INC_PATH);
 
 define IGRAPHICS_DISABLE_VSYNC in config file
-
 
 - include all files from bluelab-lib
 - add bl_uptime to IGraphics project in VC

@@ -71,7 +71,7 @@ Spectroscroll4: Chroma, GhostViewer, InfrasonicViewer, Panogram, Rebalance,
 - pre: test presets (vst2)
 - bsp: block size(perfs) - block size 32, check perfs (+ quickly checked functioning) 
 - sr: sample rate - switch 44100Hz/88200Hz (test: perfs, features, param smooth, curves smooth, curves freq scale)
-
+- win: compilation on windows
 ---
 BL-Air		    :	cppck, func, pre, bsp, sr,
 BL-AutoGain	    :	cppck, func, pre, bsp, sr,
