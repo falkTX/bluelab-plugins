@@ -416,7 +416,8 @@ Set: edit the file:
 /home/niko/.config/xfce4/xfconf/xfce-perchannel-xml/xfwm4.xml
 
 === Compil windows
-increment version
+
+increment version number
 
 include all files from bluelab-lib
 
@@ -439,5 +440,11 @@ call bl-show-resources-win.py, and update resources in main.rc
 
 define IGRAPHICS_DISABLE_VSYNC in config file
 
+use the new postbuild-win.bat script from BL-Chroma
+
 ===
 Info: Debug -> "enable windows debug heap allocator"
+Application Verifier: works great!
+Visual Studio must be run as administator for postbuid-win.bat to work
+
+Later: aax sign
