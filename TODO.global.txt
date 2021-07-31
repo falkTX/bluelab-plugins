@@ -417,31 +417,31 @@ Set: edit the file:
 
 === Compil windows
 
-increment version number
+- replace the new postbuild-win.bat script from BL-Chroma
+- copy bl-show-resources-win.py to plugin (or make it global?)
 
-include all files from bluelab-lib
+- increment plug version number
+- call bl-show-resources-win.py, and update resources in main.rc
+(special case for the long path manual, need to modif config.h too)
 
-add bl_uptime to IGraphics project in VC
-add denormal to darknet
-add resample_layer to darknet
-add convoengine to WDL
-add smbPitchShift folder and files (and new filter)
-add config.h and bl_config.h to project
-
-config/
+- config:
 EXTRA_ALL_DEFS => _HAS_STD_BYTE=0
 
 <INI_PARSER_INC_PATH>$(IPLUG2_ROOT)\..\Libs\ini_parser</INI_PARSER_INC_PATH>
 $(INI_PARSER_INC_PATH);
 
-copy bl-show-resources-win.py to plugin (or make it global?)
-
-call bl-show-resources-win.py, and update resources in main.rc
-(special case for the long path manual, need to modif config.h too)
-
 define IGRAPHICS_DISABLE_VSYNC in config file
 
-use the new postbuild-win.bat script from BL-Chroma
+
+- include all files from bluelab-lib
+- add bl_uptime to IGraphics project in VC
+- add denormal to darknet
+- add resample_layer to darknet
+- add convoengine to WDL
+- add smbPitchShift folder and files
+- add config.h and bl_config.h to project
+- update filters
+- add new filter for smbPitchShift
 
 ===
 Info: Debug -> "enable windows debug heap allocator"
