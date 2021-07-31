@@ -425,7 +425,8 @@ add bl_uptime to IGraphics project in VC
 add denormal to darknet
 add resample_layer to darknet
 add convoengine to WDL
-add smbPitchShift folder and files
+add smbPitchShift folder and files (and new filter)
+add config.h and bl_config.h to project
 
 config/
 EXTRA_ALL_DEFS => _HAS_STD_BYTE=0

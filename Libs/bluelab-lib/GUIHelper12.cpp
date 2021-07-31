@@ -998,8 +998,10 @@ GUIHelper12::GetManualFullPath(Plugin *plug, IGraphics *graphics,
     if (resSize == 0)
         return;
 
-    TCHAR tempPathBuffer[MAX_PATH];
-    GetTempPath(MAX_PATH, tempPathBuffer);
+    //TCHAR tempPathBuffer[MAX_PATH];
+    //GetTempPath(MAX_PATH, tempPathBuffer);
+    char tempPathBuffer[MAX_PATH];
+    GetTempPathA(MAX_PATH, tempPathBuffer);
 
     sprintf(fullFileName, "%s%s", tempPathBuffer, MANUAL_FN);
     
