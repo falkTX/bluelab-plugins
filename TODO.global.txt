@@ -417,31 +417,46 @@ Set: edit the file:
 
 === Compil windows
 
-- apply modifs to makedist-win.bat from Chroma (don't overwrite!!)
+cop:
 - replace the new postbuild-win.bat script from BL-Chroma
 - copy bl-show-resources-win.py to plugin (or make it global?)
 
+mkd:
+- apply modifs to makedist-win.bat from Chroma (don't overwrite!!)
+
+ver:
 - increment plug version number
+
+res:
 - call bl-show-resources-win.py, and update resources in main.rc
 (special case for the long path manual, need to modif config.h too)
 
-- config:
-EXTRA_ALL_DEFS => _HAS_STD_BYTE=0
+- cfg(config):
+global: EXTRA_ALL_DEFS => _HAS_STD_BYTE=0
 
 <INI_PARSER_INC_PATH>$(IPLUG2_ROOT)\..\Libs\ini_parser</INI_PARSER_INC_PATH>
-$(INI_PARSER_INC_PATH);
+<FASTAPPROX_INC_PATH>$(IPLUG2_ROOT)\..\Libs\fastapprox\src</FASTAPPROX_INC_PATH>
+and later $(INI_PARSER_INC_PATH);
 
 define IGRAPHICS_DISABLE_VSYNC in config file
 
+bll, blf:
 - include all files from bluelab-lib
+
 - add bl_uptime to IGraphics project in VC
+
 - add denormal to darknet
 - add resample_layer to darknet
 - add convoengine to WDL
 - add smbPitchShift folder and files
 - add config.h and bl_config.h to project
-- update filters
+
+- update filters with all that
 - add new filter for smbPitchShift
+
+filters: bl_uptime, darknet/denormal, darknet/reample_layer, WDL/convoengine,
+smbpitchshift, main/config.h main/bl_config.h
+new filter for smbPitchShift
 
 ===
 Info: Debug -> "enable windows debug heap allocator"

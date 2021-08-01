@@ -71,7 +71,6 @@ Spectroscroll4: Chroma, GhostViewer, InfrasonicViewer, Panogram, Rebalance,
 - pre: test presets (vst2)
 - bsp: block size(perfs) - block size 32, check perfs (+ quickly checked functioning) 
 - sr: sample rate - switch 44100Hz/88200Hz (test: perfs, features, param smooth, curves smooth, curves freq scale)
-- win: compilation on windows
 ---
 BL-Air		    :	cppck, func, pre, bsp, sr,
 BL-AutoGain	    :	cppck, func, pre, bsp, sr,
@@ -115,6 +114,67 @@ BL-StereoWidth	    :   cppck, func, pre, bsp, sr,
 BL-Wav3s	    :   cppck, func, pre, bsp, sr
 ===
 
+===
+Windows compilation
+cop: copy new files
+mkd: updated make-dist-win.bat
+ver: increased version number and release notes
+man: add the manual full path in config file
+res: call bl-show-resources-win and update resources in main.rc
+cfg: updated win config
+bll: include all files from bluelab-lib
+blf: include all files from bluelab-lib (filters)
+upt: add bl_uptime.h and .cpp to IGraphics
+dkw: darknet/denormal, darknet/resample_layer, WDL/convoengine
+smb: smb pitch shift cpp in vcproj
+cf2: include config.h and bl_config.h
+ff: final silters
+===
+BL-Air		    :	cop, mkd, ver, man, res, cfg, bll, blf, upt, dkw, smb, cf2, ff
+BL-AutoGain	    :	cop, mkd, ver, man, res, cfg, bll, blf, upt, dkw, smb, cf2, ff
+BL-Bat		    :	cop, mkd, ver, man,    , cfg,                             ,
+BL-Chroma	    :	cop, mkd, ver, man, res, cfg, bll, blf, upt, dkw, smb, cf2, ff
+BL-Denoiser	    :	cop, mkd, ver, man, res, cfg, bll, blf, upt, dkw, smb, cf2,
+BL-DUET		    :	cop, mkd, ver, man,    , cfg,         , upt,
+BL-Envelope	    :	cop, mkd, ver, man,    , cfg,         , upt,
+BL-EQHack	    :	cop, mkd, ver, man, res, cfg, bll, blf, upt, dkw, smb, cf2, ff
+BL-Gain12	    :	cop, mkd, ver, man, res, cfg, bll, blf, upt, dkw, smb, cf2, ff
+BL-Gain200	    :	cop, mkd, ver, man,    , cfg,         , upt,
+BL-Gain24	    :	cop, mkd, ver, man, res, cfg, bll, blf, upt, dkw, smb, cf2, ff
+BL-Gain60	    :	cop, mkd, ver, man, res, cfg, bll, blf, upt, dkw, smb, cf2, ff
+BL-Ghost	    :	cop, mkd, ver, man, res, cfg, bll, blf, upt, dkw, smb, cf2, ff
+BL-GhostViewer	    :   cop, mkd, ver, man, res, cfg, bll, blf, upt, dkw, smb, cf2, ff
+BL-Impulses	    :   cop, mkd, ver, man, res, cfg, bll, blf, upt, dkw, smb, cf2, ff
+BL-Infra	    :   cop, mkd, ver, man, res, cfg, bll, blf, upt, dkw, smb, cf2, ff
+BL-InfrasonicViewer :   cop, mkd, ver, man, res, cfg, bll, blf, upt, dkw, smb, cf2, ff
+BL-InfraSynth	    :	cop, mkd, ver, man,    , cfg, bll, blf, upt, dkw, smb, cf2, ff
+BL-LoFi		    :   cop, mkd, ver, man, res, cfg, bll, blf, upt, dkw, smb, cf2, ff
+BL-OnsetDetect	    :	cop, mkd, ver, man,    , cfg,         , upt,
+BL-Panogram	    :   cop, mkd, ver, man, res, cfg, bll, blf, upt, dkw, smb, cf2, ff
+BL-PitchShift	    :   cop, mkd, ver, man, res, cfg, bll, blf, upt, dkw, smb, cf2, ff
+BL-Precedence	    :   cop, mkd, ver, man, res, cfg, bll, blf, upt, dkw, smb, cf2, ff
+BL-Rebalance	    :	cop, mkd, ver, man, res, cfg, bll, blf, upt, dkw, smb, cf2, ff
+BL-Reverb	    :	cop, mkd, ver, man,    , cfg,         , upt,
+BL-ReverbDepth	    :	cop, mkd, ver, man,    , cfg,         , upt, dkw,
+BL-SampleDelay	    :   cop, mkd, ver, man, res, cfg, bll, blf, upt, dkw, smb, cf2, ff
+BL-SASViewer	    : 	cop, mkd, ver, man,    , cfg, bll, blf, upt, dkw, smb, cf2, ff
+BL-Saturate	    :   cop, mkd, ver, man, res, cfg, bll, blf, upt, dkw, smb, cf2, ff
+BL-Shaper	    :   cop, mkd, ver, man, res, cfg, bll, blf, upt, dkw, smb, cf2, ff
+BL-Sine		    :   cop, mkd, ver, man, res, cfg, bll, blf, upt, dkw, smb, cf2, ff
+BL-SoundMetaViewer  :	cop, mkd, ver, man,    , cfg,         , upt,
+BL-Spatializer	    :   cop, mkd, ver, man, res, cfg, bll, blf, upt, dkw, smb, cf2, ff
+BL-SpectralDiff	    :   cop, mkd, ver, man, res, cfg, bll, blf, upt, dkw, smb, cf2, ff
+BL-SpectroExpe	    :	cop, mkd, ver, man,    , cfg,         , upt,
+BL-SpectrumView	    :	cop, mkd, ver, man,    , cfg,         , upt,
+BL-StereoDeReverb   :	cop, mkd, ver, man,    , cfg,         , upt,
+BL-StereoPan	    :   cop, mkd, ver, man, res, cfg, bll, blf, upt, dkw, smb, cf2, ff
+BL-StereoWidth	    :   cop, mkd, ver, man, res, cfg, bll, blf, upt, dkw, smb, cf2, ff
+BL-Wav3s	    :   cop, mkd, ver, man, res, cfg, bll, blf, upt, dkw, smb, cf2, ff
+UST		    :   cop,
+===
+Fail: gain24 app
+
+- TESTS TODO:
 - TODO: quickly test all samplerates!
   
 - TODO: check with weird block size
