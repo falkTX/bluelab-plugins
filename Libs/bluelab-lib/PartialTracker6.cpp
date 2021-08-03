@@ -24,6 +24,9 @@ using namespace std;
 
 #include <BLDebug.h>
 
+#include <PeakDetectorBL.h>
+#include <PeakDetectorBillauer.h>
+
 #include "PartialTracker6.h"
 
 #define MIN_AMP_DB -120.0
@@ -112,8 +115,13 @@ PartialTracker6::PartialTracker6(int bufferSize, BL_FLOAT sampleRate,
     // Optim
     ComputeAWeights(bufferSize/2, sampleRate);
 
-    mPeakDetector = new PeakDetector();
-
+#if USE_BL_PEAK_DETECTOR
+    mPeakDetector = new PeakDetectorBL();
+#endif
+#if USE_BILLAUER_PEAK_DETECTOR
+    mPeakDetector = new PeakDetectorBillauer();
+#endif
+    
     mPartialFilter = new PartialFilter(bufferSize);
 }
 
@@ -202,8 +210,10 @@ PartialTracker6::DetectPartials()
     partials.resize(0);
     DetectPartials(magns0, mCurrentPhases, &partials);
 
+#if USE_BL_PEAK_DETECTOR
     // For first partial detection
     PostProcessPartials(magns0, &partials);
+#endif
     
     mResult = partials;
 }

@@ -18,15 +18,8 @@ class PeakDetector
         int mRightIndex;
     };
     
-    PeakDetector();
-    virtual ~PeakDetector();
-
-    void DetectPeaks(const WDL_TypedBuf<BL_FLOAT> &data, vector<Peak> *peaks,
-                     int minIndex = -1, int maxIndex = -1);
-
- protected:
-    bool DiscardInvalidPeaks(const WDL_TypedBuf<BL_FLOAT> &data,
-                             int peakIndex, int leftIndex, int rightIndex);
+    virtual void DetectPeaks(const WDL_TypedBuf<BL_FLOAT> &data, vector<Peak> *peaks,
+                             int minIndex = -1, int maxIndex = -1) = 0;
 };
 
 #endif

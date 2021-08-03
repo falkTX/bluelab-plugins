@@ -560,8 +560,11 @@ set(_bluelab-lib_src
   PeakDetector2D2.h
   PeakDetector2D.cpp
   PeakDetector2D.h
-  PeakDetector.cpp
   PeakDetector.h
+  PeakDetectorBL.h
+  PeakDetectorBL.cpp
+  PeakDetectorBillauer.h
+  PeakDetectorBillauer.cpp
   PhaseCorrectObj.cpp
   PhaseCorrectObj.h
   PhasesDiff.cpp

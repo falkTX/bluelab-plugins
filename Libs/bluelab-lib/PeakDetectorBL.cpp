@@ -1,17 +1,17 @@
 #include <BLUtilsMath.h>
 
-#include "PeakDetector.h"
+#include "PeakDetectorBL.h"
 
 #define DISCARD_INVALID_PEAKS 1
 
-PeakDetector::PeakDetector() {}
+PeakDetectorBL::PeakDetectorBL() {}
 
-PeakDetector::~PeakDetector() {}
+PeakDetectorBL::~PeakDetectorBL() {}
 
 void
-PeakDetector::DetectPeaks(const WDL_TypedBuf<BL_FLOAT> &data,
-                          vector<Peak> *peaks,
-                          int minIndex, int maxIndex)
+PeakDetectorBL::DetectPeaks(const WDL_TypedBuf<BL_FLOAT> &data,
+                            vector<Peak> *peaks,
+                            int minIndex, int maxIndex)
 {
     peaks->clear();
     
@@ -153,8 +153,8 @@ PeakDetector::DetectPeaks(const WDL_TypedBuf<BL_FLOAT> &data,
 }
 
 bool
-PeakDetector::DiscardInvalidPeaks(const WDL_TypedBuf<BL_FLOAT> &data,
-                                  int peakIndex, int leftIndex, int rightIndex)
+PeakDetectorBL::DiscardInvalidPeaks(const WDL_TypedBuf<BL_FLOAT> &data,
+                                    int peakIndex, int leftIndex, int rightIndex)
 {
     BL_FLOAT peakAmp = data.Get()[peakIndex];
     BL_FLOAT leftAmp = data.Get()[leftIndex];
