@@ -532,6 +532,8 @@ set(_bluelab-lib_src
   PartialsToFreq5.h
   PartialsToFreq6.cpp
   PartialsToFreq6.h
+  PartialsToFreq7.cpp
+  PartialsToFreq7.h
   PartialsToFreqCepstrum.cpp
   PartialsToFreqCepstrum.h
   PartialsToFreq.cpp

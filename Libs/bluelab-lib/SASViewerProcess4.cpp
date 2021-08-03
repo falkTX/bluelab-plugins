@@ -17,9 +17,11 @@
 
 #include <SASViewerRender4.h>
 
-#include <SASFrame4.h>
+#include <SASFrame5.h>
 
 #include <PhasesEstimPrusa.h>
+
+#include <PartialTracker6.h>
 
 #include "SASViewerProcess4.h"
 
@@ -60,12 +62,11 @@ SASViewerProcess4::SASViewerProcess4(int bufferSize,
     
     mSASViewerRender = NULL;
     
-    mPartialTracker = new PartialTracker5(bufferSize, sampleRate, overlapping);
-    mPartialTracker->SetComputeAccurateFreqs(true);
+    mPartialTracker = new PartialTracker6(bufferSize, sampleRate, overlapping);
         
     BL_FLOAT minAmpDB = mPartialTracker->GetMinAmpDB();
     
-    mSASFrame = new SASFrame4(bufferSize, sampleRate, overlapping);
+    mSASFrame = new SASFrame5(bufferSize, sampleRate, overlapping);
     mSASFrame->SetMinAmpDB(minAmpDB);
     
     mThreshold = -60.0;
@@ -153,7 +154,7 @@ SASViewerProcess4::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
 
 #if FORCE_NON_FILTERED_FIRTS_PARTIALS
      // Try to provide the first partials, even is they are not yet filtered
-    vector<PartialTracker5::Partial> rawPartials;
+    vector<Partial> rawPartials;
     mPartialTracker->GetPartialsRAW(&rawPartials);
 #endif
     
@@ -175,7 +176,7 @@ SASViewerProcess4::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     
     if (mPartialTracker != NULL)
     {
-        vector<PartialTracker5::Partial> normPartials;
+        vector<Partial> normPartials;
         mPartialTracker->GetPartials(&normPartials);
             
 #if FORCE_NON_FILTERED_FIRTS_PARTIALS
@@ -190,7 +191,7 @@ SASViewerProcess4::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
         // are used to compute the SASFrame)
         //PartialTracker3::RemoveRealDeadPartials(&partials);
         
-        vector<PartialTracker5::Partial> partials = normPartials;
+        vector<Partial> partials = normPartials;
         mPartialTracker->DenormPartials(&partials);
         
         mSASFrame->SetPartials(partials);
@@ -364,7 +365,7 @@ SASViewerProcess4::SetWarpingFactor(BL_FLOAT factor)
 }
 
 void
-SASViewerProcess4::SetSynthMode(SASFrame4::SynthMode mode)
+SASViewerProcess4::SetSynthMode(SASFrame5::SynthMode mode)
 {
     mSASFrame->SetSynthMode(mode);
 }
@@ -385,13 +386,6 @@ void
 SASViewerProcess4::SetHarmoNoiseMix(BL_FLOAT mix)
 {
     mHarmoNoiseMix = mix;
-}
-
-void
-SASViewerProcess4::DBG_SetDbgParam(BL_FLOAT param)
-{
-    if (mPartialTracker != NULL)
-        mPartialTracker->DBG_SetDbgParam(param);
 }
 
 void
@@ -465,8 +459,7 @@ SASViewerProcess4::IdToColor(int idx, unsigned char color[3])
 }
 
 void
-SASViewerProcess4::PartialToColor(const PartialTracker5::Partial &partial,
-                                  unsigned char color[4])
+SASViewerProcess4::PartialToColor(const Partial &partial, unsigned char color[4])
 {
     if (partial.mId == -1)
     {
@@ -485,7 +478,7 @@ SASViewerProcess4::PartialToColor(const PartialTracker5::Partial &partial,
     deadAlpha = 0;
 #endif
     
-    if (partial.mState == PartialTracker5::Partial::ZOMBIE)
+    if (partial.mState == Partial::ZOMBIE)
     {
         // Green
         color[0] = 255;
@@ -496,7 +489,7 @@ SASViewerProcess4::PartialToColor(const PartialTracker5::Partial &partial,
         return;
     }
     
-    if (partial.mState == PartialTracker5::Partial::DEAD)
+    if (partial.mState == Partial::DEAD)
     {
         // Green
         color[0] = 255;
@@ -530,13 +523,13 @@ SASViewerProcess4::DisplayTracking()
         mSASViewerRender->SetLineMode(TRACKING, LinesRender2::LINES_FREQ);
         
         // Add lines corresponding to the well tracked partials
-        vector<PartialTracker5::Partial> partials = mCurrentNormPartials;
+        vector<Partial> partials = mCurrentNormPartials;
 
         // Create blue lines from trackers
         vector<LinesRender2::Point> line;
         for (int i = 0; i < partials.size(); i++)
         {
-            const PartialTracker5::Partial &partial = partials[i];
+            const Partial &partial = partials[i];
             
             LinesRender2::Point p;
             

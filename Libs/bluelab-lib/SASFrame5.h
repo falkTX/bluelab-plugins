@@ -12,7 +12,7 @@
 #include <vector>
 using namespace std;
 
-#include <PartialTracker5.h>
+#include <Partial.h>
 
 // SASFrame2: from SASFrame
 //
@@ -25,7 +25,7 @@ using namespace std;
 // Try to improve frequency computation, using same thenique as in Chroma
 
 //class PartialsToFreq5;
-class PartialsToFreq6;
+class PartialsToFreq7;
 class FreqAdjustObj3;
 class WavetableSynth;
 class OnsetDetector;
@@ -72,7 +72,7 @@ public:
     void SetSynthOddPartials(bool flag);
     
     // De-normalized partials
-    void SetPartials(const vector<PartialTracker5::Partial> &partials);
+    void SetPartials(const vector<Partial> &partials);
     
     void SetNoiseEnvelope(const WDL_TypedBuf<BL_FLOAT> &noiseEnv);
     void GetNoiseEnvelope(WDL_TypedBuf<BL_FLOAT> *noiseEnv) const;
@@ -153,7 +153,7 @@ protected:
     
     bool FindPartial(BL_FLOAT freq);
 
-    void GetPartial(PartialTracker5::Partial *result, int index, BL_FLOAT t);
+    void GetPartial(Partial *result, int index, BL_FLOAT t);
     
     int FindPrevPartialIdx(int currentPartialIdx);
 
@@ -166,13 +166,11 @@ protected:
 
     // Fill everything after the last partial with value
     void FillLastValues(WDL_TypedBuf<BL_FLOAT> *values,
-                        const vector<PartialTracker5::Partial> &partials,
-                        BL_FLOAT val);
+                        const vector<Partial> &partials, BL_FLOAT val);
 
     // Fill everything bfore the first partial with value
     void FillFirstValues(WDL_TypedBuf<BL_FLOAT> *values,
-                         const vector<PartialTracker5::Partial> &partials,
-                         BL_FLOAT val);
+                         const vector<Partial> &partials, BL_FLOAT val);
 
     static BL_FLOAT ApplyColorFactor(BL_FLOAT color, BL_FLOAT factor);
     static void ApplyColorFactor(WDL_TypedBuf<BL_FLOAT> *color, BL_FLOAT factor);
@@ -187,8 +185,8 @@ protected:
     BL_FLOAT mPrevAmplitude;
     
     // Not normalized
-    vector<PartialTracker5::Partial> mPartials;
-    vector<PartialTracker5::Partial> mPrevPartials;
+    vector<Partial> mPartials;
+    vector<Partial> mPrevPartials;
     
     BL_FLOAT mAmplitude;
     
@@ -226,7 +224,7 @@ protected:
     BL_FLOAT mWarpingFactor;
     
     //PartialsToFreq5 *mPartialsToFreq;
-    PartialsToFreq6 *mPartialsToFreq;
+    PartialsToFreq7 *mPartialsToFreq;
     
     FreqAdjustObj3 *mFreqObj;
     

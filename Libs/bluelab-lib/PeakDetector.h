@@ -17,6 +17,8 @@ class PeakDetector
         int mLeftIndex;
         int mRightIndex;
     };
+
+    virtual void SetThreshold(BL_FLOAT threshold) {}
     
     virtual void DetectPeaks(const WDL_TypedBuf<BL_FLOAT> &data, vector<Peak> *peaks,
                              int minIndex = -1, int maxIndex = -1) = 0;

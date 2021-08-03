@@ -17,13 +17,13 @@ using namespace std;
 #include <SmoothAvgHistogram.h>
 #include <CMA2Smoother.h>
 #include <LinesRender2.h>
-#include <PartialTracker5.h>
-#include <SASFrame4.h>
+#include <SASFrame5.h>
+#include <Partial.h>
 #include <BlaTimer.h>
 #include <FftProcessObj16.h>
 
-class PartialTracker5;
-class SASFrame4;
+class PartialTracker6;
+class SASFrame5;
 class SASViewerRender4;
 class PhasesEstimPrusa;
 class SASViewerProcess4 : public ProcessObj
@@ -75,7 +75,7 @@ public:
     void SetColorFactor(BL_FLOAT factor);
     void SetWarpingFactor(BL_FLOAT factor);
     
-    void SetSynthMode(SASFrame4::SynthMode mode);
+    void SetSynthMode(SASFrame5::SynthMode mode);
     void SetSynthEvenPartials(bool flag);
     void SetSynthOddPartials(bool flag);
     
@@ -84,8 +84,6 @@ public:
     void SetTimeSmoothCoeff(BL_FLOAT coeff);
     
     // Debug
-    void DBG_SetDbgParam(BL_FLOAT param);
-
     void DBG_SetDebugPartials(bool flag);
     
     void SetTimeSmoothNoiseCoeff(BL_FLOAT coeff);
@@ -98,8 +96,7 @@ protected:
     
     void IdToColor(int idx, unsigned char color[3]);
     
-    void PartialToColor(const PartialTracker5::Partial &partial,
-                        unsigned char color[4]);
+    void PartialToColor(const Partial &partial, unsigned char color[4]);
 
     // Utils
     int FindIndex(const vector<int> &ids, int idx);
@@ -109,7 +106,7 @@ protected:
     // Optimized version
     void CreateLines(const vector<LinesRender2::Point> &prevPoints);
 
-    void DenormPartials(vector<PartialTracker5::Partial> *partials);
+    void DenormPartials(vector<Partial> *partials);
 
     
     // Display
@@ -129,14 +126,14 @@ protected:
     
     //
     WDL_TypedBuf<BL_FLOAT> mCurrentMagns;
-    vector<PartialTracker5::Partial> mCurrentNormPartials;
+    vector<Partial> mCurrentNormPartials;
     
     // Renderer
     SASViewerRender4 *mSASViewerRender;
     
-    PartialTracker5 *mPartialTracker;
+    PartialTracker6 *mPartialTracker;
     
-    SASFrame4 *mSASFrame;
+    SASFrame5 *mSASFrame;
     
     BL_FLOAT mThreshold;
 

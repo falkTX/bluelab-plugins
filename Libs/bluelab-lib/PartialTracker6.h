@@ -27,11 +27,11 @@ using namespace std;
 #include "../../WDL/fft.h"
 
 // Use PeakDetector class, original BlueLab implementation
-#define USE_BL_PEAK_DETECTOR 1 //0
+#define USE_BL_PEAK_DETECTOR 0
 
 // Use smart peak detection from http://billauer.co.il/peakdet.html
 // See also: https://github.com/xuphys/peakdetect/blob/master/peakdetect.c
-#define USE_BILLAUER_PEAK_DETECTOR 0 //1
+#define USE_BILLAUER_PEAK_DETECTOR 1
 
 // PartialTracker2
 // - from PartialTracker

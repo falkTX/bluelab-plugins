@@ -10,7 +10,7 @@
 
 //#include <PartialsToFreqCepstrum.h>
 //#include <PartialsToFreq5.h>
-#include <PartialsToFreq6.h>
+#include <PartialsToFreq7.h>
 
 #include <FreqAdjustObj3.h>
 
@@ -158,7 +158,7 @@ SASFrame5::SASFrame5(int bufferSize, BL_FLOAT sampleRate, int overlapping)
 
     mScale = new Scale();
     
-    mPartialsToFreq = new PartialsToFreq6(bufferSize, overlapping, 1, sampleRate);
+    mPartialsToFreq = new PartialsToFreq7(bufferSize, overlapping, 1, sampleRate);
     
 #if COMPUTE_SAS_FFT_FREQ_ADJUST
     int oversampling = 1;
@@ -289,7 +289,7 @@ SASFrame5::SetSynthOddPartials(bool flag)
 }
 
 void
-SASFrame5::SetPartials(const vector<PartialTracker5::Partial> &partials)
+SASFrame5::SetPartials(const vector<Partial> &partials)
 {
     mPrevPartials = mPartials;
     mPartials = partials;
@@ -297,8 +297,7 @@ SASFrame5::SetPartials(const vector<PartialTracker5::Partial> &partials)
     // FIX: sorting by freq avoids big jumps in computed frequency when
     // id of a given partial changes.
     // (at least when the id of the first partial).
-    sort(mPartials.begin(), mPartials.end(),
-         PartialTracker5::Partial::FreqLess);
+    sort(mPartials.begin(), mPartials.end(), Partial::FreqLess);
     
     mAmplitude = 0.0;
     
@@ -429,7 +428,7 @@ SASFrame5::ComputeFftPartials(WDL_TypedBuf<BL_FLOAT> *samples)
         if (i > SYNTH_MAX_NUM_PARTIALS)
             break;
         
-        const PartialTracker5::Partial &partial = mPartials[i];
+        const Partial &partial = mPartials[i];
     
         BL_FLOAT freq = partial.mFreq;
         if (freq > mSampleRate*0.5)
@@ -521,7 +520,7 @@ SASFrame5::ComputeSamplesPartials(WDL_TypedBuf<BL_FLOAT> *samples)
     
     for (int i = 0; i < mPartials.size(); i++)
     {
-        PartialTracker5::Partial partial;
+        Partial partial;
         
         BL_FLOAT phase = 0.0;
         int prevPartialIdx = FindPrevPartialIdx(i);
@@ -1392,12 +1391,12 @@ SASFrame5::ComputeAmplitude()
     //mPrevAmplitude = mAmplitude;
     mAmplitude = 0.0;
 
-    const vector<PartialTracker5::Partial> &partials = mPartials;
+    const vector<Partial> &partials = mPartials;
     
     BL_FLOAT amplitude = 0.0;
     for (int i = 0; i < partials.size(); i++)
     {
-        const PartialTracker5::Partial &p = partials[i];
+        const Partial &p = partials[i];
         
         BL_FLOAT amp = p.mAmp;
         amplitude += amp;
@@ -1482,11 +1481,11 @@ SASFrame5::ComputeColorAux()
     // Put the values we have
     for (int i = 0; i < mPartials.size(); i++)
     {
-        const PartialTracker5::Partial &p = mPartials[i];
+        const Partial &p = mPartials[i];
  
         // Dead or zombie: do not use for color enveloppe
         // (this is important !)
-        if (p.mState != PartialTracker5::Partial::ALIVE)
+        if (p.mState != Partial::ALIVE)
             continue;
         
         BL_FLOAT idx = p.mFreq/hzPerBin;
@@ -1637,10 +1636,10 @@ SASFrame5::ComputeNormWarpingAux()
     for (int i = 1; i < mPartials.size(); i++)
 #endif
     {
-        const PartialTracker5::Partial &p = mPartials[i];
+        const Partial &p = mPartials[i];
     
         // Do no add to warping if dead or zombie
-        if (p.mState != PartialTracker5::Partial::ALIVE)
+        if (p.mState != Partial::ALIVE)
             continue;
         
         BL_FLOAT freq = mPartials[i].mFreq;
@@ -1710,10 +1709,10 @@ SASFrame5::ComputeNormWarpingAux2()
         
         for (int j = 0; j < mPartials.size(); j++)
         {
-            const PartialTracker5::Partial &p = mPartials[j];
+            const Partial &p = mPartials[j];
 
             // Do no add to warping if dead or zombie
-            if (p.mState != PartialTracker5::Partial::ALIVE)
+            if (p.mState != Partial::ALIVE)
                 continue;
         
             if (p.mFreq < pa.mFreq*0.5)
@@ -1947,7 +1946,7 @@ SASFrame5::FindPartial(BL_FLOAT freq)
     
     for (int i = 0; i < mPartials.size(); i++)
     {
-        const PartialTracker5::Partial &p = mPartials[i];
+        const Partial &p = mPartials[i];
         
         if ((freq > p.mFreq - step) &&
             (freq < p.mFreq + step))
@@ -1960,9 +1959,9 @@ SASFrame5::FindPartial(BL_FLOAT freq)
 
 // Interpolate in amp
 void
-SASFrame5::GetPartial(PartialTracker5::Partial *result, int index, BL_FLOAT t)
+SASFrame5::GetPartial(Partial *result, int index, BL_FLOAT t)
 {
-    const PartialTracker5::Partial &currentPartial = mPartials[index];
+    const Partial &currentPartial = mPartials[index];
     
     int prevPartialIdx = FindPrevPartialIdx(index);
     
@@ -1970,8 +1969,7 @@ SASFrame5::GetPartial(PartialTracker5::Partial *result, int index, BL_FLOAT t)
     
     // Manage decrease of dead partials
     //
-    if ((currentPartial.mState == PartialTracker5::Partial::DEAD) &&
-        currentPartial.mWasAlive)
+    if ((currentPartial.mState == Partial::DEAD) && currentPartial.mWasAlive)
     {
         // Decrease progressively the amplitude
         result->mAmp = 0.0;
@@ -1979,8 +1977,7 @@ SASFrame5::GetPartial(PartialTracker5::Partial *result, int index, BL_FLOAT t)
         if (prevPartialIdx != -1)
             // Interpolate
         {
-            const PartialTracker5::Partial &prevPartial =
-                mPrevPartials[prevPartialIdx];
+            const Partial &prevPartial = mPrevPartials[prevPartialIdx];
             
             BL_FLOAT t0 = t/SYNTH_DEAD_PARTIAL_DECREASE;
             if (t0 <= 1.0)
@@ -1994,15 +1991,13 @@ SASFrame5::GetPartial(PartialTracker5::Partial *result, int index, BL_FLOAT t)
     
     // Manage interpolation of freq and amp
     //
-    if ((currentPartial.mState != PartialTracker5::Partial::DEAD) &&
-        currentPartial.mWasAlive)
+    if ((currentPartial.mState != Partial::DEAD) && currentPartial.mWasAlive)
     {
         if (prevPartialIdx != -1)
         {
-            const PartialTracker5::Partial &prevPartial =
-                mPrevPartials[prevPartialIdx];
+            const Partial &prevPartial = mPrevPartials[prevPartialIdx];
                 
-            if (prevPartial.mState == PartialTracker5::Partial::ALIVE)
+            if (prevPartial.mState == Partial::ALIVE)
             {
                 result->mFreq = (1.0 - t)*prevPartial.mFreq + t*currentPartial.mFreq;
                 
@@ -2035,13 +2030,13 @@ SASFrame5::FindPrevPartialIdx(int currentPartialIdx)
     if (currentPartialIdx >= mPartials.size())
         return -1;
     
-    const PartialTracker5::Partial &currentPartial = mPartials[currentPartialIdx];
+    const Partial &currentPartial = mPartials[currentPartialIdx];
     
     // Find the corresponding prev partial
     int prevPartialIdx = -1;
     for (int i = 0; i < mPrevPartials.size(); i++)
     {
-        const PartialTracker5::Partial &prevPartial = mPrevPartials[i];
+        const Partial &prevPartial = mPrevPartials[i];
         if (prevPartial.mId == currentPartial.mId)
         {
             prevPartialIdx = i;
@@ -2213,18 +2208,17 @@ SASFrame5::GetCol(BL_FLOAT col0, BL_FLOAT col1, BL_FLOAT t)
 
 void
 SASFrame5::FillLastValues(WDL_TypedBuf<BL_FLOAT> *values,
-                          const vector<PartialTracker5::Partial> &partials,
-                          BL_FLOAT val)
+                          const vector<Partial> &partials, BL_FLOAT val)
 {
     // First, find the last bin index
     int maxIdx = -1;
     for (int i = 0; i < partials.size(); i++)
     {
-        const PartialTracker5::Partial &p = partials[i];
+        const Partial &p = partials[i];
         
         // Dead or zombie: do not use for color enveloppe
         // (this is important !)
-        if (p.mState != PartialTracker5::Partial::ALIVE)
+        if (p.mState != Partial::ALIVE)
             continue;
         
         if (p.mRightIndex > maxIdx)
@@ -2243,18 +2237,17 @@ SASFrame5::FillLastValues(WDL_TypedBuf<BL_FLOAT> *values,
 
 void
 SASFrame5::FillFirstValues(WDL_TypedBuf<BL_FLOAT> *values,
-                           const vector<PartialTracker5::Partial> &partials,
-                           BL_FLOAT val)
+                           const vector<Partial> &partials, BL_FLOAT val)
 {
     // First, find the last bin idex
     int minIdx = values->GetSize() - 1;
     for (int i = 0; i < partials.size(); i++)
     {
-        const PartialTracker5::Partial &p = partials[i];
+        const Partial &p = partials[i];
 
         // Dead or zombie: do not use for color enveloppe
         // (this is important !)
-        if (p.mState != PartialTracker5::Partial::ALIVE)
+        if (p.mState != Partial::ALIVE)
             continue;
         
         //if (p.mLeftIndex < minIdx)

@@ -179,6 +179,8 @@ void
 PartialTracker6::SetThreshold(BL_FLOAT threshold)
 {
     mThreshold = threshold;
+
+    mPeakDetector->SetThreshold(threshold);
 }
 
 void
@@ -578,8 +580,7 @@ PartialTracker6::DetectPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
     mPeakDetector->DetectPeaks(magns, &peaks,
                                DETECT_PARTIALS_START_INDEX, maxIndex);
 
-    vector<Partial> partials;
-    ComputePartials(peaks, magns, phases, &partials);
+    ComputePartials(peaks, magns, phases, outPartials);
 }
 
 // From GlueTwinPartials()

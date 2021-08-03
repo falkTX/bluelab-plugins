@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include <cmath>
 #include <algorithm>
 using namespace std;
@@ -31,7 +33,7 @@ PartialFilter::Reset(int bufferSize)
            
 void
 PartialFilter::FilterPartials(vector<Partial> *partials)
-{
+{    
     mPartials.push_front(*partials);
     
     while(mPartials.size() > PARTIALS_HISTORY_SIZE)
@@ -155,6 +157,8 @@ PartialFilter::FilterPartials(vector<Partial> *partials)
         //if (currentPartial.mState != Partial::DEAD)
         mPartials[0].push_back(currentPartial);
     }
+
+    *partials = mPartials[0];
 }
 
 // Use method similar to SAS
