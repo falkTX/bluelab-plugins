@@ -93,8 +93,6 @@ public:
         };
         BL_FLOAT mPhase;
         
-        BL_FLOAT mPeakHeight;
-        
         long mId;
         
         enum State mState;
@@ -122,8 +120,6 @@ public:
     void Reset();
     
     void Reset(int bufferSize, BL_FLOAT sampleRate);
-
-    void SetComputeAccurateFreqs(bool flag);
     
     BL_FLOAT GetMinAmpDB();
     
@@ -142,7 +138,6 @@ public:
     
     void GetPartials(vector<Partial> *partials);
 
-    // NEW
     // For getting current partials before filtering
     void GetPartialsRAW(vector<Partial> *partials);
     
@@ -158,9 +153,6 @@ public:
     
     // Preprocess time smoth
     void SetTimeSmoothCoeff(BL_FLOAT coeff);
-    
-    void DBG_SetDbgParam(BL_FLOAT param);
-    
     void SetTimeSmoothNoiseCoeff(BL_FLOAT coeff);
     
     // For processing result warping for example
@@ -219,16 +211,9 @@ protected:
     //
     BL_FLOAT ComputePeakIndexAvg(const WDL_TypedBuf<BL_FLOAT> &magns,
                                  int leftIndex, int rightIndex);
-    BL_FLOAT ComputePeakIndexAvgSimple(const WDL_TypedBuf<BL_FLOAT> &magns,
-                                       int leftIndex, int rightIndex);
     
     BL_FLOAT ComputePeakIndexParabola(const WDL_TypedBuf<BL_FLOAT> &magns,
                                       int peakIndex);
-    
-    // Advanced method
-    BL_FLOAT ComputePeakIndexHalfProminenceAvg(const WDL_TypedBuf<BL_FLOAT> &magns,
-                                               int peakIndex,
-                                               int leftIndex, int rightIndex);
     
     // Peak amp
     //
@@ -241,23 +226,11 @@ protected:
                                     BL_FLOAT *peakAmp, BL_FLOAT *peakPhase);
     
     
-    // Avoid the partial foot to leak on the left and right
-    // with very small amplitudes
-    void NarrowPartialFoot(const WDL_TypedBuf<BL_FLOAT> &magns,
-                           int peakIndex,
-                           int *leftIndex, int *rightIndex);
-    
-    void NarrowPartialFoot(const WDL_TypedBuf<BL_FLOAT> &magns,
-                           vector<Partial> *partials);
-    
     // Glue the barbs to the main partial
     // Return true if some barbs have been glued
     bool GluePartialBarbs(const WDL_TypedBuf<BL_FLOAT> &magns,
                           vector<Partial> *partials);
-    
-    // Suppress the "barbs" (tiny partials on a side of a bigger partial)
-    void SuppressBarbs(vector<Partial> *partials);
-    
+     
     // Discard partials which are almost flat
     // (compare height of the partial, and width in the middle
     bool DiscardFlatPartial(const WDL_TypedBuf<BL_FLOAT> &magns,
@@ -268,8 +241,11 @@ protected:
     
     // Suppress partials with zero frequencies
     void SuppressZeroFreqPartials(vector<Partial> *partials);
-    
-    void ThresholdPartialsPeakHeight(vector<Partial> *partials);
+
+    BL_FLOAT ComputePeakHeight(const WDL_TypedBuf<BL_FLOAT> &magns,
+                               int peakIndex, int leftIndex, int rightIndex);
+    void ThresholdPartialsPeakHeight(const WDL_TypedBuf<BL_FLOAT> &magns,
+                                     vector<Partial> *partials);
     
     void TimeSmoothNoise(WDL_TypedBuf<BL_FLOAT> *noise);
     
@@ -280,66 +256,26 @@ protected:
     BL_FLOAT ComputePeakProminence(const WDL_TypedBuf<BL_FLOAT> &magns,
                                    int peakIndex, int leftIndex, int rightIndex);
 
-    // Inverse of prominence
-    BL_FLOAT ComputePeakHeight(const WDL_TypedBuf<BL_FLOAT> &magns,
-                               int peakIndex, int leftIndex, int rightIndex);
-    
-    BL_FLOAT ComputePeakHeightDb(const WDL_TypedBuf<BL_FLOAT> &magns,
-                               int peakIndex, int leftIndex, int rightIndex,
-                               const Partial &partial);
-    
     BL_FLOAT ComputePeakHigherFoot(const WDL_TypedBuf<BL_FLOAT> &magns,
                                  int leftIndex, int rightIndex);
 
     BL_FLOAT ComputePeakLowerFoot(const WDL_TypedBuf<BL_FLOAT> &magns,
                                   int leftIndex, int rightIndex);
-
-    // Compute for all peaks
-    void ComputePeaksHeights(const WDL_TypedBuf<BL_FLOAT> &magns,
-                             vector<Partial> *partials);
-
     
     // Filter
     //
     void FilterPartials(vector<Partial> *result);
     
-    bool TestDiscardByAmp(const Partial &p0, const Partial &p1);
-    
   
-    // Partials cut
-    //
-    void CutPartials(const vector<Partial> &partials,
-                     WDL_TypedBuf<BL_FLOAT> *magns);
-
-    void CutPartialsMinEnv(WDL_TypedBuf<BL_FLOAT> *magns);
-    
+    //    
     void KeepOnlyPartials(const vector<Partial> &partials,
                           WDL_TypedBuf<BL_FLOAT> *magns);
-
-    
-    // Extract noise envelope
-    //
-    
-    void ExtractNoiseEnvelopeMax();
-    
-    void ExtractNoiseEnvelopeTrack();
-    
-    // Good
-    void ExtractNoiseEnvelopeSimple();
-    
     
     void ProcessMusicalNoise(WDL_TypedBuf<BL_FLOAT> *noise);
 
-    // TEST
-    void ThresholdNoiseIsles(WDL_TypedBuf<BL_FLOAT> *noise);
-    
-    void ZeroToNextNoiseMinimum(WDL_TypedBuf<BL_FLOAT> *noise);
-
     void SmoothNoiseEnvelope(WDL_TypedBuf<BL_FLOAT> *noise);
-    
-    void SmoothNoiseEnvelopeTime(WDL_TypedBuf<BL_FLOAT> *noise);
-    
 
+    //
     int FindPartialById(const vector<PartialTracker6::Partial> &partials, int idx);
     
     // Associate partials
@@ -371,10 +307,10 @@ protected:
 
     int DenormBinIndex(int idx);
 
-    void ComputeAccurateFreqs(vector<Partial> *partials);
-    
+    void PostProcessPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
+                             vector<Partial> *partials);
+        
     //
-    
     int mBufferSize;
     BL_FLOAT mSampleRate;
     int mOverlapping;
@@ -404,9 +340,6 @@ protected:
     //
     BL_FLOAT mMaxDetectFreq;
     
-    // Debug
-    BL_FLOAT mDbgParam;
-    
     // For Pre-Process
     BL_FLOAT mTimeSmoothCoeff;
     // Smooth only magns (tried smooth complex, but that was bad)
@@ -426,8 +359,6 @@ protected:
 
     // Optim
     WDL_TypedBuf<BL_FLOAT> mAWeights;
-
-    bool mComputeAccurateFreqs;
 
     PeakDetector *mPeakDetector;
     

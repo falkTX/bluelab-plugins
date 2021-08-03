@@ -230,9 +230,6 @@ SASViewerProcess4::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     }
     
     // For noise envelope
-    //BLUtilsComp::MagnPhaseToComplex(ioBuffer, magns, phases);
-    //ioBuffer->Resize(ioBuffer->GetSize()*2);
-    //BLUtilsFft::FillSecondFftHalf(ioBuffer);
     BLUtilsComp::MagnPhaseToComplex(&fftSamples, magns, phases);
     BLUtilsFft::FillSecondFftHalf(fftSamples, ioBuffer);
 }
