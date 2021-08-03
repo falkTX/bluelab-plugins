@@ -516,6 +516,10 @@ set(_bluelab-lib_src
   PanoGraphDrawer.h
   ParamSmoother.cpp
   ParamSmoother.h
+  Partial.cpp
+  Partial.h
+  PartialFilter.cpp
+  PartialFilter.h
   PartialsDiffEstimate.cpp
   PartialsDiffEstimate.h
   PartialsToFreq2.cpp

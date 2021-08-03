@@ -20,6 +20,8 @@ using namespace std;
 
 #include <PeakDetector.h>
 
+#include <Partial.h>
+
 #include "IPlug_include_in_plug_hdr.h"
 
 #include "../../WDL/fft.h"
@@ -47,71 +49,6 @@ using namespace std;
 class PartialTracker6
 {
 public:
-    // class Partial
-    class Partial
-    {
-    public:
-        enum State
-        {
-            ALIVE,
-            ZOMBIE,
-            DEAD
-        };
-        
-        Partial();
-        
-        Partial(const Partial &other);
-        
-        virtual ~Partial();
-        
-        void GenNewId();
-        
-        //
-        static bool FreqLess(const Partial &p1, const Partial &p2);
-        
-        static bool AmpLess(const Partial &p1, const Partial &p2);
-        
-        static bool IdLess(const Partial &p1, const Partial &p2);
-        
-        static bool CookieLess(const Partial &p1, const Partial &p2);
-        
-    public:
-        int mPeakIndex;
-        int mLeftIndex;
-        int mRightIndex;
-        
-        // When detecting and filtering, mFreq and mAmp are "scaled and normalized"
-        // After processing, we can compute the real frequencies in Hz and amp in dB.
-        BL_FLOAT mFreq;
-        union{
-            // Inside PartialTracker6
-            BL_FLOAT mAmp;
-            
-            // After, outside PartialTracker6, if external classes need amp in dB
-            // Need to call DenormPartials() then PartialsAmpToAmpDB()
-            BL_FLOAT mAmpDB;
-        };
-        BL_FLOAT mPhase;
-        
-        long mId;
-        
-        enum State mState;
-        
-        bool mWasAlive;
-        long mZombieAge;
-        
-        long mAge;
-        
-        // All-purpose field
-        BL_FLOAT mCookie;
-        
-        SimpleKalmanFilter mKf;
-        BL_FLOAT mPredictedFreq;
-        
-    protected:
-        static unsigned long mCurrentId;
-    };
-    
     PartialTracker6(int bufferSize, BL_FLOAT sampleRate,
                     BL_FLOAT overlapping);
     
@@ -168,10 +105,10 @@ public:
     void PreProcessUnwrapPhases(WDL_TypedBuf<BL_FLOAT> *magns,
                                 WDL_TypedBuf<BL_FLOAT> *phases);
     
-    void DenormPartials(vector<PartialTracker6::Partial> *partials);
+    void DenormPartials(vector<Partial> *partials);
     void DenormData(WDL_TypedBuf<BL_FLOAT> *data);
     
-    void PartialsAmpToAmpDB(vector<PartialTracker6::Partial> *partials);
+    void PartialsAmpToAmpDB(vector<Partial> *partials);
     
 protected:
     // Pre process
@@ -276,22 +213,22 @@ protected:
     void SmoothNoiseEnvelope(WDL_TypedBuf<BL_FLOAT> *noise);
 
     //
-    int FindPartialById(const vector<PartialTracker6::Partial> &partials, int idx);
+    int FindPartialById(const vector<Partial> &partials, int idx);
     
     // Associate partials
     //
     
     // Simple method, based on frequencies only
-    void AssociatePartials(const vector<PartialTracker6::Partial> &prevPartials,
-                           vector<PartialTracker6::Partial> *currentPartials,
-                           vector<PartialTracker6::Partial> *remainingPartials);
+    void AssociatePartials(const vector<Partial> &prevPartials,
+                           vector<Partial> *currentPartials,
+                           vector<Partial> *remainingPartials);
     
     // See: https://www.dsprelated.com/freebooks/sasp/PARSHL_Program.html#app:parshlapp
     // "Peak Matching (Step 5)"
     // Use fight/winner/loser
-    void AssociatePartialsPARSHL(const vector<PartialTracker6::Partial> &prevPartials,
-                                 vector<PartialTracker6::Partial> *currentPartials,
-                                 vector<PartialTracker6::Partial> *remainingPartials);
+    void AssociatePartialsPARSHL(const vector<Partial> &prevPartials,
+                                 vector<Partial> *currentPartials,
+                                 vector<Partial> *remainingPartials);
 
     // Adaptive threshold, depending on bin num;
     BL_FLOAT GetThreshold(int binNum);

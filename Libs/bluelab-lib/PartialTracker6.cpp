@@ -57,21 +57,6 @@ using namespace std;
 // Seems better with 200Hz (tested on "oohoo")
 #define DELTA_FREQ_ASSOC 0.01 // For normalized freqs. Around 100Hz
 
-// Kalman
-// "How much do we expect to our measurement vary"
-//
-// 200Hz (previously tested with 50Hz)
-#define PT5_KF_E_MEA 0.01 // 200.0Hz
-#define PT5_KF_E_EST PT5_KF_E_MEA
-
-// "usually a small number between 0.001 and 1"
-//
-// If too low: predicted values move too slowly
-// If too high: predicted values go straight
-//
-// 0.01: "oohoo" => fails when "EEAAooaa"
-#define PT5_KF_Q 5.0 //2.0 // Was 1.0
-
 // Seems better without, not sure...
 #define USE_KALMAN_FOR_ASSOC 0 //1 //0
 // GOOD: avoid many small zig-zags on the result lines
@@ -98,95 +83,6 @@ using namespace std;
 // NEW
 #define DENORM_PARTIAL_INDICES 1
 
-unsigned long PartialTracker6::Partial::mCurrentId = 0;
-
-
-PartialTracker6::Partial::Partial()
-: mKf(PT5_KF_E_MEA, PT5_KF_E_EST, PT5_KF_Q)
-{
-    mPeakIndex = 0;
-    mLeftIndex = 0;
-    mRightIndex = 0;
-    
-    mFreq = 0.0;
-    mAmp = 0.0;
-    
-    mPhase = 0.0;
-    
-    mState = ALIVE;
-    
-    mId = -1;
-    
-    mWasAlive = false;
-    mZombieAge = 0;
-    
-    mAge = 0;
-    
-    mCookie = 0.0;
-    
-    // Kalman
-    mPredictedFreq = 0.0;
-}
-
-    
-PartialTracker6::Partial::Partial(const Partial &other)
-: mKf(other.mKf)
-{
-    mPeakIndex = other.mPeakIndex;
-    mLeftIndex = other.mLeftIndex;
-    mRightIndex = other.mRightIndex;
-    
-    mFreq = other.mFreq;
-    mAmp = other.mAmp;
-    
-    mPhase = other.mPhase;
-        
-    mState = other.mState;;
-        
-    mId = other.mId;
-    
-    mWasAlive = other.mWasAlive;
-    mZombieAge = other.mZombieAge;
-    
-    mAge = other.mAge;
-    
-    mCookie = other.mCookie;
-    
-    // Kalman
-    mPredictedFreq = other.mPredictedFreq;
-}
-
-PartialTracker6::Partial::~Partial() {}
-
-void
-PartialTracker6::Partial::GenNewId()
-{
-    mId = mCurrentId++;
-}
-    
-bool
-PartialTracker6::Partial::FreqLess(const Partial &p1, const Partial &p2)
-{
-    return (p1.mFreq < p2.mFreq);
-}
-
-bool
-PartialTracker6::Partial::AmpLess(const Partial &p1, const Partial &p2)
-{
-    return (p1.mAmp < p2.mAmp);
-}
-
-bool
-PartialTracker6::Partial::IdLess(const Partial &p1, const Partial &p2)
-{
-    return (p1.mId < p2.mId);
-}
-
-bool
-PartialTracker6::Partial::CookieLess(const Partial &p1, const Partial &p2)
-{
-    return (p1.mCookie < p2.mCookie);
-}
 
 PartialTracker6::PartialTracker6(int bufferSize, BL_FLOAT sampleRate,
                                  BL_FLOAT overlapping)
@@ -1264,7 +1160,7 @@ PartialTracker6::ComputePeakMagnPhaseInterp(const WDL_TypedBuf<BL_FLOAT> &magns,
 }
 
 int
-PartialTracker6::FindPartialById(const vector<PartialTracker6::Partial> &partials,
+PartialTracker6::FindPartialById(const vector<Partial> &partials,
                                  int idx)
 {
     for (int i = 0; i < partials.size(); i++)
@@ -1281,9 +1177,9 @@ PartialTracker6::FindPartialById(const vector<PartialTracker6::Partial> &partial
 // Use method similar to SAS
 void
 PartialTracker6::
-AssociatePartials(const vector<PartialTracker6::Partial> &prevPartials,
-                  vector<PartialTracker6::Partial> *currentPartials,
-                  vector<PartialTracker6::Partial> *remainingPartials)
+AssociatePartials(const vector<Partial> &prevPartials,
+                  vector<Partial> *currentPartials,
+                  vector<Partial> *remainingPartials)
 {
     // Sort current partials and prev partials by decreasing amplitude
     vector<Partial> &currentPartialsSort = mTmpPartials14;
@@ -1363,14 +1259,14 @@ AssociatePartials(const vector<PartialTracker6::Partial> &prevPartials,
 // Use PARSHL method
 void
 PartialTracker6::
-AssociatePartialsPARSHL(const vector<PartialTracker6::Partial> &prevPartials,
-                        vector<PartialTracker6::Partial> *currentPartials,
-                        vector<PartialTracker6::Partial> *remainingPartials)
+AssociatePartialsPARSHL(const vector<Partial> &prevPartials,
+                        vector<Partial> *currentPartials,
+                        vector<Partial> *remainingPartials)
 {
     // Sort current partials and prev partials by increasing frequency
     sort(currentPartials->begin(), currentPartials->end(), Partial::FreqLess);
     
-    vector<PartialTracker6::Partial> &prevPartials0 = mTmpPartials17;
+    vector<Partial> &prevPartials0 = mTmpPartials17;
     prevPartials0 = prevPartials;
     sort(prevPartials0.begin(), prevPartials0.end(), Partial::FreqLess);
     
@@ -1452,7 +1348,7 @@ AssociatePartialsPARSHL(const vector<PartialTracker6::Partial> &prevPartials,
     
     
     // Update partials
-    vector<PartialTracker6::Partial> &newPartials = mTmpPartials18;
+    vector<Partial> &newPartials = mTmpPartials18;
     newPartials.resize(0);
     
     for (int j = 0; j < currentPartials->size(); j++)
@@ -1497,7 +1393,7 @@ PartialTracker6::DBG_DumpPartials(const char *fileName,
     
     for (int i = 0; i < partials.size(); i++)
     {
-        const PartialTracker6::Partial &p = partials[i];
+        const Partial &p = partials[i];
         
         // Width
         for (int j = p.mLeftIndex; j <= p.mRightIndex; j++)
@@ -1681,13 +1577,13 @@ PartialTracker6::TimeSmoothNoise(WDL_TypedBuf<BL_FLOAT> *noise)
 }
 
 void
-PartialTracker6::DenormPartials(vector<PartialTracker6::Partial> *partials)
+PartialTracker6::DenormPartials(vector<Partial> *partials)
 {
     BL_FLOAT hzPerBin =  mSampleRate/mBufferSize;
     
     for (int i = 0; i < partials->size(); i++)
     {
-        PartialTracker6::Partial &partial = (*partials)[i];
+        Partial &partial = (*partials)[i];
         
         // Reverse Mel
         BL_FLOAT freq = partial.mFreq;
@@ -1749,11 +1645,11 @@ PartialTracker6::DenormData(WDL_TypedBuf<BL_FLOAT> *data)
 }
 
 void
-PartialTracker6::PartialsAmpToAmpDB(vector<PartialTracker6::Partial> *partials)
+PartialsAmpToAmpDB(vector<Partial> *partials)
 {
     for (int i = 0; i < partials->size(); i++)
     {
-        PartialTracker6::Partial &partial = (*partials)[i];
+        Partial &partial = (*partials)[i];
         
         partial.mAmpDB = BLUtils::AmpToDB(partial.mAmp);
     }
