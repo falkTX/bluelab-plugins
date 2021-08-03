@@ -540,6 +540,8 @@ set(_bluelab-lib_src
   PartialTracker4.h
   PartialTracker5.cpp
   PartialTracker5.h
+  PartialTracker6.cpp
+  PartialTracker6.h
   PartialTracker.cpp
   PartialTracker.h
   PartialTWMEstimate2.cpp
@@ -554,6 +556,8 @@ set(_bluelab-lib_src
   PeakDetector2D2.h
   PeakDetector2D.cpp
   PeakDetector2D.h
+  PeakDetector.cpp
+  PeakDetector.h
   PhaseCorrectObj.cpp
   PhaseCorrectObj.h
   PhasesDiff.cpp
@@ -663,6 +667,8 @@ set(_bluelab-lib_src
   SASFrame3.h
   SASFrame4.cpp
   SASFrame4.h
+  SASFrame5.cpp
+  SASFrame5.h
   SASFrame.cpp
   SASFrame.h
   SASViewerPluginInterface.h
@@ -670,12 +676,16 @@ set(_bluelab-lib_src
   SASViewerProcess2.h
   SASViewerProcess3.cpp
   SASViewerProcess3.h
+  SASViewerProcess4.cpp
+  SASViewerProcess4.h
   SASViewerProcess.cpp
   SASViewerProcess.h
   SASViewerRender2.cpp
   SASViewerRender2.h
   SASViewerRender3.cpp
   SASViewerRender3.h
+  SASViewerRender4.cpp
+  SASViewerRender4.h
   SASViewerRender.cpp
   SASViewerRender.h
   SaturateOverObj.cpp
