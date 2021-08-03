@@ -46,6 +46,7 @@ using namespace std;
 // PartialTracker5: improvement of trakcng quality, for new SASViewer
 // NOTE: previously test FreqAdjustObj. this was not efficient (wobbling)
 //class FreqAdjustObj3;
+class PartialFilter;
 class PartialTracker6
 {
 public:
@@ -198,11 +199,6 @@ protected:
 
     BL_FLOAT ComputePeakLowerFoot(const WDL_TypedBuf<BL_FLOAT> &magns,
                                   int leftIndex, int rightIndex);
-    
-    // Filter
-    //
-    void FilterPartials(vector<Partial> *result);
-    
   
     //    
     void KeepOnlyPartials(const vector<Partial> &partials,
@@ -212,27 +208,8 @@ protected:
 
     void SmoothNoiseEnvelope(WDL_TypedBuf<BL_FLOAT> *noise);
 
-    //
-    int FindPartialById(const vector<Partial> &partials, int idx);
-    
-    // Associate partials
-    //
-    
-    // Simple method, based on frequencies only
-    void AssociatePartials(const vector<Partial> &prevPartials,
-                           vector<Partial> *currentPartials,
-                           vector<Partial> *remainingPartials);
-    
-    // See: https://www.dsprelated.com/freebooks/sasp/PARSHL_Program.html#app:parshlapp
-    // "Peak Matching (Step 5)"
-    // Use fight/winner/loser
-    void AssociatePartialsPARSHL(const vector<Partial> &prevPartials,
-                                 vector<Partial> *currentPartials,
-                                 vector<Partial> *remainingPartials);
-
     // Adaptive threshold, depending on bin num;
     BL_FLOAT GetThreshold(int binNum);
-    BL_FLOAT GetDeltaFreqCoeff(int binNum);
 
     // Optim: pre-compute a weights
     void ComputeAWeights(int numBins, BL_FLOAT sampleRate);
@@ -259,8 +236,6 @@ protected:
     WDL_TypedBuf<BL_FLOAT> mCurrentPhases;
 
     WDL_TypedBuf<BL_FLOAT> mLinearMagns;
-    
-    deque<vector<Partial> > mPartials;
     
     vector<Partial> mResult;
     WDL_TypedBuf<BL_FLOAT> mNoiseEnvelope;
@@ -298,6 +273,7 @@ protected:
     WDL_TypedBuf<BL_FLOAT> mAWeights;
 
     PeakDetector *mPeakDetector;
+    PartialFilter *mPartialFilter;
     
 private:
     // Tmp buffers
@@ -308,9 +284,6 @@ private:
     WDL_TypedBuf<BL_FLOAT> mTmpBuf4;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf5;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf6;
-    
-    void ReserveTmpBufs();
-
     WDL_TypedBuf<BL_FLOAT> mTmpBuf7;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf8;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf9;
@@ -327,13 +300,6 @@ private:
     vector<Partial> mTmpPartials9;
     vector<Partial> mTmpPartials10;
     vector<Partial> mTmpPartials11;
-    vector<Partial> mTmpPartials12;
-    vector<Partial> mTmpPartials13;
-    vector<Partial> mTmpPartials14;
-    vector<Partial> mTmpPartials15;
-    vector<Partial> mTmpPartials16;
-    vector<Partial> mTmpPartials17;
-    vector<Partial> mTmpPartials18;
 };
 
 #endif /* defined(__BL_SASViewer__PartialTracker6__) */
