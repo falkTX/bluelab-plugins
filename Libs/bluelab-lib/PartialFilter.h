@@ -41,13 +41,13 @@ class PartialFilter
     int mBufferSize;
     
  private:
-    vector<Partial> mTmpPartials12;
-    vector<Partial> mTmpPartials13;
-    vector<Partial> mTmpPartials14;
-    vector<Partial> mTmpPartials15;
-    vector<Partial> mTmpPartials16;
-    vector<Partial> mTmpPartials17;
-    vector<Partial> mTmpPartials18;
+    vector<Partial> mTmpPartials0;
+    vector<Partial> mTmpPartials1;
+    vector<Partial> mTmpPartials2;
+    vector<Partial> mTmpPartials3;
+    vector<Partial> mTmpPartials4;
+    vector<Partial> mTmpPartials5;
+    vector<Partial> mTmpPartials6;
 };
 
 #endif

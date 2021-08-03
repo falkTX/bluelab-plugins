@@ -59,11 +59,11 @@ PartialFilter::FilterPartials(vector<Partial> *partials)
         return;
     
     const vector<Partial> &prevPartials = mPartials[1];
-    vector<Partial> &currentPartials = mTmpPartials12;
+    vector<Partial> &currentPartials = mTmpPartials0;
     currentPartials = mPartials[0];
     
     // Partials that was not associated at the end
-    vector<Partial> &remainingPartials = mTmpPartials13;
+    vector<Partial> &remainingPartials = mTmpPartials1;
     remainingPartials.resize(0);
     
     AssociatePartialsPARSHL(prevPartials, &currentPartials, &remainingPartials);
@@ -165,12 +165,12 @@ AssociatePartials(const vector<Partial> &prevPartials,
                   vector<Partial> *remainingPartials)
 {
     // Sort current partials and prev partials by decreasing amplitude
-    vector<Partial> &currentPartialsSort = mTmpPartials14;
+    vector<Partial> &currentPartialsSort = mTmpPartials2;
     currentPartialsSort = *currentPartials;
     sort(currentPartialsSort.begin(), currentPartialsSort.end(), Partial::AmpLess);
     reverse(currentPartialsSort.begin(), currentPartialsSort.end());
     
-    vector<Partial> &prevPartialsSort = mTmpPartials15;
+    vector<Partial> &prevPartialsSort = mTmpPartials3;
     prevPartialsSort = prevPartials;
     
     sort(prevPartialsSort.begin(), prevPartialsSort.end(), Partial::AmpLess);
@@ -179,7 +179,7 @@ AssociatePartials(const vector<Partial> &prevPartials,
     // Associate
     
     // Associated partials
-    vector<Partial> &currentPartialsAssoc = mTmpPartials16;
+    vector<Partial> &currentPartialsAssoc = mTmpPartials4;
     currentPartialsAssoc.resize(0);
     
     for (int i = 0; i < prevPartialsSort.size(); i++)
@@ -250,7 +250,7 @@ AssociatePartialsPARSHL(const vector<Partial> &prevPartials,
     // Sort current partials and prev partials by increasing frequency
     sort(currentPartials->begin(), currentPartials->end(), Partial::FreqLess);
     
-    vector<Partial> &prevPartials0 = mTmpPartials17;
+    vector<Partial> &prevPartials0 = mTmpPartials5;
     prevPartials0 = prevPartials;
     sort(prevPartials0.begin(), prevPartials0.end(), Partial::FreqLess);
     
@@ -333,7 +333,7 @@ AssociatePartialsPARSHL(const vector<Partial> &prevPartials,
     
     
     // Update partials
-    vector<Partial> &newPartials = mTmpPartials18;
+    vector<Partial> &newPartials = mTmpPartials6;
     newPartials.resize(0);
     
     for (int j = 0; j < currentPartials->size(); j++)
