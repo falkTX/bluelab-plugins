@@ -542,7 +542,7 @@ SASViewerProcess4::DisplayDetection()
             p.mX = partialX - 0.5;
             p.mY = partial.mAmp;
             
-            p.mZ = 0.0;
+            p.mZ = 1.0;
             
             p.mId = (int)partial.mId;
             
@@ -574,13 +574,13 @@ SASViewerProcess4::DisplayDetection()
         unsigned char color[4] = { 255, 0, 255, 255 };
         
         // Set color
-        for (int j = 0; j < mPartialLines.size(); j++)
+        for (int j = 0; j < mPartialsPoints.size(); j++)
         {
-            LinesRender2::Line &line2 = mPartialLines[j];
+            vector<LinesRender2::Point> &line2 = mPartialsPoints[j];
 
-            for (int i = 0; i < line2.mPoints.size(); i++)
+            for (int i = 0; i < line2.size(); i++)
             {
-                LinesRender2::Point &p = line2.mPoints[i];
+                LinesRender2::Point &p = line2[i];
 
                 // Color
                 p.mR = color[0];
@@ -589,11 +589,36 @@ SASViewerProcess4::DisplayDetection()
                 p.mA = color[3];
             }
         }
+
+        // Update Z
+        int divisor = mSASViewerRender->GetNumSlices() - 1;
+        if (divisor <= 0)
+            divisor = 1;
+        BL_FLOAT incrZ = 1.0/divisor;
+        for (int j = 0; j < mPartialsPoints.size(); j++)
+        {
+            vector<LinesRender2::Point> &line2 = mPartialsPoints[j];
+
+            if (line2.empty())
+                continue;
+            
+            BL_FLOAT z = line2[0].mZ;
+            z -= incrZ;
+            
+            for (int i = 0; i < line2.size(); i++)
+            {
+                LinesRender2::Point &p = line2[i];
+                p.mZ = z; 
+            }
+        }
         
         BL_FLOAT lineWidth = 4.0;
         //BL_FLOAT lineWidth = 1.5;
+
+        vector<LinesRender2::Line> &partialLines = mTmpBuf6;
+        PointsToLines(mPartialsPoints, &partialLines);
         
-        mSASViewerRender->SetAdditionalPoints(DETECTION, mPartialLines, lineWidth);
+        mSASViewerRender->SetAdditionalPoints(DETECTION, partialLines, lineWidth);
     }
 }
 
@@ -954,6 +979,25 @@ SASViewerProcess4::CreateLines(const vector<LinesRender2::Point> &prevPoints)
             
             mPartialLines.push_back(newLine);
         }
+    }
+}
+
+void
+SASViewerProcess4::PointsToLines(const deque<vector<LinesRender2::Point> > &points,
+                                 vector<LinesRender2::Line> *lines)
+{
+    lines->resize(points.size());
+
+    for (int i = 0; i < lines->size(); i++)
+    {
+        LinesRender2::Line &line = (*lines)[i];
+        line.mPoints = points[i];
+
+        // Dummy color
+        line.mColor[0] = 0;
+        line.mColor[1] = 0;
+        line.mColor[2] = 0;
+        line.mColor[3] = 0;
     }
 }
 

@@ -121,7 +121,10 @@ protected:
     void DisplayFrequency();
     void DisplayColor();
     void DisplayWarping();
-    
+
+    void PointsToLines(const deque<vector<LinesRender2::Point> > &points,
+                       vector<LinesRender2::Line> *lines);
+                      
     //
     //int mBufferSize;
     //BL_FLOAT mOverlapping;
@@ -174,6 +177,7 @@ private:
     WDL_TypedBuf<BL_FLOAT> mTmpBuf3;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf4;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf5;
+    vector<LinesRender2::Line> mTmpBuf6;
 };
 
 #endif // IGRAPHICS_NANOVG
