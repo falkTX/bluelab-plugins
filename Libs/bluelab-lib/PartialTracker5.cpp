@@ -2763,7 +2763,7 @@ PartialTracker5::ComputeAccurateFreqs(vector<Partial> *partials)
         int leftIndex = bl_round(leftIndex0);
         int rightIndex = bl_round(rightIndex0);
         
-        // Then find the integer peak index, still in ilear scale
+        // Then find the integer peak index, still in linear scale
         // Use the raw magns we previously kept (possibly time smoothed) 
         int peakIndex = BLUtils::FindMaxIndex(mLinearMagns, leftIndex, rightIndex);
 

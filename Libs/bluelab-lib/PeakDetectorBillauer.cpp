@@ -3,6 +3,8 @@
 
 #include "PeakDetectorBillauer.h"
 
+#define PEAKS_WIDTH_RATIO 0.2
+
 PeakDetectorBillauer::PeakDetectorBillauer()
 {
     mDelta = 0.25;
@@ -93,5 +95,60 @@ DetectPeaks(const WDL_TypedBuf<BL_FLOAT> &data, vector<Peak> *peaks,
         p.mPeakIndex = maxtab[i];
         p.mLeftIndex = (i < mintab.size()) ? mintab[i] : minIndex;
         p.mRightIndex = (i + 1 < mintab.size()) ? mintab[i + 1] : maxIndex;
+    }
+
+    // Post process
+    AdjustPeaksWidth(data, peaks);
+}
+
+// With Billauer, and only one peak, left and right peak indices will
+// be near to the minimum and maximum
+//
+// => So recompute the peak bounds, so they really match the peak,
+// and they not cover the whole range of freqeuncies
+void
+PeakDetectorBillauer::AdjustPeaksWidth(const WDL_TypedBuf<BL_FLOAT> &data,
+                                       vector<Peak> *peaks)
+{
+#if 0 // DEBUG
+    BLDebug::DumpData("data.txt", data);
+    
+    for (int i = 0; i < peaks.size(); i++)
+    {
+        int width = peaks[i].mRightIndex - peaks[i].mLeftIndex;
+        fprintf(stderr, "peak[%d] width: %d\n", i, width);
+    }
+#endif
+    
+    for (int i = 0; i < peaks->size(); i++)
+    {
+        Peak &peak = (*peaks)[i];
+
+        BL_FLOAT peakAmp = data.Get()[peak.mPeakIndex];
+        BL_FLOAT thrs = peakAmp*PEAKS_WIDTH_RATIO;
+
+        // Adjust left index
+        for (int j = peak.mPeakIndex - 1; j >= 0; j--)
+        {
+            BL_FLOAT a = data.Get()[j];
+            if (a < thrs)
+            {
+                peak.mLeftIndex = j;
+                
+                break;
+            }
+        }
+
+        // Adjust right index
+        for (int j = peak.mPeakIndex + 1; j < data.GetSize(); j++)
+        {
+            BL_FLOAT a = data.Get()[j];
+            if (a < thrs)
+            {
+                peak.mRightIndex = j;
+                
+                break;
+            }
+        }
     }
 }

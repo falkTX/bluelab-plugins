@@ -277,6 +277,16 @@ Scale::ApplyScaleFilterBank(FilterBankType fbType,
                             const WDL_TypedBuf<BL_FLOAT> &magns,
                             BL_FLOAT sampleRate, int numFilters)
 {
+    if (fbType == FILTER_BANK_LINEAR)
+    {
+        // Do not apply filter bank
+        // Because even in linear, it modifies the data a little
+
+        *result = magns;
+        
+        return;
+    }
+    
     if (mFilterBanks[(int)fbType] == NULL)
     {
         Type type = FilterBankTypeToType(fbType);
@@ -292,6 +302,16 @@ Scale::ApplyScaleFilterBankInv(FilterBankType fbType,
                                const WDL_TypedBuf<BL_FLOAT> &magns,
                                BL_FLOAT sampleRate, int numFilters)
 {
+    if (fbType == FILTER_BANK_LINEAR)
+    {
+        // Do not apply filter bank
+        // Because even in linear, it modifies the data a little
+
+        *result = magns;
+        
+        return;
+    }
+    
     if (mFilterBanks[(int)fbType] == NULL)
     {
         Type type = FilterBankTypeToType(fbType);

@@ -187,6 +187,15 @@ SASViewerProcess4::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
         
         vector<Partial> partials = normPartials;
         mPartialTracker->DenormPartials(&partials);
+
+#if 0 // DEBUG
+        for (int i = 0; i < partials.size(); i++)
+        {
+            const Partial &p = partials[i];
+            fprintf(stderr, "freq: %g\n", p.mFreq);
+        }
+        fprintf(stderr, "\n");
+#endif
         
         mSASFrame->SetPartials(partials);
 

@@ -1071,7 +1071,7 @@ PartialTracker6::GetThreshold(int binNum)
 
 void
 PartialTracker6::PreProcessDataX(WDL_TypedBuf<BL_FLOAT> *data)
-{
+{        
 #if !USE_FILTER_BANKS
     // ORIGIN scale: use MelScale internally
     // X
@@ -1396,9 +1396,9 @@ PartialTracker6::ComputePartials(const vector<PeakDetector::Peak> &peaks,
         p.mPeakIndex = peak.mPeakIndex;
         p.mLeftIndex = peak.mLeftIndex;
         p.mRightIndex = peak.mRightIndex;
-
+        
         BL_FLOAT peakIndexF = ComputePeakIndexParabola(magns, p.mPeakIndex);
-            
+        
         p.mPeakIndex = bl_round(peakIndexF);
         if (p.mPeakIndex < 0)
             p.mPeakIndex = 0;
