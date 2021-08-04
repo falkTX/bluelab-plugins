@@ -464,3 +464,11 @@ Application Verifier: works great!
 Visual Studio must be run as administator for postbuid-win.bat to work
 
 Later: aax sign
+
+TODO: on windows, test user accout with accents, and see if we can still launche the manual
+
+Use windows PowerShell to launch long batch processing (e.g make-dist.bat)
+
+Load in Reaper: some plugin scan crash in vst3 format when scanned by Reaper
+Spatializer crashes when loaded in Reaper
+
