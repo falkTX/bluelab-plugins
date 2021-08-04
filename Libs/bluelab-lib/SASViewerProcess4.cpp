@@ -43,11 +43,6 @@
 // Does not improve transients at all (result is identical)
 #define USE_PRUSA_PHASES_ESTIM 0 //1
 
-// That was for debugging
-// NOTE: the first time partials appears, we must wait 1 frame before
-// getting them, after filtering (filtering needs 2 rows of partials)
-#define FORCE_NON_FILTERED_FIRTS_PARTIALS 0 // 1
-
 SASViewerProcess4::SASViewerProcess4(int bufferSize,
                                      BL_FLOAT overlapping, BL_FLOAT oversampling,
                                      BL_FLOAT sampleRate)
@@ -78,6 +73,7 @@ SASViewerProcess4::SASViewerProcess4(int bufferSize,
     mSkipAdd = false;
     
     mShowTrackingLines = true;
+    mShowDetectionPoints = true;
 
     mDebugPartials = false;
 
@@ -152,15 +148,13 @@ SASViewerProcess4::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     mPartialTracker->SetData(magns, phases);
     mPartialTracker->DetectPartials();
 
-#if FORCE_NON_FILTERED_FIRTS_PARTIALS
-     // Try to provide the first partials, even is they are not yet filtered
-    vector<Partial> rawPartials;
-    mPartialTracker->GetPartialsRAW(&rawPartials);
-#endif
+    // Try to provide the first partials, even is they are not yet filtered
+    mPartialTracker->GetPartialsRAW(&mCurrentRawPartials);
     
     mPartialTracker->ExtractNoiseEnvelope();
+
     mPartialTracker->FilterPartials();
-    
+        
     //
     mPartialTracker->GetPreProcessedMagns(&mCurrentMagns);
             
@@ -179,10 +173,10 @@ SASViewerProcess4::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
         vector<Partial> normPartials;
         mPartialTracker->GetPartials(&normPartials);
             
-#if FORCE_NON_FILTERED_FIRTS_PARTIALS
-        if (normPartials.empty())
-            normPartials = rawPartials;
-#endif
+        //#if FORCE_NON_FILTERED_FIRTS_PARTIALS
+        //if (normPartials.empty())
+        //normPartials = rawPartials;
+        //#endif
         
         mCurrentNormPartials = normPartials;
         
@@ -325,6 +319,15 @@ SASViewerProcess4::SetMode(Mode mode)
 }
 
 void
+SASViewerProcess4::SetShowDetectionPoints(bool flag)
+{
+    mShowDetectionPoints = flag;
+    
+    if (mSASViewerRender != NULL)
+        mSASViewerRender->ShowDetectionPoints(DETECTION, flag);
+}
+
+void
 SASViewerProcess4::SetShowTrackingLines(bool flag)
 {
     mShowTrackingLines = flag;
@@ -419,9 +422,11 @@ SASViewerProcess4::Display()
     
     if (mSkipAdd)
         return;
+
+    DisplayDetection();
     
     DisplayTracking();
-     
+    
     DisplayHarmo();
     
     DisplayNoise();
@@ -511,6 +516,88 @@ SASViewerProcess4::PartialToColor(const Partial &partial, unsigned char color[4]
 }
 
 void
+SASViewerProcess4::DisplayDetection()
+{
+    if (mSASViewerRender != NULL)
+    {
+        mSASViewerRender->ShowDetectionPoints(DETECTION, mShowDetectionPoints);
+            
+        mSASViewerRender->AddData(DETECTION, mCurrentMagns);
+        
+        mSASViewerRender->SetLineMode(DETECTION, LinesRender2::LINES_FREQ);
+
+        // Add points corresponding to raw detected partials
+        vector<Partial> partials = mCurrentRawPartials;
+
+        // Create line
+        vector<LinesRender2::Point> line;
+        for (int i = 0; i < partials.size(); i++)
+        {
+            const Partial &partial = partials[i];
+            
+            LinesRender2::Point p;
+            
+            BL_FLOAT partialX = partial.mFreq;
+            
+            p.mX = partialX - 0.5;
+            p.mY = partial.mAmp;
+            
+            p.mZ = 0.0;
+            
+            p.mId = (int)partial.mId;
+            
+            line.push_back(p);
+        }
+
+        //
+        int numSlices = mSASViewerRender->GetNumSlices();
+        
+        // Keep track of the points we pop
+        vector<LinesRender2::Point> prevPoints;
+        // Initialize, just in case
+        if (!mPartialsPoints.empty())
+            prevPoints = mPartialsPoints[0];
+        
+        mPartialsPoints.push_back(line);
+        
+        while(mPartialsPoints.size() > numSlices)
+        {
+            prevPoints = mPartialsPoints[0];
+            mPartialsPoints.pop_front();
+        }
+        
+        //CreateLines(prevPoints);
+        
+        // It is cool like that: lite blue with alpha
+        //unsigned char color[4] = { 64, 64, 255, 255 };
+        // Magenta
+        unsigned char color[4] = { 255, 0, 255, 255 };
+        
+        // Set color
+        for (int j = 0; j < mPartialLines.size(); j++)
+        {
+            LinesRender2::Line &line2 = mPartialLines[j];
+
+            for (int i = 0; i < line2.mPoints.size(); i++)
+            {
+                LinesRender2::Point &p = line2.mPoints[i];
+
+                // Color
+                p.mR = color[0];
+                p.mG = color[1];
+                p.mB = color[2];
+                p.mA = color[3];
+            }
+        }
+        
+        BL_FLOAT lineWidth = 4.0;
+        //BL_FLOAT lineWidth = 1.5;
+        
+        mSASViewerRender->SetAdditionalPoints(DETECTION, mPartialLines, lineWidth);
+    }
+}
+
+void
 SASViewerProcess4::DisplayTracking()
 {
     if (mSASViewerRender != NULL)
@@ -551,16 +638,16 @@ SASViewerProcess4::DisplayTracking()
         // Keep track of the points we pop
         vector<LinesRender2::Point> prevPoints;
         // Initialize, just in case
-        if (!mPartialsPoints.empty())
-            prevPoints = mPartialsPoints[0];
+        if (!mFilteredPartialsPoints.empty())
+            prevPoints = mFilteredPartialsPoints[0];
         
-        mPartialsPoints.push_back(line);
+        mFilteredPartialsPoints.push_back(line);
         
-        while(mPartialsPoints.size() > numSlices)
+        while(mFilteredPartialsPoints.size() > numSlices)
         {
-            prevPoints = mPartialsPoints[0];
+            prevPoints = mFilteredPartialsPoints[0];
             
-            mPartialsPoints.pop_front();
+            mFilteredPartialsPoints.pop_front();
         }
         
         CreateLines(prevPoints);
@@ -622,6 +709,7 @@ SASViewerProcess4::DisplayHarmo()
         mSASViewerRender->AddData(HARMO, harmo);
         mSASViewerRender->SetLineMode(HARMO, LinesRender2::LINES_FREQ);
         
+        mSASViewerRender->ShowDetectionPoints(HARMO, false);
         mSASViewerRender->ShowTrackingLines(HARMO, false);
     }
 }
@@ -637,7 +725,8 @@ SASViewerProcess4::DisplayNoise()
     {
         mSASViewerRender->AddData(NOISE, noise);
         mSASViewerRender->SetLineMode(NOISE, LinesRender2::LINES_FREQ);
-        
+
+        mSASViewerRender->ShowDetectionPoints(NOISE, false);
         mSASViewerRender->ShowTrackingLines(NOISE, false);
     }
 }
@@ -663,7 +752,8 @@ SASViewerProcess4::DisplayAmplitude()
         mSASViewerRender->SetLineMode(AMPLITUDE,
                                       //LinesRender2::LINES_FREQ);
                                       LinesRender2::LINES_TIME);
-        
+
+        mSASViewerRender->ShowDetectionPoints(AMPLITUDE, false);
         mSASViewerRender->ShowTrackingLines(AMPLITUDE, false);
     }
 }
@@ -691,7 +781,8 @@ SASViewerProcess4::DisplayFrequency()
         mSASViewerRender->SetLineMode(FREQUENCY,
                                       //LinesRender2::LINES_FREQ);
                                       LinesRender2::LINES_TIME);
-        
+
+        mSASViewerRender->ShowDetectionPoints(FREQUENCY, false);
         mSASViewerRender->ShowTrackingLines(FREQUENCY, false);
     }
 }
@@ -713,7 +804,8 @@ SASViewerProcess4::DisplayColor()
     {
         mSASViewerRender->AddData(COLOR, color);
         mSASViewerRender->SetLineMode(COLOR, LinesRender2::LINES_FREQ);
-        
+
+        mSASViewerRender->ShowDetectionPoints(COLOR, false);
         mSASViewerRender->ShowTrackingLines(COLOR, false);
     }
 }
@@ -737,7 +829,8 @@ SASViewerProcess4::DisplayWarping()
     {
         mSASViewerRender->AddData(WARPING, warping);
         mSASViewerRender->SetLineMode(WARPING, LinesRender2::LINES_FREQ);
-        
+
+        mSASViewerRender->ShowDetectionPoints(WARPING, false);
         mSASViewerRender->ShowTrackingLines(WARPING, false);
     }
 }
@@ -779,7 +872,7 @@ SASViewerProcess4::CreateLines(const vector<LinesRender2::Point> &prevPoints)
     if (mSASViewerRender == NULL)
         return;
     
-    if (mPartialsPoints.empty())
+    if (mFilteredPartialsPoints.empty())
         return;
     
     // Update z for the current line points
@@ -823,7 +916,7 @@ SASViewerProcess4::CreateLines(const vector<LinesRender2::Point> &prevPoints)
     
     // Create the new lines
     const vector<LinesRender2::Point> &newPoints =
-                    mPartialsPoints[mPartialsPoints.size() - 1];
+        mFilteredPartialsPoints[mFilteredPartialsPoints.size() - 1];
     for (int i = 0; i < newPoints.size(); i++)
     {
         LinesRender2::Point newPoint = newPoints[i];

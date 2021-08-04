@@ -148,6 +148,9 @@ LinesRender2::LinesRender2()
     
     mShowAdditionalLines = false;
     mAdditionalLinesWidth = 1.0;
+
+    mShowAdditionalPoints = false;
+    mAdditionalPointsWidth = 1.0;
     
     mMustRecomputeProj = true;
     
@@ -345,6 +348,7 @@ LinesRender2::PreDraw(NVGcontext *vg, int width, int height)
     nvgRestore(vg);
 
     DrawAdditionalLines(vg, width, height);
+    DrawAdditionalPoints(vg, width, height);
     
     if (mShowAxes)
     {
@@ -386,7 +390,7 @@ LinesRender2::DrawPoints(NVGcontext *vg, const vector<vector<Point> > &points)
 
 void
 LinesRender2::DoDrawPoints(NVGcontext *vg, const vector<vector<Point> > &points,
-                          unsigned char inColor[4], BL_FLOAT inPointSize)
+                           unsigned char inColor[4], BL_FLOAT inPointSize)
 {
     unsigned char color0[4] = { inColor[0], inColor[1], inColor[2], inColor[3] };
     SWAP_COLOR(color0);
@@ -708,6 +712,62 @@ LinesRender2::DoDrawPoints(NVGcontext *vg, const vector<vector<Point> > &points,
 }
 
 void
+LinesRender2::DoDrawPointsSimple(NVGcontext *vg, const vector<Point> &points,
+                                 BL_FLOAT inPointSize)
+{
+    vector<Point> &points0 = mTmpBuf18;
+    points0 = points;
+        
+    for (int j = 0; j < points0.size(); j++)
+    {
+        const Point &p = points0[j];
+        
+        BL_FLOAT pointSize = inPointSize;
+        if (inPointSize < 0.0)
+        {
+            pointSize = p.mSize;
+        }
+    
+        // Color
+        unsigned char color0[4] = { p.mR, p.mG, p.mB, p.mA };
+        //unsigned char color0[4] = { 255, 0, 255, 255 };
+        SWAP_COLOR(color0);
+        
+        NVGcolor color =  nvgRGBA(color0[0], color0[1], color0[2], color0[3]);
+        
+        nvgStrokeColor(vg, color);
+        nvgFillColor(vg, color);
+        
+        // Coords
+        BL_FLOAT x = p.mX;
+        BL_FLOAT y = p.mY;
+        
+        BL_GUI_FLOAT yf = y;
+#if GRAPH_CONTROL_FLIP_Y
+        yf = mViewHeight - yf;
+#endif
+            
+        // Quad rendering
+        float corners[4][2] =
+            { { (float)(x - pointSize/2.0), (float)(yf - pointSize/2.0) },
+              { (float)(x + pointSize/2.0), (float)(yf - pointSize/2.0) },
+              { (float)(x + pointSize/2.0), (float)(yf + pointSize/2.0) },
+              { (float)(x - pointSize/2.0), (float)(yf + pointSize/2.0) } };
+        
+        if (mWhitePixImg < 0)
+        {
+            unsigned char white[4] = { 255, 255, 255, 255 };
+            mWhitePixImg = nvgCreateImageRGBA(vg,
+                                              1, 1,
+                                              NVG_IMAGE_NEAREST,
+                                              white);
+        }
+        
+        nvgQuad(vg, corners, mWhitePixImg);
+    }
+}
+
+void
 LinesRender2::DrawGrid(NVGcontext *vg, const vector<vector<Point> > &points)
 {
     //unsigned char color0[4] = { 128, 128, 255, 255 };
@@ -736,6 +796,7 @@ LinesRender2::ClearSlices()
     Init();
     
     mShowAdditionalLines = false;
+    mShowAdditionalPoints = false;
     
     mMustRecomputeProj = true;
 
@@ -1456,6 +1517,82 @@ LinesRender2::ProjectAdditionalLines2(vector<Line> *lines, int width, int height
         (*lines)[i] = newLine;;
 #endif
         
+    }
+}
+
+void
+LinesRender2::SetAdditionalPoints(const vector<Line> &lines, BL_FLOAT lineWidth)
+{
+    mAdditionalPoints = lines;
+    
+    mAdditionalPointsWidth = lineWidth;
+}
+
+void
+LinesRender2::ClearAdditionalPoints()
+{
+    mAdditionalPoints.clear();
+}
+
+void
+LinesRender2::ShowAdditionalPoints(bool flag)
+{
+    mShowAdditionalPoints = flag;
+}
+
+void
+LinesRender2::DrawAdditionalPoints(NVGcontext *vg, int width, int height)
+{
+    if (!mShowAdditionalPoints)
+        return;
+    
+    if (mAdditionalPoints.empty())
+        return;
+
+    vector<Line> &lines = mTmpBuf17;
+    lines = mAdditionalPoints;
+    ProjectAdditionalPoints(&lines, width, height);
+
+    for (int i = 0; i < lines.size(); i++)
+    {
+        Line &line = lines[i];
+
+        DoDrawPointsSimple(vg, line.mPoints, mAdditionalPointsWidth);
+    }
+}
+
+void
+LinesRender2::ProjectAdditionalPoints(vector<Line> *lines, int width, int height)
+{
+    *lines = mAdditionalPoints;
+    
+    for (int i = 0; i < lines->size(); i++)
+    {
+        Line &line = (*lines)[i];
+        
+        for (int j = 0; j < line.mPoints.size(); j++)
+        {
+            LinesRender2::Point &p = line.mPoints[j];
+            
+            p.mZ = 1.0 - p.mZ;
+            
+            // Center
+            p.mZ -= 0.5;
+        
+#if USE_DB_SCALE
+            if (mDBScale)
+            {
+                p.mY = BLUtils::AmpToDBNorm(p.mY, (BL_FLOAT)1e-15, mMinDB);
+                
+#if HACK_DB_SCALE
+                p.mY *= 0.5;
+#endif
+            }
+#endif
+            p.mY *= mScale;
+        }
+        
+        ProjectPoints(&line.mPoints, width, height);
     }
 }
 

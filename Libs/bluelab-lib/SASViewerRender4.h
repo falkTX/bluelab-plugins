@@ -86,10 +86,14 @@ public:
     void SetAdditionalLines(SASViewerProcess4::Mode mode,
                             const vector<LinesRender2::Line> &lines,
                             BL_FLOAT lineWidth);
-    
     void ClearAdditionalLines();
-    
     void ShowTrackingLines(SASViewerProcess4::Mode mode, bool flag);
+    
+    void SetAdditionalPoints(SASViewerProcess4::Mode mode,
+                             const vector<LinesRender2::Line> &lines,
+                             BL_FLOAT lineWidth);
+    void ClearAdditionalPoints();
+    void ShowDetectionPoints(SASViewerProcess4::Mode mode, bool flag);
     
     // For debugging
     void DBG_SetNumSlices(int numSlices);

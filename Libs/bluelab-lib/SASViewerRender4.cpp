@@ -94,7 +94,7 @@ SASViewerRender4::Clear()
 
 void
 SASViewerRender4::AddData(SASViewerProcess4::Mode mode,
-                           const WDL_TypedBuf<BL_FLOAT> &data)
+                          const WDL_TypedBuf<BL_FLOAT> &data)
 {
     if (data.GetSize() == 0)
         return;
@@ -367,6 +367,27 @@ void
 SASViewerRender4::ShowTrackingLines(SASViewerProcess4::Mode mode, bool flag)
 {
     mLinesRenders[(int)mode]->ShowAdditionalLines(flag);
+}
+
+void
+SASViewerRender4::SetAdditionalPoints(SASViewerProcess4::Mode mode,
+                                      const vector<LinesRender2::Line> &lines,
+                                      BL_FLOAT lineWidth)
+{
+    mLinesRenders[(int)mode]->SetAdditionalPoints(lines, lineWidth);
+}
+
+void
+SASViewerRender4::ClearAdditionalPoints()
+{
+    for (int i = 0; i < (int)SASViewerProcess4::NUM_MODES; i++)
+        mLinesRenders[i]->ClearAdditionalPoints();
+}
+
+void
+SASViewerRender4::ShowDetectionPoints(SASViewerProcess4::Mode mode, bool flag)
+{
+    mLinesRenders[(int)mode]->ShowAdditionalPoints(flag);
 }
 
 void

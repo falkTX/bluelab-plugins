@@ -71,9 +71,30 @@ public:
         
             mId = 0;
         }
+
+        Point(const Point &other)
+        {
+            mSkipDisplayX = other.mSkipDisplayX;
+            mSkipDisplayZ = other.mSkipDisplayZ;
+
+            //
+            mX = other.mX;
+            mY = other.mY;
+            mZ = other.mZ;
+        
+            mSize = other.mSize;
+        
+            mR = other.mR;
+            mG = other.mG;
+            mB = other.mB;
+            mA = other.mA;
+        
+            mId = other.mId;
+        }
         
         virtual ~Point() {}
-        
+
+        //
         BL_FLOAT mX;
         BL_FLOAT mY;
         BL_FLOAT mZ;
@@ -172,6 +193,12 @@ public:
     
     // Optimized version
     void ProjectAdditionalLines2(vector<Line> *lines, int width, int height);
+
+    void SetAdditionalPoints(const vector<Line> &lines, BL_FLOAT lineWidth);
+    void ClearAdditionalPoints();
+    void DrawAdditionalPoints(NVGcontext *vg, int width, int height);
+    void ProjectAdditionalPoints(vector<Line> *lines, int width, int height);
+    void ShowAdditionalPoints(bool flag);
     
     // To force recomputing projection when gui size changes for example
     // and while sound is not playing
@@ -211,6 +238,9 @@ protected:
     
     void DoDrawPoints(NVGcontext *vg, const vector<vector<Point> > &points,
                       unsigned char inColor[4], BL_FLOAT pointSize = -1.0);
+
+    void DoDrawPointsSimple(NVGcontext *vg, const vector<Point> &points,
+                            BL_FLOAT pointSize = -1.0);
     
     void DoDrawLinesFreq(NVGcontext *vg, const vector<vector<Point> > &points,
                          unsigned char inColor[4], BL_FLOAT lineWidth);
@@ -296,6 +326,11 @@ protected:
     vector<Line> mAdditionalLines;
     bool mShowAdditionalLines;
     BL_FLOAT mAdditionalLinesWidth;
+
+    // Additional points
+    vector<Line> mAdditionalPoints;
+    bool mShowAdditionalPoints;
+    BL_FLOAT mAdditionalPointsWidth;
     
     // NOTE: this doesn't optimize
     // Optim
@@ -342,6 +377,8 @@ private:
     vector<Point> mTmpBuf14;
     Slice mTmpBuf15;
     Slice mTmpBuf16;
+    vector<Line> mTmpBuf17;
+    vector<Point> mTmpBuf18;
 };
 
 #endif // IGRAPHICS_NANOVG

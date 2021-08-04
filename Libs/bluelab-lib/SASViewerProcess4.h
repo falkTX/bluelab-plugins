@@ -31,7 +31,8 @@ class SASViewerProcess4 : public ProcessObj
 public:
     enum Mode
     {
-        TRACKING = 0,
+        DETECTION = 0,
+        TRACKING,
         HARMO,
         NOISE,
         AMPLITUDE,
@@ -67,6 +68,7 @@ public:
     void SetMode(Mode mode);
     
     void SetShowTrackingLines(bool flag);
+    void SetShowDetectionPoints(bool flag);
     
     void SetThreshold(BL_FLOAT threshold);
     
@@ -110,7 +112,9 @@ protected:
 
     
     // Display
+    void DisplayDetection();
     void DisplayTracking();
+    
     void DisplayHarmo();
     void DisplayNoise();
     void DisplayAmplitude();
@@ -126,6 +130,9 @@ protected:
     
     //
     WDL_TypedBuf<BL_FLOAT> mCurrentMagns;
+    // Not filtered
+    vector<Partial> mCurrentRawPartials;
+    // Filtered
     vector<Partial> mCurrentNormPartials;
     
     // Renderer
@@ -138,9 +145,12 @@ protected:
     BL_FLOAT mThreshold;
 
     BL_FLOAT mHarmoNoiseMix;
+
+    // For tracking detection
+    deque<vector<LinesRender2::Point> > mPartialsPoints;
     
     // For tracking display
-    deque<vector<LinesRender2::Point> > mPartialsPoints;
+    deque<vector<LinesRender2::Point> > mFilteredPartialsPoints;
     
     // Keep an history, to avoid recomputing the whole lines each time
     // With this, we compute only the new extremity of the line
@@ -148,6 +158,7 @@ protected:
     
     //
     bool mShowTrackingLines;
+    bool mShowDetectionPoints;
 
     long int mAddNum;
     bool mSkipAdd;
