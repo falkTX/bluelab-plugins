@@ -607,6 +607,8 @@ set(_bluelab-lib_src
   PseudoStereoObj.h
   QuadTree.cpp
   QuadTree.h
+  QIFFT.cpp
+  QIFFT.h
   RayCaster2.cpp
   RayCaster2.h
   RCKdTree.cpp

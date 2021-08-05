@@ -947,7 +947,7 @@ PartialTracker6::ComputePeakIndexAvg(const WDL_TypedBuf<BL_FLOAT> &magns,
 }
 
 // Parabola peak center detection
-// Works well (but I prefer my method) 
+// Works well
 //
 // See: http://eprints.maynoothuniversity.ie/4523/1/thesis.pdf (p32)
 //
