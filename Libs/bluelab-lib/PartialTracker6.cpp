@@ -125,7 +125,7 @@ PartialTracker6::PartialTracker6(int bufferSize, BL_FLOAT sampleRate,
     mPartialFilter = new PartialFilter(bufferSize);
 
     // DEBUG
-    BLDebug::ResetFile("peaks.txt");
+    //BLDebug::ResetFile("peaks.txt");
 }
 
 PartialTracker6::~PartialTracker6()

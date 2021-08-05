@@ -28,7 +28,7 @@ void
 PeakDetectorBillauer::
 DetectPeaks(const WDL_TypedBuf<BL_FLOAT> &data, vector<Peak> *peaks,
             int minIndex, int maxIndex)
-{    
+{
     // Arguments
     if (minIndex < 0)
         minIndex = 0;

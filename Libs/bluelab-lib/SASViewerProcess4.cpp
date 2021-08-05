@@ -81,6 +81,11 @@ SASViewerProcess4::SASViewerProcess4(int bufferSize,
 #if USE_PRUSA_PHASES_ESTIM
     mPhasesEstim = new PhasesEstimPrusa(bufferSize, overlapping, 1, sampleRate);
 #endif
+
+    // Data scale
+    mViewScale = new Scale();
+    mViewXScale = Scale::MEL_FILTER;
+    mViewXScaleFB = Scale::FILTER_BANK_MEL;
 }
 
 SASViewerProcess4::~SASViewerProcess4()
@@ -91,6 +96,8 @@ SASViewerProcess4::~SASViewerProcess4()
 #if USE_PRUSA_PHASES_ESTIM
     delete mPhasesEstim;
 #endif
+
+    delete mViewScale;
 }
 
 void
@@ -447,8 +454,6 @@ SASViewerProcess4::Display()
     DisplayColor();
     
     DisplayWarping();
-
-    
 }
 
 void
@@ -530,8 +535,12 @@ SASViewerProcess4::DisplayDetection()
     if (mSASViewerRender != NULL)
     {
         mSASViewerRender->ShowDetectionPoints(DETECTION, mShowDetectionPoints);
-            
-        mSASViewerRender->AddData(DETECTION, mCurrentMagns);
+
+        WDL_TypedBuf<BL_FLOAT> &data = mTmpBuf7;
+        mViewScale->ApplyScaleFilterBank(mViewXScaleFB, &data, mCurrentMagns,
+                                         mSampleRate, mCurrentMagns.GetSize());
+    
+        mSASViewerRender->AddData(DETECTION, data);
         
         mSASViewerRender->SetLineMode(DETECTION, LinesRender2::LINES_FREQ);
 
@@ -547,7 +556,11 @@ SASViewerProcess4::DisplayDetection()
             LinesRender2::Point p;
             
             BL_FLOAT partialX = partial.mFreq;
-            
+
+            partialX =
+                mViewScale->ApplyScale(mViewXScale, partialX,
+                                       (BL_FLOAT)0.0, (BL_FLOAT)(mSampleRate*0.5));
+                                              
             p.mX = partialX - 0.5;
             p.mY = partial.mAmp;
             
@@ -639,7 +652,11 @@ SASViewerProcess4::DisplayTracking()
         mSASViewerRender->ShowTrackingLines(TRACKING, mShowTrackingLines);
         
         // Add the magnitudes
-        mSASViewerRender->AddData(TRACKING, mCurrentMagns);
+        WDL_TypedBuf<BL_FLOAT> &data = mTmpBuf8;
+        mViewScale->ApplyScaleFilterBank(mViewXScaleFB, &data, mCurrentMagns,
+                                         mSampleRate, mCurrentMagns.GetSize());
+                                         
+        mSASViewerRender->AddData(TRACKING, data);
         
         mSASViewerRender->SetLineMode(TRACKING, LinesRender2::LINES_FREQ);
         
@@ -655,7 +672,11 @@ SASViewerProcess4::DisplayTracking()
             LinesRender2::Point p;
             
             BL_FLOAT partialX = partial.mFreq;
-            
+
+            partialX =
+                mViewScale->ApplyScale(mViewXScale, partialX,
+                                       (BL_FLOAT)0.0, (BL_FLOAT)(mSampleRate*0.5));
+                                       
             p.mX = partialX - 0.5;
             p.mY = partial.mAmp;
             
@@ -740,7 +761,11 @@ SASViewerProcess4::DisplayHarmo()
     
     if (mSASViewerRender != NULL)
     {
-        mSASViewerRender->AddData(HARMO, harmo);
+        WDL_TypedBuf<BL_FLOAT> &data = mTmpBuf9;
+        mViewScale->ApplyScaleFilterBank(mViewXScaleFB, &data, harmo,
+                                         mSampleRate, harmo.GetSize());
+        
+        mSASViewerRender->AddData(HARMO, data);
         mSASViewerRender->SetLineMode(HARMO, LinesRender2::LINES_FREQ);
         
         mSASViewerRender->ShowDetectionPoints(HARMO, false);
@@ -757,7 +782,11 @@ SASViewerProcess4::DisplayNoise()
     
     if (mSASViewerRender != NULL)
     {
-        mSASViewerRender->AddData(NOISE, noise);
+        WDL_TypedBuf<BL_FLOAT> &data = mTmpBuf10;
+        mViewScale->ApplyScaleFilterBank(mViewXScaleFB, &data, noise,
+                                         mSampleRate, noise.GetSize());
+        
+        mSASViewerRender->AddData(NOISE, data);
         mSASViewerRender->SetLineMode(NOISE, LinesRender2::LINES_FREQ);
 
         mSASViewerRender->ShowDetectionPoints(NOISE, false);
@@ -836,7 +865,11 @@ SASViewerProcess4::DisplayColor()
     
     if (mSASViewerRender != NULL)
     {
-        mSASViewerRender->AddData(COLOR, color);
+        WDL_TypedBuf<BL_FLOAT> &data = mTmpBuf13;
+        mViewScale->ApplyScaleFilterBank(mViewXScaleFB, &data, color,
+                                         mSampleRate, color.GetSize());
+        
+        mSASViewerRender->AddData(COLOR, data);
         mSASViewerRender->SetLineMode(COLOR, LinesRender2::LINES_FREQ);
 
         mSASViewerRender->ShowDetectionPoints(COLOR, false);
@@ -861,7 +894,11 @@ SASViewerProcess4::DisplayWarping()
     
     if (mSASViewerRender != NULL)
     {
-        mSASViewerRender->AddData(WARPING, warping);
+        WDL_TypedBuf<BL_FLOAT> &data = mTmpBuf14;
+        mViewScale->ApplyScaleFilterBank(mViewXScaleFB, &data, warping,
+                                         mSampleRate, warping.GetSize());
+        
+        mSASViewerRender->AddData(WARPING, data);
         mSASViewerRender->SetLineMode(WARPING, LinesRender2::LINES_FREQ);
 
         mSASViewerRender->ShowDetectionPoints(WARPING, false);

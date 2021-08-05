@@ -169,6 +169,11 @@ protected:
     bool mDebugPartials;
 
     PhasesEstimPrusa *mPhasesEstim;
+
+    // Data scale for viewing
+    Scale *mViewScale;
+    Scale::Type mViewXScale;
+    Scale::FilterBankType mViewXScaleFB;
     
 private:
     WDL_TypedBuf<WDL_FFT_COMPLEX> mTmpBuf0;
@@ -178,6 +183,14 @@ private:
     WDL_TypedBuf<BL_FLOAT> mTmpBuf4;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf5;
     vector<LinesRender2::Line> mTmpBuf6;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf7;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf8;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf9;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf10;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf11;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf12;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf13;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf14;
 };
 
 #endif // IGRAPHICS_NANOVG
