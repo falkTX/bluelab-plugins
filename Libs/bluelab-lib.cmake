@@ -516,6 +516,10 @@ set(_bluelab-lib_src
   PanoGraphDrawer.h
   ParamSmoother.cpp
   ParamSmoother.h
+  Partial.cpp
+  Partial.h
+  PartialFilter.cpp
+  PartialFilter.h
   PartialsDiffEstimate.cpp
   PartialsDiffEstimate.h
   PartialsToFreq2.cpp
@@ -528,6 +532,8 @@ set(_bluelab-lib_src
   PartialsToFreq5.h
   PartialsToFreq6.cpp
   PartialsToFreq6.h
+  PartialsToFreq7.cpp
+  PartialsToFreq7.h
   PartialsToFreqCepstrum.cpp
   PartialsToFreqCepstrum.h
   PartialsToFreq.cpp
@@ -540,6 +546,8 @@ set(_bluelab-lib_src
   PartialTracker4.h
   PartialTracker5.cpp
   PartialTracker5.h
+  PartialTracker6.cpp
+  PartialTracker6.h
   PartialTracker.cpp
   PartialTracker.h
   PartialTWMEstimate2.cpp
@@ -554,6 +562,11 @@ set(_bluelab-lib_src
   PeakDetector2D2.h
   PeakDetector2D.cpp
   PeakDetector2D.h
+  PeakDetector.h
+  PeakDetectorBL.h
+  PeakDetectorBL.cpp
+  PeakDetectorBillauer.h
+  PeakDetectorBillauer.cpp
   PhaseCorrectObj.cpp
   PhaseCorrectObj.h
   PhasesDiff.cpp
@@ -663,6 +676,8 @@ set(_bluelab-lib_src
   SASFrame3.h
   SASFrame4.cpp
   SASFrame4.h
+  SASFrame5.cpp
+  SASFrame5.h
   SASFrame.cpp
   SASFrame.h
   SASViewerPluginInterface.h
@@ -670,12 +685,16 @@ set(_bluelab-lib_src
   SASViewerProcess2.h
   SASViewerProcess3.cpp
   SASViewerProcess3.h
+  SASViewerProcess4.cpp
+  SASViewerProcess4.h
   SASViewerProcess.cpp
   SASViewerProcess.h
   SASViewerRender2.cpp
   SASViewerRender2.h
   SASViewerRender3.cpp
   SASViewerRender3.h
+  SASViewerRender4.cpp
+  SASViewerRender4.h
   SASViewerRender.cpp
   SASViewerRender.h
   SaturateOverObj.cpp

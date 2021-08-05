@@ -1,13 +1,13 @@
 //
-//  SASViewerRender3.h
+//  SASViewerRender4.h
 //  BL-Waves
 //
 //  Created by applematuer on 10/13/18.
 //
 //
 
-#ifndef __BL_SASViewer__SASViewerRender3__
-#define __BL_SASViewer__SASViewerRender3__
+#ifndef __BL_SASViewer__SASViewerRender4__
+#define __BL_SASViewer__SASViewerRender4__
 
 #ifdef IGRAPHICS_NANOVG
 
@@ -18,7 +18,7 @@ using namespace std;
 #include <GraphControl12.h>
 #include <LinesRender2.h>
 #include <SASViewerPluginInterface.h>
-#include <SASViewerProcess3.h>
+//#include <SASViewerProcess3.h>
 #include <SASViewerProcess4.h>
 
 // Sides
@@ -36,25 +36,25 @@ using namespace std;
 #define MIN_CAM_ANGLE_1 15.0
 
 class Axis3D;
-class SASViewerRender3 : public GraphCustomControl
+class SASViewerRender4 : public GraphCustomControl
 {
 public:
-    SASViewerRender3(SASViewerPluginInterface *plug,
+    SASViewerRender4(SASViewerPluginInterface *plug,
                     GraphControl12 *graphControl,
                     BL_FLOAT sampleRate, int bufferSize);
     
-    virtual ~SASViewerRender3();
+    virtual ~SASViewerRender4();
     
     void SetGraph(GraphControl12 *graphControl);
     
     void Clear();
     
-    virtual void AddData(SASViewerProcess3::Mode mode,
+    virtual void AddData(SASViewerProcess4::Mode mode,
                           const WDL_TypedBuf<BL_FLOAT> &data);
-    virtual void AddPoints(SASViewerProcess3::Mode mode,
+    virtual void AddPoints(SASViewerProcess4::Mode mode,
                            const vector<LinesRender2::Point> &points);
 
-    virtual void SetLineMode(SASViewerProcess3::Mode mode,
+    virtual void SetLineMode(SASViewerProcess4::Mode mode,
                              LinesRender2::Mode lineMode);
     
     // Control
@@ -77,19 +77,23 @@ public:
     void SetCamFov(BL_FLOAT angle);
     
     //
-    void SetMode(SASViewerProcess3::Mode mode);
+    void SetMode(SASViewerProcess4::Mode mode);
     
     // Used for rendering tracked partials
     int GetNumSlices();
     int GetSpeed();
     
-    void SetAdditionalLines(SASViewerProcess3::Mode mode,
+    void SetAdditionalLines(SASViewerProcess4::Mode mode,
                             const vector<LinesRender2::Line> &lines,
                             BL_FLOAT lineWidth);
-    
     void ClearAdditionalLines();
+    void ShowTrackingLines(SASViewerProcess4::Mode mode, bool flag);
     
-    void ShowTrackingLines(SASViewerProcess3::Mode mode, bool flag);
+    void SetAdditionalPoints(SASViewerProcess4::Mode mode,
+                             const vector<LinesRender2::Line> &lines,
+                             BL_FLOAT lineWidth);
+    void ClearAdditionalPoints();
+    void ShowDetectionPoints(SASViewerProcess4::Mode mode, bool flag);
     
     // For debugging
     void DBG_SetNumSlices(int numSlices);
@@ -103,7 +107,7 @@ protected:
     
     GraphControl12 *mGraph;
     
-    LinesRender2 *mLinesRenders[SASViewerProcess3::NUM_MODES];
+    LinesRender2 *mLinesRenders[SASViewerProcess4::NUM_MODES];
     
     Axis3D *mFreqsAxis;
     
@@ -126,9 +130,9 @@ protected:
     //
     unsigned long long int mAddNum;
     
-    SASViewerProcess3::Mode mCurrentMode;
+    SASViewerProcess4::Mode mCurrentMode;
 };
 
 #endif // IGRAPHICS_NANOVG
 
-#endif /* defined(__BL_SASViewer__SASViewerRender3__) */
+#endif /* defined(__BL_SASViewer__SASViewerRender4__) */
