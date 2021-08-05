@@ -50,10 +50,7 @@ class HRTF;
 class KemarHRTF
 {
 public:
-	// NOTE: including IGraphics here is ugly, but this 
-	// is only for Windows, for convenience
-	// Waiting to make a better architecture...
-	static bool Load(IGraphics *pGraphics, const char *resDir, HRTF **outHrtf);
+	static bool Load(const char *resDir, HRTF **outHrtf);
     
 	// NIKO-WIN
 	// Convenient method, to generate .rc lines for Windows
@@ -66,9 +63,8 @@ protected:
 
 	// NIKO-WIN
 #ifdef WIN32  // Load from Windows resources
-	static bool LoadWin(IGraphics *pGraphics, HRTF **outHrtf);
-	static bool ReadOneFileWin(IGraphicsWin* pGraphics,
-							   WDL_TypedBuf<BL_FLOAT>* outImpulseResponses[2],
+	static bool LoadWin(HRTF **outHrtf);
+	static bool ReadOneFileWin(WDL_TypedBuf<BL_FLOAT>* outImpulseResponses[2],
 							   //int rcId);
 							   const char* rcFn);
 #endif

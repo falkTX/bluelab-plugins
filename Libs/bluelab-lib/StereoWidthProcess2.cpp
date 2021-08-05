@@ -1809,7 +1809,7 @@ StereoWidthProcess2::InitHRTF(IGraphics *pGraphics)
     const char *resDir = pGraphics->GetSharedResourcesSubPath();
     
     // For fft convolution
-    KemarHRTF::Load(pGraphics, resDir, &mHrtf);
+    KemarHRTF::Load(resDir, &mHrtf);
     
     for (int i = 0; i < NUM_HRTF_SLICES; i++)
     {

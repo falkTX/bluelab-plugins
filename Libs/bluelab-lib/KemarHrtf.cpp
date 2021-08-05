@@ -21,13 +21,12 @@
 #define DEBUG_RESPONSES 0
 
 bool
-KemarHRTF::Load(IGraphics* pGraphics,
-				const char *resourcesDir, HRTF **outHrtf)
+KemarHRTF::Load(const char *resourcesDir, HRTF **outHrtf)
 {
 #ifndef WIN32 // Mac
 	return LoadMacLinux(resourcesDir, outHrtf);
 #else
-	return LoadWin(pGraphics, outHrtf);
+	return LoadWin(outHrtf);
 #endif
 }
 
@@ -171,7 +170,7 @@ KemarHRTF::ReadOneFile(WDL_TypedBuf<BL_FLOAT> *outImpulseResponses[2], const cha
 #ifdef WIN32
 
 bool
-KemarHRTF::LoadWin(IGraphics* pGraphics, HRTF **outHrtf)
+KemarHRTF::LoadWin(HRTF **outHrtf)
 {
 #define START_RC_ID 1000 
 
@@ -191,7 +190,7 @@ KemarHRTF::LoadWin(IGraphics* pGraphics, HRTF **outHrtf)
             sprintf(rcName, "H%de%03da.%s", elev, azim, RESP_EXT);
 
 			WDL_TypedBuf<BL_FLOAT> *outImpulseResponses[2];
-            bool fileRead = ReadOneFileWin((IGraphicsWin*)pGraphics, outImpulseResponses, rcName); // rcId);
+            bool fileRead = ReadOneFileWin(outImpulseResponses, rcName); // rcId);
             //if (!fileRead)
             //    return false;
 
@@ -220,8 +219,7 @@ KemarHRTF::LoadWin(IGraphics* pGraphics, HRTF **outHrtf)
 }
 
 bool
-KemarHRTF::ReadOneFileWin(IGraphicsWin *pGraphics, 
-						  WDL_TypedBuf<BL_FLOAT> *outImpulseResponses[2], 
+KemarHRTF::ReadOneFileWin(WDL_TypedBuf<BL_FLOAT> *outImpulseResponses[2], 
                           //int rcId)
                           const char *rcFn)
 {
