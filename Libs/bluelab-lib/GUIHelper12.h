@@ -356,7 +356,7 @@ public:
     void GetGraphSeparatorColor(IColor *sepColor);
     
 protected:
-    void GetManualFullPath(Plugin *plug, IGraphics *graphics,
+    bool GetManualFullPath(Plugin *plug, IGraphics *graphics,
                            const char *manualFileName,
                            char fullFileName[1024]);
         

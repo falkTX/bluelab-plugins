@@ -979,7 +979,7 @@ GUIHelper12::CreateLogoAnim(Plugin *plug, IGraphics *graphics,
     graphics->AttachControl(control);
 }
 
-void
+bool
 GUIHelper12::GetManualFullPath(Plugin *plug, IGraphics *graphics,
                                const char *manualFileName,
                                char fullFileName[1024])
@@ -993,10 +993,11 @@ GUIHelper12::GetManualFullPath(Plugin *plug, IGraphics *graphics,
 #else
     // On windows, we must load the resource from dll, save it to the temp file
     // before re-opening it
-    WDL_TypedBuf<uint8_t> resBuf = graphics->LoadResource(MANUAL_FN, "PDF"); // "RCDATA");
+    WDL_TypedBuf<uint8_t> resBuf = 
+        graphics->LoadResource(MANUAL_FN, "PDF"); // "RCDATA");
     long resSize = resBuf.GetSize();
     if (resSize == 0)
-        return;
+        return false;
 
     //TCHAR tempPathBuffer[MAX_PATH];
     //GetTempPath(MAX_PATH, tempPathBuffer);
@@ -1009,6 +1010,8 @@ GUIHelper12::GetManualFullPath(Plugin *plug, IGraphics *graphics,
     fwrite(resBuf.Get(), 1, resSize, file);
     fclose(file);
 #endif
+
+    return true;
 }
 
 void
@@ -1040,7 +1043,9 @@ GUIHelper12::CreateHelpButton(Plugin *plug, IGraphics *graphics,
     }
     
     char fullFileName[1024];
-    GetManualFullPath(plug, graphics, manualFileName, fullFileName);
+    bool manualPathFound = GetManualFullPath(plug, graphics, manualFileName, fullFileName);
+    if (!manualPathFound)
+        return;
 
     IControl *control = NULL;
 
@@ -1068,9 +1073,12 @@ GUIHelper12::ShowHelp(Plugin *plug, IGraphics *graphics,
                       const char *manualFileName)
 {
     char fullFileName[1024];
-    GetManualFullPath(plug, graphics,
-                      manualFileName, fullFileName);
-    
+    bool manualPathFound = 
+        GetManualFullPath(plug, graphics,
+                          manualFileName, fullFileName);
+    if (!manualPathFound)
+        return;
+
     IHelpButtonControl::ShowManual(fullFileName);
 }
 
