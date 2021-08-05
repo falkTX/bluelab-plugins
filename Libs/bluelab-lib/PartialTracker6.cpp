@@ -123,6 +123,9 @@ PartialTracker6::PartialTracker6(int bufferSize, BL_FLOAT sampleRate,
 #endif
     
     mPartialFilter = new PartialFilter(bufferSize);
+
+    // DEBUG
+    BLDebug::ResetFile("peaks.txt");
 }
 
 PartialTracker6::~PartialTracker6()
@@ -580,6 +583,8 @@ PartialTracker6::DetectPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
     mPeakDetector->DetectPeaks(magns, &peaks,
                                DETECT_PARTIALS_START_INDEX, maxIndex);
 
+    //DBG_DumpPeaks(magns, &peaks);
+    
     ComputePartials(peaks, magns, phases, outPartials);
 }
 
@@ -1064,7 +1069,12 @@ PartialTracker6::DBG_DumpPartials(const char *fileName,
 BL_FLOAT
 PartialTracker6::GetThreshold(int binNum)
 {
+#if USE_BL_PEAK_DETECTOR
     BL_FLOAT thrsNorm = -(MIN_AMP_DB - mThreshold)/(-MIN_AMP_DB);
+#else // For debugging
+    const BL_FLOAT defaultThrs = -100.0;
+    BL_FLOAT thrsNorm = -(MIN_AMP_DB - defaultThrs)/(-MIN_AMP_DB);
+#endif
     
     return thrsNorm;
 }
@@ -1460,7 +1470,7 @@ PartialTracker6::PostProcessPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
                                      vector<Partial> *partials)
 {
     SuppressZeroFreqPartials(partials);
-    
+
     // Some operations
 #if GLUE_BARBS
     vector<Partial> &prev = mTmpPartials1;
@@ -1468,11 +1478,32 @@ PartialTracker6::PostProcessPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
     
     GluePartialBarbs(magns, partials);
 #endif
-    
+
 #if DISCARD_FLAT_PARTIAL
     DiscardFlatPartials(magns, partials);
 #endif
-    
+
     // Threshold
     ThresholdPartialsPeakHeight(magns, partials);
+}
+
+void
+PartialTracker6::DBG_DumpPeaks(const WDL_TypedBuf<BL_FLOAT> &data,
+                               vector<PeakDetector::Peak> *peaks)
+{
+    for (int i = 0; i < peaks->size(); i++)
+    {
+        PeakDetector::Peak &peak = (*peaks)[i];
+
+        // Select peak
+        if (peak.mPeakIndex >= 2)
+        {
+            // Dump peak amp
+            BL_FLOAT peakAmp = data.Get()[peak.mPeakIndex];
+
+            BLDebug::AppendValue("peaks.txt", peakAmp);
+            
+            break;
+        }
+    }
 }

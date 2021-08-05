@@ -27,7 +27,7 @@ using namespace std;
 #include "../../WDL/fft.h"
 
 // Use PeakDetector class, original BlueLab implementation
-#define USE_BL_PEAK_DETECTOR 0 //1 //0
+#define USE_BL_PEAK_DETECTOR 0 //1
 
 // Use smart peak detection from http://billauer.co.il/peakdet.html
 // See also: https://github.com/xuphys/peakdetect/blob/master/peakdetect.c
@@ -230,6 +230,9 @@ protected:
 
     void PostProcessPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
                              vector<Partial> *partials);
+
+    void DBG_DumpPeaks(const WDL_TypedBuf<BL_FLOAT> &data,
+                       vector<PeakDetector::Peak> *peaks);
         
     //
     int mBufferSize;
