@@ -10,7 +10,9 @@
 
 #include "portable_endian.h"
 #include "Hrtf.h"
+
 #include <BLUtils.h>
+#include <BLUtilsPlug.h>
 
 #include "KemarHrtf.h"
 
@@ -189,7 +191,9 @@ KemarHRTF::LoadWin(IGraphics* pGraphics, HRTF **outHrtf)
             sprintf(rcName, "H%de%03da.%s", elev, azim, RESP_EXT);
 
 			WDL_TypedBuf<BL_FLOAT> *outImpulseResponses[2];
-            ReadOneFileWin((IGraphicsWin*)pGraphics, outImpulseResponses, rcName); // rcId);
+            bool fileRead = ReadOneFileWin((IGraphicsWin*)pGraphics, outImpulseResponses, rcName); // rcId);
+            //if (!fileRead)
+            //    return false;
 
 			// Deduce the values we can deduce
 			// (we have the front at 0 degrees)
@@ -231,10 +235,19 @@ KemarHRTF::ReadOneFileWin(IGraphicsWin *pGraphics,
 		return false;
 #endif
 
+#if 0 // iPlug2 with iGraphics
     WDL_TypedBuf<uint8_t> rcBuf = pGraphics->LoadResource(rcFn, "RCDATA");
     long rcSize = rcBuf.GetSize();
     if (rcSize == 0)
         return false;
+#endif
+
+#if 1 // iPlug2 without iGraphics
+    WDL_TypedBuf<uint8_t> rcBuf = BLUtilsPlug::LoadWinResource(rcFn, "DAT"); // "RCDATA");
+    long rcSize = rcBuf.GetSize();
+    if (rcSize == 0)
+        return false;
+#endif
 
 	// Allocate only if the file exists in the resources
 	// Otherwise, keep the null value, which is good for further interpolation
@@ -267,7 +280,7 @@ KemarHRTF::ReadOneFileWin(IGraphicsWin *pGraphics,
 		outImpulseResponses[1]->Get()[i] = ((BL_FLOAT)dat1) / SHRT_MAX;
 	}
 
-	free(buf);
+	//free(buf);
 
 	return true;
 }
