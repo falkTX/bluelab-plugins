@@ -479,5 +479,11 @@ vst2: no gui...
 TODO: don't forget to test with no GUI, only the UI from the host
 TODO: activate OpenBlas for Rebalance Windows 
 TODO: win: test Reaper resize gui (works with Spatializer, but not with Chroma)
-TODO: win: menu is wrong with Ghost-X app
-TODO: fix Win32 Reaper freeze (e.g on Spatializer, when showing GUI)
+
+FIXED:
+- "config.h"
+- vst3 scan crash
+- Rebalance
+- Spatializer
+- win32 gui freeze fix
+- Ghost app

@@ -1048,11 +1048,21 @@ BLUtilsPlug::GetPlugFPS(int defaultFPS)
     // [BlueLab]
     // fps=30
 
+    char fileName[FILENAME_SIZE];
         
 #ifdef __linux__
-    char fileName[FILENAME_SIZE];
     sprintf(fileName, "%s/.config/BlueLab.ini", getenv("HOME"));
-        
+#endif
+
+#ifdef WIN32
+    WDL_String path;
+    iplug::INIPath(path, "");
+
+    const char *cPath = path.Get();
+    
+    sprintf(fileName, "%sBlueLab.ini", cPath);
+#endif
+    
     FILE *file = fopen(fileName, "r");
     if (file == NULL)
         return defaultFPS;
@@ -1090,7 +1100,6 @@ BLUtilsPlug::GetPlugFPS(int defaultFPS)
     }
     
     ini_destroy(ini);
-#endif
 
     return defaultFPS;
 }
