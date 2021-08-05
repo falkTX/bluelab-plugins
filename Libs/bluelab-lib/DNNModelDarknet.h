@@ -31,7 +31,7 @@ public:
               const char *resourcePath) override;
     
     // For WIN32
-    bool LoadWin(IGraphics &pGraphics,
+    bool LoadWin(IGraphics *pGraphics,
                  const char* modelRcName,
                  const char* weightsRcName) override;
     

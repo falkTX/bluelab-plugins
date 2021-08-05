@@ -82,6 +82,9 @@ class BLUtilsPlug
     static bool GetFullPlugResourcesPath(const IPluginBase &plug,
                                          WDL_String *resPath);
 
+    static WDL_TypedBuf<uint8_t> LoadWinResource(const char *resourceName,
+                                                 const char *type);
+    
     static void ApplyGain(const vector<WDL_TypedBuf<BL_FLOAT> > &in,
                           vector<WDL_TypedBuf<BL_FLOAT> > *out,
                           ParamSmoother2 *smoother);

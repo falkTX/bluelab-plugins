@@ -470,5 +470,11 @@ TODO: on windows, test user accout with accents, and see if we can still launche
 Use windows PowerShell to launch long batch processing (e.g make-dist.bat)
 
 Load in Reaper: some plugin scan crash in vst3 format when scanned by Reaper
-Spatializer crashes when loaded in Reaper
+Spatializer crashes when loaded in Reaper (e.g Shaper.vst3, PitchShift.vst3, Infra.vst3, Denoiser.vst3, Air.vst3)
 
+Spatializer / resoures hrtf not found
+
+vst2: no gui...
+
+TODO: don't forget to test with no GUI, only the UI from the host
+TODO: activate OpenBlas for Rebalance Windows 

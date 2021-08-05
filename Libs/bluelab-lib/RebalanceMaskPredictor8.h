@@ -58,7 +58,7 @@ public:
                             BL_FLOAT sampleRate,
                             int numSpectroCols,
                             const IPluginBase &plug,
-                            IGraphics& graphics);
+                            IGraphics* graphics);
     
     virtual ~RebalanceMaskPredictor8();
     

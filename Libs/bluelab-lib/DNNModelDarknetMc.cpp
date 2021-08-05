@@ -121,7 +121,7 @@ DNNModelDarknetMc::LoadWin(IGraphics &pGraphics,
     long modelRcSize = modelRcBuf.GetSize();
     if (modelRcSize == 0)
         return false;
-    
+
     WDL_TypedBuf<uint8_t> weightsRcBuf = pGraphics.LoadResource(weightsRcName, "WEIGHTS");
     long weightsRcSize = weightsRcBuf.GetSize();
     if (weightsRcSize == 0)

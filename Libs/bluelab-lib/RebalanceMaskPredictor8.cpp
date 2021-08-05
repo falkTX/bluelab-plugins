@@ -37,7 +37,7 @@ RebalanceMaskPredictor8::RebalanceMaskPredictor8(int bufferSize,
                                                  BL_FLOAT sampleRate,
                                                  int numSpectroCols,
                                                  const IPluginBase &plug,
-                                                 IGraphics &graphics)
+                                                 IGraphics *graphics)
 {
     mBufferSize = bufferSize;
     mOverlapping = overlapping;

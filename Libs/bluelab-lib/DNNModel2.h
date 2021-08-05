@@ -29,7 +29,7 @@ public:
     // For WIN32
     //virtual bool LoadWin(IGraphics *pGraphics,
     //                     int modelRcId, int weightsRcId) = 0;
-    virtual bool LoadWin(IGraphics &pGraphics, 
+    virtual bool LoadWin(IGraphics *pGraphics, 
                          const char* modelRcName,
                          const char* weightsRcName) = 0;
 

@@ -23,6 +23,7 @@ extern "C" {
 }
 
 #include <BLUtils.h>
+#include <BLUtilsPlug.h>
 #include <BLDebug.h>
 
 #include <PPMFile.h>
@@ -133,7 +134,7 @@ DNNModelDarknet::Load(const char *modelFileName,
 
 // For WIN32
 bool
-DNNModelDarknet::LoadWin(IGraphics &pGraphics,
+DNNModelDarknet::LoadWin(IGraphics *pGraphics,
                            const char *modelRcName, const char *weightsRcName)
 {
 #if DEBUG_NO_MODEL
@@ -160,15 +161,30 @@ DNNModelDarknet::LoadWin(IGraphics &pGraphics,
                                                               &weightsRcSize);
     if (!loaded)
 		return false;
-#endif->
+#endif
 
-#if 1 // iPlug2
-    WDL_TypedBuf<uint8_t> modelRcBuf = pGraphics.LoadResource(modelRcName, "CFG");
+#if 0 //1 // iPlug2, with IGraphics
+    WDL_TypedBuf<uint8_t> modelRcBuf = pGraphics->LoadResource(modelRcName, "CFG");
     long modelRcSize = modelRcBuf.GetSize();
     if (modelRcSize == 0)
         return false;
     
-    WDL_TypedBuf<uint8_t> weightsRcBuf = pGraphics.LoadResource(weightsRcName, "WEIGHTS");
+    WDL_TypedBuf<uint8_t> weightsRcBuf =
+        pGraphics->LoadResource(weightsRcName, "WEIGHTS");
+    long weightsRcSize = weightsRcBuf.GetSize();
+    if (weightsRcSize == 0)
+        return false;
+#endif
+
+#if 1 // iPlug2, without IGraphics
+    WDL_TypedBuf<uint8_t> modelRcBuf =
+        BLUtilsPlug::LoadWinResource(modelRcName, "CFG");
+    long modelRcSize = modelRcBuf.GetSize();
+    if (modelRcSize == 0)
+        return false;
+
+    WDL_TypedBuf<uint8_t> weightsRcBuf =
+        BLUtilsPlug::LoadWinResource(weightsRcName, "WEIGHTS");
     long weightsRcSize = weightsRcBuf.GetSize();
     if (weightsRcSize == 0)
         return false;

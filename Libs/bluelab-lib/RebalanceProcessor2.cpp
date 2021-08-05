@@ -67,7 +67,7 @@ RebalanceProcessor2::~RebalanceProcessor2()
 
 void
 RebalanceProcessor2::InitDetect(const IPluginBase &plug,
-                               IGraphics &graphics)
+                                IGraphics *graphics)
 {
     mMaskPred = new RebalanceMaskPredictor8(mTargetBufferSize, mOverlapping,
                                             mTargetSampleRate,
@@ -191,8 +191,12 @@ int
 RebalanceProcessor2::GetLatency()
 {
     int lat0 = ResampProcessObj::GetLatency();
-    int lat1 = mNativeFftObj->ComputeLatency(mBlockSize);
-    int lat2 = mMaskPred->GetLatency();
+    int lat1 = 0;
+    if (mNativeFftObj != NULL)
+        lat1 = mNativeFftObj->ComputeLatency(mBlockSize);
+    int lat2 = 0;
+    if (mMaskPred != NULL)
+        lat2 = mMaskPred->GetLatency();
 
     int lat3 = 0;
     if (mDetectProcessObjs[0] != NULL)

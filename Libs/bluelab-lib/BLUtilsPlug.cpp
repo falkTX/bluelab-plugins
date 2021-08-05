@@ -3,6 +3,10 @@
 
 #include <IPlugPaths.h>
 
+#ifdef WIN32
+extern HINSTANCE gHINSTANCE;    
+#endif
+
 #include <BLTypes.h>
 
 #include <BLUtils.h>
@@ -907,6 +911,33 @@ BLUtilsPlug::GetFullPlugResourcesPath(const IPluginBase &plug, WDL_String *resPa
         resPath->SetLen(resPath->GetLength() - (strlen(DUMMY_RES_FILE) + 1));
     
     return true;
+}
+
+WDL_TypedBuf<uint8_t>
+BLUtilsPlug::LoadWinResource(const char *resourceName, const char *type)
+{
+    WDL_TypedBuf<uint8_t> result;
+
+#ifdef WIN32
+    WDL_String path;
+    EResourceLocation resourceFound =
+        LocateResource(resourceName, type, path, "", gHINSTANCE, "");
+    if (resourceFound == EResourceLocation::kNotFound)
+        return result;
+
+    if (resourceFound == EResourceLocation::kWinBinary)
+    {
+        int rcSize;
+        const void* rc = iplug::LoadWinResource(path.Get(), type, rcSize, gHINSTANCE);
+        if ((rcSize == 0) || (rc == NULL))
+            return result;
+        
+        result.Resize(rcSize);
+        memcpy(result.Get(), rc, rcSize);
+    }
+#endif
+
+    return result;
 }
 
 void
