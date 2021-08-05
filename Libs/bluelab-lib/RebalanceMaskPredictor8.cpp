@@ -77,7 +77,7 @@ RebalanceMaskPredictor8::RebalanceMaskPredictor8(int bufferSize,
     char cfg0[255];
     sprintf(cfg0, "%s.cfg", MODEL0_NAME);
     char weights0[255];
-    sprintf(cfg0, "%s.weights", MODEL0_NAME);
+    sprintf(weights0, "%s.weights", MODEL0_NAME);
 
     mModels[0]->LoadWin(graphics, cfg0, weights0);
 
