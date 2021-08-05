@@ -29,8 +29,7 @@ public:
     
     virtual ~RebalanceProcessor2();
     
-    void InitDetect(const IPluginBase &plug,
-                    IGraphics* graphics);
+    void InitDetect(const IPluginBase &plug);
     
     void InitDump(int dumpOverlap);
     

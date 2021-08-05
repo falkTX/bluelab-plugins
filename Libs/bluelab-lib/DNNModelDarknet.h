@@ -31,8 +31,7 @@ public:
               const char *resourcePath) override;
     
     // For WIN32
-    bool LoadWin(IGraphics *pGraphics,
-                 const char* modelRcName,
+    bool LoadWin(const char* modelRcName,
                  const char* weightsRcName) override;
     
     void Predict(const WDL_TypedBuf<BL_FLOAT> &input,

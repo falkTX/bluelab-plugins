@@ -57,8 +57,7 @@ public:
                             BL_FLOAT overlapping,
                             BL_FLOAT sampleRate,
                             int numSpectroCols,
-                            const IPluginBase &plug,
-                            IGraphics* graphics);
+                            const IPluginBase &plug);
     
     virtual ~RebalanceMaskPredictor8();
     

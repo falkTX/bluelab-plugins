@@ -134,8 +134,7 @@ DNNModelDarknet::Load(const char *modelFileName,
 
 // For WIN32
 bool
-DNNModelDarknet::LoadWin(IGraphics *pGraphics,
-                           const char *modelRcName, const char *weightsRcName)
+DNNModelDarknet::LoadWin(const char *modelRcName, const char *weightsRcName)
 {
 #if DEBUG_NO_MODEL
     return true;
