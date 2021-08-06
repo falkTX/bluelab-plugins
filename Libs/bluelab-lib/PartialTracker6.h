@@ -297,6 +297,7 @@ private:
     WDL_TypedBuf<BL_FLOAT> mTmpBuf7;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf8;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf9;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf10;
     
     vector<Partial> mTmpPartials0;
     vector<Partial> mTmpPartials1;

@@ -28,6 +28,7 @@ using namespace std;
 #include <PeakDetectorBillauer.h>
 
 #include <QIFFT.h>
+#include <PhasesUnwrapper.h>
 
 #include "PartialTracker6.h"
 
@@ -1403,7 +1404,11 @@ PartialTracker6::ComputePartials(const vector<PeakDetector::Peak> &peaks,
                                  vector<Partial> *partials)
 {
     partials->resize(peaks.size());
-    
+
+    WDL_TypedBuf<BL_FLOAT> &phasesUW = mTmpBuf10;
+    phasesUW = phases;
+    PhasesUnwrapper::UnwrapPhasesFreq(&phasesUW);
+        
     for (int i = 0; i < peaks.size(); i++)
     {
         const PeakDetector::Peak &peak = peaks[i];
@@ -1419,7 +1424,8 @@ PartialTracker6::ComputePartials(const vector<PeakDetector::Peak> &peaks,
         BL_FLOAT peakIndexF = ComputePeakIndexParabola(magns, p.mPeakIndex);
 #else
         QIFFT::Peak qifftPeak;
-        QIFFT::FindPeak(magns, phases, peak.mPeakIndex, &qifftPeak);
+        //QIFFT::FindPeak(magns, phases, peak.mPeakIndex, &qifftPeak);
+        QIFFT::FindPeak(magns, phasesUW, peak.mPeakIndex, &qifftPeak);
 
         p.mBinIdxF = qifftPeak.mBinIdx;
         p.mAmp = qifftPeak.mAmp;

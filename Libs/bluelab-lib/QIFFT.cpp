@@ -5,6 +5,8 @@
 
 #include "QIFFT.h"
 
+#define USE_MAP_TO_PI 0 // 1
+
 void
 QIFFT::FindPeak(const WDL_TypedBuf<BL_FLOAT> &magns,
                 const WDL_TypedBuf<BL_FLOAT> &phases,
@@ -49,11 +51,13 @@ QIFFT::FindPeak(const WDL_TypedBuf<BL_FLOAT> &magns,
     BL_FLOAT betaP = phases.Get()[peakBin];
     BL_FLOAT gammaP = phases.Get()[peakBin + 1];
 
+#if USE_MAP_TO_PI
     // Seems necessary to have good parabola
     alphaP = BLUtilsPhases::MapToPi(alphaP);
     betaP = BLUtilsPhases::MapToPi(betaP);
     gammaP = BLUtilsPhases::MapToPi(gammaP);
-        
+#endif
+    
     // Get parabola equation coeffs for phases
     BL_FLOAT aP;
     BL_FLOAT bP;
@@ -273,15 +277,21 @@ QIFFT::DBG_DumpParabolaGen(int peakBin,
     //
     int leftIdx = peakBin - 1;
     int leftIdx0 = (((BL_FLOAT)(leftIdx - start))/(end - start))*NUM_VALUES;
-    values.Get()[leftIdx0] = BLUtilsPhases::MapToPi(phases.Get()[leftIdx]); //0.0;
+    values.Get()[leftIdx0] = phases.Get()[leftIdx]; //0.0;
 
     int centerIdx = peakBin;
     int centerIdx0 = (((BL_FLOAT)(centerIdx - start))/(end - start))*NUM_VALUES;
-    values.Get()[centerIdx0] = BLUtilsPhases::MapToPi(phases.Get()[centerIdx]); //0.0;
+    values.Get()[centerIdx0] = phases.Get()[centerIdx]; //0.0;
 
     int rightIdx = peakBin + 1;
     int rightIdx0 = (((BL_FLOAT)(rightIdx - start))/(end - start))*NUM_VALUES;
-    values.Get()[rightIdx0] = BLUtilsPhases::MapToPi(phases.Get()[rightIdx]); //0.0;
+    values.Get()[rightIdx0] = phases.Get()[rightIdx]; //0.0;
+
+#if USE_MAP_TO_PI
+    BLUtilsPhases::MapToPi(values.Get()[leftIdx0]);
+    BLUtilsPhases::MapToPi(values.Get()[centerIdx0]);
+    BLUtilsPhases::MapToPi(values.Get()[rightIdx0]);
+#endif
     
     BLDebug::DumpData("parabola-gen.txt", values);
 }
