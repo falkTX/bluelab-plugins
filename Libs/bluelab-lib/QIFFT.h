@@ -36,6 +36,31 @@ class QIFFT
     static void FindPeak(const WDL_TypedBuf<BL_FLOAT> &magns,
                          const WDL_TypedBuf<BL_FLOAT> &phases,
                          int peakBin, Peak *result);
+
+ protected:
+    // Parabola equation: y(x) = a*(x - c)^2 + b
+    // Specific to peak tracking
+    static void GetParabolaCoeffs(BL_FLOAT alpha, BL_FLOAT beta, BL_FLOAT gamma,
+                                  BL_FLOAT *a, BL_FLOAT *b, BL_FLOAT *c);
+
+    static BL_FLOAT ParabolaFunc(BL_FLOAT x, BL_FLOAT a, BL_FLOAT b, BL_FLOAT c);
+
+    // Parabola equation: y(x) = a*x^2 + b*x + c
+    // Generalized (no maximum constraint)
+    static void GetParabolaCoeffsGen(BL_FLOAT alpha, BL_FLOAT beta, BL_FLOAT gamma,
+                                     BL_FLOAT *a, BL_FLOAT *b, BL_FLOAT *c);
+
+    static BL_FLOAT ParabolaFuncGen(BL_FLOAT x, BL_FLOAT a, BL_FLOAT b, BL_FLOAT c);
+
+    //
+    static void DBG_DumpParabola(int peakBin,
+                                 BL_FLOAT alpha, BL_FLOAT beta, BL_FLOAT gamma,
+                                 BL_FLOAT c,
+                                 const WDL_TypedBuf<BL_FLOAT> &magns);
+
+    static void DBG_DumpParabolaGen(int peakBin,
+                                    BL_FLOAT a, BL_FLOAT b, BL_FLOAT c,
+                                    const WDL_TypedBuf<BL_FLOAT> &phases);
 };
 
 #endif

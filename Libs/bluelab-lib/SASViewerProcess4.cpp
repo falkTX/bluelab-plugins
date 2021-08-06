@@ -43,6 +43,8 @@
 // Does not improve transients at all (result is identical)
 #define USE_PRUSA_PHASES_ESTIM 0 //1
 
+#define DBG_DISPLAY_BETA0 1
+
 SASViewerProcess4::SASViewerProcess4(int bufferSize,
                                      BL_FLOAT overlapping, BL_FLOAT oversampling,
                                      BL_FLOAT sampleRate)
@@ -340,7 +342,7 @@ SASViewerProcess4::SetShowDetectionPoints(bool flag)
     mShowDetectionPoints = flag;
     
     if (mSASViewerRender != NULL)
-        mSASViewerRender->ShowDetectionPoints(DETECTION, flag);
+        mSASViewerRender->ShowAdditionalPoints(DETECTION, flag);
 }
 
 void
@@ -349,7 +351,7 @@ SASViewerProcess4::SetShowTrackingLines(bool flag)
     mShowTrackingLines = flag;
     
     if (mSASViewerRender != NULL)
-        mSASViewerRender->ShowTrackingLines(TRACKING, flag);
+        mSASViewerRender->ShowAdditionalLines(TRACKING, flag);
 }
 
 void
@@ -439,7 +441,11 @@ SASViewerProcess4::Display()
     if (mSkipAdd)
         return;
 
+#if !DBG_DISPLAY_BETA0
     DisplayDetection();
+#else
+    DisplayDetectionBeta0();
+#endif
     
     DisplayTracking();
     
@@ -534,7 +540,7 @@ SASViewerProcess4::DisplayDetection()
 {
     if (mSASViewerRender != NULL)
     {
-        mSASViewerRender->ShowDetectionPoints(DETECTION, mShowDetectionPoints);
+        mSASViewerRender->ShowAdditionalPoints(DETECTION, mShowDetectionPoints);
 
         WDL_TypedBuf<BL_FLOAT> &data = mTmpBuf7;
         mViewScale->ApplyScaleFilterBank(mViewXScaleFB, &data, mCurrentMagns,
@@ -645,11 +651,117 @@ SASViewerProcess4::DisplayDetection()
 }
 
 void
+SASViewerProcess4::DisplayDetectionBeta0()
+{
+    if (mSASViewerRender != NULL)
+    {
+        mSASViewerRender->ShowAdditionalLines(DETECTION, mShowDetectionPoints);
+
+        WDL_TypedBuf<BL_FLOAT> &data = mTmpBuf15;
+        mViewScale->ApplyScaleFilterBank(mViewXScaleFB, &data, mCurrentMagns,
+                                         mSampleRate, mCurrentMagns.GetSize());
+    
+        mSASViewerRender->AddData(DETECTION, data);
+        
+        mSASViewerRender->SetLineMode(DETECTION, LinesRender2::LINES_FREQ);
+
+        // Add points corresponding to raw detected partials
+        vector<Partial> partials = mCurrentRawPartials;
+
+        // Create line
+        vector<vector<LinesRender2::Point> > segments;
+        for (int i = 0; i < partials.size(); i++)
+        {
+            vector<LinesRender2::Point> line;
+                
+            const Partial &partial = partials[i];
+            
+            // First point (standard)
+            LinesRender2::Point p0;
+            
+            BL_FLOAT partialX0 = partial.mFreq;
+            partialX0 =
+                mViewScale->ApplyScale(mViewXScale, partialX0,
+                                       (BL_FLOAT)0.0, (BL_FLOAT)(mSampleRate*0.5));
+                                              
+            p0.mX = partialX0 - 0.5;
+            p0.mY = partial.mAmp;
+            p0.mZ = 1.0;
+            p0.mId = (int)partial.mId;
+
+            line.push_back(p0);
+
+            // Second point (extrapolated)
+            LinesRender2::Point p1;
+
+            BL_FLOAT partialX1 = partial.mFreq + partial.mBeta0;
+            partialX1 =
+                mViewScale->ApplyScale(mViewXScale, partialX1,
+                                       (BL_FLOAT)0.0, (BL_FLOAT)(mSampleRate*0.5));
+                                              
+            p1.mX = partialX1 - 0.5;
+            p1.mY = partial.mAmp;
+            p1.mZ = 1.0;
+            p1.mId = (int)partial.mId;
+
+            line.push_back(p1);
+
+            segments.push_back(line);
+        }
+
+        //
+        int numSlices = mSASViewerRender->GetNumSlices();
+        
+        mPartialsSegments.push_back(segments);
+        
+        while(mPartialsSegments.size() > numSlices)
+            mPartialsSegments.pop_front();
+        
+        // Update Z
+        int divisor = mSASViewerRender->GetNumSlices() - 1;
+        if (divisor <= 0)
+            divisor = 1;
+        BL_FLOAT incrZ = 1.0/divisor;
+
+        for (int j = 0; j < mPartialsSegments.size(); j++)
+        {
+            vector<vector<LinesRender2::Point> > &segments = mPartialsSegments[j];
+
+            for (int i = 0; i < segments.size(); i++)
+            {
+                vector<LinesRender2::Point> &seg = segments[i];
+
+                if (seg.empty())
+                    continue;
+                
+                BL_FLOAT z = seg[0].mZ;
+                z -= incrZ;
+            
+                for (int k = 0; k < seg.size(); k++)
+                {   
+                    LinesRender2::Point &p = seg[k];
+
+                    p.mZ = z;
+                }
+            }
+        }
+        
+        BL_FLOAT lineWidth = 2.0;
+        unsigned char color[4] = { 255, 0, 0, 255 }; // Red
+        
+        vector<LinesRender2::Line> &partialLines = mTmpBuf16;
+        SegmentsToLines(mPartialsSegments, color, &partialLines);
+
+        mSASViewerRender->SetAdditionalLines(DETECTION, partialLines, lineWidth);
+    }
+}
+
+void
 SASViewerProcess4::DisplayTracking()
 {
     if (mSASViewerRender != NULL)
     {
-        mSASViewerRender->ShowTrackingLines(TRACKING, mShowTrackingLines);
+        mSASViewerRender->ShowAdditionalLines(TRACKING, mShowTrackingLines);
         
         // Add the magnitudes
         WDL_TypedBuf<BL_FLOAT> &data = mTmpBuf8;
@@ -768,8 +880,8 @@ SASViewerProcess4::DisplayHarmo()
         mSASViewerRender->AddData(HARMO, data);
         mSASViewerRender->SetLineMode(HARMO, LinesRender2::LINES_FREQ);
         
-        mSASViewerRender->ShowDetectionPoints(HARMO, false);
-        mSASViewerRender->ShowTrackingLines(HARMO, false);
+        mSASViewerRender->ShowAdditionalPoints(HARMO, false);
+        mSASViewerRender->ShowAdditionalLines(HARMO, false);
     }
 }
 
@@ -789,8 +901,8 @@ SASViewerProcess4::DisplayNoise()
         mSASViewerRender->AddData(NOISE, data);
         mSASViewerRender->SetLineMode(NOISE, LinesRender2::LINES_FREQ);
 
-        mSASViewerRender->ShowDetectionPoints(NOISE, false);
-        mSASViewerRender->ShowTrackingLines(NOISE, false);
+        mSASViewerRender->ShowAdditionalPoints(NOISE, false);
+        mSASViewerRender->ShowAdditionalLines(NOISE, false);
     }
 }
 
@@ -816,8 +928,8 @@ SASViewerProcess4::DisplayAmplitude()
                                       //LinesRender2::LINES_FREQ);
                                       LinesRender2::LINES_TIME);
 
-        mSASViewerRender->ShowDetectionPoints(AMPLITUDE, false);
-        mSASViewerRender->ShowTrackingLines(AMPLITUDE, false);
+        mSASViewerRender->ShowAdditionalPoints(AMPLITUDE, false);
+        mSASViewerRender->ShowAdditionalLines(AMPLITUDE, false);
     }
 }
 
@@ -845,8 +957,8 @@ SASViewerProcess4::DisplayFrequency()
                                       //LinesRender2::LINES_FREQ);
                                       LinesRender2::LINES_TIME);
 
-        mSASViewerRender->ShowDetectionPoints(FREQUENCY, false);
-        mSASViewerRender->ShowTrackingLines(FREQUENCY, false);
+        mSASViewerRender->ShowAdditionalPoints(FREQUENCY, false);
+        mSASViewerRender->ShowAdditionalLines(FREQUENCY, false);
     }
 }
 
@@ -872,8 +984,8 @@ SASViewerProcess4::DisplayColor()
         mSASViewerRender->AddData(COLOR, data);
         mSASViewerRender->SetLineMode(COLOR, LinesRender2::LINES_FREQ);
 
-        mSASViewerRender->ShowDetectionPoints(COLOR, false);
-        mSASViewerRender->ShowTrackingLines(COLOR, false);
+        mSASViewerRender->ShowAdditionalPoints(COLOR, false);
+        mSASViewerRender->ShowAdditionalLines(COLOR, false);
     }
 }
 
@@ -901,8 +1013,8 @@ SASViewerProcess4::DisplayWarping()
         mSASViewerRender->AddData(WARPING, data);
         mSASViewerRender->SetLineMode(WARPING, LinesRender2::LINES_FREQ);
 
-        mSASViewerRender->ShowDetectionPoints(WARPING, false);
-        mSASViewerRender->ShowTrackingLines(WARPING, false);
+        mSASViewerRender->ShowAdditionalPoints(WARPING, false);
+        mSASViewerRender->ShowAdditionalLines(WARPING, false);
     }
 }
 
@@ -1033,17 +1145,53 @@ SASViewerProcess4::PointsToLines(const deque<vector<LinesRender2::Point> > &poin
                                  vector<LinesRender2::Line> *lines)
 {
     lines->resize(points.size());
-
     for (int i = 0; i < lines->size(); i++)
     {
         LinesRender2::Line &line = (*lines)[i];
         line.mPoints = points[i];
-
+        
         // Dummy color
         line.mColor[0] = 0;
         line.mColor[1] = 0;
         line.mColor[2] = 0;
         line.mColor[3] = 0;
+    }
+}
+
+void
+SASViewerProcess4::
+SegmentsToLines(const deque<vector<vector<LinesRender2::Point> > > &segments,
+                const unsigned char color[4],
+                vector<LinesRender2::Line> *lines)
+{
+    lines->clear();
+    
+    if (segments.empty())
+        return;
+
+    for (int i = 0; i < segments.size(); i++)
+    {
+        const vector<vector<LinesRender2::Point> > &seg0 = segments[i];
+        
+        for (int j = 0; j < seg0.size(); j++)
+        {
+            const vector<LinesRender2::Point> &seg = seg0[j];
+
+            if (seg.size() != 2)
+                continue;
+            
+            LinesRender2::Line line;
+            line.mPoints.push_back(seg[0]);
+            line.mPoints.push_back(seg[1]);
+
+            // Dummy color
+            line.mColor[0] = color[0];
+            line.mColor[1] = color[1];
+            line.mColor[2] = color[2];
+            line.mColor[3] = color[3];
+
+            lines->push_back(line);
+        }
     }
 }
 

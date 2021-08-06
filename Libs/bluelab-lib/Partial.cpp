@@ -71,6 +71,11 @@ Partial::Partial(const Partial &other)
     
     // Kalman
     mPredictedFreq = other.mPredictedFreq;
+
+    // QIFFT
+    mBinIdxF = other.mBinIdxF;
+    mAlpha0 = other.mAlpha0;
+    mBeta0 = other.mBeta0;
 }
 
 Partial::~Partial() {}

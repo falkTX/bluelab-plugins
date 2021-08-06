@@ -113,6 +113,7 @@ protected:
     
     // Display
     void DisplayDetection();
+    void DisplayDetectionBeta0(); // Variation
     void DisplayTracking();
     
     void DisplayHarmo();
@@ -124,7 +125,9 @@ protected:
 
     void PointsToLines(const deque<vector<LinesRender2::Point> > &points,
                        vector<LinesRender2::Line> *lines);
-                      
+    void SegmentsToLines(const deque<vector<vector<LinesRender2::Point> > >&segments,
+                         const unsigned char color[4],
+                         vector<LinesRender2::Line> *lines);
     //
     //int mBufferSize;
     //BL_FLOAT mOverlapping;
@@ -151,6 +154,9 @@ protected:
 
     // For tracking detection
     deque<vector<LinesRender2::Point> > mPartialsPoints;
+
+    // For displaying beta0
+    deque<vector<vector<LinesRender2::Point> > > mPartialsSegments;
     
     // For tracking display
     deque<vector<LinesRender2::Point> > mFilteredPartialsPoints;
@@ -191,6 +197,8 @@ private:
     WDL_TypedBuf<BL_FLOAT> mTmpBuf12;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf13;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf14;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf15;
+    vector<LinesRender2::Line> mTmpBuf16;
 };
 
 #endif // IGRAPHICS_NANOVG

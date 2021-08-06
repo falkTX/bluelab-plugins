@@ -129,6 +129,10 @@ PartialTracker6::PartialTracker6(int bufferSize, BL_FLOAT sampleRate,
 
     // DEBUG
     //BLDebug::ResetFile("peaks.txt");
+
+    //BLDebug::ResetFile("alpha0.txt");
+    //BLDebug::ResetFile("beta0.txt");
+        
 }
 
 PartialTracker6::~PartialTracker6()
@@ -1424,6 +1428,10 @@ PartialTracker6::ComputePartials(const vector<PeakDetector::Peak> &peaks,
         p.mBeta0 = qifftPeak.mBeta0;
 
         BL_FLOAT peakIndexF = qifftPeak.mBinIdx;
+
+        //fprintf(stderr, "alpha0: %g beta0: %g\n", p.mAlpha0, p.mBeta0);
+        //BLDebug::AppendValue("alpha0.txt", p.mAlpha0);
+        //BLDebug::AppendValue("beta0.txt", p.mBeta0);
 #endif
         
         p.mPeakIndex = bl_round(peakIndexF);
