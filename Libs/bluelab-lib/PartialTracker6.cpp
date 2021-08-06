@@ -27,6 +27,8 @@ using namespace std;
 #include <PeakDetectorBL.h>
 #include <PeakDetectorBillauer.h>
 
+#include <QIFFT.h>
+
 #include "PartialTracker6.h"
 
 #define MIN_AMP_DB -120.0
@@ -79,6 +81,7 @@ using namespace std;
 // NEW
 #define DENORM_PARTIAL_INDICES 1
 
+#define USE_QIFFT 1
 
 PartialTracker6::PartialTracker6(int bufferSize, BL_FLOAT sampleRate,
                                  BL_FLOAT overlapping)
@@ -1406,8 +1409,22 @@ PartialTracker6::ComputePartials(const vector<PeakDetector::Peak> &peaks,
         p.mPeakIndex = peak.mPeakIndex;
         p.mLeftIndex = peak.mLeftIndex;
         p.mRightIndex = peak.mRightIndex;
+
         
+#if !USE_QIFFT
         BL_FLOAT peakIndexF = ComputePeakIndexParabola(magns, p.mPeakIndex);
+#else
+        QIFFT::Peak qifftPeak;
+        QIFFT::FindPeak(magns, phases, peak.mPeakIndex, &qifftPeak);
+
+        p.mBinIdxF = qifftPeak.mBinIdx;
+        p.mAmp = qifftPeak.mAmp;
+        p.mPhase = qifftPeak.mPhase;
+        p.mAlpha0 = qifftPeak.mAlpha0;
+        p.mBeta0 = qifftPeak.mBeta0;
+
+        BL_FLOAT peakIndexF = qifftPeak.mBinIdx;
+#endif
         
         p.mPeakIndex = bl_round(peakIndexF);
         if (p.mPeakIndex < 0)
@@ -1433,6 +1450,8 @@ PartialTracker6::ComputePartials(const vector<PeakDetector::Peak> &peaks,
         
         // Default value. Will be overwritten
         //BL_FLOAT peakAmp = data.Get()[(int)peakIndexF];
+
+#if !USE_QIFFT
         
 #if !INTERPOLATE_PHASES
         // Magn
@@ -1443,6 +1462,8 @@ PartialTracker6::ComputePartials(const vector<PeakDetector::Peak> &peaks,
 #else
         ComputePeakMagnPhaseInterp(magns, phases, peakFreq,
                                    &p.mAmp, &p.mPhase);
+#endif
+
 #endif
     }
 }

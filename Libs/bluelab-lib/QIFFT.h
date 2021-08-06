@@ -13,6 +13,7 @@
 // (Gaussian or Hann or other)
 class QIFFT
 {
+ public:
     struct Peak
     {
         // True peak idx, in floating point format
@@ -31,7 +32,6 @@ class QIFFT
         BL_FLOAT mBeta0;
     };
     
- public:
     // Magns should be in dB!
     static void FindPeak(const WDL_TypedBuf<BL_FLOAT> &magns,
                          const WDL_TypedBuf<BL_FLOAT> &phases,

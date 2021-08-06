@@ -64,6 +64,13 @@ class Partial
         
     SimpleKalmanFilter mKf;
     BL_FLOAT mPredictedFreq;
+
+    // QIFFT
+    BL_FLOAT mBinIdxF;
+    //BL_FLOAT mAmp;
+    //BL_FLOAT mPhase;
+    BL_FLOAT mAlpha0;
+    BL_FLOAT mBeta0;
         
  protected:
     static unsigned long mCurrentId;
