@@ -14,6 +14,7 @@ QIFFT::FindPeak(const WDL_TypedBuf<BL_FLOAT> &magns,
 {
     // Default value
     result->mBinIdx = peakBin;
+    result->mFreq = 0.0; // Not computed here...
     result->mAmp = magns.Get()[peakBin];
     result->mPhase = phases.Get()[peakBin];
     result->mAlpha0 = 0.0;
@@ -139,6 +140,64 @@ QIFFT::FindPeak(const WDL_TypedBuf<BL_FLOAT> &magns,
         beta0 = p*vpp/upp;
     
     // Result
+    result->mAlpha0 = alpha0;
+    result->mBeta0 = beta0;
+}
+
+void
+QIFFT::FindPeak2(const WDL_TypedBuf<BL_FLOAT> &magns,
+                 const WDL_TypedBuf<BL_FLOAT> &phases,
+                 int peakBin, Peak *result)
+{
+    // Default value
+    result->mBinIdx = peakBin;
+    result->mFreq = 0.0;
+    result->mAmp = magns.Get()[peakBin];
+    result->mPhase = phases.Get()[peakBin];
+    result->mAlpha0 = 0.0;
+    result->mBeta0 = 0.0;
+        
+    if ((peakBin - 1 < 0) || (peakBin + 1 >= magns.GetSize()))
+        return;
+
+    int k0 = peakBin;
+    
+    BL_FLOAT um1 = magns.Get()[k0 - 1];
+    BL_FLOAT u0 = magns.Get()[k0];
+    BL_FLOAT u1 = magns.Get()[k0 + 1];
+
+    if ((um1 > u0) || (u1 > u0))
+    {
+        // Error, peakBin was not the index of a peak
+        return;
+    }
+    
+    BL_FLOAT a =  (u1 - 2.0*u0 + um1)*0.5;
+    BL_FLOAT b = (u1 - um1)*0.5;
+    BL_FLOAT c = u0;
+
+    BL_FLOAT vm1 = phases.Get()[k0 - 1];
+    BL_FLOAT v0 = phases.Get()[k0];
+    BL_FLOAT v1 = phases.Get()[k0 + 1];
+    
+    BL_FLOAT d =  (v1 - 2.0*v0 + vm1)*0.5;
+    BL_FLOAT e = (v1 - vm1)*0.5;
+    BL_FLOAT f = v0;
+
+    //
+    BL_FLOAT N = magns.GetSize()*2; // ??
+    BL_FLOAT p = -((M_PI/N)*(M_PI/N))*(d/(a*a + d*d));
+    BL_FLOAT delta0 = -b/(2.0*a);
+
+    BL_FLOAT omega0 = (2.0*M_PI/N)*(k0 + delta0);
+    BL_FLOAT lambda0 = a*(delta0*delta0) + b*delta0 + c;
+    BL_FLOAT phy0 = d*(delta0*delta0) + e*delta0 + f;
+    BL_FLOAT alpha0 = -(N/M_PI)*p*(2.0*d*delta0 + e);
+    BL_FLOAT beta0 = p*d/a;
+
+    result->mFreq = omega0;
+    result->mAmp = lambda0;
+    result->mPhase = phy0;
     result->mAlpha0 = alpha0;
     result->mBeta0 = beta0;
 }

@@ -19,6 +19,8 @@ class QIFFT
         // True peak idx, in floating point format
         BL_FLOAT mBinIdx;
 
+        BL_FLOAT mFreq;
+        
         // Amp for true peak, in dB
         BL_FLOAT mAmp;
 
@@ -33,10 +35,19 @@ class QIFFT
     };
     
     // Magns should be in dB!
+    //
+    // Custom method
     static void FindPeak(const WDL_TypedBuf<BL_FLOAT> &magns,
                          const WDL_TypedBuf<BL_FLOAT> &phases,
                          int peakBin, Peak *result);
 
+    // Magns should be in dB!
+    //
+    // Method using all the formulas in appendix A of the paper
+    static void FindPeak2(const WDL_TypedBuf<BL_FLOAT> &magns,
+                          const WDL_TypedBuf<BL_FLOAT> &phases,
+                          int peakBin, Peak *result);
+    
  protected:
     // Parabola equation: y(x) = a*(x - c)^2 + b
     // Specific to peak tracking
