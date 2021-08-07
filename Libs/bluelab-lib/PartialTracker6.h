@@ -222,6 +222,7 @@ protected:
     void ComputeAWeights(int numBins, BL_FLOAT sampleRate);
         
     // Debug
+    // First method
     void DBG_DumpPartials(const char *fileName,
                           const vector<Partial> &partials,
                           int bufferSize);
@@ -232,7 +233,11 @@ protected:
                              vector<Partial> *partials);
 
     void DBG_DumpPeaks(const WDL_TypedBuf<BL_FLOAT> &data,
-                       vector<PeakDetector::Peak> *peaks);
+                       const vector<PeakDetector::Peak> &peaks);
+
+    // Second method
+    void DBG_DumpPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
+                          const vector<Partial> &partials);
         
     //
     int mBufferSize;

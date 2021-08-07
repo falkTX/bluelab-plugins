@@ -131,9 +131,18 @@ PartialTracker6::PartialTracker6(int bufferSize, BL_FLOAT sampleRate,
     // DEBUG
     //BLDebug::ResetFile("peaks.txt");
 
+#if 0
     BLDebug::ResetFile("alpha0.txt");
     BLDebug::ResetFile("beta0.txt");
-        
+#endif
+
+    BLDebug::ResetFile("ref-amp.txt");
+    BLDebug::ResetFile("ref-freq.txt");
+    
+    BLDebug::ResetFile("amp0.txt");
+    BLDebug::ResetFile("amp1.txt");
+    BLDebug::ResetFile("freq0.txt");
+    BLDebug::ResetFile("freq1.txt");
 }
 
 PartialTracker6::~PartialTracker6()
@@ -591,9 +600,11 @@ PartialTracker6::DetectPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
     mPeakDetector->DetectPeaks(magns, &peaks,
                                DETECT_PARTIALS_START_INDEX, maxIndex);
 
-    //DBG_DumpPeaks(magns, &peaks);
+    //DBG_DumpPeaks(magns, peaks);
     
     ComputePartials(peaks, magns, phases, outPartials);
+
+    DBG_DumpPartials(magns, *outPartials);
 }
 
 // From GlueTwinPartials()
@@ -1436,10 +1447,13 @@ PartialTracker6::ComputePartials(const vector<PeakDetector::Peak> &peaks,
 
         BL_FLOAT peakIndexF = qifftPeak.mBinIdx;
 
+#if 0 // DEBUG
         //fprintf(stderr, "amp: %g phase: %g alpha0: %g beta0: %g\n",
         //        p.mAmp, p.mPhase, p.mAlpha0, p.mBeta0);
         BLDebug::AppendValue("alpha0.txt", p.mAlpha0);
         BLDebug::AppendValue("beta0.txt", p.mBeta0);
+#endif
+
 #endif
         
         p.mPeakIndex = bl_round(peakIndexF);
@@ -1526,11 +1540,11 @@ PartialTracker6::PostProcessPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
 
 void
 PartialTracker6::DBG_DumpPeaks(const WDL_TypedBuf<BL_FLOAT> &data,
-                               vector<PeakDetector::Peak> *peaks)
+                               const vector<PeakDetector::Peak> &peaks)
 {
-    for (int i = 0; i < peaks->size(); i++)
+    for (int i = 0; i < peaks.size(); i++)
     {
-        PeakDetector::Peak &peak = (*peaks)[i];
+        const PeakDetector::Peak &peak = peaks[i];
 
         // Select peak
         if (peak.mPeakIndex >= 2)
@@ -1543,4 +1557,32 @@ PartialTracker6::DBG_DumpPeaks(const WDL_TypedBuf<BL_FLOAT> &data,
             break;
         }
     }
+}
+
+void
+PartialTracker6::DBG_DumpPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
+                                  const vector<Partial> &partials)
+{
+    if (partials.empty())
+        return;
+
+    // Dump only the first partial
+    const Partial &p = partials[0];
+
+    // Ref amp
+    BLDebug::AppendValue("ref-amp.txt", magns.Get()[p.mPeakIndex]);
+
+    // Ref freq
+    BL_FLOAT refFreq = ((BL_FLOAT)p.mPeakIndex)/magns.GetSize();
+    BLDebug::AppendValue("ref-freq.txt", refFreq);
+   
+    // Real amp
+    BLDebug::AppendValue("amp0.txt", p.mAmp);
+    // Estimated next amp
+    BLDebug::AppendValue("amp1.txt", p.mAmp + p.mAlpha0);
+
+    // Real freq
+    BLDebug::AppendValue("freq0.txt", p.mFreq);
+    // Estimated next freq
+    BLDebug::AppendValue("freq1.txt", p.mFreq + p.mBeta0);
 }
