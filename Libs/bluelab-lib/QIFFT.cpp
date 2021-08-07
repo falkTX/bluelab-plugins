@@ -186,7 +186,11 @@ QIFFT::FindPeak2(const WDL_TypedBuf<BL_FLOAT> &magns,
 
     //
     BL_FLOAT N = magns.GetSize()*2; // ??
-    BL_FLOAT p = -((M_PI/N)*(M_PI/N))*(d/(a*a + d*d));
+
+    // Mistake in the article ?
+    //BL_FLOAT p = -((M_PI/N)*(M_PI/N))*(d/(a*a + d*d)); // Origin paper
+    BL_FLOAT p = -((M_PI/N)*(M_PI/N))*(a/(a*a + d*d)); // #bluelab fix
+    
     BL_FLOAT delta0 = -b/(2.0*a);
 
     BL_FLOAT omega0 = (2.0*M_PI/N)*(k0 + delta0);

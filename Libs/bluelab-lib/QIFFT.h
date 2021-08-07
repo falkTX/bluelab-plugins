@@ -33,6 +33,9 @@ class QIFFT
         // Freq derivative over time
         BL_FLOAT mBeta0;
     };
+
+    // NOTE: FindPeak() and FindPeak2() give the same results,
+    // modulo some scaling coefficient
     
     // Magns should be in dB!
     //
