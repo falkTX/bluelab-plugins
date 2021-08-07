@@ -1436,8 +1436,8 @@ PartialTracker6::ComputePartials(const vector<PeakDetector::Peak> &peaks,
 
         BL_FLOAT peakIndexF = qifftPeak.mBinIdx;
 
-        fprintf(stderr, "amp: %g phase: %g alpha0: %g beta0: %g\n",
-                p.mAmp, p.mPhase, p.mAlpha0, p.mBeta0);
+        //fprintf(stderr, "amp: %g phase: %g alpha0: %g beta0: %g\n",
+        //        p.mAmp, p.mPhase, p.mAlpha0, p.mBeta0);
         BLDebug::AppendValue("alpha0.txt", p.mAlpha0);
         BLDebug::AppendValue("beta0.txt", p.mBeta0);
 #endif

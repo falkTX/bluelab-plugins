@@ -672,7 +672,8 @@ SASViewerProcess4::DisplayDetectionBeta0()
         vector<vector<LinesRender2::Point> > segments;
         for (int i = 0; i < partials.size(); i++)
         {
-            vector<LinesRender2::Point> line;
+            vector<LinesRender2::Point> lineAlpha;
+            vector<LinesRender2::Point> lineBeta;
                 
             const Partial &partial = partials[i];
             
@@ -689,24 +690,55 @@ SASViewerProcess4::DisplayDetectionBeta0()
             p0.mZ = 1.0;
             p0.mId = (int)partial.mId;
 
-            line.push_back(p0);
+            lineAlpha.push_back(p0);
+            lineBeta.push_back(p0);
 
             // Second point (extrapolated)
             LinesRender2::Point p1;
 
-            BL_FLOAT partialX1 = partial.mFreq + partial.mBeta0;
+            /// DEBUG: debug coeffs
+            //BL_FLOAT partialX1 = partial.mFreq + partial.mBeta0*100.0;// v2, non fixed
+            //BL_FLOAT partialX1 = partial.mFreq + partial.mBeta0*1000.0; // v2, fixed
+            BL_FLOAT partialY1 = partial.mAmp + partial.mAlpha0*10.0; // DEBUG
+                                              
+            p1.mX = partialX0 - 0.5;
+            p1.mY = partialY1; //partial.mAmp;
+            p1.mZ = 1.0;
+            p1.mId = (int)partial.mId;
+
+            // Red
+            p1.mR = 255;
+            p1.mG = 0;
+            p1.mB = 0;
+            p1.mA = 255;
+            
+            lineAlpha.push_back(p1);
+            segments.push_back(lineAlpha);
+
+            // Third point (extrapolated)
+            LinesRender2::Point p2;
+
+            /// DEBUG: debug coeffs
+            //BL_FLOAT partialX1 = partial.mFreq + partial.mBeta0*100.0;// v2, non fixed
+            BL_FLOAT partialX1 = partial.mFreq + partial.mBeta0*1000.0; // v2, fixed
+            
             partialX1 =
                 mViewScale->ApplyScale(mViewXScale, partialX1,
                                        (BL_FLOAT)0.0, (BL_FLOAT)(mSampleRate*0.5));
                                               
-            p1.mX = partialX1 - 0.5;
-            p1.mY = partial.mAmp;
-            p1.mZ = 1.0;
-            p1.mId = (int)partial.mId;
+            p2.mX = partialX1 - 0.5;
+            p2.mY = partial.mAmp;
+            p2.mZ = 1.0;
+            p2.mId = (int)partial.mId;
 
-            line.push_back(p1);
-
-            segments.push_back(line);
+            // Blue
+            p2.mR = 0;
+            p2.mG = 0;
+            p2.mB = 255;
+            p2.mA = 255;
+            
+            lineBeta.push_back(p2);
+            segments.push_back(lineBeta);
         }
 
         //
@@ -747,10 +779,9 @@ SASViewerProcess4::DisplayDetectionBeta0()
         }
         
         BL_FLOAT lineWidth = 2.0;
-        unsigned char color[4] = { 255, 0, 0, 255 }; // Red
         
         vector<LinesRender2::Line> &partialLines = mTmpBuf16;
-        SegmentsToLines(mPartialsSegments, color, &partialLines);
+        SegmentsToLines(mPartialsSegments, &partialLines);
 
         mSASViewerRender->SetAdditionalLines(DETECTION, partialLines, lineWidth);
     }
@@ -1161,7 +1192,6 @@ SASViewerProcess4::PointsToLines(const deque<vector<LinesRender2::Point> > &poin
 void
 SASViewerProcess4::
 SegmentsToLines(const deque<vector<vector<LinesRender2::Point> > > &segments,
-                const unsigned char color[4],
                 vector<LinesRender2::Line> *lines)
 {
     lines->clear();
@@ -1179,16 +1209,16 @@ SegmentsToLines(const deque<vector<vector<LinesRender2::Point> > > &segments,
 
             if (seg.size() != 2)
                 continue;
-            
+
             LinesRender2::Line line;
             line.mPoints.push_back(seg[0]);
             line.mPoints.push_back(seg[1]);
 
-            // Dummy color
-            line.mColor[0] = color[0];
-            line.mColor[1] = color[1];
-            line.mColor[2] = color[2];
-            line.mColor[3] = color[3];
+            // Take the color of the last point
+            line.mColor[0] = seg[1].mR;
+            line.mColor[1] = seg[1].mG;
+            line.mColor[2] = seg[1].mB;
+            line.mColor[3] = seg[1].mA;
 
             lines->push_back(line);
         }

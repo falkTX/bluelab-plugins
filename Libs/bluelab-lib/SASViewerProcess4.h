@@ -126,13 +126,7 @@ protected:
     void PointsToLines(const deque<vector<LinesRender2::Point> > &points,
                        vector<LinesRender2::Line> *lines);
     void SegmentsToLines(const deque<vector<vector<LinesRender2::Point> > >&segments,
-                         const unsigned char color[4],
                          vector<LinesRender2::Line> *lines);
-    //
-    //int mBufferSize;
-    //BL_FLOAT mOverlapping;
-    //BL_FLOAT mOversampling;
-    //BL_FLOAT mSampleRate;
     
     //
     WDL_TypedBuf<BL_FLOAT> mCurrentMagns;
