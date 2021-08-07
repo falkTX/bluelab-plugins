@@ -195,6 +195,7 @@ QIFFT::FindPeak2(const WDL_TypedBuf<BL_FLOAT> &magns,
     BL_FLOAT alpha0 = -(N/M_PI)*p*(2.0*d*delta0 + e);
     BL_FLOAT beta0 = p*d/a;
 
+    result->mBinIdx = peakBin + delta0;
     result->mFreq = omega0;
     result->mAmp = lambda0;
     result->mPhase = phy0;

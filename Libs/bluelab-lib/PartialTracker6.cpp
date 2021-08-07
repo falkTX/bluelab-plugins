@@ -74,7 +74,7 @@ using namespace std;
 // Get the precision when interpolating peak magns, but also for phases
 #define INTERPOLATE_PHASES 1
 
-// Better mel filtering of phase if they ar eunwrapped!
+// Better mel filtering of phase if they are unwrapped!
 #define MEL_UNWRAP_PHASES 1
 
 #define USE_FILTER_BANKS 1
@@ -131,8 +131,8 @@ PartialTracker6::PartialTracker6(int bufferSize, BL_FLOAT sampleRate,
     // DEBUG
     //BLDebug::ResetFile("peaks.txt");
 
-    //BLDebug::ResetFile("alpha0.txt");
-    //BLDebug::ResetFile("beta0.txt");
+    BLDebug::ResetFile("alpha0.txt");
+    BLDebug::ResetFile("beta0.txt");
         
 }
 
@@ -1438,8 +1438,8 @@ PartialTracker6::ComputePartials(const vector<PeakDetector::Peak> &peaks,
 
         fprintf(stderr, "amp: %g phase: %g alpha0: %g beta0: %g\n",
                 p.mAmp, p.mPhase, p.mAlpha0, p.mBeta0);
-        //BLDebug::AppendValue("alpha0.txt", p.mAlpha0);
-        //BLDebug::AppendValue("beta0.txt", p.mBeta0);
+        BLDebug::AppendValue("alpha0.txt", p.mAlpha0);
+        BLDebug::AppendValue("beta0.txt", p.mBeta0);
 #endif
         
         p.mPeakIndex = bl_round(peakIndexF);
