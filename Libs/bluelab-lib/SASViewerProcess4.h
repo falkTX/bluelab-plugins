@@ -113,6 +113,7 @@ protected:
     
     // Display
     void DisplayDetection();
+    void DisplayDetectionBeta0(); // Variation
     void DisplayTracking();
     
     void DisplayHarmo();
@@ -124,12 +125,8 @@ protected:
 
     void PointsToLines(const deque<vector<LinesRender2::Point> > &points,
                        vector<LinesRender2::Line> *lines);
-                      
-    //
-    //int mBufferSize;
-    //BL_FLOAT mOverlapping;
-    //BL_FLOAT mOversampling;
-    //BL_FLOAT mSampleRate;
+    void SegmentsToLines(const deque<vector<vector<LinesRender2::Point> > >&segments,
+                         vector<LinesRender2::Line> *lines);
     
     //
     WDL_TypedBuf<BL_FLOAT> mCurrentMagns;
@@ -151,6 +148,9 @@ protected:
 
     // For tracking detection
     deque<vector<LinesRender2::Point> > mPartialsPoints;
+
+    // For displaying beta0
+    deque<vector<vector<LinesRender2::Point> > > mPartialsSegments;
     
     // For tracking display
     deque<vector<LinesRender2::Point> > mFilteredPartialsPoints;
@@ -169,6 +169,11 @@ protected:
     bool mDebugPartials;
 
     PhasesEstimPrusa *mPhasesEstim;
+
+    // Data scale for viewing
+    Scale *mViewScale;
+    Scale::Type mViewXScale;
+    Scale::FilterBankType mViewXScaleFB;
     
 private:
     WDL_TypedBuf<WDL_FFT_COMPLEX> mTmpBuf0;
@@ -178,6 +183,16 @@ private:
     WDL_TypedBuf<BL_FLOAT> mTmpBuf4;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf5;
     vector<LinesRender2::Line> mTmpBuf6;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf7;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf8;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf9;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf10;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf11;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf12;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf13;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf14;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf15;
+    vector<LinesRender2::Line> mTmpBuf16;
 };
 
 #endif // IGRAPHICS_NANOVG

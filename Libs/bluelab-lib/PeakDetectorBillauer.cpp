@@ -3,7 +3,13 @@
 
 #include "PeakDetectorBillauer.h"
 
-#define PEAKS_WIDTH_RATIO 0.2
+// NOTE: 0.5 is better than 0.2
+//
+// If too low, some harmonic parts will go to the noise envelope
+//
+// TODO: make a better strategy, to avoid partial barbs while keeping
+// better left and right indices
+#define PEAKS_WIDTH_RATIO 0.5 //0.2
 
 PeakDetectorBillauer::PeakDetectorBillauer()
 {
@@ -22,7 +28,7 @@ void
 PeakDetectorBillauer::
 DetectPeaks(const WDL_TypedBuf<BL_FLOAT> &data, vector<Peak> *peaks,
             int minIndex, int maxIndex)
-{    
+{
     // Arguments
     if (minIndex < 0)
         minIndex = 0;
@@ -97,6 +103,9 @@ DetectPeaks(const WDL_TypedBuf<BL_FLOAT> &data, vector<Peak> *peaks,
         p.mRightIndex = (i + 1 < mintab.size()) ? mintab[i + 1] : maxIndex;
     }
 
+    //
+    //DBG_TestPeaks(data, peaks);
+    
     // Post process
     AdjustPeaksWidth(data, peaks);
 }
@@ -149,6 +158,32 @@ PeakDetectorBillauer::AdjustPeaksWidth(const WDL_TypedBuf<BL_FLOAT> &data,
                 
                 break;
             }
+        }
+    }
+}
+
+void
+PeakDetectorBillauer::DBG_TestPeaks(const WDL_TypedBuf<BL_FLOAT> &data,
+                                    vector<Peak> *peaks)
+{
+    for (int i = 0; i < peaks->size(); i++)
+    {
+        Peak &peak = (*peaks)[i];
+
+        BL_FLOAT peakAmp = data.Get()[peak.mPeakIndex];
+
+        BL_FLOAT peakAmp0 = peakAmp;
+        if (i - 1 >= 0)
+            peakAmp0 = data.Get()[peak.mPeakIndex - 1];
+
+        BL_FLOAT peakAmp1 = peakAmp;
+        if (i + 1 < peaks->size())
+            peakAmp1 = data.Get()[peak.mPeakIndex + 1];
+
+        if ((peakAmp0 > peakAmp) ||
+            (peakAmp1 > peakAmp))
+        {
+            fprintf(stderr, "failed !!!!!!!!!!!\n");
         }
     }
 }

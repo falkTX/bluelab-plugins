@@ -364,7 +364,7 @@ SASViewerRender4::ClearAdditionalLines()
 }
 
 void
-SASViewerRender4::ShowTrackingLines(SASViewerProcess4::Mode mode, bool flag)
+SASViewerRender4::ShowAdditionalLines(SASViewerProcess4::Mode mode, bool flag)
 {
     mLinesRenders[(int)mode]->ShowAdditionalLines(flag);
 }
@@ -385,7 +385,7 @@ SASViewerRender4::ClearAdditionalPoints()
 }
 
 void
-SASViewerRender4::ShowDetectionPoints(SASViewerProcess4::Mode mode, bool flag)
+SASViewerRender4::ShowAdditionalPoints(SASViewerProcess4::Mode mode, bool flag)
 {
     mLinesRenders[(int)mode]->ShowAdditionalPoints(flag);
 }

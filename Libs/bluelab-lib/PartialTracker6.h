@@ -27,7 +27,7 @@ using namespace std;
 #include "../../WDL/fft.h"
 
 // Use PeakDetector class, original BlueLab implementation
-#define USE_BL_PEAK_DETECTOR 0 //1 //0
+#define USE_BL_PEAK_DETECTOR 0 //1
 
 // Use smart peak detection from http://billauer.co.il/peakdet.html
 // See also: https://github.com/xuphys/peakdetect/blob/master/peakdetect.c
@@ -222,6 +222,7 @@ protected:
     void ComputeAWeights(int numBins, BL_FLOAT sampleRate);
         
     // Debug
+    // First method
     void DBG_DumpPartials(const char *fileName,
                           const vector<Partial> &partials,
                           int bufferSize);
@@ -230,6 +231,13 @@ protected:
 
     void PostProcessPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
                              vector<Partial> *partials);
+
+    void DBG_DumpPeaks(const WDL_TypedBuf<BL_FLOAT> &data,
+                       const vector<PeakDetector::Peak> &peaks);
+
+    // Second method
+    void DBG_DumpPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
+                          const vector<Partial> &partials);
         
     //
     int mBufferSize;
@@ -294,6 +302,7 @@ private:
     WDL_TypedBuf<BL_FLOAT> mTmpBuf7;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf8;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf9;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf10;
     
     vector<Partial> mTmpPartials0;
     vector<Partial> mTmpPartials1;
