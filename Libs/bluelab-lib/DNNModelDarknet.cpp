@@ -198,6 +198,15 @@ DNNModelDarknet::LoadWin(const char *modelRcName, const char *weightsRcName)
     fwrite(modelRcBuf.Get(), 1, modelRcSize, file0);
     fflush(file0);
     fseek(file0, 0L, SEEK_SET);
+
+#if FMEM_FORCE_FLUSH_HACK_WIN32
+#ifdef WIN32
+    // Force to flush. On Win32 (not x64), the file is badly flushed otherwise.
+    fclose(file0);
+    file0 = fopen(fmem0.win_temp_file, "r");
+#endif
+#endif
+
 #else
     FILE* file0 = fmemopen_win(modelRcBuf.Get(), modelRcSize, "w+");
 #endif
@@ -211,6 +220,15 @@ DNNModelDarknet::LoadWin(const char *modelRcName, const char *weightsRcName)
     fwrite(weightsRcBuf.Get(), 1, weightsRcSize, file1);
     fflush(file1);
     fseek(file1, 0L, SEEK_SET);
+
+#if FMEM_FORCE_FLUSH_HACK_WIN32
+#ifdef WIN32
+    // Force to flush. On Win32 (not x64), the file is badly flushed otherwise.
+    fclose(file1);
+    file1 = fopen(fmem1.win_temp_file, "rb");
+#endif
+#endif
+
 #else
     FILE* file1 = fmemopen_win(weightsRcBuf.Get(), weightsRcSize, "wb+");
 #endif
