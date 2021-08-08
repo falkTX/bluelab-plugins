@@ -528,4 +528,6 @@ But for win32, it does not work with ninja and clang
 
 ========
 
-- BUG: on windows, there are 2 tooltips
+- FIXED(need recompilation):
+  - on windows, there were 2 tooltips
+
