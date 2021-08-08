@@ -487,3 +487,45 @@ FIXED:
 - Spatializer
 - win32 gui freeze fix
 - Ghost app
+
+Recompiled all: ok
+Reaper rescan all plugins: ok, no crash
+
+
+TODO: test a little the newly compiled plugins
+
+==== Rebalance / OpenBLAS: ====
+What is finally done:
+for Win64: compile with clang/Ninja, generic (not generic old)
+for Win32: unsolvable linking problem => do not use OpenBLAS
+
+Details:
+
+tryed this method with clang
+https://github.com/xianyi/OpenBLAS/wiki/How-to-use-OpenBLAS-in-Microsoft-Visual-Studio
+install lld in conda
+set LIB=%LIB%;"C:\Program Files (x86)\Windows Kits\10\Lib\10.0.18362.0\um\x64"
+
+.\vcvarsall.bat x86_amd64 10.0.18362.0
+
+finally, other method:
+launch visual studio command prompt (x86_x64)
+run conda activate (it is here: C:\Users\BillGatesMaTuer\miniconda3\condabin)
+C:\Users\BillGatesMaTuer\miniconda3\condabin\conda.bat activate
+then run cmake 
+
+cmake ..\..\OpenBLAS -G "Ninja" -DCMAKE_CXX_COMPILER=clang-cl -DCMAKE_C_COMPILER=clang-cl -DCMAKE_Fortran_COMPILER=flang -DCMAKE_MT=mt -DBUILD_WITHOUT_LAPACK=no -DNOFORTRAN=0 -DDYNAMIC_ARCH=ON -DCMAKE_BUILD_TYPE=Release
+cmake --build . --config Release
+=> success!
+
+NOTE: compiled with /MT (not multithreaded dll)
+
+cmake ..\..\OpenBLAS -G "Ninja" -DCMAKE_CXX_COMPILER=clang-cl -DCMAKE_C_COMPILER=clang-cl -DCMAKE_Fortran_COMPILER=flang -DCMAKE_MT=mt -DBUILD_WITHOUT_LAPACK=no -DNOFORTRAN=0 -DDYNAMIC_ARCH=ON  -DDYNAMIC_OLDER=ON -DCMAKE_BUILD_TYPE=Release
+
+For Win32: use cmake gui, and simply configure/generate, and build with Visual Studio. It will use the generic config (not optimal).
+But for win32, it does not work with ninja and clang
+=> it fails when liking with Rebalance (some symbols not found)
+
+========
+
+- BUG: on windows, there are 2 tooltips
