@@ -20,6 +20,11 @@ using namespace iplug;
 
 #include "../../WDL/fft.h"
 
+#ifdef WIN32
+#include <windows.h>
+#define BL_DBG_PRINTF(...) { char cad[512]; sprintf(cad, __VA_ARGS__); OutputDebugString(cad); }
+#endif
+
 class BLDebug
 {
 public:
