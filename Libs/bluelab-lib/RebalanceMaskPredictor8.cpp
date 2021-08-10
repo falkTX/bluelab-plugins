@@ -58,7 +58,7 @@ RebalanceMaskPredictor8::RebalanceMaskPredictor8(int bufferSize,
     for (int i = 0; i < NUM_MODELS; i++)
         mModels[i] = NULL;
     mModelNum = 0;
-    
+
 #ifndef WIN32
     WDL_String resPath;
     BLUtilsPlug::GetFullPlugResourcesPath(plug, &resPath);
@@ -90,7 +90,7 @@ RebalanceMaskPredictor8::RebalanceMaskPredictor8(int bufferSize,
 
     mModels[1]->LoadWin(cfg1, weights1);
 #endif
-    
+
     InitMixCols();
     
     mMaskPredictStepNum = 0;

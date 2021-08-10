@@ -90,6 +90,8 @@ DNNModelDarknet::DNNModelDarknet()
 #if DENORMAL_FLUSH_TO_ZERO
     denormal_flushtozero();
 #endif
+
+    _darknet_predict_only_flag = 1;
 }
 
 DNNModelDarknet::~DNNModelDarknet()

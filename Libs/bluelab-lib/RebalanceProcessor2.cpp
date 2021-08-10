@@ -74,7 +74,7 @@ RebalanceProcessor2::InitDetect(const IPluginBase &plug)
                                             plug);
     mMaskPred->SetPredictModuloNum(REBALANCE_PREDICT_MODULO_NUM);
     //mMaskPred->SetPredictModuloNum(0);
-    
+
     if (mTargetFftObj == NULL)
     {
         int numChannels = 2;
@@ -105,34 +105,34 @@ RebalanceProcessor2::InitDetect(const IPluginBase &plug)
     {
         int numChannels = 2;
         int numScInputs = 1;
-        
+
         // For applying the mask, use RebalanceProcessFftObjComp3
-        vector<ProcessObj *> processObjs;
+        vector<ProcessObj*> processObjs;
         for (int i = 0; i < numChannels; i++)
         {
-            RebalanceProcessFftObjComp4 *obj =
+            RebalanceProcessFftObjComp4* obj =
                 new RebalanceProcessFftObjComp4(mBufferSize, mOverlapping,
                                                 mSampleRate,
                                                 mMaskPred,
                                                 mNumSpectroCols,
                                                 NUM_STEM_SOURCES);
-            
+
             mDetectProcessObjs[i] = obj;
-            
+
             processObjs.push_back(obj);
         }
-        
+
         mNativeFftObj = new FftProcessObj16(processObjs,
                                             numChannels, numScInputs,
                                             mTargetBufferSize,
                                             mOverlapping, 1,
                                             mTargetSampleRate);
-        
+
         mNativeFftObj->SetAnalysisWindow(FftProcessObj16::ALL_CHANNELS,
                                          FftProcessObj16::WindowHanning);
         mNativeFftObj->SetSynthesisWindow(FftProcessObj16::ALL_CHANNELS,
                                           FftProcessObj16::WindowHanning);
-        
+
         mNativeFftObj->SetKeepSynthesisEnergy(FftProcessObj16::ALL_CHANNELS, 0);
     }
 }
@@ -210,63 +210,90 @@ void
 RebalanceProcessor2::SetVocal(BL_FLOAT vocal)
 {
     for (int i = 0; i < 2; i++)
-        mDetectProcessObjs[i]->SetVocal(vocal);
+    {
+        if (mDetectProcessObjs[i] != NULL)
+            mDetectProcessObjs[i]->SetVocal(vocal);
+    }
 }
 
 void
 RebalanceProcessor2::SetBass(BL_FLOAT bass)
 {
     for (int i = 0; i < 2; i++)
-        mDetectProcessObjs[i]->SetBass(bass);
+    {
+        if (mDetectProcessObjs[i] != NULL)
+            mDetectProcessObjs[i]->SetBass(bass);
+    }
 }
 
 void
 RebalanceProcessor2::SetDrums(BL_FLOAT drums)
 {
     for (int i = 0; i < 2; i++)
-        mDetectProcessObjs[i]->SetDrums(drums);
+    {
+        if (mDetectProcessObjs[i] != NULL)
+            mDetectProcessObjs[i]->SetDrums(drums);
+    }
 }
 
 void
 RebalanceProcessor2::SetOther(BL_FLOAT other)
 {
     for (int i = 0; i < 2; i++)
-        mDetectProcessObjs[i]->SetOther(other);
+    {
+        if (mDetectProcessObjs[i] != NULL)
+            mDetectProcessObjs[i]->SetOther(other);
+    }
 }
 
 void
 RebalanceProcessor2::SetMasksContrast(BL_FLOAT contrast)
 {
     for (int i = 0; i < 2; i++)
-        mDetectProcessObjs[i]->SetContrast(contrast);
+    {
+        if (mDetectProcessObjs[i] != NULL)
+            mDetectProcessObjs[i]->SetContrast(contrast);
+    }
 }
 
 void
 RebalanceProcessor2::SetVocalSensitivity(BL_FLOAT vocalSensitivity)
 {
     for (int i = 0; i < 2; i++)
-        mDetectProcessObjs[i]->SetVocalSensitivity(vocalSensitivity);
+    {
+        if (mDetectProcessObjs[i] != NULL)
+            mDetectProcessObjs[i]->SetVocalSensitivity(vocalSensitivity);
+    }
 }
 
 void
 RebalanceProcessor2::SetBassSensitivity(BL_FLOAT bassSensitivity)
 {
     for (int i = 0; i < 2; i++)
-        mDetectProcessObjs[i]->SetBassSensitivity(bassSensitivity);
+    {
+        if (mDetectProcessObjs[i] != NULL)
+            mDetectProcessObjs[i]->SetBassSensitivity(bassSensitivity);
+    }
 }
 
 void
 RebalanceProcessor2::SetDrumsSensitivity(BL_FLOAT drumsSensitivity)
 {
     for (int i = 0; i < 2; i++)
-        mDetectProcessObjs[i]->SetDrumsSensitivity(drumsSensitivity);
+    {
+        if (mDetectProcessObjs[i] != NULL)
+            mDetectProcessObjs[i]->SetDrumsSensitivity(drumsSensitivity);
+    }
 }
 
 void
 RebalanceProcessor2::SetOtherSensitivity(BL_FLOAT otherSensitivity)
 {
     for (int i = 0; i < 2; i++)
-        mDetectProcessObjs[i]->SetOtherSensitivity(otherSensitivity);
+    {
+        if (mDetectProcessObjs[i] != NULL)
+            mDetectProcessObjs[i]->SetOtherSensitivity(otherSensitivity);
+    }
 }
 
 bool
@@ -335,14 +362,16 @@ RebalanceProcessor2::SetModelNum(int modelNum)
 void
 RebalanceProcessor2::SetPredictModuloNum(int modNum)
 {
-    mMaskPred->SetPredictModuloNum(modNum);
+    if (mMaskPred != NULL)
+        mMaskPred->SetPredictModuloNum(modNum);
 }
 
 void
 RebalanceProcessor2::SetDbgThreshold(BL_FLOAT thrs)
 {
 #if 0
-    mMaskPred->SetDbgThreshold(thrs);
+    if (mMaskPred != NULL)
+        mMaskPred->SetDbgThreshold(thrs);
 #endif
 }
 
