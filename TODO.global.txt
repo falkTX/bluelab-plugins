@@ -535,3 +535,8 @@ TODO: test Rebalance and Ghost (Win7, WIN10 /USB)
 => send betas
 
 TODO: test a little the newly compiled plugins
+
+TODO: re-test Rebalance on Win10 USB
+
+WinDbg good tutorial:
+https://www.codeproject.com/Articles/6084/Windows-Debuggers-Part-1-A-WinDbg-Tutorial#_Toc64133663
