@@ -43,7 +43,9 @@ extern "C" {
 #define IMAGE_WIDTH REBALANCE_NUM_SPECTRO_FREQS
 #define IMAGE_HEIGHT REBALANCE_NUM_SPECTRO_COLS
 
-#define DENORMAL_FLUSH_TO_ZERO 1 //0 //1
+//#define DENORMAL_FLUSH_TO_ZERO 1 //0 //1
+// Can be dangerous to keep it at 1, depending on the targt hosts
+#define DENORMAL_FLUSH_TO_ZERO 0 
 
 // Use debug loaded data, just for testing?
 #define DEBUG_DATA 0 //1
