@@ -111,6 +111,7 @@ PartialTracker6::PartialTracker6(int bufferSize, BL_FLOAT sampleRate,
     mXScaleInv = Scale::LINEAR;
     //mXScaleInv = Scale::MEL_INV;
     //mXScaleInv = Scale::MEL_FILTER_INV;
+
     mYScaleInv = Scale::DB_INV;
     
     mTimeSmoothCoeff = 0.5;
