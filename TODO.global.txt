@@ -546,3 +546,23 @@ Know the manimum memory peak on linux:
 /usr/bin/time -v ~/Documents/Apps/reaper_linux_x86_64/REAPER/reaper 
 (then c-c and read "Maximum resident set size")
 
+====
+TESTS
+====
+Ghost-X v6.3.1
+Ghost-X App (win32 and x64)
+Ghost-X VST2 (x64)
+Ghost-X VST3 (x64)
+
+Rebalance v6.4.1
+Rebalance VST2 (x64)
+Rebalance VST3 (x64)
+
+Tested on:
+Mac 2 - Windows 10 (external HDD): => all success
+Mac 1 - Windows 7 (usb key): => all success
+Mac 1 - Windows 10 (usb key 64):
+    - Ghost OK
+    - Rebalance crashes Reaper when inserting the plugin
+====
+

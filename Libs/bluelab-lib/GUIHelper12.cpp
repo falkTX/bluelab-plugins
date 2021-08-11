@@ -1043,7 +1043,8 @@ GUIHelper12::CreateHelpButton(Plugin *plug, IGraphics *graphics,
     }
     
     char fullFileName[1024];
-    bool manualPathFound = GetManualFullPath(plug, graphics, manualFileName, fullFileName);
+    bool manualPathFound =
+        GetManualFullPath(plug, graphics, manualFileName, fullFileName);
     if (!manualPathFound)
         return;
 

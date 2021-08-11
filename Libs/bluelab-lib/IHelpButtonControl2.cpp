@@ -14,6 +14,9 @@ IHelpButtonControl2::OnMouseDown(float x, float y, const IMouseMod &mod)
     ShowManual(mFileName);
     
     IRolloverButtonControl::OnMouseDown(x, y, mod);
+
+    // FIX: on windows, the button stayed blue after clicking on it
+    SetValueFromUserInput(0.0);
 }
 
 void
