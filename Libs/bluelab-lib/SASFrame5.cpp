@@ -134,7 +134,8 @@ SASFrame5::SASPartial::AmpLess(const SASPartial &p1, const SASPartial &p2)
     return (p1.mAmp < p2.mAmp);
 }
 
-SASFrame5::SASFrame5(int bufferSize, BL_FLOAT sampleRate, int overlapping)
+SASFrame5::SASFrame5(int bufferSize, BL_FLOAT sampleRate,
+                     int overlapping, int freqRes)
 {
     SIN_LUT_INIT(SAS_FRAME_SIN_LUT);
     
@@ -142,6 +143,8 @@ SASFrame5::SASFrame5(int bufferSize, BL_FLOAT sampleRate, int overlapping)
     
     mSampleRate = sampleRate;
     mOverlapping = overlapping;
+
+    mFreqRes = freqRes;
     
     mSynthMode = OSC;
     
@@ -158,7 +161,8 @@ SASFrame5::SASFrame5(int bufferSize, BL_FLOAT sampleRate, int overlapping)
 
     mScale = new Scale();
     
-    mPartialsToFreq = new PartialsToFreq7(bufferSize, overlapping, 1, sampleRate);
+    mPartialsToFreq = new PartialsToFreq7(bufferSize, overlapping,
+                                          freqRes, sampleRate);
     
 #if COMPUTE_SAS_FFT_FREQ_ADJUST
     int oversampling = 1;
@@ -240,14 +244,14 @@ SASFrame5::Reset(BL_FLOAT sampleRate)
     mNoiseEnvelope.Resize(0);
     
 #if COMPUTE_SAS_FFT_FREQ_ADJUST
-    mFreqObj->Reset(mBufferSize, mOverlapping, 1, sampleRate);
+    mFreqObj->Reset(mBufferSize, mOverlapping, mFreqRes, sampleRate);
 #endif
     
 #if COMPUTE_SAS_SAMPLES_TABLE
     mTableSynth->Reset(sampleRate);
 #endif
 
-    mPartialsToFreq->Reset(mBufferSize, mOverlapping, 1, sampleRate);
+    mPartialsToFreq->Reset(mBufferSize, mOverlapping, mFreqRes, sampleRate);
 }
 
 void
@@ -256,6 +260,8 @@ SASFrame5::Reset(int bufferSize, int oversampling,
 {
     mBufferSize = bufferSize;
     mOverlapping = oversampling;
+
+    mFreqRes = freqRes;
     
     Reset(sampleRate);
 

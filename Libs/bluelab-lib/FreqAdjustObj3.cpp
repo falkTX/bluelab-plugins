@@ -52,7 +52,7 @@ FreqAdjustObj3::Reset(int bufferSize, int overlapping, int oversampling,
     mOversampling = oversampling;
     mSampleRate = sampleRate;
     
-    mLastPhases.Resize(mBufferSize/2);
+    mLastPhases.Resize((mBufferSize/2)*oversampling);
     
     for (int i = 0; i < mLastPhases.GetSize(); i++)
         mLastPhases.Get()[i] = 0.0;

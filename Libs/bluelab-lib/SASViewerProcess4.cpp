@@ -63,7 +63,8 @@ SASViewerProcess4::SASViewerProcess4(int bufferSize,
         
     BL_FLOAT minAmpDB = mPartialTracker->GetMinAmpDB();
     
-    mSASFrame = new SASFrame5(bufferSize, sampleRate, overlapping);
+    mSASFrame = new SASFrame5(bufferSize, sampleRate,
+                              overlapping, oversampling);
     mSASFrame->SetMinAmpDB(minAmpDB);
     
     mThreshold = -60.0;
