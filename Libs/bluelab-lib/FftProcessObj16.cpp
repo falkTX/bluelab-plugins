@@ -2202,8 +2202,9 @@ FftProcessObj16::MakeWindows(int bufSize, int overlapping,
         Window::MakeHanningPow(anaWindowSize, hanningFactor, analysisWindow);
     else if (analysisMethod == WindowGaussian)
     {
-        Window::MakeGaussian(anaWindowSize, gaussianSigma, analysisWindow);
-        //Window::MakeGaussianConfined(anaWindowSize, gaussianSigma, analysisWindow);
+        //Window::MakeGaussian(anaWindowSize, gaussianSigma, analysisWindow);
+        // For QIFFT, we must choose confined, for better tracking
+        Window::MakeGaussianConfined(anaWindowSize, gaussianSigma, analysisWindow);
     }
     else
         Window::MakeSquare(anaWindowSize, 1.0, analysisWindow);
@@ -2216,8 +2217,8 @@ FftProcessObj16::MakeWindows(int bufSize, int overlapping,
         Window::MakeHanningPow(synWindowSize, hanningFactor, synthesisWindow);
     if (synthesisMethod == WindowGaussian)
     {
-        Window::MakeGaussian(synWindowSize, gaussianSigma, synthesisWindow);
-        //Window::MakeGaussianConfined(synWindowSize, gaussianSigma, synthesisWindow);
+        //Window::MakeGaussian(synWindowSize, gaussianSigma, synthesisWindow);
+        Window::MakeGaussianConfined(synWindowSize, gaussianSigma, synthesisWindow);
     }
     else
         Window::MakeSquare(synWindowSize, 1.0, synthesisWindow);
