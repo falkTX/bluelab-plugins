@@ -288,7 +288,7 @@ SASViewerProcess4::ProcessSamplesBuffer(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
 // Use this to synthetize directly the samples from partials
 void
 SASViewerProcess4::ProcessSamplesPost(WDL_TypedBuf<BL_FLOAT> *ioBuffer)
-{    
+{
     if (!mSASFrame->ComputeSamplesPostFlag())
         return;
     
