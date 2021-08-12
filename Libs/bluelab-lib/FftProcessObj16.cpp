@@ -2277,12 +2277,17 @@ FftProcessObj16::MakeWindows(int bufSize, int overlapping,
         BL_FLOAT coeff = 0.25;
         
         BL_FLOAT anaSum = BLUtils::ComputeSum(*analysisWindow);
-        BLUtils::MultValues(analysisWindow,
-                            analysisWindow->GetSize()*coeff*(1.0/anaSum));
+        BL_FLOAT anaCoeff = analysisWindow->GetSize()*coeff*(1.0/anaSum);
+        //BLUtils::MultValues(analysisWindow, anaCoeff);
 
         BL_FLOAT synthSum = BLUtils::ComputeSum(*synthesisWindow);
-        BLUtils::MultValues(synthesisWindow,
-                            synthesisWindow->GetSize()*coeff*(1.0/synthSum));
+        BL_FLOAT synthCoeff = synthesisWindow->GetSize()*coeff*(1.0/synthSum);
+
+        // Do not touch analysis window, we have a gaussian, keep it like that
+        // Touch only synth window
+        synthCoeff *= anaCoeff; // 
+        
+        BLUtils::MultValues(synthesisWindow, synthCoeff);
 #endif
     }
 }
