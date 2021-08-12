@@ -45,6 +45,9 @@
 
 #define DBG_DISPLAY_BETA0 1
 
+// Bypass all processing (was for testing fft reconstruction with gaussian windows
+#define DBG_BYPASS 0 //1 // 0
+
 SASViewerProcess4::SASViewerProcess4(int bufferSize,
                                      BL_FLOAT overlapping, BL_FLOAT oversampling,
                                      BL_FLOAT sampleRate)
@@ -140,6 +143,10 @@ SASViewerProcess4::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
                                     const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer)
 
 {
+#if DBG_BYPASS
+    return;
+#endif
+    
     //WDL_TypedBuf<WDL_FFT_COMPLEX> fftSamples = *ioBuffer;
 
     WDL_TypedBuf<WDL_FFT_COMPLEX> &fftSamples0 = mTmpBuf0;
@@ -252,6 +259,10 @@ void
 SASViewerProcess4::ProcessSamplesBuffer(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
                                         WDL_TypedBuf<BL_FLOAT> *scBuffer)
 {
+#if DBG_BYPASS
+    return;
+#endif
+    
     if (!mSASFrame->ComputeSamplesFlag())
         return;
     
@@ -289,6 +300,10 @@ SASViewerProcess4::ProcessSamplesBuffer(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
 void
 SASViewerProcess4::ProcessSamplesPost(WDL_TypedBuf<BL_FLOAT> *ioBuffer)
 {
+#if DBG_BYPASS
+    return;
+#endif
+    
     if (!mSASFrame->ComputeSamplesPostFlag())
         return;
     
