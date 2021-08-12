@@ -2202,8 +2202,8 @@ FftProcessObj16::MakeWindows(int bufSize, int overlapping,
         Window::MakeHanningPow(anaWindowSize, hanningFactor, analysisWindow);
     else if (analysisMethod == WindowGaussian)
     {
-        //Window::MakeGaussian(anaWindowSize, gaussianSigma, analysisWindow);
-        Window::MakeGaussianConfined(anaWindowSize, gaussianSigma, analysisWindow);
+        Window::MakeGaussian(anaWindowSize, gaussianSigma, analysisWindow);
+        //Window::MakeGaussianConfined(anaWindowSize, gaussianSigma, analysisWindow);
     }
     else
         Window::MakeSquare(anaWindowSize, 1.0, analysisWindow);
@@ -2217,7 +2217,7 @@ FftProcessObj16::MakeWindows(int bufSize, int overlapping,
     if (synthesisMethod == WindowGaussian)
     {
         Window::MakeGaussian(synWindowSize, gaussianSigma, synthesisWindow);
-        Window::MakeGaussianConfined(synWindowSize, gaussianSigma, synthesisWindow);
+        //Window::MakeGaussianConfined(synWindowSize, gaussianSigma, synthesisWindow);
     }
     else
         Window::MakeSquare(synWindowSize, 1.0, synthesisWindow);
@@ -2262,11 +2262,28 @@ FftProcessObj16::MakeWindows(int bufSize, int overlapping,
         // Normalize only the synthesis window...
         Window::NormalizeWindow(synthesisWindow, overlapping);
     }
-    else if((analysisMethod == WindowGaussian) &&
-            (synthesisMethod == WindowGaussian))
+    //else if((analysisMethod == WindowGaussian) &&
+    //        (synthesisMethod == WindowGaussian))
+    else
     {
-        //BLUtils::MultValues(analysisWindow, (BL_FLOAT)overlapping);
-        //BLUtils::MultValues(synthesisWindow, (BL_FLOAT)overlapping);
+#if 1 // Hack
+        // Make a kind of normalization
+        
+        // For Gaussian in particular
+        
+        // Gaussian is not cola
+        
+        // This coeff seems to work... (tested with overlap 4)
+        BL_FLOAT coeff = 0.25;
+        
+        BL_FLOAT anaSum = BLUtils::ComputeSum(*analysisWindow);
+        BLUtils::MultValues(analysisWindow,
+                            analysisWindow->GetSize()*coeff*(1.0/anaSum));
+
+        BL_FLOAT synthSum = BLUtils::ComputeSum(*synthesisWindow);
+        BLUtils::MultValues(synthesisWindow,
+                            synthesisWindow->GetSize()*coeff*(1.0/synthSum));
+#endif
     }
 }
 
