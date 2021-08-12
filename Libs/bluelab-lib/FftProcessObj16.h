@@ -169,7 +169,8 @@ public:
     {
         WindowRectangular,
         WindowHanning,
-        WindowVariableHanning
+        WindowVariableHanning,
+        WindowGaussian
     };
  
     enum

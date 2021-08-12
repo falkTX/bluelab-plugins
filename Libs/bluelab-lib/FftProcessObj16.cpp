@@ -2127,7 +2127,12 @@ FftProcessObj16::MakeWindows(int bufSize, int overlapping,
 #if ADD_TAIL
     synWindowSize *= mFreqRes;
 #endif
-    
+
+    // See: https://ccrma.stanford.edu/STANM/stanms/stanm118/stanm118.pdf
+    BL_FLOAT gaussianSigma = sqrt(1.0/M_E);
+
+    // NOTE: for the moment, gaussian windows are not normalized
+    // Their sum is 256 (should be 1024 if normalized)
     bool variableHanning = ((analysisMethod == WindowVariableHanning) ||
                             (synthesisMethod == WindowVariableHanning));
     
@@ -2195,6 +2200,8 @@ FftProcessObj16::MakeWindows(int bufSize, int overlapping,
     // (vertical clear bars in the spectrogram for Ghost for example)
     if (analysisMethod == WindowHanning)
         Window::MakeHanningPow(anaWindowSize, hanningFactor, analysisWindow);
+    else if (analysisMethod == WindowGaussian)
+        Window::MakeGaussian(anaWindowSize, gaussianSigma, analysisWindow);
     else
         Window::MakeSquare(anaWindowSize, 1.0, analysisWindow);
     
@@ -2204,6 +2211,8 @@ FftProcessObj16::MakeWindows(int bufSize, int overlapping,
     // for synthesis and overlapping == 1
     if (synthesisMethod == WindowHanning)
         Window::MakeHanningPow(synWindowSize, hanningFactor, synthesisWindow);
+    if (synthesisMethod == WindowGaussian)
+        Window::MakeGaussian(synWindowSize, gaussianSigma, synthesisWindow);
     else
         Window::MakeSquare(synWindowSize, 1.0, synthesisWindow);
         
@@ -2247,6 +2256,14 @@ FftProcessObj16::MakeWindows(int bufSize, int overlapping,
         // Normalize only the synthesis window...
         Window::NormalizeWindow(synthesisWindow, overlapping);
     }
+#if 0 // Makes the gaussian peak > 1
+    else if((analysisMethod == WindowGaussian) &&
+            (synthesisMethod == WindowGaussian))
+    {
+        BLUtils::MultValues(analysisWindow, (BL_FLOAT)overlapping);
+        BLUtils::MultValues(synthesisWindow, (BL_FLOAT)overlapping);
+    }
+#endif
 }
 
 void
