@@ -307,7 +307,7 @@ Window::Gaussian(BL_FLOAT sigma, BL_FLOAT x)
 }
 
 void
-Window::MakeGaussian(BL_FLOAT sigma, int size, WDL_TypedBuf<BL_FLOAT> *result)
+Window::MakeGaussian(int size, BL_FLOAT sigma, WDL_TypedBuf<BL_FLOAT> *result)
 {
     result->Resize(size);
     BL_FLOAT *gaussian = result->Get();
@@ -326,7 +326,7 @@ Window::MakeGaussian(BL_FLOAT sigma, int size, WDL_TypedBuf<BL_FLOAT> *result)
 // FIXED !
 // The function above seems false
 void
-Window::MakeGaussian2(BL_FLOAT sigma, int size, WDL_TypedBuf<BL_FLOAT> *result)
+Window::MakeGaussian2(int size, BL_FLOAT sigma, WDL_TypedBuf<BL_FLOAT> *result)
 {
     result->Resize(size);
     
