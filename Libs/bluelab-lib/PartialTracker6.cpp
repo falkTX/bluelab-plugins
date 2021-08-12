@@ -132,11 +132,12 @@ PartialTracker6::PartialTracker6(int bufferSize, BL_FLOAT sampleRate,
     // DEBUG
     //BLDebug::ResetFile("peaks.txt");
 
-#if 0
+#if 0 // Old
     BLDebug::ResetFile("alpha0.txt");
     BLDebug::ResetFile("beta0.txt");
 #endif
 
+#if 0
     BLDebug::ResetFile("ref-amp.txt");
     BLDebug::ResetFile("ref-freq.txt");
     
@@ -144,6 +145,7 @@ PartialTracker6::PartialTracker6(int bufferSize, BL_FLOAT sampleRate,
     BLDebug::ResetFile("amp1.txt");
     BLDebug::ResetFile("freq0.txt");
     BLDebug::ResetFile("freq1.txt");
+#endif
 }
 
 PartialTracker6::~PartialTracker6()
@@ -605,7 +607,7 @@ PartialTracker6::DetectPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
     
     ComputePartials(peaks, magns, phases, outPartials);
 
-    DBG_DumpPartials(magns, *outPartials);
+    //DBG_DumpPartials(magns, *outPartials);
 }
 
 // From GlueTwinPartials()
@@ -1553,7 +1555,7 @@ PartialTracker6::DBG_DumpPeaks(const WDL_TypedBuf<BL_FLOAT> &data,
             // Dump peak amp
             BL_FLOAT peakAmp = data.Get()[peak.mPeakIndex];
 
-            BLDebug::AppendValue("peaks.txt", peakAmp);
+            //BLDebug::AppendValue("peaks.txt", peakAmp);
             
             break;
         }

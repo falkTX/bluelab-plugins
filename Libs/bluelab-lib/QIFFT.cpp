@@ -309,7 +309,7 @@ QIFFT::DBG_DumpParabola(int peakBin,
     int rightIdx0 = (((BL_FLOAT)(rightIdx - start))/(end - start))*NUM_VALUES;
     values.Get()[rightIdx0] = magns.Get()[rightIdx]; //0.0;
     
-    BLDebug::DumpData("parabola.txt", values);
+    //BLDebug::DumpData("parabola.txt", values);
 }
 
 void
@@ -357,5 +357,5 @@ QIFFT::DBG_DumpParabolaGen(int peakBin,
     BLUtilsPhases::MapToPi(values.Get()[rightIdx0]);
 #endif
     
-    BLDebug::DumpData("parabola-gen.txt", values);
+    //BLDebug::DumpData("parabola-gen.txt", values);
 }
