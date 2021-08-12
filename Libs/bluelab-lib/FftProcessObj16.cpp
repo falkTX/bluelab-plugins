@@ -2201,7 +2201,10 @@ FftProcessObj16::MakeWindows(int bufSize, int overlapping,
     if (analysisMethod == WindowHanning)
         Window::MakeHanningPow(anaWindowSize, hanningFactor, analysisWindow);
     else if (analysisMethod == WindowGaussian)
-        Window::MakeGaussian(anaWindowSize, gaussianSigma, analysisWindow);
+    {
+        //Window::MakeGaussian(anaWindowSize, gaussianSigma, analysisWindow);
+        Window::MakeGaussianConfined(anaWindowSize, gaussianSigma, analysisWindow);
+    }
     else
         Window::MakeSquare(anaWindowSize, 1.0, analysisWindow);
     
@@ -2212,7 +2215,10 @@ FftProcessObj16::MakeWindows(int bufSize, int overlapping,
     if (synthesisMethod == WindowHanning)
         Window::MakeHanningPow(synWindowSize, hanningFactor, synthesisWindow);
     if (synthesisMethod == WindowGaussian)
+    {
         Window::MakeGaussian(synWindowSize, gaussianSigma, synthesisWindow);
+        Window::MakeGaussianConfined(synWindowSize, gaussianSigma, synthesisWindow);
+    }
     else
         Window::MakeSquare(synWindowSize, 1.0, synthesisWindow);
         
@@ -2256,14 +2262,12 @@ FftProcessObj16::MakeWindows(int bufSize, int overlapping,
         // Normalize only the synthesis window...
         Window::NormalizeWindow(synthesisWindow, overlapping);
     }
-#if 0 // Makes the gaussian peak > 1
     else if((analysisMethod == WindowGaussian) &&
             (synthesisMethod == WindowGaussian))
     {
-        BLUtils::MultValues(analysisWindow, (BL_FLOAT)overlapping);
-        BLUtils::MultValues(synthesisWindow, (BL_FLOAT)overlapping);
+        //BLUtils::MultValues(analysisWindow, (BL_FLOAT)overlapping);
+        //BLUtils::MultValues(synthesisWindow, (BL_FLOAT)overlapping);
     }
-#endif
 }
 
 void

@@ -38,9 +38,18 @@ public:
     static void MakeTriangular(int size, WDL_TypedBuf<BL_FLOAT> *result);
     
     static BL_FLOAT Gaussian(BL_FLOAT sigma, BL_FLOAT x);
-    
+
+    // Good version
     static void MakeGaussian(int size, BL_FLOAT sigma,
                              WDL_TypedBuf<BL_FLOAT> *result);
+
+    // Adjusted for overlap-add, so that the bounds are 0
+    static void MakeGaussianConfined(int size, BL_FLOAT sigma,
+                                     WDL_TypedBuf<BL_FLOAT> *result);
+    
+    // Not used anymore
+    static void MakeGaussianWholeDomain(int size, BL_FLOAT sigma,
+                                        WDL_TypedBuf<BL_FLOAT> *result);
     
     // Try to fix the prev version
     static void MakeGaussian2(int size, BL_FLOAT sigma,
