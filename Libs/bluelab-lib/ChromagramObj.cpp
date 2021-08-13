@@ -29,7 +29,7 @@ ChromagramObj::ChromagramObj(int bufferSize, int oversampling,
     mSharpness = 0.0;
 
 #if USE_FREQ_OBJ
-    mFreqObj = new FreqAdjustObj3(bufferSize, oversampling, 1, sampleRate);
+    mFreqObj = new FreqAdjustObj3(bufferSize, oversampling, freqRes, sampleRate);
 #endif
 }
 
@@ -48,7 +48,7 @@ ChromagramObj::Reset(int bufferSize, int oversampling,
     mSampleRate = sampleRate;
     
 #if USE_FREQ_OBJ
-    mFreqObj->Reset(bufferSize, oversampling, 1, sampleRate);
+    mFreqObj->Reset(bufferSize, oversampling, freqRes, sampleRate);
 #endif
 }
 

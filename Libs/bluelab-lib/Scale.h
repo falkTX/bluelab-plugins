@@ -30,7 +30,9 @@ public:
         MEL_INV,
         MEL_FILTER_INV,
         DB_INV,
-        LOW_ZOOM // Zoom on low freqs
+        LOW_ZOOM, // Zoom on low freqs
+        LOG_NO_NORM, // Log, but without any normalization
+        LOG_NO_NORM_INV
     };
 
     // Filter banks
@@ -132,7 +134,7 @@ protected:
     
     BL_FLOAT NormalizedToLogInv(BL_FLOAT x, BL_FLOAT minValue,
                                 BL_FLOAT maxValue);
-    
+
 #if 0 // Legacy test
     //template <typename FLOAT_TYPE>
     /*static*/ BL_FLOAT NormalizedToLogCoeff(BL_FLOAT x,
@@ -166,6 +168,10 @@ protected:
     /*static*/ BL_FLOAT NormalizedToMelInv(BL_FLOAT x,
                                            BL_FLOAT minFreq,
                                            BL_FLOAT maxFreq);
+
+    BL_FLOAT ToLog(BL_FLOAT x);
+    
+    BL_FLOAT ToLogInv(BL_FLOAT x);
     
     //template <typename FLOAT_TYPE>
     /*static*/ void DataToMel(WDL_TypedBuf<BL_FLOAT> *values,
@@ -220,6 +226,10 @@ protected:
     
     void NormalizedToLowZoomInvForEach(WDL_TypedBuf<BL_FLOAT> *values,
                                        BL_FLOAT minValue, BL_FLOAT maxValue);
+
+    void ToLogForEach(WDL_TypedBuf<BL_FLOAT> *values);
+    
+    void ToLogInvForEach(WDL_TypedBuf<BL_FLOAT> *values);
     
     //
     // Must keep the object, for precomputed filter bank

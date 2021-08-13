@@ -11,6 +11,11 @@
 //
 // NOTE: for alpha0 and beta0, the fft must have used a window
 // (Gaussian or Hann or other)
+//
+// NOTE: this will work for amplitude only if either
+// - We use a Gaussian window insteadof Hann
+// - Or we use a fft zero padding factor of x2
+//
 class QIFFT
 {
  public:

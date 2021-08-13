@@ -903,7 +903,7 @@ PartialTracker3::SmoothNoiseEnvelope(WDL_TypedBuf<BL_FLOAT> *noise)
         // See: https://en.wikipedia.org/wiki/Window_function
         //
         BL_FLOAT sigma = 0.1;
-        Window::MakeGaussian2(sigma, NOISE_SMOOTH_WIN_SIZE, &mSmoothWinNoise);
+        Window::MakeGaussian2(NOISE_SMOOTH_WIN_SIZE, sigma, &mSmoothWinNoise);
     }
     
     WDL_TypedBuf<BL_FLOAT> smoothNoise;
@@ -1141,7 +1141,7 @@ PartialTracker3::DetectPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
         // See: https://en.wikipedia.org/wiki/Window_function
         //
         //BL_FLOAT sigma = 0.1;
-        //Window::MakeGaussian2(sigma, DETECT_PARTIALS_SMOOTH_SIZE, &mSmoothWinDetect);
+        //Window::MakeGaussian2(DETECT_PARTIALS_SMOOTH_SIZE, sigma, &mSmoothWinDetect);
     }
     
     BLUtils::SmoothDataWin(&smoothMagns, magns, mSmoothWinDetect);
@@ -1364,7 +1364,7 @@ PartialTracker3::DetectPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
         // See: https://en.wikipedia.org/wiki/Window_function
         //
         //BL_FLOAT sigma = 0.1;
-        //Window::MakeGaussian2(sigma, DETECT_PARTIALS_SMOOTH_SIZE, &mSmoothWinDetect);
+        //Window::MakeGaussian2(DETECT_PARTIALS_SMOOTH_SIZE, sigma, &mSmoothWinDetect);
     }
     
     BLUtils::SmoothDataWin(&smoothMagns, magns, mSmoothWinDetect);

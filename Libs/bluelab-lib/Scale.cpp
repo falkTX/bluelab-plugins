@@ -97,6 +97,14 @@ Scale::ApplyScale(Type scaleType,
     {
         x = NormalizedToLowZoom(x, minValue, maxValue);
     }
+    else if (scaleType == LOG_NO_NORM)
+    {
+        x = ToLog(x);
+    }
+    else if (scaleType == LOG_NO_NORM_INV)
+    {
+        x = ToLogInv(x);
+    }
     
     return x;
 }
@@ -141,6 +149,10 @@ Scale::ApplyScaleInv(Type scaleType,
     else if (scaleType == LOW_ZOOM)
     {
         x = NormalizedToLowZoomInv(x, minValue, maxValue);
+    }
+    else if (scaleType == LOG_NO_NORM)
+    {
+        x = ToLogInv(x);
     }
     
     return x;
@@ -196,6 +208,14 @@ Scale::ApplyScaleForEach(Type scaleType,
     {
         NormalizedToLowZoomForEach(values, minValue, maxValue);
     }
+    else if (scaleType == LOG_NO_NORM)
+    {
+        ToLogForEach(values);
+    }
+    else if (scaleType == LOG_NO_NORM_INV)
+    {
+        ToLogInvForEach(values);
+    }
 }
     
 void
@@ -237,6 +257,10 @@ Scale::ApplyScaleInvForEach(Type scaleType,
     else if (scaleType == LOW_ZOOM)
     {
         NormalizedToLowZoomInvForEach(values, minValue, maxValue);
+    }
+    else if (scaleType == LOG_NO_NORM)
+    {
+        ToLogInvForEach(values);
     }
 }
 
@@ -686,6 +710,23 @@ Scale::NormalizedToMelInv(BL_FLOAT x,
 //                                         float minFreq, float maxFreq);
 //template double Scale::NormalizedToMelInv(double value,
 //                                          double minFreq, double maxFreq);
+
+BL_FLOAT
+Scale::ToLog(BL_FLOAT x)
+{
+    x = log(x);
+
+    return x;
+}
+
+    
+BL_FLOAT
+Scale::ToLogInv(BL_FLOAT x)
+{
+    x = exp(x);
+
+    return x;
+}
 
 //template <typename FLOAT_TYPE>
 void
@@ -1182,5 +1223,27 @@ Scale::NormalizedToLowZoomInvForEach(WDL_TypedBuf<BL_FLOAT> *values,
         x = (x - minValue)*coeffInv;
         
         valuesData[i] = x;
+    }
+}
+
+void
+Scale::ToLogForEach(WDL_TypedBuf<BL_FLOAT> *values)
+{
+    for (int i = 0; i < values->GetSize(); i++)
+    {
+        BL_FLOAT x = values->Get()[i];
+        x = log(x);
+        values->Get()[i] = x;
+    }
+}
+    
+void
+Scale::ToLogInvForEach(WDL_TypedBuf<BL_FLOAT> *values)
+{
+    for (int i = 0; i < values->GetSize(); i++)
+    {
+        BL_FLOAT x = values->Get()[i];
+        x = exp(x);
+        values->Get()[i] = x;
     }
 }

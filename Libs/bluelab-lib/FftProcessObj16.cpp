@@ -2127,7 +2127,12 @@ FftProcessObj16::MakeWindows(int bufSize, int overlapping,
 #if ADD_TAIL
     synWindowSize *= mFreqRes;
 #endif
-    
+
+    // See: https://ccrma.stanford.edu/STANM/stanms/stanm118/stanm118.pdf
+    BL_FLOAT gaussianSigma = sqrt(1.0/M_E);
+
+    // NOTE: for the moment, gaussian windows are not normalized
+    // Their sum is 256 (should be 1024 if normalized)
     bool variableHanning = ((analysisMethod == WindowVariableHanning) ||
                             (synthesisMethod == WindowVariableHanning));
     
@@ -2195,6 +2200,14 @@ FftProcessObj16::MakeWindows(int bufSize, int overlapping,
     // (vertical clear bars in the spectrogram for Ghost for example)
     if (analysisMethod == WindowHanning)
         Window::MakeHanningPow(anaWindowSize, hanningFactor, analysisWindow);
+    else if (analysisMethod == WindowGaussian)
+    {
+        //Window::MakeGaussian(anaWindowSize, gaussianSigma, analysisWindow);
+        
+        // For QIFFT, we must choose confined, for better tracking
+        // Confined gives more smooth alpha0
+        Window::MakeGaussianConfined(anaWindowSize, gaussianSigma, analysisWindow);
+    }
     else
         Window::MakeSquare(anaWindowSize, 1.0, analysisWindow);
     
@@ -2204,6 +2217,11 @@ FftProcessObj16::MakeWindows(int bufSize, int overlapping,
     // for synthesis and overlapping == 1
     if (synthesisMethod == WindowHanning)
         Window::MakeHanningPow(synWindowSize, hanningFactor, synthesisWindow);
+    if (synthesisMethod == WindowGaussian)
+    {
+        //Window::MakeGaussian(synWindowSize, gaussianSigma, synthesisWindow);
+        Window::MakeGaussianConfined(synWindowSize, gaussianSigma, synthesisWindow);
+    }
     else
         Window::MakeSquare(synWindowSize, 1.0, synthesisWindow);
         
@@ -2246,6 +2264,34 @@ FftProcessObj16::MakeWindows(int bufSize, int overlapping,
     {
         // Normalize only the synthesis window...
         Window::NormalizeWindow(synthesisWindow, overlapping);
+    }
+    //else if((analysisMethod == WindowGaussian) &&
+    //        (synthesisMethod == WindowGaussian))
+    else
+    {
+#if 1 // Hack
+        // Make a kind of normalization
+        
+        // For Gaussian in particular
+        
+        // Gaussian is not cola
+        
+        // This coeff seems to work... (tested with overlap 4)
+        BL_FLOAT coeff = 0.25;
+        
+        BL_FLOAT anaSum = BLUtils::ComputeSum(*analysisWindow);
+        BL_FLOAT anaCoeff = analysisWindow->GetSize()*coeff*(1.0/anaSum);
+        //BLUtils::MultValues(analysisWindow, anaCoeff);
+
+        BL_FLOAT synthSum = BLUtils::ComputeSum(*synthesisWindow);
+        BL_FLOAT synthCoeff = synthesisWindow->GetSize()*coeff*(1.0/synthSum);
+
+        // Do not touch analysis window, we have a gaussian, keep it like that
+        // Touch only synth window
+        synthCoeff *= anaCoeff; // 
+        
+        BLUtils::MultValues(synthesisWindow, synthCoeff);
+#endif
     }
 }
 

@@ -20,6 +20,10 @@ using namespace std;
 
 #define M_PI_INV 0.318309886183791
 
+#ifndef M_E
+#define M_E 2.718281828459045
+#endif
+
 #ifndef MIN
 #define MIN(__x__, __y__) ((__x__ < __y__) ? __x__ : __y__)
 #endif

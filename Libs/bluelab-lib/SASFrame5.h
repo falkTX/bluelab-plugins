@@ -56,7 +56,8 @@ public:
         BL_FLOAT mPhase;
     };
     
-    SASFrame5(int bufferSize, BL_FLOAT sampleRate, int overlapping);
+    SASFrame5(int bufferSize, BL_FLOAT sampleRate,
+              int overlapping, int freqRes);
     
     virtual ~SASFrame5();
     
@@ -197,6 +198,7 @@ protected:
     int mBufferSize;
     BL_FLOAT mSampleRate;
     int mOverlapping;
+    int mFreqRes;
     
     WDL_TypedBuf<BL_FLOAT> mNoiseEnvelope;
 

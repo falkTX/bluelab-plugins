@@ -117,6 +117,9 @@ public:
     void DenormData(WDL_TypedBuf<BL_FLOAT> *data);
     
     void PartialsAmpToAmpDB(vector<Partial> *partials);
+
+    BL_FLOAT PartialScaleToQIFFTScale(BL_FLOAT ampDbNorm);
+    BL_FLOAT QIFFTScaleToPartialScale(BL_FLOAT ampLog);
     
 protected:
     // Pre process
@@ -251,6 +254,7 @@ protected:
     WDL_TypedBuf<BL_FLOAT> mCurrentPhases;
 
     WDL_TypedBuf<BL_FLOAT> mLinearMagns;
+    WDL_TypedBuf<BL_FLOAT> mLogMagns;
     
     vector<Partial> mResult;
     WDL_TypedBuf<BL_FLOAT> mNoiseEnvelope;
@@ -276,9 +280,11 @@ protected:
     Scale *mScale;
     Scale::Type mXScale;
     Scale::Type mYScale;
+    Scale::Type mYScale2; // For log
     
     Scale::Type mXScaleInv;
     Scale::Type mYScaleInv;
+    Scale::Type mYScaleInv2; // for log
     
     // Time smooth noise
     BL_FLOAT mTimeSmoothNoiseCoeff;

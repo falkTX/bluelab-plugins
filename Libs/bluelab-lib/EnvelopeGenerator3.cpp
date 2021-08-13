@@ -305,9 +305,23 @@ EnvelopeGenerator3::SetAttackPeak(double attackPeak)
     
     double decayEndLevel = ComputeDecayEndLevel();
     double headRoom = 1.0 - decayEndLevel;
-    
+
+    // BUG: Richard Todd: "when recalling a preset(reloading a project) => clicks"
+    // "and need to touch the sustain value, and re-put it to 0 to fix"
+    //
+    // This is because kSustain was saved to 0dB (i.e 1.0 i amp),
+    // and when reloading project, it was near 1e-6 dB instead of 0dB
+    // (due to precision, and parameter normalization)
+    // => So here headRoom was < 0, and the bug appeared!
+#if 0 // BUG
     if (headRoom < 0.0)
         headRoom = 1.0;
+#endif
+
+#if 1 // FIX
+    if (headRoom < 0.0)
+        headRoom = 0.0;
+#endif
     
     //mAttackPeak = mStageValue[ENVELOPE_STAGE_SUSTAIN] + attackPeak*headRoom;
     

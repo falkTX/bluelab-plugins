@@ -12,6 +12,8 @@
 #include <BLUtils.h>
 #include <BLUtilsMath.h>
 
+#include <BLDebug.h>
+
 #include "Window.h"
 
 #ifndef M_PI
@@ -298,6 +300,7 @@ Window::MakeTriangular(int size, WDL_TypedBuf<BL_FLOAT> *result)
     }
 }
 
+// This version seems buggy...
 BL_FLOAT
 Window::Gaussian(BL_FLOAT sigma, BL_FLOAT x)
 {
@@ -306,8 +309,68 @@ Window::Gaussian(BL_FLOAT sigma, BL_FLOAT x)
     return result;
 }
 
+// This version is good!
+// (Tested with SASViewer, and FftProcessObj16 for ana and resynth)
+//
+// The peak of the gaussian has a value of 1
+// See: https://en.wikipedia.org/wiki/Window_function#Gaussian_window
+static BL_FLOAT
+_gaussian(int i, int N, BL_FLOAT sigma)
+{
+    BL_FLOAT a = (i - N/2)/(sigma*N/2);
+    BL_FLOAT g = exp(-0.5*a*a);
+        
+    return g;
+}
+
+// This version is good!
+// (Tested with SASViewer, and FftProcessObj16 for ana and resynth)
 void
-Window::MakeGaussian(BL_FLOAT sigma, int size, WDL_TypedBuf<BL_FLOAT> *result)
+Window::MakeGaussian(int size, BL_FLOAT sigma, WDL_TypedBuf<BL_FLOAT> *result)
+{
+    result->Resize(size);
+    BL_FLOAT *gaussian = result->Get();
+
+    int N = size;
+    for (int i = 0; i < size; i++)
+    {
+        gaussian[i] = _gaussian(i, N, sigma);
+    }
+}
+
+// See: https://en.wikipedia.org/wiki/Window_function#Gaussian_window
+// "Approximate confined Gaussian window"
+//
+// And: https://www.recordingblogs.com/wiki/gaussian-window
+void
+Window::MakeGaussianConfined(int size, BL_FLOAT sigma,
+                             WDL_TypedBuf<BL_FLOAT> *result)
+{
+    result->Resize(size);
+    BL_FLOAT *gaussian = result->Get();
+
+    int N = size;
+    for (int i = 0; i < N; i++)
+    {
+        BL_FLOAT L = N;
+        
+        BL_FLOAT gn = _gaussian(i, N, sigma);
+        BL_FLOAT gm05 = _gaussian(-0.5, N, sigma);
+        BL_FLOAT gnpL = _gaussian(i + L, N, sigma);
+        BL_FLOAT gnmL = _gaussian(i - L, N, sigma);
+        BL_FLOAT gm05pL = _gaussian(-0.5 + L, N, sigma);
+        BL_FLOAT gm05mL = _gaussian(-0.5 - L, N, sigma);
+
+        BL_FLOAT w = gn - (gm05*(gnpL + gnmL))/(gm05pL + gm05mL);
+
+        gaussian[i] = w;
+    }
+}
+
+// Not used anymore
+void
+Window::MakeGaussianWholeDomain(int size, BL_FLOAT sigma,
+                                WDL_TypedBuf<BL_FLOAT> *result)
 {
     result->Resize(size);
     BL_FLOAT *gaussian = result->Get();
@@ -316,7 +379,7 @@ Window::MakeGaussian(BL_FLOAT sigma, int size, WDL_TypedBuf<BL_FLOAT> *result)
     {
         BL_FLOAT t = ((((BL_FLOAT)i)/size)*2.0 - 1.0);
         
-        // change t to cover the "whole" domain of a gaussian with sigma == 1
+        // Change t to cover the "whole" domain of a gaussian with sigma == 1
         t *= 4.0;
         
         gaussian[i] = Gaussian(sigma, t);
@@ -326,7 +389,7 @@ Window::MakeGaussian(BL_FLOAT sigma, int size, WDL_TypedBuf<BL_FLOAT> *result)
 // FIXED !
 // The function above seems false
 void
-Window::MakeGaussian2(BL_FLOAT sigma, int size, WDL_TypedBuf<BL_FLOAT> *result)
+Window::MakeGaussian2(int size, BL_FLOAT sigma, WDL_TypedBuf<BL_FLOAT> *result)
 {
     result->Resize(size);
     

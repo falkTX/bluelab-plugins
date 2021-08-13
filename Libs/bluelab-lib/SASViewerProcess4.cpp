@@ -45,6 +45,12 @@
 
 #define DBG_DISPLAY_BETA0 1
 
+// Bypass all processing (was for testing fft reconstruction with gaussian windows
+#define DBG_BYPASS 0 //1 // 0
+
+#define VIEW_ALPHA0_COEFF 1e4 //1e3
+#define VIEW_BETA0_COEFF 1e3
+
 SASViewerProcess4::SASViewerProcess4(int bufferSize,
                                      BL_FLOAT overlapping, BL_FLOAT oversampling,
                                      BL_FLOAT sampleRate)
@@ -63,7 +69,8 @@ SASViewerProcess4::SASViewerProcess4(int bufferSize,
         
     BL_FLOAT minAmpDB = mPartialTracker->GetMinAmpDB();
     
-    mSASFrame = new SASFrame5(bufferSize, sampleRate, overlapping);
+    mSASFrame = new SASFrame5(bufferSize, sampleRate,
+                              overlapping, oversampling);
     mSASFrame->SetMinAmpDB(minAmpDB);
     
     mThreshold = -60.0;
@@ -139,6 +146,10 @@ SASViewerProcess4::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
                                     const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer)
 
 {
+#if DBG_BYPASS
+    return;
+#endif
+    
     //WDL_TypedBuf<WDL_FFT_COMPLEX> fftSamples = *ioBuffer;
 
     WDL_TypedBuf<WDL_FFT_COMPLEX> &fftSamples0 = mTmpBuf0;
@@ -196,7 +207,7 @@ SASViewerProcess4::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
         
         vector<Partial> partials = normPartials;
         mPartialTracker->DenormPartials(&partials);
-
+        
 #if 0 // DEBUG
         for (int i = 0; i < partials.size(); i++)
         {
@@ -251,6 +262,10 @@ void
 SASViewerProcess4::ProcessSamplesBuffer(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
                                         WDL_TypedBuf<BL_FLOAT> *scBuffer)
 {
+#if DBG_BYPASS
+    return;
+#endif
+    
     if (!mSASFrame->ComputeSamplesFlag())
         return;
     
@@ -287,7 +302,11 @@ SASViewerProcess4::ProcessSamplesBuffer(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
 // Use this to synthetize directly the samples from partials
 void
 SASViewerProcess4::ProcessSamplesPost(WDL_TypedBuf<BL_FLOAT> *ioBuffer)
-{    
+{
+#if DBG_BYPASS
+    return;
+#endif
+    
     if (!mSASFrame->ComputeSamplesPostFlag())
         return;
     
@@ -699,8 +718,21 @@ SASViewerProcess4::DisplayDetectionBeta0()
             /// DEBUG: debug coeffs
             //BL_FLOAT partialX1 = partial.mFreq + partial.mBeta0*100.0;// v2, non fixed
             //BL_FLOAT partialX1 = partial.mFreq + partial.mBeta0*1000.0; // v2, fixed
-            BL_FLOAT partialY1 = partial.mAmp + partial.mAlpha0*10.0; // DEBUG
-                                              
+            //BL_FLOAT partialY1 = partial.mAmp + partial.mAlpha0*10.0; // DEBUG
+
+            //BL_FLOAT partialY1 =
+            //    partial.mAmp + /*-*/ partial.mAlpha0*VIEW_ALPHA0_COEFF;
+
+            // Add QIFFT alpha using correct scale
+            BL_FLOAT ampQIFFT =
+                mPartialTracker->PartialScaleToQIFFTScale(partial.mAmp);
+            
+            ampQIFFT += partial.mAlpha0*VIEW_ALPHA0_COEFF;
+
+            BL_FLOAT ampDbNorm =
+                mPartialTracker->QIFFTScaleToPartialScale(ampQIFFT);
+            BL_FLOAT partialY1 = ampDbNorm;
+            
             p1.mX = partialX0 - 0.5;
             p1.mY = partialY1; //partial.mAmp;
             p1.mZ = 1.0;
@@ -720,7 +752,8 @@ SASViewerProcess4::DisplayDetectionBeta0()
 
             /// DEBUG: debug coeffs
             //BL_FLOAT partialX1 = partial.mFreq + partial.mBeta0*100.0;// v2, non fixed
-            BL_FLOAT partialX1 = partial.mFreq + partial.mBeta0*1000.0; // v2, fixed
+            // Was 1000
+            BL_FLOAT partialX1 = partial.mFreq + partial.mBeta0*VIEW_BETA0_COEFF;
             
             partialX1 =
                 mViewScale->ApplyScale(mViewXScale, partialX1,
