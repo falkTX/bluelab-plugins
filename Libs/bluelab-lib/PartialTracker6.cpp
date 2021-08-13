@@ -1368,6 +1368,34 @@ PartialsAmpToAmpDB(vector<Partial> *partials)
     }
 }
 
+BL_FLOAT
+PartialTracker6::PartialScaleToQIFFTScale(BL_FLOAT ampDbNorm)
+{
+    BL_FLOAT amp =
+        mScale->ApplyScale(mYScaleInv, ampDbNorm,
+                           (BL_FLOAT)MIN_AMP_DB, (BL_FLOAT)0.0);
+
+    BL_FLOAT ampLog =
+        mScale->ApplyScale(mYScale2, amp,
+                           (BL_FLOAT)MIN_AMP_DB, (BL_FLOAT)0.0);
+
+    return ampLog;
+}
+
+BL_FLOAT
+PartialTracker6::QIFFTScaleToPartialScale(BL_FLOAT ampLog)
+{
+    BL_FLOAT amp =
+        mScale->ApplyScale(mYScaleInv2, ampLog,
+                           (BL_FLOAT)MIN_AMP_DB, (BL_FLOAT)0.0);
+    
+    BL_FLOAT ampDbNorm =
+        mScale->ApplyScale(mYScale, amp,
+                           (BL_FLOAT)MIN_AMP_DB, (BL_FLOAT)0.0);
+    
+    return ampDbNorm;
+}
+
 void
 PartialTracker6::PreProcessAWeighting(WDL_TypedBuf<BL_FLOAT> *magns,
                                       bool reverse)

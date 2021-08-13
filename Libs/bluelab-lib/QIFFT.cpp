@@ -134,6 +134,11 @@ QIFFT::FindPeak(const WDL_TypedBuf<BL_FLOAT> &magns,
         return;
     
     BL_FLOAT p = -upp/denom1;
+
+    // TEST
+    //BL_FLOAT gaussianSigma = sqrt(1.0/M_E);
+    //p = 0.5/(gaussianSigma*gaussianSigma);
+    
     BL_FLOAT alpha0 = -2.0*p*vp;
     BL_FLOAT beta0 = 0.0;
     if (std::fabs(upp) > BL_EPS)
@@ -187,10 +192,17 @@ QIFFT::FindPeak2(const WDL_TypedBuf<BL_FLOAT> &magns,
     //
     BL_FLOAT N = magns.GetSize()*2; // ??
 
+#if 0 //1 //0 // Original
     // Mistake in the article ?
-    //BL_FLOAT p = -((M_PI/N)*(M_PI/N))*(d/(a*a + d*d)); // Origin paper
-    BL_FLOAT p = -((M_PI/N)*(M_PI/N))*(a/(a*a + d*d)); // #bluelab fix
-    
+    // ok for vibrato
+    BL_FLOAT p = -((M_PI/N)*(M_PI/N))*(d/(a*a + d*d)); // Origin paper
+    // ok for sine sweep
+    //BL_FLOAT p = -((M_PI/N)*(M_PI/N))*(a/(a*a + d*d)); // #bluelab fix
+
+    // TEST
+    //BL_FLOAT gaussianSigma = sqrt(1.0/M_E);
+    //p = 0.5/(gaussianSigma*gaussianSigma);
+        
     BL_FLOAT delta0 = -b/(2.0*a);
 
     BL_FLOAT omega0 = (2.0*M_PI/N)*(k0 + delta0);
@@ -198,7 +210,21 @@ QIFFT::FindPeak2(const WDL_TypedBuf<BL_FLOAT> &magns,
     BL_FLOAT phy0 = d*(delta0*delta0) + e*delta0 + f;
     BL_FLOAT alpha0 = -(N/M_PI)*p*(2.0*d*delta0 + e);
     BL_FLOAT beta0 = p*d/a;
+#endif
 
+#if 1 // TEST
+    BL_FLOAT pAlpha = -((M_PI/N)*(M_PI/N))*(d/(a*a + d*d)); // Origin paper
+    BL_FLOAT pBeta = -((M_PI/N)*(M_PI/N))*(a/(a*a + d*d)); // #bluelab fix
+    
+    BL_FLOAT delta0 = -b/(2.0*a);
+
+    BL_FLOAT omega0 = (2.0*M_PI/N)*(k0 + delta0);
+    BL_FLOAT lambda0 = a*(delta0*delta0) + b*delta0 + c;
+    BL_FLOAT phy0 = d*(delta0*delta0) + e*delta0 + f;
+    BL_FLOAT alpha0 = -(N/M_PI)*pAlpha*(2.0*d*delta0 + e);
+    BL_FLOAT beta0 = pBeta*d/a;
+#endif
+    
     result->mBinIdx = peakBin + delta0;
     result->mFreq = omega0;
     result->mAmp = lambda0;

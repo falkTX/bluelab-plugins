@@ -117,6 +117,9 @@ public:
     void DenormData(WDL_TypedBuf<BL_FLOAT> *data);
     
     void PartialsAmpToAmpDB(vector<Partial> *partials);
+
+    BL_FLOAT PartialScaleToQIFFTScale(BL_FLOAT ampDbNorm);
+    BL_FLOAT QIFFTScaleToPartialScale(BL_FLOAT ampLog);
     
 protected:
     // Pre process

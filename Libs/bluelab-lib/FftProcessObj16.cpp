@@ -2203,7 +2203,9 @@ FftProcessObj16::MakeWindows(int bufSize, int overlapping,
     else if (analysisMethod == WindowGaussian)
     {
         //Window::MakeGaussian(anaWindowSize, gaussianSigma, analysisWindow);
+        
         // For QIFFT, we must choose confined, for better tracking
+        // Confined gives more smooth alpha0
         Window::MakeGaussianConfined(anaWindowSize, gaussianSigma, analysisWindow);
     }
     else
