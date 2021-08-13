@@ -204,7 +204,7 @@ SASViewerProcess4::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
         
         vector<Partial> partials = normPartials;
         mPartialTracker->DenormPartials(&partials);
-
+        
 #if 0 // DEBUG
         for (int i = 0; i < partials.size(); i++)
         {

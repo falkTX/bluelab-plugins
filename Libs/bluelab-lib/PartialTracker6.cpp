@@ -84,6 +84,8 @@ using namespace std;
 
 #define USE_QIFFT 1
 
+#define USE_QIFFT_YLOG 1 //0
+
 PartialTracker6::PartialTracker6(int bufferSize, BL_FLOAT sampleRate,
                                  BL_FLOAT overlapping)
 {
@@ -106,6 +108,10 @@ PartialTracker6::PartialTracker6(int bufferSize, BL_FLOAT sampleRate,
     
     //mYScale = Scale::LINEAR;
     mYScale = Scale::DB;
+
+#if USE_QIFFT_YLOG
+    mYScale2 = Scale::LOG_NO_NORM;
+#endif
     
     //
     mXScaleInv = Scale::LINEAR;
@@ -113,6 +119,9 @@ PartialTracker6::PartialTracker6(int bufferSize, BL_FLOAT sampleRate,
     //mXScaleInv = Scale::MEL_FILTER_INV;
 
     mYScaleInv = Scale::DB_INV;
+#if USE_QIFFT_YLOG
+    mYScaleInv2 = Scale::LOG_NO_NORM_INV;
+#endif
     
     mTimeSmoothCoeff = 0.5;
     mTimeSmoothNoiseCoeff = 0.5;
@@ -604,9 +613,27 @@ PartialTracker6::DetectPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
                                DETECT_PARTIALS_START_INDEX, maxIndex);
 
     //DBG_DumpPeaks(magns, peaks);
-    
-    ComputePartials(peaks, magns, phases, outPartials);
 
+#if !USE_QIFFT_YLOG
+    ComputePartials(peaks, magns, phases, outPartials);
+#else
+    // Log
+    ComputePartials(peaks, mLogMagns, phases, outPartials);
+
+    // Adjust the scale
+    for (int i = 0; i < outPartials->size(); i++)
+    {
+        Partial &p = (*outPartials)[i];
+        BL_FLOAT ampNorm =
+            mScale->ApplyScale(mYScaleInv2, p.mAmp,
+                               (BL_FLOAT)MIN_AMP_DB, (BL_FLOAT)0.0);
+        BL_FLOAT ampDbNorm =
+            mScale->ApplyScale(mYScale, ampNorm,
+                               (BL_FLOAT)MIN_AMP_DB, (BL_FLOAT)0.0);
+        p.mAmp = ampDbNorm;
+    }
+#endif
+    
     //DBG_DumpPartials(magns, *outPartials);
 }
 
@@ -1159,6 +1186,11 @@ PartialTracker6::PreProcess(WDL_TypedBuf<BL_FLOAT> *magns,
     // (time smoothed, but linearly scaled)
     mLinearMagns = *magns;
     PreProcessDataY(&mLinearMagns); // We want raw data in dB (just keep linear on x)
+
+#if USE_QIFFT_YLOG
+    mLogMagns = *magns;
+    mScale->ApplyScaleForEach(mYScale2, &mLogMagns);
+#endif
     
 #if SQUARE_MAGNS
     BLUtils::ComputeSquare(magns);
@@ -1267,7 +1299,8 @@ PartialTracker6::DenormPartials(vector<Partial> *partials)
         
         // Convert to real freqs
         partial.mFreq *= mSampleRate*0.5;
-        
+
+#if !USE_QIFFT_YLOG
         // Reverse AWeighting
         int binNum = partial.mFreq/hzPerBin;
         partial.mAmp = ProcessAWeighting(binNum, mBufferSize*0.5,
@@ -1276,6 +1309,12 @@ PartialTracker6::DenormPartials(vector<Partial> *partials)
         // Y
         partial.mAmp = mScale->ApplyScale(mYScaleInv, partial.mAmp,
                                           (BL_FLOAT)MIN_AMP_DB, (BL_FLOAT)0.0);
+#endif
+#if USE_QIFFT_YLOG
+        // Y
+        partial.mAmp = mScale->ApplyScale(mYScaleInv/*2*/, partial.mAmp,
+                                          (BL_FLOAT)MIN_AMP_DB, (BL_FLOAT)0.0);
+#endif
 
 #if DENORM_PARTIAL_INDICES
         partial.mLeftIndex = DenormBinIndex(partial.mLeftIndex);
@@ -1422,7 +1461,7 @@ PartialTracker6::ComputePartials(const vector<PeakDetector::Peak> &peaks,
     WDL_TypedBuf<BL_FLOAT> &phasesUW = mTmpBuf10;
     phasesUW = phases;
     PhasesUnwrapper::UnwrapPhasesFreq(&phasesUW);
-        
+    
     for (int i = 0; i < peaks.size(); i++)
     {
         const PeakDetector::Peak &peak = peaks[i];
