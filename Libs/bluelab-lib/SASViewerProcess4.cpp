@@ -48,6 +48,9 @@
 // Bypass all processing (was for testing fft reconstruction with gaussian windows
 #define DBG_BYPASS 0 //1 // 0
 
+#define VIEW_ALPHA0_COEFF 1e2
+#define VIEW_BETA0_COEFF 1e3
+
 SASViewerProcess4::SASViewerProcess4(int bufferSize,
                                      BL_FLOAT overlapping, BL_FLOAT oversampling,
                                      BL_FLOAT sampleRate)
@@ -715,7 +718,8 @@ SASViewerProcess4::DisplayDetectionBeta0()
             /// DEBUG: debug coeffs
             //BL_FLOAT partialX1 = partial.mFreq + partial.mBeta0*100.0;// v2, non fixed
             //BL_FLOAT partialX1 = partial.mFreq + partial.mBeta0*1000.0; // v2, fixed
-            BL_FLOAT partialY1 = partial.mAmp + partial.mAlpha0*10.0; // DEBUG
+            //BL_FLOAT partialY1 = partial.mAmp + partial.mAlpha0*10.0; // DEBUG
+            BL_FLOAT partialY1 = partial.mAmp + partial.mAlpha0*VIEW_ALPHA0_COEFF;
                                               
             p1.mX = partialX0 - 0.5;
             p1.mY = partialY1; //partial.mAmp;
@@ -736,7 +740,8 @@ SASViewerProcess4::DisplayDetectionBeta0()
 
             /// DEBUG: debug coeffs
             //BL_FLOAT partialX1 = partial.mFreq + partial.mBeta0*100.0;// v2, non fixed
-            BL_FLOAT partialX1 = partial.mFreq + partial.mBeta0*1000.0; // v2, fixed
+            // Was 1000
+            BL_FLOAT partialX1 = partial.mFreq + partial.mBeta0*VIEW_BETA0_COEFF;
             
             partialX1 =
                 mViewScale->ApplyScale(mViewXScale, partialX1,
