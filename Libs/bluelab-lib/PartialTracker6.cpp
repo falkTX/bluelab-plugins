@@ -91,6 +91,7 @@ using namespace std;
 // It is better with log then just with dB!
 #define USE_QIFFT_YLOG 1
 
+
 PartialTracker6::PartialTracker6(int bufferSize, BL_FLOAT sampleRate,
                                  BL_FLOAT overlapping)
 {
@@ -145,7 +146,7 @@ PartialTracker6::PartialTracker6(int bufferSize, BL_FLOAT sampleRate,
     mPartialFilter = new PartialFilter(bufferSize);
 
     // For the method DBG_DumpPartials()
-#if 0
+#if 0 //1 // 0
     BLDebug::ResetFile("ref-amp.txt");
     BLDebug::ResetFile("ref-freq.txt");
     BLDebug::ResetFile("amp0.txt");
@@ -620,7 +621,7 @@ PartialTracker6::DetectPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
 
     // Log
     ComputePartials(peaks, mLogMagns, phases, outPartials);
-
+    
     // Adjust the scale
     for (int i = 0; i < outPartials->size(); i++)
     {
@@ -635,7 +636,7 @@ PartialTracker6::DetectPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
     }
 #endif
     
-    DBG_DumpPartials(magns, *outPartials);
+    //DBG_DumpPartials(magns, *outPartials);
 }
 
 // From GlueTwinPartials()
@@ -1514,6 +1515,13 @@ PartialTracker6::ComputePartials(const vector<PeakDetector::Peak> &peaks,
         // QIFFT::FindPeak2() is not fixed yet...
         //QIFFT::FindPeak2(magns, phasesUW, peak.mPeakIndex, &qifftPeak);
 
+        // Apply empirical coeffs, so that next values will match
+        // current values + deta.
+        //
+        // NOTE: this may depend on window type, maybe on overlap too..
+        qifftPeak.mAlpha0 *= EMPIR_ALPHA0_COEFF;
+        qifftPeak.mBeta0 *= EMPIR_BETA0_COEFF;
+            
         p.mBinIdxF = qifftPeak.mBinIdx;
         p.mFreq = qifftPeak.mFreq;
         p.mAmp = qifftPeak.mAmp;
@@ -1650,15 +1658,13 @@ PartialTracker6::DBG_DumpPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
     BLDebug::AppendValue("amp0.txt", p.mAmp);
     
     // Estimated next amp
-    const BL_FLOAT ampCoeff = 4.0*M_PI*sqrt(2.0); // Arbitrary coeff
-    BL_FLOAT amp1 = p.mAmp + p.mAlpha0*ampCoeff;
+    BL_FLOAT amp1 = p.mAmp + p.mAlpha0;
     BLDebug::AppendValue("amp1.txt", amp1);
 
     // Real freq
     BLDebug::AppendValue("freq0.txt", p.mFreq);
-    
+
     // Estimated next freq
-    const BL_FLOAT freqCoeff = (4.0*M_PI*M_PI)*2.0*M_PI*sqrt(2.0); // Arbitrary coeff
-    BL_FLOAT freq1 = p.mFreq + p.mBeta0*freqCoeff;
+    BL_FLOAT freq1 = p.mFreq + p.mBeta0;
     BLDebug::AppendValue("freq1.txt", freq1);
 }

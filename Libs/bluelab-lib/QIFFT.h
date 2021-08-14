@@ -5,6 +5,18 @@
 
 #include "IPlug_include_in_plug_hdr.h"
 
+// Set to 1 to have the same scale in FindPeak() as FindPeak2()
+//
+// NOTE: if using FindPeak2() again, it may be necessary to also
+// change EMPIR_ALPHA0_COEFF and EMPIR_BETA0_COEFF to 1
+#define FIND_PEAK_COMPAT 0 //1
+
+// Empirical alpha0 additional coeff
+#define EMPIR_ALPHA0_COEFF 0.1138292
+
+// Empirical beta0 additional coeff
+#define EMPIR_BETA0_COEFF 0.0030370
+
 // See: https://ccrma.stanford.edu/files/papers/stanm118.pdf
 // And (p32): http://mural.maynoothuniversity.ie/4523/1/thesis.pdf
 // And: https://ccrma.stanford.edu/~jos/parshl/Peak_Detection_Steps_3.html#sec:peakdet

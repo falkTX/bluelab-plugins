@@ -145,9 +145,11 @@ QIFFT::FindPeak(const WDL_TypedBuf<BL_FLOAT> &magns,
     
     BL_FLOAT p = -upp/denom1;
     
+#if FIND_PEAK_COMPAT
     // Adjust with a coeff, to be similar to the original paper
     BL_FLOAT N = magns.GetSize()*2;
     p *= (2.0*M_PI/N)*(2.0*M_PI/N);
+#endif
     
     // Origin
     //BL_FLOAT alpha0 = -2.0*p*vp;
@@ -156,8 +158,10 @@ QIFFT::FindPeak(const WDL_TypedBuf<BL_FLOAT> &magns,
     // #bluelab: Must do a -M_PI, otherwise alpha0 will always be positive 
     BL_FLOAT alpha0 = -2.0*p*(vp - M_PI);
 
+#if FIND_PEAK_COMPAT
     // Adjust with a coeff, to be similar to the original paper
     alpha0 *= ((BL_FLOAT)N)/M_PI;
+#endif
     
     BL_FLOAT beta0 = 0.0;
     if (std::fabs(upp) > BL_EPS)
