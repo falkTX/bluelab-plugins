@@ -8,7 +8,8 @@
 class PeakDetectorBillauer : public PeakDetector
 {
  public:
-    PeakDetectorBillauer();
+    // Can use norm dB scale, or else pure log scale 
+    PeakDetectorBillauer(BL_FLOAT maxDelta);
     virtual ~PeakDetectorBillauer();
 
     void SetThreshold(BL_FLOAT threshold) override;
@@ -23,6 +24,8 @@ protected:
     void DBG_DumpPeaks(const WDL_TypedBuf<BL_FLOAT> &data, const vector<Peak> &peaks);
         
     //
+    BL_FLOAT mMaxDelta;
+    
     BL_FLOAT mDelta;
 };
 

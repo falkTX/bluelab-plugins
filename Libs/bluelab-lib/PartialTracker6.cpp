@@ -88,7 +88,8 @@ using namespace std;
 
 #define USE_QIFFT 1
 
-#define USE_QIFFT_YLOG 1 //0
+// It is better with log then just with dB!
+#define USE_QIFFT_YLOG 1
 
 PartialTracker6::PartialTracker6(int bufferSize, BL_FLOAT sampleRate,
                                  BL_FLOAT overlapping)
@@ -137,7 +138,8 @@ PartialTracker6::PartialTracker6(int bufferSize, BL_FLOAT sampleRate,
     mPeakDetector = new PeakDetectorBL();
 #endif
 #if USE_BILLAUER_PEAK_DETECTOR
-    mPeakDetector = new PeakDetectorBillauer();
+    BL_FLOAT maxDelta = (USE_QIFFT_YLOG == 0) ? 1.0 : -MIN_AMP_DB/4;
+    mPeakDetector = new PeakDetectorBillauer(maxDelta);
 #endif
     
     mPartialFilter = new PartialFilter(bufferSize);

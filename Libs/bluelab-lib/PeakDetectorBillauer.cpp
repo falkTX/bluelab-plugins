@@ -11,9 +11,13 @@
 // better left and right indices
 #define PEAKS_WIDTH_RATIO 0.5 //0.2
 
-PeakDetectorBillauer::PeakDetectorBillauer()
+PeakDetectorBillauer::PeakDetectorBillauer(BL_FLOAT maxDelta)
 {
-    mDelta = 0.25;
+    //mDelta = 0.25;
+        
+    mMaxDelta = maxDelta;
+    
+    mDelta = 0.25*mMaxDelta;
 }
 
 PeakDetectorBillauer::~PeakDetectorBillauer() {}
@@ -21,7 +25,9 @@ PeakDetectorBillauer::~PeakDetectorBillauer() {}
 void
 PeakDetectorBillauer::SetThreshold(BL_FLOAT threshold)
 {
-    mDelta = threshold;
+    //mDelta = threshold;
+    
+    mDelta = threshold*mMaxDelta;
 }
 
 void
