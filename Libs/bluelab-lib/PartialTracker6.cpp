@@ -137,24 +137,6 @@ PartialTracker6::PartialTracker6(int bufferSize, BL_FLOAT sampleRate,
 #endif
     
     mPartialFilter = new PartialFilter(bufferSize);
-
-    // DEBUG
-    //BLDebug::ResetFile("peaks.txt");
-
-#if 0 // Old
-    BLDebug::ResetFile("alpha0.txt");
-    BLDebug::ResetFile("beta0.txt");
-#endif
-
-#if 0
-    BLDebug::ResetFile("ref-amp.txt");
-    BLDebug::ResetFile("ref-freq.txt");
-    
-    BLDebug::ResetFile("amp0.txt");
-    BLDebug::ResetFile("amp1.txt");
-    BLDebug::ResetFile("freq0.txt");
-    BLDebug::ResetFile("freq1.txt");
-#endif
 }
 
 PartialTracker6::~PartialTracker6()
@@ -1235,6 +1217,9 @@ PartialTracker6::SetTimeSmoothNoiseCoeff(BL_FLOAT coeff)
 }
 
 // Time smooth
+//
+// NOTE: Makes PartialTacker6/QIFFT fail if > 0
+// If need to smooth, we will have to smooth in complex domain!
 void
 PartialTracker6::PreProcessTimeSmooth(WDL_TypedBuf<BL_FLOAT> *magns)
 {
@@ -1488,6 +1473,7 @@ PartialTracker6::ComputePartials(const vector<PeakDetector::Peak> &peaks,
 
     WDL_TypedBuf<BL_FLOAT> &phasesUW = mTmpBuf10;
     phasesUW = phases;
+    // NOTE: phases are already unwrapped if MEL_UNWRAP_PHASES is 1
     PhasesUnwrapper::UnwrapPhasesFreq(&phasesUW);
     
     for (int i = 0; i < peaks.size(); i++)
@@ -1505,9 +1491,8 @@ PartialTracker6::ComputePartials(const vector<PeakDetector::Peak> &peaks,
         BL_FLOAT peakIndexF = ComputePeakIndexParabola(magns, p.mPeakIndex);
 #else
         QIFFT::Peak qifftPeak;
-        //QIFFT::FindPeak(magns, phases, peak.mPeakIndex, &qifftPeak);
-        //QIFFT::FindPeak(magns, phasesUW, peak.mPeakIndex, &qifftPeak);
-        QIFFT::FindPeak2(magns, phasesUW, peak.mPeakIndex, &qifftPeak);
+        QIFFT::FindPeak(magns, phasesUW, peak.mPeakIndex, &qifftPeak);
+        //QIFFT::FindPeak2(magns, phasesUW, peak.mPeakIndex, &qifftPeak);
 
         p.mBinIdxF = qifftPeak.mBinIdx;
         p.mAmp = qifftPeak.mAmp;
@@ -1516,14 +1501,6 @@ PartialTracker6::ComputePartials(const vector<PeakDetector::Peak> &peaks,
         p.mBeta0 = qifftPeak.mBeta0;
 
         BL_FLOAT peakIndexF = qifftPeak.mBinIdx;
-
-#if 0 // DEBUG
-        //fprintf(stderr, "amp: %g phase: %g alpha0: %g beta0: %g\n",
-        //        p.mAmp, p.mPhase, p.mAlpha0, p.mBeta0);
-        BLDebug::AppendValue("alpha0.txt", p.mAlpha0);
-        BLDebug::AppendValue("beta0.txt", p.mBeta0);
-#endif
-
 #endif
         
         p.mPeakIndex = bl_round(peakIndexF);

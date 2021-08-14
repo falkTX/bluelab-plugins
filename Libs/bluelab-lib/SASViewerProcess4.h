@@ -113,7 +113,7 @@ protected:
     
     // Display
     void DisplayDetection();
-    void DisplayDetectionBeta0(); // Variation
+    void DisplayDetectionBeta0(bool addData); // Variation
     void DisplayTracking();
     
     void DisplayHarmo();

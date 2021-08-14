@@ -48,7 +48,7 @@
 // Bypass all processing (was for testing fft reconstruction with gaussian windows
 #define DBG_BYPASS 0 //1 // 0
 
-#define VIEW_ALPHA0_COEFF 1e4 //1e3
+#define VIEW_ALPHA0_COEFF 1e4 //5e2
 #define VIEW_BETA0_COEFF 1e3
 
 SASViewerProcess4::SASViewerProcess4(int bufferSize,
@@ -460,11 +460,11 @@ SASViewerProcess4::Display()
     if (mSkipAdd)
         return;
 
-#if !DBG_DISPLAY_BETA0
-    DisplayDetection();
-#else
-    DisplayDetectionBeta0();
+#if DBG_DISPLAY_BETA0
+    DisplayDetectionBeta0(false);
 #endif
+
+    DisplayDetection();
     
     DisplayTracking();
     
@@ -618,7 +618,9 @@ SASViewerProcess4::DisplayDetection()
         // It is cool like that: lite blue with alpha
         //unsigned char color[4] = { 64, 64, 255, 255 };
         // Magenta
-        unsigned char color[4] = { 255, 0, 255, 255 };
+        //unsigned char color[4] = { 255, 0, 255, 255 };
+        // Green
+        unsigned char color[4] = { 0, 255, 0, 255 };
         
         // Set color
         for (int j = 0; j < mPartialsPoints.size(); j++)
@@ -669,8 +671,9 @@ SASViewerProcess4::DisplayDetection()
     }
 }
 
+// Set add data to false if we already call DisplayDetection()
 void
-SASViewerProcess4::DisplayDetectionBeta0()
+SASViewerProcess4::DisplayDetectionBeta0(bool addData)
 {
     if (mSASViewerRender != NULL)
     {
@@ -679,8 +682,9 @@ SASViewerProcess4::DisplayDetectionBeta0()
         WDL_TypedBuf<BL_FLOAT> &data = mTmpBuf15;
         mViewScale->ApplyScaleFilterBank(mViewXScaleFB, &data, mCurrentMagns,
                                          mSampleRate, mCurrentMagns.GetSize());
-    
-        mSASViewerRender->AddData(DETECTION, data);
+
+        if (addData)
+            mSASViewerRender->AddData(DETECTION, data);
         
         mSASViewerRender->SetLineMode(DETECTION, LinesRender2::LINES_FREQ);
 

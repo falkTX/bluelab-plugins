@@ -118,12 +118,12 @@ QIFFT::FindPeak(const WDL_TypedBuf<BL_FLOAT> &magns,
     BL_FLOAT p00 = ParabolaFuncGen(c - 2.0*DERIV_EPS, aP, bP, cP);
     BL_FLOAT p10 = ParabolaFuncGen(c, aP, bP, cP);
     BL_FLOAT vp0 = (p10 - p00)/(2.0*DERIV_EPS);
-
+    
     // Derivative at n + 1
     BL_FLOAT p01 = ParabolaFuncGen(c, aP, bP, cP);
     BL_FLOAT p11 = ParabolaFuncGen(c + 2.0*DERIV_EPS, aP, bP, cP);
     BL_FLOAT vp1 = (p11 - p01)/(2.0*DERIV_EPS);
-
+    
     // Second derivative
     BL_FLOAT vpp = (vp1 - vp0)/(2.0*DERIV_EPS);
 
@@ -135,11 +135,20 @@ QIFFT::FindPeak(const WDL_TypedBuf<BL_FLOAT> &magns,
     
     BL_FLOAT p = -upp/denom1;
 
-    // TEST
-    //BL_FLOAT gaussianSigma = sqrt(1.0/M_E);
-    //p = 0.5/(gaussianSigma*gaussianSigma);
+    // Adjust with a coeff, to be similar to the original paper
+    BL_FLOAT N = magns.GetSize()*2;
+    p *= (2.0*M_PI/N)*(2.0*M_PI/N);
+
+    // Origin
+    //BL_FLOAT alpha0 = -2.0*p*vp;
     
-    BL_FLOAT alpha0 = -2.0*p*vp;
+    // GOOD!
+    // #bluelab: Must do a -M_PI, otherwise alpha0 will always be positive 
+    BL_FLOAT alpha0 = -2.0*p*(vp - M_PI);
+
+    // Adjust with a coeff, to be similar to the original paper
+    alpha0 *= ((BL_FLOAT)N)/M_PI;
+    
     BL_FLOAT beta0 = 0.0;
     if (std::fabs(upp) > BL_EPS)
         beta0 = p*vpp/upp;
@@ -189,10 +198,10 @@ QIFFT::FindPeak2(const WDL_TypedBuf<BL_FLOAT> &magns,
     BL_FLOAT e = (v1 - vm1)*0.5;
     BL_FLOAT f = v0;
 
-    //
-    BL_FLOAT N = magns.GetSize()*2; // ??
+    // Fft size
+    BL_FLOAT N = magns.GetSize()*2;
 
-#if 0 //1 //0 // Original
+#if 1 //0 // Original
     // Mistake in the article ?
     // ok for vibrato
     BL_FLOAT p = -((M_PI/N)*(M_PI/N))*(d/(a*a + d*d)); // Origin paper
@@ -202,7 +211,7 @@ QIFFT::FindPeak2(const WDL_TypedBuf<BL_FLOAT> &magns,
     // TEST
     //BL_FLOAT gaussianSigma = sqrt(1.0/M_E);
     //p = 0.5/(gaussianSigma*gaussianSigma);
-        
+    
     BL_FLOAT delta0 = -b/(2.0*a);
 
     BL_FLOAT omega0 = (2.0*M_PI/N)*(k0 + delta0);
@@ -212,7 +221,7 @@ QIFFT::FindPeak2(const WDL_TypedBuf<BL_FLOAT> &magns,
     BL_FLOAT beta0 = p*d/a;
 #endif
 
-#if 1 // TEST
+#if 0 //1 // TEST
     BL_FLOAT pAlpha = -((M_PI/N)*(M_PI/N))*(d/(a*a + d*d)); // Origin paper
     BL_FLOAT pBeta = -((M_PI/N)*(M_PI/N))*(a/(a*a + d*d)); // #bluelab fix
     
