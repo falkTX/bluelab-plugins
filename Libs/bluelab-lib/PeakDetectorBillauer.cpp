@@ -54,6 +54,8 @@ DetectPeaks(const WDL_TypedBuf<BL_FLOAT> &data, vector<Peak> *peaks,
     // Look for max first
     bool lookformax = true;
 
+    // Check if we start by a peak
+    bool startedbypeak = false;
     if (maxIndex - minIndex >= 2)
     {
         BL_FLOAT val0 = data.Get()[minIndex];
@@ -67,6 +69,8 @@ DetectPeaks(const WDL_TypedBuf<BL_FLOAT> &data, vector<Peak> *peaks,
             mx = val0;
             mxpos = minIndex;
             lookformax = false;
+
+            startedbypeak = true;
         }
     }
     
@@ -114,17 +118,42 @@ DetectPeaks(const WDL_TypedBuf<BL_FLOAT> &data, vector<Peak> *peaks,
         }
     }
 
+    // We started by a peak
+    bool keepfirstpeak = true;
+    if (startedbypeak)
+    {
+        // Check if we must keep the first peak
+        if ((maxtab.size() > 0) && (mintab.size() > 0))
+        {
+            if (!(data.Get()[maxtab[0]] >= data.Get()[mintab[0]] + mDelta))
+                keepfirstpeak = false;
+        }
+    }
+    
     // Secondly, fill the peaks
     //
-    peaks->resize(maxtab.size());
+    //peaks->resize(maxtab.size());
+    peaks->clear();
     for (int i = 0; i < maxtab.size(); i++)
     {
-        Peak &p = (*peaks)[i];
+        if ((i == 0) && !keepfirstpeak)
+            continue;
+        
+        //Peak &p = (*peaks)[i];
+        Peak p;
         p.mPeakIndex = maxtab[i];
         p.mLeftIndex = (i < mintab.size()) ? mintab[i] : minIndex;
         p.mRightIndex = (i + 1 < mintab.size()) ? mintab[i + 1] : maxIndex;
+
+        peaks->push_back(p);
     }
 
+    // Debug
+#if 0
+    if (peaks->size() > 1)
+        DBG_DumpPeaks(data, *peaks);
+#endif
+    
 #if 0
     bool peakOk = DBG_TestPeaks(data, *peaks);
     if (!peakOk)
