@@ -1492,6 +1492,7 @@ PartialTracker6::ComputePartials(const vector<PeakDetector::Peak> &peaks,
 #else
         QIFFT::Peak qifftPeak;
         QIFFT::FindPeak(magns, phasesUW, peak.mPeakIndex, &qifftPeak);
+        // QIFFT::FindPeak2() is not fixed yet...
         //QIFFT::FindPeak2(magns, phasesUW, peak.mPeakIndex, &qifftPeak);
 
         p.mBinIdxF = qifftPeak.mBinIdx;

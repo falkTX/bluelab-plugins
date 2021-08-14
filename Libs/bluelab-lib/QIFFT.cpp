@@ -134,11 +134,11 @@ QIFFT::FindPeak(const WDL_TypedBuf<BL_FLOAT> &magns,
         return;
     
     BL_FLOAT p = -upp/denom1;
-
+    
     // Adjust with a coeff, to be similar to the original paper
     BL_FLOAT N = magns.GetSize()*2;
     p *= (2.0*M_PI/N)*(2.0*M_PI/N);
-
+    
     // Origin
     //BL_FLOAT alpha0 = -2.0*p*vp;
     
@@ -158,6 +158,12 @@ QIFFT::FindPeak(const WDL_TypedBuf<BL_FLOAT> &magns,
     result->mBeta0 = beta0;
 }
 
+// NOTE: this is BAD
+// Error in alpha0 values, compared to QIFFT::FindPeak(), which is correct
+// Don't know why... (maybe numerical precision...)
+//
+// If try to fix later, see the appendix of this paper:
+// https://ccrma.stanford.edu/files/papers/stanm118.pdf
 void
 QIFFT::FindPeak2(const WDL_TypedBuf<BL_FLOAT> &magns,
                  const WDL_TypedBuf<BL_FLOAT> &phases,
@@ -175,11 +181,17 @@ QIFFT::FindPeak2(const WDL_TypedBuf<BL_FLOAT> &magns,
         return;
 
     int k0 = peakBin;
-    
+
+    // Amps
     BL_FLOAT um1 = magns.Get()[k0 - 1];
     BL_FLOAT u0 = magns.Get()[k0];
     BL_FLOAT u1 = magns.Get()[k0 + 1];
 
+    // Phases
+    BL_FLOAT vm1 = phases.Get()[k0 - 1];
+    BL_FLOAT v0 = phases.Get()[k0];
+    BL_FLOAT v1 = phases.Get()[k0 + 1];
+    
     if ((um1 > u0) || (u1 > u0))
     {
         // Error, peakBin was not the index of a peak
@@ -189,10 +201,6 @@ QIFFT::FindPeak2(const WDL_TypedBuf<BL_FLOAT> &magns,
     BL_FLOAT a =  (u1 - 2.0*u0 + um1)*0.5;
     BL_FLOAT b = (u1 - um1)*0.5;
     BL_FLOAT c = u0;
-
-    BL_FLOAT vm1 = phases.Get()[k0 - 1];
-    BL_FLOAT v0 = phases.Get()[k0];
-    BL_FLOAT v1 = phases.Get()[k0 + 1];
     
     BL_FLOAT d =  (v1 - 2.0*v0 + vm1)*0.5;
     BL_FLOAT e = (v1 - vm1)*0.5;
@@ -201,38 +209,25 @@ QIFFT::FindPeak2(const WDL_TypedBuf<BL_FLOAT> &magns,
     // Fft size
     BL_FLOAT N = magns.GetSize()*2;
 
-#if 1 //0 // Original
-    // Mistake in the article ?
+    // Mistake in the article Appendix ?
     // ok for vibrato
-    BL_FLOAT p = -((M_PI/N)*(M_PI/N))*(d/(a*a + d*d)); // Origin paper
-    // ok for sine sweep
-    //BL_FLOAT p = -((M_PI/N)*(M_PI/N))*(a/(a*a + d*d)); // #bluelab fix
-
-    // TEST
-    //BL_FLOAT gaussianSigma = sqrt(1.0/M_E);
-    //p = 0.5/(gaussianSigma*gaussianSigma);
+    //BL_FLOAT p = -((M_PI/N)*(M_PI/N))*(d/(a*a + d*d)); // Origin paper
+    
+    // This gives good result for sine sweep,
+    //
+    // NOTE: p is exactly the same as in QIFFT::FindPeak() (which is correct)
+    BL_FLOAT p = -((M_PI/N)*(M_PI/N))*(a/(a*a + d*d)); // #bluelab fix
     
     BL_FLOAT delta0 = -b/(2.0*a);
 
     BL_FLOAT omega0 = (2.0*M_PI/N)*(k0 + delta0);
     BL_FLOAT lambda0 = a*(delta0*delta0) + b*delta0 + c;
     BL_FLOAT phy0 = d*(delta0*delta0) + e*delta0 + f;
+    // BAD!
+    // NOTE: alpha0 is false, different from QIFFT::FindPeak() (which is correct)
     BL_FLOAT alpha0 = -(N/M_PI)*p*(2.0*d*delta0 + e);
+    // NOTE: beta0 exactly the same as in QIFFT::FindPeak() (which is correct)
     BL_FLOAT beta0 = p*d/a;
-#endif
-
-#if 0 //1 // TEST
-    BL_FLOAT pAlpha = -((M_PI/N)*(M_PI/N))*(d/(a*a + d*d)); // Origin paper
-    BL_FLOAT pBeta = -((M_PI/N)*(M_PI/N))*(a/(a*a + d*d)); // #bluelab fix
-    
-    BL_FLOAT delta0 = -b/(2.0*a);
-
-    BL_FLOAT omega0 = (2.0*M_PI/N)*(k0 + delta0);
-    BL_FLOAT lambda0 = a*(delta0*delta0) + b*delta0 + c;
-    BL_FLOAT phy0 = d*(delta0*delta0) + e*delta0 + f;
-    BL_FLOAT alpha0 = -(N/M_PI)*pAlpha*(2.0*d*delta0 + e);
-    BL_FLOAT beta0 = pBeta*d/a;
-#endif
     
     result->mBinIdx = peakBin + delta0;
     result->mFreq = omega0;
