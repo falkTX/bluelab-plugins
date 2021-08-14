@@ -18,12 +18,13 @@ QIFFT::FindPeak(const WDL_TypedBuf<BL_FLOAT> &magns,
     
     // Default value
     result->mBinIdx = peakBin;
-    result->mFreq = peakBin/(bufferSize*0.5); // Begin with rough computation
+    // Begin with rough computation
+    result->mFreq = ((BL_FLOAT)peakBin)/(bufferSize*0.5);
     result->mAmp = magns.Get()[peakBin];
     result->mPhase = phases.Get()[peakBin];
     result->mAlpha0 = 0.0;
     result->mBeta0 = 0.0;
-        
+    
     if ((peakBin - 1 < 0) || (peakBin + 1 >= magns.GetSize()))
         return;
 
