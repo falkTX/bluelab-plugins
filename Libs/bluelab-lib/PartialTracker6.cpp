@@ -1650,7 +1650,7 @@ PartialTracker6::DBG_DumpPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
     BLDebug::AppendValue("amp0.txt", p.mAmp);
     
     // Estimated next amp
-    const BL_FLOAT ampCoeff = 4.0*M_PI*sqrt(2.0);
+    const BL_FLOAT ampCoeff = 4.0*M_PI*sqrt(2.0); // Arbitrary coeff
     BL_FLOAT amp1 = p.mAmp + p.mAlpha0*ampCoeff;
     BLDebug::AppendValue("amp1.txt", amp1);
 
@@ -1658,7 +1658,7 @@ PartialTracker6::DBG_DumpPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
     BLDebug::AppendValue("freq0.txt", p.mFreq);
     
     // Estimated next freq
-    const BL_FLOAT freqCoeff = 2.0*M_PI*sqrt(2.0);
+    const BL_FLOAT freqCoeff = (4.0*M_PI*M_PI)*2.0*M_PI*sqrt(2.0); // Arbitrary coeff
     BL_FLOAT freq1 = p.mFreq + p.mBeta0*freqCoeff;
     BLDebug::AppendValue("freq1.txt", freq1);
 }
