@@ -10,11 +10,15 @@
 void
 QIFFT::FindPeak(const WDL_TypedBuf<BL_FLOAT> &magns,
                 const WDL_TypedBuf<BL_FLOAT> &phases,
+                int bufferSize,
                 int peakBin, Peak *result)
 {
+    // Eps used for derivative
+#define DERIV_EPS 1e-5 //1e-3 //1e-10
+    
     // Default value
     result->mBinIdx = peakBin;
-    result->mFreq = 0.0; // Not computed here...
+    result->mFreq = peakBin/(bufferSize*0.5); // Begin with rough computation
     result->mAmp = magns.Get()[peakBin];
     result->mPhase = phases.Get()[peakBin];
     result->mAlpha0 = 0.0;
@@ -22,16 +26,21 @@ QIFFT::FindPeak(const WDL_TypedBuf<BL_FLOAT> &magns,
         
     if ((peakBin - 1 < 0) || (peakBin + 1 >= magns.GetSize()))
         return;
+
+    // Bin 1 is the first usable bin (bin 0 is the fft DC)
+    // If we have a peak at bin1, we can not make parabola interploation
+    if (peakBin <= 1)
+        return;
     
     // Magns are in DB
     BL_FLOAT alpha = magns.Get()[peakBin - 1];
     BL_FLOAT beta = magns.Get()[peakBin];
     BL_FLOAT gamma = magns.Get()[peakBin + 1];
 
-    // Will avoid wrong negative result
+    // Will avoid wrong negative result in case of not true peaks
     if ((beta < alpha) || (beta < gamma))
         return;
-
+    
    // Get parabola equation coeffs a and b
     // (we already have c)
     BL_FLOAT a;
@@ -42,6 +51,9 @@ QIFFT::FindPeak(const WDL_TypedBuf<BL_FLOAT> &magns,
     // We have the true bin!
     result->mBinIdx = peakBin + c;
 
+    // Frequency
+    result->mFreq = result->mBinIdx/(bufferSize*0.5);
+        
     // We have the true amp!
     result->mAmp = beta - 0.25*(alpha - gamma)*c;
 
@@ -75,9 +87,6 @@ QIFFT::FindPeak(const WDL_TypedBuf<BL_FLOAT> &magns,
     
     // For alpha0 and beta0,
     // See: https://ccrma.stanford.edu/files/papers/stanm118.pdf
-
-    // Eps used for derivative
-#define DERIV_EPS 1e-5 //1e-3 //1e-10
 
     // Magnitudes
     //

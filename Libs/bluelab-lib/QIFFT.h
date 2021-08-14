@@ -47,6 +47,7 @@ class QIFFT
     // Custom method
     static void FindPeak(const WDL_TypedBuf<BL_FLOAT> &magns,
                          const WDL_TypedBuf<BL_FLOAT> &phases,
+                         int bufferSize,
                          int peakBin, Peak *result);
 
     // Magns should be in dB!

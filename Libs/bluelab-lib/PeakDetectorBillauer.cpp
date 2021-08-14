@@ -48,6 +48,22 @@ DetectPeaks(const WDL_TypedBuf<BL_FLOAT> &data, vector<Peak> *peaks,
     // Look for max first
     bool lookformax = true;
 
+    if (maxIndex - minIndex >= 2)
+    {
+        BL_FLOAT val0 = data.Get()[minIndex];
+        BL_FLOAT val1 = data.Get()[minIndex + 1];
+
+        if (val0 > val1)
+            // We are starting on a descending slope
+        {
+            // Start by looking for min
+            maxtab.push_back(minIndex);
+            mx = val0;
+            mxpos = minIndex;
+            lookformax = false;
+        }
+    }
+    
     for (int i = minIndex; i <= maxIndex; i++)
     {
         BL_FLOAT t = data.Get()[i];
@@ -103,8 +119,11 @@ DetectPeaks(const WDL_TypedBuf<BL_FLOAT> &data, vector<Peak> *peaks,
         p.mRightIndex = (i + 1 < mintab.size()) ? mintab[i + 1] : maxIndex;
     }
 
-    //
-    //DBG_TestPeaks(data, peaks);
+#if 0
+    bool peakOk = DBG_TestPeaks(data, *peaks);
+    if (!peakOk)
+        DBG_DumpPeaks(data, *peaks);
+#endif
     
     // Post process
     AdjustPeaksWidth(data, peaks);
@@ -162,13 +181,13 @@ PeakDetectorBillauer::AdjustPeaksWidth(const WDL_TypedBuf<BL_FLOAT> &data,
     }
 }
 
-void
+bool
 PeakDetectorBillauer::DBG_TestPeaks(const WDL_TypedBuf<BL_FLOAT> &data,
-                                    vector<Peak> *peaks)
+                                    const vector<Peak> &peaks)
 {
-    for (int i = 0; i < peaks->size(); i++)
+    for (int i = 0; i < peaks.size(); i++)
     {
-        Peak &peak = (*peaks)[i];
+        const Peak &peak = peaks[i];
 
         BL_FLOAT peakAmp = data.Get()[peak.mPeakIndex];
 
@@ -177,13 +196,26 @@ PeakDetectorBillauer::DBG_TestPeaks(const WDL_TypedBuf<BL_FLOAT> &data,
             peakAmp0 = data.Get()[peak.mPeakIndex - 1];
 
         BL_FLOAT peakAmp1 = peakAmp;
-        if (i + 1 < peaks->size())
+        if (i + 1 < peaks.size())
             peakAmp1 = data.Get()[peak.mPeakIndex + 1];
 
-        if ((peakAmp0 > peakAmp) ||
-            (peakAmp1 > peakAmp))
-        {
-            fprintf(stderr, "failed !!!!!!!!!!!\n");
-        }
+        if ((peakAmp0 > peakAmp) || (peakAmp1 > peakAmp))
+            return false;
     }
+
+    return true;
+}
+
+void
+PeakDetectorBillauer::DBG_DumpPeaks(const WDL_TypedBuf<BL_FLOAT> &data,
+                                    const vector<Peak> &peaks)
+{
+    BLDebug::DumpData("peaks-data.txt", data);
+    
+    for (int i = 0; i < peaks.size(); i++)
+    {
+        const Peak &p = peaks[i];
+        fprintf(stderr, "indices: [%d %d %d]\n",
+                p.mLeftIndex, p.mPeakIndex, p.mRightIndex);
+    }   
 }

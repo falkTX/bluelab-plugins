@@ -41,7 +41,11 @@ using namespace std;
 
 // Detect partials
 //
+#if USE_BL_PEAK_DETECTOR
 #define DETECT_PARTIALS_START_INDEX 2
+#else
+#define DETECT_PARTIALS_START_INDEX 1
+#endif
 
 #define DISCARD_FLAT_PARTIAL 1
 #define DISCARD_FLAT_PARTIAL_COEFF 25000.0 //30000.0
@@ -137,6 +141,16 @@ PartialTracker6::PartialTracker6(int bufferSize, BL_FLOAT sampleRate,
 #endif
     
     mPartialFilter = new PartialFilter(bufferSize);
+
+    // For the method DBG_DumpPartials()
+#if 0
+    BLDebug::ResetFile("ref-amp.txt");
+    BLDebug::ResetFile("ref-freq.txt");
+    BLDebug::ResetFile("amp0.txt");
+    BLDebug::ResetFile("amp1.txt");
+    BLDebug::ResetFile("freq0.txt");
+    BLDebug::ResetFile("freq1.txt");
+#endif
 }
 
 PartialTracker6::~PartialTracker6()
@@ -591,14 +605,17 @@ PartialTracker6::DetectPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
         maxIndex = magns.GetSize() - 1;
     
     vector<PeakDetector::Peak> peaks;
-    mPeakDetector->DetectPeaks(magns, &peaks,
-                               DETECT_PARTIALS_START_INDEX, maxIndex);
-
     //DBG_DumpPeaks(magns, peaks);
 
 #if !USE_QIFFT_YLOG
+    mPeakDetector->DetectPeaks(magns, &peaks,
+                               DETECT_PARTIALS_START_INDEX, maxIndex);
+    
     ComputePartials(peaks, magns, phases, outPartials);
 #else
+    mPeakDetector->DetectPeaks(mLogMagns, &peaks,
+                               DETECT_PARTIALS_START_INDEX, maxIndex);
+
     // Log
     ComputePartials(peaks, mLogMagns, phases, outPartials);
 
@@ -616,7 +633,7 @@ PartialTracker6::DetectPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
     }
 #endif
     
-    //DBG_DumpPartials(magns, *outPartials);
+    DBG_DumpPartials(magns, *outPartials);
 }
 
 // From GlueTwinPartials()
@@ -1491,11 +1508,12 @@ PartialTracker6::ComputePartials(const vector<PeakDetector::Peak> &peaks,
         BL_FLOAT peakIndexF = ComputePeakIndexParabola(magns, p.mPeakIndex);
 #else
         QIFFT::Peak qifftPeak;
-        QIFFT::FindPeak(magns, phasesUW, peak.mPeakIndex, &qifftPeak);
+        QIFFT::FindPeak(magns, phasesUW, mBufferSize, peak.mPeakIndex, &qifftPeak);
         // QIFFT::FindPeak2() is not fixed yet...
         //QIFFT::FindPeak2(magns, phasesUW, peak.mPeakIndex, &qifftPeak);
 
         p.mBinIdxF = qifftPeak.mBinIdx;
+        p.mFreq = qifftPeak.mFreq;
         p.mAmp = qifftPeak.mAmp;
         p.mPhase = qifftPeak.mPhase;
         p.mAlpha0 = qifftPeak.mAlpha0;
@@ -1512,11 +1530,13 @@ PartialTracker6::ComputePartials(const vector<PeakDetector::Peak> &peaks,
         //    p.mPeakIndex = maxIndex;
         if (p.mPeakIndex > magns.GetSize() - 1)
             p.mPeakIndex = magns.GetSize() - 1;
-        
+
+#if !USE_QIFFT
         // Remainder: freq is normalized here
         BL_FLOAT peakFreq = peakIndexF/(mBufferSize*0.5);
         p.mFreq = peakFreq;
-            
+#endif
+        
         // Kalman
         //
         // Update the estimate with the first value
@@ -1623,14 +1643,20 @@ PartialTracker6::DBG_DumpPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
     // Ref freq
     BL_FLOAT refFreq = ((BL_FLOAT)p.mPeakIndex)/magns.GetSize();
     BLDebug::AppendValue("ref-freq.txt", refFreq);
-   
+        
     // Real amp
     BLDebug::AppendValue("amp0.txt", p.mAmp);
+    
     // Estimated next amp
-    BLDebug::AppendValue("amp1.txt", p.mAmp + p.mAlpha0);
+    const BL_FLOAT ampCoeff = 4.0*M_PI*sqrt(2.0);
+    BL_FLOAT amp1 = p.mAmp + p.mAlpha0*ampCoeff;
+    BLDebug::AppendValue("amp1.txt", amp1);
 
     // Real freq
     BLDebug::AppendValue("freq0.txt", p.mFreq);
+    
     // Estimated next freq
-    BLDebug::AppendValue("freq1.txt", p.mFreq + p.mBeta0);
+    const BL_FLOAT freqCoeff = 2.0*M_PI*sqrt(2.0);
+    BL_FLOAT freq1 = p.mFreq + p.mBeta0*freqCoeff;
+    BLDebug::AppendValue("freq1.txt", freq1);
 }

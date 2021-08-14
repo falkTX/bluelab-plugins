@@ -19,7 +19,8 @@ class PeakDetectorBillauer : public PeakDetector
 protected:
     void AdjustPeaksWidth(const WDL_TypedBuf<BL_FLOAT> &data, vector<Peak> *peaks);
 
-    void DBG_TestPeaks(const WDL_TypedBuf<BL_FLOAT> &data, vector<Peak> *peaks);
+    bool DBG_TestPeaks(const WDL_TypedBuf<BL_FLOAT> &data, const vector<Peak> &peaks);
+    void DBG_DumpPeaks(const WDL_TypedBuf<BL_FLOAT> &data, const vector<Peak> &peaks);
         
     //
     BL_FLOAT mDelta;
