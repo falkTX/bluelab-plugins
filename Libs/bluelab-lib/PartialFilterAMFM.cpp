@@ -185,12 +185,11 @@ AssociatePartialsAMFM(const vector<Partial> &prevPartials,
                     // Already associated, nothing to do on this step!
                     continue;
                 
-                BL_FLOAT scoreAmp = ComputeScoreAmp(prevPartial, currentPartial);
-                BL_FLOAT scoreFreq = ComputeScoreFreq(prevPartial, currentPartial);
+                BL_FLOAT LA = ComputeLA(prevPartial, currentPartial);
+                BL_FLOAT LF = ComputeLF(prevPartial, currentPartial);
 
-                // TODO: maybe manage the scores better
-                if ((scoreAmp < 0.5) &&
-                    (scoreFreq < 0.5))
+                // TODO: maybe manage the "scores" better
+                if ((LA > 0.5) && (LF > 0.5))
                     // Associate!
                 {
                     int otherIdx =
@@ -206,18 +205,16 @@ AssociatePartialsAMFM(const vector<Partial> &prevPartials,
                         
                         stopFlag = false;
                     }
+#if 1 //0
                     else // Fight!
                     {
                         Partial &otherPartial = (*currentPartials)[otherIdx];
 
-                        BL_FLOAT otherScoreAmp =
-                            ComputeScoreAmp(prevPartial, otherPartial);
-                        BL_FLOAT otherScoreFreq =
-                            ComputeScoreFreq(prevPartial, otherPartial);
+                        BL_FLOAT otherLA = ComputeLA(prevPartial, otherPartial);
+                        BL_FLOAT otherLF = ComputeLF(prevPartial, otherPartial);
                 
                         // TODO: manage better the two scores
-                        if ((scoreAmp < otherScoreAmp) &&
-                            (scoreFreq < otherScoreFreq))
+                        if ((LA > otherLA) && (LF > otherLF))
                         // Current partial won
                         {
                             currentPartial.mId = prevPartial.mId;
@@ -235,6 +232,7 @@ AssociatePartialsAMFM(const vector<Partial> &prevPartials,
                             // Just keep it like it is!
                         }
                     }
+#endif
                 }
             }
         }
@@ -290,47 +288,71 @@ PartialFilterAMFM::FindPartialById(const vector<Partial> &partials, int idx)
     return -1;
 }
 
+// Compute amplitude likelihood
+// (increase when the penality decrease)
 BL_FLOAT
-PartialFilterAMFM::ComputeScoreAmp(const Partial &currentPartial,
-                                   const Partial &otherPartial)
+PartialFilterAMFM::ComputeLA(const Partial &currentPartial,
+                             const Partial &otherPartial)
 {
+    // Points
     BL_FLOAT a = currentPartial.mAmp; 
     BL_FLOAT b = currentPartial.mAmp + currentPartial.mAlpha0;
     BL_FLOAT c = otherPartial.mAmp; 
     BL_FLOAT d = otherPartial.mAmp - otherPartial.mAlpha0;
 
+    // Area
     BL_FLOAT area = ComputeArea(a, b, c, d);
 
+    // u
     BL_FLOAT denom = sqrt(currentPartial.mAmp*otherPartial.mAmp);
-    BL_FLOAT score = 0.0;
+    BL_FLOAT ua = 0.0;
     if (denom > BL_EPS)
-        score = score/denom;
+        ua = area/denom;
 
-    return score;
+    // Likelihood
+    BL_FLOAT LA = 1.0/(1.0 + ua);
+
+    return LA;
 }
 
+// Compute frequency likelihood
+// (increase when the penality decrease)
 BL_FLOAT
-PartialFilterAMFM::ComputeScoreFreq(const Partial &currentPartial,
-                                    const Partial &otherPartial)
+PartialFilterAMFM::ComputeLF(const Partial &currentPartial,
+                             const Partial &otherPartial)
 {
+    // Points
     BL_FLOAT a = currentPartial.mFreq; 
     BL_FLOAT b = currentPartial.mFreq + currentPartial.mBeta0;
     BL_FLOAT c = otherPartial.mFreq; 
     BL_FLOAT d = otherPartial.mFreq - otherPartial.mBeta0;
 
+    // Area
     BL_FLOAT area = ComputeArea(a, b, c, d);
 
+    // u
     BL_FLOAT denom = sqrt(currentPartial.mFreq*otherPartial.mFreq);
-    BL_FLOAT score = 0.0;
+    BL_FLOAT uf = 0.0;
     if (denom > BL_EPS)
-        score = score/denom;
+        uf = area/denom;
 
-    return score;
+    // Likelihood
+    BL_FLOAT LF = 1.0/(1.0 + uf);
+
+    return LF;
 }
 
+// Trapezoid: https://en.wikipedia.org/wiki/Trapezoid
 BL_FLOAT
 PartialFilterAMFM::ComputeArea(BL_FLOAT a, BL_FLOAT b, BL_FLOAT c, BL_FLOAT d)
 {
-    // TODO
-    return -1.0;
+    BL_FLOAT b0 = std::fabs(d - a);
+    BL_FLOAT b1 = std::fabs(c - b);
+
+    // Trapezoid height (T = 1)
+    BL_FLOAT h = 1.0;
+
+    BL_FLOAT area = (b0 + b1)*0.5*h;
+    
+    return area;
 }
