@@ -518,10 +518,14 @@ set(_bluelab-lib_src
   ParamSmoother.h
   Partial.cpp
   Partial.h
-  PartialFilter.cpp
   PartialFilter.h
   PartialsDiffEstimate.cpp
   PartialsDiffEstimate.h
+  PartialFilter.h
+  PartialFilterAMFM.cpp
+  PartialFilterAMFM.h
+  PartialFilterMarchand.cpp
+  PartialFilterMarchand.h
   PartialsToFreq2.cpp
   PartialsToFreq2.h
   PartialsToFreq3.cpp

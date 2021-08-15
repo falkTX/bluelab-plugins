@@ -4,7 +4,7 @@
 #include <algorithm>
 using namespace std;
 
-#include "PartialFilter.h"
+#include "PartialFilterMarchand.h"
 
 // Seems better without, not sure...
 #define USE_KALMAN_FOR_ASSOC 0 //1 //0
@@ -16,15 +16,15 @@ using namespace std;
 
 #define PARTIALS_HISTORY_SIZE 2
 
-PartialFilter::PartialFilter(int bufferSize)
+PartialFilterMarchand::PartialFilterMarchand(int bufferSize)
 {
     mBufferSize = bufferSize;
 }
 
-PartialFilter::~PartialFilter() {}
+PartialFilterMarchand::~PartialFilterMarchand() {}
 
 void
-PartialFilter::Reset(int bufferSize)
+PartialFilterMarchand::Reset(int bufferSize)
 {
     mBufferSize = bufferSize;
 
@@ -32,7 +32,7 @@ PartialFilter::Reset(int bufferSize)
 }
            
 void
-PartialFilter::FilterPartials(vector<Partial> *partials)
+PartialFilterMarchand::FilterPartials(vector<Partial> *partials)
 {    
     mPartials.push_front(*partials);
     
@@ -163,7 +163,7 @@ PartialFilter::FilterPartials(vector<Partial> *partials)
 
 // Use method similar to SAS
 void
-PartialFilter::
+PartialFilterMarchand::
 AssociatePartials(const vector<Partial> &prevPartials,
                   vector<Partial> *currentPartials,
                   vector<Partial> *remainingPartials)
@@ -246,7 +246,7 @@ AssociatePartials(const vector<Partial> &prevPartials,
 
 // Use PARSHL method
 void
-PartialFilter::
+PartialFilterMarchand::
 AssociatePartialsPARSHL(const vector<Partial> &prevPartials,
                         vector<Partial> *currentPartials,
                         vector<Partial> *remainingPartials)
@@ -372,7 +372,7 @@ AssociatePartialsPARSHL(const vector<Partial> &prevPartials,
 }
 
 BL_FLOAT
-PartialFilter::GetDeltaFreqCoeff(int binNum)
+PartialFilterMarchand::GetDeltaFreqCoeff(int binNum)
 {
 #define END_COEFF 0.25
     
@@ -383,7 +383,7 @@ PartialFilter::GetDeltaFreqCoeff(int binNum)
 }
 
 int
-PartialFilter::FindPartialById(const vector<Partial> &partials, int idx)
+PartialFilterMarchand::FindPartialById(const vector<Partial> &partials, int idx)
 {
     for (int i = 0; i < partials.size(); i++)
     {
