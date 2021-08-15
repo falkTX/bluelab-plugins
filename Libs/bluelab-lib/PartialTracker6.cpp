@@ -92,16 +92,6 @@ using namespace std;
 // It is better with log then just with dB!
 #define USE_QIFFT_YLOG 1
 
-// Use PeakDetector class, original BlueLab implementation
-#define USE_BL_PEAK_DETECTOR 0 //1
-
-// Use smart peak detection from http://billauer.co.il/peakdet.html
-// See also: https://github.com/xuphys/peakdetect/blob/master/peakdetect.c
-#define USE_BILLAUER_PEAK_DETECTOR 1 // 0
-
-#define USE_PARTIAL_FILTER_MARCHAND 0 //1
-#define USE_PARTIAL_FILTER_AMFM 1 //0
-
 PartialTracker6::PartialTracker6(int bufferSize, BL_FLOAT sampleRate,
                                  BL_FLOAT overlapping)
 {
