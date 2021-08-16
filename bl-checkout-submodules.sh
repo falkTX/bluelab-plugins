@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# git submodules init
+# git submodules update
+
 git pull --recurse-submodules
 
 cd bl-darknet
