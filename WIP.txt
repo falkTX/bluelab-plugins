@@ -172,7 +172,18 @@ BL-StereoWidth	    :   cop, mkd, ver, man, res, cfg, bll, blf, upt, dkw, smb, cf
 BL-Wav3s	    :   cop, mkd, ver, man, res, cfg, bll, blf, upt, dkw, smb, cf2, ff
 UST		    :   cop,
 ===
-Fail: gain24 app
+
+===
+Mac Build
+===
+"xcodebuild" crashes
+=> for each project, must select "Legacy build system" (The second one, Per use project settings)
+(and maybe remove derived data, and user prefs in .xcode proj archives)
+
+
+===
+
+- TODO: use the new design for the incons (mac plugins, installers etc.)
 
 - TESTS TODO:
 - TODO: quickly test all samplerates!
