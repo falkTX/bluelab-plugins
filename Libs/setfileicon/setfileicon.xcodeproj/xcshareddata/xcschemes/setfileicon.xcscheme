@@ -63,8 +63,12 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "/Users/applematuer/Documents/Dev/plugs-dev/bluelab/BL-Plugins/BL-Chroma/resources/BL-Chroma.icns /Users/applematuer/Documents/Dev/plugs-dev/bluelab/BL-Plugins/BL-Chroma/installer/build-mac/BL-Chroma_Installer.pkg"
+            argument = "/Users/applematuer/Documents/Dev/plugs-dev/bluelab/BL-Plugins/BL-Chroma/resources/BL-Chroma.icns /Library/Audio/Plug-Ins/Components/BL-Chroma.component"
             isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "/Users/applematuer/Documents/Dev/plugs-dev/bluelab/BL-Plugins/BL-Chroma/resources/BL-Chroma.icns /Users/applematuer/Documents/Dev/plugs-dev/bluelab/BL-Plugins/BL-Chroma/installer/build-mac/BL-Chroma_Installer.pkg"
+            isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>
       <AdditionalOptions>

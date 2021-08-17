@@ -65,8 +65,10 @@ OSStatus DeleteCustomIconForFileOrFolder(NSString* file_path) {
 	
 	FSCatalogInfo catInfo;
 	err = FSGetCatalogInfo(&resFile, kFSCatInfoFinderInfo, &catInfo, NULL, NULL, NULL);
-	if(err == noErr) ((FileInfo*)&catInfo.finderInfo)->finderFlags &= ~kHasCustomIcon;
-	if(err == noErr) err = FSSetCatalogInfo(&resFile, kFSCatInfoFinderInfo, &catInfo);
+	if(err == noErr)
+        ((FileInfo*)&catInfo.finderInfo)->finderFlags &= ~kHasCustomIcon;
+	if(err == noErr)
+        err = FSSetCatalogInfo(&resFile, kFSCatInfoFinderInfo, &catInfo);
 	if( err != noErr ) {
 		fprintf(stderr,"Cannot suppress custom icon flag for %s : error #%d\n",[file_path fileSystemRepresentation],(int)err);
 		return err;
@@ -104,7 +106,8 @@ OSStatus SetCustomIconForFileOrFolder(NSString* icon_path, NSString* file_path) 
     FSSpec resFileOld;
     FSRef resFile;
     err = FSPathMakeRef((UInt8*)[dst_icon_file fileSystemRepresentation], &resFile, false);
-    if(err == noErr) err = FSGetCatalogInfo(&resFile, 0, NULL, NULL, &resFileOld, NULL);
+    if(err == noErr)
+        err = FSGetCatalogInfo(&resFile, 0, NULL, NULL, &resFileOld, NULL);
     if( err != noErr ) {
         fprintf(stderr,"Cannot find file %s : error #%d\n",[dst_icon_file fileSystemRepresentation],(int)err);
         return err;
@@ -130,12 +133,14 @@ OSStatus SetCustomIconForFileOrFolder(NSString* icon_path, NSString* file_path) 
 		return err;
 	}
 #endif
-    // See: https://github.com/BOINC/boinc/blob/master/api/mac_icon.cpp
+    
 #if 1 // New
+    // See: https://github.com/BOINC/boinc/blob/master/api/mac_icon.cpp
     HFSUniStr255 forkName;
     
     SInt16 refnum = FSOpenResFile(&resFile, fsRdWrPerm);
     err = ResError();
+    
     if (err == eofErr) { /* EOF, resource fork/file not found */
         // If we set file type and signature to non-NULL, it makes OS mistakenly
         // identify file as a classic application instead of a UNIX executable.
@@ -144,7 +149,7 @@ OSStatus SetCustomIconForFileOrFolder(NSString* icon_path, NSString* file_path) 
         if (err == noErr) {
             err = FSCreateResourceFork(&resFile, forkName.length, forkName.unicode, 0);
         }
-        err = ResError();
+        //err = ResError(); // #bluelab comment (prevent failure when targetting a folder (e.g AU plugin)
         if (err == noErr) {
             //                rref = FSpOpenResFile(&fsspec, fsRdWrPerm);
             refnum = FSOpenResFile(&resFile, fsRdWrPerm);
@@ -159,18 +164,21 @@ OSStatus SetCustomIconForFileOrFolder(NSString* icon_path, NSString* file_path) 
 	memcpy(*icnsResource, [icns_data bytes], [icns_data length]);
 	HUnlock(icnsResource);
 	AddResource(icnsResource,'icns',-16455,"\p");
-	if((err = ResError()) == noErr ) CloseResFile(refnum);
+	if((err = ResError()) == noErr )
+        CloseResFile(refnum);
 	if((err = ResError()) != noErr ) {
 		fprintf(stderr,"Cannot write resource fork at %s : error #%d\n",[dst_icon_file fileSystemRepresentation],(int)err);
 		return err;
 	}
-
+    
 	// Setup the "hidden" flag for folder
 	FSCatalogInfo catInfo;
 	if(isFolder) {
 		err = FSGetCatalogInfo(&resFile, kFSCatInfoFinderInfo, &catInfo, NULL, NULL, NULL);
-		if(err == noErr) ((FileInfo*)&catInfo.finderInfo)->finderFlags |= kIsInvisible;
-		if(err == noErr) err = FSSetCatalogInfo(&resFile, kFSCatInfoFinderInfo, &catInfo);
+		if(err == noErr)
+            ((FileInfo*)&catInfo.finderInfo)->finderFlags |= kIsInvisible;
+		if(err == noErr)
+            err = FSSetCatalogInfo(&resFile, kFSCatInfoFinderInfo, &catInfo);
 		if( err != noErr ) {
 			fprintf(stderr,"Cannot set hidden flag for %s : error #%d\n",[dst_icon_file fileSystemRepresentation],(int)err);
 			return err;
@@ -187,8 +195,10 @@ OSStatus SetCustomIconForFileOrFolder(NSString* icon_path, NSString* file_path) 
 	}
 	
 	err = FSGetCatalogInfo(&resFile, kFSCatInfoFinderInfo, &catInfo, NULL, NULL, NULL);
-	if(err == noErr) ((FileInfo*)&catInfo.finderInfo)->finderFlags |= kHasCustomIcon;
-	if(err == noErr) err = FSSetCatalogInfo(&resFile, kFSCatInfoFinderInfo, &catInfo);
+	if(err == noErr)
+        ((FileInfo*)&catInfo.finderInfo)->finderFlags |= kHasCustomIcon;
+	if(err == noErr)
+        err = FSSetCatalogInfo(&resFile, kFSCatInfoFinderInfo, &catInfo);
 	if( err != noErr ) {
 		fprintf(stderr,"Cannot set custom icon flag for %s : error #%d\n",[file_path fileSystemRepresentation],(int)err);
 		return err;
