@@ -1,5 +1,10 @@
 #!/bin/sh
 
+# bluelabpxx@ssh.cluster026.hosting.ovh.net:bluelab.git
+
+# git submodules init
+# git submodules update
+
 git pull --recurse-submodules
 
 cd bl-darknet

@@ -82,7 +82,7 @@ protected:
         unsigned char mIsValid;
 #endif
         
-        bool operator< (const Tuple &t0)
+        bool operator< (const Tuple &t0) const
         { return (this->mMagn < t0.mMagn); } // Was tested successfully!
         
         // For optimization

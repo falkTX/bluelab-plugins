@@ -219,7 +219,7 @@ BLUtilsPlug::GetPlugIOBuffers(Plugin *plug,
 #if defined OS_MAC && defined AU_API
     if(plug->GetHost() == kHostLogic || plug->GetHost() == kHostGarageBand)
     {
-        const int sz = nFrames * sizeof(sample);
+        const int sz = nFrames * sizeof(double);
         if(!memcmp(inputs[0], inputs[2], sz))
         {
             memset(inputs[2], 0, sz);
