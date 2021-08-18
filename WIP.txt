@@ -207,6 +207,18 @@ darknet: added dbg_printf, denormal, resample_layer, stb_image)
 - App: hardened runtime: yes -> no
 
 - Added manual and license file to the .dmg
+
+Installation for mac build machine:
+- grand full access to Packages.app, packagesbuild, packagesutil, setfileicon
+- XCode: disable source control
+- sudo chown -R applematuer VST3, VST, AAX, Component
+- install python3.6, Packages etc.
+- copy setfileicon to /usr/local/bin
+- xcode select --install
+- xcode-select --switch
+- connect XCoe to AppleID website
+- install certificates (need restart keyhain, XCode, and even the whole Mac)
+
 ===
 
 - TODO: windows: add the licence to the zip (and the manual, if not already)
