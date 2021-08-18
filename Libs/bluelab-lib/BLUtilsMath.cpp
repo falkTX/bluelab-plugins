@@ -768,3 +768,27 @@ template void BLUtilsMath::LinearResample(const float *srcBuf, int srcSize,
                                           float *dstBuf, int dstSize);
 template void BLUtilsMath::LinearResample(const double *srcBuf, int srcSize,
                                           double *dstBuf, int dstSize);
+
+template <typename FLOAT_TYPE>
+FLOAT_TYPE
+BLUtilsMath::PolygonArea(const FLOAT_TYPE x[], const FLOAT_TYPE y[], int n)
+{
+    if (n < 3)
+        return 0.0;
+    
+    FLOAT_TYPE area = 0.0;
+ 
+    // Shoelace formula
+    int j = n - 1;
+    for (int i = 0; i < n; i++)
+    {
+        area += (x[j] + x[i])*(y[j] - y[i]);
+        j = i; 
+    }
+ 
+    // Return absolute value
+    return std::fabs(area*0.5);
+}
+template float BLUtilsMath::PolygonArea(const float x[], const float y[], int n);
+template double BLUtilsMath::PolygonArea(const double x[], const double y[], int n);
+    

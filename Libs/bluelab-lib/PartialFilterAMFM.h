@@ -13,10 +13,10 @@ using namespace std;
 class PartialFilterAMFM : public PartialFilter
 {
  public:
-    PartialFilterAMFM(int bufferSize);
+    PartialFilterAMFM(int bufferSize, BL_FLOAT smapleRate);
     virtual ~PartialFilterAMFM();
 
-    void Reset(int bufferSize);
+    void Reset(int bufferSize, BL_FLOAT smapleRate);
         
     void FilterPartials(vector<Partial> *partials);
 
@@ -30,12 +30,13 @@ class PartialFilterAMFM : public PartialFilter
 
     BL_FLOAT ComputeLA(const Partial &currentPartial, const Partial &otherPartial);
     BL_FLOAT ComputeLF(const Partial &currentPartial, const Partial &otherPartial);
-    BL_FLOAT ComputeArea(BL_FLOAT a, BL_FLOAT b, BL_FLOAT c, BL_FLOAT d);
+    BL_FLOAT ComputeTrapezoidArea(BL_FLOAT a, BL_FLOAT b, BL_FLOAT c, BL_FLOAT d);
         
     //
     deque<vector<Partial> > mPartials;
 
     int mBufferSize;
+    BL_FLOAT mSampleRate;
     
  private:
     vector<Partial> mTmpPartials0;

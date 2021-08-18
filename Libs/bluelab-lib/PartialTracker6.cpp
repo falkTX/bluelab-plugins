@@ -144,10 +144,10 @@ PartialTracker6::PartialTracker6(int bufferSize, BL_FLOAT sampleRate,
 #endif
 
 #if USE_PARTIAL_FILTER_MARCHAND
-    mPartialFilter = new PartialFilterMarchand(bufferSize);
+    mPartialFilter = new PartialFilterMarchand(bufferSize, sampleRate);
 #endif
 #if USE_PARTIAL_FILTER_AMFM
-    mPartialFilter = new PartialFilterAMFM(bufferSize);
+    mPartialFilter = new PartialFilterAMFM(bufferSize, sampleRate);
 #endif
 
     // For the method DBG_DumpPartials()
@@ -190,7 +190,7 @@ PartialTracker6::Reset()
     mTimeSmoothPrevNoise.Resize(0);
 
     if (mPartialFilter != NULL)
-        mPartialFilter->Reset(mBufferSize);
+        mPartialFilter->Reset(mBufferSize, mSampleRate);
 }
 
 void

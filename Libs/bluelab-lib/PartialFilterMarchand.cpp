@@ -16,7 +16,7 @@ using namespace std;
 
 #define PARTIALS_HISTORY_SIZE 2
 
-PartialFilterMarchand::PartialFilterMarchand(int bufferSize)
+PartialFilterMarchand::PartialFilterMarchand(int bufferSize, BL_FLOAT sampleRate)
 {
     mBufferSize = bufferSize;
 }
@@ -24,7 +24,7 @@ PartialFilterMarchand::PartialFilterMarchand(int bufferSize)
 PartialFilterMarchand::~PartialFilterMarchand() {}
 
 void
-PartialFilterMarchand::Reset(int bufferSize)
+PartialFilterMarchand::Reset(int bufferSize, BL_FLOAT sampleRate)
 {
     mBufferSize = bufferSize;
 
