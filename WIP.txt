@@ -205,6 +205,8 @@ Adapted all the probjects for automatic build system:
 - WDL: added convoengine
 darknet: added dbg_printf, denormal, resample_layer, stb_image)
 - App: hardened runtime: yes -> no
+
+- Added manual and license file to the .dmg
 ===
 
 - TODO: windows: add the licence to the zip (and the manual, if not already)
