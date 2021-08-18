@@ -180,10 +180,37 @@ Mac Build
 => for each project, must select "Legacy build system" (The second one, Per use project settings)
 (and maybe remove derived data, and user prefs in .xcode proj archives)
 
+For code signing:
+- remove all keychain dev certificated
+(be sure to have no certificate in red)
+- import apple certificate AppleWWDRCAG3.cer
+- import from apple website to keychain
+(be sure to not to have "missing private key", and not to be in red
+- relaunch xcode
+- choose "Mac Developer" + "Automatic" everywhere
 
+xcodebuild crash, error 4 => project settings, build system: "1st: new, second: legacy"
+For App, disabled hardened runtime
+
+Adapted all the probjects for automatic build system:
+- All-BL: added aax lib
+- added config.h when missing
+- code signing: "Mac Developer" + "Automatic"
+- Xcode, Project Settings: (new buid sstem + legacy build system)
+- bluelab-lib: removed all files, re-added all files
+  - removed PartialTracker6, SASViewerProcess4, SASViewerRender4, SASFrame5
+- IGraphics/Drawing: removed orphans
+- IGraphics: removed IGraphicsBasePath.h, added missing files
+- Added smbPitchShift files (created a "group without filder")
+- WDL: added convoengine
+darknet: added dbg_printf, denormal, resample_layer, stb_image)
+- App: hardened runtime: yes -> no
 ===
 
+- TODO: windows: add the licence to the zip (and the manual, if not already)
+
 - TODO: use the new design for the incons (mac plugins, installers etc.)
+- TODO(maybe): add the manual in the zip for mac (or in the dmg)
 
 - TESTS TODO:
 - TODO: quickly test all samplerates!
