@@ -8,7 +8,6 @@
 
 #ifdef IGRAPHICS_NANOVG
 
-#include <LinesRender.h>
 #include <Axis3D.h>
 
 #include <BLUtils.h>
@@ -25,6 +24,9 @@
 // Artificially modify the coeff, to increase the spread on the grid
 #define MEL_COEFF 4.0
 
+// Do noty skpi any slices
+#define DBG_DISPLAY_ALL_SLICES 0 //1
+
 SASViewerRender4::SASViewerRender4(SASViewerPluginInterface *plug,
                                    GraphControl12 *graphControl,
                                    BL_FLOAT sampleRate, int bufferSize)
@@ -40,6 +42,13 @@ SASViewerRender4::SASViewerRender4(SASViewerPluginInterface *plug,
         mLinesRenders[i]->SetMode(LinesRender2::LINES_FREQ);
 
         mLinesRenders[i]->SetUseLegacyLock(true);
+
+#if DBG_DISPLAY_ALL_SLICES
+        mLinesRenders[i]->DBG_SetDisplayAllSlices();
+#endif
+
+        // Fix, to have the detection points synchronized to the lines
+        mLinesRenders[i]->DBG_FixDensityNumSlices();
     }
     
     mCurrentMode = SASViewerProcess4::TRACKING;

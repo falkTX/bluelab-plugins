@@ -603,7 +603,7 @@ SASViewerProcess4::DisplayDetection()
 
         //
         int numSlices = mSASViewerRender->GetNumSlices();
-        
+
         // Keep track of the points we pop
         vector<LinesRender2::Point> prevPoints;
         // Initialize, just in case

@@ -344,7 +344,7 @@ PartialFilterAMFM::FindPartialById(const vector<Partial> &partials, int idx)
 BL_FLOAT
 PartialFilterAMFM::ComputeLA(const Partial &currentPartial,
                              const Partial &otherPartial)
-{
+{    
 #if 0 // Use trapezoid
     // Points
     BL_FLOAT a = currentPartial.mAmp; 
