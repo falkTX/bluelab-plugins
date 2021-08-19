@@ -64,7 +64,7 @@ using namespace std;
 #define FILTER_PARTIALS 1
 
 // GOOD: avoid many small zig-zags on the result lines
-#define USE_KALMAN_FOR_RESULT 1
+//#define USE_KALMAN_FOR_RESULT 1
 
 #define PROCESS_MUS_NOISE      1 // Working (but dos not remove all mus noise)
 // 4 seems better than 2
@@ -559,12 +559,12 @@ PartialTracker6::GetPartials(vector<Partial> *partials)
 {
     *partials = mResult;
     
-#if USE_KALMAN_FOR_RESULT
-    for (int i = 0; i < partials->size(); i++)
-    {
-        (*partials)[i].mFreq = (*partials)[i].mPredictedFreq;
-    }
-#endif
+    /*#if USE_KALMAN_FOR_RESULT
+      for (int i = 0; i < partials->size(); i++)
+      {
+      (*partials)[i].mFreq = (*partials)[i].mPredictedFreq;
+      }
+      #endif*/
     
     // For sending good result to SASFrame
     RemoveRealDeadPartials(partials);
@@ -789,7 +789,7 @@ PartialTracker6::GluePartialBarbs(const WDL_TypedBuf<BL_FLOAT> &magns,
             
             // Kalman
             res.mKf.initEstimate(res.mFreq);
-            res.mPredictedFreq = res.mFreq;
+            //res.mPredictedFreq = res.mFreq;
             
             // Do not set mPhase for now
             
@@ -1559,7 +1559,7 @@ PartialTracker6::ComputePartials(const vector<PeakDetector::Peak> &peaks,
         p.mKf.initEstimate(p.mFreq);
         
         // For predicted freq to be freq for the first value
-        p.mPredictedFreq = p.mFreq;
+        //p.mPredictedFreq = p.mFreq;
         
         // Default value. Will be overwritten
         //BL_FLOAT peakAmp = data.Get()[(int)peakIndexF];

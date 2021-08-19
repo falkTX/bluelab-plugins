@@ -31,7 +31,12 @@ class PartialFilterAMFM : public PartialFilter
     BL_FLOAT ComputeLA(const Partial &currentPartial, const Partial &otherPartial);
     BL_FLOAT ComputeLF(const Partial &currentPartial, const Partial &otherPartial);
     BL_FLOAT ComputeTrapezoidArea(BL_FLOAT a, BL_FLOAT b, BL_FLOAT c, BL_FLOAT d);
-        
+
+    void ExtrapolatePartialAMFM(Partial *p);
+    void ExtrapolatePartialKalman(Partial *p);
+    
+    void DBG_PrintPartials(const vector<Partial> &partials);
+    
     //
     deque<vector<Partial> > mPartials;
 

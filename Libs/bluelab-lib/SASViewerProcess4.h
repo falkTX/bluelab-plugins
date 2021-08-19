@@ -114,6 +114,8 @@ protected:
     // Display
     void DisplayDetection();
     void DisplayDetectionBeta0(bool addData); // Variation
+    void DisplayZombiePoints();
+    
     void DisplayTracking();
     
     void DisplayHarmo();
@@ -127,6 +129,10 @@ protected:
                        vector<LinesRender2::Line> *lines);
     void SegmentsToLines(const deque<vector<vector<LinesRender2::Point> > >&segments,
                          vector<LinesRender2::Line> *lines);
+
+    void PointsToLinesMix(const deque<vector<LinesRender2::Point> > &points0,
+                          const deque<vector<LinesRender2::Point> > &points1,
+                          vector<LinesRender2::Line> *lines);
     
     //
     WDL_TypedBuf<BL_FLOAT> mCurrentMagns;
@@ -151,6 +157,9 @@ protected:
 
     // For displaying beta0
     deque<vector<vector<LinesRender2::Point> > > mPartialsSegments;
+
+    // For zombie points
+    deque<vector<LinesRender2::Point> > mPartialsPointsZombie;
     
     // For tracking display
     deque<vector<LinesRender2::Point> > mFilteredPartialsPoints;

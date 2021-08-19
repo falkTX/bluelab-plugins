@@ -11,13 +11,14 @@ using namespace std;
 
 #include "PartialFilterAMFM.h"
 
-#define MAX_ZOMBIE_AGE 2
+#define MAX_ZOMBIE_AGE 5 //2
+#define PARTIALS_HISTORY_SIZE 2 //2
 
-#define PARTIALS_HISTORY_SIZE 2
 
-// Disabled for AMFM
-#define DISABLE_KALMAN 1
-
+#define EXTRAPOLATE_KALMAN 0 //1 //0
+// Propagate dead and zombies with alpha0 and beta0
+// Problem: at partial crossing, alpha0 (for amp) sometimes has big values 
+#define EXTRAPOLATE_AMFM 0 //1
 
 PartialFilterAMFM::PartialFilterAMFM(int bufferSize, BL_FLOAT sampleRate)
 {
@@ -113,11 +114,18 @@ PartialFilterAMFM::FilterPartials(vector<Partial> *partials)
                 newPartial.mState = Partial::ZOMBIE;
                 newPartial.mZombieAge = 0;
 
-#if !DISABLE_KALMAN
-                // Kalman:
-                // GOOD: extrapolate the zombies
-                newPartial.mPredictedFreq =
-                    newPartial.mKf.updateEstimate(newPartial.mFreq);
+#if 1 // Good, extrapolate zombies
+                
+#if EXTRAPOLATE_KALMAN
+                //newPartial.mPredictedFreq =
+                //newPartial.mFreq = newPartial.mKf.updateEstimate(newPartial.mFreq);
+                ExtrapolatePartialKalman(&newPartial);
+#endif
+
+#if EXTRAPOLATE_AMFM
+                ExtrapolatePartialAMFM(&newPartial);
+#endif
+
 #endif
                 
                 currentPartials.push_back(newPartial);
@@ -128,14 +136,25 @@ PartialFilterAMFM::FilterPartials(vector<Partial> *partials)
                 
                 newPartial.mZombieAge++;
                 if (newPartial.mZombieAge >= MAX_ZOMBIE_AGE)
+                {
                     newPartial.mState = Partial::DEAD;
-
-#if !DISABLE_KALMAN
-                // Kalman
-                // GOOD: extrapolate the zombies
-                newPartial.mPredictedFreq =
-                    newPartial.mKf.updateEstimate(newPartial.mFreq);
+                }
+                else
+                {
+#if 1
+                
+#if EXTRAPOLATE_KALMAN
+                    //newPartial.mPredictedFreq =
+                    //newPartial.mFreq = newPartial.mKf.updateEstimate(newPartial.mFreq);
+                    ExtrapolatePartialKalman(&newPartial);
 #endif
+
+#if EXTRAPOLATE_AMFM
+                    ExtrapolatePartialAMFM(&newPartial);
+#endif
+                
+#endif
+                }
                 
                 currentPartials.push_back(newPartial);
             }
@@ -171,15 +190,25 @@ PartialFilterAMFM::FilterPartials(vector<Partial> *partials)
     for (int i = 0; i < currentPartials.size(); i++)
     {
         const Partial &currentPartial = currentPartials[i];
-        
+
+#if 0 // ORIGIN
         // TEST: do not skip the dead partials:
         // they will be used for fade out !
         //if (currentPartial.mState != Partial::DEAD)
         mPartials[0].push_back(currentPartial);
+#endif
+
+#if 1
+        if (currentPartial.mState != Partial::DEAD)
+            mPartials[0].push_back(currentPartial);
+#endif
     }
 
     *partials = mPartials[0];
 
+    // DEBUG
+    DBG_PrintPartials(*partials);
+    
     BL_FLOAT coeff = 1.0/(mSampleRate*0.5);
     for (int i = 0; i < partials->size(); i++)
     {
@@ -187,9 +216,9 @@ PartialFilterAMFM::FilterPartials(vector<Partial> *partials)
         p.mFreq *= coeff;
         p.mBeta0 *= coeff;
 
-#if DISABLE_KALMAN
-        p.mPredictedFreq = p.mFreq;
-#endif
+        //#if !EXTRAPOLATE_KALMAN
+        //p.mPredictedFreq = p.mFreq;
+        //#endif
     }
 }
 
@@ -239,7 +268,7 @@ AssociatePartialsAMFM(const vector<Partial> &prevPartials,
                         currentPartial.mId = prevPartial.mId;
                         currentPartial.mAge = prevPartial.mAge;
 
-#if !DISABLE_KALMAN
+#if EXTRAPOLATE_KALMAN
                         currentPartial.mKf = prevPartial.mKf; //
 #endif
                         
@@ -259,13 +288,12 @@ AssociatePartialsAMFM(const vector<Partial> &prevPartials,
                         // TODO: manage better the two scores
                         //if ((LA > otherLA) && (LF > otherLF))
                         if (j0 > j1)
-                        //if (LF > otherLF) // TEST
                         // Current partial won
                         {
                             currentPartial.mId = prevPartial.mId;
                             currentPartial.mAge = prevPartial.mAge;
 
-#if !DISABLE_KALMAN
+#if EXTRAPOLATE_KALMAN
                             currentPartial.mKf = prevPartial.mKf; //
 #endif
                             
@@ -294,7 +322,7 @@ AssociatePartialsAMFM(const vector<Partial> &prevPartials,
     for (int j = 0; j < currentPartials->size(); j++)
     {
         Partial &currentPartial = (*currentPartials)[j];
-        
+
         if (currentPartial.mId != -1)
         {
             currentPartial.mState = Partial::ALIVE;
@@ -303,9 +331,19 @@ AssociatePartialsAMFM(const vector<Partial> &prevPartials,
             // Increment age
             currentPartial.mAge = currentPartial.mAge + 1;
 
-#if !DISABLE_KALMAN
-            currentPartial.mPredictedFreq =
-                    currentPartial.mKf.updateEstimate(currentPartial.mFreq);
+#if 0 // No need
+            
+#if EXTRAPOLATE_KALMAN
+            //currentPartial.mPredictedFreq =
+            //currentPartial.mFreq =
+            //    currentPartial.mKf.updateEstimate(currentPartial.mFreq);
+            ExtrapolatePartialKalman(&currentPartial);
+#endif
+            
+#if EXTRAPOLATE_AMFM
+            ExtrapolatePartialAMFM(&currentPartial);
+#endif
+
 #endif
             
             newPartials.push_back(currentPartial);
@@ -344,7 +382,7 @@ PartialFilterAMFM::FindPartialById(const vector<Partial> &partials, int idx)
 BL_FLOAT
 PartialFilterAMFM::ComputeLA(const Partial &currentPartial,
                              const Partial &otherPartial)
-{    
+{
 #if 0 // Use trapezoid
     // Points
     BL_FLOAT a = currentPartial.mAmp; 
@@ -441,12 +479,6 @@ PartialFilterAMFM::ComputeLF(const Partial &currentPartial,
     
     // Likelihood
     BL_FLOAT LF = 1.0/(1.0 + uf);
-
-    /*if ((LF > 0.5) &&
-      (fabs(otherPartial.mFreq - currentPartial.mFreq) > 500.0))
-      {
-      int dummy = 0;
-      }*/
         
     return LF;
 }
@@ -467,3 +499,44 @@ PartialFilterAMFM::ComputeTrapezoidArea(BL_FLOAT a, BL_FLOAT b,
     return area;
 }
 
+// Extrapolate the partial with alpha0 and beta0
+void
+PartialFilterAMFM::ExtrapolatePartialAMFM(Partial *p)
+{
+    // Amp is normalized
+    p->mAmp += p->mAlpha0;
+    if (p->mAmp < 0.0)
+        p->mAmp = 0.0;
+    if (p->mAmp > 1.0)
+        p->mAmp = 1.0;
+
+    // Freq is real freq
+    p->mFreq += p->mBeta0;
+    if (p->mFreq < 0.0)
+        p->mFreq = 0.0;
+    if (p->mFreq > mSampleRate*0.5)
+        p->mFreq = mSampleRate*0.5;
+}
+
+void
+PartialFilterAMFM::ExtrapolatePartialKalman(Partial *p)
+{
+    p->mFreq /= mSampleRate*0.5;
+    
+    p->mFreq = p->mKf.updateEstimate(p->mFreq);
+
+    p->mFreq *= mSampleRate*0.5;
+}
+
+void
+PartialFilterAMFM::DBG_PrintPartials(const vector<Partial> &partials)
+{
+    fprintf(stderr, "-------------------\n");
+    for (int i = 0; i < partials.size(); i++)
+    {
+        const Partial &p = partials[i];
+        
+        fprintf(stderr, "id: %ld state: %d amp: %g freq: %g\n",
+                p.mId, p.mState, p.mAmp, p.mFreq);
+    }
+}

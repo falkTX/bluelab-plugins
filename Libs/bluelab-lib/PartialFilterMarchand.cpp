@@ -99,8 +99,8 @@ PartialFilterMarchand::FilterPartials(vector<Partial> *partials)
                 
                 // Kalman:
                 // GOOD: extrapolate the zombies
-                newPartial.mPredictedFreq =
-                    newPartial.mKf.updateEstimate(newPartial.mFreq);
+                //newPartial.mPredictedFreq =
+                newPartial.mFreq = newPartial.mKf.updateEstimate(newPartial.mFreq);
                 
                 currentPartials.push_back(newPartial);
             }
@@ -114,8 +114,8 @@ PartialFilterMarchand::FilterPartials(vector<Partial> *partials)
   
                 // Kalman
                 // GOOD: extrapolate the zombies
-                newPartial.mPredictedFreq =
-                    newPartial.mKf.updateEstimate(newPartial.mFreq);
+                //newPartial.mPredictedFreq =
+                newPartial.mFreq = newPartial.mKf.updateEstimate(newPartial.mFreq);
 
                 currentPartials.push_back(newPartial);
             }
@@ -218,8 +218,9 @@ AssociatePartials(const vector<Partial> &prevPartials,
             
                 // Kalman
                 currentPartial.mKf = prevPartial.mKf;
-                currentPartial.mPredictedFreq =
-                            currentPartial.mKf.updateEstimate(currentPartial.mFreq);
+                //currentPartial.mPredictedFreq =
+                currentPartial.mFreq =
+                    currentPartial.mKf.updateEstimate(currentPartial.mFreq);
 
                 currentPartialsAssoc.push_back(currentPartial);
                 
@@ -351,8 +352,9 @@ AssociatePartialsPARSHL(const vector<Partial> &prevPartials,
     
             // Increment age
             currentPartial.mAge = currentPartial.mAge + 1;
-            currentPartial.mPredictedFreq =
-                    currentPartial.mKf.updateEstimate(currentPartial.mFreq);
+            //currentPartial.mPredictedFreq =
+            currentPartial.mFreq =
+                currentPartial.mKf.updateEstimate(currentPartial.mFreq);
     
             newPartials.push_back(currentPartial);
         }

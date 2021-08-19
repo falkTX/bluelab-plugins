@@ -10,7 +10,7 @@ class Partial
  public:
     enum State
     {
-        ALIVE,
+        ALIVE = 0,
         ZOMBIE,
         DEAD
     };
@@ -63,7 +63,7 @@ class Partial
     BL_FLOAT mCookie;
         
     SimpleKalmanFilter mKf;
-    BL_FLOAT mPredictedFreq;
+    //BL_FLOAT mPredictedFreq;
 
     // QIFFT
     BL_FLOAT mBinIdxF;
