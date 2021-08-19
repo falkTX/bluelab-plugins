@@ -1281,6 +1281,8 @@ void
 LinesRender2::DBG_FixDensityNumSlices()
 {
     mNumSlices = DENSITY_MAX_NUM_SLICES;
+
+    Init();
 }
 
 void
