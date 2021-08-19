@@ -618,8 +618,6 @@ SASViewerProcess4::DisplayDetection()
             mPartialsPoints.pop_front();
         }
         
-        //CreateLines(prevPoints);
-        
         // It is cool like that: lite blue with alpha
         //unsigned char color[4] = { 64, 64, 255, 255 };
         // Magenta
@@ -645,7 +643,7 @@ SASViewerProcess4::DisplayDetection()
         }
 
         // Update Z
-        int divisor = mSASViewerRender->GetNumSlices() - 1;
+        int divisor = mSASViewerRender->GetNumSlices(); // - 1;
         if (divisor <= 0)
             divisor = 1;
         BL_FLOAT incrZ = 1.0/divisor;
@@ -658,7 +656,7 @@ SASViewerProcess4::DisplayDetection()
             
             BL_FLOAT z = line2[0].mZ;
             z -= incrZ;
-            
+
             for (int i = 0; i < line2.size(); i++)
             {
                 LinesRender2::Point &p = line2[i];
@@ -792,7 +790,7 @@ SASViewerProcess4::DisplayDetectionBeta0(bool addData)
             mPartialsSegments.pop_front();
         
         // Update Z
-        int divisor = mSASViewerRender->GetNumSlices() - 1;
+        int divisor = mSASViewerRender->GetNumSlices(); // - 1;
         if (divisor <= 0)
             divisor = 1;
         BL_FLOAT incrZ = 1.0/divisor;
@@ -1133,7 +1131,7 @@ SASViewerProcess4::CreateLines(const vector<LinesRender2::Point> &prevPoints)
     
     // Update z for the current line points
     //
-    int divisor = mSASViewerRender->GetNumSlices() - 1;
+    int divisor = mSASViewerRender->GetNumSlices(); // - 1;
     if (divisor <= 0)
         divisor = 1;
     BL_FLOAT incrZ = 1.0/divisor;
@@ -1176,7 +1174,10 @@ SASViewerProcess4::CreateLines(const vector<LinesRender2::Point> &prevPoints)
     for (int i = 0; i < newPoints.size(); i++)
     {
         LinesRender2::Point newPoint = newPoints[i];
-        newPoint.mZ = 1.0;
+
+        //newPoint.mZ = 1.0;
+        // Adjust
+        newPoint.mZ = 1.0 - incrZ;
         
         bool pointAdded = false;
         
