@@ -13,6 +13,8 @@ QIFFT::FindPeak(const WDL_TypedBuf<BL_FLOAT> &magns,
                 int bufferSize,
                 int peakBin, Peak *result)
 {
+    // Here, magns are in log scale
+    
     // Eps used for derivative
 #define DERIV_EPS 1e-5 //1e-3 //1e-10
     
