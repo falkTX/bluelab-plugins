@@ -127,8 +127,9 @@ PartialFilterAMFM::FilterPartials(vector<Partial> *partials)
 #endif
 
 #endif
-                
-                currentPartials.push_back(newPartial);
+                // If MAX_ZOMBIE_AGE is 0, do not generate zombies
+                if (newPartial.mZombieAge < MAX_ZOMBIE_AGE)
+                    currentPartials.push_back(newPartial);
             }
             else if (prevPartial.mState == Partial::ZOMBIE)
             {
@@ -252,6 +253,8 @@ AssociatePartialsAMFM(const vector<Partial> &prevPartials,
                 
                 BL_FLOAT LA = ComputeLA(prevPartial, currentPartial);
                 BL_FLOAT LF = ComputeLF(prevPartial, currentPartial);
+
+                //fprintf(stderr, "LA: %g LF: %g\n", LA, LF);
 
                 // TODO: maybe manage the "scores" better
                 if ((LA > 0.5) && (LF > 0.5))

@@ -57,6 +57,10 @@
 #define VIEW_BETA0_COEFF 0.02/EMPIR_BETA0_COEFF // Blue segments, for freqs
 #endif
 
+// If not set to 1, we will skip steps, depending on the speed
+// (for example we won't display every wombie point)
+#define DISPLAY_EVERY_STEP 1 // 0
+
 SASViewerProcess4::SASViewerProcess4(int bufferSize,
                                      BL_FLOAT overlapping, BL_FLOAT oversampling,
                                      BL_FLOAT sampleRate)
@@ -198,7 +202,7 @@ SASViewerProcess4::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     {
         vector<Partial> normPartials;
         mPartialTracker->GetPartials(&normPartials);
-            
+
         //#if FORCE_NON_FILTERED_FIRTS_PARTIALS
         //if (normPartials.empty())
         //normPartials = rawPartials;
@@ -457,6 +461,7 @@ SASViewerProcess4::SetTimeSmoothNoiseCoeff(BL_FLOAT coeff)
 void
 SASViewerProcess4::Display()
 {
+#if !DISPLAY_EVERY_STEP
     if (mSASViewerRender != NULL)
     {
         int speed = mSASViewerRender->GetSpeed();
@@ -465,7 +470,8 @@ SASViewerProcess4::Display()
     
     if (mSkipAdd)
         return;
-
+#endif
+    
 #if DBG_DISPLAY_BETA0
     DisplayDetectionBeta0(false);
 #endif
@@ -873,7 +879,7 @@ SASViewerProcess4::DisplayZombiePoints()
             
             line.push_back(p);
         }
-
+        
         //
         int numSlices = mSASViewerRender->GetNumSlices();
 
