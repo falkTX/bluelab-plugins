@@ -11,11 +11,11 @@ using namespace std;
 
 #include "PartialFilterAMFM.h"
 
-#define MAX_ZOMBIE_AGE 5 //2
+#define MAX_ZOMBIE_AGE 3 //2 //5 //2
 #define PARTIALS_HISTORY_SIZE 2 //2
 
 
-#define EXTRAPOLATE_KALMAN 0 //1 //0
+#define EXTRAPOLATE_KALMAN 0 // 1
 // Propagate dead and zombies with alpha0 and beta0
 // Problem: at partial crossing, alpha0 (for amp) sometimes has big values 
 #define EXTRAPOLATE_AMFM 0 //1
@@ -208,7 +208,7 @@ PartialFilterAMFM::FilterPartials(vector<Partial> *partials)
     *partials = mPartials[0];
 
     // DEBUG
-    DBG_PrintPartials(*partials);
+    //DBG_PrintPartials(*partials);
     
     BL_FLOAT coeff = 1.0/(mSampleRate*0.5);
     for (int i = 0; i < partials->size(); i++)
@@ -253,8 +253,6 @@ AssociatePartialsAMFM(const vector<Partial> &prevPartials,
                 
                 BL_FLOAT LA = ComputeLA(prevPartial, currentPartial);
                 BL_FLOAT LF = ComputeLF(prevPartial, currentPartial);
-
-                //fprintf(stderr, "LA: %g LF: %g\n", LA, LF);
 
                 // TODO: maybe manage the "scores" better
                 if ((LA > 0.5) && (LF > 0.5))
