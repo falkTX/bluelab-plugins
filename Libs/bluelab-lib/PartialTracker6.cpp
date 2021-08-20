@@ -660,8 +660,10 @@ PartialTracker6::DetectPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
 
     // Log
     ComputePartials(peaks, mLogMagns, phases, outPartials);
-    
+
     // Adjust the scale
+    //
+    // NOTE: we keep alpha0 in log scale
     for (int i = 0; i < outPartials->size(); i++)
     {
         Partial &p = (*outPartials)[i];
@@ -1222,12 +1224,12 @@ PartialTracker6::PreProcess(WDL_TypedBuf<BL_FLOAT> *magns,
     // ORIGIN: smooth only magns
     // NOTE: tested smooting on complex => gave more noisy result
     PreProcessTimeSmooth(magns);
-
+    
     // Use time smooth on raw magns too
     // (time smoothed, but linearly scaled)
     mLinearMagns = *magns;
     PreProcessDataY(&mLinearMagns); // We want raw data in dB (just keep linear on x)
-
+    
 #if USE_QIFFT_YLOG
     mLogMagns = *magns;
     mScale->ApplyScaleForEach(mYScale2, &mLogMagns);
