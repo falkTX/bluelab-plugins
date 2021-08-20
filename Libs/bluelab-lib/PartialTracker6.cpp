@@ -64,7 +64,7 @@ using namespace std;
 #define FILTER_PARTIALS 1
 
 // GOOD: avoid many small zig-zags on the result lines
-#define USE_KALMAN_FOR_RESULT 1
+//#define USE_KALMAN_FOR_RESULT 1
 
 #define PROCESS_MUS_NOISE      1 // Working (but dos not remove all mus noise)
 // 4 seems better than 2
@@ -144,10 +144,10 @@ PartialTracker6::PartialTracker6(int bufferSize, BL_FLOAT sampleRate,
 #endif
 
 #if USE_PARTIAL_FILTER_MARCHAND
-    mPartialFilter = new PartialFilterMarchand(bufferSize);
+    mPartialFilter = new PartialFilterMarchand(bufferSize, sampleRate);
 #endif
 #if USE_PARTIAL_FILTER_AMFM
-    mPartialFilter = new PartialFilterAMFM(bufferSize);
+    mPartialFilter = new PartialFilterAMFM(bufferSize, sampleRate);
 #endif
 
     // For the method DBG_DumpPartials()
@@ -190,7 +190,7 @@ PartialTracker6::Reset()
     mTimeSmoothPrevNoise.Resize(0);
 
     if (mPartialFilter != NULL)
-        mPartialFilter->Reset(mBufferSize);
+        mPartialFilter->Reset(mBufferSize, mSampleRate);
 }
 
 void
@@ -511,7 +511,41 @@ PartialTracker6::FilterPartials()
 {    
 #if FILTER_PARTIALS
     //FilterPartials(&mResult);
+
+#if USE_PARTIAL_FILTER_AMFM
+    // Adjust the scale
+    for (int i = 0; i < mResult.size(); i++)
+    {
+        Partial &p = mResult[i];
+
+        BL_FLOAT amp =
+            mScale->ApplyScale(mYScaleInv, p.mAmp,
+                               (BL_FLOAT)MIN_AMP_DB, (BL_FLOAT)0.0);
+        
+        BL_FLOAT ampNorm =
+            mScale->ApplyScale(mYScale2, amp,
+                               (BL_FLOAT)MIN_AMP_DB, (BL_FLOAT)0.0);
+        p.mAmp = ampNorm;
+    }
+#endif
+    
     mPartialFilter->FilterPartials(&mResult);
+
+#if USE_PARTIAL_FILTER_AMFM
+    // Adjust the scale
+    for (int i = 0; i < mResult.size(); i++)
+    {
+        Partial &p = mResult[i];
+        BL_FLOAT ampNorm =
+            mScale->ApplyScale(mYScaleInv2, p.mAmp,
+                               (BL_FLOAT)MIN_AMP_DB, (BL_FLOAT)0.0);
+        BL_FLOAT ampDbNorm =
+            mScale->ApplyScale(mYScale, ampNorm,
+                               (BL_FLOAT)MIN_AMP_DB, (BL_FLOAT)0.0);
+        p.mAmp = ampDbNorm;
+    }
+#endif
+    
 #endif
 }
 
@@ -559,12 +593,12 @@ PartialTracker6::GetPartials(vector<Partial> *partials)
 {
     *partials = mResult;
     
-#if USE_KALMAN_FOR_RESULT
-    for (int i = 0; i < partials->size(); i++)
-    {
-        (*partials)[i].mFreq = (*partials)[i].mPredictedFreq;
-    }
-#endif
+    /*#if USE_KALMAN_FOR_RESULT
+      for (int i = 0; i < partials->size(); i++)
+      {
+      (*partials)[i].mFreq = (*partials)[i].mPredictedFreq;
+      }
+      #endif*/
     
     // For sending good result to SASFrame
     RemoveRealDeadPartials(partials);
@@ -626,8 +660,10 @@ PartialTracker6::DetectPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
 
     // Log
     ComputePartials(peaks, mLogMagns, phases, outPartials);
-    
+
     // Adjust the scale
+    //
+    // NOTE: we keep alpha0 in log scale
     for (int i = 0; i < outPartials->size(); i++)
     {
         Partial &p = (*outPartials)[i];
@@ -789,7 +825,7 @@ PartialTracker6::GluePartialBarbs(const WDL_TypedBuf<BL_FLOAT> &magns,
             
             // Kalman
             res.mKf.initEstimate(res.mFreq);
-            res.mPredictedFreq = res.mFreq;
+            //res.mPredictedFreq = res.mFreq;
             
             // Do not set mPhase for now
             
@@ -1188,12 +1224,12 @@ PartialTracker6::PreProcess(WDL_TypedBuf<BL_FLOAT> *magns,
     // ORIGIN: smooth only magns
     // NOTE: tested smooting on complex => gave more noisy result
     PreProcessTimeSmooth(magns);
-
+    
     // Use time smooth on raw magns too
     // (time smoothed, but linearly scaled)
     mLinearMagns = *magns;
     PreProcessDataY(&mLinearMagns); // We want raw data in dB (just keep linear on x)
-
+    
 #if USE_QIFFT_YLOG
     mLogMagns = *magns;
     mScale->ApplyScaleForEach(mYScale2, &mLogMagns);
@@ -1559,7 +1595,7 @@ PartialTracker6::ComputePartials(const vector<PeakDetector::Peak> &peaks,
         p.mKf.initEstimate(p.mFreq);
         
         // For predicted freq to be freq for the first value
-        p.mPredictedFreq = p.mFreq;
+        //p.mPredictedFreq = p.mFreq;
         
         // Default value. Will be overwritten
         //BL_FLOAT peakAmp = data.Get()[(int)peakIndexF];

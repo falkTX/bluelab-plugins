@@ -207,7 +207,9 @@ public:
     void SetColors(unsigned char color0[4], unsigned char color1[4]);
     
     void DBG_ForceDensityNumSlices();
-
+    void DBG_SetDisplayAllSlices();
+    void DBG_FixDensityNumSlices();
+    
 protected:
     void AddSliceLF(const vector<Point> &points);
     

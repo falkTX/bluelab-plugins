@@ -10,7 +10,7 @@ using namespace std;
 class PartialFilter
 {
  public:
-    virtual void Reset(int bufferSize) = 0;
+    virtual void Reset(int bufferSize, BL_FLOAT smapleRate) = 0;
         
     virtual void FilterPartials(vector<Partial> *partials) = 0;
 };

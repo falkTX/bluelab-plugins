@@ -37,7 +37,6 @@ using namespace std;
 #define BUFFER_SIZE 2048
 
 #define NUM_TOTAL_SLICES 32
-
 #define MIN_SPEED 1
 #define MAX_SPEED 8
 
@@ -123,7 +122,7 @@ LinesRender2::LinesRender2()
     mCamFov = MAX_FOV;
     
     mNumSlices = NUM_TOTAL_SLICES;
-    
+        
     mWhitePixImg = -1;
         
     mMode = LinesRender2::POINTS;
@@ -278,9 +277,7 @@ LinesRender2::SetNumSlices(long numSlices)
     mMustRecomputeProj = true;
     
     if (mDbgForceDensityNumSlices)
-    {
         mDensityNumSlices = mNumSlices;
-    }
 
     mNeedRedraw = true;
 }
@@ -1256,14 +1253,12 @@ void
 LinesRender2::SetDensity(BL_FLOAT density)
 {
     mDensityNumSlices = (1.0 - density)*DENSITY_MIN_NUM_SLICES +
-                                density*DENSITY_MAX_NUM_SLICES;
+        density*DENSITY_MAX_NUM_SLICES;
     
     mMustRecomputeProj = true;
     
     if (mDbgForceDensityNumSlices)
-    {
         mDensityNumSlices = mNumSlices;
-    }
 }
 
 void
@@ -1274,6 +1269,20 @@ LinesRender2::DBG_ForceDensityNumSlices()
     mDensityNumSlices = mNumSlices;
     
     mMustRecomputeProj = true;
+}
+
+void
+LinesRender2::DBG_SetDisplayAllSlices()
+{
+    mDisplayAllSlices = true;
+}
+
+void
+LinesRender2::DBG_FixDensityNumSlices()
+{
+    mNumSlices = DENSITY_MAX_NUM_SLICES;
+
+    Init();
 }
 
 void

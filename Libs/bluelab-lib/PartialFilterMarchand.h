@@ -11,10 +11,10 @@ using namespace std;
 class PartialFilterMarchand : public PartialFilter
 {
  public:
-    PartialFilterMarchand(int bufferSize);
+    PartialFilterMarchand(int bufferSize, BL_FLOAT sampleRate);
     virtual ~PartialFilterMarchand();
 
-    void Reset(int bufferSize);
+    void Reset(int bufferSize, BL_FLOAT sampleRate);
         
     void FilterPartials(vector<Partial> *partials);
 

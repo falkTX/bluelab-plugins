@@ -44,6 +44,7 @@
 #define USE_PRUSA_PHASES_ESTIM 0 //1
 
 #define DBG_DISPLAY_BETA0 1
+#define DBG_DISPLAY_ZOMBIES 1
 
 // Bypass all processing (was for testing fft reconstruction with gaussian windows
 #define DBG_BYPASS 0 //1 // 0
@@ -55,6 +56,10 @@
 #define VIEW_ALPHA0_COEFF 50.0/EMPIR_ALPHA0_COEFF // Red segments, for amps
 #define VIEW_BETA0_COEFF 0.02/EMPIR_BETA0_COEFF // Blue segments, for freqs
 #endif
+
+// If not set to 1, we will skip steps, depending on the speed
+// (for example we won't display every wombie point)
+#define DISPLAY_EVERY_STEP 1 // 0
 
 SASViewerProcess4::SASViewerProcess4(int bufferSize,
                                      BL_FLOAT overlapping, BL_FLOAT oversampling,
@@ -197,7 +202,7 @@ SASViewerProcess4::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     {
         vector<Partial> normPartials;
         mPartialTracker->GetPartials(&normPartials);
-            
+
         //#if FORCE_NON_FILTERED_FIRTS_PARTIALS
         //if (normPartials.empty())
         //normPartials = rawPartials;
@@ -456,6 +461,7 @@ SASViewerProcess4::SetTimeSmoothNoiseCoeff(BL_FLOAT coeff)
 void
 SASViewerProcess4::Display()
 {
+#if !DISPLAY_EVERY_STEP
     if (mSASViewerRender != NULL)
     {
         int speed = mSASViewerRender->GetSpeed();
@@ -464,12 +470,17 @@ SASViewerProcess4::Display()
     
     if (mSkipAdd)
         return;
-
+#endif
+    
 #if DBG_DISPLAY_BETA0
     DisplayDetectionBeta0(false);
 #endif
-
+    
     DisplayDetection();
+
+#if DBG_DISPLAY_ZOMBIES
+    DisplayZombiePoints();
+#endif
     
     DisplayTracking();
     
@@ -603,7 +614,7 @@ SASViewerProcess4::DisplayDetection()
 
         //
         int numSlices = mSASViewerRender->GetNumSlices();
-        
+
         // Keep track of the points we pop
         vector<LinesRender2::Point> prevPoints;
         // Initialize, just in case
@@ -617,8 +628,6 @@ SASViewerProcess4::DisplayDetection()
             prevPoints = mPartialsPoints[0];
             mPartialsPoints.pop_front();
         }
-        
-        //CreateLines(prevPoints);
         
         // It is cool like that: lite blue with alpha
         //unsigned char color[4] = { 64, 64, 255, 255 };
@@ -645,7 +654,7 @@ SASViewerProcess4::DisplayDetection()
         }
 
         // Update Z
-        int divisor = mSASViewerRender->GetNumSlices() - 1;
+        int divisor = mSASViewerRender->GetNumSlices(); // - 1;
         if (divisor <= 0)
             divisor = 1;
         BL_FLOAT incrZ = 1.0/divisor;
@@ -658,7 +667,7 @@ SASViewerProcess4::DisplayDetection()
             
             BL_FLOAT z = line2[0].mZ;
             z -= incrZ;
-            
+
             for (int i = 0; i < line2.size(); i++)
             {
                 LinesRender2::Point &p = line2[i];
@@ -792,7 +801,7 @@ SASViewerProcess4::DisplayDetectionBeta0(bool addData)
             mPartialsSegments.pop_front();
         
         // Update Z
-        int divisor = mSASViewerRender->GetNumSlices() - 1;
+        int divisor = mSASViewerRender->GetNumSlices(); // - 1;
         if (divisor <= 0)
             divisor = 1;
         BL_FLOAT incrZ = 1.0/divisor;
@@ -826,6 +835,119 @@ SASViewerProcess4::DisplayDetectionBeta0(bool addData)
         SegmentsToLines(mPartialsSegments, &partialLines);
 
         mSASViewerRender->SetAdditionalLines(DETECTION, partialLines, lineWidth);
+    }
+}
+
+void
+SASViewerProcess4::DisplayZombiePoints()
+{
+#define ZOMBIE_POINT_OFFSET_X 0.0025
+    
+    if (mSASViewerRender != NULL)
+    {
+        mSASViewerRender->ShowAdditionalPoints(DETECTION, mShowDetectionPoints);
+        
+        // Add points corresponding to raw detected partials
+        vector<Partial> partials = mCurrentNormPartials;
+
+        // Create line
+        vector<LinesRender2::Point> line;
+        for (int i = 0; i < partials.size(); i++)
+        {
+            const Partial &partial = partials[i];
+
+            if (partial.mState != Partial::State::ZOMBIE)
+                continue;
+            
+            LinesRender2::Point p;
+            
+            BL_FLOAT partialX = partial.mFreq;
+
+            partialX =
+                mViewScale->ApplyScale(mViewXScale, partialX,
+                                       (BL_FLOAT)0.0, (BL_FLOAT)(mSampleRate*0.5));
+                                              
+            p.mX = partialX - 0.5;
+            p.mY = partial.mAmp;
+            
+            p.mZ = 1.0;
+            
+            p.mId = (int)partial.mId;
+
+            // Make a small offset, so we can see both points
+            p.mX += ZOMBIE_POINT_OFFSET_X;
+            
+            line.push_back(p);
+        }
+        
+        //
+        int numSlices = mSASViewerRender->GetNumSlices();
+
+        // Keep track of the points we pop
+        vector<LinesRender2::Point> prevPoints;
+        // Initialize, just in case
+        if (!mPartialsPointsZombie.empty())
+            prevPoints = mPartialsPointsZombie[0];
+        
+        mPartialsPointsZombie.push_back(line);
+        
+        while(mPartialsPointsZombie.size() > numSlices)
+        {
+            prevPoints = mPartialsPointsZombie[0];
+            mPartialsPointsZombie.pop_front();
+        }
+        
+        // Magenta
+        unsigned char color[4] = { 255, 0, 255, 255 };
+        
+        // Set color
+        for (int j = 0; j < mPartialsPointsZombie.size(); j++)
+        {
+            vector<LinesRender2::Point> &line2 = mPartialsPointsZombie[j];
+
+            for (int i = 0; i < line2.size(); i++)
+            {
+                LinesRender2::Point &p = line2[i];
+
+                // Color
+                p.mR = color[0];
+                p.mG = color[1];
+                p.mB = color[2];
+                p.mA = color[3];
+            }
+        }
+
+        // Update Z
+        int divisor = mSASViewerRender->GetNumSlices(); // - 1;
+        if (divisor <= 0)
+            divisor = 1;
+        BL_FLOAT incrZ = 1.0/divisor;
+        for (int j = 0; j < mPartialsPointsZombie.size(); j++)
+        {
+            vector<LinesRender2::Point> &line2 = mPartialsPointsZombie[j];
+
+            if (line2.empty())
+                continue;
+            
+            BL_FLOAT z = line2[0].mZ;
+            z -= incrZ;
+
+            for (int i = 0; i < line2.size(); i++)
+            {
+                LinesRender2::Point &p = line2[i];
+                p.mZ = z; 
+            }
+        }
+        
+        BL_FLOAT lineWidth = 4.0;
+
+        vector<LinesRender2::Line> &partialLines = mTmpBuf6;
+        //PointsToLines(mPartialsPointsZombie, &partialLines);
+        
+        // Add all the points at the same time
+        PointsToLinesMix(mPartialsPoints, mPartialsPointsZombie, &partialLines);
+        
+        mSASViewerRender->SetAdditionalPoints(DETECTION, partialLines, lineWidth);
     }
 }
 
@@ -1133,7 +1255,7 @@ SASViewerProcess4::CreateLines(const vector<LinesRender2::Point> &prevPoints)
     
     // Update z for the current line points
     //
-    int divisor = mSASViewerRender->GetNumSlices() - 1;
+    int divisor = mSASViewerRender->GetNumSlices(); // - 1;
     if (divisor <= 0)
         divisor = 1;
     BL_FLOAT incrZ = 1.0/divisor;
@@ -1176,7 +1298,10 @@ SASViewerProcess4::CreateLines(const vector<LinesRender2::Point> &prevPoints)
     for (int i = 0; i < newPoints.size(); i++)
     {
         LinesRender2::Point newPoint = newPoints[i];
-        newPoint.mZ = 1.0;
+
+        //newPoint.mZ = 1.0;
+        // Adjust
+        newPoint.mZ = 1.0 - incrZ;
         
         bool pointAdded = false;
         
@@ -1222,6 +1347,32 @@ SASViewerProcess4::PointsToLines(const deque<vector<LinesRender2::Point> > &poin
     {
         LinesRender2::Line &line = (*lines)[i];
         line.mPoints = points[i];
+        
+        // Dummy color
+        line.mColor[0] = 0;
+        line.mColor[1] = 0;
+        line.mColor[2] = 0;
+        line.mColor[3] = 0;
+    }
+}
+
+void
+SASViewerProcess4::
+PointsToLinesMix(const deque<vector<LinesRender2::Point> > &points0,
+                 const deque<vector<LinesRender2::Point> > &points1,
+                 vector<LinesRender2::Line> *lines)
+{
+    lines->resize(points0.size());
+    for (int i = 0; i < lines->size(); i++)
+    {
+        LinesRender2::Line &line = (*lines)[i];
+        line.mPoints = points0[i];
+
+        for (int j = 0; j < points1[i].size(); j++)
+        {
+            const LinesRender2::Point &p = points1[i][j];
+            line.mPoints.push_back(p);
+        }
         
         // Dummy color
         line.mColor[0] = 0;

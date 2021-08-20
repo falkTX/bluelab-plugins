@@ -31,6 +31,8 @@
 //#define LOW_ZOOM_GAMMA 0.95
 #define LOW_ZOOM_GAMMA 0.8
 
+#define LOG_EPS 1e-35
+
 Scale::Scale()
 {
     mMelScale = new MelScale();
@@ -714,11 +716,10 @@ Scale::NormalizedToMelInv(BL_FLOAT x,
 BL_FLOAT
 Scale::ToLog(BL_FLOAT x)
 {
-    x = log(x);
+    x = log(x + LOG_EPS);
 
     return x;
 }
-
     
 BL_FLOAT
 Scale::ToLogInv(BL_FLOAT x)
@@ -1232,7 +1233,7 @@ Scale::ToLogForEach(WDL_TypedBuf<BL_FLOAT> *values)
     for (int i = 0; i < values->GetSize(); i++)
     {
         BL_FLOAT x = values->Get()[i];
-        x = log(x);
+        x = log(x + LOG_EPS);
         values->Get()[i] = x;
     }
 }
