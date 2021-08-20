@@ -511,7 +511,41 @@ PartialTracker6::FilterPartials()
 {    
 #if FILTER_PARTIALS
     //FilterPartials(&mResult);
+
+#if USE_PARTIAL_FILTER_AMFM
+    // Adjust the scale
+    for (int i = 0; i < mResult.size(); i++)
+    {
+        Partial &p = mResult[i];
+
+        BL_FLOAT amp =
+            mScale->ApplyScale(mYScaleInv, p.mAmp,
+                               (BL_FLOAT)MIN_AMP_DB, (BL_FLOAT)0.0);
+        
+        BL_FLOAT ampNorm =
+            mScale->ApplyScale(mYScale2, amp,
+                               (BL_FLOAT)MIN_AMP_DB, (BL_FLOAT)0.0);
+        p.mAmp = ampNorm;
+    }
+#endif
+    
     mPartialFilter->FilterPartials(&mResult);
+
+#if USE_PARTIAL_FILTER_AMFM
+    // Adjust the scale
+    for (int i = 0; i < mResult.size(); i++)
+    {
+        Partial &p = mResult[i];
+        BL_FLOAT ampNorm =
+            mScale->ApplyScale(mYScaleInv2, p.mAmp,
+                               (BL_FLOAT)MIN_AMP_DB, (BL_FLOAT)0.0);
+        BL_FLOAT ampDbNorm =
+            mScale->ApplyScale(mYScale, ampNorm,
+                               (BL_FLOAT)MIN_AMP_DB, (BL_FLOAT)0.0);
+        p.mAmp = ampDbNorm;
+    }
+#endif
+    
 #endif
 }
 
