@@ -2474,11 +2474,11 @@ FftProcessObj16::ComputeFft(const WDL_TypedBuf<BL_FLOAT> &samples,
     // Not sure we must do that only when normalizing or not
     for (int i = 0; i < bufSize; i++)
         tmpFftBufData[i].re *= freqRes;
-    
+
     // Do the fft
     // Do it on the window but also in following the empty space, to capture remaining waves
     WDL_fft(tmpFftBuf.Get(), bufSize, false);
-    
+
     // Sort the fft buffer
     WDL_FFT_COMPLEX *fftSamplesData = fftSamples->Get();
     for (int i = 0; i < bufSize; i++)
