@@ -94,7 +94,6 @@ PartialFilterAMFM::FilterPartials(vector<Partial> *partials)
     for (int i = 0; i < deadZombiePartials.size(); i++)
         currentPartials.push_back(deadZombiePartials[i]);
 
-    //FixPartialsCrossing(prevPartials, &currentPartials);
     if (mPartials.size() >= 3)
         FixPartialsCrossing(mPartials[2], mPartials[1], &currentPartials);
     
@@ -385,111 +384,14 @@ PartialFilterAMFM::ComputeZombieDeadPartials(const vector<Partial> &prevPartials
     }
 }
 
-#if 0 // First test
-// Simple fix for partial crossing error
-void
-PartialFilterAMFM::FixPartialsCrossing(const vector<Partial> &prevPartials,
-                                       vector<Partial> *currentPartials)
-{    
-    // 100Hz
-#define FREQ_THRESHOLD 100.0
-
-    fprintf(stderr, "----------------------\n");
-    fprintf(stderr, "num: %d %d\n", prevPartials.size(), currentPartials->size());
-        
-    const vector<Partial> currentPartials0 = *currentPartials;
-        
-    Partial p0[2];
-    Partial p1[2];
-    for (int i = 0; i < currentPartials0.size(); i++)
-    {
-        p0[1] = currentPartials0[i];
-        if (p0[1].mId == -1)
-            continue;
-        
-        bool found0 = false;
-        for (int j = 0; j < prevPartials.size(); j++)
-        {
-            const Partial &p = prevPartials[j];
-            if (p.mId == p0[1].mId)
-            {
-                p0[0] = p;
-                
-                found0 = true;
-                
-                break;
-            }
-        }
-
-        if (!found0)
-            continue;
-
-        for (int j = i + 1/*0*/; j < currentPartials0.size(); j++)
-        {
-            //if (j == i)
-            //    continue;
-            
-            const Partial &p = currentPartials0[j];
-            p1[1] = p;
-            if (p1[1].mId == -1)
-                continue;
-            
-            bool found1 = false;
-            for (int k = 0; k < prevPartials.size(); k++)
-            {
-                const Partial &p = prevPartials[k];
-                if (p.mId == p1[1].mId)
-                {
-                    p1[0] = p;
-                    
-                    found1 = true;
-                    
-                    break;
-                }
-            }
-
-            if (!found1)
-                continue;
-
-            // Frequencies too far
-            if (std::fabs(p0[0].mFreq - p1[0].mFreq) > FREQ_THRESHOLD)
-                continue;
-            if (std::fabs(p0[1].mFreq - p1[1].mFreq) > FREQ_THRESHOLD)
-                continue;
-
-            // Test if frequancies are crossing
-            //if ((p0[1].mFreq - p1[0].mFreq)*(p1[1].mFreq - p0[0].mFreq) > 0.0)
-            BL_FLOAT seg0[2][2] = { { p0[1].mFreq, 0.0 }, { p0[0].mFreq, 1.0 } };
-            BL_FLOAT seg1[2][2] = { { p1[1].mFreq, 0.0 }, { p1[0].mFreq, 1.0 } };
-            bool intersect = BLUtilsMath::SegSegIntersect2(seg0, seg1);
-
-            fprintf(stderr, "intersect: %d\n", intersect);
-            
-            if (!intersect)
-                // Freqs are not crossing => must swap
-            {
-                fprintf(stderr, "swap! %d %d\n", p0[1].mId, p1[1].mId);
-                
-                int tmpId = p0[1].mId;
-                p0[1].mId = p1[1].mId;
-                p1[1].mId = tmpId;
-                
-                (*currentPartials)[i].mId = p0[1].mId;
-                (*currentPartials)[j].mId = p1[1].mId;
-            }
-        }
-    }
-}
-#endif
-
 // Simple fix for partial crossing error
 void
 PartialFilterAMFM::FixPartialsCrossing(const vector<Partial> &partials0,
                                        const vector<Partial> &partials1,
                                        vector<Partial> *partials2)
-{    
-    //fprintf(stderr, "----------------------\n");
-    //fprintf(stderr, "num: %d %d\n", partials1.size(), partials2->size());
+{
+    // Tmp optimization
+#define MIN_PARTIAL_AGE 5
         
     const vector<Partial> partials2Copy = *partials2;
         
@@ -502,6 +404,10 @@ PartialFilterAMFM::FixPartialsCrossing(const vector<Partial> &partials0,
         if (p0[2].mId == -1)
             continue;
 
+        // Tmp optim
+        if (p0[2].mAge < MIN_PARTIAL_AGE)
+            continue;
+        
         int idx01 = FindPartialById(partials1, p0[2].mId);
         if (idx01 == -1)
             continue;
@@ -545,9 +451,7 @@ PartialFilterAMFM::FixPartialsCrossing(const vector<Partial> &partials0,
             bool intersect = BLUtilsMath::SegSegIntersect2(seg0, seg1);
             
             if (intersect != extraIntersect)
-            {
-                //fprintf(stderr, "swap! %d %d\n", p0[1].mId, p1[1].mId);
-                
+            {   
                 int tmpId = p0[2].mId;
                 p0[2].mId = p1[2].mId;
                 p1[2].mId = tmpId;
