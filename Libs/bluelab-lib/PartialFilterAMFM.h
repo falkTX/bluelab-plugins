@@ -24,8 +24,16 @@ class PartialFilterAMFM : public PartialFilter
     // Method based on alpha0 and beta0
     void AssociatePartialsAMFM(const vector<Partial> &prevPartials,
                                vector<Partial> *currentPartials,
-                               vector<Partial> *remainingPartials);
-    
+                               vector<Partial> *remainingCurrentPartials);
+
+    void ComputeZombieDeadPartials(const vector<Partial> &prevPartials,
+                                   const vector<Partial> &currentPartials,
+                                   vector<Partial> *zombieDeadPartials);
+
+    void FixPartialsCrossing(const vector<Partial> &partials0,
+                             const vector<Partial> &partials1,
+                             vector<Partial> *partials2);
+        
     int FindPartialById(const vector<Partial> &partials, int idx);
 
     BL_FLOAT ComputeLA(const Partial &currentPartial, const Partial &otherPartial);
@@ -51,6 +59,7 @@ class PartialFilterAMFM : public PartialFilter
     vector<Partial> mTmpPartials4;
     vector<Partial> mTmpPartials5;
     vector<Partial> mTmpPartials6;
+    vector<Partial> mTmpPartials7;
 };
 
 #endif

@@ -604,6 +604,24 @@ BLUtilsMath::SegSegIntersect(BL_FLOAT seg0[2][2], BL_FLOAT seg1[2][2])
     return (bool)inter;
 }
 
+static bool
+ccw(BL_FLOAT A[2], BL_FLOAT B[2], BL_FLOAT C[2])
+{
+    bool res = (C[1] - A[1])*(B[0] - A[0]) > (B[1] - A[1])*(C[0] - A[0]);
+
+    return res;
+}
+
+bool
+BLUtilsMath::SegSegIntersect2(BL_FLOAT seg0[2][2], BL_FLOAT seg1[2][2])
+{
+    //bool res = ccw(A,C,D) != ccw(B,C,D) and ccw(A,B,C) != ccw(A,B,D);
+    bool res = ((ccw(seg0[0], seg1[0], seg1[1]) != ccw(seg0[1], seg1[0], seg1[1])) &&
+                (ccw(seg0[0], seg0[1], seg1[0]) != ccw(seg0[0], seg0[1], seg1[1])));
+
+    return res;
+}
+
 // Schlick sigmoid, see:
 //
 // https://dept-info.labri.u-bordeaux.fr/~schlick/DOC/gem2.ps.gz

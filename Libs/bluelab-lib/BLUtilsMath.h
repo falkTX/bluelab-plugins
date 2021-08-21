@@ -123,6 +123,8 @@ class BLUtilsMath
     
     static bool SegSegIntersect(BL_FLOAT seg0[2][2], BL_FLOAT seg1[2][2]);
 
+    static bool SegSegIntersect2(BL_FLOAT seg0[2][2], BL_FLOAT seg1[2][2]);
+    
     // Schlick sigmoid, see:
     //
     // https://dept-info.labri.u-bordeaux.fr/~schlick/DOC/gem2.ps.gz

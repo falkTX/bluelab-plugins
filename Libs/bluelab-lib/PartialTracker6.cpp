@@ -1725,15 +1725,15 @@ PartialTracker6::DBG_DumpPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
     static bool firstTime = true;
     if (firstTime)
     {
-        BLDebug::ResetFile("ref-amp-0.txt");
-        BLDebug::ResetFile("ref-freq-0.txt");
+        //BLDebug::ResetFile("ref-amp-0.txt");
+        //BLDebug::ResetFile("ref-freq-0.txt");
         BLDebug::ResetFile("amp0-0.txt");
         BLDebug::ResetFile("amp1-0.txt");
         BLDebug::ResetFile("freq0-0.txt");
         BLDebug::ResetFile("freq1-0.txt");
 
-        BLDebug::ResetFile("ref-amp-1.txt");
-        BLDebug::ResetFile("ref-freq-1.txt");
+        //BLDebug::ResetFile("ref-amp-1.txt");
+        //BLDebug::ResetFile("ref-freq-1.txt");
         BLDebug::ResetFile("amp0-1.txt");
         BLDebug::ResetFile("amp1-1.txt");
         BLDebug::ResetFile("freq0-1.txt");
@@ -1747,10 +1747,10 @@ PartialTracker6::DBG_DumpPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
 
     for (int i = 0; i < 2; i++)
     {
-        BL_FLOAT amp0 = 0.0;
-        BL_FLOAT amp1 = 0.0;
-        BL_FLOAT freq0 = 0.0;
-        BL_FLOAT freq1 = 0.0;
+        BL_FLOAT amp0 = -1.0;
+        BL_FLOAT amp1 = -1.0;
+        BL_FLOAT freq0 = -1.0;
+        BL_FLOAT freq1 = -1.0;
 
         if (i < partials.size())
         {

@@ -12,7 +12,7 @@ using namespace std;
 #include "PartialFilterAMFM.h"
 
 #define MAX_ZOMBIE_AGE 3 //2 //5 //2
-#define PARTIALS_HISTORY_SIZE 2 //2
+#define PARTIALS_HISTORY_SIZE 3 //2
 
 
 #define EXTRAPOLATE_KALMAN 0 // 1
@@ -82,99 +82,33 @@ PartialFilterAMFM::FilterPartials(vector<Partial> *partials)
     currentPartials = mPartials[0];
     
     // Partials that was not associated at the end
-    vector<Partial> &remainingPartials = mTmpPartials1;
-    remainingPartials.resize(0);
+    vector<Partial> &remainingCurrentPartials = mTmpPartials1;
+    remainingCurrentPartials.resize(0);
     
-    AssociatePartialsAMFM(prevPartials, &currentPartials, &remainingPartials);
+    AssociatePartialsAMFM(prevPartials, &currentPartials, &remainingCurrentPartials);
+
+    vector<Partial> &deadZombiePartials = mTmpPartials7;
+    ComputeZombieDeadPartials(prevPartials, currentPartials, &deadZombiePartials);
     
-    // Add the new zombie and dead partials
-    for (int i = 0; i < prevPartials.size(); i++)
-    {
-        const Partial &prevPartial = prevPartials[i];
+    // Add zombie and dead partial
+    for (int i = 0; i < deadZombiePartials.size(); i++)
+        currentPartials.push_back(deadZombiePartials[i]);
 
-        bool found = false;
-        for (int j = 0; j < currentPartials.size(); j++)
-        {
-            const Partial &currentPartial = currentPartials[j];
-            
-            if (currentPartial.mId == prevPartial.mId)
-            {
-                found = true;
-                
-                break;
-            }
-        }
-
-        if (!found)
-        {
-            if (prevPartial.mState == Partial::ALIVE)
-            {
-                // We set zombie for 1 frame only
-                Partial newPartial = prevPartial;
-                newPartial.mState = Partial::ZOMBIE;
-                newPartial.mZombieAge = 0;
-
-#if 1 // Good, extrapolate zombies
-                
-#if EXTRAPOLATE_KALMAN
-                //newPartial.mPredictedFreq =
-                //newPartial.mFreq = newPartial.mKf.updateEstimate(newPartial.mFreq);
-                ExtrapolatePartialKalman(&newPartial);
-#endif
-
-#if EXTRAPOLATE_AMFM
-                ExtrapolatePartialAMFM(&newPartial);
-#endif
-
-#endif
-                // If MAX_ZOMBIE_AGE is 0, do not generate zombies
-                if (newPartial.mZombieAge < MAX_ZOMBIE_AGE)
-                    currentPartials.push_back(newPartial);
-            }
-            else if (prevPartial.mState == Partial::ZOMBIE)
-            {
-                Partial newPartial = prevPartial;
-                
-                newPartial.mZombieAge++;
-                if (newPartial.mZombieAge >= MAX_ZOMBIE_AGE)
-                {
-                    newPartial.mState = Partial::DEAD;
-                }
-                else
-                {
-#if 1
-                
-#if EXTRAPOLATE_KALMAN
-                    //newPartial.mPredictedFreq =
-                    //newPartial.mFreq = newPartial.mKf.updateEstimate(newPartial.mFreq);
-                    ExtrapolatePartialKalman(&newPartial);
-#endif
-
-#if EXTRAPOLATE_AMFM
-                    ExtrapolatePartialAMFM(&newPartial);
-#endif
-                
-#endif
-                }
-                
-                currentPartials.push_back(newPartial);
-            }
-            
-            // If DEAD, do not add, forget it
-        }
-    }
+    //FixPartialsCrossing(prevPartials, &currentPartials);
+    if (mPartials.size() >= 3)
+        FixPartialsCrossing(mPartials[2], mPartials[1], &currentPartials);
     
     // Get the result here
     // So we get the partials that are well tracked over time
-    *partials = currentPartials;
+    //*partials = currentPartials;
     
     // At the end, there remains the partial that have not been matched
     //
     // Add them at to the history for next time
     //
-    for (int i = 0; i < remainingPartials.size(); i++)
+    for (int i = 0; i < remainingCurrentPartials.size(); i++)
     {
-        Partial p = remainingPartials[i];
+        Partial p = remainingCurrentPartials[i];
         
         p.GenNewId();
         
@@ -227,7 +161,7 @@ void
 PartialFilterAMFM::
 AssociatePartialsAMFM(const vector<Partial> &prevPartials,
                       vector<Partial> *currentPartials,
-                      vector<Partial> *remainingPartials)
+                      vector<Partial> *remainingCurrentPartials)
 {
     // Sort current partials and prev partials by increasing frequency
     sort(currentPartials->begin(), currentPartials->end(), Partial::FreqLess);
@@ -352,16 +286,277 @@ AssociatePartialsAMFM(const vector<Partial> &prevPartials,
     }
     
     // Add the remaining partials
-    remainingPartials->clear();
+    remainingCurrentPartials->clear();
     for (int i = 0; i < currentPartials->size(); i++)
     {
         const Partial &p = (*currentPartials)[i];
         if (p.mId == -1)
-            remainingPartials->push_back(p);
+            remainingCurrentPartials->push_back(p);
     }
     
     // Update current partials
     *currentPartials = newPartials;
+}
+
+void
+PartialFilterAMFM::ComputeZombieDeadPartials(const vector<Partial> &prevPartials,
+                                             const vector<Partial> &currentPartials,
+                                             vector<Partial> *zombieDeadPartials)
+{
+    zombieDeadPartials->clear();
+    
+    // Add the new zombie and dead partials
+    for (int i = 0; i < prevPartials.size(); i++)
+    {
+        const Partial &prevPartial = prevPartials[i];
+
+        bool found = false;
+        for (int j = 0; j < currentPartials.size(); j++)
+        {
+            const Partial &currentPartial = currentPartials[j];
+            
+            if (currentPartial.mId == prevPartial.mId)
+            {
+                found = true;
+                
+                break;
+            }
+        }
+
+        if (!found)
+        {            
+            if (prevPartial.mState == Partial::ALIVE)
+            {
+                // We set zombie for 1 frame only
+                Partial newPartial = prevPartial;
+                newPartial.mState = Partial::ZOMBIE;
+                newPartial.mZombieAge = 0;
+
+#if 1 // Good, extrapolate zombies
+                
+#if EXTRAPOLATE_KALMAN
+                //newPartial.mPredictedFreq =
+                //newPartial.mFreq = newPartial.mKf.updateEstimate(newPartial.mFreq);
+                ExtrapolatePartialKalman(&newPartial);
+#endif
+
+#if EXTRAPOLATE_AMFM
+                ExtrapolatePartialAMFM(&newPartial);
+#endif
+
+#endif
+                // If MAX_ZOMBIE_AGE is 0, do not generate zombies
+                //if (newPartial.mZombieAge < MAX_ZOMBIE_AGE)
+                //    currentPartials.push_back(newPartial);
+
+                zombieDeadPartials->push_back(newPartial);
+            }
+            else if (prevPartial.mState == Partial::ZOMBIE)
+            {
+                Partial newPartial = prevPartial;
+                newPartial.mZombieAge++;
+                
+                if (newPartial.mZombieAge >= MAX_ZOMBIE_AGE)
+                {
+                    newPartial.mState = Partial::DEAD;
+                }
+                else
+                {
+#if 1
+                
+#if EXTRAPOLATE_KALMAN
+                    //newPartial.mPredictedFreq =
+                    //newPartial.mFreq = newPartial.mKf.updateEstimate(newPartial.mFreq);
+                    ExtrapolatePartialKalman(&newPartial);
+#endif
+
+#if EXTRAPOLATE_AMFM
+                    ExtrapolatePartialAMFM(&newPartial);
+#endif
+                
+#endif
+                }
+                
+                zombieDeadPartials->push_back(newPartial);
+            }
+            
+            // If DEAD, do not add, forget it
+        }
+    }
+}
+
+#if 0 // First test
+// Simple fix for partial crossing error
+void
+PartialFilterAMFM::FixPartialsCrossing(const vector<Partial> &prevPartials,
+                                       vector<Partial> *currentPartials)
+{    
+    // 100Hz
+#define FREQ_THRESHOLD 100.0
+
+    fprintf(stderr, "----------------------\n");
+    fprintf(stderr, "num: %d %d\n", prevPartials.size(), currentPartials->size());
+        
+    const vector<Partial> currentPartials0 = *currentPartials;
+        
+    Partial p0[2];
+    Partial p1[2];
+    for (int i = 0; i < currentPartials0.size(); i++)
+    {
+        p0[1] = currentPartials0[i];
+        if (p0[1].mId == -1)
+            continue;
+        
+        bool found0 = false;
+        for (int j = 0; j < prevPartials.size(); j++)
+        {
+            const Partial &p = prevPartials[j];
+            if (p.mId == p0[1].mId)
+            {
+                p0[0] = p;
+                
+                found0 = true;
+                
+                break;
+            }
+        }
+
+        if (!found0)
+            continue;
+
+        for (int j = i + 1/*0*/; j < currentPartials0.size(); j++)
+        {
+            //if (j == i)
+            //    continue;
+            
+            const Partial &p = currentPartials0[j];
+            p1[1] = p;
+            if (p1[1].mId == -1)
+                continue;
+            
+            bool found1 = false;
+            for (int k = 0; k < prevPartials.size(); k++)
+            {
+                const Partial &p = prevPartials[k];
+                if (p.mId == p1[1].mId)
+                {
+                    p1[0] = p;
+                    
+                    found1 = true;
+                    
+                    break;
+                }
+            }
+
+            if (!found1)
+                continue;
+
+            // Frequencies too far
+            if (std::fabs(p0[0].mFreq - p1[0].mFreq) > FREQ_THRESHOLD)
+                continue;
+            if (std::fabs(p0[1].mFreq - p1[1].mFreq) > FREQ_THRESHOLD)
+                continue;
+
+            // Test if frequancies are crossing
+            //if ((p0[1].mFreq - p1[0].mFreq)*(p1[1].mFreq - p0[0].mFreq) > 0.0)
+            BL_FLOAT seg0[2][2] = { { p0[1].mFreq, 0.0 }, { p0[0].mFreq, 1.0 } };
+            BL_FLOAT seg1[2][2] = { { p1[1].mFreq, 0.0 }, { p1[0].mFreq, 1.0 } };
+            bool intersect = BLUtilsMath::SegSegIntersect2(seg0, seg1);
+
+            fprintf(stderr, "intersect: %d\n", intersect);
+            
+            if (!intersect)
+                // Freqs are not crossing => must swap
+            {
+                fprintf(stderr, "swap! %d %d\n", p0[1].mId, p1[1].mId);
+                
+                int tmpId = p0[1].mId;
+                p0[1].mId = p1[1].mId;
+                p1[1].mId = tmpId;
+                
+                (*currentPartials)[i].mId = p0[1].mId;
+                (*currentPartials)[j].mId = p1[1].mId;
+            }
+        }
+    }
+}
+#endif
+
+// Simple fix for partial crossing error
+void
+PartialFilterAMFM::FixPartialsCrossing(const vector<Partial> &partials0,
+                                       const vector<Partial> &partials1,
+                                       vector<Partial> *partials2)
+{    
+    //fprintf(stderr, "----------------------\n");
+    //fprintf(stderr, "num: %d %d\n", partials1.size(), partials2->size());
+        
+    const vector<Partial> partials2Copy = *partials2;
+        
+    Partial p0[3];
+    Partial p1[3];
+    
+    for (int i = 0; i < partials2Copy.size(); i++)
+    {
+        p0[2] = partials2Copy[i];
+        if (p0[2].mId == -1)
+            continue;
+
+        int idx01 = FindPartialById(partials1, p0[2].mId);
+        if (idx01 == -1)
+            continue;
+        p0[1] = partials1[idx01];
+
+        int idx00 = FindPartialById(partials0, p0[2].mId);
+        if (idx00 == -1)
+            continue;
+        p0[0] = partials0[idx00];
+
+        //
+        for (int j = i + 1; j < partials2Copy.size(); j++)
+        {
+            const Partial &p = partials2Copy[j];
+            p1[2] = p;
+            if (p1[2].mId == -1)
+                continue;
+
+            int idx11 = FindPartialById(partials1, p1[2].mId);
+            if (idx11 == -1)
+                continue;
+            p1[1] = partials1[idx11];
+            
+            int idx10 = FindPartialById(partials0, p1[2].mId);
+            if (idx10 == -1)
+                continue;
+            p1[0] = partials0[idx10];
+
+            // Extrapolated values
+            BL_FLOAT extraP0 = p0[1].mFreq + (p0[1].mFreq - p0[0].mFreq);
+            BL_FLOAT extraP1 = p1[1].mFreq + (p1[1].mFreq - p1[0].mFreq);
+
+            // Check if extrapolated points intersect
+            BL_FLOAT extraSeg0[2][2] = { { p0[1].mFreq, 0.0 }, { extraP0, 1.0 } };
+            BL_FLOAT extraSeg1[2][2] = { { p1[1].mFreq, 0.0 }, { extraP1, 1.0 } };
+            bool extraIntersect = BLUtilsMath::SegSegIntersect2(extraSeg0, extraSeg1);
+
+            // Check if real points intersect
+            BL_FLOAT seg0[2][2] = { { p0[1].mFreq, 0.0 }, { p0[2].mFreq, 1.0 } };
+            BL_FLOAT seg1[2][2] = { { p1[1].mFreq, 0.0 }, { p1[2].mFreq, 1.0 } };
+            bool intersect = BLUtilsMath::SegSegIntersect2(seg0, seg1);
+            
+            if (intersect != extraIntersect)
+            {
+                //fprintf(stderr, "swap! %d %d\n", p0[1].mId, p1[1].mId);
+                
+                int tmpId = p0[2].mId;
+                p0[2].mId = p1[2].mId;
+                p1[2].mId = tmpId;
+                
+                (*partials2)[i].mId = p0[2].mId;
+                (*partials2)[j].mId = p1[2].mId;
+            }
+        }
+    }
 }
 
 int
