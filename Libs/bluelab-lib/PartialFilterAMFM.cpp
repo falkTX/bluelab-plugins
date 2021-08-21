@@ -46,6 +46,9 @@ PartialFilterAMFM::FilterPartials(vector<Partial> *partials)
         p.mFreq *= mSampleRate*0.5;
         p.mBeta0 *= mSampleRate*0.5;
     }
+
+    // DEBUG
+    DBG_PrintPartials(*partials);
     
     mPartials.push_front(*partials);
     
@@ -90,8 +93,8 @@ PartialFilterAMFM::FilterPartials(vector<Partial> *partials)
     for (int i = 0; i < deadZombiePartials.size(); i++)
         currentPartials.push_back(deadZombiePartials[i]);
 
-    if (mPartials.size() >= 3)
-        FixPartialsCrossing(mPartials[2], mPartials[1], &currentPartials);
+    //if (mPartials.size() >= 3)
+    //    FixPartialsCrossing(mPartials[2], mPartials[1], &currentPartials);
     
     
     // At the end, there remains the partial that have not been matched
@@ -131,9 +134,6 @@ PartialFilterAMFM::FilterPartials(vector<Partial> *partials)
     }
 
     *partials = mPartials[0];
-
-    // DEBUG
-    //DBG_PrintPartials(*partials);
     
     BL_FLOAT coeff = 1.0/(mSampleRate*0.5);
     for (int i = 0; i < partials->size(); i++)
@@ -154,6 +154,8 @@ AssociatePartialsAMFM(const vector<Partial> &prevPartials,
                       vector<Partial> *currentPartials,
                       vector<Partial> *remainingCurrentPartials)
 {
+    fprintf(stderr, "--------------------------\n");
+    
     // Sort current partials and prev partials by increasing frequency
     sort(currentPartials->begin(), currentPartials->end(), Partial::FreqLess);
     
@@ -164,77 +166,119 @@ AssociatePartialsAMFM(const vector<Partial> &prevPartials,
     // Associated partials
     bool stopFlag = true;
     do {
+        DBG_PrintPartials(*currentPartials); // DEBUG
+        
         stopFlag = true;
         
         for (int i = 0; i < prevPartials0.size(); i++)
         {
             const Partial &prevPartial = prevPartials0[i];
+            
+            // Check if the link is already done
+            if (((int)prevPartial.mId != -1) &&
+                (FindPartialById(*currentPartials, (int)prevPartial.mId) != -1))
+                // Already linked
+                continue;
+            
             for (int j = 0; j < currentPartials->size(); j++)
             {
                 Partial &currentPartial = (*currentPartials)[j];
-                if (currentPartial.mId != -1)
-                    // Already associated, nothing to do on this step!
+                
+                if (currentPartial.mId == prevPartial.mId)
                     continue;
                 
                 BL_FLOAT LA = ComputeLA(prevPartial, currentPartial);
                 BL_FLOAT LF = ComputeLF(prevPartial, currentPartial);
 
-                // TODO: maybe manage the "scores" better
+                // As is the paper
                 if ((LA > 0.5) && (LF > 0.5))
                     //if ((LA > 0.7) && (LF > 0.7))
                     // Associate!
                 {
-                    int otherIdx =
-                        FindPartialById(*currentPartials, (int)prevPartial.mId);
-
-                    if (otherIdx == -1)
-                        // This partial is not yet associated
-                        // => No fight
+                    bool mustFight0 = (currentPartial.mId != -1);
+                    int fight1Idx = FindPartialById(*currentPartials,
+                                                    (int)prevPartial.mId);
+                    bool mustFight1 = (fight1Idx != -1);
+                        
+                    if (!mustFight0 && !mustFight1)
                     {
                         currentPartial.mId = prevPartial.mId;
                         currentPartial.mAge = prevPartial.mAge;
-
+                        
 #if EXTRAPOLATE_KALMAN
                         currentPartial.mKf = prevPartial.mKf; //
 #endif
                         
+                        //if ((prevPartial.mFreq > 199.0) && (prevPartial.mFreq < 201))
+                        {
+                            if (fabs(prevPartial.mFreq - currentPartial.mFreq) > 50)
+                                fprintf(stderr, "Big jump!\n");
+                            
+                            fprintf(stderr, "#free! [id: %d freq: %g LF: %g LA: %g]\n",
+                                    currentPartial.mId,
+                                    currentPartial.mFreq, LF, LA);
+                        }
+                        
                         stopFlag = false;
+                        
+                        continue;
                     }
-#if 1 //0
-                    else // Fight!
-                    {
-                        Partial &otherPartial = (*currentPartials)[otherIdx];
-
-                        BL_FLOAT otherLA = ComputeLA(prevPartial, otherPartial);
-                        BL_FLOAT otherLF = ComputeLF(prevPartial, otherPartial);
-
-                        // Joint likelihood
-                        BL_FLOAT j0 = LA*LF;
-                        BL_FLOAT j1 = otherLA*otherLF;
-                        // TODO: manage better the two scores
-                        //if ((LA > otherLA) && (LF > otherLF))
-                        if (j0 > j1)
+                        
+                    // Fight!
+                    int otherPrevIdx =
+                        FindPartialById(prevPartials0,
+                                        (int)currentPartial.mId);
+                    Partial prevPartialFight =
+                        mustFight0 ? prevPartials0[otherPrevIdx] : prevPartial;
+                    Partial currentPartialFight =
+                        mustFight0 ? currentPartial : (*currentPartials)[fight1Idx];
+                        
+                    BL_FLOAT otherLA =
+                        ComputeLA(prevPartialFight, currentPartialFight);
+                    BL_FLOAT otherLF =
+                        ComputeLF(prevPartialFight, currentPartialFight);
+                    
+                    // Joint likelihood
+                    BL_FLOAT j0 = LA*LF;
+                    BL_FLOAT j1 = otherLA*otherLF;
+                    if (j0 > j1)
+                        //if ((LA > otherLA) && (LF > otherLF)) 
                         // Current partial won
-                        {
-                            currentPartial.mId = prevPartial.mId;
-                            currentPartial.mAge = prevPartial.mAge;
-
+                    {
+                        int dbgPrevId = currentPartial.mId;
+                        
+                        currentPartial.mId = prevPartial.mId;
+                        currentPartial.mAge = prevPartial.mAge;
+                        
 #if EXTRAPOLATE_KALMAN
-                            currentPartial.mKf = prevPartial.mKf; //
+                        currentPartial.mKf = prevPartial.mKf; //
 #endif
-                            
-                            // Detach the other
-                            otherPartial.mId = -1;
-                            
-                            stopFlag = false;
-                        }
-                        else
-                        // Other partial won
+
+                        if (mustFight1)
+                            (*currentPartials)[fight1Idx].mId = -1;
+                        stopFlag = false;
+                        
+                        //if ((prevPartial.mFreq > 199.0) &&
+                        //    (prevPartial.mFreq < 201))
                         {
-                            // Just keep it like it is!
+                            if (fabs(prevPartialFight.mFreq -
+                                     currentPartialFight.mFreq) > 50)
+                                fprintf(stderr, "Big jump!\n");
+                            
+                            fprintf(stderr,
+                                    "#fight! [id: %d freq: %g LF: %g \
+LA: %g j0: %g] other=[freq %g LF: %g LA: %g j1: %g] prevId: %d\n",
+                                    currentPartialFight.mId,
+                                    currentPartial.mFreq, LF, LA, j0, 
+                                    prevPartialFight.mFreq,
+                                    otherLF, otherLA, j1, dbgPrevId);
                         }
                     }
-#endif
+                    else
+                        // Other partial won
+                    {
+                        // Just keep it like it is!
+                    }
                 }
             }
         }
@@ -260,9 +304,6 @@ AssociatePartialsAMFM(const vector<Partial> &prevPartials,
 #if 0 // No need
             
 #if EXTRAPOLATE_KALMAN
-            //currentPartial.mPredictedFreq =
-            //currentPartial.mFreq =
-            //    currentPartial.mKf.updateEstimate(currentPartial.mFreq);
             ExtrapolatePartialKalman(&currentPartial);
 #endif
             
@@ -326,8 +367,6 @@ PartialFilterAMFM::ComputeZombieDeadPartials(const vector<Partial> &prevPartials
 #if 1 // Good, extrapolate zombies
                 
 #if EXTRAPOLATE_KALMAN
-                //newPartial.mPredictedFreq =
-                //newPartial.mFreq = newPartial.mKf.updateEstimate(newPartial.mFreq);
                 ExtrapolatePartialKalman(&newPartial);
 #endif
 
@@ -336,10 +375,7 @@ PartialFilterAMFM::ComputeZombieDeadPartials(const vector<Partial> &prevPartials
 #endif
 
 #endif
-                // If MAX_ZOMBIE_AGE is 0, do not generate zombies
-                //if (newPartial.mZombieAge < MAX_ZOMBIE_AGE)
-                //    currentPartials.push_back(newPartial);
-
+                
                 zombieDeadPartials->push_back(newPartial);
             }
             else if (prevPartial.mState == Partial::ZOMBIE)
@@ -356,8 +392,6 @@ PartialFilterAMFM::ComputeZombieDeadPartials(const vector<Partial> &prevPartials
 #if 1
                 
 #if EXTRAPOLATE_KALMAN
-                    //newPartial.mPredictedFreq =
-                    //newPartial.mFreq = newPartial.mKf.updateEstimate(newPartial.mFreq);
                     ExtrapolatePartialKalman(&newPartial);
 #endif
 
@@ -472,50 +506,35 @@ PartialFilterAMFM::FindPartialById(const vector<Partial> &partials, int idx)
 // Compute amplitude likelihood
 // (increase when the penality decrease)
 BL_FLOAT
-PartialFilterAMFM::ComputeLA(const Partial &currentPartial,
-                             const Partial &otherPartial)
+PartialFilterAMFM::ComputeLA(const Partial &prevPartial,
+                             const Partial &currentPartial)
 {
-#if 0 // Use trapezoid
-    // Points
-    BL_FLOAT a = currentPartial.mAmp; 
-    BL_FLOAT b = currentPartial.mAmp + currentPartial.mAlpha0;
-    BL_FLOAT c = otherPartial.mAmp; 
-    BL_FLOAT d = otherPartial.mAmp - otherPartial.mAlpha0;
-
-#if 0
-    a = BLUtils::DBToAmp(a);
-    b = BLUtils::DBToAmp(b);
-    c = BLUtils::DBToAmp(c);
-    d = BLUtils::DBToAmp(d);
-#endif
-    
-    // Area
-    BL_FLOAT area = ComputeTrapezoidArea(a, b, c, d);
-#endif
-
-#if 1 // Use general polygon
+    // Use general polygon
     BL_FLOAT x[4] = { 0.0, 1.0, 1.0, 0.0 };
     BL_FLOAT y[4];
-    if (currentPartial.mAmp < otherPartial.mAmp)
-    {
-        y[0] = currentPartial.mAmp;
-        y[1] = currentPartial.mAmp + currentPartial.mAlpha0;
-        y[2] = otherPartial.mAmp;
-        y[3] = otherPartial.mAmp - otherPartial.mAlpha0;
-    }
-    else
-    {
-        y[0] = otherPartial.mAmp - otherPartial.mAlpha0;
-        y[1] = otherPartial.mAmp;
-        y[2] = currentPartial.mAmp + currentPartial.mAlpha0;
-        y[3] = currentPartial.mAmp;
-    }
-
+    /*if (currentPartial.mAmp < prevPartial.mAmp)
+      {
+      y[0] = currentPartial.mAmp;
+      y[1] = currentPartial.mAmp + currentPartial.mAlpha0;
+      y[2] = prevPartial.mAmp;
+      y[3] = prevPartial.mAmp - prevPartial.mAlpha0;
+      }
+      else
+      {
+      y[0] = prevPartial.mAmp - prevPartial.mAlpha0;
+      y[1] = prevPartial.mAmp;
+      y[2] = currentPartial.mAmp + currentPartial.mAlpha0;
+      y[3] = currentPartial.mAmp;
+      }*/
+    y[0] = prevPartial.mAmp;
+    y[1] = prevPartial.mAmp + prevPartial.mAlpha0;
+    y[2] = currentPartial.mAmp;
+    y[3] = currentPartial.mAmp - currentPartial.mAlpha0;
+      
     BL_FLOAT area = BLUtilsMath::PolygonArea(x, y, 4);
-#endif
     
     // u
-    BL_FLOAT denom = sqrt(currentPartial.mAmp*otherPartial.mAmp);
+    BL_FLOAT denom = sqrt(currentPartial.mAmp*prevPartial.mAmp);
     BL_FLOAT ua = 0.0;
     if (denom > BL_EPS)
         ua = area/denom;
@@ -529,42 +548,35 @@ PartialFilterAMFM::ComputeLA(const Partial &currentPartial,
 // Compute frequency likelihood
 // (increase when the penality decrease)
 BL_FLOAT
-PartialFilterAMFM::ComputeLF(const Partial &currentPartial,
-                             const Partial &otherPartial)
+PartialFilterAMFM::ComputeLF(const Partial &prevPartial,
+                             const Partial &currentPartial)
 {
-#if 0 // Trapezoid
-    // Points
-    BL_FLOAT a = currentPartial.mFreq; 
-    BL_FLOAT b = currentPartial.mFreq + currentPartial.mBeta0;
-    BL_FLOAT c = otherPartial.mFreq; 
-    BL_FLOAT d = otherPartial.mFreq - otherPartial.mBeta0;
-    
-    // Area
-    BL_FLOAT area = ComputeTrapezoidArea(a, b, c, d);
-#endif
-#if 1 // General polygon
+    // General polygon
     BL_FLOAT x[4] = { 0.0, 1.0, 1.0, 0.0 };
     BL_FLOAT y[4];
-    if (currentPartial.mAmp < otherPartial.mAmp)
-    {
-        y[0] = currentPartial.mFreq;
-        y[1] = currentPartial.mFreq + currentPartial.mBeta0;
-        y[2] = otherPartial.mFreq;
-        y[3] = otherPartial.mFreq - otherPartial.mBeta0;
-    }
-    else
-    {
-        y[0] = otherPartial.mFreq - otherPartial.mBeta0;
-        y[1] = otherPartial.mFreq;
-        y[2] = currentPartial.mFreq + currentPartial.mBeta0;
-        y[3] = currentPartial.mFreq;
-    }
-    
+    /*if (currentPartial.mAmp < prevPartial.mAmp)
+      {
+      y[0] = currentPartial.mFreq;
+      y[1] = currentPartial.mFreq + currentPartial.mBeta0;
+      y[2] = prevPartial.mFreq;
+      y[3] = prevPartial.mFreq - prevPartial.mBeta0;
+      }
+      else
+      {
+      y[0] = prevPartial.mFreq - prevPartial.mBeta0;
+      y[1] = prevPartial.mFreq;
+      y[2] = currentPartial.mFreq + currentPartial.mBeta0;
+      y[3] = currentPartial.mFreq;
+      }*/
+    y[0] = prevPartial.mFreq;
+    y[1] = prevPartial.mFreq + prevPartial.mBeta0;
+    y[2] = currentPartial.mFreq;
+    y[3] = currentPartial.mFreq - currentPartial.mBeta0;
+      
     BL_FLOAT area = BLUtilsMath::PolygonArea(x, y, 4);
-#endif
     
     // u
-    BL_FLOAT denom = sqrt(currentPartial.mFreq*otherPartial.mFreq);
+    BL_FLOAT denom = sqrt(currentPartial.mFreq*prevPartial.mFreq);
     BL_FLOAT uf = 0.0;
     if (denom > BL_EPS)
         uf = area/denom;
@@ -575,6 +587,7 @@ PartialFilterAMFM::ComputeLF(const Partial &currentPartial,
     return LF;
 }
 
+#if 0 // Not used anymore
 // Trapezoid: https://en.wikipedia.org/wiki/Trapezoid
 BL_FLOAT
 PartialFilterAMFM::ComputeTrapezoidArea(BL_FLOAT a, BL_FLOAT b,
@@ -590,6 +603,7 @@ PartialFilterAMFM::ComputeTrapezoidArea(BL_FLOAT a, BL_FLOAT b,
     
     return area;
 }
+#endif
 
 // Extrapolate the partial with alpha0 and beta0
 void
