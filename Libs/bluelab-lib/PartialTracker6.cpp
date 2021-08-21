@@ -149,16 +149,6 @@ PartialTracker6::PartialTracker6(int bufferSize, BL_FLOAT sampleRate,
 #if USE_PARTIAL_FILTER_AMFM
     mPartialFilter = new PartialFilterAMFM(bufferSize, sampleRate);
 #endif
-
-    // For the method DBG_DumpPartials()
-#if 0 //1 // 0
-    BLDebug::ResetFile("ref-amp.txt");
-    BLDebug::ResetFile("ref-freq.txt");
-    BLDebug::ResetFile("amp0.txt");
-    BLDebug::ResetFile("amp1.txt");
-    BLDebug::ResetFile("freq0.txt");
-    BLDebug::ResetFile("freq1.txt");
-#endif
 }
 
 PartialTracker6::~PartialTracker6()
@@ -676,7 +666,8 @@ PartialTracker6::DetectPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
         p.mAmp = ampDbNorm;
     }
 #endif
-    
+
+    // DEBUG
     //DBG_DumpPartials(magns, *outPartials);
 }
 
@@ -1678,10 +1669,24 @@ PartialTracker6::DBG_DumpPeaks(const WDL_TypedBuf<BL_FLOAT> &data,
     }
 }
 
+#if 1 //0 // Display only the first partial
 void
 PartialTracker6::DBG_DumpPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
                                   const vector<Partial> &partials)
 {
+    static bool firstTime = true;
+    if (firstTime)
+    {
+        BLDebug::ResetFile("ref-amp.txt");
+        BLDebug::ResetFile("ref-freq.txt");
+        BLDebug::ResetFile("amp0.txt");
+        BLDebug::ResetFile("amp1.txt");
+        BLDebug::ResetFile("freq0.txt");
+        BLDebug::ResetFile("freq1.txt");
+
+        firstTime = false;
+    }
+    
     if (partials.empty())
         return;
 
@@ -1709,3 +1714,85 @@ PartialTracker6::DBG_DumpPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
     BL_FLOAT freq1 = p.mFreq + p.mBeta0;
     BLDebug::AppendValue("freq1.txt", freq1);
 }
+#endif
+
+// Specific; for displaying two sines crossing
+#if 0 //1 // Dump all th epartials
+void
+PartialTracker6::DBG_DumpPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
+                                  const vector<Partial> &partials)
+{
+    static bool firstTime = true;
+    if (firstTime)
+    {
+        BLDebug::ResetFile("ref-amp-0.txt");
+        BLDebug::ResetFile("ref-freq-0.txt");
+        BLDebug::ResetFile("amp0-0.txt");
+        BLDebug::ResetFile("amp1-0.txt");
+        BLDebug::ResetFile("freq0-0.txt");
+        BLDebug::ResetFile("freq1-0.txt");
+
+        BLDebug::ResetFile("ref-amp-1.txt");
+        BLDebug::ResetFile("ref-freq-1.txt");
+        BLDebug::ResetFile("amp0-1.txt");
+        BLDebug::ResetFile("amp1-1.txt");
+        BLDebug::ResetFile("freq0-1.txt");
+        BLDebug::ResetFile("freq1-1.txt");
+        
+        firstTime = false;
+    }
+    
+    if (partials.empty())
+        return;
+
+    for (int i = 0; i < 2; i++)
+    {
+        BL_FLOAT amp0 = 0.0;
+        BL_FLOAT amp1 = 0.0;
+        BL_FLOAT freq0 = 0.0;
+        BL_FLOAT freq1 = 0.0;
+
+        if (i < partials.size())
+        {
+            // Dump only the first partial
+            const Partial &p = partials[i];
+
+            amp0 = p.mAmp;
+            amp1 = p.mAmp + p.mAlpha0;
+
+            freq0 = p.mFreq;
+            freq1 = p.mFreq + p.mBeta0;
+        }
+
+        if (i == 0)
+        {
+            // Real amp
+            BLDebug::AppendValue("amp0-0.txt", amp0);
+            
+            // Estimated next amp
+            BLDebug::AppendValue("amp1-0.txt", amp1);
+            
+            // Real freq
+            BLDebug::AppendValue("freq0-0.txt", freq0);
+            
+            // Estimated next freq
+            BLDebug::AppendValue("freq1-0.txt", freq1);
+        }
+
+        if (i == 1)
+        {
+            // Real amp
+            BLDebug::AppendValue("amp0-1.txt", amp0);
+            
+            // Estimated next amp
+            BLDebug::AppendValue("amp1-1.txt", amp1);
+            
+            // Real freq
+            BLDebug::AppendValue("freq0-1.txt", freq0);
+            
+            // Estimated next freq
+            BLDebug::AppendValue("freq1-1.txt", freq1);
+        }
+    }
+}
+#endif
