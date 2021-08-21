@@ -53,7 +53,7 @@
 #define VIEW_BETA0_COEFF 1e3
 
 #if !FIND_PEAK_COMPAT
-#define VIEW_ALPHA0_COEFF 50.0/EMPIR_ALPHA0_COEFF // Red segments, for amps
+#define VIEW_ALPHA0_COEFF 5.0/*50.0*//EMPIR_ALPHA0_COEFF // Red segments, for amps
 #define VIEW_BETA0_COEFF 0.02/EMPIR_BETA0_COEFF // Blue segments, for freqs
 #endif
 
