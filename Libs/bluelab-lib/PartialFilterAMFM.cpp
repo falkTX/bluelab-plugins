@@ -21,9 +21,7 @@ using namespace std;
 #define EXTRAPOLATE_AMFM 0 //1
 
 PartialFilterAMFM::PartialFilterAMFM(int bufferSize, BL_FLOAT sampleRate)
-{
-    //sampleRate = 2.0; // TEST
-    
+{    
     mBufferSize = bufferSize;
     mSampleRate = sampleRate;
 }
@@ -32,9 +30,7 @@ PartialFilterAMFM::~PartialFilterAMFM() {}
 
 void
 PartialFilterAMFM::Reset(int bufferSize, BL_FLOAT sampleRate)
-{
-    //sampleRate = 2.0; // TEST
-    
+{    
     mBufferSize = bufferSize;
     mSampleRate = sampleRate;
     
@@ -43,7 +39,7 @@ PartialFilterAMFM::Reset(int bufferSize, BL_FLOAT sampleRate)
            
 void
 PartialFilterAMFM::FilterPartials(vector<Partial> *partials)
-{
+{    
     for (int i = 0; i < partials->size(); i++)
     {
         Partial &p = (*partials)[i];
@@ -97,9 +93,6 @@ PartialFilterAMFM::FilterPartials(vector<Partial> *partials)
     if (mPartials.size() >= 3)
         FixPartialsCrossing(mPartials[2], mPartials[1], &currentPartials);
     
-    // Get the result here
-    // So we get the partials that are well tracked over time
-    //*partials = currentPartials;
     
     // At the end, there remains the partial that have not been matched
     //
@@ -131,7 +124,6 @@ PartialFilterAMFM::FilterPartials(vector<Partial> *partials)
         //if (currentPartial.mState != Partial::DEAD)
         mPartials[0].push_back(currentPartial);
 #endif
-
 #if 1
         if (currentPartial.mState != Partial::DEAD)
             mPartials[0].push_back(currentPartial);
