@@ -187,6 +187,8 @@ public:
                     BL_FLOAT sampleRate);
     
     virtual ~FftProcessObj16();
+
+    void SetFreqResImprov(bool flag);
     
     // Set latency, when we want a value that is not the default (buffer size)
     void SetDefaultLatency(int latency);

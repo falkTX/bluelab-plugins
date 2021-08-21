@@ -123,6 +123,8 @@ public:
     ProcessObjChannel(ProcessObj *processObj, int bufferSize);
     
     virtual ~ProcessObjChannel();
+
+    void SetFreqResImprov(bool flag);
     
     void SetDefaultLatency(int latency);
     
@@ -242,6 +244,8 @@ protected:
     WDL_TypedBuf<BL_FLOAT> mAnalysisWindow;
     WDL_TypedBuf<BL_FLOAT> mSynthesisWindow;
     
+    bool mFreqResImprov;
+    WDL_TypedBuf<BL_FLOAT> mFreqResImprovAnaWindow;
     
     bool mKeepSynthesisEnergy;
     
@@ -319,6 +323,8 @@ ProcessObjChannel::ProcessObjChannel(ProcessObj *processObj, int bufferSize)
     mFreqRes = 1;
     mSampleRate = 44100.0;
 
+    mFreqResImprov = false;
+    
     mEnergy0 = 0.0;
     
     mShift = mBufferSize/mOverlapping;
@@ -354,6 +360,12 @@ ProcessObjChannel::ProcessObjChannel(ProcessObj *processObj, int bufferSize)
 }
 
 ProcessObjChannel::~ProcessObjChannel() {}
+
+void
+ProcessObjChannel::SetFreqResImprov(bool flag)
+{
+    mFreqResImprov = flag;
+}
 
 void
 ProcessObjChannel::SetDefaultLatency(int latency)
@@ -765,8 +777,8 @@ ProcessObjChannel::MakeAnaWindowStep()
     mMustMakeWindows = false;
     
     mResult.Resize(mPreparedBuffer.GetSize());
-    
-    // Apply analysis windows before resizing !
+
+    // Apply analysis windows before resizing!
     ApplyAnalysisWindow(&mPreparedBuffer);
     
     if (mProcessObj != NULL)
@@ -796,10 +808,27 @@ ProcessObjChannel::MakeFftStep()
     // See: http://www.bitweenie.com/listings/fft-zero-padding/
     // (last links of the page)
     if (mFreqRes > 1)
-    {
+    {        
         // Non-cyclic technique, to avoid aliasing
         BLUtils::ResizeFillZeros(&mPreparedBuffer,
                                  mPreparedBuffer.GetSize()*mFreqRes);
+                    
+        if (mFreqResImprov)
+        {
+            // For example on a pure sine wave, when using freqRes > 1,
+            // there are many small ocillations.
+            // By multiplying again by a window (of size BUFFER_SIZE*freqRes,
+            // we remove those oscillations and the curve becomes smooth again.
+            //
+            // NOTE: this changes the amplitudes a little.
+            WDL_TypedBuf<BL_FLOAT> zeroPadAnaWindow;
+            WDL_TypedBuf<BL_FLOAT> dummySynthWindow;
+            FftProcessObj16::MakeWindows(mBufferSize*mFreqRes, mOverlapping,
+                                         mAnalysisMethod, mSynthesisMethod,
+                                         &mFreqResImprovAnaWindow, &dummySynthWindow,
+                                         mOutTimeStretchFactor);
+            BLUtils::MultValues(&mPreparedBuffer, mFreqResImprovAnaWindow);
+        }
     }
     
     if (!mIsEnabled || mSkipFFT)
@@ -814,7 +843,7 @@ ProcessObjChannel::MakeFftStep()
 #endif
         
         // NOTE: Here, we have checked that mFreqRes didn't modify the amplitude
-        // of the out samples, neither the intermediate magnitude !
+        // of the out samples, neither the intermediate magnitude!
         FftProcessObj16::ComputeFft(mPreparedBuffer, &mFftBuf, mFreqRes, &mTmpBuf5);
     }
 }
@@ -1156,6 +1185,13 @@ FftProcessObj16::~FftProcessObj16()
      
         delete chan;
     }
+}
+
+void
+FftProcessObj16::SetFreqResImprov(bool flag)
+{
+    for (int i = 0; i < mChannels.size(); i++)
+        mChannels[i]->SetFreqResImprov(flag);
 }
 
 void

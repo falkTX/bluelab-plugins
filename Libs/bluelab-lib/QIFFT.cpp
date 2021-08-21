@@ -146,7 +146,11 @@ QIFFT::FindPeak(const WDL_TypedBuf<BL_FLOAT> &magns,
         return;
     
     BL_FLOAT p = -upp/denom1;
-    
+
+    // TEST
+    //BL_FLOAT sigma = sqrt(1.0/M_E);
+    //p = 1.0/(2.0*sigma*sigma);
+        
 #if FIND_PEAK_COMPAT
     // Adjust with a coeff, to be similar to the original paper
     BL_FLOAT N = magns.GetSize()*2;
