@@ -93,9 +93,10 @@ PartialFilterAMFM::FilterPartials(vector<Partial> *partials)
     for (int i = 0; i < deadZombiePartials.size(); i++)
         currentPartials.push_back(deadZombiePartials[i]);
 
+#if 1 //0 // 1
     if (mPartials.size() >= 3)
         FixPartialsCrossing(mPartials[2], mPartials[1], &currentPartials);
-    
+#endif
     
     // At the end, there remains the partial that have not been matched
     //
@@ -401,10 +402,11 @@ void
 PartialFilterAMFM::FixPartialsCrossing(const vector<Partial> &partials0,
                                        const vector<Partial> &partials1,
                                        vector<Partial> *partials2)
-{
+{    
     // Tmp optimization
 #define MIN_PARTIAL_AGE 5
-        
+#define MAX_SWAP_FREQ 100.0
+    
     const vector<Partial> partials2Copy = *partials2;
         
     Partial p0[3];
@@ -433,11 +435,14 @@ PartialFilterAMFM::FixPartialsCrossing(const vector<Partial> &partials0,
         //
         for (int j = i + 1; j < partials2Copy.size(); j++)
         {
-            const Partial &p = partials2Copy[j];
-            p1[2] = p;
+            p1[2] = partials2Copy[j];
             if (p1[2].mId == -1)
                 continue;
 
+            // Try to avoid very messay results
+            if (std::fabs(p1[2].mFreq - p0[2].mFreq) > MAX_SWAP_FREQ)
+                continue;
+            
             int idx11 = FindPartialById(partials1, p1[2].mId);
             if (idx11 == -1)
                 continue;
@@ -470,6 +475,9 @@ PartialFilterAMFM::FixPartialsCrossing(const vector<Partial> &partials0,
                 
                 (*partials2)[i].mId = p0[2].mId;
                 (*partials2)[j].mId = p1[2].mId;
+
+                // ??
+                break;
             }
         }
     }
