@@ -11,7 +11,11 @@ using namespace std;
 
 #include "PartialFilterAMFM.h"
 
-#define MAX_ZOMBIE_AGE 3 //2 //5 //2
+// 3 is often good
+//#define MAX_ZOMBIE_AGE 3 //2 //5 //2
+// 5 avoids changing id when partial crossing
+#define MAX_ZOMBIE_AGE 5
+
 // Must keep history size >= 3, for FixPartialsCrossing
 #define PARTIALS_HISTORY_SIZE 3 //2
 
