@@ -217,7 +217,6 @@ SASViewerRender4::OnMouseDrag(float x, float y, float dX, float dY,
     //
     // Without that, the camera point of view is not modified if
     // the sound is not playing
-    //mGraph->SetDirty(true);
     if (mGraph != NULL)
         mGraph->SetDataChanged();
     

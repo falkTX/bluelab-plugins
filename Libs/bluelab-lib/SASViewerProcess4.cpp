@@ -138,12 +138,10 @@ SASViewerProcess4::Reset(int bufferSize, int overlapping,
     mBufferSize = bufferSize;
     
     mOverlapping = overlapping;
-    //mOversampling = oversampling;
     mFreqRes = oversampling;
     
     mSampleRate = sampleRate;
     
-    //mSASFrame->Reset(sampleRate);
     mSASFrame->Reset(bufferSize, overlapping, oversampling, sampleRate);
 
 #if USE_PRUSA_PHASES_ESTIM
@@ -159,14 +157,11 @@ SASViewerProcess4::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
 #if DBG_BYPASS
     return;
 #endif
-    
-    //WDL_TypedBuf<WDL_FFT_COMPLEX> fftSamples = *ioBuffer;
-
+   
     WDL_TypedBuf<WDL_FFT_COMPLEX> &fftSamples0 = mTmpBuf0;
     fftSamples0 = *ioBuffer;
     
     // Take half of the complexes
-    //BLUtils::TakeHalf(&fftSamples);
     WDL_TypedBuf<WDL_FFT_COMPLEX> &fftSamples = mTmpBuf1;
     BLUtils::TakeHalf(fftSamples0, &fftSamples);
     
@@ -190,10 +185,6 @@ SASViewerProcess4::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
             
     //
     mSASFrame->SetInputData(magns, phases);
-
-    //#if USE_PRUSA_PHASES_ESTIM
-    //mPhasesEstim->Process(magns, &phases);
-    //#endif
         
     // Silence
     BLUtils::FillAllZero(&magns);
@@ -203,17 +194,7 @@ SASViewerProcess4::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
         vector<Partial> normPartials;
         mPartialTracker->GetPartials(&normPartials);
 
-        //#if FORCE_NON_FILTERED_FIRTS_PARTIALS
-        //if (normPartials.empty())
-        //normPartials = rawPartials;
-        //#endif
-        
         mCurrentNormPartials = normPartials;
-        
-        // Avoid sending garbage partials to the SASFrame
-        // (would slow down a lot when many garbage partial
-        // are used to compute the SASFrame)
-        //PartialTracker3::RemoveRealDeadPartials(&partials);
         
         vector<Partial> partials = normPartials;
         mPartialTracker->DenormPartials(&partials);
@@ -314,7 +295,6 @@ SASViewerProcess4::ProcessSamplesPost(WDL_TypedBuf<BL_FLOAT> *ioBuffer)
     // Create a separate buffer for samples synthesis from partials
     // (because it doesn't use overlap)
     WDL_TypedBuf<BL_FLOAT> samplesBuffer;
-    //BLUtils::ResizeFillZeros(&samplesBuffer, ioBuffer->GetSize());
     samplesBuffer.Resize(ioBuffer->GetSize());
     BLUtils::FillAllZero(&samplesBuffer);
 
@@ -523,7 +503,7 @@ SASViewerProcess4::PartialToColor(const Partial &partial, unsigned char color[4]
         return;
     }
     
-    int deadAlpha = 255; //128;
+    int deadAlpha = 255;
     
 #if SHOW_ONLY_ALIVE
     deadAlpha = 0;
@@ -558,7 +538,7 @@ SASViewerProcess4::PartialToColor(const Partial &partial, unsigned char color[4]
     }
     
     IdToColor((int)partial.mId, color);
-    color[3] = alpha; //255;
+    color[3] = alpha;
 }
 
 void
@@ -622,8 +602,7 @@ SASViewerProcess4::DisplayDetection()
         
         // It is cool like that: lite blue with alpha
         //unsigned char color[4] = { 64, 64, 255, 255 };
-        // Magenta
-        //unsigned char color[4] = { 255, 0, 255, 255 };
+        
         // Green
         unsigned char color[4] = { 0, 255, 0, 255 };
         
@@ -645,7 +624,7 @@ SASViewerProcess4::DisplayDetection()
         }
 
         // Update Z
-        int divisor = mSASViewerRender->GetNumSlices(); // - 1;
+        int divisor = mSASViewerRender->GetNumSlices();
         if (divisor <= 0)
             divisor = 1;
         BL_FLOAT incrZ = 1.0/divisor;
@@ -667,7 +646,6 @@ SASViewerProcess4::DisplayDetection()
         }
         
         BL_FLOAT lineWidth = 4.0;
-        //BL_FLOAT lineWidth = 1.5;
 
         vector<LinesRender2::Line> &partialLines = mTmpBuf6;
         PointsToLines(mPartialsPoints, &partialLines);
@@ -724,14 +702,6 @@ SASViewerProcess4::DisplayDetectionBeta0(bool addData)
             // Second point (extrapolated)
             LinesRender2::Point p1;
 
-            /// DEBUG: debug coeffs
-            //BL_FLOAT partialX1 = partial.mFreq + partial.mBeta0*100.0;// v2, non fixed
-            //BL_FLOAT partialX1 = partial.mFreq + partial.mBeta0*1000.0; // v2, fixed
-            //BL_FLOAT partialY1 = partial.mAmp + partial.mAlpha0*10.0; // DEBUG
-
-            //BL_FLOAT partialY1 =
-            //    partial.mAmp + /*-*/ partial.mAlpha0*VIEW_ALPHA0_COEFF;
-
             // Add QIFFT alpha using correct scale
             BL_FLOAT ampQIFFT =
                 mPartialTracker->PartialScaleToQIFFTScale(partial.mAmp);
@@ -743,7 +713,7 @@ SASViewerProcess4::DisplayDetectionBeta0(bool addData)
             BL_FLOAT partialY1 = ampDbNorm;
             
             p1.mX = partialX0 - 0.5;
-            p1.mY = partialY1; //partial.mAmp;
+            p1.mY = partialY1;
             p1.mZ = 1.0;
             p1.mId = (int)partial.mId;
 
@@ -759,8 +729,6 @@ SASViewerProcess4::DisplayDetectionBeta0(bool addData)
             // Third point (extrapolated)
             LinesRender2::Point p2;
 
-            /// DEBUG: debug coeffs
-            //BL_FLOAT partialX1 = partial.mFreq + partial.mBeta0*100.0;// v2, non fixed
             // Was 1000
             BL_FLOAT partialX1 = partial.mFreq + partial.mBeta0*VIEW_BETA0_COEFF;
             
@@ -792,7 +760,7 @@ SASViewerProcess4::DisplayDetectionBeta0(bool addData)
             mPartialsSegments.pop_front();
         
         // Update Z
-        int divisor = mSASViewerRender->GetNumSlices(); // - 1;
+        int divisor = mSASViewerRender->GetNumSlices();
         if (divisor <= 0)
             divisor = 1;
         BL_FLOAT incrZ = 1.0/divisor;
@@ -909,7 +877,7 @@ SASViewerProcess4::DisplayZombiePoints()
         }
 
         // Update Z
-        int divisor = mSASViewerRender->GetNumSlices(); // - 1;
+        int divisor = mSASViewerRender->GetNumSlices();
         if (divisor <= 0)
             divisor = 1;
         BL_FLOAT incrZ = 1.0/divisor;
@@ -1005,9 +973,6 @@ SASViewerProcess4::DisplayTracking()
         
         CreateLines(prevPoints);
         
-        // It is cool like that: lite blue with alpha
-        //unsigned char color[4] = { 64, 64, 255, 255 };
-        
         // Set color
         for (int j = 0; j < mPartialLines.size(); j++)
         {
@@ -1027,13 +992,9 @@ SASViewerProcess4::DisplayTracking()
             }
         }
             
-        //BL_FLOAT lineWidth = 4.0;
         BL_FLOAT lineWidth = 1.5;
         if (!mDebugPartials)
-        {
-            //lineWidth = 1.5;
             lineWidth = 4.0;
-        }
         
         mSASViewerRender->SetAdditionalLines(TRACKING, mPartialLines, lineWidth);
     }
@@ -1290,7 +1251,6 @@ SASViewerProcess4::CreateLines(const vector<LinesRender2::Point> &prevPoints)
     {
         LinesRender2::Point newPoint = newPoints[i];
 
-        //newPoint.mZ = 1.0;
         // Adjust
         newPoint.mZ = 1.0 - incrZ;
         

@@ -40,9 +40,6 @@ Partial::Partial()
     mAge = 0;
     
     mCookie = 0.0;
-    
-    // Kalman
-    //mPredictedFreq = 0.0;
 }
 
     
@@ -68,9 +65,6 @@ Partial::Partial(const Partial &other)
     mAge = other.mAge;
     
     mCookie = other.mCookie;
-    
-    // Kalman
-    //mPredictedFreq = other.mPredictedFreq;
 
     // QIFFT
     mBinIdxF = other.mBinIdxF;

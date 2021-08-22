@@ -9,7 +9,7 @@ using namespace std;
 
 // Method using alhpa0 and dlta0 from AM FM paper
 // https://www.researchgate.net/publication/235219224_Improved_partial_tracking_technique_for_sinusoidal_modeling_of_speech_and_audio
-// Also use zonbied as suggested
+// Also use zombied as suggested
 class PartialFilterAMFM : public PartialFilter
 {
  public:
@@ -38,7 +38,6 @@ class PartialFilterAMFM : public PartialFilter
 
     BL_FLOAT ComputeLA(const Partial &prevPartial, const Partial &currentPartial);
     BL_FLOAT ComputeLF(const Partial &prevPartial, const Partial &currentPartial);
-    //BL_FLOAT ComputeTrapezoidArea(BL_FLOAT a, BL_FLOAT b, BL_FLOAT c, BL_FLOAT d);
 
     void ExtrapolatePartialAMFM(Partial *p);
     void ExtrapolatePartialKalman(Partial *p);

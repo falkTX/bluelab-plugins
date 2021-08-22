@@ -338,7 +338,6 @@ PartialTracker6::ProcessMusicalNoise(WDL_TypedBuf<BL_FLOAT> *noise)
         return;
     }
     
-    //const WDL_TypedBuf<BL_FLOAT> noiseCopy = *noise;
     WDL_TypedBuf<BL_FLOAT> &noiseCopy = mTmpBuf2;
     noiseCopy = *noise;
     
@@ -470,7 +469,6 @@ PartialTracker6::KeepOnlyPartials(const vector<Partial> &partials,
                                   WDL_TypedBuf<BL_FLOAT> *magns)
 {
     WDL_TypedBuf<BL_FLOAT> &result = mTmpBuf4;
-    //BLUtils::ResizeFillValue(&result, magns->GetSize(), (BL_FLOAT)0.0);
     result.Resize(magns->GetSize());
     BLUtils::FillAllZero(&result);
                    
@@ -500,8 +498,7 @@ void
 PartialTracker6::FilterPartials()
 {    
 #if FILTER_PARTIALS
-    //FilterPartials(&mResult);
-
+    
 #if USE_PARTIAL_FILTER_AMFM
     // Adjust the scale
     for (int i = 0; i < mResult.size(); i++)
@@ -544,7 +541,6 @@ PartialTracker6::FilterPartials()
 bool
 PartialTracker6::GetAlivePartials(vector<Partial> *partials)
 {
-    //if (mPartials.empty())
     if (mResult.empty())
         return false;
     
@@ -582,13 +578,6 @@ void
 PartialTracker6::GetPartials(vector<Partial> *partials)
 {
     *partials = mResult;
-    
-    /*#if USE_KALMAN_FOR_RESULT
-      for (int i = 0; i < partials->size(); i++)
-      {
-      (*partials)[i].mFreq = (*partials)[i].mPredictedFreq;
-      }
-      #endif*/
     
     // For sending good result to SASFrame
     RemoveRealDeadPartials(partials);
@@ -637,7 +626,6 @@ PartialTracker6::DetectPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
         maxIndex = magns.GetSize() - 1;
     
     vector<PeakDetector::Peak> peaks;
-    //DBG_DumpPeaks(magns, peaks);
 
 #if !USE_QIFFT_YLOG
     mPeakDetector->DetectPeaks(magns, &peaks,
@@ -666,9 +654,6 @@ PartialTracker6::DetectPartials(const WDL_TypedBuf<BL_FLOAT> &magns,
         p.mAmp = ampDbNorm;
     }
 #endif
-
-    // DEBUG
-    //DBG_DumpPartials(magns, *outPartials);
 }
 
 // From GlueTwinPartials()
@@ -1311,7 +1296,8 @@ PartialTracker6::TimeSmoothNoise(WDL_TypedBuf<BL_FLOAT> *noise)
         BL_FLOAT val = noise->Get()[i];
         BL_FLOAT prevVal = mTimeSmoothPrevNoise.Get()[i];
         
-        BL_FLOAT newVal = (1.0 - mTimeSmoothNoiseCoeff)*val + mTimeSmoothNoiseCoeff*prevVal;
+        BL_FLOAT newVal =
+            (1.0 - mTimeSmoothNoiseCoeff)*val + mTimeSmoothNoiseCoeff*prevVal;
         
         noise->Get()[i] = newVal;
     }
@@ -1380,18 +1366,7 @@ PartialTracker6::DenormData(WDL_TypedBuf<BL_FLOAT> *data)
     // A-Weighting
     PreProcessAWeighting(data, false);
     
-    // Y
-#if 0 // one by one
-    for (int i = 0; i < data->GetSize(); i++)
-    {
-        BL_FLOAT d = data->Get()[i];
-        d = mScale->ApplyScale(mYScaleInv, d, (BL_FLOAT)MIN_AMP_DB, (BL_FLOAT)0.0);
-        data->Get()[i] = d;
-    }
-#endif
-#if 1 // OPTIM: process by block
     mScale->ApplyScaleForEach(mYScaleInv, data, (BL_FLOAT)MIN_AMP_DB, (BL_FLOAT)0.0);
-#endif
 }
 
 void
@@ -1487,7 +1462,6 @@ PartialTracker6::ProcessAWeighting(int binNum, int numBins,
         // Do nothing
         return magn;
     
-    //BL_FLOAT a = AWeighting::ComputeAWeight(binNum, numBins, mSampleRate);
     BL_FLOAT a = mAWeights.Get()[binNum];
     
     BL_FLOAT normDbMagn = magn;
@@ -1582,14 +1556,7 @@ PartialTracker6::ComputePartials(const vector<PeakDetector::Peak> &peaks,
         // Kalman
         //
         // Update the estimate with the first value
-        //p.mKf.updateEstimate(p.mFreq);
         p.mKf.initEstimate(p.mFreq);
-        
-        // For predicted freq to be freq for the first value
-        //p.mPredictedFreq = p.mFreq;
-        
-        // Default value. Will be overwritten
-        //BL_FLOAT peakAmp = data.Get()[(int)peakIndexF];
 
 #if !USE_QIFFT
         
