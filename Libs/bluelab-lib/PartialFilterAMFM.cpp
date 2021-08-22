@@ -93,8 +93,8 @@ PartialFilterAMFM::FilterPartials(vector<Partial> *partials)
     for (int i = 0; i < deadZombiePartials.size(); i++)
         currentPartials.push_back(deadZombiePartials[i]);
 
-    //if (mPartials.size() >= 3)
-    //    FixPartialsCrossing(mPartials[2], mPartials[1], &currentPartials);
+    if (mPartials.size() >= 3)
+        FixPartialsCrossing(mPartials[2], mPartials[1], &currentPartials);
     
     
     // At the end, there remains the partial that have not been matched
