@@ -26,6 +26,10 @@ class PartialFilterAMFM : public PartialFilter
                                vector<Partial> *currentPartials,
                                vector<Partial> *remainingCurrentPartials);
 
+    void AssociatePartialsHungarian(const vector<Partial> &prevPartials,
+                                    vector<Partial> *currentPartials,
+                                    vector<Partial> *remainingCurrentPartials);
+    
     void ComputeZombieDeadPartials(const vector<Partial> &prevPartials,
                                    const vector<Partial> &currentPartials,
                                    vector<Partial> *zombieDeadPartials);

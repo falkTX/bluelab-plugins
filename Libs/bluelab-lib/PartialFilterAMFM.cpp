@@ -9,6 +9,8 @@ using namespace std;
 
 #include <BLDebug.h>
 
+#include <Hungarian.h>
+
 #include "PartialFilterAMFM.h"
 
 // 3 is often good
@@ -24,6 +26,9 @@ using namespace std;
 // Propagate dead and zombies with alpha0 and beta0
 // Problem: at partial crossing, alpha0 (for amp) sometimes has big values 
 #define EXTRAPOLATE_AMFM 0 //1
+
+#define ASSOC_AMFM 0 // 1
+#define ASSOC_HUNGARIAN 1 //0
 
 PartialFilterAMFM::PartialFilterAMFM(int bufferSize, BL_FLOAT sampleRate)
 {    
@@ -87,9 +92,17 @@ PartialFilterAMFM::FilterPartials(vector<Partial> *partials)
     // Partials that was not associated at the end
     vector<Partial> &remainingCurrentPartials = mTmpPartials1;
     remainingCurrentPartials.resize(0);
-    
-    AssociatePartialsAMFM(prevPartials, &currentPartials, &remainingCurrentPartials);
 
+#if ASSOC_AMFM
+    AssociatePartialsAMFM(prevPartials, &currentPartials,
+                          &remainingCurrentPartials);
+#endif
+
+#if ASSOC_HUNGARIAN
+    AssociatePartialsHungarian(prevPartials, &currentPartials,
+                               &remainingCurrentPartials);
+#endif
+    
     vector<Partial> &deadZombiePartials = mTmpPartials7;
     ComputeZombieDeadPartials(prevPartials, currentPartials, &deadZombiePartials);
     
@@ -318,6 +331,91 @@ AssociatePartialsAMFM(const vector<Partial> &prevPartials,
     }
     
     // Update current partials
+    *currentPartials = newPartials;
+}
+
+void
+PartialFilterAMFM::
+AssociatePartialsHungarian(const vector<Partial> &prevPartials,
+                           vector<Partial> *currentPartials,
+                           vector<Partial> *remainingCurrentPartials)
+{
+#define MAX_COST BL_INF
+    
+    int maxDim = (prevPartials.size() >= currentPartials->size()) ?
+        prevPartials.size() : currentPartials->size();
+
+    // Init cost matrix
+    vector<vector<BL_FLOAT> > costMatrix;
+    costMatrix.resize(maxDim);
+    for (int i = 0; i < costMatrix.size(); i++)
+    {
+        costMatrix[i].resize(maxDim);
+        for (int j = 0; j < costMatrix[i].size(); j++)
+            // Initialize with dummy cost value
+            costMatrix[i][j] = MAX_COST; //0.0;
+    }
+    
+    // Fill the cost matrix
+    for (int i = 0; i < costMatrix.size(); i++)
+    {
+        for (int j = 0; j < costMatrix[i].size(); j++)
+        {
+            if ((i < prevPartials.size()) &&
+                (j < currentPartials->size()))
+            {
+                BL_FLOAT LA = ComputeLA(prevPartials[i], (*currentPartials)[j]);
+                BL_FLOAT LF = ComputeLF(prevPartials[i], (*currentPartials)[j]);
+
+                if ((LA < 0.5) || (LF < 0.5))
+                    // Discard
+                    costMatrix[i][j] = MAX_COST;
+                else
+                    costMatrix[i][j] = 1.0 - LA*LF;
+            }
+        }
+    }
+
+    // Solve
+    HungarianAlgorithm HungAlgo;
+	vector<int> assignment;
+	BL_FLOAT cost = HungAlgo.Solve(costMatrix, assignment);
+
+    for (int i = 0; i < assignment.size(); i++)
+    {
+        if (i < currentPartials->size())
+        {
+            int a = assignment[i];
+            if (a < prevPartials.size())
+            {
+                if (prevPartials[a].mId != -1)
+                    (*currentPartials)[i].mId = prevPartials[a].mId;
+            }
+        }
+    }
+
+
+    vector<Partial> newPartials;
+    
+    // Add the remaining partials
+    remainingCurrentPartials->clear();
+    for (int i = 0; i < currentPartials->size(); i++)
+    {
+        Partial &p = (*currentPartials)[i];
+        if (p.mId != -1)
+        {
+            p.mState = Partial::ALIVE;
+            p.mWasAlive = true;
+    
+            // Increment age
+            p.mAge = p.mAge + 1;
+            
+            newPartials.push_back(p);
+        }
+        else          
+            remainingCurrentPartials->push_back(p);
+    }
+
     *currentPartials = newPartials;
 }
 
