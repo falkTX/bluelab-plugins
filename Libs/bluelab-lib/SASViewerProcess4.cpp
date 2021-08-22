@@ -1337,12 +1337,16 @@ void
 SASViewerProcess4::
 SegmentsToLines(const deque<vector<vector<LinesRender2::Point> > > &segments,
                 vector<LinesRender2::Line> *lines)
-{
-    lines->clear();
-    
+{    
     if (segments.empty())
+    {
+        lines->clear();
+        
         return;
-
+    }
+    
+    // Count the total number of lines
+    int numLines = 0;
     for (int i = 0; i < segments.size(); i++)
     {
         const vector<vector<LinesRender2::Point> > &seg0 = segments[i];
@@ -1354,17 +1358,37 @@ SegmentsToLines(const deque<vector<vector<LinesRender2::Point> > > &segments,
             if (seg.size() != 2)
                 continue;
 
-            LinesRender2::Line line;
-            line.mPoints.push_back(seg[0]);
-            line.mPoints.push_back(seg[1]);
+            numLines++;
+        }
+    }
 
+    lines->resize(numLines);
+
+    // Process
+    int lineNum = 0;
+    LinesRender2::Line line;
+    line.mPoints.resize(2);
+    for (int i = 0; i < segments.size(); i++)
+    {
+        const vector<vector<LinesRender2::Point> > &seg0 = segments[i];
+        
+        for (int j = 0; j < seg0.size(); j++)
+        {
+            const vector<LinesRender2::Point> &seg = seg0[j];
+
+            if (seg.size() != 2)
+                continue;
+
+            line.mPoints[0] = seg[0];
+            line.mPoints[1] = seg[1];
+            
             // Take the color of the last point
             line.mColor[0] = seg[1].mR;
             line.mColor[1] = seg[1].mG;
             line.mColor[2] = seg[1].mB;
             line.mColor[3] = seg[1].mA;
 
-            lines->push_back(line);
+            (*lines)[lineNum++] = line;
         }
     }
 }

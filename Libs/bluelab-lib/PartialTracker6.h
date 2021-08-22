@@ -147,7 +147,7 @@ protected:
                          const WDL_TypedBuf<BL_FLOAT> &magns,
                          const WDL_TypedBuf<BL_FLOAT> &phases,
                          vector<Partial> *partials);
-    
+
     // Get the partials which are alive
     // (this avoid getting garbage partials that would never be associated)
     bool GetAlivePartials(vector<Partial> *partials);
