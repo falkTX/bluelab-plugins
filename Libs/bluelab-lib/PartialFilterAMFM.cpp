@@ -154,6 +154,10 @@ AssociatePartialsAMFM(const vector<Partial> &prevPartials,
                       vector<Partial> *currentPartials,
                       vector<Partial> *remainingCurrentPartials)
 {
+    // Quick optimization (avoid long freezing)
+    // (later, will use hungarian)
+#define MAX_NUM_ITER 5
+    
     // Sort current partials and prev partials by increasing frequency
     sort(currentPartials->begin(), currentPartials->end(), Partial::FreqLess);
     
@@ -163,8 +167,11 @@ AssociatePartialsAMFM(const vector<Partial> &prevPartials,
     
     // Associated partials
     bool stopFlag = true;
+    int numIters = 0;
     do {
         stopFlag = true;
+
+        numIters++;
         
         for (int i = 0; i < prevPartials0.size(); i++)
         {
@@ -257,8 +264,12 @@ AssociatePartialsAMFM(const vector<Partial> &prevPartials,
                 }
             }
         }
+
+        // Quick optimization
+        if (numIters > MAX_NUM_ITER)
+            break;
+        
     } while (!stopFlag);
-    
     
     // Update partials
     vector<Partial> &newPartials = mTmpPartials6;
@@ -467,7 +478,8 @@ PartialFilterAMFM::FixPartialsCrossing(const vector<Partial> &partials0,
 int
 PartialFilterAMFM::FindPartialById(const vector<Partial> &partials, int idx)
 {
-    for (int i = 0; i < partials.size(); i++)
+    long numPartials = partials.size();
+    for (int i = 0; i < numPartials; i++)
     {
         const Partial &partial = partials[i];
         
