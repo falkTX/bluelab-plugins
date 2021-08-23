@@ -682,7 +682,7 @@ SASViewerProcess4::DisplayDetectionBeta0(bool addData)
         mSASViewerRender->SetLineMode(DETECTION, LinesRender2::LINES_FREQ);
 
         // Add points corresponding to raw detected partials
-        vector<Partial> partials = mCurrentRawPartials;
+        vector<Partial> partials = mCurrentNormPartials; //mCurrentRawPartials;
 
         // Create line
         vector<vector<LinesRender2::Point> > segments;

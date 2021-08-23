@@ -229,8 +229,13 @@ AssociatePartialsAMFM(const vector<Partial> &prevPartials,
                 BL_FLOAT LA = ComputeLA(prevPartial, currentPartial);
                 BL_FLOAT LF = ComputeLF(prevPartial, currentPartial);
 
+                bool bigJump = CheckBigJump(prevPartial, currentPartial);
+                
                 // As is the paper
-                if ((LA > 0.5) && (LF > 0.5))
+                if ((LA > 0.5) && (LF > 0.5) &&
+                    // Avoid big jumps
+                    !bigJump)
+                     
                     // Associate!
                 {
                     // Current partial already has an id
@@ -865,3 +870,50 @@ PartialFilterAMFM::DBG_DumpPartials(const char *fileName,
 
     BLDebug::DumpData(fileName, data);
 }
+
+bool
+PartialFilterAMFM::CheckBigJump(const Partial &prevPartial,
+                                const Partial &currentPartial)
+{
+#define BIG_JUMP_COEFF 16.0 //4.0 //16.0 //4.0 //2.0
+
+    BL_FLOAT oneBinEps = 1.0/mBufferSize;
+#if RESCALE_HZ
+    oneBinEps *= mSampleRate*0.5;
+#endif
+
+    // Check if partials are very close
+    // (in this case, it sould keep the same id, even if beta0 is very small)
+    if (std::fabs(prevPartial.mFreq - currentPartial.mFreq) <
+        oneBinEps*BIG_JUMP_COEFF)
+        return false;
+        
+    // Extrapoled frequency, from prev partial
+    BL_FLOAT extraFreq0 = prevPartial.mFreq + prevPartial.mBeta0;
+    bool flag0 = (currentPartial.mFreq > extraFreq0 +
+                  BIG_JUMP_COEFF*(extraFreq0 - prevPartial.mFreq));
+
+
+    bool flag1 = (currentPartial.mFreq < extraFreq0 -
+                  BIG_JUMP_COEFF*(extraFreq0 - prevPartial.mFreq));
+
+    // Extrapolated, from current partial
+    BL_FLOAT extraFreq1 = currentPartial.mFreq - currentPartial.mBeta0;
+    bool flag2 = (prevPartial.mFreq > extraFreq1 +
+                  BIG_JUMP_COEFF*(extraFreq1 - currentPartial.mFreq));
+
+    bool flag3 = (prevPartial.mFreq < extraFreq1 -
+                  BIG_JUMP_COEFF*(extraFreq1 - currentPartial.mFreq));
+
+    // Use flags "&&" to mix cases
+    // e.g to give a chance to a case where prev beta0 is almost 0,
+    // but current beta0 has a significant value.
+    if (flag0 && flag3)
+        return true;
+    
+    if (flag1 && flag2)
+        return true;
+    
+    return false;
+}
+

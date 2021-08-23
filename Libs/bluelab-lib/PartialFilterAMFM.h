@@ -57,6 +57,8 @@ class PartialFilterAMFM : public PartialFilter
         
     void ExtrapolatePartialAMFM(Partial *p);
     void ExtrapolatePartialKalman(Partial *p);
+
+    bool CheckBigJump(const Partial &prevPartial, const Partial &currentPartial);
     
     void DBG_PrintPartials(const vector<Partial> &partials);
     void DBG_DumpPartials(const char *fileName,
