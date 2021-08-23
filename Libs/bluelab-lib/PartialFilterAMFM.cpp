@@ -27,8 +27,11 @@ using namespace std;
 // Problem: at partial crossing, alpha0 (for amp) sometimes has big values 
 #define EXTRAPOLATE_AMFM 0 //1
 
-#define ASSOC_AMFM 0 // 1
-#define ASSOC_HUNGARIAN 1 //0
+#define ASSOC_AMFM 1 //0
+#define ASSOC_HUNGARIAN_AMFM 0 //1
+#define ASSOC_HUNGARIAN_NERI 0 //1
+
+#define RESCALE_HZ 0 //1
 
 PartialFilterAMFM::PartialFilterAMFM(int bufferSize, BL_FLOAT sampleRate)
 {    
@@ -49,14 +52,16 @@ PartialFilterAMFM::Reset(int bufferSize, BL_FLOAT sampleRate)
            
 void
 PartialFilterAMFM::FilterPartials(vector<Partial> *partials)
-{    
+{
+#if RESCALE_HZ
     for (int i = 0; i < partials->size(); i++)
     {
         Partial &p = (*partials)[i];
         p.mFreq *= mSampleRate*0.5;
         p.mBeta0 *= mSampleRate*0.5;
     }
-
+#endif
+    
     //DBG_PrintPartials(*partials);
     
     mPartials.push_front(*partials);
@@ -93,14 +98,25 @@ PartialFilterAMFM::FilterPartials(vector<Partial> *partials)
     vector<Partial> &remainingCurrentPartials = mTmpPartials1;
     remainingCurrentPartials.resize(0);
 
+    // DEBUG
+    //DBG_DumpPartials("prev.txt", prevPartials, mBufferSize);
+    //DBG_DumpPartials("cur.txt", currentPartials, mBufferSize);
+
+    //DBG_PrintPartials(prevPartials);
+        
 #if ASSOC_AMFM
     AssociatePartialsAMFM(prevPartials, &currentPartials,
                           &remainingCurrentPartials);
 #endif
 
-#if ASSOC_HUNGARIAN
-    AssociatePartialsHungarian(prevPartials, &currentPartials,
-                               &remainingCurrentPartials);
+#if ASSOC_HUNGARIAN_AMFM
+    AssociatePartialsHungarianAMFM(prevPartials, &currentPartials,
+                                   &remainingCurrentPartials);
+#endif
+
+#if ASSOC_HUNGARIAN_NERI
+    AssociatePartialsHungarianNeri(prevPartials, &currentPartials,
+                                   &remainingCurrentPartials);
 #endif
     
     vector<Partial> &deadZombiePartials = mTmpPartials7;
@@ -152,7 +168,8 @@ PartialFilterAMFM::FilterPartials(vector<Partial> *partials)
     }
 
     *partials = mPartials[0];
-    
+
+#if RESCALE_HZ
     BL_FLOAT coeff = 1.0/(mSampleRate*0.5);
     for (int i = 0; i < partials->size(); i++)
     {
@@ -164,6 +181,7 @@ PartialFilterAMFM::FilterPartials(vector<Partial> *partials)
         //p.mPredictedFreq = p.mFreq;
         //#endif
     }
+#endif
 }
 
 void
@@ -336,9 +354,9 @@ AssociatePartialsAMFM(const vector<Partial> &prevPartials,
 
 void
 PartialFilterAMFM::
-AssociatePartialsHungarian(const vector<Partial> &prevPartials,
-                           vector<Partial> *currentPartials,
-                           vector<Partial> *remainingCurrentPartials)
+AssociatePartialsHungarianAMFM(const vector<Partial> &prevPartials,
+                               vector<Partial> *currentPartials,
+                               vector<Partial> *remainingCurrentPartials)
 {    
     // Init cost matrix (MxN)
     vector<vector<BL_FLOAT> > costMatrix;
@@ -361,6 +379,93 @@ AssociatePartialsHungarian(const vector<Partial> &prevPartials,
             else
 #endif
                 costMatrix[i][j] = 1.0 - LA*LF;
+        }
+    }
+
+    // Solve
+    HungarianAlgorithm HungAlgo;
+	vector<int> assignment;
+	BL_FLOAT cost = HungAlgo.Solve(costMatrix, assignment);
+    
+    for (int i = 0; i < assignment.size(); i++)
+    {
+        int a = assignment[i];
+       
+        // If num prev > num current, there will be some unassigned partials
+        // (int this case, assignment is -1)
+        if ((a != -1) && 
+            (prevPartials[i].mId != -1))
+            (*currentPartials)[a].mId = prevPartials[i].mId;
+    }
+
+    vector<Partial> newPartials;
+    
+    // Add the remaining partials
+    remainingCurrentPartials->clear();
+    for (int i = 0; i < currentPartials->size(); i++)
+    {
+        Partial &p = (*currentPartials)[i];
+        if (p.mId != -1)
+        {
+            p.mState = Partial::ALIVE;
+            p.mWasAlive = true;
+    
+            // Increment age
+            p.mAge = p.mAge + 1;
+            
+            newPartials.push_back(p);
+        }
+        else          
+            remainingCurrentPartials->push_back(p);
+    }
+
+    *currentPartials = newPartials;
+}
+
+// Compute score like in the paper
+void
+PartialFilterAMFM::
+AssociatePartialsHungarianNeri(const vector<Partial> &prevPartials,
+                               vector<Partial> *currentPartials,
+                               vector<Partial> *remainingCurrentPartials)
+{
+    // Parameters
+    /*const*/ BL_FLOAT delta = 0.2;
+    /*const*/ BL_FLOAT zetaF = 50.0; // in Hz
+    /*const*/ BL_FLOAT zetaA = 15; // in dB
+
+#if !RESCALE_HZ
+    zetaF *= 1.0/(mSampleRate*0.5);
+#endif
+    
+    // These can't be <= 0
+    if (zetaF < 1e-1)
+        zetaF = 1e-1;
+    if (zetaA < 1e-1)
+        zetaA = 1e-1;
+ 
+    //Convert to log from dB
+    zetaA = zetaA/20*log(10);
+
+    
+    // Init cost matrix (MxN)
+    vector<vector<BL_FLOAT> > costMatrix;
+    costMatrix.resize(prevPartials.size());
+    for (int i = 0; i < costMatrix.size(); i++)
+        costMatrix[i].resize(currentPartials->size());
+    
+    // Fill the cost matrix
+    for (int i = 0; i < costMatrix.size(); i++)
+    {
+        for (int j = 0; j < costMatrix[i].size(); j++)
+        {
+            BL_FLOAT A;
+            BL_FLOAT B;
+            ComputeScoreNeri(prevPartials[i], (*currentPartials)[j],
+                             delta, zetaF, zetaA,
+                             &A, &B);
+
+            costMatrix[i][j] = (A < B) ? A : B;
         }
     }
 
@@ -449,8 +554,8 @@ PartialFilterAMFM::ComputeZombieDeadPartials(const vector<Partial> &prevPartials
 #endif
 
 #endif
-                
-                zombieDeadPartials->push_back(newPartial);
+                if (newPartial.mZombieAge < MAX_ZOMBIE_AGE)
+                    zombieDeadPartials->push_back(newPartial);
             }
             else if (prevPartial.mState == Partial::ZOMBIE)
             {
@@ -492,7 +597,12 @@ PartialFilterAMFM::FixPartialsCrossing(const vector<Partial> &partials0,
 {    
     // Tmp optimization
 #define MIN_PARTIAL_AGE 5
+
+#if RESCALE_HZ
 #define MAX_SWAP_FREQ 100.0
+#else
+#define MAX_SWAP_FREQ 100.0/(mSampleRate*0.5)
+#endif
     
     const vector<Partial> partials2Copy = *partials2;
         
@@ -624,11 +734,18 @@ PartialFilterAMFM::ComputeLF(const Partial &prevPartial,
                       prevPartial.mFreq + prevPartial.mBeta0,
                       currentPartial.mFreq,
                       currentPartial.mFreq - currentPartial.mBeta0 };
-      
+
+    // TEST
+    //for (int i = 0; i < 4; i++)
+    //    y[i] = log(1.0 + y[i]*mSampleRate*0.5);
+    
     BL_FLOAT area = BLUtilsMath::PolygonArea(x, y, 4);
     
     // u
     BL_FLOAT denom = sqrt(currentPartial.mFreq*prevPartial.mFreq);
+    //BL_FLOAT denom = sqrt(log(1.0 + currentPartial.mFreq*mSampleRate*0.5)*
+    //                      log(1.0 + prevPartial.mFreq*mSampleRate*0.5));
+    
     BL_FLOAT uf = 0.0;
     if (denom > BL_EPS)
         uf = area/denom;
@@ -638,6 +755,37 @@ PartialFilterAMFM::ComputeLF(const Partial &prevPartial,
         
     return LF;
 }
+
+void
+PartialFilterAMFM::ComputeScoreNeri(const Partial &prevPartial,
+                                    const Partial &currentPartial,
+                                    BL_FLOAT delta, BL_FLOAT zetaF, BL_FLOAT zetaA,
+                                    BL_FLOAT *A, BL_FLOAT *B)
+{
+    BL_FLOAT deltaF =
+        (currentPartial.mFreq - currentPartial.mBeta0*0.5) -
+        (prevPartial.mFreq + prevPartial.mBeta0*0.5);
+    BL_FLOAT deltaA = (currentPartial.mAmp - currentPartial.mAlpha0*0.5) -
+        (prevPartial.mAmp + prevPartial.mAlpha0*0.5);
+    
+    // Like in paper
+    //BL_FLOAT denom = (2.0*log(delta - 2.0) - 2.0*log(delta - 1.0));
+    //BL_FLOAT sigmaF2 = zetaF*zetaF/denom;
+    //BL_FLOAT sigmaA2 = zetaA*zetaA/denom;
+
+    // Like in github
+    BL_FLOAT coeff = log((delta - 1.0)/(delta - 2.0));
+    BL_FLOAT sigmaF2 = -zetaF*zetaF*coeff;
+    BL_FLOAT sigmaA2 = -zetaA*zetaA*coeff;
+
+    // Like in paper
+    //*A = 1.0 - exp(-deltaF*deltaF/(2.0*sigmaF2) - deltaA*deltaA/(2.0*sigmaA2));
+
+    // Like in github
+    *A = 1.0 - exp(-deltaF*deltaF/sigmaF2 - deltaA*deltaA/sigmaA2);
+     
+    *B = 1.0 - (1.0 - delta)*(*A);
+}   
 
 // Extrapolate the partial with alpha0 and beta0
 void
@@ -652,20 +800,32 @@ PartialFilterAMFM::ExtrapolatePartialAMFM(Partial *p)
 
     // Freq is real freq
     p->mFreq += p->mBeta0;
+    
+#if RESCALE_HZ
     if (p->mFreq < 0.0)
         p->mFreq = 0.0;
     if (p->mFreq > mSampleRate*0.5)
         p->mFreq = mSampleRate*0.5;
+#else
+    if (p->mFreq < 0.0)
+        p->mFreq = 0.0;
+    if (p->mFreq > 1.0)
+        p->mFreq = 1.0;
+#endif
 }
 
 void
 PartialFilterAMFM::ExtrapolatePartialKalman(Partial *p)
 {
+#if RESCALE_HZ
     p->mFreq /= mSampleRate*0.5;
+#endif
     
     p->mFreq = p->mKf.updateEstimate(p->mFreq);
 
+#if RESCALE_HZ
     p->mFreq *= mSampleRate*0.5;
+#endif
 }
 
 void
@@ -679,4 +839,29 @@ PartialFilterAMFM::DBG_PrintPartials(const vector<Partial> &partials)
         fprintf(stderr, "id: %ld state: %d amp: %g freq: %g\n",
                 p.mId, p.mState, p.mAmp, p.mFreq);
     }
+}
+
+void
+PartialFilterAMFM::DBG_DumpPartials(const char *fileName,
+                                    const vector<Partial> &partials, int size)
+{
+#define MIN_AMP_DB -120.0
+    
+    WDL_TypedBuf<BL_FLOAT> data;
+    data.Resize(size);
+    BLUtils::FillAllZero(&data);
+    
+    for (int i = 0; i < partials.size(); i++)
+    {
+        const Partial &p = partials[i];
+        
+        int idx = p.mFreq*size;
+        if (idx >= size)
+            continue;
+
+        BL_FLOAT amp = (p.mAmp - MIN_AMP_DB)/(0.0 - MIN_AMP_DB);
+        data.Get()[idx] = amp; //p.mAmp;
+    }
+
+    BLDebug::DumpData(fileName, data);
 }

@@ -26,9 +26,14 @@ class PartialFilterAMFM : public PartialFilter
                                vector<Partial> *currentPartials,
                                vector<Partial> *remainingCurrentPartials);
 
-    void AssociatePartialsHungarian(const vector<Partial> &prevPartials,
-                                    vector<Partial> *currentPartials,
-                                    vector<Partial> *remainingCurrentPartials);
+    void AssociatePartialsHungarianAMFM(const vector<Partial> &prevPartials,
+                                        vector<Partial> *currentPartials,
+                                        vector<Partial> *remainingCurrentPartials);
+
+    // Compute score like in the paper
+    void AssociatePartialsHungarianNeri(const vector<Partial> &prevPartials,
+                                        vector<Partial> *currentPartials,
+                                        vector<Partial> *remainingCurrentPartials);
     
     void ComputeZombieDeadPartials(const vector<Partial> &prevPartials,
                                    const vector<Partial> &currentPartials,
@@ -40,13 +45,22 @@ class PartialFilterAMFM : public PartialFilter
         
     int FindPartialById(const vector<Partial> &partials, int idx);
 
+    // For AMFM
     BL_FLOAT ComputeLA(const Partial &prevPartial, const Partial &currentPartial);
     BL_FLOAT ComputeLF(const Partial &prevPartial, const Partial &currentPartial);
 
+    // for hungarian Neri
+    void ComputeScoreNeri(const Partial &prevPartial,
+                          const Partial &currentPartial,
+                          BL_FLOAT delta, BL_FLOAT zetaF, BL_FLOAT zetaA,
+                          BL_FLOAT *A, BL_FLOAT *B);
+        
     void ExtrapolatePartialAMFM(Partial *p);
     void ExtrapolatePartialKalman(Partial *p);
     
     void DBG_PrintPartials(const vector<Partial> &partials);
+    void DBG_DumpPartials(const char *fileName,
+                          const vector<Partial> &partials, int size);
     
     //
     deque<vector<Partial> > mPartials;
