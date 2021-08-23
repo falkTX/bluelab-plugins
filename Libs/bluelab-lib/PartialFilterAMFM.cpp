@@ -339,40 +339,28 @@ PartialFilterAMFM::
 AssociatePartialsHungarian(const vector<Partial> &prevPartials,
                            vector<Partial> *currentPartials,
                            vector<Partial> *remainingCurrentPartials)
-{
-#define MAX_COST BL_INF
-    
-    int maxDim = (prevPartials.size() >= currentPartials->size()) ?
-        prevPartials.size() : currentPartials->size();
-
-    // Init cost matrix
+{    
+    // Init cost matrix (MxN)
     vector<vector<BL_FLOAT> > costMatrix;
-    costMatrix.resize(maxDim);
+    costMatrix.resize(prevPartials.size());
     for (int i = 0; i < costMatrix.size(); i++)
-    {
-        costMatrix[i].resize(maxDim);
-        for (int j = 0; j < costMatrix[i].size(); j++)
-            // Initialize with dummy cost value
-            costMatrix[i][j] = MAX_COST; //0.0;
-    }
+        costMatrix[i].resize(currentPartials->size());
     
     // Fill the cost matrix
     for (int i = 0; i < costMatrix.size(); i++)
     {
         for (int j = 0; j < costMatrix[i].size(); j++)
         {
-            if ((i < prevPartials.size()) &&
-                (j < currentPartials->size()))
-            {
-                BL_FLOAT LA = ComputeLA(prevPartials[i], (*currentPartials)[j]);
-                BL_FLOAT LF = ComputeLF(prevPartials[i], (*currentPartials)[j]);
+            BL_FLOAT LA = ComputeLA(prevPartials[i], (*currentPartials)[j]);
+            BL_FLOAT LF = ComputeLF(prevPartials[i], (*currentPartials)[j]);
 
-                if ((LA < 0.5) || (LF < 0.5))
-                    // Discard
-                    costMatrix[i][j] = MAX_COST;
-                else
-                    costMatrix[i][j] = 1.0 - LA*LF;
-            }
+#if 0 // Check discard?
+            if ((LA < 0.5) || (LF < 0.5))
+                // Discard
+                costMatrix[i][j] = BL_INF;
+            else
+#endif
+                costMatrix[i][j] = 1.0 - LA*LF;
         }
     }
 
@@ -380,20 +368,17 @@ AssociatePartialsHungarian(const vector<Partial> &prevPartials,
     HungarianAlgorithm HungAlgo;
 	vector<int> assignment;
 	BL_FLOAT cost = HungAlgo.Solve(costMatrix, assignment);
-
+    
     for (int i = 0; i < assignment.size(); i++)
     {
-        if (i < currentPartials->size())
-        {
-            int a = assignment[i];
-            if (a < prevPartials.size())
-            {
-                if (prevPartials[a].mId != -1)
-                    (*currentPartials)[i].mId = prevPartials[a].mId;
-            }
-        }
+        int a = assignment[i];
+       
+        // If num prev > num current, there will be some unassigned partials
+        // (int this case, assignment is -1)
+        if ((a != -1) && 
+            (prevPartials[i].mId != -1))
+            (*currentPartials)[a].mId = prevPartials[i].mId;
     }
-
 
     vector<Partial> newPartials;
     
