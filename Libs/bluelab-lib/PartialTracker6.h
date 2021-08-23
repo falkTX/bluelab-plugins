@@ -74,10 +74,16 @@ public:
     BL_FLOAT GetMinAmpDB();
     
     void SetThreshold(BL_FLOAT threshold);
+
+    // Use one or the other following methods
+    //
     
     // Magn/phase
     void SetData(const WDL_TypedBuf<BL_FLOAT> &magns,
                  const WDL_TypedBuf<BL_FLOAT> &phases);
+
+    // Complex
+    void SetData(const WDL_TypedBuf<WDL_FFT_COMPLEX> &data);
     
     void GetPreProcessedMagns(WDL_TypedBuf<BL_FLOAT> *magns);
     
@@ -135,6 +141,9 @@ protected:
     // Apply time smooth (removes the noise and make more neat peaks), very good!
     // NOTE: Smooth only magns. Test on complex, and that was baD.
     void PreProcessTimeSmooth(WDL_TypedBuf<BL_FLOAT> *magns);
+
+    // Do it in the complex domain (to be compatible with AM/FM parameters)
+    void PreProcessTimeSmooth(WDL_TypedBuf<WDL_FFT_COMPLEX> *data);
     
     // Apply A-Weighting, so the peaks at highest frequencies will not be small
     void PreProcessAWeighting(WDL_TypedBuf<BL_FLOAT> *magns, bool reverse = false);
@@ -280,6 +289,8 @@ protected:
     BL_FLOAT mTimeSmoothCoeff;
     // Smooth only magns (tried smooth complex, but that was bad)
     WDL_TypedBuf<BL_FLOAT> mTimeSmoothPrevMagns;
+    // When using complexex...
+    WDL_TypedBuf<WDL_FFT_COMPLEX> mTimeSmoothPrevComp;
     
     // Scales
     Scale *mScale;
@@ -314,6 +325,7 @@ private:
     WDL_TypedBuf<BL_FLOAT> mTmpBuf8;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf9;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf10;
+    WDL_TypedBuf<WDL_FFT_COMPLEX> mTmpBuf11;
     
     vector<Partial> mTmpPartials0;
     vector<Partial> mTmpPartials1;

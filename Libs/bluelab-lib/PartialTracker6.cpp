@@ -22,6 +22,7 @@ using namespace std;
 #include <BLUtils.h>
 #include <BLUtilsPhases.h>
 #include <BLUtilsMath.h>
+#include <BLUtilsComp.h>
 
 #include <BLDebug.h>
 
@@ -215,6 +216,25 @@ PartialTracker6::SetData(const WDL_TypedBuf<BL_FLOAT> &magns,
 {
     mCurrentMagns = magns;
     mCurrentPhases = phases;
+
+    // Not smoothed (will be overwritten later)
+    //mLinearMagns = magns;
+
+    PreProcessTimeSmooth(&mCurrentMagns);
+    
+    PreProcess(&mCurrentMagns, &mCurrentPhases);
+}
+
+void
+PartialTracker6::SetData(const WDL_TypedBuf<WDL_FFT_COMPLEX> &data)
+{
+    WDL_TypedBuf<WDL_FFT_COMPLEX> compBuf = mTmpBuf11;
+    compBuf = data;
+
+    // Time smooth in complex
+    PreProcessTimeSmooth(&compBuf);
+
+    BLUtilsComp::ComplexToMagnPhase(&mCurrentMagns, &mCurrentPhases, compBuf);
 
     // Not smoothed (will be overwritten later)
     //mLinearMagns = magns;
@@ -1199,7 +1219,7 @@ PartialTracker6::PreProcess(WDL_TypedBuf<BL_FLOAT> *magns,
 {
     // ORIGIN: smooth only magns
     // NOTE: tested smooting on complex => gave more noisy result
-    PreProcessTimeSmooth(magns);
+    // PreProcessTimeSmooth(magns);
     
     // Use time smooth on raw magns too
     // (time smoothed, but linearly scaled)
@@ -1278,6 +1298,32 @@ PartialTracker6::PreProcessTimeSmooth(WDL_TypedBuf<BL_FLOAT> *magns)
     }
     
     mTimeSmoothPrevMagns = *magns;
+}
+
+// Do it in the complex domain (to be compatible with AM/FM parameters)
+void
+PartialTracker6::PreProcessTimeSmooth(WDL_TypedBuf<WDL_FFT_COMPLEX> *data)
+{
+    if (mTimeSmoothPrevComp.GetSize() == 0)
+    {
+        mTimeSmoothPrevComp = *data;
+        
+        return;
+    }
+    
+    for (int i = 0; i < data->GetSize(); i++)
+    {
+        WDL_FFT_COMPLEX val = data->Get()[i];
+        WDL_FFT_COMPLEX prevVal = mTimeSmoothPrevComp.Get()[i];
+
+        WDL_FFT_COMPLEX newVal;
+        newVal.re = (1.0 - mTimeSmoothCoeff)*val.re + mTimeSmoothCoeff*prevVal.re;
+        newVal.im = (1.0 - mTimeSmoothCoeff)*val.im + mTimeSmoothCoeff*prevVal.im;
+        
+        data->Get()[i] = newVal;
+    }
+    
+    mTimeSmoothPrevComp = *data;
 }
 
 // Time smooth noise

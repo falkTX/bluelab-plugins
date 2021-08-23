@@ -61,6 +61,10 @@
 // (for example we won't display every wombie point)
 #define DISPLAY_EVERY_STEP 1 // 0
 
+// BAD
+// Set to 1 to try to time smooth on complex values later 
+#define SET_PT_DATA_COMPLEX 0 //1
+
 SASViewerProcess4::SASViewerProcess4(int bufferSize,
                                      BL_FLOAT overlapping, BL_FLOAT oversampling,
                                      BL_FLOAT sampleRate)
@@ -164,13 +168,19 @@ SASViewerProcess4::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     // Take half of the complexes
     WDL_TypedBuf<WDL_FFT_COMPLEX> &fftSamples = mTmpBuf1;
     BLUtils::TakeHalf(fftSamples0, &fftSamples);
-    
+
+    // Need to compute magns and phases here for later mSASFrame->SetInputData()G
     WDL_TypedBuf<BL_FLOAT> &magns = mTmpBuf2;
     WDL_TypedBuf<BL_FLOAT> &phases = mTmpBuf3;
     BLUtilsComp::ComplexToMagnPhase(&magns, &phases, fftSamples);
     
-    // DetectPartials
+#if !SET_PT_DATA_COMPLEX
     mPartialTracker->SetData(magns, phases);
+#else
+    mPartialTracker->SetData(fftSamples);
+#endif
+    
+    // DetectPartials
     mPartialTracker->DetectPartials();
 
     // Try to provide the first partials, even is they are not yet filtered
