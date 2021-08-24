@@ -409,7 +409,7 @@ SASFrame5::ComputeSamples(WDL_TypedBuf<BL_FLOAT> *samples)
     ComputeFftPartials(samples);
 }
 
-// TODO: teste this!
+// TODO: test this!
 void
 SASFrame5::ComputeFftPartials(WDL_TypedBuf<BL_FLOAT> *samples)
 {

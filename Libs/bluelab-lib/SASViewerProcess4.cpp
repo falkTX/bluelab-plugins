@@ -34,11 +34,11 @@
 #define DISPLAY_HARMO_SUBSTRACT 1
 
 // Use full SASFrame
-#define OUT_HARMO_SAS_FRAME 1 //0 // ORIGIN
+#define OUT_HARMO_SAS_FRAME 0 // 1 //0 // ORIGIN
 // Use extracted harmonic envelope
 #define OUT_HARMO_EXTRACTED_ENV 0 //1
 // Use input partials (not modified by color etc.)
-#define OUT_HARMO_INPUT_PARTIALS 0 //1
+#define OUT_HARMO_INPUT_PARTIALS 1 //0 //1
 
 // Does not improve transients at all (result is identical)
 #define USE_PRUSA_PHASES_ESTIM 0 //1
@@ -282,7 +282,8 @@ SASViewerProcess4::ProcessSamplesBuffer(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
     
 #if OUT_HARMO_INPUT_PARTIALS
     // Compute the samples from partials
-    mSASFrame->ComputeSamples(&samplesBuffer);
+    //mSASFrame->ComputeSamples(&samplesBuffer);
+    mSASFrame->ComputeSamplesPost(&samplesBuffer);
 
     BLUtils::MultValues(&samplesBuffer, harmoCoeff);
     
