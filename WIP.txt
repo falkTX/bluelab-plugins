@@ -221,14 +221,10 @@ Installation for mac build machine:
 
 ===
 
-- TODO: Ghost: reorganize meters / add labels
-- TODO(?): Ghost: SELECT DIR => SELECT TYPE
 
-- TODO: windows: add the licence to the zip (and the manual, if not already)
+- TODO: windows: add the licences to the zip (and the manual, if not already)
 
-- TODO: use the new design for the incons (mac plugins, installers etc.)
-- TODO(maybe): add the manual in the zip for mac (or in the dmg)
-
+- TODO: use the new design for the icons (mac plugins, installers etc.)
 
 - TESTS TODO:
 - TODO: quickly test all samplerates!
@@ -259,8 +255,6 @@ Installation for mac build machine:
 
 - NOTE: colors set in app programatically, and colors exported from Inkscape
 are not exactly the same (don't know why)
-- NOTE: tooltips often appear just under the mouse pointer
-(then it is difficult to read)
 
 - InfrasonicViewer: "2.7Hz", or "2.7 Hz" ?
 
