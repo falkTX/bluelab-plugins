@@ -176,6 +176,9 @@ v3.45
 v3.46
 "infrasonicviewer" => "infrasonic-viewer"
 
+v3.47
+- Ghost: legend for the meters (and signs "+" and "x")
+
 
 Rollover menu: 5c75eb
 Rollover buttons: 6a6affff
