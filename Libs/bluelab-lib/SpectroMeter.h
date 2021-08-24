@@ -59,6 +59,8 @@ public:
     // Style
     void SetTextFieldHSpacing(int spacing);
     void SetTextFieldVSpacing(int spacing);
+    // Bigger spacing, between curso meter and selection meters
+    void SetTextFieldVSpacing1(int spacing);
 
     void SetBackgroundColor(const IColor &color);
     void SetBorderColor(const IColor &color);
@@ -114,6 +116,7 @@ protected:
     // Style
     int mTextFieldHSpacing;
     int mTextFieldVSpacing;
+    int mTextFieldVSpacing1;
 
     IColor mBGColor;
 

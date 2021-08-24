@@ -4,11 +4,12 @@
 
 #include "SpectroMeter.h"
 
-#define TEXT_FIELD_V_SIZE 14 //16 //40
+#define TEXT_FIELD_V_SIZE 14
 
-#define TEXT_FIELD_H_SPACING1 10
+#define TEXT_FIELD_H_SPACING 10
 
 #define TEXT_FIELD_V_SPACING 10
+#define TEXT_FIELD_V_SPACING1 10
 
 #define FONT "Roboto-Bold"
 
@@ -43,8 +44,9 @@ SpectroMeter::SpectroMeter(BL_FLOAT x, BL_FLOAT y,
     mY = y;
 
     // Style
-    mTextFieldHSpacing = TEXT_FIELD_H_SPACING1;
+    mTextFieldHSpacing = TEXT_FIELD_H_SPACING;
     mTextFieldVSpacing = TEXT_FIELD_V_SPACING;
+    mTextFieldVSpacing1 = TEXT_FIELD_V_SPACING1;
 
     mBGColor = IColor(255, 64, 64, 64);
 
@@ -100,7 +102,7 @@ SpectroMeter::GenerateUI(GUIHelper12 *guiHelper,
     mCursorPosTexts[1] =
         guiHelper->CreateTextButton(graphics,
                                     cp0.R + mTextFieldHSpacing,
-                                    //TEXT_FIELD_H_SPACING1,
+                                    //TEXT_FIELD_H_SPACING,
                                     mY + offsetY,
                                     mFreqParamIdx,
                                     DEFAULT_TEXT, TEXT_FIELD_V_SIZE,
@@ -113,7 +115,7 @@ SpectroMeter::GenerateUI(GUIHelper12 *guiHelper,
         // Selection pos
         mSelPosTexts[0] =
             guiHelper->CreateTextButton(graphics,
-                                        mX + offsetX, cp0.B + mTextFieldVSpacing,
+                                        mX + offsetX, cp0.B + mTextFieldVSpacing1,
                                         //TEXT_FIELD_V_SPACING,
                                         mTimeParamIdx,
                                         DEFAULT_TEXT, TEXT_FIELD_V_SIZE,
@@ -125,8 +127,8 @@ SpectroMeter::GenerateUI(GUIHelper12 *guiHelper,
         mSelPosTexts[1] =
             guiHelper->CreateTextButton(graphics,
                                         cp0.R + mTextFieldHSpacing,
-                                        //TEXT_FIELD_H_SPACING1,
-                                        cp0.B + mTextFieldVSpacing,
+                                        //TEXT_FIELD_H_SPACING,
+                                        cp0.B + mTextFieldVSpacing1,
                                         //TEXT_FIELD_V_SPACING,
                                         mFreqParamIdx,
                                         DEFAULT_TEXT, TEXT_FIELD_V_SIZE,
@@ -150,7 +152,7 @@ SpectroMeter::GenerateUI(GUIHelper12 *guiHelper,
         mSelSizeTexts[1] =
             guiHelper->CreateTextButton(graphics,
                                         ss0.R + mTextFieldHSpacing,
-                                        //TEXT_FIELD_H_SPACING1,
+                                        //TEXT_FIELD_H_SPACING,
                                         sp0.B + mTextFieldVSpacing,
                                         //TEXT_FIELD_V_SPACING,
                                         mFreqParamIdx,
@@ -308,6 +310,12 @@ void
 SpectroMeter::SetTextFieldVSpacing(int spacing)
 {
     mTextFieldVSpacing = spacing;
+}
+
+void
+SpectroMeter::SetTextFieldVSpacing1(int spacing)
+{
+    mTextFieldVSpacing1 = spacing;
 }
 
 void
