@@ -231,8 +231,10 @@ Linux Build
 Or better, try nanovg for dx11: https://github.com/cmaughan/nanovg/tree/master/src
 First, try with a simple gain plugin, Win10/Ableton 10
 
+- TODO: on windows, check that the result zip file expands to a directory e.g BL-Air-v5.2.2/ , and not verything beside th zip file.
+
 - TESTS TODO:
-- TODO: quickly test all samplerates!
+- TODO: quicKly test all samplerates!
   
 - TODO: check with weird block size
 
@@ -269,3 +271,9 @@ are not exactly the same (don't know why)
 - TODO: test plugins with DaVinci Resolve Video Editor / Fairlight (see Eugene mail)
 
 - BUG: Ghost: fat tabs bar text (when tooltip)
+
+The guy who advertized its spectrogram software in bluelab size comments...
+https://github.com/Christoph-Lauer/Sonogram
+https://www.youtube.com/channel/UCG3u-G3P_SsiDGhGKRwlnyw/featured
+"2020/03/18" - christophlauer@me.com
+
