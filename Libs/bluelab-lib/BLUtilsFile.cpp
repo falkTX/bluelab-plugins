@@ -273,9 +273,18 @@ BLUtilsFile::PromptForFileOpenAudio(Plugin *plug,
 #else // __linux__
                                                    
 #if AUDIOFILE_USE_FLAC
-                                             "*.wav *.aif *.aiff *.flac"
+                                             //"*.wav *.aif *.aiff *.flac"
+
+                                             // Note: before the "|", this is what is displayed in Zenity, after the "|", this is the accepted extensions
+                                             //"Audio Files | *.wav *.aif *.aiff *.flac"
+                                             // Warning: Zenity seems to not manage case for extensions
+                                             "Audio files | *.wav *.Wav *.WAV *.aif *.Aif *.AIF *.aiff *.Aiff *.AIFF *.flac *.Flac *.FLAC"
 #else
-                                             "*.wav *.aif *.aiff"
+                                             //"*.wav *.aif *.aiff"
+                                             // Note: before the "|", this is what is displayed in Zenity, after the "|", this is the accepted extensions
+                                             //"Audio Files | *.wav *.aif *.aiff"
+                                             // Warning: Zenity seems to not manage case for extensions
+                                             "Audio files | *.wav *.Wav *.WAV *.aif *.Aif *.AIF *.aiff *.Aiff *.AIFF"
 #endif
                                                    
 #endif
