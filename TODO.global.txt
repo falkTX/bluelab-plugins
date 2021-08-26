@@ -566,3 +566,5 @@ Mac 1 - Windows 10 (usb key 64):
     - Rebalance crashes Reaper when inserting the plugin
 ====
 
+Keep an eye on https://vi-control.net (Musicians Helping Musicians) - forum
+
