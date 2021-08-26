@@ -22,17 +22,17 @@ HungarianAlgorithm::~HungarianAlgorithm(){}
 //********************************************************//
 // A single function wrapper for solving assignment problem.
 //********************************************************//
-double HungarianAlgorithm::Solve(vector <vector<double> >& DistMatrix, vector<int>& Assignment)
+BL_FLOAT HungarianAlgorithm::Solve(vector <vector<BL_FLOAT> >& DistMatrix, vector<int>& Assignment)
 {
 	unsigned int nRows = DistMatrix.size();
 	unsigned int nCols = DistMatrix[0].size();
 
-	double *distMatrixIn = new double[nRows * nCols];
+	BL_FLOAT *distMatrixIn = new BL_FLOAT[nRows * nCols];
 	int *assignment = new int[nRows];
-	double cost = 0.0;
+	BL_FLOAT cost = 0.0;
 
 	// Fill in the distMatrixIn. Mind the index is "i + nRows * j".
-	// Here the cost matrix of size MxN is defined as a double precision array of N*M elements. 
+	// Here the cost matrix of size MxN is defined as a BL_FLOAT precision array of N*M elements. 
 	// In the solving functions matrices are seen to be saved MATLAB-internally in row-order.
 	// (i.e. the matrix [1 2; 3 4] will be stored as a vector [1 3 2 4], NOT [1 2 3 4]).
 	for (unsigned int i = 0; i < nRows; i++)
@@ -55,9 +55,9 @@ double HungarianAlgorithm::Solve(vector <vector<double> >& DistMatrix, vector<in
 //********************************************************//
 // Solve optimal solution for assignment problem using Munkres algorithm, also known as Hungarian Algorithm.
 //********************************************************//
-void HungarianAlgorithm::assignmentoptimal(int *assignment, double *cost, double *distMatrixIn, int nOfRows, int nOfColumns)
+void HungarianAlgorithm::assignmentoptimal(int *assignment, BL_FLOAT *cost, BL_FLOAT *distMatrixIn, int nOfRows, int nOfColumns)
 {
-	double *distMatrix, *distMatrixTemp, *distMatrixEnd, *columnEnd, value, minValue;
+	BL_FLOAT *distMatrix, *distMatrixTemp, *distMatrixEnd, *columnEnd, value, minValue;
 	bool *coveredColumns, *coveredRows, *starMatrix, *newStarMatrix, *primeMatrix;
 	int nOfElements, minDim, row, col;
 
@@ -69,7 +69,7 @@ void HungarianAlgorithm::assignmentoptimal(int *assignment, double *cost, double
 	/* generate working copy of distance Matrix */
 	/* check if all matrix elements are positive */
 	nOfElements = nOfRows * nOfColumns;
-	distMatrix = (double *)malloc(nOfElements * sizeof(double));
+	distMatrix = (BL_FLOAT *)malloc(nOfElements * sizeof(BL_FLOAT));
 	distMatrixEnd = distMatrix + nOfElements;
 
 	for (row = 0; row<nOfElements; row++)
@@ -203,7 +203,7 @@ void HungarianAlgorithm::buildassignmentvector(int *assignment, bool *starMatrix
 }
 
 /********************************************************/
-void HungarianAlgorithm::computeassignmentcost(int *assignment, double *cost, double *distMatrix, int nOfRows)
+void HungarianAlgorithm::computeassignmentcost(int *assignment, BL_FLOAT *cost, BL_FLOAT *distMatrix, int nOfRows)
 {
 	int row, col;
 
@@ -216,7 +216,7 @@ void HungarianAlgorithm::computeassignmentcost(int *assignment, double *cost, do
 }
 
 /********************************************************/
-void HungarianAlgorithm::step2a(int *assignment, double *distMatrix, bool *starMatrix, bool *newStarMatrix, bool *primeMatrix, bool *coveredColumns, bool *coveredRows, int nOfRows, int nOfColumns, int minDim)
+void HungarianAlgorithm::step2a(int *assignment, BL_FLOAT *distMatrix, bool *starMatrix, bool *newStarMatrix, bool *primeMatrix, bool *coveredColumns, bool *coveredRows, int nOfRows, int nOfColumns, int minDim)
 {
 	bool *starMatrixTemp, *columnEnd;
 	int col;
@@ -240,7 +240,7 @@ void HungarianAlgorithm::step2a(int *assignment, double *distMatrix, bool *starM
 }
 
 /********************************************************/
-void HungarianAlgorithm::step2b(int *assignment, double *distMatrix, bool *starMatrix, bool *newStarMatrix, bool *primeMatrix, bool *coveredColumns, bool *coveredRows, int nOfRows, int nOfColumns, int minDim)
+void HungarianAlgorithm::step2b(int *assignment, BL_FLOAT *distMatrix, bool *starMatrix, bool *newStarMatrix, bool *primeMatrix, bool *coveredColumns, bool *coveredRows, int nOfRows, int nOfColumns, int minDim)
 {
 	int col, nOfCoveredColumns;
 
@@ -264,7 +264,7 @@ void HungarianAlgorithm::step2b(int *assignment, double *distMatrix, bool *starM
 }
 
 /********************************************************/
-void HungarianAlgorithm::step3(int *assignment, double *distMatrix, bool *starMatrix, bool *newStarMatrix, bool *primeMatrix, bool *coveredColumns, bool *coveredRows, int nOfRows, int nOfColumns, int minDim)
+void HungarianAlgorithm::step3(int *assignment, BL_FLOAT *distMatrix, bool *starMatrix, bool *newStarMatrix, bool *primeMatrix, bool *coveredColumns, bool *coveredRows, int nOfRows, int nOfColumns, int minDim)
 {
 	bool zerosFound;
 	int row, col, starCol;
@@ -307,7 +307,7 @@ void HungarianAlgorithm::step3(int *assignment, double *distMatrix, bool *starMa
 }
 
 /********************************************************/
-void HungarianAlgorithm::step4(int *assignment, double *distMatrix, bool *starMatrix, bool *newStarMatrix, bool *primeMatrix, bool *coveredColumns, bool *coveredRows, int nOfRows, int nOfColumns, int minDim, int row, int col)
+void HungarianAlgorithm::step4(int *assignment, BL_FLOAT *distMatrix, bool *starMatrix, bool *newStarMatrix, bool *primeMatrix, bool *coveredColumns, bool *coveredRows, int nOfRows, int nOfColumns, int minDim, int row, int col)
 {
 	int n, starRow, starCol, primeRow, primeCol;
 	int nOfElements = nOfRows*nOfColumns;
@@ -361,9 +361,9 @@ void HungarianAlgorithm::step4(int *assignment, double *distMatrix, bool *starMa
 }
 
 /********************************************************/
-void HungarianAlgorithm::step5(int *assignment, double *distMatrix, bool *starMatrix, bool *newStarMatrix, bool *primeMatrix, bool *coveredColumns, bool *coveredRows, int nOfRows, int nOfColumns, int minDim)
+void HungarianAlgorithm::step5(int *assignment, BL_FLOAT *distMatrix, bool *starMatrix, bool *newStarMatrix, bool *primeMatrix, bool *coveredColumns, bool *coveredRows, int nOfRows, int nOfColumns, int minDim)
 {
-	double h, value;
+	BL_FLOAT h, value;
 	int row, col;
 
 	/* find smallest uncovered element h */

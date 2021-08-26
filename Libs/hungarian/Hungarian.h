@@ -12,6 +12,8 @@
 #ifndef HUNGARIAN_H
 #define HUNGARIAN_H
 
+#include <BLTypes.h>
+
 #include <iostream>
 #include <vector>
 
@@ -23,17 +25,17 @@ class HungarianAlgorithm
 public:
 	HungarianAlgorithm();
 	~HungarianAlgorithm();
-	double Solve(vector <vector<double> >& DistMatrix, vector<int>& Assignment);
+	BL_FLOAT Solve(vector <vector<BL_FLOAT> >& DistMatrix, vector<int>& Assignment);
 
 private:
-	void assignmentoptimal(int *assignment, double *cost, double *distMatrix, int nOfRows, int nOfColumns);
+	void assignmentoptimal(int *assignment, BL_FLOAT *cost, BL_FLOAT *distMatrix, int nOfRows, int nOfColumns);
 	void buildassignmentvector(int *assignment, bool *starMatrix, int nOfRows, int nOfColumns);
-	void computeassignmentcost(int *assignment, double *cost, double *distMatrix, int nOfRows);
-	void step2a(int *assignment, double *distMatrix, bool *starMatrix, bool *newStarMatrix, bool *primeMatrix, bool *coveredColumns, bool *coveredRows, int nOfRows, int nOfColumns, int minDim);
-	void step2b(int *assignment, double *distMatrix, bool *starMatrix, bool *newStarMatrix, bool *primeMatrix, bool *coveredColumns, bool *coveredRows, int nOfRows, int nOfColumns, int minDim);
-	void step3(int *assignment, double *distMatrix, bool *starMatrix, bool *newStarMatrix, bool *primeMatrix, bool *coveredColumns, bool *coveredRows, int nOfRows, int nOfColumns, int minDim);
-	void step4(int *assignment, double *distMatrix, bool *starMatrix, bool *newStarMatrix, bool *primeMatrix, bool *coveredColumns, bool *coveredRows, int nOfRows, int nOfColumns, int minDim, int row, int col);
-	void step5(int *assignment, double *distMatrix, bool *starMatrix, bool *newStarMatrix, bool *primeMatrix, bool *coveredColumns, bool *coveredRows, int nOfRows, int nOfColumns, int minDim);
+	void computeassignmentcost(int *assignment, BL_FLOAT *cost, BL_FLOAT *distMatrix, int nOfRows);
+	void step2a(int *assignment, BL_FLOAT *distMatrix, bool *starMatrix, bool *newStarMatrix, bool *primeMatrix, bool *coveredColumns, bool *coveredRows, int nOfRows, int nOfColumns, int minDim);
+	void step2b(int *assignment, BL_FLOAT *distMatrix, bool *starMatrix, bool *newStarMatrix, bool *primeMatrix, bool *coveredColumns, bool *coveredRows, int nOfRows, int nOfColumns, int minDim);
+	void step3(int *assignment, BL_FLOAT *distMatrix, bool *starMatrix, bool *newStarMatrix, bool *primeMatrix, bool *coveredColumns, bool *coveredRows, int nOfRows, int nOfColumns, int minDim);
+	void step4(int *assignment, BL_FLOAT *distMatrix, bool *starMatrix, bool *newStarMatrix, bool *primeMatrix, bool *coveredColumns, bool *coveredRows, int nOfRows, int nOfColumns, int minDim, int row, int col);
+	void step5(int *assignment, BL_FLOAT *distMatrix, bool *starMatrix, bool *newStarMatrix, bool *primeMatrix, bool *coveredColumns, bool *coveredRows, int nOfRows, int nOfColumns, int minDim);
 };
 
 
