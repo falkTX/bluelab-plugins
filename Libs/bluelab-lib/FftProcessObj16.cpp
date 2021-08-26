@@ -2253,7 +2253,7 @@ FftProcessObj16::MakeWindows(int bufSize, int overlapping,
     // for synthesis and overlapping == 1
     if (synthesisMethod == WindowHanning)
         Window::MakeHanningPow(synWindowSize, hanningFactor, synthesisWindow);
-    if (synthesisMethod == WindowGaussian)
+    else if (synthesisMethod == WindowGaussian)
     {
         //Window::MakeGaussian(synWindowSize, gaussianSigma, synthesisWindow);
         Window::MakeGaussianConfined(synWindowSize, gaussianSigma, synthesisWindow);
