@@ -2301,11 +2301,13 @@ FftProcessObj16::MakeWindows(int bufSize, int overlapping,
         // Normalize only the synthesis window...
         Window::NormalizeWindow(synthesisWindow, overlapping);
     }
+#if 1 // Hack
+    // Must make the Gaussian type test, otherwise it will make bad values
+    // on other types of windows
     //else if((analysisMethod == WindowGaussian) &&
     //        (synthesisMethod == WindowGaussian))
     else
     {
-#if 1 // Hack
         // Make a kind of normalization
         
         // For Gaussian in particular
