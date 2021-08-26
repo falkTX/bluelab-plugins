@@ -231,7 +231,7 @@ Linux Build
 Or better, try nanovg for dx11: https://github.com/cmaughan/nanovg/tree/master/src
 First, try with a simple gain plugin, Win10/Ableton 10
 
-TODO: check if Mac binaries are well stripped
+TODO: check if Mac binaries are well stripped (and windows too, if we can "remove dead code") (on linux, installer size decreases from 70MB to 14MB when stripping!)
 
 - TODO: on windows, check that the result zip file expands to a directory e.g BL-Air-v5.2.2/ , and not verything beside th zip file.
 
