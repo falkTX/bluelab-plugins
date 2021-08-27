@@ -305,12 +305,18 @@ Scale::ApplyScaleFilterBank(FilterBankType fbType,
 {
     if (fbType == FILTER_BANK_LINEAR)
     {
-        // Do not apply filter bank
+        // Try to not apply filter bank
         // Because even in linear, it modifies the data a little
 
-        *result = magns;
-        
-        return;
+        if (magns.GetSize() == numFilters)
+            // Size is the same, nothing to do, just copy
+        {
+            *result = magns;
+            
+            return;
+        }
+
+        // Otherwise, will need filter bank to resize the data
     }
     
     if (mFilterBanks[(int)fbType] == NULL)
@@ -330,12 +336,18 @@ Scale::ApplyScaleFilterBankInv(FilterBankType fbType,
 {
     if (fbType == FILTER_BANK_LINEAR)
     {
-        // Do not apply filter bank
+        // Try to not apply filter bank
         // Because even in linear, it modifies the data a little
 
-        *result = magns;
-        
-        return;
+        if (magns.GetSize() == numFilters)
+            // Size is the same, nothing to do, just copy
+        {
+            *result = magns;
+            
+            return;
+        }
+
+        // Otherwise, will need filter bank to resize the data
     }
     
     if (mFilterBanks[(int)fbType] == NULL)
