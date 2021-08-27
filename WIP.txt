@@ -228,47 +228,47 @@ Linux Tests
 snd: test of stereo sound, headphones (vst2, reaper). insert remove plug each time
 vst3: test vst3 (reaper). insert remove plug each time
 ===
-BL-Air		    : snd
-BL-AutoGain	    : snd
+BL-Air		    : snd,
+BL-AutoGain	    : snd,
 BL-Bat		    : 
-BL-Chroma	    : snd	
-BL-Denoiser	    : snd
+BL-Chroma	    : snd,	
+BL-Denoiser	    : snd,
 BL-DUET		    :	
 BL-Envelope	    :	
-BL-EQHack	    : snd
-BL-Gain12	    : snd
+BL-EQHack	    : snd,
+BL-Gain12	    : snd,
 BL-Gain200	    : 
-BL-Gain24	    : snd
-BL-Gain60	    : snd
-BL-Ghost	    : snd
-BL-GhostViewer	    : snd  
-BL-Impulses	    : snd
-BL-Infra	    : snd
-BL-InfrasonicViewer : snd
+BL-Gain24	    : snd,
+BL-Gain60	    : snd,
+BL-Ghost	    : snd,
+BL-GhostViewer	    : snd,  
+BL-Impulses	    : snd,
+BL-Infra	    : snd,
+BL-InfrasonicViewer : snd,
 BL-InfraSynth	    :	
-BL-LoFi		    : snd
+BL-LoFi		    : snd,
 BL-OnsetDetect	    :	
-BL-Panogram	    : snd
-BL-PitchShift	    : 
-BL-Precedence	    :   
-BL-Rebalance	    :	
-BL-Reverb	    :	
-BL-ReverbDepth	    :	
-BL-SampleDelay	    :   
-BL-SASViewer	    : 	
-BL-Saturate	    :   
-BL-Shaper	    :   
-BL-Sine		    :   
+BL-Panogram	    : snd,
+BL-PitchShift	    : snd,
+BL-Precedence	    : snd,
+BL-Rebalance	    : snd,
+BL-Reverb	    :
+BL-ReverbDepth	    :
+BL-SampleDelay	    : snd,
+BL-SASViewer	    : 
+BL-Saturate	    : snd,  
+BL-Shaper	    : snd,
+BL-Sine		    : snd,
 BL-SoundMetaViewer  :	
-BL-Spatializer	    :   
-BL-SpectralDiff	    :   
-BL-SpectroExpe	    :	
-BL-SpectrumView	    :	
-BL-StereoDeReverb   :	
-BL-StereoPan	    :   
-BL-StereoWidth	    :   
-BL-Wav3s	    :   
-UST		    :   
+BL-Spatializer	    : snd,
+BL-SpectralDiff	    : snd,
+BL-SpectroExpe	    :
+BL-SpectrumView	    :
+BL-StereoDeReverb   :
+BL-StereoPan	    : snd,
+BL-StereoWidth	    : snd,
+BL-Wav3s	    : snd, 
+UST		    :
 ===
 
 
