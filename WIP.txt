@@ -116,6 +116,7 @@ BL-Wav3s	    :   cppck, func, pre, bsp, sr
 
 ===
 Windows compilation
+===
 cop: copy new files
 mkd: updated make-dist-win.bat
 ver: increased version number and release notes
@@ -220,11 +221,57 @@ Installation for mac build machine:
 - install certificates (need restart keyhain, XCode, and even the whole Mac)
 ===
 
-===
-Linux Build
-===
 
 ===
+Linux Tests
+===
+snd: test of stereo sound, headphones (vst2, reaper). insert remove plug each time
+vst3: test vst3 (reaper). insert remove plug each time
+===
+BL-Air		    : snd
+BL-AutoGain	    : snd
+BL-Bat		    : 
+BL-Chroma	    : snd	
+BL-Denoiser	    : snd
+BL-DUET		    :	
+BL-Envelope	    :	
+BL-EQHack	    : snd
+BL-Gain12	    : snd
+BL-Gain200	    : 
+BL-Gain24	    : snd
+BL-Gain60	    : snd
+BL-Ghost	    : snd
+BL-GhostViewer	    : snd  
+BL-Impulses	    : snd
+BL-Infra	    : snd
+BL-InfrasonicViewer : snd
+BL-InfraSynth	    :	
+BL-LoFi		    : snd
+BL-OnsetDetect	    :	
+BL-Panogram	    : snd
+BL-PitchShift	    : 
+BL-Precedence	    :   
+BL-Rebalance	    :	
+BL-Reverb	    :	
+BL-ReverbDepth	    :	
+BL-SampleDelay	    :   
+BL-SASViewer	    : 	
+BL-Saturate	    :   
+BL-Shaper	    :   
+BL-Sine		    :   
+BL-SoundMetaViewer  :	
+BL-Spatializer	    :   
+BL-SpectralDiff	    :   
+BL-SpectroExpe	    :	
+BL-SpectrumView	    :	
+BL-StereoDeReverb   :	
+BL-StereoPan	    :   
+BL-StereoWidth	    :   
+BL-Wav3s	    :   
+UST		    :   
+===
+
+
 
 - TODO: download all hosts
 - TODO: try a cpu backend for nanovg, in case of no gl on windows (e.g nanovg-nanort)
