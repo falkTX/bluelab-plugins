@@ -17,6 +17,8 @@
 #include <BLUtilsComp.h>
 #include <BLUtilsMath.h>
 
+#include <BLDebug.h>
+
 #include "PanogramFftObj.h"
 
 //
@@ -290,7 +292,7 @@ PanogramFftObj::MagnsToPanoLine(const WDL_TypedBuf<BL_FLOAT> magns[2],
         BL_FLOAT magnVal = (l + r)*0.5;
         if ((binNum >= 0) && (binNum < panoLineSize))
             panoLineBuf[binNum] += magnVal;
-        
+
         if (maskLine != NULL)
             maskLine->AddValue(binNum, i);
     }
