@@ -244,10 +244,12 @@ BLUpmixGraphDrawer::OnMouseDown(float x, float y, const IMouseMod &mod)
     
     BL_FLOAT center[2];
     ComputeSourceCenter(center, mWidth, mHeight);
+
+    center[1] += Y_OFFSET2;
     
     BL_FLOAT radius1 = ComputeRad1(mHeight);
     BL_FLOAT dist2 = (x - center[0])*(x - center[0]) +
-    (y - center[1])*(y - center[1]);
+        (y - center[1])*(y - center[1]);
     
     if (dist2 <= radius1*radius1)
         mSourceIsSelected = true;
@@ -402,7 +404,7 @@ BLUpmixGraphDrawer::ComputeSourceCenter(BL_FLOAT center[2],
     BL_FLOAT angle = (1.0 - normPan)*MIN_ANGLE + normPan*MAX_ANGLE;
     
     BL_FLOAT radius = (1.0 - mDepth)*START_CIRCLE_RAD +
-    mDepth*END_CIRCLE_RAD + Y_OFFSET;
+        mDepth*END_CIRCLE_RAD + Y_OFFSET;
     
     radius *= height;
     
