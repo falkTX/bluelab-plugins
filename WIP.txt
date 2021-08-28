@@ -226,48 +226,49 @@ Installation for mac build machine:
 Linux Tests
 ===
 snd: test of stereo sound, headphones (vst2, reaper). insert remove plug each time
-vst3: test vst3 (reaper). insert remove plug each time
+vst3: test vst3 (reaper). insert remove plug each time. quick test.
+btw: linux: test bitwig studio vst2
 ===
-BL-Air		    : snd,
-BL-AutoGain	    : snd,
+BL-Air		    : snd, vst3, btw
+BL-AutoGain	    : snd, vst3, WIP: find how to write automations in bitwig
 BL-Bat		    : 
-BL-Chroma	    : snd,	
-BL-Denoiser	    : snd,
+BL-Chroma	    : snd, vst3,	
+BL-Denoiser	    : snd, vst3,
 BL-DUET		    :	
 BL-Envelope	    :	
-BL-EQHack	    : snd,
-BL-Gain12	    : snd,
+BL-EQHack	    : snd, vst3,
+BL-Gain12	    : snd, vst3,
 BL-Gain200	    : 
-BL-Gain24	    : snd,
-BL-Gain60	    : snd,
-BL-Ghost	    : snd,
-BL-GhostViewer	    : snd,  
-BL-Impulses	    : snd,
-BL-Infra	    : snd,
-BL-InfrasonicViewer : snd,
+BL-Gain24	    : snd, vst3,
+BL-Gain60	    : snd, vst3,
+BL-Ghost	    : snd, vst3,
+BL-GhostViewer	    : snd, vst3,  
+BL-Impulses	    : snd, vst3,
+BL-Infra	    : snd, vst3,
+BL-InfrasonicViewer : snd, vst3,
 BL-InfraSynth	    :	
-BL-LoFi		    : snd,
+BL-LoFi		    : snd, vst3,
 BL-OnsetDetect	    :	
-BL-Panogram	    : snd,
-BL-PitchShift	    : snd,
-BL-Precedence	    : snd,
-BL-Rebalance	    : snd,
+BL-Panogram	    : snd, vst3,
+BL-PitchShift	    : snd, vst3,
+BL-Precedence	    : snd, vst3,
+BL-Rebalance	    : snd, vst3,
 BL-Reverb	    :
 BL-ReverbDepth	    :
-BL-SampleDelay	    : snd,
+BL-SampleDelay	    : snd, vst3,
 BL-SASViewer	    : 
-BL-Saturate	    : snd,  
-BL-Shaper	    : snd,
-BL-Sine		    : snd,
+BL-Saturate	    : snd, vst3,  
+BL-Shaper	    : snd, vst3,
+BL-Sine		    : snd, vst3,
 BL-SoundMetaViewer  :	
-BL-Spatializer	    : snd,
-BL-SpectralDiff	    : snd,
+BL-Spatializer	    : snd, vst3,
+BL-SpectralDiff	    : snd, vst3,
 BL-SpectroExpe	    :
 BL-SpectrumView	    :
 BL-StereoDeReverb   :
-BL-StereoPan	    : snd,
-BL-StereoWidth	    : snd,
-BL-Wav3s	    : snd, 
+BL-StereoPan	    : snd, vst3,
+BL-StereoWidth	    : snd, vst3,
+BL-Wav3s	    : snd, vst3, 
 UST		    :
 ===
 
