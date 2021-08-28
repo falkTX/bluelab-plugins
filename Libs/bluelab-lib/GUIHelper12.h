@@ -105,7 +105,7 @@ public:
 #ifdef IGRAPHICS_NANOVG
     GraphControl12 *CreateGraph(Plugin *plug, IGraphics *graphics,
                                 float x, float y,
-                                const char *bitmapFname, int paramIdx,
+                                const char *bitmapFname, int paramIdx = kNoParameter,
                                 const char *overlayFname = NULL);
 #endif // IGRAPHICS_NANOVG
     
