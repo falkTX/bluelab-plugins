@@ -651,6 +651,8 @@ GUIHelper12::CreateVumeter2SidesV(IGraphics *graphics,
                                   const char *bitmapFname,
                                   int paramIdx, const char *title,
                                   float marginMin, float marginMax,
+                                  float marginMinHeight,
+                                  float marginMaxHeight,
                                   const char *tooltip)
 {
     // Background bitmap
@@ -673,6 +675,10 @@ GUIHelper12::CreateVumeter2SidesV(IGraphics *graphics,
     // Margin
     x += marginMin;
     width -= (marginMin + marginMax);
+
+    // Height margin
+    y += marginMinHeight;
+    height -= (marginMinHeight + marginMaxHeight);
     
     IRECT rect(x, y, x + width, y + height);
     BLVumeter2SidesControl *result = new BLVumeter2SidesControl(rect,

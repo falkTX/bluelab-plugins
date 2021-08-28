@@ -147,6 +147,8 @@ public:
                                                  const char *title = NULL,
                                                  float marginMin = 0.0,
                                                  float marginMax = 0.0,
+                                                 float marginMinHeight = 0.0,
+                                                 float marginMaxHeight = 0.0,
                                                  const char *tooltip = NULL);
     
     BLVumeterNeedleControl *CreateVumeterNeedleV(IGraphics *graphics,
