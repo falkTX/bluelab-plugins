@@ -568,3 +568,12 @@ Mac 1 - Windows 10 (usb key 64):
 
 Keep an eye on https://vi-control.net (Musicians Helping Musicians) - forum
 
+====
+Debug Bitwig Linux:
+====
+Modif for enabling gdb attach to process:
+/proc/sys/kernel/yama/ptrace_scope : 1 => 0
+
+gdb -i=mi /opt/bitwig-studio/bin/BitwigStudioEngine -p 535858
+====
+
