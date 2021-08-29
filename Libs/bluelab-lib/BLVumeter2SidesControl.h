@@ -28,6 +28,12 @@ public:
     virtual ~BLVumeter2SidesControl();
     
     void Draw(IGraphics& g) override;
+
+    // Set the value only if not disabled
+    void SetValue(double value, int valIdx = 0) override;
+
+    // Set value even if disabled
+    void SetValueForce(double value, int valIdx = 0);
     
 protected:
     IColor mColor;

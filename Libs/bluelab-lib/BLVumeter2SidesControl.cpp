@@ -52,3 +52,16 @@ BLVumeter2SidesControl::Draw(IGraphics& g)
     
     g.FillRect(mColor, rect);
 }
+
+void
+BLVumeter2SidesControl::SetValue(double value, int valIdx)
+{
+    if (!IsDisabled())
+        IControl::SetValue(value, valIdx);
+}
+
+void
+BLVumeter2SidesControl::SetValueForce(double value, int valIdx)
+{
+    IControl::SetValue(value, valIdx);
+}
