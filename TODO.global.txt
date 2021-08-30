@@ -574,6 +574,6 @@ Debug Bitwig Linux:
 Modif for enabling gdb attach to process:
 /proc/sys/kernel/yama/ptrace_scope : 1 => 0
 
-gdb -i=mi /opt/bitwig-studio/bin/BitwigStudioEngine -p 535858
+gdb -i=mi /opt/bitwig-studio/bin/BitwigStudioEngine -p 573523
 ====
 
