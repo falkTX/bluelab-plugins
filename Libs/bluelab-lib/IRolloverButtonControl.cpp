@@ -84,7 +84,8 @@ IRolloverButtonControl::OnMouseDown(float x, float y, const IMouseMod &mod)
 
 #if FIX_HILIGHT_REOPEN
         // Ensure that the button is toggled off after
-        SetValueFromUserInput(0.0);
+        if (mToggleOffFlag)
+            SetValueFromUserInput(0.0);
 #endif
     }
 }
