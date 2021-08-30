@@ -222,26 +222,27 @@ Installation for mac build machine:
 ===
 
 
-===
+====
 Linux Tests
-===
+====
 snd: test of stereo sound, headphones (vst2, reaper). insert remove plug each time
 vst3: test vst3 (reaper). insert remove plug each time. quick test.
-btw: linux: test bitwig studio vst2
-===
-BL-Air		    : snd, vst3, btw
-BL-AutoGain	    : snd, vst3, WIP: find how to write automations in bitwig
+btw2: linux: test bitwig studio vst2
+btw3: linux: test bitwig studio vst3
+====
+BL-Air		    : snd, vst3, btw2
+BL-AutoGain	    : snd, vst3, btw2/3: bugs
 BL-Bat		    : 
-BL-Chroma	    : snd, vst3,	
-BL-Denoiser	    : snd, vst3,
+BL-Chroma	    : snd, vst3, btw2
+BL-Denoiser	    : snd, vst3, btw2
 BL-DUET		    :	
 BL-Envelope	    :	
-BL-EQHack	    : snd, vst3,
-BL-Gain12	    : snd, vst3,
+BL-EQHack	    : snd, vst3, btw2
+BL-Gain12	    : snd, vst3, btw2
 BL-Gain200	    : 
-BL-Gain24	    : snd, vst3,
-BL-Gain60	    : snd, vst3,
-BL-Ghost	    : snd, vst3,
+BL-Gain24	    : snd, vst3, btw2
+BL-Gain60	    : snd, vst3, btw2
+BL-Ghost	    : snd, vst3, WIP/BUG
 BL-GhostViewer	    : snd, vst3,  
 BL-Impulses	    : snd, vst3,
 BL-Infra	    : snd, vst3,
@@ -270,7 +271,17 @@ BL-StereoPan	    : snd, vst3,
 BL-StereoWidth	    : snd, vst3,
 BL-Wav3s	    : snd, vst3, 
 UST		    :
-===
+====
+
+
+====
+DAW known problems
+====
+- All animated plugs: Bitwig3.3.1/vst3/linux: the gui stops refreshing if we don't move the mouse
+
+- AutoGain: Bitwig3.3.1/vst3/linux: automations are not written
+- AutoGain: Bitwig3.3.1/vst2/linux: automation are not re-read
+====
 
 
 - TODO: download all hosts
