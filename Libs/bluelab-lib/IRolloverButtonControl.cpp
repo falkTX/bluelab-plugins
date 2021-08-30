@@ -8,6 +8,10 @@
 
 #include "IRolloverButtonControl.h"
 
+// When re-opening the plugin after having clicked the button,
+// the button was hilighted
+#define FIX_HILIGHT_REOPEN 1
+
 void
 IRolloverButtonControl::Draw(IGraphics &g)
 {
@@ -77,6 +81,11 @@ IRolloverButtonControl::OnMouseDown(float x, float y, const IMouseMod &mod)
         //}
         
         SetValueFromUserInput(1.0);
+
+#if FIX_HILIGHT_REOPEN
+        // Ensure that the button is toggled off after
+        SetValueFromUserInput(0.0);
+#endif
     }
 }
 
