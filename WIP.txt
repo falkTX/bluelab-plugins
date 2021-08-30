@@ -243,33 +243,33 @@ BL-Gain200	    :
 BL-Gain24	    : snd, vst3, btw2
 BL-Gain60	    : snd, vst3, btw2
 BL-Ghost	    : snd, vst3, WIP/BUG
-BL-GhostViewer	    : snd, vst3,  
-BL-Impulses	    : snd, vst3,
-BL-Infra	    : snd, vst3,
-BL-InfrasonicViewer : snd, vst3,
+BL-GhostViewer	    : snd, vst3, btw2
+BL-Impulses	    : snd, vst3, btw2
+BL-Infra	    : snd, vst3, btw2
+BL-InfrasonicViewer : snd, vst3, btw2
 BL-InfraSynth	    :	
-BL-LoFi		    : snd, vst3,
+BL-LoFi		    : snd, vst3, btw2
 BL-OnsetDetect	    :	
-BL-Panogram	    : snd, vst3,
-BL-PitchShift	    : snd, vst3,
-BL-Precedence	    : snd, vst3,
-BL-Rebalance	    : snd, vst3,
+BL-Panogram	    : snd, vst3, btw2
+BL-PitchShift	    : snd, vst3, btw2
+BL-Precedence	    : snd, vst3, btw2
+BL-Rebalance	    : snd, vst3, btw2
 BL-Reverb	    :
 BL-ReverbDepth	    :
-BL-SampleDelay	    : snd, vst3,
+BL-SampleDelay	    : snd, vst3, btw2
 BL-SASViewer	    : 
-BL-Saturate	    : snd, vst3,  
-BL-Shaper	    : snd, vst3,
-BL-Sine		    : snd, vst3,
+BL-Saturate	    : snd, vst3, btw2
+BL-Shaper	    : snd, vst3, btw2
+BL-Sine		    : snd, vst3, btw2
 BL-SoundMetaViewer  :	
-BL-Spatializer	    : snd, vst3,
-BL-SpectralDiff	    : snd, vst3,
+BL-Spatializer	    : snd, vst3, btw2
+BL-SpectralDiff	    : snd, vst3, btw2
 BL-SpectroExpe	    :
 BL-SpectrumView	    :
 BL-StereoDeReverb   :
-BL-StereoPan	    : snd, vst3,
-BL-StereoWidth	    : snd, vst3,
-BL-Wav3s	    : snd, vst3, 
+BL-StereoPan	    : snd, vst3, btw2
+BL-StereoWidth	    : snd, vst3, btw2
+BL-Wav3s	    : snd, vst3, btw2
 UST		    :
 ====
 
