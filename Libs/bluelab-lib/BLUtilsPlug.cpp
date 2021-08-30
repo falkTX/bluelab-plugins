@@ -23,6 +23,13 @@ using namespace iplug;
 
 #define TRY_FIX_SIDE_CHAIN_AU 1
 
+BLUtilsPlug::BLUtilsPlug()
+{
+    mWasPlaying = false;
+}
+
+BLUtilsPlug::~BLUtilsPlug() {}
+
 void
 BLUtilsPlug::PlugInits()
 {
@@ -1149,4 +1156,15 @@ BLUtilsPlug::InterleavedToChannels(const BL_FLOAT *buf,
             (*chans)[j].Get()[i] = *(buf++);
         }
     }
+}
+
+void
+BLUtilsPlug::CheckReset(Plugin *plug)
+{
+    bool isPlaying = plug->IsTransportPlaying();
+
+    if (isPlaying && !mWasPlaying)
+        plug->OnReset();
+
+    mWasPlaying = isPlaying;
 }

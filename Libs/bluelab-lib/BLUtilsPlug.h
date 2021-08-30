@@ -14,6 +14,9 @@ class ParamSmoother2;
 class BLUtilsPlug
 {
  public:
+    BLUtilsPlug();
+    virtual ~BLUtilsPlug();
+    
     // Plugin operations
     static void PlugInits();
     
@@ -108,6 +111,12 @@ class BLUtilsPlug
     // chans must have been resized correctly before
     static void InterleavedToChannels(const BL_FLOAT *buf,
                                       vector<WDL_TypedBuf<BL_FLOAT> > *chans);
+
+    // Some hosts, like Bitwig/linux/vst2 does not call OnReset() when playback starts
+    void CheckReset(Plugin *plug);
+
+protected:
+    bool mWasPlaying;
 };
 
 #endif
