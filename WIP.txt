@@ -231,47 +231,48 @@ btw2: linux: test bitwig studio vst2 (bitwig-studio-3.3.11)
 btw3: linux: test bitwig studio vst3 (bitwig-studio-3.3.11)
 bt42: linux: test bitwig studio vst2 (bitwig-studio-4.0.1)
 bt43: linux: test bitwig studio vst2 (bitwig-studio-4.0.1)
+ard2: linux/Ardour 6.3.0~ds0/vst2
 ====
-BL-Air		    : snd, vst3, btw2, btw3, bt42, bt43, 
-BL-AutoGain	    : snd, vst3, btw bugs  , bt42, bt43, 
+BL-Air		    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
+BL-AutoGain	    : snd, vst3, btw bugs  , bt42, bt43, ard2, 
 BL-Bat		    : 
-BL-Chroma	    : snd, vst3, btw2, btw3, bt42, bt43, 
-BL-Denoiser	    : snd, vst3, btw2, btw3, bt42, bt43, 
+BL-Chroma	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
+BL-Denoiser	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
 BL-DUET		    :	
 BL-Envelope	    :	
-BL-EQHack	    : snd, vst3, btw2, btw3, bt42, bt43, 
-BL-Gain12	    : snd, vst3, btw2, btw3, bt42, bt43, 
+BL-EQHack	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
+BL-Gain12	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
 BL-Gain200	    : 
-BL-Gain24	    : snd, vst3, btw2, btw3, bt42, bt43, 
-BL-Gain60	    : snd, vst3, btw2, btw3, bt42, bt43, 
-BL-Ghost	    : snd, vst3, btw2, btw3, bt42, bt43, 
-BL-GhostViewer	    : snd, vst3, btw2, btw3, bt42, bt43, 
-BL-Impulses	    : snd, vst3, btw2, btw3, bt42, bt43, 
-BL-Infra	    : snd, vst3, btw2, btw3, bt42, bt43, 
-BL-InfrasonicViewer : snd, vst3, btw2, btw3, bt42, bt43, 
+BL-Gain24	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
+BL-Gain60	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
+BL-Ghost	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
+BL-GhostViewer	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
+BL-Impulses	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
+BL-Infra	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
+BL-InfrasonicViewer : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
 BL-InfraSynth	    :	
-BL-LoFi		    : snd, vst3, btw2, btw3, bt42, bt43, 
+BL-LoFi		    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
 BL-OnsetDetect	    :	
-BL-Panogram	    : snd, vst3, btw2, btw3, bt42, bt43, 
-BL-PitchShift	    : snd, vst3, btw2, btw3, bt42, bt43, 
-BL-Precedence	    : snd, vst3, btw2, btw3, bt42, bt43, 
-BL-Rebalance	    : snd, vst3, btw2, btw3, bt42, bt43, 
+BL-Panogram	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
+BL-PitchShift	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
+BL-Precedence	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
+BL-Rebalance	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
 BL-Reverb	    :
 BL-ReverbDepth	    :
-BL-SampleDelay	    : snd, vst3, btw2, btw3, bt42, bt43, 
+BL-SampleDelay	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
 BL-SASViewer	    : 
-BL-Saturate	    : snd, vst3, btw2, btw3, bt42, bt43, 
-BL-Shaper	    : snd, vst3, btw2, btw3, bt42, bt43, 
-BL-Sine		    : snd, vst3, btw2, btw3, bt42, bt43, 
+BL-Saturate	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
+BL-Shaper	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
+BL-Sine		    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
 BL-SoundMetaViewer  :	
-BL-Spatializer	    : snd, vst3, btw2, btw3, bt42, bt43, 
-BL-SpectralDiff	    : snd, vst3, btw2, btw3, bt42, bt43, 
+BL-Spatializer	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
+BL-SpectralDiff	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
 BL-SpectroExpe	    :
 BL-SpectrumView	    :
 BL-StereoDeReverb   :
-BL-StereoPan	    : snd, vst3, btw2, btw3, bt42, bt43, 
-BL-StereoWidth	    : snd, vst3, btw2, btw3, bt42, bt43, 
-BL-Wav3s	    : snd, vst3, btw2, btw3, bt42, bt43, 
+BL-StereoPan	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
+BL-StereoWidth	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
+BL-Wav3s	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
 UST		    :
 ====
 
@@ -287,6 +288,15 @@ DAW known problems
 - Ghost-X: Bitwig3.3.1/vst2/linux: menu displays "Ghost", even if it is "Ghost-X"
 - Rebalance: Bitwig-4.0.1/vst3/linux: sometimes audio engine crashes when inserting plugin
 - Bitwig-4.0.1/linux: sometimes when inserting plugin, Bitwig takes all resources and freezes (seems to be a bitwig bug)
+
+- linux/Ardour 6.3.0~ds0/vst2: plugin gui (with graph) is slower than expected
+=> a bit hacked scrolling, curves animation bot so smooth
+
+- AutoGain: linux/Ardour 6.3.0~ds0/vst2: seems not possible to do automation on VST
+(only lua or LV2)
+
+- Impulses: linux/Ardour 6.3.0~ds0/vst2: reset to default preset button => fails reset
+(the image stays displayed, and the IR is not unloaded)
 ====
 
 
