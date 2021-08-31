@@ -232,47 +232,57 @@ btw3: linux: test bitwig studio vst3 (bitwig-studio-3.3.11)
 bt42: linux: test bitwig studio vst2 (bitwig-studio-4.0.1)
 bt43: linux: test bitwig studio vst2 (bitwig-studio-4.0.1)
 ard2: linux/Ardour 6.3.0~ds0/vst2
+ren2: Renoise VST2
+ren3: Renoise VST2
+
+Audacity
+Qtractor
+Tracktion 7
+Waveform
+Radium
+LMMS (not tested, need Wine for VST ?)
+
 ====
-BL-Air		    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
-BL-AutoGain	    : snd, vst3, btw bugs  , bt42, bt43, ard2, 
+BL-Air		    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3 WIP
+BL-AutoGain	    : snd, vst3, btw bugs  , bt42, bt43, ard2, ren2
 BL-Bat		    : 
-BL-Chroma	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
-BL-Denoiser	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
+BL-Chroma	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2
+BL-Denoiser	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2
 BL-DUET		    :	
 BL-Envelope	    :	
-BL-EQHack	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
-BL-Gain12	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
+BL-EQHack	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2
+BL-Gain12	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2
 BL-Gain200	    : 
-BL-Gain24	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
-BL-Gain60	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
-BL-Ghost	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
-BL-GhostViewer	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
-BL-Impulses	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
-BL-Infra	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
-BL-InfrasonicViewer : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
+BL-Gain24	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2
+BL-Gain60	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2
+BL-Ghost	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2
+BL-GhostViewer	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2
+BL-Impulses	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2
+BL-Infra	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2
+BL-InfrasonicViewer : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2
 BL-InfraSynth	    :	
-BL-LoFi		    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
+BL-LoFi		    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2
 BL-OnsetDetect	    :	
-BL-Panogram	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
-BL-PitchShift	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
-BL-Precedence	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
-BL-Rebalance	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
+BL-Panogram	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2
+BL-PitchShift	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2
+BL-Precedence	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2
+BL-Rebalance	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2
 BL-Reverb	    :
 BL-ReverbDepth	    :
-BL-SampleDelay	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
+BL-SampleDelay	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2
 BL-SASViewer	    : 
-BL-Saturate	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
-BL-Shaper	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
-BL-Sine		    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
+BL-Saturate	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2
+BL-Shaper	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2
+BL-Sine		    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2
 BL-SoundMetaViewer  :	
-BL-Spatializer	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
-BL-SpectralDiff	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
+BL-Spatializer	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2
+BL-SpectralDiff	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2
 BL-SpectroExpe	    :
 BL-SpectrumView	    :
 BL-StereoDeReverb   :
-BL-StereoPan	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
-BL-StereoWidth	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
-BL-Wav3s	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, 
+BL-StereoPan	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2
+BL-StereoWidth	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2
+BL-Wav3s	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2
 UST		    :
 ====
 
@@ -297,6 +307,14 @@ DAW known problems
 
 - Impulses: linux/Ardour 6.3.0~ds0/vst2: reset to default preset button => fails reset
 (the image stays displayed, and the IR is not unloaded)
+
+- Chroma: linux/Renoise-V3.3.2: one crash when removing plugin (not repro)
+(crash when "VSTSetParameter")
+
+- Renoise-V3.3.2/linux: not tested side chain or automations
+
+- LoFi: linux/Renoise-V3.3.2: it seems to display 2 waveforms at the same time
+
 ====
 
 
