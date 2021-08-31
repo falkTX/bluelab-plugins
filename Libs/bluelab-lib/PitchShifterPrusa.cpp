@@ -256,16 +256,16 @@ PitchShifterPrusa::UpdateQuality()
     BL_FLOAT sampleRateCoeff = mSampleRate/44100.0;
     int sampleRateCoeffI = (int)sampleRateCoeff;
     sampleRateCoeffI = BLUtilsMath::NextPowerOfTwo(sampleRateCoeffI);
-        
+    
     // Change buffer size
     switch(mQuality)
     {
         case 0:
-            mBufferSize = BUFFER_SIZE_0*sampleRateCoeff;
+            mBufferSize = BUFFER_SIZE_0*sampleRateCoeffI;
             break;
             
         case 1:
-            mBufferSize = BUFFER_SIZE_1*sampleRateCoeff;
+            mBufferSize = BUFFER_SIZE_1*sampleRateCoeffI;
             break;
             
         default:
