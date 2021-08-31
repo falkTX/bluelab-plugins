@@ -227,49 +227,51 @@ Linux Tests
 ====
 snd: test of stereo sound, headphones (vst2, reaper). insert remove plug each time
 vst3: test vst3 (reaper). insert remove plug each time. quick test.
-btw2: linux: test bitwig studio vst2
-btw3: linux: test bitwig studio vst3
+btw2: linux: test bitwig studio vst2 (bitwig-studio-3.3.11)
+btw3: linux: test bitwig studio vst3 (bitwig-studio-3.3.11)
+bt42: linux: test bitwig studio vst2 (bitwig-studio-4.0.1)
+bt43: linux: test bitwig studio vst2 (bitwig-studio-4.0.1)
 ====
-BL-Air		    : snd, vst3, btw2
-BL-AutoGain	    : snd, vst3, btw2/3: bugs
+BL-Air		    : snd, vst3, btw2, btw3, bt42, bt43, 
+BL-AutoGain	    : snd, vst3, btw bugs  , bt42, bt43, 
 BL-Bat		    : 
-BL-Chroma	    : snd, vst3, btw2
-BL-Denoiser	    : snd, vst3, btw2
+BL-Chroma	    : snd, vst3, btw2, btw3, bt42, bt43, 
+BL-Denoiser	    : snd, vst3, btw2, btw3, bt42, bt43, 
 BL-DUET		    :	
 BL-Envelope	    :	
-BL-EQHack	    : snd, vst3, btw2
-BL-Gain12	    : snd, vst3, btw2
+BL-EQHack	    : snd, vst3, btw2, btw3, bt42, bt43, 
+BL-Gain12	    : snd, vst3, btw2, btw3, bt42, bt43, 
 BL-Gain200	    : 
-BL-Gain24	    : snd, vst3, btw2
-BL-Gain60	    : snd, vst3, btw2
-BL-Ghost	    : snd, vst3, WIP/BUG
-BL-GhostViewer	    : snd, vst3, btw2
-BL-Impulses	    : snd, vst3, btw2
-BL-Infra	    : snd, vst3, btw2
-BL-InfrasonicViewer : snd, vst3, btw2
+BL-Gain24	    : snd, vst3, btw2, btw3, bt42, bt43, 
+BL-Gain60	    : snd, vst3, btw2, btw3, bt42, bt43, 
+BL-Ghost	    : snd, vst3, btw2, btw3, bt42, bt43, 
+BL-GhostViewer	    : snd, vst3, btw2, btw3, bt42, bt43, 
+BL-Impulses	    : snd, vst3, btw2, btw3, bt42, bt43, 
+BL-Infra	    : snd, vst3, btw2, btw3, bt42, bt43, 
+BL-InfrasonicViewer : snd, vst3, btw2, btw3, bt42, bt43, 
 BL-InfraSynth	    :	
-BL-LoFi		    : snd, vst3, btw2
+BL-LoFi		    : snd, vst3, btw2, btw3, bt42, bt43, 
 BL-OnsetDetect	    :	
-BL-Panogram	    : snd, vst3, btw2
-BL-PitchShift	    : snd, vst3, btw2
-BL-Precedence	    : snd, vst3, btw2
-BL-Rebalance	    : snd, vst3, btw2
+BL-Panogram	    : snd, vst3, btw2, btw3, bt42, bt43, 
+BL-PitchShift	    : snd, vst3, btw2, btw3, bt42, bt43, 
+BL-Precedence	    : snd, vst3, btw2, btw3, bt42, bt43, 
+BL-Rebalance	    : snd, vst3, btw2, btw3, bt42, bt43, 
 BL-Reverb	    :
 BL-ReverbDepth	    :
-BL-SampleDelay	    : snd, vst3, btw2
+BL-SampleDelay	    : snd, vst3, btw2, btw3, bt42, bt43, 
 BL-SASViewer	    : 
-BL-Saturate	    : snd, vst3, btw2
-BL-Shaper	    : snd, vst3, btw2
-BL-Sine		    : snd, vst3, btw2
+BL-Saturate	    : snd, vst3, btw2, btw3, bt42, bt43, 
+BL-Shaper	    : snd, vst3, btw2, btw3, bt42, bt43, 
+BL-Sine		    : snd, vst3, btw2, btw3, bt42, bt43, 
 BL-SoundMetaViewer  :	
-BL-Spatializer	    : snd, vst3, btw2
-BL-SpectralDiff	    : snd, vst3, btw2
+BL-Spatializer	    : snd, vst3, btw2, btw3, bt42, bt43, 
+BL-SpectralDiff	    : snd, vst3, btw2, btw3, bt42, bt43, 
 BL-SpectroExpe	    :
 BL-SpectrumView	    :
 BL-StereoDeReverb   :
-BL-StereoPan	    : snd, vst3, btw2
-BL-StereoWidth	    : snd, vst3, btw2
-BL-Wav3s	    : snd, vst3, btw2
+BL-StereoPan	    : snd, vst3, btw2, btw3, bt42, bt43, 
+BL-StereoWidth	    : snd, vst3, btw2, btw3, bt42, bt43, 
+BL-Wav3s	    : snd, vst3, btw2, btw3, bt42, bt43, 
 UST		    :
 ====
 
@@ -281,6 +283,10 @@ DAW known problems
 
 - AutoGain: Bitwig3.3.1/vst3/linux: automations are not written
 - AutoGain: Bitwig3.3.1/vst2/linux: automation are not re-read
+
+- Ghost-X: Bitwig3.3.1/vst2/linux: menu displays "Ghost", even if it is "Ghost-X"
+- Rebalance: Bitwig-4.0.1/vst3/linux: sometimes audio engine crashes when inserting plugin
+- Bitwig-4.0.1/linux: sometimes when inserting plugin, Bitwig takes all resources and freezes (seems to be a bitwig bug)
 ====
 
 
