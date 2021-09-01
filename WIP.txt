@@ -234,13 +234,16 @@ bt43: linux: test bitwig studio vst2 (bitwig-studio-4.0.1)
 ard2: linux/Ardour 6.3.0~ds0/vst2
 ren2: Renoise VST2
 ren3: Renoise VST3
+w112: Tracktion Waveform11: vst2
+w113: Tracktion Waveform11: vst3
 
 Audacity
 Qtractor
-Tracktion 7
-Waveform
+Waveform11
 Radium
 LMMS (not tested, need Wine for VST ?)
+
+TODO: uninstall bitwig, renoise
 
 ====
 BL-Air		    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3
@@ -290,8 +293,6 @@ UST		    :
 ====
 DAW known problems
 ====
-- All animated plugs: Bitwig3.3.1/vst3/linux: the gui stops refreshing if we don't move the mouse
-
 - AutoGain: Bitwig3.3.1/vst3/linux: automations are not written
 - AutoGain: Bitwig3.3.1/vst2/linux: automation are not re-read
 
@@ -315,6 +316,10 @@ DAW known problems
 
 - LoFi: linux/Renoise-V3.3.2: it seems to display 2 waveforms at the same time
 
+- Waveform11/linux/vst2: crashed when inserting Air plugin (VST2) (hardly repro)
+
+- TODO: Renoise: test sidechain and automations
+- TODO: Waveform11: test side chain and automations
 ====
 
 
