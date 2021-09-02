@@ -246,10 +246,10 @@ LMMS (not tested, need Wine for VST ?)
 TODO: uninstall bitwig, renoise
 
 ====
-BL-Air		    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3
-BL-AutoGain	    : snd, vst3, btw bugs  , bt42, bt43, ard2, ren2, ren3
+BL-Air		    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3, w112, w113
+BL-AutoGain	    : snd, vst3, btw bugs  , bt42, bt43, ard2, ren2, ren3, w112, w113
 BL-Bat		    : 
-BL-Chroma	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3
+BL-Chroma	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3, WIP
 BL-Denoiser	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3
 BL-DUET		    :	
 BL-Envelope	    :	
@@ -289,6 +289,8 @@ BL-Wav3s	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3
 UST		    :
 ====
 
+
+NOTE: Waveform11: vst3 == "open" icon
 
 ====
 DAW known problems
