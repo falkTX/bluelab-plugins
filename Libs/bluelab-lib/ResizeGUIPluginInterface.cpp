@@ -34,7 +34,7 @@ ResizeGUIPluginInterface::ApplyGUIResize(int guiSizeIdx)
     int newGUIWidth;
     int newGUIHeight;
     PreResizeGUI(guiSizeIdx, &newGUIWidth, &newGUIHeight);
-    
+
     if (mPlug->GetUI() != NULL)
         mPlug->GetUI()->Resize(newGUIWidth, newGUIHeight, 1.0f, true);
     
