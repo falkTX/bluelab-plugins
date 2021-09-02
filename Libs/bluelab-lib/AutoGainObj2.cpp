@@ -61,6 +61,9 @@
 // not fft
 #define FIX_COMPUTE_IN_GAIN 0 //1
 
+// When moving the sc gain knob, with no side chain defined,
+// the vumter jittered
+#define FIX_JITTER_SC_GAIN 1
 
 AutoGainObj2::AutoGainObj2(int bufferSize, int oversampling, int freqRes,
                            BL_FLOAT sampleRate,
@@ -273,10 +276,12 @@ AutoGainObj2::SetScGain(BL_FLOAT gain)
 {
     mScGain = gain;
 
+#if !FIX_JITTER_SC_GAIN
     if (mMode == BYPASS_WRITE)
     {
         mGain = mScGain;
-    }   
+    }
+#endif
 }
 
 void
