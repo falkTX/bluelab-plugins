@@ -49,6 +49,38 @@ BLUtilsPlug::PlugInits()
 }
 
 void
+BLUtilsPlug::SetPlugResizable(Plugin *plug, bool flag)
+{
+    // Waveform11/linux/vst3: must set PLUG_HOST_RESIZE to 1
+    // to be able to resize without bug.
+    // In this case, Waveform won't provide draggable lower right window corner,
+    // but instead, only allow the plugin to resize (this is what we want).
+    //
+    // If we don't set PLUG_HOST_RESIZE to 1, Waveform11 will try to resize back
+    // the plugin to its original size, for ever. (so the plugin won't be resizable.
+#if __linux__
+#ifdef VST3_API
+    if (flag)
+    {
+#if 0 // Debug
+        WDL_String hostStr;
+        plug->GetHostStr(hostStr);
+        fprintf(stderr, "Host: %s\n", hostStr.Get());
+#endif
+        
+        EHost host = plug->GetHost();
+        if ((host == kHostWaveform) || // This one is necessary
+            (host == kHostTracktion)) // This one is just in case
+        {
+            // Won't add winwdow draggable corner, but will just allow resizing
+            plug->SetHostResizeEnabled(true);
+        }
+    }
+#endif
+#endif
+}
+
+void
 BLUtilsPlug::BypassPlug(double **inputs, double **outputs, int nFrames)
 {
     if ((inputs[0] != NULL) && (outputs[0] != NULL))

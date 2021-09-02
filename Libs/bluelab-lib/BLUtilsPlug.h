@@ -19,6 +19,8 @@ class BLUtilsPlug
     
     // Plugin operations
     static void PlugInits();
+
+    static void SetPlugResizable(Plugin *plug, bool flag);
     
     static void BypassPlug(double **inputs, double **outputs, int nFrames);
     
