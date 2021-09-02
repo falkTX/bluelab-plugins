@@ -38,10 +38,13 @@ BLUtilsPlug::PlugInits()
     // the digit separation would be ',' instad of ".".
     // This would make fail functions such as atof() e.g
     // and this would show a ',' in the knob values instead of a '.'
+    //
+    // Necessary for plugin too (e.g on Waveform11/linux)
+    // e.g BL-Chroma, vertical axis with note names was garbage because atof() failed.
 #if __linux__
-#ifdef APP_API
+    //#ifdef APP_API
     setlocale(LC_ALL, "C");
-#endif
+    //#endif
 #endif
 }
 
