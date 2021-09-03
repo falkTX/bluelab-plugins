@@ -43,7 +43,9 @@ public:
     void SetDirty();
     
     void SetZoom(BL_GUI_FLOAT zoom);
-
+    // Lazy evaluation, to avoid thread problem (crash)
+    void UpdateZoom();
+    
     void ResetSweepBar();
 
     void SetCurveStyle(int curveNum,
@@ -81,6 +83,8 @@ protected:
     GraphCurve5 *mAxisCurve;
     GraphCurve5 *mSweepBarCurve;
 
+    bool mNeedUpdateZoom;
+    
     //
     class Curve
     {

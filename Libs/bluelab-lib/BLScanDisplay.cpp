@@ -54,6 +54,8 @@ BLScanDisplay::BLScanDisplay(int numCurves, BL_GUI_FLOAT sampleRate)
     Reset(sampleRate);
 
     mIsEnabled = false;
+
+    mNeedUpdateZoom = false;
 }
 
 BLScanDisplay::~BLScanDisplay()
@@ -247,11 +249,22 @@ BLScanDisplay::SetZoom(BL_GUI_FLOAT zoom)
     mZoom = 1.0 + (mZoom - 1.0)*0.5;
 #endif
 
+    mNeedUpdateZoom = true;
+}
+
+void
+BLScanDisplay::UpdateZoom()
+{
+    if (!mNeedUpdateZoom)
+        return;
+            
     for (int i = 0; i < mCurves.size(); i++)
         AddSamplesZoom(i);
     
     if (mGraph != NULL)
         mGraph->SetDataChanged();
+
+    mNeedUpdateZoom = false;
 }
 
 void
