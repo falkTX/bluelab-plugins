@@ -237,13 +237,12 @@ ren3: Renoise VST3
 w112: Tracktion Waveform11: vst2
 w113: Tracktion Waveform11: vst3
 
-Audacity
 Qtractor
-Waveform11
 Radium
+Audacity
 LMMS (not tested, need Wine for VST ?)
 
-TODO: uninstall bitwig, renoise
+- TODO: uninstall bitwig, renoise, Wavefor11
 
 ====
 BL-Air		    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3, w112, w113
@@ -285,13 +284,14 @@ BL-SpectrumView	    :
 BL-StereoDeReverb   :
 BL-StereoPan	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3, w112, w113
 BL-StereoWidth	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3, w112, w113
-BL-Wav3s	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3
+BL-Wav3s	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3, w112, w113
 UST		    :
 ====
 
 - TODO: Rebalance big improvement (stereo)!! 
+- TODO: StereoWidth: checkbox "bass focus mono"
 
-NOTE: Waveform11: vst3 == "open" icon
+- NOTE: Waveform11: vst3 == "open" icon
 
 ====
 DAW known problems
