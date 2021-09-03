@@ -249,33 +249,33 @@ TODO: uninstall bitwig, renoise
 BL-Air		    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3, w112, w113
 BL-AutoGain	    : snd, vst3, btw bugs  , bt42, bt43, ard2, ren2, ren3, w112, w113
 BL-Bat		    : 
-BL-Chroma	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3, WIP
-BL-Denoiser	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3
+BL-Chroma	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3, w112, w113
+BL-Denoiser	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3, w112, w113
 BL-DUET		    :	
 BL-Envelope	    :	
-BL-EQHack	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3
-BL-Gain12	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3
+BL-EQHack	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3, w112, w113
+BL-Gain12	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3, w112, w113
 BL-Gain200	    : 
-BL-Gain24	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3
-BL-Gain60	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3
-BL-Ghost	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3
-BL-GhostViewer	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3
-BL-Impulses	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3
-BL-Infra	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3
-BL-InfrasonicViewer : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3
+BL-Gain24	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3, w112, w113
+BL-Gain60	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3, w112, w113
+BL-Ghost	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3, w112, w113
+BL-GhostViewer	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3, w112, w113
+BL-Impulses	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3, w112, w113
+BL-Infra	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3, w112, w113
+BL-InfrasonicViewer : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3, w112, w113
 BL-InfraSynth	    :	
-BL-LoFi		    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3
+BL-LoFi		    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3, w112, w113
 BL-OnsetDetect	    :	
-BL-Panogram	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3
-BL-PitchShift	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3
-BL-Precedence	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3
-BL-Rebalance	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3
+BL-Panogram	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3, w112, w113
+BL-PitchShift	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3, w112, w113
+BL-Precedence	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3, w112, w113
+BL-Rebalance	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3, w112, w113
 BL-Reverb	    :
 BL-ReverbDepth	    :
-BL-SampleDelay	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3
+BL-SampleDelay	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3, w112, w113
 BL-SASViewer	    : 
-BL-Saturate	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3
-BL-Shaper	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3
+BL-Saturate	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3, w112, w113
+BL-Shaper	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3, WIP
 BL-Sine		    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3
 BL-SoundMetaViewer  :	
 BL-Spatializer	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3
@@ -299,6 +299,7 @@ DAW known problems
 - AutoGain: Bitwig3.3.1/vst2/linux: automation are not re-read
 
 - Ghost-X: Bitwig3.3.1/vst2/linux: menu displays "Ghost", even if it is "Ghost-X"
+(same with Waveform11/linux/vst2)
 - Rebalance: Bitwig-4.0.1/vst3/linux: sometimes audio engine crashes when inserting plugin
 - Bitwig-4.0.1/linux: sometimes when inserting plugin, Bitwig takes all resources and freezes (seems to be a bitwig bug)
 
