@@ -275,20 +275,21 @@ BL-ReverbDepth	    :
 BL-SampleDelay	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3, w112, w113
 BL-SASViewer	    : 
 BL-Saturate	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3, w112, w113
-BL-Shaper	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3, WIP
-BL-Sine		    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3
+BL-Shaper	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3, w112, w113
+BL-Sine		    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3, w112, w113
 BL-SoundMetaViewer  :	
-BL-Spatializer	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3
-BL-SpectralDiff	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3
+BL-Spatializer	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3, w112, w113
+BL-SpectralDiff	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3, w112, w113
 BL-SpectroExpe	    :
 BL-SpectrumView	    :
 BL-StereoDeReverb   :
-BL-StereoPan	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3
-BL-StereoWidth	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3
+BL-StereoPan	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3, w112, w113
+BL-StereoWidth	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3, w112, w113
 BL-Wav3s	    : snd, vst3, btw2, btw3, bt42, bt43, ard2, ren2, ren3
 UST		    :
 ====
 
+- TODO: Rebalance big improvement (stereo)!! 
 
 NOTE: Waveform11: vst3 == "open" icon
 
