@@ -220,6 +220,10 @@ GraphControl12::~GraphControl12()
     for (int i = 0; i < mCustomDrawers.size(); i++)
     {
         GraphCustomDrawer *drawer = mCustomDrawers[i];
+
+        // NEW
+        drawer->OnUIClose();
+
         if (drawer->IsOwnedByGraph())
             delete drawer;
     }

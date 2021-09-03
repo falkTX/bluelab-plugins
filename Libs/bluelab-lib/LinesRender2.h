@@ -125,13 +125,14 @@ public:
     virtual ~LinesRender2();
 
     void SetUseLegacyLock(bool flag);
+
+    void OnUIClose() override;
     
     void ProjectPoint(BL_FLOAT projP[3], const BL_FLOAT p[3],
                       int width, int height) override;
     
     void Init();
 
-    
     void SetNumSlices(long numSlices);
     
     long GetNumSlices();
@@ -358,6 +359,8 @@ protected:
     bool mNeedRedraw;
 
     bool mUseLegacyLock;
+
+    NVGcontext *mVg;
     
 private:
     // Tmp buffers

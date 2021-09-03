@@ -109,6 +109,8 @@ public:
     
     //virtual bool NeedRedraw() { return true; }
     virtual bool NeedRedraw() { return false; }
+
+    virtual void OnUIClose() {}
 };
 
 class GraphCustomControl

@@ -174,6 +174,8 @@ LinesRender2::LinesRender2()
     mUseLegacyLock = false;
     
     Init();
+
+    mVg = NULL;
 }
 
 LinesRender2::~LinesRender2() {}
@@ -182,6 +184,16 @@ void
 LinesRender2::SetUseLegacyLock(bool flag)
 {
     mUseLegacyLock = flag;
+}
+
+void
+LinesRender2::OnUIClose()
+{
+    if ((mWhitePixImg >= 0) && (mVg != NULL))
+        nvgDeleteImage(mVg, mWhitePixImg);
+    
+    mWhitePixImg = -1;
+    mVg = NULL;
 }
 
 void
@@ -301,6 +313,8 @@ LinesRender2::SetDensePointsFlag(bool flag)
 void
 LinesRender2::PreDraw(NVGcontext *vg, int width, int height)
 {
+    mVg = vg;
+    
     // NOTE: does not work, makes the display blink
     // (sometimes the graph need to redraw itself,
     // whereas LineResner2 has not changed)
@@ -361,7 +375,7 @@ LinesRender2::PreDraw(NVGcontext *vg, int width, int height)
 
 void
 LinesRender2::DrawPoints(NVGcontext *vg, const vector<vector<Point> > &points)
-{
+{    
 #if 0 // Simple
     unsigned char color[4] = { 200, 200, 255, 255 };
     DoDrawPoints(vg, points, color, 2.0);
