@@ -13,6 +13,8 @@ extern HINSTANCE gHINSTANCE;
 #include <BLUtilsMath.h>
 #include <BLUtilsFile.h>
 
+#include <BLDebug.h>
+
 #include <ParamSmoother2.h>
 
 #include "IPlug_include_in_plug_hdr.h"
@@ -51,6 +53,14 @@ BLUtilsPlug::PlugInits()
 void
 BLUtilsPlug::SetPlugResizable(Plugin *plug, bool flag)
 {
+#if 0 // Debug
+        WDL_String hostStr;
+        plug->GetHostStr(hostStr);
+        fprintf(stderr, "Host: %s\n", hostStr.Get());
+
+        BLDebug::AppendMessage("bl-logs.txt", hostStr.Get());
+#endif
+        
     // Waveform11/linux/vst3: must set PLUG_HOST_RESIZE to 1
     // to be able to resize without bug.
     // In this case, Waveform won't provide draggable lower right window corner,
@@ -61,13 +71,7 @@ BLUtilsPlug::SetPlugResizable(Plugin *plug, bool flag)
 #if __linux__
 #ifdef VST3_API
     if (flag)
-    {
-#if 0 // Debug
-        WDL_String hostStr;
-        plug->GetHostStr(hostStr);
-        fprintf(stderr, "Host: %s\n", hostStr.Get());
-#endif
-        
+    {        
         EHost host = plug->GetHost();
         if ((host == kHostWaveform) || // This one is necessary
             (host == kHostTracktion)) // This one is just in case
@@ -77,6 +81,19 @@ BLUtilsPlug::SetPlugResizable(Plugin *plug, bool flag)
         }
     }
 #endif
+#endif
+
+    // Radium/linux: Radium needs SetHostResizeEnabled(), but returns kHostUnknown
+    // Should also work for any host that return kHostUnknown
+#if __linux__
+    if (flag)
+    {        
+        EHost host = plug->GetHost();
+        if (host == kHostUnknown)
+        {
+            plug->SetHostResizeEnabled(true);
+        }
+    }
 #endif
 }
 
