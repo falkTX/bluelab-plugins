@@ -83,7 +83,8 @@ BLUtilsPlug::SetPlugResizable(Plugin *plug, bool flag)
 #endif
 #endif
 
-    // Radium/linux: Radium needs SetHostResizeEnabled(), but returns kHostUnknown
+    // Radium/linux/vst3: Radium needs SetHostResizeEnabled(),
+    // but returns kHostUnknown
     // Should also work for any host that return kHostUnknown
 #if __linux__
     if (flag)
