@@ -182,6 +182,8 @@ v3.47
 v3.48
 - StereoWidth: "WIDTH LIMIT" -> "WIDTH LIMITER"
 
+v3.49
+- StereoWidth: new "BASS TO MONO" checkbox
 
 Rollover menu: 5c75eb
 Rollover buttons: 6a6affff
