@@ -242,53 +242,52 @@ w11 => w112 + w113
 rad: Radium/linux
 aud: Audacity vst2
 
-Audacity
 LMMS (not tested, need Wine for VST ?)
 Qtractor: not tested (crash during VST plugins scan)
 
 - TODO: uninstall bitwig, renoise, Waveform11
 
 ====
-BL-Air		    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, aud,
-BL-AutoGain	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, aud,
+BL-Air		    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, aud
+BL-AutoGain	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, aud
 BL-Bat		    : 
-BL-Chroma	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, aud,
-BL-Denoiser	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, 
+BL-Chroma	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, aud
+BL-Denoiser	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, aud 
 BL-DUET		    :	
 BL-Envelope	    :	
-BL-EQHack	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, 
-BL-Gain12	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, 
+BL-EQHack	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, aud 
+BL-Gain12	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, aud 
 BL-Gain200	    : 
-BL-Gain24	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, 
-BL-Gain60	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, 
-BL-Ghost	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, 
-BL-GhostViewer	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, 
-BL-Impulses	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, 
-BL-Infra	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, 
-BL-InfrasonicViewer : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, 
+BL-Gain24	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, aud 
+BL-Gain60	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, aud 
+BL-Ghost	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, aud 
+BL-GhostViewer	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, aud 
+BL-Impulses	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, aud 
+BL-Infra	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, aud 
+BL-InfrasonicViewer : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, aud 
 BL-InfraSynth	    :	
-BL-LoFi		    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, 
+BL-LoFi		    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, aud 
 BL-OnsetDetect	    :	
-BL-Panogram	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, 
-BL-PitchShift	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, 
-BL-Precedence	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, 
-BL-Rebalance	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, 
+BL-Panogram	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, aud 
+BL-PitchShift	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, aud 
+BL-Precedence	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, aud 
+BL-Rebalance	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, aud 
 BL-Reverb	    :
 BL-ReverbDepth	    :
-BL-SampleDelay	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, 
+BL-SampleDelay	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, aud 
 BL-SASViewer	    : 
-BL-Saturate	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, 
-BL-Shaper	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, 
-BL-Sine		    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, 
+BL-Saturate	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, aud 
+BL-Shaper	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, aud 
+BL-Sine		    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, aud 
 BL-SoundMetaViewer  :	
-BL-Spatializer	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, 
-BL-SpectralDiff	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, 
+BL-Spatializer	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, aud 
+BL-SpectralDiff	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, aud 
 BL-SpectroExpe	    :
 BL-SpectrumView	    :
 BL-StereoDeReverb   :
-BL-StereoPan	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, 
-BL-StereoWidth	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, 
-BL-Wav3s	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, 
+BL-StereoPan	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, aud 
+BL-StereoWidth	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, aud 
+BL-Wav3s	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, aud 
 UST		    :
 ====
 
@@ -342,8 +341,14 @@ it seems to play at wrong speed (too fast), until we reload the project.
 - Radium/linux: Wav3s: gui resize problem VST2 and also VST3
 
 - Audacity/linux: need enough resources, othwise sound will be bad
+=> the sound is often bad, really make sure to have enough resources!
+
 - Audacity/linux: Chroma (and other with scrolling): time axis is not scrolling
 (because maybe there is not a real "transport bar")
+- Audacity/linux: Ghost and Ghost-X: doesn't work well for playing when in edit mode
+(not usable)
+- Audacity/linux: Panogram: doesn't work well to freeze and play
+
 
 - TODO: Renoise: test sidechain and automations
 - TODO: Waveform11: test side chain and automations
