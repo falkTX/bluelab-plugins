@@ -291,13 +291,7 @@ BL-Wav3s	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, aud
 UST		    :
 ====
 
-
-WIP: test Audacity
-(for the moment, fixed scrolling time axis)
-
-
 - TODO: Rebalance big improvement (stereo)!! 
-- TODO: StereoWidth: checkbox "bass to mono"
 
 ====
 DAW known problems
