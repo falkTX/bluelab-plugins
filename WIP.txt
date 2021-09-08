@@ -337,8 +337,6 @@ it seems to play at wrong speed (too fast), until we reload the project.
 - Audacity/linux: need enough resources, othwise sound will be bad
 => the sound is often bad, really make sure to have enough resources!
 
-- Audacity/linux: Chroma (and other with scrolling): time axis is not scrolling
-(because maybe there is not a real "transport bar")
 - Audacity/linux: Ghost and Ghost-X: doesn't work well for playing when in edit mode
 (not usable)
 - Audacity/linux: Panogram: doesn't work well to freeze and play
