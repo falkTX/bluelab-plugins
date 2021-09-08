@@ -1174,6 +1174,7 @@ BLUtilsPlug::GetTransportTime(Plugin *plug)
     
     BL_FLOAT transportTime = samplePos/sampleRate;
 
+#if 1 // Keep to 1 since it is not fixed in Audacity
     // Audacity workaround, see the following github issue:
     // https://github.com/audacity/audacity/issues/1628
     if (plug->GetHost() == kHostAudacity)
@@ -1184,6 +1185,7 @@ BLUtilsPlug::GetTransportTime(Plugin *plug)
 
         transportTime = samplePos;
     }
+#endif
     
     return transportTime;
 }
