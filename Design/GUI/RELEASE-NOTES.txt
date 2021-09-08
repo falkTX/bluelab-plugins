@@ -185,6 +185,13 @@ v3.48
 v3.49
 - StereoWidth: new "BASS TO MONO" checkbox
 
+v3.50
+- Rebalance stereo (WIP)
+
+v3.51
+- Rebalance stereo
+
+
 Rollover menu: 5c75eb
 Rollover buttons: 6a6affff
 Knobs: 617bf7
