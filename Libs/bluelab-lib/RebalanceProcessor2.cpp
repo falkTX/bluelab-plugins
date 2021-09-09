@@ -235,11 +235,17 @@ RebalanceProcessor2::GetLatency()
 void
 RebalanceProcessor2::SetVocal(BL_FLOAT vocal)
 {
-    for (int i = 0; i < 2; i++)
+    if (!mStereoMode)
     {
-        if (mDetectProcessObjs[i] != NULL)
-            mDetectProcessObjs[i]->SetVocal(vocal);
-        else if (mDetectProcessObjStereo != NULL)
+        for (int i = 0; i < 2; i++)
+        {
+            if (mDetectProcessObjs[i] != NULL)
+                mDetectProcessObjs[i]->SetVocal(vocal);
+        }
+    }
+    else
+    {
+        if (mDetectProcessObjStereo != NULL)
             mDetectProcessObjStereo->SetVocal(vocal);
     }
 }
@@ -247,11 +253,17 @@ RebalanceProcessor2::SetVocal(BL_FLOAT vocal)
 void
 RebalanceProcessor2::SetBass(BL_FLOAT bass)
 {
-    for (int i = 0; i < 2; i++)
+    if (!mStereoMode)
     {
-        if (mDetectProcessObjs[i] != NULL)
-            mDetectProcessObjs[i]->SetBass(bass);
-        else if (mDetectProcessObjStereo != NULL)
+        for (int i = 0; i < 2; i++)
+        {
+            if (mDetectProcessObjs[i] != NULL)
+                mDetectProcessObjs[i]->SetBass(bass);
+        }
+    }
+    else
+    {
+        if (mDetectProcessObjStereo != NULL)
             mDetectProcessObjStereo->SetBass(bass);
     }
 }
@@ -259,11 +271,17 @@ RebalanceProcessor2::SetBass(BL_FLOAT bass)
 void
 RebalanceProcessor2::SetDrums(BL_FLOAT drums)
 {
-    for (int i = 0; i < 2; i++)
+    if (!mStereoMode)
     {
-        if (mDetectProcessObjs[i] != NULL)
-            mDetectProcessObjs[i]->SetDrums(drums);
-        else if (mDetectProcessObjStereo != NULL)
+        for (int i = 0; i < 2; i++)
+        {
+            if (mDetectProcessObjs[i] != NULL)
+                mDetectProcessObjs[i]->SetDrums(drums);
+        }
+    }
+    else
+    {
+        if (mDetectProcessObjStereo != NULL)
             mDetectProcessObjStereo->SetDrums(drums);
     }
 }
@@ -271,11 +289,17 @@ RebalanceProcessor2::SetDrums(BL_FLOAT drums)
 void
 RebalanceProcessor2::SetOther(BL_FLOAT other)
 {
-    for (int i = 0; i < 2; i++)
+    if (!mStereoMode)
     {
-        if (mDetectProcessObjs[i] != NULL)
-            mDetectProcessObjs[i]->SetOther(other);
-        else if (mDetectProcessObjStereo != NULL)
+        for (int i = 0; i < 2; i++)
+        {
+            if (mDetectProcessObjs[i] != NULL)
+                mDetectProcessObjs[i]->SetOther(other);
+        }
+    }
+    else
+    {
+        if (mDetectProcessObjStereo != NULL)
             mDetectProcessObjStereo->SetOther(other);
     }
 }
@@ -283,11 +307,17 @@ RebalanceProcessor2::SetOther(BL_FLOAT other)
 void
 RebalanceProcessor2::SetMasksContrast(BL_FLOAT contrast)
 {
-    for (int i = 0; i < 2; i++)
+    if (!mStereoMode)
     {
-        if (mDetectProcessObjs[i] != NULL)
-            mDetectProcessObjs[i]->SetContrast(contrast);
-        else if (mDetectProcessObjStereo != NULL)
+        for (int i = 0; i < 2; i++)
+        {
+            if (mDetectProcessObjs[i] != NULL)
+                mDetectProcessObjs[i]->SetContrast(contrast);
+        }
+    }
+    else
+    {
+        if (mDetectProcessObjStereo != NULL)
             mDetectProcessObjStereo->SetContrast(contrast);
     }
 }
@@ -295,11 +325,17 @@ RebalanceProcessor2::SetMasksContrast(BL_FLOAT contrast)
 void
 RebalanceProcessor2::SetVocalSensitivity(BL_FLOAT vocalSensitivity)
 {
-    for (int i = 0; i < 2; i++)
+    if (!mStereoMode)
     {
-        if (mDetectProcessObjs[i] != NULL)
-            mDetectProcessObjs[i]->SetVocalSensitivity(vocalSensitivity);
-        else if (mDetectProcessObjStereo != NULL)
+        for (int i = 0; i < 2; i++)
+        {
+            if (mDetectProcessObjs[i] != NULL)
+                mDetectProcessObjs[i]->SetVocalSensitivity(vocalSensitivity);
+        }
+    }
+    else
+    {
+        if (mDetectProcessObjStereo != NULL)
             mDetectProcessObjStereo->SetVocalSensitivity(vocalSensitivity);
     }
 }
@@ -307,11 +343,17 @@ RebalanceProcessor2::SetVocalSensitivity(BL_FLOAT vocalSensitivity)
 void
 RebalanceProcessor2::SetBassSensitivity(BL_FLOAT bassSensitivity)
 {
-    for (int i = 0; i < 2; i++)
+    if (!mStereoMode)
     {
-        if (mDetectProcessObjs[i] != NULL)
-            mDetectProcessObjs[i]->SetBassSensitivity(bassSensitivity);
-        else if (mDetectProcessObjStereo != NULL)
+        for (int i = 0; i < 2; i++)
+        {
+            if (mDetectProcessObjs[i] != NULL)
+                mDetectProcessObjs[i]->SetBassSensitivity(bassSensitivity);
+        }
+    }
+    else
+    {
+        if (mDetectProcessObjStereo != NULL)
             mDetectProcessObjStereo->SetBassSensitivity(bassSensitivity);
     }
 }
@@ -319,11 +361,17 @@ RebalanceProcessor2::SetBassSensitivity(BL_FLOAT bassSensitivity)
 void
 RebalanceProcessor2::SetDrumsSensitivity(BL_FLOAT drumsSensitivity)
 {
-    for (int i = 0; i < 2; i++)
+    if (!mStereoMode)
     {
-        if (mDetectProcessObjs[i] != NULL)
-            mDetectProcessObjs[i]->SetDrumsSensitivity(drumsSensitivity);
-        else if (mDetectProcessObjStereo != NULL)
+        for (int i = 0; i < 2; i++)
+        {
+            if (mDetectProcessObjs[i] != NULL)
+                mDetectProcessObjs[i]->SetDrumsSensitivity(drumsSensitivity);
+        }
+    }
+    else
+    {
+        if (mDetectProcessObjStereo != NULL)
             mDetectProcessObjStereo->SetDrumsSensitivity(drumsSensitivity);
     }
 }
@@ -331,11 +379,17 @@ RebalanceProcessor2::SetDrumsSensitivity(BL_FLOAT drumsSensitivity)
 void
 RebalanceProcessor2::SetOtherSensitivity(BL_FLOAT otherSensitivity)
 {
-    for (int i = 0; i < 2; i++)
+    if (!mStereoMode)
     {
-        if (mDetectProcessObjs[i] != NULL)
-            mDetectProcessObjs[i]->SetOtherSensitivity(otherSensitivity);
-        else if (mDetectProcessObjStereo != NULL)
+        for (int i = 0; i < 2; i++)
+        {
+            if (mDetectProcessObjs[i] != NULL)
+                mDetectProcessObjs[i]->SetOtherSensitivity(otherSensitivity);
+        }
+    }
+    else
+    {
+        if (mDetectProcessObjStereo != NULL)
             mDetectProcessObjStereo->SetOtherSensitivity(otherSensitivity);
     }
 }
