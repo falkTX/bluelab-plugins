@@ -976,7 +976,7 @@ ProcessStereoSamples(int partNum, WDL_TypedBuf<BL_FLOAT> samples[2])
     
     BL_FLOAT panFactors[NUM_STEM_SOURCES] =
         { mPanVocal, mPanBass, mPanDrums, mPanOther };
-
+    
     vector<WDL_TypedBuf<BL_FLOAT> * > samplesVec;
     samplesVec.resize(2);
     
