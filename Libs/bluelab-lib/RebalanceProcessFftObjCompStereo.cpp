@@ -48,6 +48,8 @@
 // (Otherwise, the gain effect was very small)
 #define SOFT_MASKING_HACK 1
 
+#define DBG_DISABLE_SOFT_MASKING 1 // 0
+
 RebalanceProcessFftObjCompStereo::
 RebalanceProcessFftObjCompStereo(int bufferSize, int oversampling,
                                  BL_FLOAT sampleRate,
@@ -78,6 +80,10 @@ RebalanceProcessFftObjCompStereo(int bufferSize, int oversampling,
         {
             mSoftMasking[i][j] = new SoftMaskingComp4(bufferSize, oversampling,
                                                       SOFT_MASKING_HISTO_SIZE);
+
+#if DBG_DISABLE_SOFT_MASKING
+            mSoftMasking[i][j]->SetProcessingEnabled(false);
+#endif
         }
     }
     
@@ -589,9 +595,14 @@ ApplySoftMaskingStereo(WDL_TypedBuf<WDL_FFT_COMPLEX> ioData[2],
         for (int j = 0; j < 2; j++)
         {
             sourceData[i][j] = ioData[j];
-            
+
             mSoftMasking[i][j]->ProcessCentered(&sourceData[i][j],
                                                 masks[i], &softMaskedResult[i][j]);
+
+#if DBG_DISABLE_SOFT_MASKING
+            softMaskedResult[i][j] = sourceData[i][j];
+            BLUtils::MultValues(&softMaskedResult[i][j], masks[i]);
+#endif        
         }
     }
 
@@ -615,7 +626,9 @@ ApplySoftMaskingStereo(WDL_TypedBuf<WDL_FFT_COMPLEX> ioData[2],
 #endif
     
     // Result
+#if !DBG_DISABLE_SOFT_MASKING
     if (mSoftMasking[0][0]->IsProcessingEnabled())
+#endif
     {
         // Sum the different parts
         BLUtils::FillAllZero(&ioData[0]);

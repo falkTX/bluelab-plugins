@@ -233,4 +233,4 @@ private:
     WDL_TypedBuf<BL_FLOAT> mTmpBuf46[2];
 };
 
-#endif /* defined(__BL_Rebalance__RebalanceProcessFftObjComp4__) */
+#endif /* defined(__BL_Rebalance__RebalanceProcessFftObjStereo__) */
