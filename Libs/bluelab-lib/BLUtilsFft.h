@@ -24,7 +24,8 @@ class BLUtilsFft
                             FLOAT_TYPE sampleRate, FLOAT_TYPE *t = NULL);
     
     template <typename FLOAT_TYPE>
-    static void FftFreqs(WDL_TypedBuf<FLOAT_TYPE> *freqs, int numBins, FLOAT_TYPE sampleRate);
+    static void FftFreqs(WDL_TypedBuf<FLOAT_TYPE> *freqs, int numBins,
+                         FLOAT_TYPE sampleRate);
     
     template <typename FLOAT_TYPE>
     static void MinMaxFftBinFreq(FLOAT_TYPE *minFreq, FLOAT_TYPE *maxFreq,
@@ -49,7 +50,7 @@ class BLUtilsFft
     template <typename FLOAT_TYPE>
     static void FftIdsToSamplesIds(const WDL_TypedBuf<FLOAT_TYPE> &phases,
                                    WDL_TypedBuf<int> *samplesIds);
-    #define USE_SIMD_OPTIM 1
+#define USE_SIMD_OPTIM 1
     template <typename FLOAT_TYPE>
     static void FftIdsToSamplesIdsSym(const WDL_TypedBuf<FLOAT_TYPE> &phases,
                                       WDL_TypedBuf<int> *samplesIds);
