@@ -324,8 +324,9 @@ RebalanceProcessFftObjCompStereo::GetLatency()
 }
     
 void
-RebalanceProcessFftObjCompStereo::AddSpectrogramLine(const WDL_TypedBuf<BL_FLOAT> &magns,
-                                                const WDL_TypedBuf<BL_FLOAT> &phases)
+RebalanceProcessFftObjCompStereo::
+AddSpectrogramLine(const WDL_TypedBuf<BL_FLOAT> &magns,
+                   const WDL_TypedBuf<BL_FLOAT> &phases)
 {
     // When disabled: the spectrogram display jitters less
     // even whn much resource is consumed
@@ -698,7 +699,10 @@ ApplySoftMaskingStereo(WDL_TypedBuf<WDL_FFT_COMPLEX> ioData[2],
     }
 #endif
             
-#if !PROCESS_STEREO_POST_SAMPLES
+    // Neeed to do the following even if PROCESS_STEREO_POST_SAMPLES,
+    // because we need it for spectrogram display
+    // (otherwise the spectrogram won't show the changes of the parameters)
+    
     // Result
 #if !DBG_DISABLE_SOFT_MASKING
     if (mSoftMasking[0][0]->IsProcessingEnabled())
@@ -715,7 +719,6 @@ ApplySoftMaskingStereo(WDL_TypedBuf<WDL_FFT_COMPLEX> ioData[2],
         
         //*ioData = softMaskedResult;
     }
-#endif
 }
 
 void
