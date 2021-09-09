@@ -292,6 +292,7 @@ UST		    :
 ====
 
 - TODO: Rebalance big improvement (stereo)!! 
+- BUG: Ghost: app, export long selection (e.g 1mn) => out of memory
 
 ====
 DAW known problems
