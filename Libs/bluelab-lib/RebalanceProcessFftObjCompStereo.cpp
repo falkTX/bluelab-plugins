@@ -676,9 +676,7 @@ RebalanceProcessFftObjCompStereo::RecomputeSpectrogram(bool recomputeMasks)
         {
             WDL_TypedBuf<WDL_FFT_COMPLEX> *signal = mTmpBuf33;
             for (int k = 0; k < 2; k++)
-            {
-                signal[0] = rawSignalHistoryCopy[k][i];
-            }
+                signal[k] = rawSignalHistoryCopy[k][i];
             
             //
             vector<WDL_TypedBuf<WDL_FFT_COMPLEX> *> &signalVec = mTmpBuf20;
