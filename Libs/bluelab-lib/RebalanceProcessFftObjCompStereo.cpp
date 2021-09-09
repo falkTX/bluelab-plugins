@@ -52,6 +52,11 @@
 // NOTE: without soft mask, it looks to give better result for mixing in stereo
 // When using soft mask, it looks to give better results for extractio (separation)
 #define DBG_DISABLE_SOFT_MASKING 1 //0
+// Try to make the plugin transparent when all to default
+// If DBG_DISABLE_SOFT_MASKING=1 and SOFT_MASKING_HACK=1, volume is louder
+#if DBG_DISABLE_SOFT_MASKING
+#define SOFT_MASKING_HACK 0
+#endif
 
 // Origin
 #define PROCESS_STEREO_POST 0 //1
