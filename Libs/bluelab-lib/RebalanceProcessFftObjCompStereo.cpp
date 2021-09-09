@@ -566,7 +566,7 @@ ApplySoftMaskingStereo(WDL_TypedBuf<WDL_FFT_COMPLEX> ioData[2],
         masks[i] = masks0[i];
 
     // Not sure if we still need to use this for stereo...
-#if 0 //SOFT_MASKING_HACK
+#if SOFT_MASKING_HACK
     // s = input * HM
     // s = (input * alpha) * HM/alpha
     //
@@ -574,8 +574,11 @@ ApplySoftMaskingStereo(WDL_TypedBuf<WDL_FFT_COMPLEX> ioData[2],
     //
     // This is a hack, but it works well! :)
     //
-    BLUtils::MultValues(&mask, (BL_FLOAT)(1.0/4.0));
-    BLUtils::MultValues(ioData, (BL_FLOAT)4.0);
+    for (int i = 0; i < NUM_STEM_SOURCES; i++)
+        BLUtils::MultValues(&masks[i], (BL_FLOAT)(1.0/4.0));
+
+    for (int i = 0; i < 2; i++)
+        BLUtils::MultValues(&ioData[i], (BL_FLOAT)4.0);
 #endif
 
     // References to array
@@ -595,8 +598,7 @@ ApplySoftMaskingStereo(WDL_TypedBuf<WDL_FFT_COMPLEX> ioData[2],
     for (int i = 0; i < NUM_STEM_SOURCES; i++)
         ProcessStereo(i, softMaskedResult[i]);
     
-    // Not sure if we still need to use this for stereo...
-#if 0 //SOFT_MASKING_HACK
+#if SOFT_MASKING_HACK
     // Empirical coeff
     //
     // Compared the input hard mask here, and the soft mask inside mSoftMasking
@@ -605,7 +607,11 @@ ApplySoftMaskingStereo(WDL_TypedBuf<WDL_FFT_COMPLEX> ioData[2],
     //
     // NOTE: this makes the plugin transparent when all is at 100%
     //
-    BLUtils::MultValues(&softMaskedResult, (BL_FLOAT)(10.0/4.0));
+    for (int i = 0; i < NUM_STEM_SOURCES; i++)
+    {
+        for (int j = 0; j < 2; j++)
+            BLUtils::MultValues(&softMaskedResult[i][j], (BL_FLOAT)(10.0/4.0));
+    }
 #endif
     
     // Result
