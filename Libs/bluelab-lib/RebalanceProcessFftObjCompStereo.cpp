@@ -257,7 +257,6 @@ RebalanceProcessFftObjCompStereo::SetWidthOther(BL_FLOAT widthOther)
     mWidthOther = widthOther;
 }
 
-
 void
 RebalanceProcessFftObjCompStereo::SetPanVocal(BL_FLOAT panVocal)
 {
@@ -330,7 +329,7 @@ RebalanceProcessFftObjCompStereo::
 //                 const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer)
 ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamples,
                 const vector<WDL_TypedBuf<WDL_FFT_COMPLEX> > *scBuffer)
-{
+{        
     // Avoid a crash
     if (ioFftSamples->size() < 2)
         return;
@@ -855,21 +854,19 @@ ProcessStereo(int partNum, WDL_TypedBuf<WDL_FFT_COMPLEX> ioFftSamples[2])
 
     vector<WDL_TypedBuf<BL_FLOAT> * > magnsVec;
     magnsVec.resize(2);
-    for (int i = 0; i < NUM_STEM_SOURCES; i++)
-    {
-        magnsVec[0] = &magns[0];
-        magnsVec[1] = &magns[1];
-        
-        // Do not use param smoother
-        // (this is why we use StereoWidenProcess and not BLStereoWidener)
-
-        // Width
-        StereoWidenProcess::StereoWiden(&magnsVec, widthFactors[i]);
-
-        // Pan
-        StereoWidenProcess::Balance(&magnsVec, panFactors[i]);
-    }
     
+    magnsVec[0] = &magns[0];
+    magnsVec[1] = &magns[1];
+        
+    // Do not use param smoother
+    // (this is why we use StereoWidenProcess and not BLStereoWidener)
+    
+    // Width
+    StereoWidenProcess::StereoWiden(&magnsVec, widthFactors[partNum]);
+    
+    // Pan
+    StereoWidenProcess::Balance(&magnsVec, panFactors[partNum]);
+                
     // Convert back to complex
     BLUtilsComp::MagnPhaseToComplex(&ioFftSamples[0], magns[0], phases[0]);
     BLUtilsComp::MagnPhaseToComplex(&ioFftSamples[1], magns[1], phases[1]);
