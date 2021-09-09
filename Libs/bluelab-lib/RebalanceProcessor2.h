@@ -54,6 +54,18 @@ public:
     void SetBassSensitivity(BL_FLOAT bassSensitivity);
     void SetDrumsSensitivity(BL_FLOAT drumsSensitivity);
     void SetOtherSensitivity(BL_FLOAT otherSensitivity);
+
+    // Stereo
+    //
+    void SetWidthVocal(BL_FLOAT widthVocal);
+    void SetWidthBass(BL_FLOAT widthBass);
+    void SetWidthDrums(BL_FLOAT widthDrums);
+    void SetWidthOther(BL_FLOAT widthOther);
+
+    void SetPanVocal(BL_FLOAT panVocal);
+    void SetPanBass(BL_FLOAT panBass);
+    void SetPanDrums(BL_FLOAT panDrums);
+    void SetPanOther(BL_FLOAT panOther);
     
     // Dump
     //

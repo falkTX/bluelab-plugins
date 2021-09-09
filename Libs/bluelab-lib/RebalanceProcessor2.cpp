@@ -340,6 +340,62 @@ RebalanceProcessor2::SetOtherSensitivity(BL_FLOAT otherSensitivity)
     }
 }
 
+void
+RebalanceProcessor2::SetWidthVocal(BL_FLOAT widthVocal)
+{
+    if (mDetectProcessObjStereo != NULL)
+        mDetectProcessObjStereo->SetWidthVocal(widthVocal);
+}
+
+void
+RebalanceProcessor2::SetWidthBass(BL_FLOAT widthBass)
+{
+    if (mDetectProcessObjStereo != NULL)
+        mDetectProcessObjStereo->SetWidthBass(widthBass);
+}
+
+void
+RebalanceProcessor2::SetWidthDrums(BL_FLOAT widthDrums)
+{
+    if (mDetectProcessObjStereo != NULL)
+        mDetectProcessObjStereo->SetWidthDrums(widthDrums);
+}
+
+void
+RebalanceProcessor2::SetWidthOther(BL_FLOAT widthOther)
+{
+    if (mDetectProcessObjStereo != NULL)
+        mDetectProcessObjStereo->SetWidthOther(widthOther);
+}
+
+void
+RebalanceProcessor2::SetPanVocal(BL_FLOAT panVocal)
+{
+    if (mDetectProcessObjStereo != NULL)
+        mDetectProcessObjStereo->SetPanVocal(panVocal);
+}
+
+void
+RebalanceProcessor2::SetPanBass(BL_FLOAT panBass)
+{
+    if (mDetectProcessObjStereo != NULL)
+        mDetectProcessObjStereo->SetPanBass(panBass);
+}
+
+void
+RebalanceProcessor2::SetPanDrums(BL_FLOAT panDrums)
+{
+    if (mDetectProcessObjStereo != NULL)
+        mDetectProcessObjStereo->SetPanDrums(panDrums);
+}
+
+void
+RebalanceProcessor2::SetPanOther(BL_FLOAT panOther)
+{
+    if (mDetectProcessObjStereo != NULL)
+        mDetectProcessObjStereo->SetPanOther(panOther);
+}
+
 bool
 RebalanceProcessor2::HasEnoughDumpData()
 {
