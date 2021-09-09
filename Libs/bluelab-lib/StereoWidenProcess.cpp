@@ -472,8 +472,10 @@ StereoWidenProcess::StereoWidenComputeAngle1()
 }
 
 void
-StereoWidenProcess::StereoWiden(BL_FLOAT *left, BL_FLOAT *right, BL_FLOAT widthFactor,
-                                const WDL_FFT_COMPLEX &angle0, WDL_FFT_COMPLEX &angle1)
+StereoWidenProcess::StereoWiden(BL_FLOAT *left, BL_FLOAT *right,
+                                BL_FLOAT widthFactor,
+                                const WDL_FFT_COMPLEX &angle0,
+                                WDL_FFT_COMPLEX &angle1)
 {
     // Init
     WDL_FFT_COMPLEX signal0;
@@ -499,7 +501,8 @@ StereoWidenProcess::StereoWiden(BL_FLOAT *left, BL_FLOAT *right, BL_FLOAT widthF
 
 // NOTE: does not work very well
 void
-StereoWidenProcess::StereoWiden(WDL_FFT_COMPLEX *left, WDL_FFT_COMPLEX *right, BL_FLOAT widthFactor)
+StereoWidenProcess::StereoWiden(WDL_FFT_COMPLEX *left, WDL_FFT_COMPLEX *right,
+                                BL_FLOAT widthFactor)
 {
     // Naive version, just to check
 #if !STEREO_WIDEN_COMPLEX_OPTIM2

@@ -33,31 +33,40 @@ RebalanceMaskProcessor::Process(const WDL_TypedBuf<BL_FLOAT> masks0[NUM_STEM_SOU
 {
     //WDL_TypedBuf<BL_FLOAT> masks[NUM_STEM_SOURCES];
     WDL_TypedBuf<BL_FLOAT> *masks = mTmpBuf0;
-    for (int i = 0; i < NUM_STEM_SOURCES; i++)
-    {
-        masks[i] = masks0[i];
-    }
-    
-    NormalizeMasks(masks); // ??
-    
-    ApplySensitivity(masks);
-    
-    NormalizeMasks(masks);
 
-    ApplyMasksContrast(masks);
-    
-    NormalizeMasks(masks); // ??
+    ProcessSeparate(masks0, masks);
 
-    // Do not normalize after Mix!
-    // (otherwise we risk to have everything at 1 e.g when only vocal mix is not zero)
-    ApplyMix(masks);
-    
     resultMask->Resize(masks[0].GetSize());
     BLUtils::FillAllZero(resultMask);
     for (int i = 0; i < NUM_STEM_SOURCES; i++)
     {
         BLUtils::AddValues(resultMask, masks[i]);
     }
+}
+
+void
+RebalanceMaskProcessor::
+ProcessSeparate(const WDL_TypedBuf<BL_FLOAT> masks[NUM_STEM_SOURCES],
+                WDL_TypedBuf<BL_FLOAT> resultMasks[NUM_STEM_SOURCES])
+{
+    for (int i = 0; i < NUM_STEM_SOURCES; i++)
+    {
+        resultMasks[i] = masks[i];
+    }
+    
+    NormalizeMasks(resultMasks); // ??
+    
+    ApplySensitivity(resultMasks);
+    
+    NormalizeMasks(resultMasks);
+
+    ApplyMasksContrast(resultMasks);
+    
+    NormalizeMasks(resultMasks); // ??
+
+    // Do not normalize after Mix!
+    // (otherwise we risk to have everything at 1 e.g when only vocal mix is not zero)
+    ApplyMix(resultMasks);
 }
 
 void

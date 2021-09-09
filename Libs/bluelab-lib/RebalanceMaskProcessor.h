@@ -18,6 +18,10 @@ class RebalanceMaskProcessor
     void Process(const WDL_TypedBuf<BL_FLOAT> masks[NUM_STEM_SOURCES],
                  WDL_TypedBuf<BL_FLOAT> *resultMask);
 
+    // For RebalanceStereo
+    void ProcessSeparate(const WDL_TypedBuf<BL_FLOAT> masks[NUM_STEM_SOURCES],
+                         WDL_TypedBuf<BL_FLOAT> resultMasks[NUM_STEM_SOURCES]);
+    
     void SetVocalMix(BL_FLOAT vocalMix);
     void SetBassMix(BL_FLOAT bassMix);
     void SetDrumsMix(BL_FLOAT drumsMix);

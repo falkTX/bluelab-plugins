@@ -10,6 +10,7 @@
 #include <RebalanceDumpFftObj2.h>
 #include <RebalanceMaskPredictor8.h>
 #include <RebalanceProcessFftObjComp4.h>
+#include <RebalanceProcessFftObjCompStereo.h>
 #include <SpectrogramDisplayScroll4.h>
 
 #include <BLUtils.h>
@@ -21,7 +22,8 @@ RebalanceProcessor2::RebalanceProcessor2(BL_FLOAT sampleRate,
                                          BL_FLOAT targetSampleRate,
                                          int bufferSize, int targetBufferSize,
                                          int overlapping,
-                                         int numSpectroCols)
+                                         int numSpectroCols,
+                                         bool stereoMode)
 : ResampProcessObj(targetSampleRate, sampleRate, true)
 {
     mNativeFftObj = NULL;
@@ -42,6 +44,9 @@ RebalanceProcessor2::RebalanceProcessor2(BL_FLOAT sampleRate,
     mNumSpectroCols = numSpectroCols;
     
     mBlockSize = bufferSize;
+
+    mStereoMode = stereoMode;
+    mDetectProcessObjStereo = NULL;
 }
 
 RebalanceProcessor2::~RebalanceProcessor2()
@@ -63,6 +68,9 @@ RebalanceProcessor2::~RebalanceProcessor2()
 
     if (mMaskPred != NULL)
         delete mMaskPred;
+
+    if (mDetectProcessObjStereo != NULL)
+        delete mDetectProcessObjStereo;
 }
 
 void
@@ -108,18 +116,22 @@ RebalanceProcessor2::InitDetect(const IPluginBase &plug)
 
         // For applying the mask, use RebalanceProcessFftObjComp3
         vector<ProcessObj*> processObjs;
-        for (int i = 0; i < numChannels; i++)
+
+        if (!mStereoMode)
         {
-            RebalanceProcessFftObjComp4* obj =
-                new RebalanceProcessFftObjComp4(mBufferSize, mOverlapping,
-                                                mSampleRate,
-                                                mMaskPred,
-                                                mNumSpectroCols,
-                                                NUM_STEM_SOURCES);
-
-            mDetectProcessObjs[i] = obj;
-
-            processObjs.push_back(obj);
+            for (int i = 0; i < numChannels; i++)
+            {
+                RebalanceProcessFftObjComp4* obj =
+                    new RebalanceProcessFftObjComp4(mBufferSize, mOverlapping,
+                                                    mSampleRate,
+                                                    mMaskPred,
+                                                    mNumSpectroCols,
+                                                    NUM_STEM_SOURCES);
+                
+                mDetectProcessObjs[i] = obj;
+                
+                processObjs.push_back(obj);
+            }
         }
 
         mNativeFftObj = new FftProcessObj16(processObjs,
@@ -128,6 +140,18 @@ RebalanceProcessor2::InitDetect(const IPluginBase &plug)
                                             mOverlapping, 1,
                                             mTargetSampleRate);
 
+        if (mStereoMode)
+        {
+            mDetectProcessObjStereo =
+                new RebalanceProcessFftObjCompStereo(mBufferSize, mOverlapping,
+                                                     mSampleRate,
+                                                     mMaskPred,
+                                                     mNumSpectroCols,
+                                                     NUM_STEM_SOURCES);
+            
+            mNativeFftObj->AddMultichannelProcess(mDetectProcessObjStereo);
+        }
+            
         mNativeFftObj->SetAnalysisWindow(FftProcessObj16::ALL_CHANNELS,
                                          FftProcessObj16::WindowHanning);
         mNativeFftObj->SetSynthesisWindow(FftProcessObj16::ALL_CHANNELS,
@@ -200,7 +224,9 @@ RebalanceProcessor2::GetLatency()
     int lat3 = 0;
     if (mDetectProcessObjs[0] != NULL)
         lat3 = mDetectProcessObjs[0]->GetLatency();
-        
+    else if (mDetectProcessObjStereo != NULL)
+        lat3 = mDetectProcessObjStereo->GetLatency();
+    
     int latency = lat0 + lat1 + lat2 + lat3;
     
     return latency;
@@ -213,6 +239,8 @@ RebalanceProcessor2::SetVocal(BL_FLOAT vocal)
     {
         if (mDetectProcessObjs[i] != NULL)
             mDetectProcessObjs[i]->SetVocal(vocal);
+        else if (mDetectProcessObjStereo != NULL)
+            mDetectProcessObjStereo->SetVocal(vocal);
     }
 }
 
@@ -223,6 +251,8 @@ RebalanceProcessor2::SetBass(BL_FLOAT bass)
     {
         if (mDetectProcessObjs[i] != NULL)
             mDetectProcessObjs[i]->SetBass(bass);
+        else if (mDetectProcessObjStereo != NULL)
+            mDetectProcessObjStereo->SetBass(bass);
     }
 }
 
@@ -233,6 +263,8 @@ RebalanceProcessor2::SetDrums(BL_FLOAT drums)
     {
         if (mDetectProcessObjs[i] != NULL)
             mDetectProcessObjs[i]->SetDrums(drums);
+        else if (mDetectProcessObjStereo != NULL)
+            mDetectProcessObjStereo->SetDrums(drums);
     }
 }
 
@@ -243,6 +275,8 @@ RebalanceProcessor2::SetOther(BL_FLOAT other)
     {
         if (mDetectProcessObjs[i] != NULL)
             mDetectProcessObjs[i]->SetOther(other);
+        else if (mDetectProcessObjStereo != NULL)
+            mDetectProcessObjStereo->SetOther(other);
     }
 }
 
@@ -253,6 +287,8 @@ RebalanceProcessor2::SetMasksContrast(BL_FLOAT contrast)
     {
         if (mDetectProcessObjs[i] != NULL)
             mDetectProcessObjs[i]->SetContrast(contrast);
+        else if (mDetectProcessObjStereo != NULL)
+            mDetectProcessObjStereo->SetContrast(contrast);
     }
 }
 
@@ -263,6 +299,8 @@ RebalanceProcessor2::SetVocalSensitivity(BL_FLOAT vocalSensitivity)
     {
         if (mDetectProcessObjs[i] != NULL)
             mDetectProcessObjs[i]->SetVocalSensitivity(vocalSensitivity);
+        else if (mDetectProcessObjStereo != NULL)
+            mDetectProcessObjStereo->SetVocalSensitivity(vocalSensitivity);
     }
 }
 
@@ -273,6 +311,8 @@ RebalanceProcessor2::SetBassSensitivity(BL_FLOAT bassSensitivity)
     {
         if (mDetectProcessObjs[i] != NULL)
             mDetectProcessObjs[i]->SetBassSensitivity(bassSensitivity);
+        else if (mDetectProcessObjStereo != NULL)
+            mDetectProcessObjStereo->SetBassSensitivity(bassSensitivity);
     }
 }
 
@@ -283,6 +323,8 @@ RebalanceProcessor2::SetDrumsSensitivity(BL_FLOAT drumsSensitivity)
     {
         if (mDetectProcessObjs[i] != NULL)
             mDetectProcessObjs[i]->SetDrumsSensitivity(drumsSensitivity);
+        else if (mDetectProcessObjStereo != NULL)
+            mDetectProcessObjStereo->SetDrumsSensitivity(drumsSensitivity);
     }
 }
 
@@ -293,6 +335,8 @@ RebalanceProcessor2::SetOtherSensitivity(BL_FLOAT otherSensitivity)
     {
         if (mDetectProcessObjs[i] != NULL)
             mDetectProcessObjs[i]->SetOtherSensitivity(otherSensitivity);
+        else if (mDetectProcessObjStereo != NULL)
+            mDetectProcessObjStereo->SetOtherSensitivity(otherSensitivity);
     }
 }
 
@@ -331,6 +375,13 @@ RebalanceProcessor2::GetSpectrogram()
     if (mDetectProcessObjs[0] != NULL)
     {
         BLSpectrogram4 *spect = mDetectProcessObjs[0]->GetSpectrogram();
+
+        return spect;
+    }
+    else if (mDetectProcessObjStereo != NULL)
+    {
+        BLSpectrogram4 *spect = mDetectProcessObjStereo->GetSpectrogram();
+
         return spect;
     }
 
@@ -343,6 +394,8 @@ SetSpectrogramDisplay(SpectrogramDisplayScroll4 *spectroDisplay)
 {
     if (mDetectProcessObjs[0] != NULL)
         mDetectProcessObjs[0]->SetSpectrogramDisplay(spectroDisplay);
+    else if (mDetectProcessObjStereo != NULL)
+        mDetectProcessObjStereo->SetSpectrogramDisplay(spectroDisplay);
 }
 
 void
@@ -350,6 +403,8 @@ RebalanceProcessor2::RecomputeSpectrogram(bool recomputeMasks)
 {
     if (mDetectProcessObjs[0] != NULL)
         mDetectProcessObjs[0]->RecomputeSpectrogram(recomputeMasks);
+    else if (mDetectProcessObjStereo != NULL)
+        mDetectProcessObjStereo->RecomputeSpectrogram(recomputeMasks);
 }
 
 void
@@ -397,7 +452,8 @@ ProcessSamplesBuffers(vector<WDL_TypedBuf<BL_FLOAT> > *ioBuffers,
         return false;
     }
     
-    if (mDetectProcessObjs[0] != NULL)
+    if ((mDetectProcessObjs[0] != NULL) ||
+        (mDetectProcessObjStereo != NULL))
     {
         vector<WDL_TypedBuf<BL_FLOAT> > &monoBuffer = mTmpBuf2;
         monoBuffer.resize(1);

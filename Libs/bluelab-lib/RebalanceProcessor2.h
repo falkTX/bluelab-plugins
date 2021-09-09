@@ -18,14 +18,16 @@
 class FftProcessObj16;
 class RebalanceDumpFftObj2;
 class RebalanceProcessFftObjComp4;
+class RebalanceProcessFftObjCompStereo;
 class RebalanceMaskPredictor8;
 class RebalanceProcessor2 : public ResampProcessObj
 {
 public:
     RebalanceProcessor2(BL_FLOAT sampleRate, BL_FLOAT targetSampleRate,
-                       int bufferSize, int targetBufferSize,
-                       int overlapping,
-                       int numSpectroCols);
+                        int bufferSize, int targetBufferSize,
+                        int overlapping,
+                        int numSpectroCols,
+                        bool stereoMode = false);
     
     virtual ~RebalanceProcessor2();
     
@@ -97,6 +99,11 @@ protected:
     
     RebalanceProcessFftObjComp4 *mDetectProcessObjs[2];
 
+    // For RebalanceStereo
+    bool mStereoMode;
+
+    RebalanceProcessFftObjCompStereo *mDetectProcessObjStereo;
+    
 private:
     // Tmp buffers
     vector<WDL_TypedBuf<BL_FLOAT> > mTmpBuf0;

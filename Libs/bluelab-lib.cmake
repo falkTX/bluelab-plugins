@@ -648,6 +648,8 @@ set(_bluelab-lib_src
   RebalanceProcessFftObjComp3.h
   RebalanceProcessFftObjComp4.cpp
   RebalanceProcessFftObjComp4.h
+  RebalanceProcessFftObjCompStereo.cpp
+  RebalanceProcessFftObjCompStereo.h
   RebalanceProcessor.cpp
   RebalanceProcessor.h
   RebalanceProcessor2.cpp

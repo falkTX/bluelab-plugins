@@ -36,7 +36,7 @@ public:
     
     void StereoWiden(vector<WDL_TypedBuf<BL_FLOAT> * > *ioSamples,
                      BLWidthAdjuster *widthAdjuster) const;
-    
+
 protected:
     BL_FLOAT ComputeFactor(BL_FLOAT normVal, BL_FLOAT maxVal) const;
     
