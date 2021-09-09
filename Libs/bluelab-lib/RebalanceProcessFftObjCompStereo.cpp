@@ -48,7 +48,15 @@
 // (Otherwise, the gain effect was very small)
 #define SOFT_MASKING_HACK 1
 
-#define DBG_DISABLE_SOFT_MASKING 1 // 0
+// Origin: enabled
+#define DBG_DISABLE_SOFT_MASKING 1 //0
+
+// Origin
+#define PROCESS_STEREO_POST 0 //1
+// Test
+#define PROCESS_STEREO_PRE 0 //1 //0
+// Test 2
+#define PROCESS_STEREO_POST_SAMPLES 1
 
 RebalanceProcessFftObjCompStereo::
 RebalanceProcessFftObjCompStereo(int bufferSize, int oversampling,
@@ -433,7 +441,8 @@ ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamples,
     AddSpectrogramLine(monoMagns, *phases1);
     
     // TODO: tmp buffers / memory optimization
-    
+
+#if !PROCESS_STEREO_POST_SAMPLES
     // Fill the result
     WDL_TypedBuf<WDL_FFT_COMPLEX> *fftSamples = mTmpBuf31;
     for (int i = 0; i < 2; i++)
@@ -441,6 +450,42 @@ ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamples,
         fftSamples[i] = result[i];
     
         BLUtilsFft::FillSecondFftHalf(fftSamples[i], (*ioFftSamples)[i]);
+    }
+#endif
+}
+
+void
+RebalanceProcessFftObjCompStereo::
+ProcessResultSamples(vector<WDL_TypedBuf<BL_FLOAT> * > *ioSamples,
+                     const vector<WDL_TypedBuf<BL_FLOAT> > *scBuffer)
+{
+#if !PROCESS_STEREO_POST_SAMPLES
+    return;
+#endif
+    
+    if (ioSamples->size() != 2)
+        return;
+
+    BLUtils::FillAllZero((*ioSamples)[0]);
+    BLUtils::FillAllZero((*ioSamples)[1]);
+
+    for (int i = 0; i < NUM_STEM_SOURCES; i++)
+    {
+        WDL_TypedBuf<WDL_FFT_COMPLEX> (&fftSamples0)[2] = mCurrentFftSamples[i];
+        
+        WDL_TypedBuf<WDL_FFT_COMPLEX> (&fftSamples)[2] = mTmpBuf48;
+        BLUtilsFft::FillSecondFftHalf(fftSamples0[0], &fftSamples[0]);
+        BLUtilsFft::FillSecondFftHalf(fftSamples0[1], &fftSamples[1]);
+        
+        WDL_TypedBuf<BL_FLOAT> (&samples)[2] = mTmpBuf47;
+        
+        FftProcessObj16::FftToSamples(fftSamples[0], &samples[0]);
+        FftProcessObj16::FftToSamples(fftSamples[1], &samples[1]);
+
+        ProcessStereoSamples(i, samples);
+
+        BLUtils::AddValues((*ioSamples)[0], samples[0]);
+        BLUtils::AddValues((*ioSamples)[1], samples[1]);
     }
 }
 
@@ -587,15 +632,26 @@ ApplySoftMaskingStereo(WDL_TypedBuf<WDL_FFT_COMPLEX> ioData[2],
         BLUtils::MultValues(&ioData[i], (BL_FLOAT)4.0);
 #endif
 
-    // References to array
     WDL_TypedBuf<WDL_FFT_COMPLEX> (&sourceData)[4][2] = mTmpBuf43;
-    WDL_TypedBuf<WDL_FFT_COMPLEX> (&softMaskedResult)[4][2] = mTmpBuf44;
     for (int i = 0; i < NUM_STEM_SOURCES; i++)
     {
         for (int j = 0; j < 2; j++)
         {
             sourceData[i][j] = ioData[j];
-
+        }
+    }
+    
+#if PROCESS_STEREO_PRE
+    for (int i = 0; i < NUM_STEM_SOURCES; i++)
+        ProcessStereo(i, sourceData[i]);
+#endif
+    
+    // References to array
+    WDL_TypedBuf<WDL_FFT_COMPLEX> (&softMaskedResult)[4][2] = mTmpBuf44;
+    for (int i = 0; i < NUM_STEM_SOURCES; i++)
+    {
+        for (int j = 0; j < 2; j++)
+        {
             mSoftMasking[i][j]->ProcessCentered(&sourceData[i][j],
                                                 masks[i], &softMaskedResult[i][j]);
 
@@ -606,8 +662,10 @@ ApplySoftMaskingStereo(WDL_TypedBuf<WDL_FFT_COMPLEX> ioData[2],
         }
     }
 
+#if PROCESS_STEREO_POST
     for (int i = 0; i < NUM_STEM_SOURCES; i++)
         ProcessStereo(i, softMaskedResult[i]);
+#endif
     
 #if SOFT_MASKING_HACK
     // Empirical coeff
@@ -624,7 +682,16 @@ ApplySoftMaskingStereo(WDL_TypedBuf<WDL_FFT_COMPLEX> ioData[2],
             BLUtils::MultValues(&softMaskedResult[i][j], (BL_FLOAT)(10.0/4.0));
     }
 #endif
-    
+
+#if PROCESS_STEREO_POST_SAMPLES
+    for (int i = 0; i < NUM_STEM_SOURCES; i++)
+    {
+        for (int j = 0; j < 2; j++)
+            mCurrentFftSamples[i][j] = softMaskedResult[i][j];
+    }
+#endif
+            
+#if !PROCESS_STEREO_POST_SAMPLES
     // Result
 #if !DBG_DISABLE_SOFT_MASKING
     if (mSoftMasking[0][0]->IsProcessingEnabled())
@@ -641,6 +708,7 @@ ApplySoftMaskingStereo(WDL_TypedBuf<WDL_FFT_COMPLEX> ioData[2],
         
         //*ioData = softMaskedResult;
     }
+#endif
 }
 
 void
@@ -798,11 +866,13 @@ ComputeResult(const WDL_TypedBuf<WDL_FFT_COMPLEX> mixBuffer[2],
     for (int i = 0; i < 2; i++)
     {
         BLUtilsComp::ComplexToMagnPhase(&resMagns[i], &resPhases[i], result[i]);
-        
+
+#if !PROCESS_STEREO_POST_SAMPLES
 #if PROCESS_SIGNAL_DB
         ComputeInverseDB(resMagns[i]);
         
         BLUtilsComp::MagnPhaseToComplex(&result[i], resMagns[i], resPhases[i]);
+#endif
 #endif
     }
 }
@@ -887,4 +957,30 @@ ProcessStereo(int partNum, WDL_TypedBuf<WDL_FFT_COMPLEX> ioFftSamples[2])
     // Convert back to complex
     BLUtilsComp::MagnPhaseToComplex(&ioFftSamples[0], magns[0], phases[0]);
     BLUtilsComp::MagnPhaseToComplex(&ioFftSamples[1], magns[1], phases[1]);
+}
+
+void
+RebalanceProcessFftObjCompStereo::
+ProcessStereoSamples(int partNum, WDL_TypedBuf<BL_FLOAT> samples[2])
+{
+    // Process
+    BL_FLOAT widthFactors[NUM_STEM_SOURCES] =
+        { mWidthVocal, mWidthBass, mWidthDrums, mWidthOther };
+    
+    BL_FLOAT panFactors[NUM_STEM_SOURCES] =
+        { mPanVocal, mPanBass, mPanDrums, mPanOther };
+
+    vector<WDL_TypedBuf<BL_FLOAT> * > samplesVec;
+    samplesVec.resize(2);
+    
+    samplesVec[0] = &samples[0];
+    samplesVec[1] = &samples[1];
+        
+    // TODO: use param smoother, to avoid knob crackles
+    
+    // Width
+    StereoWidenProcess::StereoWiden(&samplesVec, widthFactors[partNum]);
+    
+    // Pan
+    StereoWidenProcess::Balance(&samplesVec, panFactors[partNum]);
 }

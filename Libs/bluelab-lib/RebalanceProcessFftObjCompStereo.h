@@ -57,11 +57,14 @@ public:
     BLSpectrogram4 *GetSpectrogram();
     void SetSpectrogramDisplay(SpectrogramDisplayScroll4 *spectroDisplay);
     
-    //void ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
-    //                      const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer) override;
     void
     ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamples,
                     const vector<WDL_TypedBuf<WDL_FFT_COMPLEX> > *scBuffer) override;
+
+    // For PROCESS_STEREO_POST_SAMPLES
+    void
+    ProcessResultSamples(vector<WDL_TypedBuf<BL_FLOAT> * > *ioSamples,
+                         const vector<WDL_TypedBuf<BL_FLOAT> > *scBuffer) override;
     
     void SetVocal(BL_FLOAT vocal);
     void SetBass(BL_FLOAT bass);
@@ -131,6 +134,8 @@ protected:
     // Stereo
     //
     void ProcessStereo(int partNum, WDL_TypedBuf<WDL_FFT_COMPLEX> ioFftSamples[2]);
+    
+    void ProcessStereoSamples(int partNum, WDL_TypedBuf<BL_FLOAT> samples[2]);
                        
     //
     int mBufferSize;
@@ -178,6 +183,9 @@ protected:
     BL_FLOAT mPanBass;
     BL_FLOAT mPanDrums;
     BL_FLOAT mPanOther;
+
+    // For PROCESS_STEREO_POST_SAMPLES
+    WDL_TypedBuf<WDL_FFT_COMPLEX> mCurrentFftSamples[NUM_STEM_SOURCES][2];
     
 private:
     // Tmp buffers
@@ -231,6 +239,9 @@ private:
     WDL_TypedBuf<WDL_FFT_COMPLEX> mTmpBuf44[4][2]; // NUM_STEM_SOURCES x 2 channels
     WDL_TypedBuf<BL_FLOAT> mTmpBuf45[2];
     WDL_TypedBuf<BL_FLOAT> mTmpBuf46[2];
+    
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf47[2];
+    WDL_TypedBuf<WDL_FFT_COMPLEX> mTmpBuf48[2];
 };
 
 #endif /* defined(__BL_Rebalance__RebalanceProcessFftObjStereo__) */
