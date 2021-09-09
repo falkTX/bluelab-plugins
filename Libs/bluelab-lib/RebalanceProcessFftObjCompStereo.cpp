@@ -49,13 +49,15 @@
 #define SOFT_MASKING_HACK 1
 
 // Origin: enabled
+// NOTE: without soft mask, it looks to give better result for mixing in stereo
+// When using soft mask, it looks to give better results for extractio (separation)
 #define DBG_DISABLE_SOFT_MASKING 1 //0
 
 // Origin
 #define PROCESS_STEREO_POST 0 //1
 // Test
 #define PROCESS_STEREO_PRE 0 //1 //0
-// Test 2
+// New: process stereo on samples => far better results!
 #define PROCESS_STEREO_POST_SAMPLES 1
 
 RebalanceProcessFftObjCompStereo::
