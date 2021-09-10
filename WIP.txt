@@ -291,7 +291,7 @@ BL-Wav3s	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, aud
 UST		    :
 ====
 
-- TODO: Rebalance big improvement (stereo)!! 
+- TODO: finish RebalanceStereo
 - BUG: Ghost: app, export long selection (e.g 1mn) => out of memory
 
 ====
