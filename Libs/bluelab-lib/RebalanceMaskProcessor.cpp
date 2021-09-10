@@ -35,13 +35,12 @@ RebalanceMaskProcessor::Process(const WDL_TypedBuf<BL_FLOAT> masks0[NUM_STEM_SOU
     WDL_TypedBuf<BL_FLOAT> *masks = mTmpBuf0;
 
     ProcessSeparate(masks0, masks);
-
+    
     resultMask->Resize(masks[0].GetSize());
     BLUtils::FillAllZero(resultMask);
+    
     for (int i = 0; i < NUM_STEM_SOURCES; i++)
-    {
         BLUtils::AddValues(resultMask, masks[i]);
-    }
 }
 
 void

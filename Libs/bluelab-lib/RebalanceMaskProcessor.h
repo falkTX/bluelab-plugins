@@ -43,7 +43,7 @@ class RebalanceMaskProcessor
     void ApplyMix(WDL_TypedBuf<BL_FLOAT> masks[NUM_STEM_SOURCES]);
     
     void ApplyMasksContrast(WDL_TypedBuf<BL_FLOAT> masks[NUM_STEM_SOURCES]);
-        
+
     void NormalizeMasks(WDL_TypedBuf<BL_FLOAT> masks[NUM_STEM_SOURCES]);
 
     //

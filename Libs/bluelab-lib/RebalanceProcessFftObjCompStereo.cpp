@@ -61,7 +61,7 @@
 // Origin
 #define PROCESS_STEREO_POST 0 //1
 // Test
-#define PROCESS_STEREO_PRE 0 //1 //0
+#define PROCESS_STEREO_PRE 0 //1
 // New: process stereo on samples => far better results!
 #define PROCESS_STEREO_POST_SAMPLES 1
 
@@ -417,7 +417,7 @@ ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamples,
     {
         // Keep mask and signal histories
         if (mSignalHistory[i].size() < numCols)
-        mSignalHistory[i].push_back(mixBuffer[i]);
+            mSignalHistory[i].push_back(mixBuffer[i]);
         else
         {
             mSignalHistory[i].freeze();
@@ -448,8 +448,8 @@ ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamples,
     // NOTE: should do something with phases?
     AddSpectrogramLine(monoMagns, *phases1);
     
-    // TODO: tmp buffers / memory optimization
-
+    // TODO: tmp buffers / memory optimization    
+    
 #if !PROCESS_STEREO_POST_SAMPLES
     // Fill the result
     WDL_TypedBuf<WDL_FFT_COMPLEX> *fftSamples = mTmpBuf31;
@@ -592,6 +592,7 @@ ApplySoftMasking(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioData,
     //
     // This is a hack, but it works well! :)
     //
+
     BLUtils::MultValues(&mask, (BL_FLOAT)(1.0/4.0));
     BLUtils::MultValues(ioData, (BL_FLOAT)4.0);
 #endif
@@ -624,7 +625,6 @@ ApplySoftMaskingStereo(WDL_TypedBuf<WDL_FFT_COMPLEX> ioData[2],
     for (int i = 0; i < NUM_STEM_SOURCES; i++)
         masks[i] = masks0[i];
 
-    // Not sure if we still need to use this for stereo...
 #if SOFT_MASKING_HACK
     // s = input * HM
     // s = (input * alpha) * HM/alpha
@@ -679,7 +679,7 @@ ApplySoftMaskingStereo(WDL_TypedBuf<WDL_FFT_COMPLEX> ioData[2],
     // Empirical coeff
     //
     // Compared the input hard mask here, and the soft mask inside mSoftMasking
-    // When maks i 1.0 here (all at 100%), the soft mask is 0.1
+    // When mask is 1.0 here (all at 100%), the soft mask is 0.1
     // So adjust here with a factor 10.0, plus fix the previous gain of 4.0
     //
     // NOTE: this makes the plugin transparent when all is at 100%
