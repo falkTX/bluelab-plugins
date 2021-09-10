@@ -48,13 +48,17 @@
 // (Otherwise, the gain effect was very small)
 #define SOFT_MASKING_HACK 1
 
-// Origin: enabled
+// Origin: was enabled for Rebalance (not stereo)
 // NOTE: without soft mask, it looks to give better result for mixing in stereo
-// When using soft mask, it looks to give better results for extractio (separation)
-#define DBG_DISABLE_SOFT_MASKING 1 //0
+// When using soft mask, it looks to give better results for extraction (separation)
+//
+// NOTE: soft masking is desinged for separating sound in 2 parts, not more.
+// Here, for stereo version, we need to separate sound in 4 parts, then remix
+// them later. => so it is not correct to use soft masking
+#define DISABLE_SOFT_MASKING 1 //0
 // Try to make the plugin transparent when all to default
-// If DBG_DISABLE_SOFT_MASKING=1 and SOFT_MASKING_HACK=1, volume is louder
-#if DBG_DISABLE_SOFT_MASKING
+// If DISABLE_SOFT_MASKING=1 and SOFT_MASKING_HACK=1, volume is louder
+#if DISABLE_SOFT_MASKING
 #define SOFT_MASKING_HACK 0
 #endif
 
@@ -96,7 +100,7 @@ RebalanceProcessFftObjCompStereo(int bufferSize, int oversampling,
             mSoftMasking[i][j] = new SoftMaskingComp4(bufferSize, oversampling,
                                                       SOFT_MASKING_HISTO_SIZE);
 
-#if DBG_DISABLE_SOFT_MASKING
+#if DISABLE_SOFT_MASKING
             mSoftMasking[i][j]->SetProcessingEnabled(false);
 #endif
         }
@@ -663,7 +667,7 @@ ApplySoftMaskingStereo(WDL_TypedBuf<WDL_FFT_COMPLEX> ioData[2],
             mSoftMasking[i][j]->ProcessCentered(&sourceData[i][j],
                                                 masks[i], &softMaskedResult[i][j]);
 
-#if DBG_DISABLE_SOFT_MASKING
+#if DISABLE_SOFT_MASKING
             softMaskedResult[i][j] = sourceData[i][j];
             BLUtils::MultValues(&softMaskedResult[i][j], masks[i]);
 #endif        
@@ -704,7 +708,7 @@ ApplySoftMaskingStereo(WDL_TypedBuf<WDL_FFT_COMPLEX> ioData[2],
     // (otherwise the spectrogram won't show the changes of the parameters)
     
     // Result
-#if !DBG_DISABLE_SOFT_MASKING
+#if !DISABLE_SOFT_MASKING
     if (mSoftMasking[0][0]->IsProcessingEnabled())
 #endif
     {
