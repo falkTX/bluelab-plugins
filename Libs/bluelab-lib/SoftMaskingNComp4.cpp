@@ -16,10 +16,6 @@
 
 #include "SoftMaskingNComp4.h"
 
-// Use fake mask for second mask?
-// Fake mask seem to work well, and is optimized
-#define USE_FAKE_MASK1 1 // 0
-
 //
 SoftMaskingNComp4::HistoryLine::HistoryLine()
 {
@@ -66,7 +62,6 @@ SoftMaskingNComp4::HistoryLine::GetNumMasks()
 }
 
 //
-
 SoftMaskingNComp4::SoftMaskingNComp4(int bufferSize, int overlapping,
                                      int historySize, int numMasks,
                                      bool autoGenerateRestMask)
@@ -150,13 +145,20 @@ SoftMaskingNComp4::GetLatency()
 
 // Process over time
 //
-// Algo:
 
+// Algo: (for 1 mask)
 // s = input * HM
 // n = input * (1.0 - HM)
 // SM = s2(s)/(s2(s) + s2(n))
 // output = input * SM
 //
+// Algo (for n masks)
+// s0 = input*HM0
+// s1 = input*HM1
+// sn = input*HMn
+// n = input * (1.0 - sigma(si))
+// SMi = si(s)/(sigma(si) + sn)
+// outputi = input * SMi
 void
 SoftMaskingNComp4::
 ProcessCentered(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioSum,
@@ -190,13 +192,6 @@ ProcessCentered(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioSum,
     if (masks.size() != mNumMasks)
         // Error
         return;
-
-    /////////
-    /*BLDebug::DumpData("mask0.txt", masks[0]);
-      BLDebug::DumpData("mask1.txt", masks[1]);
-      BLDebug::DumpData("mask2.txt", masks[2]);
-      BLDebug::DumpData("mask3.txt", masks[3]);*/
-    /////////
     
     ioMaskedResult->resize(mNumMasks);
     
@@ -215,19 +210,12 @@ ProcessCentered(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioSum,
             newHistoLine.mMaskedSquare[j] = *ioSum;
             BLUtils::MultValues(&newHistoLine.mMaskedSquare[j], masks[j]);
         
-            // maskd1 = sum - masked0
-            // same as: masked1 = sum*(1 - mask)
-            //newHistoLine.mMasked1Square = *ioSum;
-            //BLUtils::SubstractValues(&newHistoLine.mMasked1Square,
-            //                         newHistoLine.mMasked0Square);
-            
             // See: https://hal.inria.fr/hal-01881425/document
             // |x|^2
             // NOTE: square abs => complex conjugate
             
             // Compute squares (using complex conjugate)
             BLUtilsComp::ComputeSquareConjugate(&newHistoLine.mMaskedSquare[j]);
-            //BLUtilsComp::ComputeSquareConjugate(&newHistoLine.mMasked1Square);
         }
     }
     else // Not enabled, fill history with zeros
@@ -236,9 +224,6 @@ ProcessCentered(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioSum,
         {
             newHistoLine.mMaskedSquare[j].Resize(ioSum->GetSize());
             BLUtils::FillAllZero(&newHistoLine.mMaskedSquare[j]);
-        
-            //newHistoLine.mMasked1Square.Resize(ioSum->GetSize());
-            //BLUtils::FillAllZero(&newHistoLine.mMasked1Square);
         }
     }
     
@@ -260,10 +245,7 @@ ProcessCentered(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioSum,
         vector<WDL_TypedBuf<WDL_FFT_COMPLEX> > &sigma2Mask = mTmpBuf0;
         sigma2Mask.resize(mNumMasks);
         for (int i = 0; i < mNumMasks; i++)
-        {
-            //WDL_TypedBuf<WDL_FFT_COMPLEX> &sigma2Mask1 = mTmpBuf1;
             ComputeSigma2(i, &sigma2Mask[i]);
-        }
             
         vector<WDL_TypedBuf<WDL_FFT_COMPLEX> > &softMasks = mTmpBuf8;
         softMasks.resize(mNumMasks);
@@ -290,20 +272,7 @@ ProcessCentered(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioSum,
         {
             softMasks[j].Resize(ioSum->GetSize());
             
-            //WDL_FFT_COMPLEX *s0Data = sigma2Mask0.Get();
-            //WDL_FFT_COMPLEX *s1Data = sigma2Mask1.Get();
-        
-            // Create the mask
-            //if (mHistory[j].empty()) // Just in case
-            //    return;
-
-            //WDL_TypedBuf<WDL_FFT_COMPLEX> &softMask0 = mTmpBuf4;
-            //softMask0.Resize(mHistory[0].GetSize());
-
-            //int softMask0Size = softMask0.GetSize();
-            //WDL_FFT_COMPLEX *softMask0Data = softMask0.Get();
-        
-            // Compute soft mask 0
+            // Compute soft mask
             for (int i = 0; i < ioSum->GetSize(); i++)
             {
                 WDL_FFT_COMPLEX csum = sum.Get()[i];
@@ -314,8 +283,7 @@ ProcessCentered(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioSum,
                 maskVal.re = 0.0;
                 maskVal.im = 0.0;
 
-                if ((std::fabs(csum.re) > BL_EPS) ||
-                    (std::fabs(csum.im) > BL_EPS))
+                if ((std::fabs(csum.re) > BL_EPS) || (std::fabs(csum.im) > BL_EPS))
                 {
                     COMP_DIV(s, csum, maskVal);
                 }
@@ -335,26 +303,10 @@ ProcessCentered(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioSum,
 
             // Result when enabled
             
-            // Apply mask 0
+            // Apply mas
             (*ioMaskedResult)[j] = mHistory[mHistory.size()/2].mSum;
             BLUtils::MultValues(&(*ioMaskedResult)[j], softMasks[j]);
         }
-
-        /////////
-        /*WDL_TypedBuf<BL_FLOAT> dbgMask0;
-          BLUtilsComp::ComplexToMagn(&dbgMask0, softMasks[0]);
-          BLDebug::DumpData("smask0.txt", dbgMask0);
-          WDL_TypedBuf<BL_FLOAT> dbgMask1;
-          BLUtilsComp::ComplexToMagn(&dbgMask1, softMasks[1]);
-          BLDebug::DumpData("smask1.txt", dbgMask1);
-          WDL_TypedBuf<BL_FLOAT> dbgMask2;
-          BLUtilsComp::ComplexToMagn(&dbgMask2, softMasks[2]);
-          BLDebug::DumpData("smask2.txt", dbgMask2);
-          WDL_TypedBuf<BL_FLOAT> dbgMask3;
-          BLUtilsComp::ComplexToMagn(&dbgMask3, softMasks[3]);
-          BLDebug::DumpData("smask3.txt", dbgMask3);
-        */
-        /////////
     }
     
     // Even if processing enabled is true or false,

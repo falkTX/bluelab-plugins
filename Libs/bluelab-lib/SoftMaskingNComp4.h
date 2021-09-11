@@ -41,6 +41,7 @@
 //
 // SoftMaskingCompN4: from SoftMaskingComp4
 // (and not from SoftMaskingNComp)
+// NOTE: works well!
 class SoftMaskingNComp4
 {
 public:
@@ -65,8 +66,7 @@ public:
     int GetLatency();
     
     // Returns the centered data value in ioSum
-    // Returns the centered masked data in ioMaskedResult0
-    // Return sum - maskedResult0 in  ioMaskedResult1 if required
+    // Returns the centered masked data in ioMaskedResult
     void ProcessCentered(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioSum,
                          const vector<WDL_TypedBuf<BL_FLOAT> > &masks,
                          vector<WDL_TypedBuf<WDL_FFT_COMPLEX> > *ioMaskedResult);
