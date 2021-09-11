@@ -68,7 +68,8 @@ SoftMaskingNComp4::HistoryLine::GetNumMasks()
 //
 
 SoftMaskingNComp4::SoftMaskingNComp4(int bufferSize, int overlapping,
-                                     int historySize, int numMasks)
+                                     int historySize, int numMasks,
+                                     bool autoGenerateRestMask)
 {
     mBufferSize = bufferSize;
     mOverlapping = overlapping;
@@ -77,6 +78,11 @@ SoftMaskingNComp4::SoftMaskingNComp4(int bufferSize, int overlapping,
     mNumMasks = numMasks;
     
     mProcessingEnabled = true;
+
+    mAutoGenerateRestMask = autoGenerateRestMask;
+    if (mAutoGenerateRestMask)
+        // One additonal hidden mask
+        mNumMasks++;
 }
 
 SoftMaskingNComp4::~SoftMaskingNComp4() {}
@@ -154,9 +160,33 @@ SoftMaskingNComp4::GetLatency()
 void
 SoftMaskingNComp4::
 ProcessCentered(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioSum,
-                const vector<WDL_TypedBuf<BL_FLOAT> > &masks,
+                const vector<WDL_TypedBuf<BL_FLOAT> > &masks0,
                 vector<WDL_TypedBuf<WDL_FFT_COMPLEX> > *ioMaskedResult)
 {
+    if (masks0.empty())
+        return;
+    
+    vector<WDL_TypedBuf<BL_FLOAT> > masks = mTmpBuf10;
+    masks = masks0;
+
+    // Generate rest mask if necessary
+    if (mAutoGenerateRestMask)
+    {
+        WDL_TypedBuf<BL_FLOAT> &restMask = mTmpBuf11;
+        restMask.Resize(masks0[0].GetSize());
+        for (int i = 0; i < masks0[0].GetSize(); i++)
+        {
+            BL_FLOAT sum = 0.0;
+            for (int j = 0; j < masks0.size(); j++)
+                sum += masks0[j].Get()[i];
+
+            restMask.Get()[i] = 1.0 - sum;
+        }
+
+        masks.push_back(restMask);
+            
+    }
+    
     if (masks.size() != mNumMasks)
         // Error
         return;

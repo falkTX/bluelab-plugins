@@ -73,7 +73,7 @@
 #define USE_SOFT_MASKING_N 1
 
 // Necessary (put it in another class?)
-#define USE_REST_MASK 1 
+#define USE_REST_MASK 0 //1 
 
 // Apply mix here, on resynth samples
 #define APPLY_MIX_SAMPLES 1
@@ -122,11 +122,11 @@ RebalanceProcessFftObjCompStereo(int bufferSize, int oversampling,
     {
         mSoftMaskingN[j] = new SoftMaskingNComp4(bufferSize, oversampling,
                                                  SOFT_MASKING_HISTO_SIZE,
-                                                 NUM_STEM_SOURCES
-#if USE_REST_MASK
-                                                 + 1
-#endif
-                                                 ); // TEST
+                                                 NUM_STEM_SOURCES,
+                                                 //#if USE_REST_MASK
+                                                 //+ 1
+                                                 //#endif
+                                                 true); // TEST
         
 #if DISABLE_SOFT_MASKING
         mSoftMaskingN[j]->SetProcessingEnabled(false);

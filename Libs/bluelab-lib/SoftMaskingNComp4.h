@@ -44,8 +44,12 @@
 class SoftMaskingNComp4
 {
 public:
+    // autoGenerateRestMask: set to true to generate a "rest" mask
+    // rest = 1.0 - sigma(masks)
+    // Useful if the sum of the masks is not 1
     SoftMaskingNComp4(int bufferSize, int overlapping,
-                      int historySize, int numMasks);
+                      int historySize, int numMasks,
+                      bool autoGenerateRestMask);
     
     virtual ~SoftMaskingNComp4();
 
@@ -108,6 +112,8 @@ protected:
     
     bool mProcessingEnabled;
 
+    bool mAutoGenerateRestMask;
+    
 private:
     HistoryLine mTmpHistoryLine;
     vector<WDL_TypedBuf<WDL_FFT_COMPLEX> > mTmpBuf0;
@@ -120,6 +126,8 @@ private:
     WDL_TypedBuf<BL_FLOAT> mTmpBuf7;
     vector<WDL_TypedBuf<WDL_FFT_COMPLEX> > mTmpBuf8;
     WDL_TypedBuf<WDL_FFT_COMPLEX> mTmpBuf9;
+    vector<WDL_TypedBuf<BL_FLOAT> > mTmpBuf10;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf11;
 };
 
 #endif /* defined(__BL_DUET__SoftMaskingNComp4__) */
