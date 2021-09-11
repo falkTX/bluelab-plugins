@@ -35,7 +35,6 @@
 class RebalanceMaskPredictor8;
 class RebalanceMaskProcessor;
 class Scale;
-class SoftMaskingComp4;
 class SoftMaskingNComp4;
 class BLSpectrogram4;
 class SpectrogramDisplayScroll4;
@@ -57,21 +56,26 @@ public:
 
     BLSpectrogram4 *GetSpectrogram();
     void SetSpectrogramDisplay(SpectrogramDisplayScroll4 *spectroDisplay);
-    
+
+    // Separate the different parts and keep them
     void
     ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamples,
                     const vector<WDL_TypedBuf<WDL_FFT_COMPLEX> > *scBuffer) override;
 
-    // For PROCESS_STEREO_POST_SAMPLES
+
+    // Get separated parts, convert them to samples, then process them
+    // (mix, width, stereo). this way we get the best sound
     void
     ProcessResultSamples(vector<WDL_TypedBuf<BL_FLOAT> * > *ioSamples,
                          const vector<WDL_TypedBuf<BL_FLOAT> > *scBuffer) override;
-    
+
+    // Mix
     void SetVocal(BL_FLOAT vocal);
     void SetBass(BL_FLOAT bass);
     void SetDrums(BL_FLOAT drums);
     void SetOther(BL_FLOAT other);
 
+    // Not used...
     void SetVocalSensitivity(BL_FLOAT vocal);
     void SetBassSensitivity(BL_FLOAT bass);
     void SetDrumsSensitivity(BL_FLOAT drums);
@@ -106,20 +110,9 @@ protected:
     void ResetSignalHistory();
     void ResetRawSignalHistory();
 
-    // Not used anymore (using soft masking instead) 
-    void ApplyMask(const WDL_TypedBuf<WDL_FFT_COMPLEX> &inData,
-                   WDL_TypedBuf<WDL_FFT_COMPLEX> *outData,
-                   const WDL_TypedBuf<BL_FLOAT> &masks);
-
-    // Not used anymore, now use with stereo
-    void ApplySoftMasking(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioData,
-                          const WDL_TypedBuf<BL_FLOAT> &mask);
-
     // 
     void ApplySoftMaskingStereo(WDL_TypedBuf<WDL_FFT_COMPLEX> ioData[2],
                                 const WDL_TypedBuf<BL_FLOAT> masks[NUM_STEM_SOURCES]);
-    
-    void ComputeInverseDB(WDL_TypedBuf<BL_FLOAT> *magns);
 
     void ComputeResult(const WDL_TypedBuf<WDL_FFT_COMPLEX> mixBuffer[2],
                        const WDL_TypedBuf<BL_FLOAT> masks[NUM_STEM_SOURCES],
@@ -157,13 +150,10 @@ protected:
     // Keep the history of input data
     // So we can get exactly the same corresponding the the
     // correct location of the mask
-    //deque<WDL_TypedBuf<WDL_FFT_COMPLEX> > mSamplesHistory;
     bl_queue<WDL_TypedBuf<WDL_FFT_COMPLEX> > mSamplesHistory[2];
 
-    // Need 4 soft masking... because we need fft samples for each part,
-    // to be able to make stereo processing separately
-    SoftMaskingComp4 *mSoftMasking[4][2]; // OLD
-    SoftMaskingNComp4 *mSoftMaskingN[2]; // NEW
+    // N = 4
+    SoftMaskingNComp4 *mSoftMaskingN[2];
     
     bl_queue<WDL_TypedBuf<WDL_FFT_COMPLEX> > mMixColsComp[2];
 
@@ -176,7 +166,7 @@ protected:
     // For recomputing spectrogram when also mask changes
     bl_queue<WDL_TypedBuf<WDL_FFT_COMPLEX> > mRawSignalHistory[2];
 
-    // NEW
+    // Mix params
     BL_FLOAT mVocalMix;
     BL_FLOAT mBassMix;
     BL_FLOAT mDrumsMix;
@@ -194,7 +184,7 @@ protected:
     BL_FLOAT mPanDrums;
     BL_FLOAT mPanOther;
 
-    // For PROCESS_STEREO_POST_SAMPLES
+    // Store the separated fft samples, then re-use them when processing samples
     WDL_TypedBuf<WDL_FFT_COMPLEX> mCurrentFftSamples[NUM_STEM_SOURCES][2];
     
 private:
