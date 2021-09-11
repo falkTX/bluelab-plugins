@@ -37,6 +37,9 @@
 // Origin: was 0
 #define SMOOTH_SPECTRO_DISPLAY 1 // 0
 
+// Width boost factor
+#define WIDTH_BOOST_FACTOR 5.0
+
 // Mix parameters boost (so the volume can be increase a lot, like in Rebalance)
 #define MIX_BOOST 2.0
 
@@ -93,6 +96,8 @@ RebalanceProcessFftObjCompStereo(int bufferSize, int oversampling,
     mPanBass = 0.0;
     mPanDrums = 0.0;
     mPanOther = 0.0;
+
+    mWidthBoost = false;
 }
 
 RebalanceProcessFftObjCompStereo::~RebalanceProcessFftObjCompStereo()
@@ -171,6 +176,12 @@ RebalanceProcessFftObjCompStereo::
 SetSpectrogramDisplay(SpectrogramDisplayScroll4 *spectroDisplay)
 {
     mSpectroDisplay = spectroDisplay;
+}
+
+void
+RebalanceProcessFftObjCompStereo::SetWidthBoost(bool flag)
+{
+    mWidthBoost = flag;
 }
 
 void
@@ -753,6 +764,8 @@ ProcessStereoSamples(int partNum, WDL_TypedBuf<BL_FLOAT> samples[2])
     // Process
     BL_FLOAT widthFactors[NUM_STEM_SOURCES] =
         { mWidthVocal, mWidthBass, mWidthDrums, mWidthOther };
+
+    ApplyWidthBoost(widthFactors);
     
     BL_FLOAT panFactors[NUM_STEM_SOURCES] =
         { mPanVocal, mPanBass, mPanDrums, mPanOther };
@@ -779,5 +792,18 @@ RebalanceProcessFftObjCompStereo::ApplyMixBoost(BL_FLOAT mixes[NUM_STEM_SOURCES]
     {
         if (mixes[i] > 1.0)
             mixes[i] *= MIX_BOOST;
+    }
+}
+
+void
+RebalanceProcessFftObjCompStereo::ApplyWidthBoost(BL_FLOAT width[NUM_STEM_SOURCES])
+{
+    if (!mWidthBoost)
+        return;
+    
+    for (int i = 0; i < NUM_STEM_SOURCES; i++)
+    {
+        if (width[i] > 0.0)
+            width[i] *= WIDTH_BOOST_FACTOR;
     }
 }

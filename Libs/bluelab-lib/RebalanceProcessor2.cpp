@@ -450,6 +450,13 @@ RebalanceProcessor2::SetPanOther(BL_FLOAT panOther)
         mDetectProcessObjStereo->SetPanOther(panOther);
 }
 
+void
+RebalanceProcessor2::SetWidthBoost(bool flag)
+{
+    if (mDetectProcessObjStereo != NULL)
+        mDetectProcessObjStereo->SetWidthBoost(flag);
+}
+
 bool
 RebalanceProcessor2::HasEnoughDumpData()
 {

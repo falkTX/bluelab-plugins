@@ -57,6 +57,8 @@ public:
     BLSpectrogram4 *GetSpectrogram();
     void SetSpectrogramDisplay(SpectrogramDisplayScroll4 *spectroDisplay);
 
+    void SetWidthBoost(bool flag);
+    
     // Separate the different parts and keep them
     void
     ProcessInputFft(vector<WDL_TypedBuf<WDL_FFT_COMPLEX> * > *ioFftSamples,
@@ -129,6 +131,7 @@ protected:
     //
     void ProcessStereoSamples(int partNum, WDL_TypedBuf<BL_FLOAT> samples[2]);
 
+    void ApplyWidthBoost(BL_FLOAT width[NUM_STEM_SOURCES]);
     void ApplyMixBoost(BL_FLOAT mixes[NUM_STEM_SOURCES]);
         
     //
@@ -182,6 +185,8 @@ protected:
     BL_FLOAT mPanDrums;
     BL_FLOAT mPanOther;
 
+    bool mWidthBoost;
+    
     // Store the separated fft samples, then re-use them when processing samples
     WDL_TypedBuf<WDL_FFT_COMPLEX> mCurrentFftSamples[NUM_STEM_SOURCES][2];
     

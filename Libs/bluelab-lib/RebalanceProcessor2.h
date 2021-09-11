@@ -66,6 +66,8 @@ public:
     void SetPanBass(BL_FLOAT panBass);
     void SetPanDrums(BL_FLOAT panDrums);
     void SetPanOther(BL_FLOAT panOther);
+
+    void SetWidthBoost(bool flag);
     
     // Dump
     //
