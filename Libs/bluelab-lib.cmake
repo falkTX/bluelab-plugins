@@ -797,6 +797,8 @@ set(_bluelab-lib_src
   SoftMaskingComp3.h
   SoftMaskingComp4.cpp
   SoftMaskingComp4.h
+  SoftMaskingNComp4.cpp
+  SoftMaskingNComp4.h
   SoftMaskingComp.cpp
   SoftMaskingComp.h
   SoftMasking.cpp

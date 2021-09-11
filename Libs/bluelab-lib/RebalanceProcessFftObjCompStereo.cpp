@@ -18,6 +18,7 @@
 #include <Scale.h>
 
 #include <SoftMaskingComp4.h>
+#include <SoftMaskingNComp4.h>
 
 #include <BLSpectrogram4.h>
 #include <SpectrogramDisplayScroll4.h>
@@ -46,7 +47,7 @@
 // With this, it will be possible to increase the gain a lot
 // when setting mix at 200%
 // (Otherwise, the gain effect was very small)
-#define SOFT_MASKING_HACK 1
+#define SOFT_MASKING_HACK 0 //1
 
 // Origin: was enabled for Rebalance (not stereo)
 // NOTE: without soft mask, it looks to give better result for mixing in stereo
@@ -55,7 +56,7 @@
 // NOTE: soft masking is desinged for separating sound in 2 parts, not more.
 // Here, for stereo version, we need to separate sound in 4 parts, then remix
 // them later. => so it is not correct to use soft masking
-#define DISABLE_SOFT_MASKING 1 //0
+#define DISABLE_SOFT_MASKING 0 //1 //0
 // Try to make the plugin transparent when all to default
 // If DISABLE_SOFT_MASKING=1 and SOFT_MASKING_HACK=1, volume is louder
 #if DISABLE_SOFT_MASKING
@@ -68,6 +69,16 @@
 #define PROCESS_STEREO_PRE 0 //1
 // New: process stereo on samples => far better results!
 #define PROCESS_STEREO_POST_SAMPLES 1
+
+#define USE_SOFT_MASKING_N 1
+
+// Necessary (put it in another class?)
+#define USE_REST_MASK 1 
+
+// Apply mix here, on resynth samples
+#define APPLY_MIX_SAMPLES 1
+
+#define MIX_BOOST 2.0
 
 RebalanceProcessFftObjCompStereo::
 RebalanceProcessFftObjCompStereo(int bufferSize, int oversampling,
@@ -93,6 +104,7 @@ RebalanceProcessFftObjCompStereo(int bufferSize, int oversampling,
     ResetSamplesHistory();
     
     // Soft masks
+#if !USE_SOFT_MASKING_N
     for (int i = 0; i < NUM_STEM_SOURCES; i++)
     {
         for (int j = 0; j < 2; j++)
@@ -105,11 +117,33 @@ RebalanceProcessFftObjCompStereo(int bufferSize, int oversampling,
 #endif
         }
     }
+#else
+    for (int j = 0; j < 2; j++)
+    {
+        mSoftMaskingN[j] = new SoftMaskingNComp4(bufferSize, oversampling,
+                                                 SOFT_MASKING_HISTO_SIZE,
+                                                 NUM_STEM_SOURCES
+#if USE_REST_MASK
+                                                 + 1
+#endif
+                                                 ); // TEST
+        
+#if DISABLE_SOFT_MASKING
+        mSoftMaskingN[j]->SetProcessingEnabled(false);
+#endif
+    }
+#endif
     
     mMaskProcessor = new RebalanceMaskProcessor();
     
     ResetMixColsComp();
 
+    // NEW
+    mVocalMix = 1.0;
+    mBassMix = 1.0;
+    mDrumsMix = 1.0;
+    mOtherMix = 1.0;
+    
     // Stereo
     //
     mWidthVocal = 0.0;
@@ -125,6 +159,7 @@ RebalanceProcessFftObjCompStereo(int bufferSize, int oversampling,
 
 RebalanceProcessFftObjCompStereo::~RebalanceProcessFftObjCompStereo()
 {
+#if USE_SOFT_MASKING_N
     for (int i = 0; i < NUM_STEM_SOURCES; i++)
     {
         for (int j = 0; j < 2; j++)
@@ -133,6 +168,13 @@ RebalanceProcessFftObjCompStereo::~RebalanceProcessFftObjCompStereo()
                 delete mSoftMasking[i][j];
         }
     }
+#else
+    for (int j = 0; j < 2; j++)
+    {
+        if (mSoftMaskingN[j] != NULL)
+            delete mSoftMaskingN[j];
+    }
+#endif
     
     delete mMaskProcessor;
     
@@ -148,6 +190,7 @@ RebalanceProcessFftObjCompStereo::Reset(int bufferSize, int oversampling,
     mOverlapping = oversampling;
     mSampleRate = sampleRate;
 
+#if USE_SOFT_MASKING_N
     for (int i = 0; i < NUM_STEM_SOURCES; i++)
     {
         for (int j = 0; j < 2; j++)
@@ -156,6 +199,13 @@ RebalanceProcessFftObjCompStereo::Reset(int bufferSize, int oversampling,
                 mSoftMasking[i][j]->Reset(bufferSize, oversampling);
         }
     }
+#else
+    for (int j = 0; j < 2; j++)
+    {
+        if (mSoftMaskingN[j] != NULL)
+            mSoftMaskingN[j]->Reset(bufferSize, oversampling);
+    }
+#endif
     
     mMaskPred->Reset();
     
@@ -174,6 +224,7 @@ RebalanceProcessFftObjCompStereo::Reset(int bufferSize, int oversampling,
 void
 RebalanceProcessFftObjCompStereo::Reset()
 {
+#if !USE_SOFT_MASKING_N
     for (int i = 0; i < NUM_STEM_SOURCES; i++)
     {
         for (int j = 0; j < 2; j++)
@@ -182,6 +233,13 @@ RebalanceProcessFftObjCompStereo::Reset()
                 mSoftMasking[i][j]->Reset();
         }
     }
+#else
+    for (int j = 0; j < 2; j++)
+    {
+        if (mSoftMaskingN[j] != NULL)
+            mSoftMaskingN[j]->Reset();
+    }
+#endif
     
     mMaskPred->Reset();
     
@@ -213,25 +271,29 @@ SetSpectrogramDisplay(SpectrogramDisplayScroll4 *spectroDisplay)
 void
 RebalanceProcessFftObjCompStereo::SetVocal(BL_FLOAT vocal)
 {
-    mMaskProcessor->SetVocalMix(vocal);
+    //mMaskProcessor->SetVocalMix(vocal);
+    mVocalMix = vocal;
 }
 
 void
 RebalanceProcessFftObjCompStereo::SetBass(BL_FLOAT bass)
 {
-    mMaskProcessor->SetBassMix(bass);
+    //mMaskProcessor->SetBassMix(bass);
+    mBassMix = bass;
 }
 
 void
 RebalanceProcessFftObjCompStereo::SetDrums(BL_FLOAT drums)
 {
-    mMaskProcessor->SetDrumsMix(drums);
+    //mMaskProcessor->SetDrumsMix(drums);
+    mDrumsMix = drums;
 }
 
 void
 RebalanceProcessFftObjCompStereo::SetOther(BL_FLOAT other)
 {
-    mMaskProcessor->SetOtherMix(other);
+    //mMaskProcessor->SetOtherMix(other);
+    mOtherMix = other;
 }
 
 void
@@ -318,12 +380,19 @@ RebalanceProcessFftObjCompStereo::GetLatency()
 #if !USE_SOFT_MASKING
     return 0;
 #endif
-    
+
+#if !USE_SOFT_MASKING_N
     if (mSoftMasking[0][0] == NULL)
         return 0;
 
     int latency = mSoftMasking[0][0]->GetLatency();
+#else
+    if (mSoftMaskingN[0] == NULL)
+        return 0;
 
+    int latency = mSoftMaskingN[0]->GetLatency();
+#endif
+    
     return latency;
 }
     
@@ -478,9 +547,14 @@ ProcessResultSamples(vector<WDL_TypedBuf<BL_FLOAT> * > *ioSamples,
     if (ioSamples->size() != 2)
         return;
 
+    //BLDebug::DumpData("samples0.txt", *(*ioSamples)[0]);
+    
     BLUtils::FillAllZero((*ioSamples)[0]);
     BLUtils::FillAllZero((*ioSamples)[1]);
 
+    BL_FLOAT mixes[NUM_STEM_SOURCES] = { mVocalMix, mBassMix, mDrumsMix, mOtherMix };
+    ApplyMixBoost(mixes);
+    
     for (int i = 0; i < NUM_STEM_SOURCES; i++)
     {
         WDL_TypedBuf<WDL_FFT_COMPLEX> (&fftSamples0)[2] = mCurrentFftSamples[i];
@@ -494,11 +568,19 @@ ProcessResultSamples(vector<WDL_TypedBuf<BL_FLOAT> * > *ioSamples,
         FftProcessObj16::FftToSamples(fftSamples[0], &samples[0]);
         FftProcessObj16::FftToSamples(fftSamples[1], &samples[1]);
 
+#if APPLY_MIX_SAMPLES
+        // Apply mix
+        for (int j = 0; j < 2; j++)
+            BLUtils::MultValues(&samples[j], mixes[i]);
+#endif
+        
         ProcessStereoSamples(i, samples);
 
         BLUtils::AddValues((*ioSamples)[0], samples[0]);
         BLUtils::AddValues((*ioSamples)[1], samples[1]);
     }
+
+    //BLDebug::DumpData("samples1.txt", *(*ioSamples)[0]);
 }
 
 void
@@ -660,6 +742,7 @@ ApplySoftMaskingStereo(WDL_TypedBuf<WDL_FFT_COMPLEX> ioData[2],
     
     // References to array
     WDL_TypedBuf<WDL_FFT_COMPLEX> (&softMaskedResult)[4][2] = mTmpBuf44;
+#if !USE_SOFT_MASKING_N
     for (int i = 0; i < NUM_STEM_SOURCES; i++)
     {
         for (int j = 0; j < 2; j++)
@@ -673,7 +756,57 @@ ApplySoftMaskingStereo(WDL_TypedBuf<WDL_FFT_COMPLEX> ioData[2],
 #endif        
         }
     }
+#else // Soft masking N
+    vector<WDL_TypedBuf<BL_FLOAT> > &masksVec = mTmpBuf51;
+    masksVec.resize(NUM_STEM_SOURCES);
+    for (int i = 0; i < NUM_STEM_SOURCES; i++)
+        masksVec[i] = masks[i];
 
+    // TEST
+#if USE_REST_MASK
+    // => TODO; put this in new soft mask class
+    // Add a dummy mask, for the "rest"
+    WDL_TypedBuf<BL_FLOAT> &restMask = mTmpBuf52;
+    restMask.Resize(masks[0].GetSize());
+    for (int i = 0; i < restMask.GetSize(); i++)
+    {
+        BL_FLOAT sum = 0.0;
+        for (int j = 0; j < masksVec.size(); j++)
+            sum += masksVec[j].Get()[i];
+
+#if !SOFT_MASKING_HACK
+        restMask.Get()[i] = 1.0 - sum;
+#else
+        restMask.Get()[i] = (1.0 - sum*4.0)/4.0;
+        //restMask.Get()[i] = (1.0 - sum*4.0);
+        //restMask.Get()[i] = (1.0 - sum)/4.0;
+#endif        
+    }
+    masksVec.push_back(restMask);
+#endif
+    
+    for (int j = 0; j < 2; j++)
+    {
+        vector<WDL_TypedBuf<WDL_FFT_COMPLEX> > &softMaskedResultVec = mTmpBuf50;
+        softMaskedResultVec.resize(NUM_STEM_SOURCES);
+
+        mSoftMaskingN[j]->ProcessCentered(//&sourceData[i][j],
+                                          &ioData[j],
+                                          masksVec, &softMaskedResultVec);
+
+        for (int i = 0; i < NUM_STEM_SOURCES; i++)
+            softMaskedResult[i][j] = softMaskedResultVec[i];
+        
+#if DISABLE_SOFT_MASKING
+        for (int i = 0; i < NUM_STEM_SOURCES; i++)
+        {
+            softMaskedResult[i][j] = ioData[j]; //sourceData[i][j];
+            BLUtils::MultValues(&softMaskedResult[i][j], masks[i]);
+        }
+#endif        
+    }
+#endif
+    
 #if PROCESS_STEREO_POST
     for (int i = 0; i < NUM_STEM_SOURCES; i++)
         ProcessStereo(i, softMaskedResult[i]);
@@ -690,8 +823,13 @@ ApplySoftMaskingStereo(WDL_TypedBuf<WDL_FFT_COMPLEX> ioData[2],
     //
     for (int i = 0; i < NUM_STEM_SOURCES; i++)
     {
+#if !USE_SOFT_MASKING_N
         for (int j = 0; j < 2; j++)
             BLUtils::MultValues(&softMaskedResult[i][j], (BL_FLOAT)(10.0/4.0));
+#else
+        for (int j = 0; j < 2; j++)
+            BLUtils::MultValues(&softMaskedResult[i][j], (BL_FLOAT)(1.0/4.0));
+#endif
     }
 #endif
 
@@ -709,14 +847,30 @@ ApplySoftMaskingStereo(WDL_TypedBuf<WDL_FFT_COMPLEX> ioData[2],
     
     // Result
 #if !DISABLE_SOFT_MASKING
+#if !USE_SOFT_MASKING_N
     if (mSoftMasking[0][0]->IsProcessingEnabled())
+#else
+    if (mSoftMaskingN[0]->IsProcessingEnabled())
+#endif
 #endif
     {
+#if APPLY_MIX_SAMPLES
+        BL_FLOAT mixes[NUM_STEM_SOURCES] =
+            { mVocalMix, mBassMix, mDrumsMix, mOtherMix };
+        ApplyMixBoost(mixes);
+#endif
+        
         // Sum the different parts
         BLUtils::FillAllZero(&ioData[0]);
         BLUtils::FillAllZero(&ioData[1]);
         for (int i = 0; i < NUM_STEM_SOURCES; i++)
         {
+#if APPLY_MIX_SAMPLES
+            // Update here, so the spectrogram will be updated
+            BLUtils::MultValues(&softMaskedResult[i][0], mixes[i]);
+            BLUtils::MultValues(&softMaskedResult[i][1], mixes[i]);
+#endif
+            
             BLUtils::AddValues(&ioData[0], softMaskedResult[i][0]);
             BLUtils::AddValues(&ioData[1], softMaskedResult[i][1]);
         }
@@ -791,6 +945,7 @@ RebalanceProcessFftObjCompStereo::RecomputeSpectrogram(bool recomputeMasks)
     }
 
     // Be sure to reset!
+#if !USE_SOFT_MASKING_N
     for (int i = 0; i < NUM_STEM_SOURCES; i++)
     {
         for (int j = 0; j < 2; j++)
@@ -799,6 +954,13 @@ RebalanceProcessFftObjCompStereo::RecomputeSpectrogram(bool recomputeMasks)
                 mSoftMasking[i][j]->Reset(mBufferSize, mOverlapping);
         }
     }
+#else
+    for (int j = 0; j < 2; j++)
+    {
+        if (mSoftMaskingN[j] != NULL)
+            mSoftMaskingN[j]->Reset(mBufferSize, mOverlapping);
+    }
+#endif
     
     // Keep lines, and add them all at once at the end 
     vector<WDL_TypedBuf<BL_FLOAT> > *magnsVec = mTmpBuf34;
@@ -912,6 +1074,7 @@ RebalanceProcessFftObjCompStereo::ComputeSpectroNumCols()
 void
 RebalanceProcessFftObjCompStereo::ResetSpectrogram()
 {
+#if !USE_SOFT_MASKING_N
     for (int i = 0; i < NUM_STEM_SOURCES; i++)
     {
         for (int j = 0; j < 2; j++)
@@ -920,6 +1083,13 @@ RebalanceProcessFftObjCompStereo::ResetSpectrogram()
                 mSoftMasking[i][j]->Reset(mBufferSize, mOverlapping);
         }
     }
+#else
+    for (int j = 0; j < 2; j++)
+    {
+        if (mSoftMaskingN[j] != NULL)
+            mSoftMaskingN[j]->Reset(mBufferSize, mOverlapping);
+    }
+#endif
     
     mMaskPred->Reset();
     
@@ -997,4 +1167,14 @@ ProcessStereoSamples(int partNum, WDL_TypedBuf<BL_FLOAT> samples[2])
     
     // Pan
     StereoWidenProcess::Balance(&samplesVec, panFactors[partNum]);
+}
+
+void
+RebalanceProcessFftObjCompStereo::ApplyMixBoost(BL_FLOAT mixes[NUM_STEM_SOURCES])
+{
+    for (int i = 0; i < NUM_STEM_SOURCES; i++)
+    {
+        if (mixes[i] > 1.0)
+            mixes[i] *= MIX_BOOST;
+    }
 }

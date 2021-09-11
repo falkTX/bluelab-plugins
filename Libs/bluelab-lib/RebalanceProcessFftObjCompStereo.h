@@ -36,6 +36,7 @@ class RebalanceMaskPredictor8;
 class RebalanceMaskProcessor;
 class Scale;
 class SoftMaskingComp4;
+class SoftMaskingNComp4;
 class BLSpectrogram4;
 class SpectrogramDisplayScroll4;
 class RebalanceProcessFftObjCompStereo : public MultichannelProcess
@@ -136,7 +137,9 @@ protected:
     void ProcessStereo(int partNum, WDL_TypedBuf<WDL_FFT_COMPLEX> ioFftSamples[2]);
     
     void ProcessStereoSamples(int partNum, WDL_TypedBuf<BL_FLOAT> samples[2]);
-                       
+
+    void ApplyMixBoost(BL_FLOAT mixes[NUM_STEM_SOURCES]);
+        
     //
     int mBufferSize;
     int mOverlapping;
@@ -159,7 +162,8 @@ protected:
 
     // Need 4 soft masking... because we need fft samples for each part,
     // to be able to make stereo processing separately
-    SoftMaskingComp4 *mSoftMasking[4][2];
+    SoftMaskingComp4 *mSoftMasking[4][2]; // OLD
+    SoftMaskingNComp4 *mSoftMaskingN[2]; // NEW
     
     bl_queue<WDL_TypedBuf<WDL_FFT_COMPLEX> > mMixColsComp[2];
 
@@ -172,6 +176,12 @@ protected:
     // For recomputing spectrogram when also mask changes
     bl_queue<WDL_TypedBuf<WDL_FFT_COMPLEX> > mRawSignalHistory[2];
 
+    // NEW
+    BL_FLOAT mVocalMix;
+    BL_FLOAT mBassMix;
+    BL_FLOAT mDrumsMix;
+    BL_FLOAT mOtherMix;
+    
     // Stereo
     //
     BL_FLOAT mWidthVocal;
@@ -242,6 +252,11 @@ private:
     
     WDL_TypedBuf<BL_FLOAT> mTmpBuf47[2];
     WDL_TypedBuf<WDL_FFT_COMPLEX> mTmpBuf48[2];
+
+    vector<WDL_TypedBuf<WDL_FFT_COMPLEX> > mTmpBuf49;
+    vector<WDL_TypedBuf<WDL_FFT_COMPLEX> > mTmpBuf50;
+    vector<WDL_TypedBuf<BL_FLOAT> > mTmpBuf51;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf52;
 };
 
 #endif /* defined(__BL_Rebalance__RebalanceProcessFftObjStereo__) */
