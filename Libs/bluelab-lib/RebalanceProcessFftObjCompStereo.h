@@ -127,8 +127,6 @@ protected:
 
     // Stereo
     //
-    void ProcessStereo(int partNum, WDL_TypedBuf<WDL_FFT_COMPLEX> ioFftSamples[2]);
-    
     void ProcessStereoSamples(int partNum, WDL_TypedBuf<BL_FLOAT> samples[2]);
 
     void ApplyMixBoost(BL_FLOAT mixes[NUM_STEM_SOURCES]);

@@ -748,44 +748,6 @@ RebalanceProcessFftObjCompStereo::ResetSpectrogram()
 
 void
 RebalanceProcessFftObjCompStereo::
-ProcessStereo(int partNum, WDL_TypedBuf<WDL_FFT_COMPLEX> ioFftSamples[2])
-{
-    // Convert to magn/phases
-    WDL_TypedBuf<BL_FLOAT> *magns = mTmpBuf45;
-    WDL_TypedBuf<BL_FLOAT> *phases = mTmpBuf46;
-
-    BLUtilsComp::ComplexToMagnPhase(&magns[0], &phases[0], ioFftSamples[0]);
-    BLUtilsComp::ComplexToMagnPhase(&magns[1], &phases[1], ioFftSamples[1]);
-
-    // Process
-    BL_FLOAT widthFactors[NUM_STEM_SOURCES] =
-        { mWidthVocal, mWidthBass, mWidthDrums, mWidthOther };
-
-    BL_FLOAT panFactors[NUM_STEM_SOURCES] =
-        { mPanVocal, mPanBass, mPanDrums, mPanOther };
-
-    vector<WDL_TypedBuf<BL_FLOAT> * > magnsVec;
-    magnsVec.resize(2);
-    
-    magnsVec[0] = &magns[0];
-    magnsVec[1] = &magns[1];
-        
-    // Do not use param smoother
-    // (this is why we use StereoWidenProcess and not BLStereoWidener)
-    
-    // Width
-    StereoWidenProcess::StereoWiden(&magnsVec, widthFactors[partNum]);
-    
-    // Pan
-    StereoWidenProcess::Balance(&magnsVec, panFactors[partNum]);
-                
-    // Convert back to complex
-    BLUtilsComp::MagnPhaseToComplex(&ioFftSamples[0], magns[0], phases[0]);
-    BLUtilsComp::MagnPhaseToComplex(&ioFftSamples[1], magns[1], phases[1]);
-}
-
-void
-RebalanceProcessFftObjCompStereo::
 ProcessStereoSamples(int partNum, WDL_TypedBuf<BL_FLOAT> samples[2])
 {
     // Process
