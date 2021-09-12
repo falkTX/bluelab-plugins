@@ -31,7 +31,8 @@ public:
       COLORMAP_SWEET2,
       COLORMAP_SKY,
       COLORMAP_LANDSCAPE,
-      COLORMAP_FIRE
+      COLORMAP_FIRE,
+      COLORMAP_PURPLE2
     };
     
     ColorMapFactory(bool useGLSL, bool transparentColorMap);

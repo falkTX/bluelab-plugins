@@ -144,7 +144,7 @@ ColorMapFactory::CreateColorMap(ColorMap colorMapId)
             result->AddColor(132, 0, 0, 255, 1.0);
         }
         break;
-            
+
         case COLORMAP_PURPLE:
         {
             // Purple, derived from Wasp
@@ -163,7 +163,7 @@ ColorMapFactory::CreateColorMap(ColorMap colorMapId)
             result->AddColor(255, 255, 255, 255, 1.0);
         }
         break;
-            
+        
         case COLORMAP_SWEET:
         {
             // Cyan and Pink ("Sweet")
@@ -325,7 +325,32 @@ ColorMapFactory::CreateColorMap(ColorMap colorMapId)
             result->AddColor(255, 255, 255, 255, 1.0);
         }
         break;
+
+        // NEW
+        case COLORMAP_PURPLE2:
+        {
+            // Purple, derived from Wasp
+            result = new ColorMap4(mUseGLSL);
             
+            if (mTransparentColorMap)
+                result->AddColor(0, 0, 0, 0, 0.0);
+            else
+                result->AddColor(0, 0, 0, 255, 0.0);
+            
+            //result->AddColor(21, 34, 65, 255, 0.25);
+            //result->AddColor(65, 21, 34, 255, 0.25); // Blood red
+            result->AddColor(25, 8, 17, 255, 0.25);
+            
+            //result->AddColor(40, 33, 187, 255, 0.5);
+            result->AddColor(73, 0, 148, 255, 0.5);
+ 
+            //result->AddColor(173, 98, 250, 255, 0.75);
+            result->AddColor(118, 89, 254, 255, 0.75);
+            
+            result->AddColor(255, 255, 255, 255, 1.0);
+        }
+        break;
+        
         default:
             break;
     }
