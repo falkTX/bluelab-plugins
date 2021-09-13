@@ -291,10 +291,9 @@ BL-Wav3s	    : snd, vst3, btw, bt4, ard2, ren2, ren3, w11, rad, aud
 UST		    :
 ====
 
-- BUG: Ghost: app, export long selection (e.g 1mn) => out of memory
-- TODO: Rebalance and RebalanceStreo: change the manual
-(could not remove at 100% vocal, for karaoke, do not oversell the prolugins!)
-
+- BUG: Ghost: app, export long selection (e.g 1mn) => 300mb taken and not freed
+- PROBLEM: Ghost: takes a lot of memory when exporting selection
+(maybe impossible to export a selection of > 5mn)
 
 ====
 DAW known problems
