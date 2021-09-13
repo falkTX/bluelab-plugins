@@ -1400,7 +1400,7 @@ LinesRender2::DrawAdditionalLines(NVGcontext *vg, int width, int height)
     lines = mAdditionalLines;
     ProjectAdditionalLines(&lines, width, height); // Was commented
     //ProjectAdditionalLines2(&lines, width, height); // Buggy
-
+    
     for (int i = 0; i < lines.size(); i++)
     {
         Line &line = lines[i];

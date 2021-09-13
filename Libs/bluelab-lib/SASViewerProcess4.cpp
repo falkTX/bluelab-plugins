@@ -1006,7 +1006,7 @@ SASViewerProcess4::DisplayTracking()
         BL_FLOAT lineWidth = 1.5;
         if (!mDebugPartials)
             lineWidth = 4.0;
-        
+                
         mSASViewerRender->SetAdditionalLines(TRACKING, mPartialLines, lineWidth);
     }
 }
