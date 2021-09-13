@@ -2136,6 +2136,7 @@ BLUtils::ConsumeRight(WDL_TypedBuf<FLOAT_TYPE> *ioBuffer, int numToConsume)
 template void BLUtils::ConsumeRight(WDL_TypedBuf<float> *ioBuffer, int numToConsume);
 template void BLUtils::ConsumeRight(WDL_TypedBuf<double> *ioBuffer, int numToConsume);
 
+#if 0 // Not optimized
 template <typename FLOAT_TYPE>
 void
 BLUtils::ConsumeLeft(vector<WDL_TypedBuf<FLOAT_TYPE> > *ioBuffer)
@@ -2154,6 +2155,20 @@ BLUtils::ConsumeLeft(vector<WDL_TypedBuf<FLOAT_TYPE> > *ioBuffer)
 }
 template void BLUtils::ConsumeLeft(vector<WDL_TypedBuf<float> > *ioBuffer);
 template void BLUtils::ConsumeLeft(vector<WDL_TypedBuf<double> > *ioBuffer);
+#endif
+#if 1 // Optimized
+template <typename FLOAT_TYPE>
+void
+BLUtils::ConsumeLeft(vector<WDL_TypedBuf<FLOAT_TYPE> > *ioBuffer)
+{
+    if (ioBuffer->empty())
+        return;
+    
+    ioBuffer->erase(ioBuffer->begin());
+}
+template void BLUtils::ConsumeLeft(vector<WDL_TypedBuf<float> > *ioBuffer);
+template void BLUtils::ConsumeLeft(vector<WDL_TypedBuf<double> > *ioBuffer);
+#endif
 
 template <typename FLOAT_TYPE>
 void
