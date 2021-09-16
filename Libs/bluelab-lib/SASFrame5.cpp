@@ -282,6 +282,12 @@ SASFrame5::SetSynthMode(enum SynthMode mode)
     mSynthMode = mode;
 }
 
+SASFrame5::SynthMode
+SASFrame5::GetSynthMode() const
+{
+    return mSynthMode;
+}
+
 void
 SASFrame5::SetSynthEvenPartials(bool flag)
 {
@@ -478,7 +484,7 @@ void
 SASFrame5::ComputeSamplesResynthPost(WDL_TypedBuf<BL_FLOAT> *samples)
 {
 #if COMPUTE_SAS_SAMPLES
-    if (mSynthMode == OSC)
+    if ((mSynthMode == OSC) || (mSynthMode == RAW_PARTIALS))
         ComputeSamplesSAS(samples);
 #endif
     
@@ -1329,7 +1335,7 @@ bool
 SASFrame5::ComputeSamplesFlag()
 {
 #if COMPUTE_SAS_SAMPLES
-    if (mSynthMode == OSC)
+    if ((mSynthMode == OSC) || (mSynthMode == RAW_PARTIALS))
         return false;
 #endif
 
@@ -1357,7 +1363,7 @@ bool
 SASFrame5::ComputeSamplesPostFlag()
 {
 #if COMPUTE_SAS_SAMPLES
-    if (mSynthMode == OSC)
+    if ((mSynthMode == OSC) || (mSynthMode == RAW_PARTIALS))
         return true;
 #endif
     

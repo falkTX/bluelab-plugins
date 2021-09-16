@@ -34,8 +34,12 @@ class SASFrame5
 public:
     enum SynthMode
     {
-        FFT,
-        OSC
+        // Resynth using fft
+        FFT = 0,
+        // Resynth using sines and samples
+        OSC,
+        // Use raw detected partials and synth using sine and samples
+        RAW_PARTIALS
     };
     
     class SASPartial
@@ -67,8 +71,12 @@ public:
                int freqRes, BL_FLOAT sampleRate);
         
     void SetMinAmpDB(BL_FLOAT ampDB);
-    
+
+    //
+    //
     void SetSynthMode(enum SynthMode mode);
+    SASFrame5::SynthMode GetSynthMode() const;
+    
     void SetSynthEvenPartials(bool flag);
     void SetSynthOddPartials(bool flag);
     

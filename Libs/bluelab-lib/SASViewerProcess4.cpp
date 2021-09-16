@@ -34,11 +34,11 @@
 #define DISPLAY_HARMO_SUBSTRACT 1
 
 // Use full SASFrame
-#define OUT_HARMO_SAS_FRAME 0 // 1 //0 // ORIGIN
+//#define OUT_HARMO_SAS_FRAME 0 // 1 //0 // ORIGIN
 // Use extracted harmonic envelope
 #define OUT_HARMO_EXTRACTED_ENV 0 //1
 // Use input partials (not modified by color etc.)
-#define OUT_HARMO_INPUT_PARTIALS 1 //0 //1
+//#define OUT_HARMO_INPUT_PARTIALS 1 //0 //1
 
 // Does not improve transients at all (result is identical)
 #define USE_PRUSA_PHASES_ESTIM 0 //1
@@ -269,27 +269,33 @@ SASViewerProcess4::ProcessSamplesBuffer(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
     BL_FLOAT noiseCoeff;
     BL_FLOAT harmoCoeff;
     BLUtils::MixParamToCoeffs(mHarmoNoiseMix, &noiseCoeff, &harmoCoeff);
+
+    if ((mSASFrame->GetSynthMode() == SASFrame5::FFT) ||
+        (mSASFrame->GetSynthMode() == SASFrame5::OSC))
+    {
+        //#if OUT_HARMO_SAS_FRAME
+        // Compute the samples from partials
+        mSASFrame->ComputeSamplesResynth(&samplesBuffer);
         
-#if OUT_HARMO_SAS_FRAME
-    // Compute the samples from partials
-    mSASFrame->ComputeSamplesResynth(&samplesBuffer);
-
-    BLUtils::MultValues(&samplesBuffer, harmoCoeff);
-    
-    // ioBuffer may already contain noise
-    BLUtils::AddValues(ioBuffer, samplesBuffer);
-#endif
-    
-#if OUT_HARMO_INPUT_PARTIALS
-    // Compute the samples from partials
-    //mSASFrame->ComputeSamples(&samplesBuffer);
-    mSASFrame->ComputeSamplesPost(&samplesBuffer);
-
-    BLUtils::MultValues(&samplesBuffer, harmoCoeff);
-    
-    // ioBuffer may already contain noise
-    BLUtils::AddValues(ioBuffer, samplesBuffer);
-#endif
+        BLUtils::MultValues(&samplesBuffer, harmoCoeff);
+        
+        // ioBuffer may already contain noise
+        BLUtils::AddValues(ioBuffer, samplesBuffer);
+        //#endif
+    }
+    else if (mSASFrame->GetSynthMode() == SASFrame5::RAW_PARTIALS)
+    {
+        //#if OUT_HARMO_INPUT_PARTIALS
+        // Compute the samples from partials
+        //mSASFrame->ComputeSamples(&samplesBuffer);
+        mSASFrame->ComputeSamplesPost(&samplesBuffer);
+        
+        BLUtils::MultValues(&samplesBuffer, harmoCoeff);
+        
+        // ioBuffer may already contain noise
+        BLUtils::AddValues(ioBuffer, samplesBuffer);
+        //#endif
+    }
 }
 
 // Use this to synthetize directly the samples from partials
@@ -313,25 +319,32 @@ SASViewerProcess4::ProcessSamplesPost(WDL_TypedBuf<BL_FLOAT> *ioBuffer)
     BL_FLOAT harmoCoeff;
     BLUtils::MixParamToCoeffs(mHarmoNoiseMix, &noiseCoeff, &harmoCoeff);
         
-#if OUT_HARMO_SAS_FRAME
-    // Compute the samples from partials
-    mSASFrame->ComputeSamplesResynthPost(&samplesBuffer);
-
-    BLUtils::MultValues(&samplesBuffer, harmoCoeff);
-    
-    // ioBuffer may already contain noise
-    BLUtils::AddValues(ioBuffer, samplesBuffer);
-#endif
-    
-#if OUT_HARMO_INPUT_PARTIALS
-    // Compute the samples from partials
-    mSASFrame->ComputeSamplesPost(&samplesBuffer);
-
-    BLUtils::MultValues(&samplesBuffer, harmoCoeff);
-    
-    // ioBuffer may already contain noise
-    BLUtils::AddValues(ioBuffer, samplesBuffer);
-#endif
+    if ((mSASFrame->GetSynthMode() == SASFrame5::FFT) ||
+        (mSASFrame->GetSynthMode() == SASFrame5::OSC))
+    {
+        //#if OUT_HARMO_SAS_FRAME
+        
+        // Compute the samples from partials
+        mSASFrame->ComputeSamplesResynthPost(&samplesBuffer);
+        
+        BLUtils::MultValues(&samplesBuffer, harmoCoeff);
+        
+        // ioBuffer may already contain noise
+        BLUtils::AddValues(ioBuffer, samplesBuffer);
+        //#endif
+    }
+    else if (mSASFrame->GetSynthMode() == SASFrame5::RAW_PARTIALS)
+    {
+        //#if OUT_HARMO_INPUT_PARTIALS
+        // Compute the samples from partials
+        mSASFrame->ComputeSamplesPost(&samplesBuffer);
+        
+        BLUtils::MultValues(&samplesBuffer, harmoCoeff);
+        
+        // ioBuffer may already contain noise
+        BLUtils::AddValues(ioBuffer, samplesBuffer);
+        //#endif
+    }
 }
 
 void
