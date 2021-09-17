@@ -795,7 +795,8 @@ BLUtilsMath::PolygonArea(const FLOAT_TYPE x[], const FLOAT_TYPE y[], int n)
         return 0.0;
     
     FLOAT_TYPE area = 0.0;
- 
+
+#if 0 //1 //0 // ORIGIN (not tested)
     // Shoelace formula
     int j = n - 1;
     for (int i = 0; i < n; i++)
@@ -803,7 +804,19 @@ BLUtilsMath::PolygonArea(const FLOAT_TYPE x[], const FLOAT_TYPE y[], int n)
         area += (x[j] + x[i])*(y[j] - y[i]);
         j = i; 
     }
- 
+#endif
+#if 0 //1 // TEST Shoelace formula (see Wikipedia)
+    for (int i = 0; i < n; i++)
+        area += (x[(i + 1) % n] + x[i])*(y[(i + 1) % n] - y[i]);
+#endif
+    // NOTE: tested, this is ok!
+#if 1
+    // Shoelace formula
+    // See: https://rosettacode.org/wiki/Shoelace_formula_for_polygonal_area#C
+    for (int i = 0; i < n; i++)
+        area += x[i]*y[(i + 1) % n] - x[(i + 1) % n]*y[i];
+#endif
+    
     // Return absolute value
     return std::fabs(area*0.5);
 }
