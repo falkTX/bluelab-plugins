@@ -12,8 +12,9 @@
 #define FIND_PEAK_COMPAT 0 //1
 
 // Empirical alpha0 additional coeff
-#define EMPIR_ALPHA0_COEFF 0.1138292
-
+//#define EMPIR_ALPHA0_COEFF 0.1138292
+#define EMPIR_ALPHA0_COEFF 1.422865
+    
 // Empirical beta0 additional coeff
 #define EMPIR_BETA0_COEFF 0.0030370
 

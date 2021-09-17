@@ -148,7 +148,7 @@ PartialTracker6::PartialTracker6(int bufferSize, BL_FLOAT sampleRate,
     mPartialFilter = new PartialFilterMarchand(bufferSize, sampleRate);
 #endif
 #if USE_PARTIAL_FILTER_AMFM
-    mPartialFilter = new PartialFilterAMFM(bufferSize, sampleRate);
+    mPartialFilter = new PartialFilterAMFM(bufferSize, sampleRate, mYScale2);
 #endif
 }
 
@@ -1619,6 +1619,8 @@ PartialTracker6::ComputePartials(const vector<PeakDetector::Peak> &peaks,
 
 #endif
     }
+
+    //DBG_DumpPartials(magns, *partials);
 }
 
 int
