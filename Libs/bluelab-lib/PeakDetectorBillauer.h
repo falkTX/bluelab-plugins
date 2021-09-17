@@ -18,6 +18,8 @@ class PeakDetectorBillauer : public PeakDetector
                      int minIndex = -1, int maxIndex = -1) override;
 
 protected:
+    void SuppressSmallPeaks(const WDL_TypedBuf<BL_FLOAT> &data, vector<Peak> *peaks);
+        
     void AdjustPeaksWidth(const WDL_TypedBuf<BL_FLOAT> &data, vector<Peak> *peaks);
 
     bool DBG_TestPeaks(const WDL_TypedBuf<BL_FLOAT> &data, const vector<Peak> &peaks);

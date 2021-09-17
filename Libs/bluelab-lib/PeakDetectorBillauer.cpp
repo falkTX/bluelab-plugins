@@ -11,6 +11,10 @@
 // better left and right indices
 #define PEAKS_WIDTH_RATIO 0.5 //0.2
 
+// Peaks must be +2dB over the noise floor
+// => this will avoid having many many flat partials at high frequencies
+#define MIN_PARTIAL_HEIGHT_OVER_NF 2.0
+
 PeakDetectorBillauer::PeakDetectorBillauer(BL_FLOAT maxDelta)
 {
     //mDelta = 0.25;
@@ -161,7 +165,32 @@ DetectPeaks(const WDL_TypedBuf<BL_FLOAT> &data, vector<Peak> *peaks,
 #endif
     
     // Post process
+    SuppressSmallPeaks(data, peaks);
+        
     AdjustPeaksWidth(data, peaks);
+}
+
+void
+PeakDetectorBillauer::SuppressSmallPeaks(const WDL_TypedBuf<BL_FLOAT> &data,
+                                         vector<Peak> *peaks)
+{
+    vector<Peak> newPeaks;
+    for (int i = 0; i < peaks->size(); i++)
+    {
+        const Peak &p = (*peaks)[i];
+        
+        BL_FLOAT lm = data.Get()[p.mLeftIndex];
+        BL_FLOAT rm = data.Get()[p.mRightIndex];
+
+        BL_FLOAT base = (lm < rm) ? lm : rm;
+
+        BL_FLOAT height = data.Get()[p.mPeakIndex] - base;
+
+        if (height >= MIN_PARTIAL_HEIGHT_OVER_NF) // Hard coded
+            newPeaks.push_back(p);
+    }
+    
+    *peaks = newPeaks;
 }
 
 // With Billauer, and only one peak, left and right peak indices will
