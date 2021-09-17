@@ -577,3 +577,4 @@ Modif for enabling gdb attach to process:
 gdb -i=mi /opt/bitwig-studio/bin/BitwigStudioEngine -p 573523
 ====
 
+generator of test signals: https://www.wavtones.com/functiongenerator.php
