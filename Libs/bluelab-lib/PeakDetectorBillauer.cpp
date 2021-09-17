@@ -13,7 +13,7 @@
 
 // Peaks must be +2dB over the noise floor
 // => this will avoid having many many flat partials at high frequencies
-#define MIN_PARTIAL_HEIGHT_OVER_NF 2.0
+#define MIN_PARTIAL_HEIGHT_OVER_NF 0.0 //0.5 //2.0
 
 PeakDetectorBillauer::PeakDetectorBillauer(BL_FLOAT maxDelta)
 {

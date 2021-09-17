@@ -36,7 +36,7 @@ using namespace std;
 
 #define FIX_PARTIAL_CROSSING 1 //0 //1
 
-#define DISCARD_BIG_JUMPS 0 //1 //0
+#define DISCARD_BIG_JUMPS 1 //0
 
 #define DISCARD_OPPOSITE_DIRECTION 0 //1
 

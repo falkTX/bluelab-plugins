@@ -148,7 +148,7 @@ PartialTracker6::PartialTracker6(int bufferSize, BL_FLOAT sampleRate,
     mPartialFilter = new PartialFilterMarchand(bufferSize, sampleRate);
 #endif
 #if USE_PARTIAL_FILTER_AMFM
-    mPartialFilter = new PartialFilterAMFM(bufferSize, sampleRate, mYScale2);
+    mPartialFilter = new PartialFilterAMFM(bufferSize, sampleRate);
 #endif
 }
 
