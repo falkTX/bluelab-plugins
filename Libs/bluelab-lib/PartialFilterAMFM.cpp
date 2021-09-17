@@ -16,7 +16,8 @@ using namespace std;
 // 3 is often good
 //#define MAX_ZOMBIE_AGE 3 //2 //5 //2
 // 5 avoids changing id when partial crossing
-#define MAX_ZOMBIE_AGE 5
+//#define MAX_ZOMBIE_AGE 5
+#define MAX_ZOMBIE_AGE 1 // TEST NEW
 
 // Must keep history size >= 3, for FixPartialsCrossing
 #define PARTIALS_HISTORY_SIZE 3 //2
@@ -32,6 +33,12 @@ using namespace std;
 #define ASSOC_HUNGARIAN_NERI 0 //1
 
 #define RESCALE_HZ 0 //1
+
+#define FIX_PARTIAL_CROSSING 1 //0 //1
+
+#define DISCARD_BIG_JUMPS 0 //1 //0
+
+#define DISCARD_OPPOSITE_DIRECTION 0 //1
 
 PartialFilterAMFM::PartialFilterAMFM(int bufferSize, BL_FLOAT sampleRate)
 {    
@@ -126,7 +133,7 @@ PartialFilterAMFM::FilterPartials(vector<Partial> *partials)
     for (int i = 0; i < deadZombiePartials.size(); i++)
         currentPartials.push_back(deadZombiePartials[i]);
 
-#if 1 //0 // 1
+#if FIX_PARTIAL_CROSSING
     if (mPartials.size() >= 3)
         FixPartialsCrossing(mPartials[2], mPartials[1], &currentPartials);
 #endif
@@ -229,12 +236,19 @@ AssociatePartialsAMFM(const vector<Partial> &prevPartials,
                 BL_FLOAT LA = ComputeLA(prevPartial, currentPartial);
                 BL_FLOAT LF = ComputeLF(prevPartial, currentPartial);
 
-                bool bigJump = CheckBigJump(prevPartial, currentPartial);
+                bool discard = false;
+#if DISCARD_BIG_JUMPS
+                discard = CheckDiscardBigJump(prevPartial, currentPartial);
+#endif
+
+#if DISCARD_OPPOSITE_DIRECTION
+                discard = CheckDiscardOppositeDirection(prevPartial, currentPartial);
+#endif
                 
                 // As is the paper
                 if ((LA > 0.5) && (LF > 0.5) &&
-                    // Avoid big jumps
-                    !bigJump)
+                    // Avoid big jumps or similar
+                    !discard)
                      
                     // Associate!
                 {
@@ -705,7 +719,7 @@ PartialFilterAMFM::FindPartialById(const vector<Partial> &partials, int idx)
 BL_FLOAT
 PartialFilterAMFM::ComputeLA(const Partial &prevPartial,
                              const Partial &currentPartial)
-{
+{    
     // Use general polygon
     BL_FLOAT x[4] = { 0.0, 1.0, 1.0, 0.0 };
     BL_FLOAT y[4] = { prevPartial.mAmp,
@@ -739,7 +753,7 @@ PartialFilterAMFM::ComputeLF(const Partial &prevPartial,
                       prevPartial.mFreq + prevPartial.mBeta0,
                       currentPartial.mFreq,
                       currentPartial.mFreq - currentPartial.mBeta0 };
-
+    
     // TEST
     //for (int i = 0; i < 4; i++)
     //    y[i] = log(1.0 + y[i]*mSampleRate*0.5);
@@ -872,8 +886,8 @@ PartialFilterAMFM::DBG_DumpPartials(const char *fileName,
 }
 
 bool
-PartialFilterAMFM::CheckBigJump(const Partial &prevPartial,
-                                const Partial &currentPartial)
+PartialFilterAMFM::CheckDiscardBigJump(const Partial &prevPartial,
+                                       const Partial &currentPartial)
 {
 #define BIG_JUMP_COEFF 16.0 //4.0 //16.0 //4.0 //2.0
 
@@ -917,3 +931,23 @@ PartialFilterAMFM::CheckBigJump(const Partial &prevPartial,
     return false;
 }
 
+bool
+PartialFilterAMFM::CheckDiscardOppositeDirection(const Partial &prevPartial,
+                                                 const Partial &currentPartial)
+{
+    if ((prevPartial.mFreq < currentPartial.mFreq) &&
+        (prevPartial.mBeta0 < 0.0) && (currentPartial.mBeta0 > 0.0))
+        return true;
+    if ((prevPartial.mFreq > currentPartial.mFreq) &&
+        (prevPartial.mBeta0 > 0.0) && (currentPartial.mBeta0 < 0.0))
+        return true;
+
+    if ((prevPartial.mAmp < currentPartial.mAmp) &&
+        (prevPartial.mAlpha0 < 0.0) && (currentPartial.mAlpha0 > 0.0))
+        return true;
+    if ((prevPartial.mAmp > currentPartial.mAmp) &&
+        (prevPartial.mAlpha0 > 0.0) && (currentPartial.mAlpha0 < 0.0))
+        return true;
+    
+    return false;
+}

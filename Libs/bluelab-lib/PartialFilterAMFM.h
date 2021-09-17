@@ -13,7 +13,7 @@ using namespace std;
 class PartialFilterAMFM : public PartialFilter
 {
  public:
-    PartialFilterAMFM(int bufferSize, BL_FLOAT smapleRate);
+    PartialFilterAMFM(int bufferSize, BL_FLOAT sampleRate);
     virtual ~PartialFilterAMFM();
 
     void Reset(int bufferSize, BL_FLOAT smapleRate);
@@ -58,8 +58,11 @@ class PartialFilterAMFM : public PartialFilter
     void ExtrapolatePartialAMFM(Partial *p);
     void ExtrapolatePartialKalman(Partial *p);
 
-    bool CheckBigJump(const Partial &prevPartial, const Partial &currentPartial);
-    
+    bool CheckDiscardBigJump(const Partial &prevPartial,
+                             const Partial &currentPartial);
+    bool CheckDiscardOppositeDirection(const Partial &prevPartial,
+                                       const Partial &currentPartial);
+        
     void DBG_PrintPartials(const vector<Partial> &partials);
     void DBG_DumpPartials(const char *fileName,
                           const vector<Partial> &partials, int size);
