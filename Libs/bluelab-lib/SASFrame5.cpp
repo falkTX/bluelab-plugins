@@ -112,6 +112,8 @@ SIN_LUT_CREATE(SAS_FRAME_SIN_LUT, 4096);
 
 #define DEBUG_DUMP_VALUES 0 //1
 
+#define OPTIM_SAMPLES_SYNTH_SORTED_VEC 1 // 0
+
 SASFrame5::SASPartial::SASPartial()
 {
     mFreq = 0.0;
@@ -305,6 +307,10 @@ SASFrame5::SetPartials(const vector<Partial> &partials)
 {
     mPrevPartials = mPartials;
     mPartials = partials;
+
+#if OPTIM_SAMPLES_SYNTH_SORTED_VEC
+    sort(mPrevPartials.begin(), mPrevPartials.end(), Partial::IdLess);
+#endif
     
     // FIX: sorting by freq avoids big jumps in computed frequency when
     // id of a given partial changes.
@@ -535,7 +541,12 @@ SASFrame5::ComputeSamplesPartials(WDL_TypedBuf<BL_FLOAT> *samples)
         Partial partial;
         
         BL_FLOAT phase = 0.0;
+#if !OPTIM_SAMPLES_SYNTH_SORTED_VEC
         int prevPartialIdx = FindPrevPartialIdx(i);
+#else
+        int prevPartialIdx = FindPrevPartialIdxSorted(i);
+#endif
+        
         if (prevPartialIdx != -1)
             phase = mPrevPartials[prevPartialIdx].mPhase;
         
@@ -1974,8 +1985,12 @@ void
 SASFrame5::GetPartial(Partial *result, int index, BL_FLOAT t)
 {
     const Partial &currentPartial = mPartials[index];
-    
+
+#if !OPTIM_SAMPLES_SYNTH_SORTED_VEC
     int prevPartialIdx = FindPrevPartialIdx(index);
+#else
+    int prevPartialIdx = FindPrevPartialIdxSorted(index);
+#endif
     
     *result = currentPartial;
     
@@ -2059,6 +2074,28 @@ SASFrame5::FindPrevPartialIdx(int currentPartialIdx)
     }
     
     return prevPartialIdx;
+}
+
+int
+SASFrame5::FindPrevPartialIdxSorted(int currentPartialIdx)
+{
+    if (currentPartialIdx >= mPartials.size())
+        return -1;
+    
+    const Partial &currentPartial = mPartials[currentPartialIdx];
+    
+    // Find the corresponding prev partial
+    vector<Partial>::iterator it =
+        lower_bound(mPrevPartials.begin(), mPrevPartials.end(),
+                    currentPartial, Partial::IdLess);
+    
+    if (it != mPrevPartials.end() && (*it).mId == currentPartial.mId)
+    {
+        // We found the element!
+        return (it - mPrevPartials.begin());
+    }
+
+    return -1;
 }
 
 void

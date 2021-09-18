@@ -165,7 +165,9 @@ protected:
     void GetPartial(Partial *result, int index, BL_FLOAT t);
     
     int FindPrevPartialIdx(int currentPartialIdx);
-
+    // Optimized
+    int FindPrevPartialIdxSorted(int currentPartialIdx);
+    
     void GetSASPartial(SASPartial *result, int index, BL_FLOAT t);
     
     //
