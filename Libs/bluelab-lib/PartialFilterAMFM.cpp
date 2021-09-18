@@ -754,16 +754,10 @@ PartialFilterAMFM::ComputeLF(const Partial &prevPartial,
                       currentPartial.mFreq,
                       currentPartial.mFreq - currentPartial.mBeta0 };
     
-    // TEST
-    //for (int i = 0; i < 4; i++)
-    //    y[i] = log(1.0 + y[i]*mSampleRate*0.5);
-    
     BL_FLOAT area = BLUtilsMath::PolygonArea(x, y, 4);
     
     // u
     BL_FLOAT denom = sqrt(currentPartial.mFreq*prevPartial.mFreq);
-    //BL_FLOAT denom = sqrt(log(1.0 + currentPartial.mFreq*mSampleRate*0.5)*
-    //                      log(1.0 + prevPartial.mFreq*mSampleRate*0.5));
     
     BL_FLOAT uf = 0.0;
     if (denom > BL_EPS)
