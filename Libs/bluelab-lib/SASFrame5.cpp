@@ -2095,6 +2095,7 @@ SASFrame5::FindPrevPartialIdxSorted(int currentPartialIdx)
         return (it - mPrevPartials.begin());
     }
 
+    // Not found
     return -1;
 }
 
