@@ -44,7 +44,10 @@ class PartialFilterAMFM : public PartialFilter
                              vector<Partial> *partials2);
         
     int FindPartialById(const vector<Partial> &partials, int idx);
-
+    // Optimized
+    int FindPartialByIdSorted(const vector<Partial> &partials,
+                              const Partial &refPartial);
+    
     // For AMFM
     BL_FLOAT ComputeLA(const Partial &prevPartial, const Partial &currentPartial);
     BL_FLOAT ComputeLF(const Partial &prevPartial, const Partial &currentPartial);

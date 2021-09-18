@@ -42,6 +42,8 @@ using namespace std;
 
 #define OPTIM_TRAPEZOID_AREA 1 // 0
 
+#define OPTIM_SAMPLES_SYNTH_SORTED_VEC 1 // 0
+
 PartialFilterAMFM::PartialFilterAMFM(int bufferSize, BL_FLOAT sampleRate)
 {    
     mBufferSize = bufferSize;
@@ -152,7 +154,7 @@ PartialFilterAMFM::FilterPartials(vector<Partial> *partials)
         
         currentPartials.push_back(p);
     }
-    
+
     // Then sort the new partials by frequency
     sort(currentPartials.begin(), currentPartials.end(), Partial::FreqLess);
     
@@ -208,7 +210,12 @@ AssociatePartialsAMFM(const vector<Partial> &prevPartials,
     
     vector<Partial> &prevPartials0 = mTmpPartials5;
     prevPartials0 = prevPartials;
+
+#if !OPTIM_SAMPLES_SYNTH_SORTED_VEC
     sort(prevPartials0.begin(), prevPartials0.end(), Partial::FreqLess);
+#else
+    sort(prevPartials0.begin(), prevPartials0.end(), Partial::IdLess);
+#endif
     
     // Associated partials
     bool stopFlag = true;
@@ -280,8 +287,14 @@ AssociatePartialsAMFM(const vector<Partial> &prevPartials,
                     //
                     
                     // Find the previous link for case 0
+#if !OPTIM_SAMPLES_SYNTH_SORTED_VEC
                     int otherPrevIdx =
                         FindPartialById(prevPartials0, (int)currentPartial.mId);
+#else
+                    int otherPrevIdx =
+                        FindPartialByIdSorted(prevPartials0, currentPartial);
+#endif
+                    
                     // Find prev partial
                     Partial prevPartialFight =
                         mustFight0 ? prevPartials0[otherPrevIdx] : prevPartial;
@@ -713,6 +726,26 @@ PartialFilterAMFM::FindPartialById(const vector<Partial> &partials, int idx)
             return i;
     }
     
+    return -1;
+}
+
+int
+PartialFilterAMFM::FindPartialByIdSorted(const vector<Partial> &partials,
+                                         const Partial &refPartial)
+{
+    vector<Partial> &partials0 = (vector<Partial> &)partials;
+    
+    // Find the corresponding prev partial
+    vector<Partial>::iterator it =
+        lower_bound(partials0.begin(), partials0.end(), refPartial, Partial::IdLess);
+    
+    if (it != partials0.end() && (*it).mId == refPartial.mId)
+    {
+        // We found the element!
+        return (it - partials0.begin());
+    }
+
+    // Not found
     return -1;
 }
 
