@@ -396,31 +396,82 @@ PartialFilterAMFM::
 AssociatePartialsHungarianAMFM(const vector<Partial> &prevPartials,
                                vector<Partial> *currentPartials,
                                vector<Partial> *remainingCurrentPartials)
-{    
+{
+#define HUNGARIAN_INF BL_INF
+    //#define HUNGARIAN_INF 1.0 //10.0
+
+    // ORIGIN: 0
+    // => looks quite similar with or without...
+#define FORCE_SQUARE_MATRIX 0 //1
+    
+#if FORCE_SQUARE_MATRIX
+    int maxDim = (prevPartials.size() > currentPartials->size()) ?
+        prevPartials.size() : currentPartials->size();
+
+    // Init cost matrix (MxN)
+    vector<vector<BL_FLOAT> > costMatrix;
+    costMatrix.resize(maxDim);
+    for (int i = 0; i < costMatrix.size(); i++)
+        costMatrix[i].resize(maxDim);
+#else 
     // Init cost matrix (MxN)
     vector<vector<BL_FLOAT> > costMatrix;
     costMatrix.resize(prevPartials.size());
     for (int i = 0; i < costMatrix.size(); i++)
         costMatrix[i].resize(currentPartials->size());
+#endif
+    
+#if FORCE_SQUARE_MATRIX
+    // Fill with dummy values
+    for (int i = 0; i < costMatrix.size(); i++)
+        for (int j = 0; j < costMatrix[i].size(); j++)
+            costMatrix[i][j] = 0.0;
+#endif
     
     // Fill the cost matrix
     for (int i = 0; i < costMatrix.size(); i++)
     {
         for (int j = 0; j < costMatrix[i].size(); j++)
         {
+#if FORCE_SQUARE_MATRIX
+            if (i >= prevPartials.size())
+                continue;
+            if (j >= currentPartials->size())
+                continue;
+#endif
+            
             BL_FLOAT LA = ComputeLA(prevPartials[i], (*currentPartials)[j]);
             BL_FLOAT LF = ComputeLF(prevPartials[i], (*currentPartials)[j]);
+            
+            bool discard = false;
+#if DISCARD_BIG_JUMPS
+            discard = CheckDiscardBigJump(prevPartials[i], (*currentPartials)[j]);
+#endif
 
-#if 0 // Check discard?
-            if ((LA < 0.5) || (LF < 0.5))
-                // Discard
-                costMatrix[i][j] = BL_INF;
+#if 1 // Check discard?
+            if ((LA < 0.5) || (LF < 0.5) ||
+                // Avoid big jumps or similar
+                discard)
+                costMatrix[i][j] = HUNGARIAN_INF; 
             else
 #endif
                 costMatrix[i][j] = 1.0 - LA*LF;
         }
     }
 
+#if 0 //1 // DEBUG
+    BLDebug::ResetFile("matrix.txt");
+    for (int i = 0; i < costMatrix.size(); i++)
+    {
+        for (int j = 0; j < costMatrix[i].size(); j++)
+        {
+            BL_FLOAT val = costMatrix[i][j];
+            
+            BLDebug::AppendValue("matrix.txt", val);
+        }
+    }
+#endif
+    
     // Solve
     HungarianAlgorithm HungAlgo;
 	vector<int> assignment;
@@ -429,11 +480,17 @@ AssociatePartialsHungarianAMFM(const vector<Partial> &prevPartials,
     for (int i = 0; i < assignment.size(); i++)
     {
         int a = assignment[i];
-       
+
+#if FORCE_SQUARE_MATRIX
+        if (i >= prevPartials.size())
+            continue;
+        if (a >= currentPartials->size())
+            continue;
+#endif
+        
         // If num prev > num current, there will be some unassigned partials
         // (int this case, assignment is -1)
-        if ((a != -1) && 
-            (prevPartials[i].mId != -1))
+        if ((a != -1) && (prevPartials[i].mId != -1))
             (*currentPartials)[a].mId = prevPartials[i].mId;
     }
 
