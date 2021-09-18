@@ -93,6 +93,9 @@ using namespace std;
 // It is better with log then just with dB!
 #define USE_QIFFT_YLOG 1
 
+// ORIGIN: 1
+#define USE_A_WEIGHTING 1 //0
+
 PartialTracker6::PartialTracker6(int bufferSize, BL_FLOAT sampleRate,
                                  BL_FLOAT overlapping)
 {
@@ -1199,9 +1202,11 @@ PartialTracker6::PreProcessDataY(WDL_TypedBuf<BL_FLOAT> *data)
 #if 1 // OPTIM; in block
     mScale->ApplyScaleForEach(mYScale, data, (BL_FLOAT)MIN_AMP_DB, (BL_FLOAT)0.0);
 #endif
-    
+
+#if USE_A_WEIGHTING
     // Better tracking on high frequencies with this!
     PreProcessAWeighting(data, true);
+#endif
 }
 
 void
@@ -1370,11 +1375,14 @@ PartialTracker6::DenormPartials(vector<Partial> *partials)
         partial.mFreq *= mSampleRate*0.5;
 
 #if !USE_QIFFT_YLOG
+
+#if USE_A_WEIGHTING
         // Reverse AWeighting
         int binNum = partial.mFreq/hzPerBin;
         partial.mAmp = ProcessAWeighting(binNum, mBufferSize*0.5,
                                          partial.mAmp, false);
-    
+#endif
+        
         // Y
         partial.mAmp = mScale->ApplyScale(mYScaleInv, partial.mAmp,
                                           (BL_FLOAT)MIN_AMP_DB, (BL_FLOAT)0.0);
@@ -1408,9 +1416,11 @@ PartialTracker6::DenormData(WDL_TypedBuf<BL_FLOAT> *data)
                                     mSampleRate, data->GetSize());
     *data = scaledData;
 #endif
-    
+
+#if USE_A_WEIGHTING
     // A-Weighting
     PreProcessAWeighting(data, false);
+#endif
     
     mScale->ApplyScaleForEach(mYScaleInv, data, (BL_FLOAT)MIN_AMP_DB, (BL_FLOAT)0.0);
 }
