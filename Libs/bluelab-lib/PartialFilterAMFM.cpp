@@ -40,6 +40,8 @@ using namespace std;
 
 #define DISCARD_OPPOSITE_DIRECTION 0 //1
 
+#define OPTIM_TRAPEZOID_AREA 1 // 0
+
 PartialFilterAMFM::PartialFilterAMFM(int bufferSize, BL_FLOAT sampleRate)
 {    
     mBufferSize = bufferSize;
@@ -719,7 +721,8 @@ PartialFilterAMFM::FindPartialById(const vector<Partial> &partials, int idx)
 BL_FLOAT
 PartialFilterAMFM::ComputeLA(const Partial &prevPartial,
                              const Partial &currentPartial)
-{    
+{
+#if !OPTIM_TRAPEZOID_AREA
     // Use general polygon
     BL_FLOAT x[4] = { 0.0, 1.0, 1.0, 0.0 };
     BL_FLOAT y[4] = { prevPartial.mAmp,
@@ -728,6 +731,14 @@ PartialFilterAMFM::ComputeLA(const Partial &prevPartial,
                       currentPartial.mAmp - currentPartial.mAlpha0 };
                         
     BL_FLOAT area = BLUtilsMath::PolygonArea(x, y, 4);
+#else
+    BL_FLOAT a =
+        fabs(prevPartial.mAmp - (currentPartial.mAmp - currentPartial.mAlpha0));
+    BL_FLOAT b =
+        fabs(currentPartial.mAmp - (prevPartial.mAmp + prevPartial.mAlpha0));
+    BL_FLOAT h = 1.0;
+    BL_FLOAT area = BLUtilsMath::TrapezoidArea(a, b, h);
+#endif
     
     // u
     BL_FLOAT denom = sqrt(currentPartial.mAmp*prevPartial.mAmp);
@@ -747,6 +758,7 @@ BL_FLOAT
 PartialFilterAMFM::ComputeLF(const Partial &prevPartial,
                              const Partial &currentPartial)
 {
+#if !OPTIM_TRAPEZOID_AREA
     // General polygon
     BL_FLOAT x[4] = { 0.0, 1.0, 1.0, 0.0 };
     BL_FLOAT y[4] = { prevPartial.mFreq,
@@ -755,10 +767,17 @@ PartialFilterAMFM::ComputeLF(const Partial &prevPartial,
                       currentPartial.mFreq - currentPartial.mBeta0 };
     
     BL_FLOAT area = BLUtilsMath::PolygonArea(x, y, 4);
+#else
+    BL_FLOAT a =
+        fabs(prevPartial.mFreq - (currentPartial.mFreq - currentPartial.mBeta0));
+    BL_FLOAT b =
+        fabs(currentPartial.mFreq - (prevPartial.mFreq + prevPartial.mBeta0));
+    BL_FLOAT h = 1.0;
+    BL_FLOAT area = BLUtilsMath::TrapezoidArea(a, b, h);
+#endif
     
     // u
     BL_FLOAT denom = sqrt(currentPartial.mFreq*prevPartial.mFreq);
-    
     BL_FLOAT uf = 0.0;
     if (denom > BL_EPS)
         uf = area/denom;

@@ -807,4 +807,16 @@ BLUtilsMath::PolygonArea(const FLOAT_TYPE x[], const FLOAT_TYPE y[], int n)
 }
 template float BLUtilsMath::PolygonArea(const float x[], const float y[], int n);
 template double BLUtilsMath::PolygonArea(const double x[], const double y[], int n);
+
+// NOTE: should also work for obtuse trapezoids
+template <typename FLOAT_TYPE>
+FLOAT_TYPE
+BLUtilsMath::TrapezoidArea(FLOAT_TYPE a, FLOAT_TYPE b, FLOAT_TYPE h)
+{
+    FLOAT_TYPE area = (a + b)*h*0.5;
     
+    return area;
+}
+template float BLUtilsMath::TrapezoidArea(float a, float b, float h);
+template double BLUtilsMath::TrapezoidArea(double a, double b, double h);
+

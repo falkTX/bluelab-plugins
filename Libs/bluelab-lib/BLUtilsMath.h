@@ -146,9 +146,11 @@ class BLUtilsMath
     static void LinearResample(const FLOAT_TYPE *srcBuf, int srcSize,
                                FLOAT_TYPE *dstBuf, int dstSize);
 
-    // Coordinates must be in counterclockwise order
     template <typename FLOAT_TYPE>
     static FLOAT_TYPE PolygonArea(const FLOAT_TYPE x[], const FLOAT_TYPE y[], int n);
+
+    template <typename FLOAT_TYPE>
+    static FLOAT_TYPE TrapezoidArea(FLOAT_TYPE a, FLOAT_TYPE b, FLOAT_TYPE h);
 };
 
 #endif
