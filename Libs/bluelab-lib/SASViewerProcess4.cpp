@@ -386,6 +386,12 @@ SASViewerProcess4::SetThreshold(BL_FLOAT threshold)
 }
 
 void
+SASViewerProcess4::SetThreshold2(BL_FLOAT threshold2)
+{
+    mPartialTracker->SetThreshold2(threshold2);
+}
+
+void
 SASViewerProcess4::SetAmpFactor(BL_FLOAT factor)
 {
     mSASFrame->SetAmpFactor(factor);

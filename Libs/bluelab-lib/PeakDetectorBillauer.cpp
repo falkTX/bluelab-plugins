@@ -11,9 +11,8 @@
 // better left and right indices
 #define PEAKS_WIDTH_RATIO 0.5 //0.2
 
-// Peaks must be +2dB over the noise floor
-// => this will avoid having many many flat partials at high frequencies
-#define MIN_PARTIAL_HEIGHT_OVER_NF 0.0 //0.5 //2.0
+// Keep 20 peaks and suppress only if more than 20 peaks
+#define SUPPRESS_MIN_NUM_PEAKS 20.0
 
 PeakDetectorBillauer::PeakDetectorBillauer(BL_FLOAT maxDelta)
 {
@@ -22,6 +21,8 @@ PeakDetectorBillauer::PeakDetectorBillauer(BL_FLOAT maxDelta)
     mMaxDelta = maxDelta;
     
     mDelta = 0.25*mMaxDelta;
+
+    mThreshold2 = 1.0;
 }
 
 PeakDetectorBillauer::~PeakDetectorBillauer() {}
@@ -32,6 +33,12 @@ PeakDetectorBillauer::SetThreshold(BL_FLOAT threshold)
     //mDelta = threshold;
     
     mDelta = threshold*mMaxDelta;
+}
+
+void
+PeakDetectorBillauer::SetThreshold2(BL_FLOAT threshold2)
+{
+    mThreshold2 = threshold2;
 }
 
 void
@@ -163,17 +170,26 @@ DetectPeaks(const WDL_TypedBuf<BL_FLOAT> &data, vector<Peak> *peaks,
     if (!peakOk)
         DBG_DumpPeaks(data, *peaks);
 #endif
+
+    // NOTE: need SuppressSmallPeaks() before AdjustPeaksWidth()
+    // strangely... (it should be the contrary)
+    
     
     // Post process
     SuppressSmallPeaks(data, peaks);
-        
+
     AdjustPeaksWidth(data, peaks);
 }
 
+// Simple method, with hard coded value
 void
-PeakDetectorBillauer::SuppressSmallPeaks(const WDL_TypedBuf<BL_FLOAT> &data,
-                                         vector<Peak> *peaks)
+PeakDetectorBillauer::SuppressSmallPeaksSimple(const WDL_TypedBuf<BL_FLOAT> &data,
+                                               vector<Peak> *peaks)
 {
+    // Peaks must be +2dB over the noise floor
+    // => this will avoid having many many flat partials at high frequencies
+#define MIN_PARTIAL_HEIGHT_OVER_NF 0.0 //0.5 //2.0
+    
     vector<Peak> newPeaks;
     for (int i = 0; i < peaks->size(); i++)
     {
@@ -191,6 +207,40 @@ PeakDetectorBillauer::SuppressSmallPeaks(const WDL_TypedBuf<BL_FLOAT> &data,
     }
     
     *peaks = newPeaks;
+}
+
+void
+PeakDetectorBillauer::SuppressSmallPeaks(const WDL_TypedBuf<BL_FLOAT> &data,
+                                         vector<Peak> *peaks)
+{
+    if (mThreshold2 >= 1.0)
+        // Take all peaks
+        return;
+
+    if (peaks->size() < SUPPRESS_MIN_NUM_PEAKS)
+        return;
+    
+    // Compute peaks prominence
+    for (int i = 0; i < peaks->size(); i++)
+    {
+        Peak &p = (*peaks)[i];
+        ComputePeakProminence(data, &p);
+    }
+
+    // Sort peaks by prominence
+    sort(peaks->begin(), peaks->end(), Peak::ProminenceLess);
+
+    // Order biggest peaks first
+    reverse(peaks->begin(), peaks->end());
+
+    // Keep only the biggest peaks
+    int numToTakePeaks = peaks->size()*mThreshold2;
+
+    if ((numToTakePeaks < SUPPRESS_MIN_NUM_PEAKS) &&
+        (peaks->size() > SUPPRESS_MIN_NUM_PEAKS))
+        numToTakePeaks = SUPPRESS_MIN_NUM_PEAKS;
+    
+    peaks->resize(numToTakePeaks);
 }
 
 // With Billauer, and only one peak, left and right peak indices will
@@ -243,6 +293,21 @@ PeakDetectorBillauer::AdjustPeaksWidth(const WDL_TypedBuf<BL_FLOAT> &data,
             }
         }
     }
+}
+
+// Prominence is computed from the highest border
+//
+// See: https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.peak_prominences.html#scipy.signal.peak_prominences
+void
+PeakDetectorBillauer::ComputePeakProminence(const WDL_TypedBuf<BL_FLOAT> &data,
+                                            Peak *p)
+{
+    BL_FLOAT lm = data.Get()[p->mLeftIndex];
+    BL_FLOAT rm = data.Get()[p->mRightIndex];
+
+    BL_FLOAT base = (lm > rm) ? lm : rm;
+
+    p->mProminence = data.Get()[p->mPeakIndex] - base;
 }
 
 bool

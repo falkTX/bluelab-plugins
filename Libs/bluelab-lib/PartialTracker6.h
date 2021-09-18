@@ -74,6 +74,7 @@ public:
     BL_FLOAT GetMinAmpDB();
     
     void SetThreshold(BL_FLOAT threshold);
+    void SetThreshold2(BL_FLOAT threshold2);
 
     // Use one or the other following methods
     //

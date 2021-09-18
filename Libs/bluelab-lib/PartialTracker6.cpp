@@ -214,6 +214,12 @@ PartialTracker6::SetThreshold(BL_FLOAT threshold)
 }
 
 void
+PartialTracker6::SetThreshold2(BL_FLOAT threshold2)
+{
+    mPeakDetector->SetThreshold2(threshold2);
+}
+
+void
 PartialTracker6::SetData(const WDL_TypedBuf<BL_FLOAT> &magns,
                          const WDL_TypedBuf<BL_FLOAT> &phases)
 {

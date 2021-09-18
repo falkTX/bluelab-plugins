@@ -377,6 +377,8 @@ AssociatePartialsAMFM(const vector<Partial> &prevPartials,
             newPartials.push_back(currentPartial);
         }
     }
+
+    // NOTE: sometimes would need an "infinite number of iterations"..
     
     // Add the remaining partials
     remainingCurrentPartials->clear();

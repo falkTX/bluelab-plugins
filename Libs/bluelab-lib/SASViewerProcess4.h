@@ -71,6 +71,7 @@ public:
     void SetShowDetectionPoints(bool flag);
     
     void SetThreshold(BL_FLOAT threshold);
+    void SetThreshold2(BL_FLOAT threshold2);
     
     void SetAmpFactor(BL_FLOAT factor);
     void SetFreqFactor(BL_FLOAT factor);
