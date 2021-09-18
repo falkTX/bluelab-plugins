@@ -203,7 +203,12 @@ AssociatePartialsAMFM(const vector<Partial> &prevPartials,
 {
     // Quick optimization (avoid long freezing)
     // (later, will use hungarian)
-#define MAX_NUM_ITER 5
+    //#define MAX_NUM_ITER 5
+    
+    // Sometimes need more than 5 (and less than 10)
+    // When threshold is near 1%
+    // (Sometimes it never solves totally and would lead to infinite num iters)
+#define MAX_NUM_ITER 10
     
     // Sort current partials and prev partials by increasing frequency
     sort(currentPartials->begin(), currentPartials->end(), Partial::FreqLess);
