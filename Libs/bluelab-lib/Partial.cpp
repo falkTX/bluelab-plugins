@@ -33,6 +33,7 @@ Partial::Partial()
     mState = ALIVE;
     
     mId = -1;
+    mLinkedId = -1;
     
     mWasAlive = false;
     mZombieAge = 0;
@@ -58,6 +59,7 @@ Partial::Partial(const Partial &other)
     mState = other.mState;;
         
     mId = other.mId;
+    mLinkedId = other.mLinkedId;
     
     mWasAlive = other.mWasAlive;
     mZombieAge = other.mZombieAge;

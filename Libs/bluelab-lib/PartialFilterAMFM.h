@@ -23,11 +23,18 @@ class PartialFilterAMFM : public PartialFilter
     void SetNeriDelta(BL_FLOAT delta);
     
  protected:
-    // Method based on alpha0 and beta0
+    // Method based on alpha0 and beta0 (not optimized)
+    void AssociatePartialsAMFMSimple(const vector<Partial> &prevPartials,
+                                     vector<Partial> *currentPartials,
+                                     vector<Partial> *remainingCurrentPartials);
+
+    // Method based on alpha0 and beta0 (optimized)
     void AssociatePartialsAMFM(const vector<Partial> &prevPartials,
                                vector<Partial> *currentPartials,
                                vector<Partial> *remainingCurrentPartials);
-
+    long FindNearestFreqId(const vector<Partial> &partials,
+                           BL_FLOAT freq, int index);
+        
     // Compute score using Neri
     void AssociatePartialsNeri(const vector<Partial> &prevPartials,
                                vector<Partial> *currentPartials,

@@ -124,8 +124,9 @@ PartialFilterAMFM::FilterPartials(vector<Partial> *partials)
     //DBG_PrintPartials(prevPartials);
         
 #if ASSOC_SIMPLE_AMFM
-    AssociatePartialsAMFM(prevPartials, &currentPartials,
-                          &remainingCurrentPartials);
+    AssociatePartialsAMFM(prevPartials, &currentPartials, &remainingCurrentPartials);
+    //AssociatePartialsAMFMSimple(prevPartials, &currentPartials,
+    //                            &remainingCurrentPartials);
 #endif
 
 #if ASSOC_SIMPLE_NERI
@@ -216,9 +217,9 @@ PartialFilterAMFM::SetNeriDelta(BL_FLOAT delta)
 
 void
 PartialFilterAMFM::
-AssociatePartialsAMFM(const vector<Partial> &prevPartials,
-                      vector<Partial> *currentPartials,
-                      vector<Partial> *remainingCurrentPartials)
+AssociatePartialsAMFMSimple(const vector<Partial> &prevPartials,
+                            vector<Partial> *currentPartials,
+                            vector<Partial> *remainingCurrentPartials)
 {
     // Quick optimization (avoid long freezing)
     // (later, will use hungarian)
@@ -410,6 +411,255 @@ AssociatePartialsAMFM(const vector<Partial> &prevPartials,
     
     // Update current partials
     *currentPartials = newPartials;
+}
+
+void
+PartialFilterAMFM::
+AssociatePartialsAMFM(const vector<Partial> &prevPartials,
+                      vector<Partial> *currentPartials,
+                      vector<Partial> *remainingCurrentPartials)
+{
+    // Quick optimization (avoid long freezing)
+    // (later, will use hungarian)
+    //#define MAX_NUM_ITER 5
+    
+    // Sometimes need more than 5 (and less than 10)
+    // When threshold is near 1%
+    // (Sometimes it never solves totally and would lead to infinite num iters)
+#define MAX_NUM_ITER 10
+
+    // Problem: we miss the highest freqs if != 2048
+#define NUM_STEPS_LOOKUP 8 //2048 // 128 //4
+    
+    // Sort current partials and prev partials by increasing frequency
+    sort(currentPartials->begin(), currentPartials->end(), Partial::FreqLess);
+    
+    vector<Partial> &prevPartials0 = mTmpPartials5;
+    prevPartials0 = prevPartials;
+
+    sort(prevPartials0.begin(), prevPartials0.end(), Partial::FreqLess);
+
+    // Reset the links
+    for (int i = 0; i < prevPartials0.size(); i++)
+        prevPartials0[i].mLinkedId = -1;
+    for (int i = 0; i < currentPartials->size(); i++)
+    {
+        (*currentPartials)[i].mLinkedId = -1;
+
+        // Just in case
+        (*currentPartials)[i].mId = -1;
+    }
+    
+    // Associated partials
+    bool stopFlag = true;
+    int numIters = 0;
+    do {
+        stopFlag = true;
+
+        numIters++;
+        
+        for (int i = 0; i < prevPartials0.size(); i++)
+        {
+            Partial &prevPartial = prevPartials0[i];
+
+            // Check if the link is already done
+            if (((int)prevPartial.mId != -1) &&
+                (prevPartial.mLinkedId != -1) &&
+                ((*currentPartials)[prevPartial.mLinkedId].mLinkedId == i))
+                // Already linked
+                continue;
+            
+            int nearestFreqId =
+                FindNearestFreqId(*currentPartials, prevPartial.mFreq, i);
+                
+            for (int j = nearestFreqId - NUM_STEPS_LOOKUP/2;
+                 j < nearestFreqId + NUM_STEPS_LOOKUP/2; j++)
+            {
+                if ((j < 0) || (j >= currentPartials->size()))
+                    continue;
+                
+                Partial &currentPartial = (*currentPartials)[j];
+                
+                if (currentPartial.mId == prevPartial.mId)
+                    continue;
+                
+#if DISCARD_BIG_JUMPS
+                bool discard = CheckDiscardBigJump(prevPartial, currentPartial);
+                if (discard)
+                    continue;
+#endif
+
+                BL_FLOAT LA = ComputeLA(prevPartial, currentPartial);
+                BL_FLOAT LF = ComputeLF(prevPartial, currentPartial);
+                
+                // As is the paper
+                if ((LA > 0.5) && (LF > 0.5))
+                    // Associate!
+                {
+                    // Current partial already has an id
+                    bool mustFight0 = (currentPartial.mId != -1);
+
+                    int fight1Idx = prevPartial.mLinkedId;
+                    
+                    // Prev partial already has some association with the current id
+                    bool mustFight1 = (fight1Idx != -1);
+                        
+                    if (!mustFight0 && !mustFight1)
+                    {
+                        currentPartial.mId = prevPartial.mId;
+                        currentPartial.mAge = prevPartial.mAge;
+
+                        currentPartial.mLinkedId = i;
+                        prevPartial.mLinkedId = j;
+                            
+                        stopFlag = false;
+                        
+                        continue;
+                    }
+                    
+                    // Fight!
+                    //
+                    
+                    // Find the previous link for case 0
+                    int otherPrevIdx = currentPartial.mLinkedId;
+
+                    if ((otherPrevIdx == -1) && mustFight0)
+                        continue;
+
+                    if ((fight1Idx == -1) && !mustFight0)
+                        continue;
+                    
+                    // Find prev partial
+                    Partial prevPartialFight =
+                        mustFight0 ? prevPartials0[otherPrevIdx] : prevPartial;
+                    // Find current partial
+                    Partial currentPartialFight =
+                        mustFight0 ? currentPartial : (*currentPartials)[fight1Idx];
+
+                    // Compute scores
+                    BL_FLOAT otherLA =
+                        ComputeLA(prevPartialFight, currentPartialFight);
+                    BL_FLOAT otherLF =
+                        ComputeLF(prevPartialFight, currentPartialFight);
+                    
+                    // Joint likelihood
+                    BL_FLOAT j0 = LA*LF;
+                    BL_FLOAT j1 = otherLA*otherLF;
+                    if (j0 > j1)
+                        // Current partial won
+                    {
+                        // Disconnect for case 1
+                        if (mustFight1)
+                        {
+                            int prevPartialIdx =
+                                (*currentPartials)[fight1Idx].mLinkedId;
+                            if (prevPartialIdx != -1)
+                                prevPartials0[prevPartialIdx].mLinkedId = -1;
+                            
+                            (*currentPartials)[fight1Idx].mId = -1;
+                            (*currentPartials)[fight1Idx].mLinkedId = -1;
+                        }
+                        
+                        currentPartial.mId = prevPartial.mId;
+                        currentPartial.mAge = prevPartial.mAge;
+
+                        currentPartial.mLinkedId = i;
+                        prevPartial.mLinkedId = j;
+                        
+                        stopFlag = false;
+                    }
+                    else
+                        // Other partial won
+                    {
+                        // Just keep it like it is!
+                    }
+                }
+            }
+        }
+
+        // Quick optimization
+        if (numIters > MAX_NUM_ITER)
+            break;
+        
+    } while (!stopFlag);
+    
+    // Update partials
+    vector<Partial> &newPartials = mTmpPartials6;
+    newPartials.resize(0);
+    
+    for (int j = 0; j < currentPartials->size(); j++)
+    {
+        Partial &currentPartial = (*currentPartials)[j];
+
+        if (currentPartial.mId != -1)
+        {
+            currentPartial.mState = Partial::ALIVE;
+            currentPartial.mWasAlive = true;
+    
+            // Increment age
+            currentPartial.mAge = currentPartial.mAge + 1;
+            
+            newPartials.push_back(currentPartial);
+        }
+    }
+
+    // NOTE: sometimes would need an "infinite number of iterations"..
+    
+    // Add the remaining partials
+    remainingCurrentPartials->clear();
+    for (int i = 0; i < currentPartials->size(); i++)
+    {
+        const Partial &p = (*currentPartials)[i];
+        if (p.mId == -1)
+            remainingCurrentPartials->push_back(p);
+    }
+    
+    // Update current partials
+    *currentPartials = newPartials;
+}
+
+long
+PartialFilterAMFM::FindNearestFreqId(const vector<Partial> &partials,
+                                     BL_FLOAT freq, int index)
+{
+    if (index >= partials.size())
+        return -1;
+
+    if (partials[index].mFreq < freq)
+    {
+        for (int i = index; i < partials.size(); i++)
+        {
+            if (partials[i].mFreq > freq)
+            {
+                BL_FLOAT d20 = partials[i].mFreq - freq;
+                BL_FLOAT d21 = freq - partials[i - 1].mFreq;
+                
+                if (d20 < d21)
+                    return i;
+                else
+                    return (i - 1);
+            }
+        }
+    }
+    else if (partials[index].mFreq > freq)
+    {
+        for (int i = index; i >= 0; i--)
+        {
+            if (partials[i].mFreq < freq)
+            {
+                BL_FLOAT d20 = freq - partials[i].mFreq;
+                BL_FLOAT d21 = partials[i + 1].mFreq - freq;
+                
+                if (d20 < d21)
+                    return i;
+                else
+                    return (i + 1);
+            }
+        }
+    }
+
+    // Index corresponds exactly to the lookup frequency
+    return index;
 }
 
 void

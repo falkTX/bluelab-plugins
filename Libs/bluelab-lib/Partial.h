@@ -49,9 +49,12 @@ class Partial
         BL_FLOAT mAmpDB;
     };
     BL_FLOAT mPhase;
-        
+
+    // Partial id
     long mId;
-        
+    // Index of the linked partial in the current array (for associating)
+    long mLinkedId;
+    
     enum State mState;
         
     bool mWasAlive;
