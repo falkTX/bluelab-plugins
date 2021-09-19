@@ -21,18 +21,37 @@ class PeakDetectorBillauer : public PeakDetector
 protected:
     void SuppressSmallPeaksSimple(const WDL_TypedBuf<BL_FLOAT> &data,
                                   vector<Peak> *peaks);
-    void SuppressSmallPeaks(const WDL_TypedBuf<BL_FLOAT> &data, vector<Peak> *peaks);
-        
-    void AdjustPeaksWidth(const WDL_TypedBuf<BL_FLOAT> &data, vector<Peak> *peaks);
+    void SuppressSmallPeaks(const WDL_TypedBuf<BL_FLOAT> &data,
+                            vector<Peak> *peaks,
+                            int minIndex, int maxIndex);
 
-    void ComputePeakProminence(const WDL_TypedBuf<BL_FLOAT> &data, Peak *p);
-        
+    // Naive algorithm
+    void AdjustPeaksWidthSimple(const WDL_TypedBuf<BL_FLOAT> &data,
+                                vector<Peak> *peaks);
+
+    void AdjustPeaksWidthProminence(const WDL_TypedBuf<BL_FLOAT> &data,
+                                    vector<Peak> *peaks,
+                                    int minIndex, int maxIndex);
+
+    //void AdjustPeaksWidthNoisy(const WDL_TypedBuf<BL_FLOAT> &data,
+    //                           vector<Peak> *peaks);
+    
+    void ComputePeakProminenceSimple(const WDL_TypedBuf<BL_FLOAT> &data, Peak *peak);
+
+    // Real prominence
+    void ComputePeakProminence(const WDL_TypedBuf<BL_FLOAT> &data, Peak *peak,
+                               int minIndex, int maxIndex);
+
+    void ComputePeaksProminence(const WDL_TypedBuf<BL_FLOAT> &data,
+                                vector<Peak> *peaks,
+                                int minIndex, int maxIndex);
+                                
     bool DBG_TestPeaks(const WDL_TypedBuf<BL_FLOAT> &data, const vector<Peak> &peaks);
     // Print peak
-    void DBG_DumpPeaks(const WDL_TypedBuf<BL_FLOAT> &data, const vector<Peak> &peaks);
+    void DBG_PrintPeaks(const WDL_TypedBuf<BL_FLOAT> &data, const vector<Peak> &peaks);
     // Dump array, showing peak bounds
-    void DBG_DumpPeaksBounds(const WDL_TypedBuf<BL_FLOAT> &data,
-                             const vector<Peak> &peaks);
+    void DBG_DumpPeaks(const WDL_TypedBuf<BL_FLOAT> &data,
+                       const vector<Peak> &peaks);
         
     //
     BL_FLOAT mMaxDelta;
