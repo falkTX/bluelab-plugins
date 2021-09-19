@@ -686,7 +686,13 @@ SASFrame5::ComputeSamplesSAS(WDL_TypedBuf<BL_FLOAT> *samples)
             // Current and prev partials
             SASPartial &partial = mSASPartials[partialIndex];
             partial.mFreq = partialFreq;
+
+#if 1 //0 // If we did this, we applied amplitude two times?
             partial.mAmp = mAmplitude;
+#endif
+#if 0 // Correct ?
+            partial.mAmp = 1.0;
+#endif
             
             const SASPartial &prevPartial = mPrevSASPartials[partialIndex];
             
@@ -773,7 +779,7 @@ SASFrame5::ComputeSamplesSAS(WDL_TypedBuf<BL_FLOAT> *samples)
             
         partialFreq = mFrequency*mFreqFactor*(partialIndex + 1);
     }
-    
+
     // At the end, apply amplitude
     //
     BL_FLOAT tStep = 1.0/(samples->GetSize() - 1);
@@ -1407,6 +1413,7 @@ SASFrame5::Compute()
     ComputeNormWarping();
 }
 
+#if 1 // Use sum
 void
 SASFrame5::ComputeAmplitude()
 {
@@ -1415,7 +1422,7 @@ SASFrame5::ComputeAmplitude()
     mAmplitude = 0.0;
 
     const vector<Partial> &partials = mPartials;
-    
+
     BL_FLOAT amplitude = 0.0;
     for (int i = 0; i < partials.size(); i++)
     {
@@ -1427,6 +1434,28 @@ SASFrame5::ComputeAmplitude()
     
     mAmplitude = amplitude;
 }
+#endif
+#if 0 // Use max
+void
+SASFrame5::ComputeAmplitude()
+{
+    // Amp must not be in dB, but direct!
+    //mPrevAmplitude = mAmplitude;
+    mAmplitude = 0.0;
+
+    const vector<Partial> &partials = mPartials;
+
+    for (int i = 0; i < partials.size(); i++)
+    {
+        const Partial &p = partials[i];
+        
+        BL_FLOAT amp = p.mAmp;
+
+        if (amp > mAmplitude)
+            mAmplitude = amp;
+    }
+}
+#endif
 
 void
 SASFrame5::ComputeFrequency()
@@ -1570,7 +1599,7 @@ SASFrame5::ComputeColorAux()
         mColor.Get()[i] = c;
     }
 #endif
-    
+
     // Normalize the color (maybe not necessary)
     BL_FLOAT amplitude = mAmplitude;
     if (amplitude > 0.0)
