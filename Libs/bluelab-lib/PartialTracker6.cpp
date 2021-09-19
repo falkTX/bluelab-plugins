@@ -940,7 +940,7 @@ PartialTracker6::ThresholdPartialsPeakHeight(const WDL_TypedBuf<BL_FLOAT> &magns
         BL_FLOAT thrsNorm = GetThreshold(binNum);
         
         if (height >= thrsNorm)
-             result.push_back(partial);
+            result.push_back(partial);
     }
     
     *partials = result;
