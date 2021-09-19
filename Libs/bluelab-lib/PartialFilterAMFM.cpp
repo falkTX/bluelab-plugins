@@ -418,7 +418,7 @@ PartialFilterAMFM::
 AssociatePartialsAMFM(const vector<Partial> &prevPartials,
                       vector<Partial> *currentPartials,
                       vector<Partial> *remainingCurrentPartials)
-{
+{    
     // Quick optimization (avoid long freezing)
     // (later, will use hungarian)
     //#define MAX_NUM_ITER 5
