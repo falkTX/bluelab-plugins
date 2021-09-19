@@ -165,7 +165,8 @@ DetectPeaks(const WDL_TypedBuf<BL_FLOAT> &data, vector<Peak> *peaks,
     // NOTE: this may not narrow very small peaks surrounded by noise
     AdjustPeaksWidthProminence(data, peaks, minIndex, maxIndex);
     
-    SuppressSmallPeaks(data, peaks, minIndex, maxIndex);
+    //SuppressSmallPeaksProminence(data, peaks, minIndex, maxIndex);
+    SuppressSmallPeaksFrequency(data, peaks, minIndex, maxIndex);
 }
 
 // Simple method, with hard coded value
@@ -197,9 +198,9 @@ PeakDetectorBillauer::SuppressSmallPeaksSimple(const WDL_TypedBuf<BL_FLOAT> &dat
 }
 
 void
-PeakDetectorBillauer::SuppressSmallPeaks(const WDL_TypedBuf<BL_FLOAT> &data,
-                                         vector<Peak> *peaks,
-                                         int minIndex, int maxIndex)
+PeakDetectorBillauer::SuppressSmallPeaksProminence(const WDL_TypedBuf<BL_FLOAT> &data,
+                                                   vector<Peak> *peaks,
+                                                   int minIndex, int maxIndex)
 {
     if (mThreshold2 >= 1.0)
         // Take all peaks
@@ -219,6 +220,31 @@ PeakDetectorBillauer::SuppressSmallPeaks(const WDL_TypedBuf<BL_FLOAT> &data,
 
     // Order biggest peaks first
     reverse(peaks->begin(), peaks->end());
+
+    // Keep only the biggest peaks
+    int numToTakePeaks = peaks->size()*mThreshold2;
+
+    if ((numToTakePeaks < SUPPRESS_MIN_NUM_PEAKS) &&
+        (peaks->size() > SUPPRESS_MIN_NUM_PEAKS))
+        numToTakePeaks = SUPPRESS_MIN_NUM_PEAKS;
+    
+    peaks->resize(numToTakePeaks);
+}
+
+void
+PeakDetectorBillauer::SuppressSmallPeaksFrequency(const WDL_TypedBuf<BL_FLOAT> &data,
+                                                  vector<Peak> *peaks,
+                                                  int minIndex, int maxIndex)
+{
+    if (mThreshold2 >= 1.0)
+        // Take all peaks
+        return;
+
+    if (peaks->size() < SUPPRESS_MIN_NUM_PEAKS)
+        return;
+
+    // Sort peaks by prominence
+    sort(peaks->begin(), peaks->end(), Peak::PeakIndexLess);
 
     // Keep only the biggest peaks
     int numToTakePeaks = peaks->size()*mThreshold2;

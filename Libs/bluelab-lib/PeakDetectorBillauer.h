@@ -21,10 +21,15 @@ class PeakDetectorBillauer : public PeakDetector
 protected:
     void SuppressSmallPeaksSimple(const WDL_TypedBuf<BL_FLOAT> &data,
                                   vector<Peak> *peaks);
-    void SuppressSmallPeaks(const WDL_TypedBuf<BL_FLOAT> &data,
-                            vector<Peak> *peaks,
-                            int minIndex, int maxIndex);
-
+    // Remove peaks with small prominance
+    void SuppressSmallPeaksProminence(const WDL_TypedBuf<BL_FLOAT> &data,
+                                      vector<Peak> *peaks,
+                                      int minIndex, int maxIndex);
+    // Remove high harmonics
+    void SuppressSmallPeaksFrequency(const WDL_TypedBuf<BL_FLOAT> &data,
+                                     vector<Peak> *peaks,
+                                     int minIndex, int maxIndex);
+    
     // Naive algorithm
     void AdjustPeaksWidthSimple(const WDL_TypedBuf<BL_FLOAT> &data,
                                 vector<Peak> *peaks);

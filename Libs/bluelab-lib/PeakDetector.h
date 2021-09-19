@@ -22,6 +22,9 @@ class PeakDetector
 
         static bool ProminenceLess(const Peak &p1, const Peak &p2)
         { return (p1.mProminence < p2.mProminence); }
+
+        static bool PeakIndexLess(const Peak &p1, const Peak &p2)
+        { return (p1.mPeakIndex < p2.mPeakIndex); }
     };
 
     virtual void SetThreshold(BL_FLOAT threshold) {}
