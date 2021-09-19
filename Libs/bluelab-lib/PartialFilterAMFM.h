@@ -26,6 +26,11 @@ class PartialFilterAMFM : public PartialFilter
                                vector<Partial> *currentPartials,
                                vector<Partial> *remainingCurrentPartials);
 
+    // Compute score using Neri
+    void AssociatePartialsNeri(const vector<Partial> &prevPartials,
+                               vector<Partial> *currentPartials,
+                               vector<Partial> *remainingCurrentPartials);
+    
     void AssociatePartialsHungarianAMFM(const vector<Partial> &prevPartials,
                                         vector<Partial> *currentPartials,
                                         vector<Partial> *remainingCurrentPartials);
@@ -53,10 +58,10 @@ class PartialFilterAMFM : public PartialFilter
     BL_FLOAT ComputeLF(const Partial &prevPartial, const Partial &currentPartial);
 
     // for hungarian Neri
-    void ComputeScoreNeri(const Partial &prevPartial,
-                          const Partial &currentPartial,
-                          BL_FLOAT delta, BL_FLOAT zetaF, BL_FLOAT zetaA,
-                          BL_FLOAT *A, BL_FLOAT *B);
+    void ComputeCostNeri(const Partial &prevPartial,
+                         const Partial &currentPartial,
+                         BL_FLOAT delta, BL_FLOAT zetaF, BL_FLOAT zetaA,
+                         BL_FLOAT *A, BL_FLOAT *B);
         
     void ExtrapolatePartialAMFM(Partial *p);
     void ExtrapolatePartialKalman(Partial *p);

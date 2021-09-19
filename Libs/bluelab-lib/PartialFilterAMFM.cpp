@@ -28,7 +28,8 @@ using namespace std;
 // Problem: at partial crossing, alpha0 (for amp) sometimes has big values 
 #define EXTRAPOLATE_AMFM 0 //1
 
-#define ASSOC_AMFM 1 //0
+#define ASSOC_SIMPLE_AMFM 0 //1 // ORIGIN
+#define ASSOC_SIMPLE_NERI 1 //0
 #define ASSOC_HUNGARIAN_AMFM 0 //1
 #define ASSOC_HUNGARIAN_NERI 0 //1
 
@@ -115,11 +116,16 @@ PartialFilterAMFM::FilterPartials(vector<Partial> *partials)
 
     //DBG_PrintPartials(prevPartials);
         
-#if ASSOC_AMFM
+#if ASSOC_SIMPLE_AMFM
     AssociatePartialsAMFM(prevPartials, &currentPartials,
                           &remainingCurrentPartials);
 #endif
 
+#if ASSOC_SIMPLE_NERI
+    AssociatePartialsNeri(prevPartials, &currentPartials,
+                          &remainingCurrentPartials);
+#endif
+    
 #if ASSOC_HUNGARIAN_AMFM
     AssociatePartialsHungarianAMFM(prevPartials, &currentPartials,
                                    &remainingCurrentPartials);
@@ -395,6 +401,226 @@ AssociatePartialsAMFM(const vector<Partial> &prevPartials,
 
 void
 PartialFilterAMFM::
+AssociatePartialsNeri(const vector<Partial> &prevPartials,
+                      vector<Partial> *currentPartials,
+                      vector<Partial> *remainingCurrentPartials)
+{
+    // Parameters
+    BL_FLOAT delta = 0.2;
+    BL_FLOAT zetaF = 50.0; // in Hz
+    BL_FLOAT zetaA = 15; // in dB
+
+#if !RESCALE_HZ
+    zetaF *= 1.0/(mSampleRate*0.5);
+#endif
+    
+    // These can't be <= 0
+    if (zetaF < 1e-1)
+        zetaF = 1e-1;
+    if (zetaA < 1e-1)
+        zetaA = 1e-1;
+ 
+    //Convert to log from dB
+    zetaA = zetaA/20*log(10);
+
+    
+    // Quick optimization (avoid long freezing)
+    // (later, will use hungarian)
+    //#define MAX_NUM_ITER 5
+    
+    // Sometimes need more than 5 (and less than 10)
+    // When threshold is near 1%
+    // (Sometimes it never solves totally and would lead to infinite num iters)
+#define MAX_NUM_ITER 10
+    
+    // Sort current partials and prev partials by increasing frequency
+    sort(currentPartials->begin(), currentPartials->end(), Partial::FreqLess);
+    
+    vector<Partial> &prevPartials0 = mTmpPartials5;
+    prevPartials0 = prevPartials;
+
+#if !OPTIM_SAMPLES_SYNTH_SORTED_VEC
+    sort(prevPartials0.begin(), prevPartials0.end(), Partial::FreqLess);
+#else
+    sort(prevPartials0.begin(), prevPartials0.end(), Partial::IdLess);
+#endif
+    
+    // Associated partials
+    bool stopFlag = true;
+    int numIters = 0;
+    do {
+        stopFlag = true;
+
+        numIters++;
+        
+        for (int i = 0; i < prevPartials0.size(); i++)
+        {
+            const Partial &prevPartial = prevPartials0[i];
+            
+            // Check if the link is already done
+            if (((int)prevPartial.mId != -1) &&
+                (FindPartialById(*currentPartials, (int)prevPartial.mId) != -1))
+                // Already linked
+                continue;
+            
+            for (int j = 0; j < currentPartials->size(); j++)
+            {
+                Partial &currentPartial = (*currentPartials)[j];
+                
+                if (currentPartial.mId == prevPartial.mId)
+                    continue;
+
+                // Compute current score
+                BL_FLOAT A;
+                BL_FLOAT B;
+                ComputeCostNeri(prevPartial, currentPartial,
+                                 delta, zetaF, zetaA,
+                                 &A, &B);
+
+                BL_FLOAT cost = MIN(A, B);
+                
+                bool discard = false;
+#if DISCARD_BIG_JUMPS
+                discard = CheckDiscardBigJump(prevPartial, currentPartial);
+#endif
+
+#if DISCARD_OPPOSITE_DIRECTION
+                discard = CheckDiscardOppositeDirection(prevPartial, currentPartial);
+#endif
+                
+                // Avoid big jumps or similar
+                if (!discard)
+                    // Associate!
+                {
+                    // Current partial already has an id
+                    bool mustFight0 = (currentPartial.mId != -1);
+
+                    int fight1Idx = FindPartialById(*currentPartials,
+                                                    (int)prevPartial.mId);
+                    // Prev partial already has some association with the current id
+                    bool mustFight1 = (fight1Idx != -1);
+                        
+                    if (!mustFight0 && !mustFight1)
+                    {
+                        currentPartial.mId = prevPartial.mId;
+                        currentPartial.mAge = prevPartial.mAge;
+                        
+#if EXTRAPOLATE_KALMAN
+                        currentPartial.mKf = prevPartial.mKf; //
+#endif
+                        
+                        stopFlag = false;
+                        
+                        continue;
+                    }
+                        
+                    // Fight!
+                    //
+                    
+                    // Find the previous link for case 0
+#if !OPTIM_SAMPLES_SYNTH_SORTED_VEC
+                    int otherPrevIdx =
+                        FindPartialById(prevPartials0, (int)currentPartial.mId);
+#else
+                    int otherPrevIdx =
+                        FindPartialByIdSorted(prevPartials0, currentPartial);
+#endif
+                    
+                    // Find prev partial
+                    Partial prevPartialFight =
+                        mustFight0 ? prevPartials0[otherPrevIdx] : prevPartial;
+                    // Find current partial
+                    Partial currentPartialFight =
+                        mustFight0 ? currentPartial : (*currentPartials)[fight1Idx];
+
+                    // Compute other score
+                    BL_FLOAT otherA;
+                    BL_FLOAT otherB;
+                    ComputeCostNeri(prevPartialFight, currentPartialFight,
+                                    delta, zetaF, zetaA,
+                                    &otherA, &otherB);
+                    
+                    BL_FLOAT otherCost = MIN(otherA, otherB);
+                
+                    if (cost < otherCost)
+                        // Current partial won
+                    {
+                        currentPartial.mId = prevPartial.mId;
+                        currentPartial.mAge = prevPartial.mAge;
+                        
+#if EXTRAPOLATE_KALMAN
+                        currentPartial.mKf = prevPartial.mKf; //
+#endif
+
+                        // Disconnect for case 1
+                        if (mustFight1)
+                            (*currentPartials)[fight1Idx].mId = -1;
+                        stopFlag = false;
+                    }
+                    else
+                        // Other partial won
+                    {
+                        // Just keep it like it is!
+                    }
+                }
+            }
+        }
+
+        // Quick optimization
+        if (numIters > MAX_NUM_ITER)
+            break;
+        
+    } while (!stopFlag);
+    
+    // Update partials
+    vector<Partial> &newPartials = mTmpPartials6;
+    newPartials.resize(0);
+    
+    for (int j = 0; j < currentPartials->size(); j++)
+    {
+        Partial &currentPartial = (*currentPartials)[j];
+
+        if (currentPartial.mId != -1)
+        {
+            currentPartial.mState = Partial::ALIVE;
+            currentPartial.mWasAlive = true;
+    
+            // Increment age
+            currentPartial.mAge = currentPartial.mAge + 1;
+
+#if 0 // No need
+            
+#if EXTRAPOLATE_KALMAN
+            ExtrapolatePartialKalman(&currentPartial);
+#endif
+            
+#if EXTRAPOLATE_AMFM
+            ExtrapolatePartialAMFM(&currentPartial);
+#endif
+
+#endif
+            
+            newPartials.push_back(currentPartial);
+        }
+    }
+
+    // NOTE: sometimes would need an "infinite number of iterations"..
+    
+    // Add the remaining partials
+    remainingCurrentPartials->clear();
+    for (int i = 0; i < currentPartials->size(); i++)
+    {
+        const Partial &p = (*currentPartials)[i];
+        if (p.mId == -1)
+            remainingCurrentPartials->push_back(p);
+    }
+    
+    // Update current partials
+    *currentPartials = newPartials;
+}
+
+void
+PartialFilterAMFM::
 AssociatePartialsHungarianAMFM(const vector<Partial> &prevPartials,
                                vector<Partial> *currentPartials,
                                vector<Partial> *remainingCurrentPartials)
@@ -559,9 +785,9 @@ AssociatePartialsHungarianNeri(const vector<Partial> &prevPartials,
         {
             BL_FLOAT A;
             BL_FLOAT B;
-            ComputeScoreNeri(prevPartials[i], (*currentPartials)[j],
-                             delta, zetaF, zetaA,
-                             &A, &B);
+            ComputeCostNeri(prevPartials[i], (*currentPartials)[j],
+                            delta, zetaF, zetaA,
+                            &A, &B);
 
             costMatrix[i][j] = (A < B) ? A : B;
         }
@@ -886,7 +1112,7 @@ PartialFilterAMFM::ComputeLF(const Partial &prevPartial,
 }
 
 void
-PartialFilterAMFM::ComputeScoreNeri(const Partial &prevPartial,
+PartialFilterAMFM::ComputeCostNeri(const Partial &prevPartial,
                                     const Partial &currentPartial,
                                     BL_FLOAT delta, BL_FLOAT zetaF, BL_FLOAT zetaA,
                                     BL_FLOAT *A, BL_FLOAT *B)
