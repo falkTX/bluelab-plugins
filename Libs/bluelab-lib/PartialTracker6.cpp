@@ -46,7 +46,10 @@ using namespace std;
 #if USE_BL_PEAK_DETECTOR
 #define DETECT_PARTIALS_START_INDEX 2
 #else
-#define DETECT_PARTIALS_START_INDEX 1
+// ORIGIN
+//#define DETECT_PARTIALS_START_INDEX 1
+// Better, in order to not discard low freq peaks with Billauer real prominence
+#define DETECT_PARTIALS_START_INDEX 0
 #endif
 
 #define DISCARD_FLAT_PARTIAL 1

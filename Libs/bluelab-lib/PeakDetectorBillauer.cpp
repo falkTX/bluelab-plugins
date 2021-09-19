@@ -164,7 +164,7 @@ DetectPeaks(const WDL_TypedBuf<BL_FLOAT> &data, vector<Peak> *peaks,
 
     // NOTE: this may not narrow very small peaks surrounded by noise
     AdjustPeaksWidthProminence(data, peaks, minIndex, maxIndex);
-
+    
     SuppressSmallPeaks(data, peaks, minIndex, maxIndex);
 }
 
@@ -397,6 +397,13 @@ PeakDetectorBillauer::ComputePeakProminence(const WDL_TypedBuf<BL_FLOAT> &data,
     
     BL_FLOAT prominence = (leftMin > rightMin) ?
         peakVal - leftMin : peakVal - rightMin;
+
+    // Special cases
+    // Will avoid very low or zero prominence, for border partials
+    if (leftIndex == minIndex)
+        prominence = peakVal - rightMin;
+    if (rightIndex == maxIndex)
+        prominence = peakVal - leftMin;
     
     peak->mProminence = prominence;
 }
