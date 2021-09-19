@@ -452,7 +452,7 @@ SASFrame5::ComputeFftPartials(WDL_TypedBuf<BL_FLOAT> *samples)
         if (freq > mSampleRate*0.5)
             continue;
         
-        if (freq < SYNTH_MIN_FREQ)
+        if ((freq < SYNTH_MIN_FREQ) && (mSynthMode != RAW_PARTIALS))
             continue;
         
         // Magn
@@ -563,7 +563,7 @@ SASFrame5::ComputeSamplesPartials(WDL_TypedBuf<BL_FLOAT> *samples)
             
             samp *= SYNTH_AMP_COEFF;
             
-            if (freq >= SYNTH_MIN_FREQ)
+            if ((freq >= SYNTH_MIN_FREQ) || (mSynthMode == RAW_PARTIALS))
                 samples->Get()[j] += samp;
             
             phase += 2.0*M_PI*freq/mSampleRate;
@@ -681,7 +681,7 @@ SASFrame5::ComputeSamplesSAS(WDL_TypedBuf<BL_FLOAT> *samples)
             }
         }
         
-        if (partialFreq > SYNTH_MIN_FREQ)
+        if ((partialFreq > SYNTH_MIN_FREQ) || (mSynthMode == RAW_PARTIALS))
         {
             // Current and prev partials
             SASPartial &partial = mSASPartials[partialIndex];
@@ -751,7 +751,7 @@ SASFrame5::ComputeSamplesSAS(WDL_TypedBuf<BL_FLOAT> *samples)
                 // No "blurb" between frequencies
                 BL_FLOAT samp = std::sin(phase);
                 
-                if (freq >= SYNTH_MIN_FREQ)
+                if ((freq >= SYNTH_MIN_FREQ) || (mSynthMode == RAW_PARTIALS))
                 {
                     // Generate samples only if not on an transient
                     if (!transientDetected)
@@ -881,7 +881,7 @@ SASFrame5::ComputeSamplesSASOverlap(WDL_TypedBuf<BL_FLOAT> *samples)
     int partialIndex = 0;
     while((freq < mSampleRate/2.0) && (partialIndex < SYNTH_MAX_NUM_PARTIALS))
     {
-        if (freq > SYNTH_MIN_FREQ)
+        if ((freq > SYNTH_MIN_FREQ) || (mSynthMode == RAW_PARTIALS))
         {
             freq = ApplyNormWarping(freq);
             BL_FLOAT col = ApplyColor(freq);
@@ -917,7 +917,7 @@ SASFrame5::ComputeSamplesSASOverlap(WDL_TypedBuf<BL_FLOAT> *samples)
                 samp *= amp;
                 samp *= SYNTH_AMP_COEFF;
                 
-                if (freq2 >= SYNTH_MIN_FREQ)
+                if ((freq2 >= SYNTH_MIN_FREQ) || (mSynthMode == RAW_PARTIALS))
                     samples->Get()[i] += samp;
                 
                 phase += 2.0*M_PI*freq2/mSampleRate;
@@ -962,7 +962,7 @@ SASFrame5::ComputeFftSAS(WDL_TypedBuf<BL_FLOAT> *samples)
     int partialIndex = 0;
     while((freq < mSampleRate/2.0) && (partialIndex < SYNTH_MAX_NUM_PARTIALS))
     {
-        if (freq > SYNTH_MIN_FREQ)
+        if ((freq > SYNTH_MIN_FREQ) || (mSynthMode == RAW_PARTIALS))
         {
             if (mSASPartials.size() <= partialIndex)
             {
@@ -1003,7 +1003,7 @@ SASFrame5::ComputeFftSAS(WDL_TypedBuf<BL_FLOAT> *samples)
                 phase = mPrevSASPartials[partialIndex].mPhase;
             
             // Fill the fft
-            if (freq2 >= SYNTH_MIN_FREQ)
+            if ((freq2 >= SYNTH_MIN_FREQ) || (mSynthMode == RAW_PARTIALS))
             {
                 BL_FLOAT binNum = freq2/hzPerBin;
                 binNum = bl_round(binNum);
@@ -1067,7 +1067,7 @@ SASFrame5::ComputeFftSASFreqAdjust(WDL_TypedBuf<BL_FLOAT> *samples)
     int partialIndex = 0;
     while((freq < mSampleRate/2.0) && (partialIndex < SYNTH_MAX_NUM_PARTIALS))
     {
-        if (freq > SYNTH_MIN_FREQ)
+        if ((freq > SYNTH_MIN_FREQ) || (mSynthMode == RAW_PARTIALS))
         {
             if (mSASPartials.size() <= partialIndex)
             {
@@ -1105,7 +1105,7 @@ SASFrame5::ComputeFftSASFreqAdjust(WDL_TypedBuf<BL_FLOAT> *samples)
                 phase = mPrevSASPartials[partialIndex].mPhase;
             
             // Fill the fft
-            if (freq2 >= SYNTH_MIN_FREQ)
+            if ((freq2 >= SYNTH_MIN_FREQ) || (mSynthMode == RAW_PARTIALS))
             {
                 BL_FLOAT binNum = freq2/hzPerBin;
                 binNum = bl_round(binNum);
@@ -1171,7 +1171,7 @@ SASFrame5::ComputeSamplesSASTable(WDL_TypedBuf<BL_FLOAT> *samples)
     int partialIndex = 0;
     while((freq < mSampleRate/2.0) && (partialIndex < SYNTH_MAX_NUM_PARTIALS))
     {
-        if (freq > SYNTH_MIN_FREQ)
+        if ((freq > SYNTH_MIN_FREQ) || (mSynthMode == RAW_PARTIALS))
         {
             if (mSASPartials.size() <= partialIndex)
             {
@@ -1213,7 +1213,7 @@ SASFrame5::ComputeSamplesSASTable(WDL_TypedBuf<BL_FLOAT> *samples)
                 phase = mPrevSASPartials[partialIndex].mPhase;
             
             // Fill the fft
-            if (freq2 >= SYNTH_MIN_FREQ)
+            if ((freq2 >= SYNTH_MIN_FREQ) || (mSynthMode == RAW_PARTIALS))
             {
                 WDL_TypedBuf<BL_FLOAT> freqBuffer;
                 freqBuffer.Resize(mBufferSize/mOverlapping);
@@ -1256,7 +1256,7 @@ SASFrame5::ComputeSamplesSASTable2(WDL_TypedBuf<BL_FLOAT> *samples)
     int partialIndex = 0;
     while((freq < mSampleRate/2.0) && (partialIndex < SYNTH_MAX_NUM_PARTIALS))
     {
-        if (freq > SYNTH_MIN_FREQ)
+        if ((freq > SYNTH_MIN_FREQ) || (mSynthMode == RAW_PARTIALS))
         {
             if (mSASPartials.size() <= partialIndex)
             {
@@ -1291,7 +1291,7 @@ SASFrame5::ComputeSamplesSASTable2(WDL_TypedBuf<BL_FLOAT> *samples)
                 amp *= SYNTH_AMP_COEFF;
                 
                 // Get from the wavetable
-                if (freq2 >= SYNTH_MIN_FREQ)
+                if ((freq2 >= SYNTH_MIN_FREQ) || (mSynthMode == RAW_PARTIALS))
                 {
                     BL_FLOAT samp = mTableSynth->GetSampleNearest(i, freq2, amp);
                     samples->Get()[i] += samp;
