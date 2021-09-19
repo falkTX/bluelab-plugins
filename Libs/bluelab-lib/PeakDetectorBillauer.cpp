@@ -1,4 +1,6 @@
+#include <BLUtils.h>
 #include <BLUtilsMath.h>
+
 #include <BLDebug.h>
 
 #include "PeakDetectorBillauer.h"
@@ -153,8 +155,9 @@ DetectPeaks(const WDL_TypedBuf<BL_FLOAT> &data, vector<Peak> *peaks,
         //Peak &p = (*peaks)[i];
         Peak p;
         p.mPeakIndex = maxtab[i];
-        p.mLeftIndex = (i < mintab.size()) ? mintab[i] : minIndex;
-        p.mRightIndex = (i + 1 < mintab.size()) ? mintab[i + 1] : maxIndex;
+        p.mLeftIndex = ((i - 1 >= 0) && (i - 1 < mintab.size())) ?
+            mintab[i - 1] : minIndex;
+        p.mRightIndex = (i < mintab.size()) ? mintab[i] : maxIndex;
 
         peaks->push_back(p);
     }
@@ -347,4 +350,35 @@ PeakDetectorBillauer::DBG_DumpPeaks(const WDL_TypedBuf<BL_FLOAT> &data,
         fprintf(stderr, "indices: [%d %d %d]\n",
                 p.mLeftIndex, p.mPeakIndex, p.mRightIndex);
     }   
+
+void
+PeakDetectorBillauer::DBG_DumpPeaksBounds(const WDL_TypedBuf<BL_FLOAT> &data,
+                                          const vector<Peak> &peaks)
+{
+    BLDebug::DumpData("data.txt", data);
+    
+    WDL_TypedBuf<BL_FLOAT> peaksData;
+    peaksData.Resize(data.GetSize());
+    BLUtils::FillAllZero(&peaksData);
+
+    WDL_TypedBuf<BL_FLOAT> peaksDataLarge;
+    peaksDataLarge.Resize(data.GetSize());
+    BLUtils::FillAllZero(&peaksDataLarge);
+    
+    for (int i = 0; i < peaks.size(); i++)
+    {
+        const Peak &p = peaks[i];
+
+        BL_FLOAT val = data.Get()[p.mPeakIndex];
+        peaksData.Get()[p.mPeakIndex] = val;
+
+        for (int j = p.mLeftIndex; j <= p.mRightIndex; j++)
+        {
+            BL_FLOAT val2 = data.Get()[j];
+            peaksDataLarge.Get()[j] = val2;
+        }
+    }
+
+    BLDebug::DumpData("peaks.txt", peaksData);
+    BLDebug::DumpData("peaks-large.txt", peaksDataLarge);
 }

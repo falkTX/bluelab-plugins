@@ -28,7 +28,11 @@ protected:
     void ComputePeakProminence(const WDL_TypedBuf<BL_FLOAT> &data, Peak *p);
         
     bool DBG_TestPeaks(const WDL_TypedBuf<BL_FLOAT> &data, const vector<Peak> &peaks);
+    // Print peak
     void DBG_DumpPeaks(const WDL_TypedBuf<BL_FLOAT> &data, const vector<Peak> &peaks);
+    // Dump array, showing peak bounds
+    void DBG_DumpPeaksBounds(const WDL_TypedBuf<BL_FLOAT> &data,
+                             const vector<Peak> &peaks);
         
     //
     BL_FLOAT mMaxDelta;
