@@ -460,6 +460,13 @@ SASViewerProcess4::SetTimeSmoothNoiseCoeff(BL_FLOAT coeff)
 }
 
 void
+SASViewerProcess4::SetNeriDelta(BL_FLOAT delta)
+{
+    if (mPartialTracker != NULL)
+        mPartialTracker->SetNeriDelta(delta);
+}
+
+void
 SASViewerProcess4::Display()
 {
 #if !DISPLAY_EVERY_STEP

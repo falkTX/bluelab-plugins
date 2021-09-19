@@ -86,10 +86,12 @@ public:
     
     void SetTimeSmoothCoeff(BL_FLOAT coeff);
     
+    void SetTimeSmoothNoiseCoeff(BL_FLOAT coeff);
+
+    void SetNeriDelta(BL_FLOAT delta);
+
     // Debug
     void DBG_SetDebugPartials(bool flag);
-    
-    void SetTimeSmoothNoiseCoeff(BL_FLOAT coeff);
     
 protected:
     void Display();

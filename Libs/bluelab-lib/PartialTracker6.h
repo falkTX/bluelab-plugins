@@ -132,6 +132,8 @@ public:
 
     BL_FLOAT PartialScaleToQIFFTScale(BL_FLOAT ampDbNorm);
     BL_FLOAT QIFFTScaleToPartialScale(BL_FLOAT ampLog);
+
+    void SetNeriDelta(BL_FLOAT delta);
     
 protected:
     // Pre process

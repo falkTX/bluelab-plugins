@@ -49,6 +49,8 @@ PartialFilterAMFM::PartialFilterAMFM(int bufferSize, BL_FLOAT sampleRate)
 {    
     mBufferSize = bufferSize;
     mSampleRate = sampleRate;
+
+    mNeriDelta = 0.2;
 }
 
 PartialFilterAMFM::~PartialFilterAMFM() {}
@@ -199,6 +201,12 @@ PartialFilterAMFM::FilterPartials(vector<Partial> *partials)
         //#endif
     }
 #endif
+}
+
+void
+PartialFilterAMFM::SetNeriDelta(BL_FLOAT delta)
+{
+    mNeriDelta = delta;
 }
 
 void
@@ -406,7 +414,8 @@ AssociatePartialsNeri(const vector<Partial> &prevPartials,
                       vector<Partial> *remainingCurrentPartials)
 {
     // Parameters
-    BL_FLOAT delta = 0.2;
+    //BL_FLOAT delta = 0.2;
+    BL_FLOAT delta = mNeriDelta;
     BL_FLOAT zetaF = 50.0; // in Hz
     BL_FLOAT zetaA = 15; // in dB
 
@@ -422,7 +431,6 @@ AssociatePartialsNeri(const vector<Partial> &prevPartials,
  
     //Convert to log from dB
     zetaA = zetaA/20*log(10);
-
     
     // Quick optimization (avoid long freezing)
     // (later, will use hungarian)
@@ -474,8 +482,8 @@ AssociatePartialsNeri(const vector<Partial> &prevPartials,
                 BL_FLOAT A;
                 BL_FLOAT B;
                 ComputeCostNeri(prevPartial, currentPartial,
-                                 delta, zetaF, zetaA,
-                                 &A, &B);
+                                delta, zetaF, zetaA,
+                                &A, &B);
 
                 BL_FLOAT cost = MIN(A, B);
                 
@@ -1111,6 +1119,7 @@ PartialFilterAMFM::ComputeLF(const Partial &prevPartial,
     return LF;
 }
 
+// See: https://github.com/jundsp/Fast-Partial-Tracking
 void
 PartialFilterAMFM::ComputeCostNeri(const Partial &prevPartial,
                                     const Partial &currentPartial,

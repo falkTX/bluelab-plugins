@@ -20,6 +20,8 @@ class PartialFilterAMFM : public PartialFilter
         
     void FilterPartials(vector<Partial> *partials);
 
+    void SetNeriDelta(BL_FLOAT delta);
+    
  protected:
     // Method based on alpha0 and beta0
     void AssociatePartialsAMFM(const vector<Partial> &prevPartials,
@@ -80,6 +82,8 @@ class PartialFilterAMFM : public PartialFilter
 
     int mBufferSize;
     BL_FLOAT mSampleRate;
+
+    BL_FLOAT mNeriDelta;
     
  private:
     vector<Partial> mTmpPartials0;

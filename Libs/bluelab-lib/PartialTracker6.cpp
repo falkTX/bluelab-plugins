@@ -1474,6 +1474,14 @@ PartialTracker6::QIFFTScaleToPartialScale(BL_FLOAT ampLog)
 }
 
 void
+PartialTracker6::SetNeriDelta(BL_FLOAT delta)
+{
+#if USE_PARTIAL_FILTER_AMFM
+    ((PartialFilterAMFM *)mPartialFilter)->SetNeriDelta(delta);
+#endif
+}
+
+void
 PartialTracker6::PreProcessAWeighting(WDL_TypedBuf<BL_FLOAT> *magns,
                                       bool reverse)
 {
