@@ -28,8 +28,13 @@ using namespace std;
 // Problem: at partial crossing, alpha0 (for amp) sometimes has big values 
 #define EXTRAPOLATE_AMFM 0 //1
 
-#define ASSOC_SIMPLE_AMFM 0 //1 // ORIGIN
-#define ASSOC_SIMPLE_NERI 1 //0
+// NOTE: when using time smoothing on magns, it created fake amp dirivatives (alpha0)
+// So the following algorithms won't be optimal
+// But finally the result looks good with time smooth
+
+#define ASSOC_SIMPLE_AMFM 1 //0 //1 // ORIGIN
+// Result almost similar to ASSOC_SIMPLE_AMFM
+#define ASSOC_SIMPLE_NERI 0 //1 //0 // NOTE: don't forget the hack zetaA = 50.0
 #define ASSOC_HUNGARIAN_AMFM 0 //1
 #define ASSOC_HUNGARIAN_NERI 0 //1
 
@@ -549,8 +554,9 @@ AssociatePartialsNeri(const vector<Partial> &prevPartials,
                                     &otherA, &otherB);
                     
                     BL_FLOAT otherCost = MIN(otherA, otherB);
-                
+                    
                     if (cost < otherCost)
+                    //if ((A < otherA) && (B < otherB))
                         // Current partial won
                     {
                         currentPartial.mId = prevPartial.mId;
@@ -1126,28 +1132,47 @@ PartialFilterAMFM::ComputeCostNeri(const Partial &prevPartial,
                                     BL_FLOAT delta, BL_FLOAT zetaF, BL_FLOAT zetaA,
                                     BL_FLOAT *A, BL_FLOAT *B)
 {
+    // Debug/Hack: set a very big value for zetaA...
+    
+    //zetaA = 5.0; // TEST
+    //zetaA = 10.0; // TEST
+    zetaA = 50.0; // TEST => this way detections begin to be good
+    
+    /*fprintf(stderr, "freq: %g zetaF: %g\n", currentPartial.mFreq, zetaF);
+      fprintf(stderr, "amp: %g zetaA: %g\n", currentPartial.mAmp, zetaA);
+      fprintf(stderr, "\n");
+    */
+    
     BL_FLOAT deltaF =
         (currentPartial.mFreq - currentPartial.mBeta0*0.5) -
         (prevPartial.mFreq + prevPartial.mBeta0*0.5);
     BL_FLOAT deltaA = (currentPartial.mAmp - currentPartial.mAlpha0*0.5) -
         (prevPartial.mAmp + prevPartial.mAlpha0*0.5);
     
-    // Like in paper
-    //BL_FLOAT denom = (2.0*log(delta - 2.0) - 2.0*log(delta - 1.0));
-    //BL_FLOAT sigmaF2 = zetaF*zetaF/denom;
-    //BL_FLOAT sigmaA2 = zetaA*zetaA/denom;
+#if 0
+    // Like in paper (there is a mistake here! log of negative values => NaN 
+    BL_FLOAT denom = (2.0*log(delta - 2.0) - 2.0*log(delta - 1.0));    
+    BL_FLOAT sigmaF2 = zetaF*zetaF/denom;
+    BL_FLOAT sigmaA2 = zetaA*zetaA/denom;
+#endif
 
+#if 1
     // Like in github
     BL_FLOAT coeff = log((delta - 1.0)/(delta - 2.0));
     BL_FLOAT sigmaF2 = -zetaF*zetaF*coeff;
     BL_FLOAT sigmaA2 = -zetaA*zetaA*coeff;
+#endif
 
+#if 0 //1
     // Like in paper
-    //*A = 1.0 - exp(-deltaF*deltaF/(2.0*sigmaF2) - deltaA*deltaA/(2.0*sigmaA2));
+    *A = 1.0 - exp(-deltaF*deltaF/(2.0*sigmaF2) - deltaA*deltaA/(2.0*sigmaA2));
+#endif
 
+#if 1 //0
     // Like in github
     *A = 1.0 - exp(-deltaF*deltaF/sigmaF2 - deltaA*deltaA/sigmaA2);
-     
+#endif
+    
     *B = 1.0 - (1.0 - delta)*(*A);
 }   
 
