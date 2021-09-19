@@ -1593,6 +1593,7 @@ PartialTracker6::ComputePartials(const vector<PeakDetector::Peak> &peaks,
         p.mBinIdxF = qifftPeak.mBinIdx;
         p.mFreq = qifftPeak.mFreq;
         p.mAmp = qifftPeak.mAmp;
+        
         p.mPhase = qifftPeak.mPhase;
         p.mAlpha0 = qifftPeak.mAlpha0;
         p.mBeta0 = qifftPeak.mBeta0;
