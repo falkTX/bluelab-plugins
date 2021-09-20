@@ -105,8 +105,8 @@ ChromagramObj::MagnsToChromaLine(const WDL_TypedBuf<BL_FLOAT> &magns,
     int chromaLineSize = chromaLine->GetSize();
     BL_FLOAT *chromaLineBuf = chromaLine->Get();
 
-    int magnsSize = magns->GetSize();
-    BL_FLOAT *magnsBuf = magns->Get();
+    int magnsSize = magns.GetSize();
+    BL_FLOAT *magnsBuf = magns.Get();
     
     BL_FLOAT hzPerBin = mSampleRate/mBufferSize;
 
