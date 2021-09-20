@@ -1241,7 +1241,7 @@ PartialFilterAMFM::FixPartialsCrossing(const vector<Partial> &partials0,
             if (p1[2].mId == -1)
                 continue;
 
-            // Try to avoid very messay results
+            // Try to avoid very messy results
             if (std::fabs(p1[2].mFreq - p0[2].mFreq) > MAX_SWAP_FREQ)
                 continue;
 
