@@ -101,19 +101,32 @@ ChromagramObj::MagnsToChromaLine(const WDL_TypedBuf<BL_FLOAT> &magns,
     
     chromaLine->Resize(magns.GetSize());
     BLUtils::FillAllZero(chromaLine);
+
+    int chromaLineSize = chromaLine->GetSize();
+    BL_FLOAT *chromaLineBuf = chromaLine->Get();
+
+    int magnsSize = magns->GetSize();
+    BL_FLOAT *magnsBuf = magns->Get();
     
     BL_FLOAT hzPerBin = mSampleRate/mBufferSize;
+
+    BL_FLOAT c0FreqInv = 1.0/c0Freq;
+    BL_FLOAT toneMultInv = 1.0/std::log(toneMult);
+    BL_FLOAT twelveInv = 1.0/12.0;
     
     // Do not take 0Hz!
-    for (int i = 1; i < magns.GetSize(); i++)
+    //for (int i = 1; i < magns.GetSize(); i++)
+    for (int i = 1; i < magnsSize; i++)
     {
-        BL_FLOAT magnVal = magns.Get()[i];
+        BL_FLOAT magnVal = magnsBuf[i];
         
         BL_FLOAT freq = i*hzPerBin;
         
         // See: https://pages.mtu.edu/~suits/NoteFreqCalcs.html
-        BL_FLOAT fRatio = freq / c0Freq;
-        BL_FLOAT tone = std::log(fRatio)/std::log(toneMult);
+        //BL_FLOAT fRatio = freq / c0Freq;
+        BL_FLOAT fRatio = freq*c0FreqInv;
+        //BL_FLOAT tone = std::log(fRatio)/std::log(toneMult);
+        BL_FLOAT tone = std::log(fRatio)*toneMultInv;
         
         // Shift by one (strange...)
         tone += 1.0;
