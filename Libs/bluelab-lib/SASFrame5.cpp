@@ -112,7 +112,8 @@ SIN_LUT_CREATE(SAS_FRAME_SIN_LUT, 4096);
 
 #define DEBUG_DUMP_VALUES 0 //1
 
-#define OPTIM_SAMPLES_SYNTH_SORTED_VEC 1 // 0
+#define OPTIM_SAMPLES_SYNTH_SORTED_VEC 0 //1 // 0
+#define OPTIM_SAMPLES_SYNTH_SORTED_VEC2 1
 
 SASFrame5::SASPartial::SASPartial()
 {
@@ -308,14 +309,18 @@ SASFrame5::SetPartials(const vector<Partial> &partials)
     mPrevPartials = mPartials;
     mPartials = partials;
 
-#if OPTIM_SAMPLES_SYNTH_SORTED_VEC
+#if OPTIM_SAMPLES_SYNTH_SORTED_VEC || OPTIM_SAMPLES_SYNTH_SORTED_VEC2
     sort(mPrevPartials.begin(), mPrevPartials.end(), Partial::IdLess);
 #endif
-    
+
+#if !OPTIM_SAMPLES_SYNTH_SORTED_VEC2
     // FIX: sorting by freq avoids big jumps in computed frequency when
     // id of a given partial changes.
     // (at least when the id of the first partial).
     sort(mPartials.begin(), mPartials.end(), Partial::FreqLess);
+#else
+    sort(mPartials.begin(), mPartials.end(), Partial::IdLess);
+#endif
     
     mAmplitude = 0.0;
     
@@ -541,14 +546,20 @@ SASFrame5::ComputeSamplesPartials(WDL_TypedBuf<BL_FLOAT> *samples)
         Partial partial;
         
         BL_FLOAT phase = 0.0;
-#if !OPTIM_SAMPLES_SYNTH_SORTED_VEC
+#if !OPTIM_SAMPLES_SYNTH_SORTED_VEC && !OPTIM_SAMPLES_SYNTH_SORTED_VEC2
         int prevPartialIdx = FindPrevPartialIdx(i);
-#else
+#endif
+#if OPTIM_SAMPLES_SYNTH_SORTED_VEC
         int prevPartialIdx = FindPrevPartialIdxSorted(i);
+#endif
+#if OPTIM_SAMPLES_SYNTH_SORTED_VEC2
+        int prevPartialIdx = FindPrevPartialIdxSorted2(i);
 #endif
         
         if (prevPartialIdx != -1)
             phase = mPrevPartials[prevPartialIdx].mPhase;
+
+        BL_FLOAT twoPiSR = 2.0*M_PI/mSampleRate;
         
         for (int j = 0; j < samples->GetSize()/mOverlapping; j++)
         {
@@ -566,7 +577,8 @@ SASFrame5::ComputeSamplesPartials(WDL_TypedBuf<BL_FLOAT> *samples)
             if ((freq >= SYNTH_MIN_FREQ) || (mSynthMode == RAW_PARTIALS))
                 samples->Get()[j] += samp;
             
-            phase += 2.0*M_PI*freq/mSampleRate;
+            //phase += 2.0*M_PI*freq/mSampleRate;
+            phase += twoPiSR*freq;
         }
         
         mPartials[i].mPhase = phase;
@@ -2015,10 +2027,14 @@ SASFrame5::GetPartial(Partial *result, int index, BL_FLOAT t)
 {
     const Partial &currentPartial = mPartials[index];
 
-#if !OPTIM_SAMPLES_SYNTH_SORTED_VEC
+#if !OPTIM_SAMPLES_SYNTH_SORTED_VEC && !OPTIM_SAMPLES_SYNTH_SORTED_VEC2
     int prevPartialIdx = FindPrevPartialIdx(index);
-#else
+#endif
+#if OPTIM_SAMPLES_SYNTH_SORTED_VEC
     int prevPartialIdx = FindPrevPartialIdxSorted(index);
+#endif
+#if OPTIM_SAMPLES_SYNTH_SORTED_VEC2
+    int prevPartialIdx = FindPrevPartialIdxSorted2(index);
 #endif
     
     *result = currentPartial;
@@ -2122,6 +2138,45 @@ SASFrame5::FindPrevPartialIdxSorted(int currentPartialIdx)
     {
         // We found the element!
         return (it - mPrevPartials.begin());
+    }
+
+    // Not found
+    return -1;
+}
+
+int
+SASFrame5::FindPrevPartialIdxSorted2(int currentPartialIdx)
+{
+    if (currentPartialIdx >= mPartials.size())
+        return -1;
+    
+    const Partial &currentPartial = mPartials[currentPartialIdx];
+
+    if (mPrevPartials.empty())
+        return -1;
+    
+    if (currentPartialIdx > mPrevPartials.size() - 1)
+        currentPartialIdx = mPrevPartials.size() - 1;
+
+    if (mPrevPartials[currentPartialIdx].mId == currentPartial.mId)
+    {
+        return currentPartialIdx;
+    }
+    else if (mPrevPartials[currentPartialIdx].mId < currentPartial.mId)
+    {
+        for (int i = currentPartialIdx; i < mPrevPartials.size(); i++)
+        {
+            if (mPrevPartials[i].mId == currentPartial.mId)
+                return i;
+        }
+    }
+    else if (mPrevPartials[currentPartialIdx].mId > currentPartial.mId)
+    {
+        for (int i = currentPartialIdx; i >= 0; i--)
+        {
+            if (mPrevPartials[i].mId == currentPartial.mId)
+                return i;
+        }
     }
 
     // Not found
