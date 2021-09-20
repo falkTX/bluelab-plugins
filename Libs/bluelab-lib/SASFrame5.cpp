@@ -1897,9 +1897,6 @@ SASFrame5::ComputeNormWarpingAux2(WDL_TypedBuf<BL_FLOAT> *warping,
                 continue;
             
             BL_FLOAT w = p.mFreq/pa.mFreq;
-
-            if (inverse)
-                w = 1.0/w;
             
 #if LIMIT_WARPING_MAX
             // Discard too high warping values,
@@ -2015,12 +2012,12 @@ SASFrame5::ComputeNormWarpingAux2(WDL_TypedBuf<BL_FLOAT> *warping,
         
         if (inverse)
         {
-            idx /= w;
+            if (w > BL_EPS)
+            {
+                idx *= w;
             
-            //idx *= pa.mWarping;
-
-            //if (std::fabs(w) > BL_EPS)
-            //    w = 1.0/w;
+                w = 1.0/w;
+            }
         }
         
         // TODO: make an interpolation ?
