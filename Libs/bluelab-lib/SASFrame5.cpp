@@ -325,6 +325,9 @@ SASFrame5::SetPartials(const vector<Partial> &partials)
 
 #if OPTIM_SAMPLES_SYNTH_SORTED_VEC3
     LinkPartialsIdx(&mPrevPartials, &mPartials);
+
+    // NOTE: Can not sort by freqs, otherwise  indices likned with LinkPartialsIdx
+    // would be shuffled
 #endif
     
     mAmplitude = 0.0;
@@ -615,7 +618,7 @@ SASFrame5::ComputeSamplesPartials(WDL_TypedBuf<BL_FLOAT> *samples)
 
     BL_FLOAT hzPerBin = mSampleRate/mBufferSize;
     BL_FLOAT hzPerBinInv = 1.0/hzPerBin;
-        
+
     for (int i = 0; i < mPartials.size(); i++)
     {
         // OPTIM_SAMPLES_SYNTH_SORTED_VEC3
@@ -633,7 +636,7 @@ SASFrame5::ComputeSamplesPartials(WDL_TypedBuf<BL_FLOAT> *samples)
             // Get interpolated partial
             BL_FLOAT partialT = ((BL_FLOAT)j)/(samples->GetSize()/mOverlapping);
             GetPartial(&partial, i, partialT);
-
+            
             BL_FLOAT binIdx = partial.mFreq*hzPerBinInv;
             
             // Apply SAS parameters to current partial
@@ -646,28 +649,35 @@ SASFrame5::ComputeSamplesPartials(WDL_TypedBuf<BL_FLOAT> *samples)
             mColorFactor = colorFactor;
 
             partial.mAmp /= col0;
-                        
-            // Cancel warping
+
+            // Inverse warping
+            // => the detected partials will then be aligned to harmonics after that
+            //
+            // (No need to revert additional warping after)            
             BL_FLOAT warpFactor = mWarpingFactor;
             mWarpingFactor = 1.0;
-            BL_FLOAT w0 = GetWarping(mNormWarping, binIdx);
+            BL_FLOAT w0 = GetWarping(mNormWarpingInv, binIdx);
             mWarpingFactor = warpFactor;
 
-            partial.mFreq /= w0;
+            partial.mFreq *= w0;
 
+            // Recompute bin idx
+            binIdx = partial.mFreq*hzPerBinInv;
+            
             // Apply warping
             BL_FLOAT w = GetWarping(mNormWarping, binIdx);
             partial.mFreq *= w;
-
+            
             // Recompute bin idx
             binIdx = partial.mFreq*hzPerBinInv;
             
             // Apply color
             BL_FLOAT col = GetColor(mColor, binIdx);
+            
             partial.mAmp *= col;
 
             // Amplitude
-            partial.mAmp *= mAmpFactor; //*mAmplitude;
+            partial.mAmp *= mAmpFactor;
                         
             // Freq factor (post)
             partial.mFreq *= mFreqFactor;
@@ -677,7 +687,7 @@ SASFrame5::ComputeSamplesPartials(WDL_TypedBuf<BL_FLOAT> *samples)
                 
             BL_FLOAT amp = partial.mAmp;
             
-            BL_FLOAT samp = amp*std::sin(phase); // cos
+            BL_FLOAT samp = amp*std::sin(phase);
             
             samp *= SYNTH_AMP_COEFF;
             
@@ -861,7 +871,7 @@ SASFrame5::ComputeSamplesSAS(WDL_TypedBuf<BL_FLOAT> *samples)
                 
                 // Warping
                 freq *= w;
-
+                
                 // Color
                 BL_FLOAT col = GetCol(col0, col1, t);
 
@@ -1721,29 +1731,27 @@ SASFrame5::ComputeColorAux()
 void
 SASFrame5::ComputeNormWarping()
 {
+    // Normal warping
+    //
     mPrevNormWarping = mNormWarping;
     
-    WDL_TypedBuf<BL_FLOAT> prevWarping = mNormWarping;
-    
     //ComputeNormWarpingAux();
-    ComputeNormWarpingAux2();
-    
-    if (prevWarping.GetSize() != mNormWarping.GetSize())
-        return;
+    ComputeNormWarpingAux2(&mNormWarping);
 
-    // Smooth
-    for (int i = 0; i < mNormWarping.GetSize(); i++)
-    {
-        BL_FLOAT warp = mNormWarping.Get()[i];
-        BL_FLOAT prevWarp = prevWarping.Get()[i];
-        
-        BL_FLOAT result = WARPING_SMOOTH_COEFF*prevWarp +
-            (1.0 - WARPING_SMOOTH_COEFF)*warp;
-        
-        mNormWarping.Get()[i] = result;
-    }
+    if (mPrevNormWarping.GetSize() == mNormWarping.GetSize())
+        BLUtils::Smooth(&mNormWarping, &mPrevNormWarping, WARPING_SMOOTH_COEFF);
+
+    // Inverse warping
+    //
+    mPrevNormWarpingInv = mNormWarpingInv;
+    
+    ComputeNormWarpingAux2(&mNormWarpingInv, true);
+    
+    if (mPrevNormWarpingInv.GetSize() == mNormWarpingInv.GetSize())
+        BLUtils::Smooth(&mNormWarpingInv, &mPrevNormWarpingInv, WARPING_SMOOTH_COEFF);
 }
 
+// Unused
 void
 SASFrame5::ComputeNormWarpingAux()
 {
@@ -1845,7 +1853,8 @@ SASFrame5::ComputeNormWarpingAux()
 //
 // NOTE: this is not still perfect if we briefly loose the tracking
 void
-SASFrame5::ComputeNormWarpingAux2()
+SASFrame5::ComputeNormWarpingAux2(WDL_TypedBuf<BL_FLOAT> *warping,
+                                  bool inverse)
 {
     // Init
 
@@ -1870,17 +1879,27 @@ SASFrame5::ComputeNormWarpingAux2()
         for (int j = 0; j < mPartials.size(); j++)
         {
             const Partial &p = mPartials[j];
-
+            
             // Do no add to warping if dead or zombie
             if (p.mState != Partial::ALIVE)
                 continue;
-        
-            if (p.mFreq < pa.mFreq*0.5)
-                continue;
-            if (p.mFreq > pa.mFreq*2.0)
-                break;
 
+            // GOOD!
+            // mFrequency is the step...
+            // Take half the step! Over half the step,
+            // this is another theorical partial which will be interesting
+            if (p.mFreq < pa.mFreq - mFrequency*0.5)
+                continue;
+            if (p.mFreq > pa.mFreq + mFrequency*0.5)
+                // Can not break, because now partials can be sorted by id
+                // instead of by freq
+                //break;
+                continue;
+            
             BL_FLOAT w = p.mFreq/pa.mFreq;
+
+            if (inverse)
+                w = 1.0/w;
             
 #if LIMIT_WARPING_MAX
             // Discard too high warping values,
@@ -1890,43 +1909,25 @@ SASFrame5::ComputeNormWarpingAux2()
                 continue;
 #endif
 
-#if 0 // ORIGIN
-            // Keep smallest warping
-            if ((pa.mWarping < 0.0) ||
-                (std::fabs(w - 1.0) < std::fabs(pa.mWarping - 1.0)))
-                pa.mWarping = w;
-#endif
-
-#if 1 // TEST
-            // Compute the ral "smallest" warping value
-            BL_FLOAT wNorm = (w < 1.0) ? 1.0/w : w;
-            BL_FLOAT paNorm = (pa.mWarping < 1.0) ? 1.0/pa.mWarping : pa.mWarping;
-            
-            // Keep smallest warping
-            if ((pa.mWarping < 0.0) || (wNorm < paNorm))
-                pa.mWarping = w;
-#endif
-
-#if 0 // Bad if we briefly loose the tracking of a long partial
-            // Keep biggest age, then smallest warping
+            // Take the smallest warping
+            // (i.e the closest partial)
             if (pa.mWarping < 0.0)
+                pa.mWarping = w;
+            else
             {
-                if (p.mAge >= pa.mPartialAge)
-                {
-                    if ((p.mAge > pa.mPartialAge) ||
-                        (std::fabs(w - 1.0) < std::fabs(pa.mWarping - 1.0)))
-                    {
-                        pa.mWarping = w;
-                        pa.mPartialAge = p.mAge;
-                    }
-                }
+                // Compute the ral "smallest" warping value
+                BL_FLOAT wNorm = (w < 1.0) ? 1.0/w : w;
+                BL_FLOAT paNorm = (pa.mWarping < 1.0) ? 1.0/pa.mWarping : pa.mWarping;
+                
+                // Keep smallest warping
+                if (wNorm < paNorm)
+                    pa.mWarping = w;
             }
-#endif
         }
     }
 
     // Fill missing partials values
-    // (in case no matchin detected partial was found for a given theorical partial)
+    // (in case no matching detected partial was found for a given theorical partial)
     for (int i = 0; i < theoricalPartials.size(); i++)
     {
         PartialAux &pa = theoricalPartials[i];
@@ -1974,26 +1975,26 @@ SASFrame5::ComputeNormWarpingAux2()
     // Fill the warping envelope
     //
     
-    mNormWarping.Resize(mBufferSize/2);
+    warping->Resize(mBufferSize/2);
     
     if (mFrequency < BL_EPS)
     {
-        BLUtils::FillAllValue(&mNormWarping, (BL_FLOAT)1.0);
+        BLUtils::FillAllValue(warping, (BL_FLOAT)1.0);
         
         return;
     }
     
     // Will interpolate values between the partials
     BL_FLOAT undefinedValue = -1.0;
-    BLUtils::FillAllValue(&mNormWarping, undefinedValue);
+    BLUtils::FillAllValue(warping, undefinedValue);
     
     // Fix bounds at 1
-    mNormWarping.Get()[0] = 1.0;
-    mNormWarping.Get()[mBufferSize/2 - 1] = 1.0;
+    warping->Get()[0] = 1.0;
+    warping->Get()[mBufferSize/2 - 1] = 1.0;
     
     if (mPartials.size() < 2)
     {
-        BLUtils::FillAllValue(&mNormWarping, (BL_FLOAT)1.0);
+        BLUtils::FillAllValue(warping, (BL_FLOAT)1.0);
         
         return;
     }
@@ -2006,26 +2007,43 @@ SASFrame5::ComputeNormWarpingAux2()
         PartialAux &pa = theoricalPartials[i];
         
         BL_FLOAT idx = pa.mFreq/hzPerBin;
+        BL_FLOAT w = pa.mWarping;
+
+        // Fix missing values in the thorical partials here
+        if (w < 0.0)
+            w = 1.0;
+        
+        if (inverse)
+        {
+            idx /= w;
+            
+            //idx *= pa.mWarping;
+
+            //if (std::fabs(w) > BL_EPS)
+            //    w = 1.0/w;
+        }
+        
         // TODO: make an interpolation ?
         idx = bl_round(idx);
         
-        if ((idx > 0) && (idx < mNormWarping.GetSize()))
-            mNormWarping.Get()[(int)idx] = pa.mWarping;
+        if ((idx > 0) && (idx < warping->GetSize()))
+            warping->Get()[(int)idx] = w;
     }
 
-#if FILL_ZERO_FIRST_LAST_VALUES
-#if 0 // Keep the first partial warping of reference is chroma-compute freq
+    // Do not do this, no need because the undefined theorical partials
+    // will now have a warping value of 1 assigned 
+#if 0 //FILL_ZERO_FIRST_LAST_VALUES
+    // Keep the first partial warping of reference is chroma-compute freq
     // Avoid warping the first partial
-    FillFirstValues(&mNormWarping, mPartials, 1.0);
-#endif
+    //FillFirstValues(warping, mPartials, 1.0);
     
     // NEW
-    FillLastValues(&mNormWarping, mPartials, 1.0);
+    FillLastValues(warping, mPartials, 1.0);
 #endif
     
     // Fill all the other value
     bool extendBounds = false;
-    BLUtils::FillMissingValues(&mNormWarping, extendBounds, undefinedValue);
+    BLUtils::FillMissingValues(warping, extendBounds, undefinedValue);
 }
 
 BL_FLOAT

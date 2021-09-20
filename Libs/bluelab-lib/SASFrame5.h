@@ -151,7 +151,9 @@ protected:
     void ComputeColorAux();
     void ComputeNormWarping();
     void ComputeNormWarpingAux();
-    void ComputeNormWarpingAux2();
+    // If inverse is true, then compute inverse warping
+    void ComputeNormWarpingAux2(WDL_TypedBuf<BL_FLOAT> *warping,
+                                bool inverse = false);
     
     // Simple version
     BL_FLOAT ApplyNormWarping(BL_FLOAT freq);
@@ -226,11 +228,13 @@ protected:
     
     WDL_TypedBuf<BL_FLOAT> mColor;
     WDL_TypedBuf<BL_FLOAT> mNormWarping;
+    WDL_TypedBuf<BL_FLOAT> mNormWarpingInv;
     
     // Must keep the prev values, to interpolate over time
     // when generating the samples
     WDL_TypedBuf<BL_FLOAT> mPrevColor;
     WDL_TypedBuf<BL_FLOAT> mPrevNormWarping;
+    WDL_TypedBuf<BL_FLOAT> mPrevNormWarpingInv;
     
     vector<SASPartial> mSASPartials;
     vector<SASPartial> mPrevSASPartials;
