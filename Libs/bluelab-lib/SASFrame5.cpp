@@ -2049,12 +2049,12 @@ SASFrame5::GetPartial(Partial *result, int index, BL_FLOAT t)
         if (prevPartialIdx != -1)
             // Interpolate
         {
-            const Partial &prevPartial = mPrevPartials[prevPartialIdx];
-            
             BL_FLOAT t0 = t/SYNTH_DEAD_PARTIAL_DECREASE;
             if (t0 <= 1.0)
             {
                 // Interpolate in amp
+                const Partial &prevPartial = mPrevPartials[prevPartialIdx];
+                
                 BL_FLOAT amp = (1.0 - t0)*prevPartial.mAmp;
                 result->mAmp = amp;
             }
@@ -2164,7 +2164,7 @@ SASFrame5::FindPrevPartialIdxSorted2(int currentPartialIdx)
     }
     else if (mPrevPartials[currentPartialIdx].mId < currentPartial.mId)
     {
-        for (int i = currentPartialIdx; i < mPrevPartials.size(); i++)
+        for (int i = currentPartialIdx + 1; i < mPrevPartials.size(); i++)
         {
             if (mPrevPartials[i].mId == currentPartial.mId)
                 return i;
@@ -2172,7 +2172,7 @@ SASFrame5::FindPrevPartialIdxSorted2(int currentPartialIdx)
     }
     else if (mPrevPartials[currentPartialIdx].mId > currentPartial.mId)
     {
-        for (int i = currentPartialIdx; i >= 0; i--)
+        for (int i = currentPartialIdx - 1; i >= 0; i--)
         {
             if (mPrevPartials[i].mId == currentPartial.mId)
                 return i;

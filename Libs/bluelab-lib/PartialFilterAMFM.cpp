@@ -153,7 +153,14 @@ PartialFilterAMFM::FilterPartials(vector<Partial> *partials)
 
 #if FIX_PARTIAL_CROSSING
     if (mPartials.size() >= 3)
+    {
+#if OPTIM_SAMPLES_SYNTH_SORTED_VEC
+        sort(mPartials[1].begin(), mPartials[1].end(), Partial::IdLess);
+        sort(mPartials[2].begin(), mPartials[2].end(), Partial::IdLess);
+#endif
+    
         FixPartialsCrossing(mPartials[2], mPartials[1], &currentPartials);
+    }
 #endif
     
     // At the end, there remains the partial that have not been matched
@@ -1206,13 +1213,23 @@ PartialFilterAMFM::FixPartialsCrossing(const vector<Partial> &partials0,
         // Tmp optim
         if (p0[2].mAge < MIN_PARTIAL_AGE)
             continue;
-        
+
+#if !OPTIM_SAMPLES_SYNTH_SORTED_VEC
         int idx01 = FindPartialById(partials1, p0[2].mId);
+#else
+        int idx01 = FindPartialByIdSorted(partials1, p0[2]);
+#endif
+        
         if (idx01 == -1)
             continue;
         p0[1] = partials1[idx01];
 
+#if !OPTIM_SAMPLES_SYNTH_SORTED_VEC
         int idx00 = FindPartialById(partials0, p0[2].mId);
+#else
+        int idx00 = FindPartialByIdSorted(partials0, p0[2]);
+#endif
+        
         if (idx00 == -1)
             continue;
         p0[0] = partials0[idx00];
@@ -1227,13 +1244,23 @@ PartialFilterAMFM::FixPartialsCrossing(const vector<Partial> &partials0,
             // Try to avoid very messay results
             if (std::fabs(p1[2].mFreq - p0[2].mFreq) > MAX_SWAP_FREQ)
                 continue;
-            
+
+#if !OPTIM_SAMPLES_SYNTH_SORTED_VEC
             int idx11 = FindPartialById(partials1, p1[2].mId);
+#else
+            int idx11 = FindPartialByIdSorted(partials1, p1[2]);
+#endif
+            
             if (idx11 == -1)
                 continue;
             p1[1] = partials1[idx11];
-            
+
+#if !OPTIM_SAMPLES_SYNTH_SORTED_VEC
             int idx10 = FindPartialById(partials0, p1[2].mId);
+#else
+            int idx10 = FindPartialByIdSorted(partials0, p1[2]);
+#endif
+            
             if (idx10 == -1)
                 continue;
             p1[0] = partials0[idx10];
