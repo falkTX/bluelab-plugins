@@ -2442,7 +2442,7 @@ SASFrame5::GetCol(BL_FLOAT col0, BL_FLOAT col1, BL_FLOAT t)
 void
 SASFrame5::FillLastValues(WDL_TypedBuf<BL_FLOAT> *values,
                           const vector<Partial> &partials, BL_FLOAT val)
-{
+{    
     // First, find the last bin index
     int maxIdx = -1;
     for (int i = 0; i < partials.size(); i++)
@@ -2453,9 +2453,11 @@ SASFrame5::FillLastValues(WDL_TypedBuf<BL_FLOAT> *values,
         // (this is important !)
         if (p.mState != Partial::ALIVE)
             continue;
-        
-        if (p.mRightIndex > maxIdx)
-            maxIdx = p.mRightIndex;
+            
+        //if (p.mRightIndex > maxIdx)
+        //    maxIdx = p.mRightIndex;
+        if (p.mPeakIndex > maxIdx)
+            maxIdx = p.mPeakIndex;
     }
     
     // Then fill with zeros after this index
@@ -2465,7 +2467,7 @@ SASFrame5::FillLastValues(WDL_TypedBuf<BL_FLOAT> *values,
         {
             values->Get()[i] = val;
         }
-    }            
+    }
 }
 
 void
