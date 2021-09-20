@@ -113,7 +113,8 @@ SIN_LUT_CREATE(SAS_FRAME_SIN_LUT, 4096);
 #define DEBUG_DUMP_VALUES 0 //1
 
 #define OPTIM_SAMPLES_SYNTH_SORTED_VEC 0 //1 // 0
-#define OPTIM_SAMPLES_SYNTH_SORTED_VEC2 1
+#define OPTIM_SAMPLES_SYNTH_SORTED_VEC2 0
+#define OPTIM_SAMPLES_SYNTH_SORTED_VEC3 1
 
 SASFrame5::SASPartial::SASPartial()
 {
@@ -309,17 +310,21 @@ SASFrame5::SetPartials(const vector<Partial> &partials)
     mPrevPartials = mPartials;
     mPartials = partials;
 
-#if OPTIM_SAMPLES_SYNTH_SORTED_VEC || OPTIM_SAMPLES_SYNTH_SORTED_VEC2
+#if OPTIM_SAMPLES_SYNTH_SORTED_VEC || OPTIM_SAMPLES_SYNTH_SORTED_VEC2 || OPTIM_SAMPLES_SYNTH_SORTED_VEC3
     sort(mPrevPartials.begin(), mPrevPartials.end(), Partial::IdLess);
 #endif
 
-#if !OPTIM_SAMPLES_SYNTH_SORTED_VEC2
+#if !OPTIM_SAMPLES_SYNTH_SORTED_VEC2 && !OPTIM_SAMPLES_SYNTH_SORTED_VEC3
     // FIX: sorting by freq avoids big jumps in computed frequency when
     // id of a given partial changes.
     // (at least when the id of the first partial).
     sort(mPartials.begin(), mPartials.end(), Partial::FreqLess);
 #else
     sort(mPartials.begin(), mPartials.end(), Partial::IdLess);
+#endif
+
+#if OPTIM_SAMPLES_SYNTH_SORTED_VEC3
+    LinkPartialsIdx(&mPrevPartials, &mPartials);
 #endif
     
     mAmplitude = 0.0;
@@ -546,7 +551,7 @@ SASFrame5::ComputeSamplesPartials(WDL_TypedBuf<BL_FLOAT> *samples)
         Partial partial;
         
         BL_FLOAT phase = 0.0;
-#if !OPTIM_SAMPLES_SYNTH_SORTED_VEC && !OPTIM_SAMPLES_SYNTH_SORTED_VEC2
+#if !OPTIM_SAMPLES_SYNTH_SORTED_VEC && !OPTIM_SAMPLES_SYNTH_SORTED_VEC2 && !OPTIM_SAMPLES_SYNTH_SORTED_VEC3
         int prevPartialIdx = FindPrevPartialIdx(i);
 #endif
 #if OPTIM_SAMPLES_SYNTH_SORTED_VEC
@@ -554,6 +559,9 @@ SASFrame5::ComputeSamplesPartials(WDL_TypedBuf<BL_FLOAT> *samples)
 #endif
 #if OPTIM_SAMPLES_SYNTH_SORTED_VEC2
         int prevPartialIdx = FindPrevPartialIdxSorted2(i);
+#endif
+#if OPTIM_SAMPLES_SYNTH_SORTED_VEC3
+        int prevPartialIdx = mPartials[i].mLinkedId;
 #endif
         
         if (prevPartialIdx != -1)
@@ -2027,7 +2035,7 @@ SASFrame5::GetPartial(Partial *result, int index, BL_FLOAT t)
 {
     const Partial &currentPartial = mPartials[index];
 
-#if !OPTIM_SAMPLES_SYNTH_SORTED_VEC && !OPTIM_SAMPLES_SYNTH_SORTED_VEC2
+#if !OPTIM_SAMPLES_SYNTH_SORTED_VEC && !OPTIM_SAMPLES_SYNTH_SORTED_VEC2 && !OPTIM_SAMPLES_SYNTH_SORTED_VEC3
     int prevPartialIdx = FindPrevPartialIdx(index);
 #endif
 #if OPTIM_SAMPLES_SYNTH_SORTED_VEC
@@ -2036,7 +2044,10 @@ SASFrame5::GetPartial(Partial *result, int index, BL_FLOAT t)
 #if OPTIM_SAMPLES_SYNTH_SORTED_VEC2
     int prevPartialIdx = FindPrevPartialIdxSorted2(index);
 #endif
-    
+#if OPTIM_SAMPLES_SYNTH_SORTED_VEC3
+    int prevPartialIdx = currentPartial.mLinkedId;
+#endif
+        
     *result = currentPartial;
     
     // Manage decrease of dead partials
@@ -2157,7 +2168,7 @@ SASFrame5::FindPrevPartialIdxSorted2(int currentPartialIdx)
     
     if (currentPartialIdx > mPrevPartials.size() - 1)
         currentPartialIdx = mPrevPartials.size() - 1;
-
+        
     if (mPrevPartials[currentPartialIdx].mId == currentPartial.mId)
     {
         return currentPartialIdx;
@@ -2430,5 +2441,46 @@ SASFrame5::ApplyColorFactor(WDL_TypedBuf<BL_FLOAT> *color, BL_FLOAT factor)
         BL_FLOAT col = color->Get()[i];
         col = ApplyColorFactor(col, factor);
         color->Get()[i] = col;
+    }
+}
+
+void
+SASFrame5::LinkPartialsIdx(vector<Partial> *partials0,
+                           vector<Partial> *partials1)
+{
+    // Init
+    for (int i = 0; i < partials0->size(); i++)
+        (*partials0)[i].mLinkedId = -1;
+    for (int i = 0; i < partials1->size(); i++)
+        (*partials1)[i].mLinkedId = -1;
+
+    int i0 = 0;
+    int i1 = 0;
+    while(true)
+    {
+        if (i0 >= partials0->size())
+            return;
+        if (i1 >= partials1->size())
+            return;
+        
+        Partial &p0 = (*partials0)[i0];
+        Partial &p1 = (*partials1)[i1];
+
+        if (p0.mId == p1.mId)
+        {
+            p0.mLinkedId = i1;
+            p1.mLinkedId = i0;
+
+            i0++;
+            i1++;
+            
+            continue;
+        }
+
+        if (p0.mId > p1.mId)
+            i1++;
+
+        if (p0.mId < p1.mId)
+            i0++;
     }
 }

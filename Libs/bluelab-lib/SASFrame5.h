@@ -188,7 +188,9 @@ protected:
     static BL_FLOAT ApplyColorFactor(BL_FLOAT color, BL_FLOAT factor);
     static void ApplyColorFactor(WDL_TypedBuf<BL_FLOAT> *color, BL_FLOAT factor);
     
-                          
+    void LinkPartialsIdx(vector<Partial> *partials0,
+                         vector<Partial> *partials1);
+        
     //
     SynthMode mSynthMode;
     bool mSynthEvenPartials;
