@@ -58,7 +58,7 @@
 #endif
 
 // If not set to 1, we will skip steps, depending on the speed
-// (for example we won't display every wombie point)
+// (for example we won't display every zombie point)
 #define DISPLAY_EVERY_STEP 1 // 0
 
 // BAD
