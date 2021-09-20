@@ -123,18 +123,20 @@ ChromagramObj::MagnsToChromaLine(const WDL_TypedBuf<BL_FLOAT> &magns,
         
         tone = fmod(tone, 12.0);
         
-        BL_FLOAT toneNorm = tone/12.0;
+        //BL_FLOAT toneNorm = tone/12.0;
+        BL_FLOAT toneNorm = tone*twelveInv;
         
-        BL_FLOAT binNumF = toneNorm*chromaLine->GetSize();
+        BL_FLOAT binNumF = toneNorm*chromaLineSize;
         
         int binNum = bl_round(binNumF);
         
-        if ((binNum >= 0) && (binNum < chromaLine->GetSize()))
-            chromaLine->Get()[binNum] += magnVal;
+        if ((binNum >= 0) && (binNum < chromaLineSize))
+            //chromaLine->Get()[binNum] += magnVal;
+            chromaLineBuf[binNum] += magnVal;
 
         if (maskLine != NULL)
         {
-            if ((binNum >= 0) && (binNum < chromaLine->GetSize()))
+            if ((binNum >= 0) && (binNum < chromaLineSize))
                 maskLine->AddValue(binNum, i);
         }
     }
