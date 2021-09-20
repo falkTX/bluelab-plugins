@@ -707,10 +707,10 @@ SASFrame5::ComputeSamplesSAS(WDL_TypedBuf<BL_FLOAT> *samples)
             SASPartial &partial = mSASPartials[partialIndex];
             partial.mFreq = partialFreq;
 
-#if 1 //0 // If we did this, we applied amplitude two times?
+#if 0 // If we did this, maybe amplitude too low
             partial.mAmp = mAmplitude;
 #endif
-#if 0 // Correct ?
+#if 1 // Correct! (global amplitude will be applied later)
             partial.mAmp = 1.0;
 #endif
             
@@ -813,9 +813,13 @@ SASFrame5::ComputeSamplesSAS(WDL_TypedBuf<BL_FLOAT> *samples)
             continue;
         
         BL_FLOAT amp = GetAmp(mPrevAmplitude, mAmplitude, t);
-        
+
+#if 0 // Make the volume decrease
         BL_FLOAT a = amp*(s/d);
-        
+#endif
+#if 1 // Resynth the correct volume!
+        BL_FLOAT a = amp*s;
+#endif
         samples->Get()[i] = a;
         
         t += tStep;
@@ -1433,7 +1437,6 @@ SASFrame5::Compute()
     ComputeNormWarping();
 }
 
-#if 1 // Use sum
 void
 SASFrame5::ComputeAmplitude()
 {
@@ -1454,28 +1457,6 @@ SASFrame5::ComputeAmplitude()
     
     mAmplitude = amplitude;
 }
-#endif
-#if 0 // Use max
-void
-SASFrame5::ComputeAmplitude()
-{
-    // Amp must not be in dB, but direct!
-    //mPrevAmplitude = mAmplitude;
-    mAmplitude = 0.0;
-
-    const vector<Partial> &partials = mPartials;
-
-    for (int i = 0; i < partials.size(); i++)
-    {
-        const Partial &p = partials[i];
-        
-        BL_FLOAT amp = p.mAmp;
-
-        if (amp > mAmplitude)
-            mAmplitude = amp;
-    }
-}
-#endif
 
 void
 SASFrame5::ComputeFrequency()
@@ -1620,6 +1601,7 @@ SASFrame5::ComputeColorAux()
     }
 #endif
 
+#if 0 // Makes gain decrease
     // Normalize the color (maybe not necessary)
     BL_FLOAT amplitude = mAmplitude;
     if (amplitude > 0.0)
@@ -1628,6 +1610,14 @@ SASFrame5::ComputeColorAux()
         
         BLUtils::MultValues(&mColor, coeff);
     }
+#endif
+
+#if 1 // Fixed version => so the color max is 1
+    // Normalize the color
+    BL_FLOAT maxCol = BLUtils::ComputeMax(mColor);
+    if (maxCol > BL_EPS)
+        BLUtils::MultValues(&mColor, 1.0/maxCol);
+#endif
 }
 
 void
