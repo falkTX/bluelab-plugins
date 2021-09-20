@@ -609,53 +609,22 @@ SASFrame5::ComputeSamplesPartials(WDL_TypedBuf<BL_FLOAT> *samples)
     {
         return;
     }
-    
+
+    // Optim
+    BL_FLOAT twoPiSR = 2.0*M_PI/mSampleRate;
+
+    BL_FLOAT hzPerBin = mSampleRate/mBufferSize;
+    BL_FLOAT hzPerBinInv = 1.0/hzPerBin;
+        
     for (int i = 0; i < mPartials.size(); i++)
     {
-        //Partial partial;
-        
-        BL_FLOAT phase = 0.0;
-#if !OPTIM_SAMPLES_SYNTH_SORTED_VEC && !OPTIM_SAMPLES_SYNTH_SORTED_VEC2 && !OPTIM_SAMPLES_SYNTH_SORTED_VEC3
-        int prevPartialIdx = FindPrevPartialIdx(i);
-#endif
-#if OPTIM_SAMPLES_SYNTH_SORTED_VEC
-        int prevPartialIdx = FindPrevPartialIdxSorted(i);
-#endif
-#if OPTIM_SAMPLES_SYNTH_SORTED_VEC2
-        int prevPartialIdx = FindPrevPartialIdxSorted2(i);
-#endif
-#if OPTIM_SAMPLES_SYNTH_SORTED_VEC3
+        // OPTIM_SAMPLES_SYNTH_SORTED_VEC3
         int prevPartialIdx = mPartials[i].mLinkedId;
-#endif
-        
+
+        BL_FLOAT phase = 0.0;
         if (prevPartialIdx != -1)
             phase = mPrevPartials[prevPartialIdx].mPhase;
-
-        // 
-        BL_FLOAT hzPerBin = mSampleRate/mBufferSize;
-        BL_FLOAT hzPerBinInv = 1.0/hzPerBin;
         
-        // SAS parameters
-        //
-        
-        // Bin param
-        //BL_FLOAT binIdx = partial.mFreq*hzPerBinInv;
-        
-        // Warping
-        //BL_FLOAT w0 = GetWarping(mPrevNormWarping, binIdx);
-        //BL_FLOAT w = GetWarping(mNormWarping, binIdx);
-        
-        // Color
-        //BL_FLOAT prevBinIdxc = w0*prevPartial.mFreq*hzPerBinInv;
-        //BL_FLOAT binIdxc = w1*partial.mFreq*hzPerBinInv;
-        
-        //
-        //BL_FLOAT col0 = GetColor(mPrevColor, prevBinIdxc);
-        //BL_FLOAT col1 = GetColor(mColor, binIdxc);
-    
-        // Optim
-        BL_FLOAT twoPiSR = 2.0*M_PI/mSampleRate;
-
         // Generate samples
         for (int j = 0; j < samples->GetSize()/mOverlapping; j++)
         {
@@ -669,19 +638,6 @@ SASFrame5::ComputeSamplesPartials(WDL_TypedBuf<BL_FLOAT> *samples)
             
             // Apply SAS parameters to current partial
             //
-            
-            // Freq factor (pre)
-            //partial.mFreq *= mFreqFactor;
-            
-            // Amplitude
-
-            //partial.mAmp = mAmplitude*mAmpFactor;
-            //partial.mAmp = 1.0;
-            
-            // Compute norm warping
-            //BL_FLOAT w = 1.0;
-            //if (binIdx < mNormWarping.GetSize() - 1)
-            //    w = (1.0 - t)*w0 + t*w1;
 
             // Cancel color
             BL_FLOAT colorFactor = mColorFactor;
@@ -691,10 +647,7 @@ SASFrame5::ComputeSamplesPartials(WDL_TypedBuf<BL_FLOAT> *samples)
 
             partial.mAmp /= col0;
                         
-            // Warping
-            //
-
-            // Get and cancel the current warping
+            // Cancel warping
             BL_FLOAT warpFactor = mWarpingFactor;
             mWarpingFactor = 1.0;
             BL_FLOAT w0 = GetWarping(mNormWarping, binIdx);
@@ -702,18 +655,18 @@ SASFrame5::ComputeSamplesPartials(WDL_TypedBuf<BL_FLOAT> *samples)
 
             partial.mFreq /= w0;
 
-            // Apply current warping
+            // Apply warping
             BL_FLOAT w = GetWarping(mNormWarping, binIdx);
             partial.mFreq *= w;
 
             // Recompute bin idx
             binIdx = partial.mFreq*hzPerBinInv;
             
-            // Color
-            //BL_FLOAT col = GetCol(col0, col1, t);
+            // Apply color
             BL_FLOAT col = GetColor(mColor, binIdx);
             partial.mAmp *= col;
 
+            // Amplitude
             partial.mAmp *= mAmpFactor; //*mAmplitude;
                         
             // Freq factor (post)
@@ -731,7 +684,6 @@ SASFrame5::ComputeSamplesPartials(WDL_TypedBuf<BL_FLOAT> *samples)
             if ((freq >= SYNTH_MIN_FREQ) || (mSynthMode == RAW_PARTIALS))
                 samples->Get()[j] += samp;
             
-            //phase += 2.0*M_PI*freq/mSampleRate;
             phase += twoPiSR*freq;
         }
         
