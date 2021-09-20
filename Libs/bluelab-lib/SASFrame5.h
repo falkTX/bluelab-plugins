@@ -126,6 +126,7 @@ public:
                           BL_FLOAT t, bool mixFreq);
     
 protected:
+    void ComputeSamplesPartialsRAW(WDL_TypedBuf<BL_FLOAT> *samples);
     void ComputeSamplesPartials(WDL_TypedBuf<BL_FLOAT> *samples);
     
     BL_FLOAT GetColor(const WDL_TypedBuf<BL_FLOAT> &color, BL_FLOAT binIdx);
