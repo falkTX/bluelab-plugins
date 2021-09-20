@@ -1868,7 +1868,6 @@ SASFrame5::ComputeNormWarpingAux2(WDL_TypedBuf<BL_FLOAT> *warping,
     {
         theoricalPartials[i].mFreq = (i + 1)*mFrequency;
         theoricalPartials[i].mWarping = -1.0;
-        theoricalPartials[i].mPartialAge = -1;
     }
     
     // Compute best match

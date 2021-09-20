@@ -262,7 +262,6 @@ protected:
     {
         BL_FLOAT mFreq;
         BL_FLOAT mWarping;
-        int mPartialAge;
     };
 };
 
