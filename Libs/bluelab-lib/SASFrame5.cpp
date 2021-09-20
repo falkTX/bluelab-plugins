@@ -1890,10 +1890,20 @@ SASFrame5::ComputeNormWarpingAux2()
                 continue;
 #endif
 
-#if 1
+#if 0 // ORIGIN
             // Keep smallest warping
             if ((pa.mWarping < 0.0) ||
                 (std::fabs(w - 1.0) < std::fabs(pa.mWarping - 1.0)))
+                pa.mWarping = w;
+#endif
+
+#if 1 // TEST
+            // Compute the ral "smallest" warping value
+            BL_FLOAT wNorm = (w < 1.0) ? 1.0/w : w;
+            BL_FLOAT paNorm = (pa.mWarping < 1.0) ? 1.0/pa.mWarping : pa.mWarping;
+            
+            // Keep smallest warping
+            if ((pa.mWarping < 0.0) || (wNorm < paNorm))
                 pa.mWarping = w;
 #endif
 
