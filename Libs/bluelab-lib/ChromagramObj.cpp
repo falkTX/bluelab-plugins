@@ -198,9 +198,11 @@ ChromagramObj::MagnsToChromaLineFreqs(const WDL_TypedBuf<BL_FLOAT> &magns,
     
     int magnsSize = magns.GetSize();
     BL_FLOAT *magnsData = magns.Get();
+    
     BL_FLOAT *realFreqsData = realFreqs.Get();
 
     int chromaLineSize = chromaLine->GetSize();
+    BL_FLOAT *chromaLineBuf = chromaLine->Get();
     
     // Do not take 0Hz!
     //for (int i = 1; i < magns.GetSize(); i++)
@@ -232,7 +234,7 @@ ChromagramObj::MagnsToChromaLineFreqs(const WDL_TypedBuf<BL_FLOAT> &magns,
         
         //if ((binNum >= 0) && (binNum < chromaLine->GetSize()))
         if ((binNum >= 0) && (binNum < chromaLineSize))
-            chromaLine->Get()[binNum] += magnVal;
+            chromaLineBuf[binNum] += magnVal;
 
         if (maskLine != NULL)
         {
