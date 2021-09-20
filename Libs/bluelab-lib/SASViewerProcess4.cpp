@@ -23,6 +23,7 @@
 
 #include <PartialTracker6.h>
 #include <QIFFT.h> // For empirical coeffs
+
 #include "SASViewerProcess4.h"
 
 
@@ -208,7 +209,7 @@ SASViewerProcess4::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
         
         vector<Partial> partials = normPartials;
         mPartialTracker->DenormPartials(&partials);
-        
+    
         mSASFrame->SetPartials(partials);
 
         BL_FLOAT noiseCoeff;

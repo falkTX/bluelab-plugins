@@ -1,3 +1,11 @@
+#include <stdio.h>
+
+#include <BLUtils.h>
+
+#include <BLDebug.h>
+
+#include "IPlug_include_in_plug_hdr.h"
+
 #include "Partial.h"
 
 // Kalman
@@ -104,4 +112,42 @@ bool
 Partial::CookieLess(const Partial &p1, const Partial &p2)
 {
     return (p1.mCookie < p2.mCookie);
+}
+
+void
+Partial::DBG_PrintPartials(const vector<Partial> &partials)
+{
+    fprintf(stderr, "-------------------\n");
+    for (int i = 0; i < partials.size(); i++)
+    {
+        const Partial &p = partials[i];
+        
+        fprintf(stderr, "id: %ld state: %d amp: %g freq: %g\n",
+                p.mId, p.mState, p.mAmp, p.mFreq);
+    }
+}
+
+void
+Partial::DBG_DumpPartials(const char *fileName,
+                          const vector<Partial> &partials, int size)
+{
+#define MIN_AMP_DB -120.0
+    
+    WDL_TypedBuf<BL_FLOAT> data;
+    data.Resize(size);
+    BLUtils::FillAllZero(&data);
+    
+    for (int i = 0; i < partials.size(); i++)
+    {
+        const Partial &p = partials[i];
+        
+        int idx = p.mFreq*size;
+        if (idx >= size)
+            continue;
+
+        BL_FLOAT amp = (p.mAmp - MIN_AMP_DB)/(0.0 - MIN_AMP_DB);
+        data.Get()[idx] = amp; //p.mAmp;
+    }
+
+    BLDebug::DumpData(fileName, data);
 }

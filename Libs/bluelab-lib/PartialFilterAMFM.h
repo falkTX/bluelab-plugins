@@ -79,10 +79,6 @@ class PartialFilterAMFM : public PartialFilter
                              const Partial &currentPartial);
     bool CheckDiscardOppositeDirection(const Partial &prevPartial,
                                        const Partial &currentPartial);
-        
-    void DBG_PrintPartials(const vector<Partial> &partials);
-    void DBG_DumpPartials(const char *fileName,
-                          const vector<Partial> &partials, int size);
     
     //
     deque<vector<Partial> > mPartials;

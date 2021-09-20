@@ -1,6 +1,9 @@
 #ifndef PARTIAL_H
 #define PARTIAL_H
 
+#include <vector>
+using namespace std;
+
 #include <SimpleKalmanFilter.h>
 
 #include <BLTypes.h>
@@ -31,7 +34,12 @@ class Partial
     static bool IdLess(const Partial &p1, const Partial &p2);
         
     static bool CookieLess(const Partial &p1, const Partial &p2);
-        
+
+    // Debug
+    static void DBG_PrintPartials(const vector<Partial> &partials);
+    static void DBG_DumpPartials(const char *fileName,
+                                 const vector<Partial> &partials, int size);
+    
  public:
     int mPeakIndex;
     int mLeftIndex;
