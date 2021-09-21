@@ -79,9 +79,11 @@ SIN_LUT_CREATE(SAS_FRAME_SIN_LUT, 4096);
 //#define COLOR_CUT_MISSING_PARTIALS 1 // ORIGIN
 #define COLOR_CUT_MISSING_PARTIALS 0 //1
 
+// NOTE: not sure at all it is good...
+//
 // Interpolate partials to color in DB
 // Better, for example with a single sine wave, at low freq
-#define COLOR_DB_INTERP 1 // ??
+#define COLOR_DB_INTERP 0 //1 // ??
 
 // Set to 0 for optimization
 //
@@ -92,7 +94,8 @@ SIN_LUT_CREATE(SAS_FRAME_SIN_LUT, 4096);
 #define INTERP_RESCALE 0 // Origin: 1
 
 // Origin: 1
-#define FILL_ZERO_FIRST_LAST_VALUES 1
+#define FILL_ZERO_FIRST_LAST_VALUES_WARPING 1
+#define FILL_ZERO_FIRST_LAST_VALUES_COLOR 0 //1
 
 // Use OnsetDetector to avoid generating garbage harmonics when a transient appears
 #define ENABLE_ONSET_DETECTION 1
@@ -118,6 +121,15 @@ SIN_LUT_CREATE(SAS_FRAME_SIN_LUT, 4096);
 
 // Smooth interpolation of warping envelope
 #define WARP_ENVELOPE_USE_LAGRANGE_INTERP 1
+
+// NOTE: Lagrange interp seems not good for color
+// => it makes holes in "bowl", and if adding
+// additional values before interpolation, this gives the same result as simple
+// interpolation (no Lagrange)
+
+// Smooth interpolation of color envelope?
+#define COLOR_ENVELOPE_USE_LAGRANGE_INTERP 0 //1
+#define LAGRANGE_MIN_NUM_COLOR_VALUES 16
 
 SASFrame5::SASPartial::SASPartial()
 {
@@ -1690,16 +1702,31 @@ SASFrame5::ComputeColorAux()
     }
 #endif
 
-#if FILL_ZERO_FIRST_LAST_VALUES
+#if FILL_ZERO_FIRST_LAST_VALUES_COLOR
     // Avoid interpolating to the last partial value to 0
-    // Would make color where ther eis no sound otherwise
+    // Would make color where there is no sound otherwise
     // (e.g example with just some sine waves is false)
     FillLastValues(&mColor, mPartials, minColorValue);
 #endif
     
     // Fill al the other value
     bool extendBounds = false;
+#if !COLOR_ENVELOPE_USE_LAGRANGE_INTERP
     BLUtils::FillMissingValues(&mColor, extendBounds, undefinedValue);
+#else
+#if COLOR_DB_INTERP
+    // Makes undefined values...
+    BLUtils::FillMissingValuesLagrangeDB(&mColor, extendBounds, undefinedValue);
+#else
+    // Try to add intermediate values, to avoid too many oscillations
+    // (not working, this leads to the same result as linear (no Lagrange)
+    BLUtils::AddIntermediateValues(&mColor, LAGRANGE_MIN_NUM_COLOR_VALUES,
+                                   undefinedValue);
+    BLUtils::FillMissingValuesLagrange(&mColor, extendBounds, undefinedValue);
+    // Lagrange oscillations can make the values to become negative sometimes
+    BLUtils::ClipMin(&mColor, 0.0);
+#endif
+#endif    
     
 #if COLOR_DB_INTERP
     for (int i = 0; i < mColor.GetSize(); i++)
@@ -1834,7 +1861,7 @@ SASFrame5::ComputeNormWarpingAux()
             mNormWarping.Get()[(int)idx] = normWarp;
     }
 
-#if FILL_ZERO_FIRST_LAST_VALUES
+#if FILL_ZERO_FIRST_LAST_VALUES_WARPING
 #if 0 // Keep the first partial warping of reference is chroma-compute freq
     // Avoid warping the first partial
     FillFirstValues(&mNormWarping, mPartials, 1.0);
@@ -2031,7 +2058,7 @@ SASFrame5::ComputeNormWarpingAux2(WDL_TypedBuf<BL_FLOAT> *warping,
 
     // Do not do this, no need because the undefined theorical partials
     // will now have a warping value of 1 assigned 
-#if 0 //FILL_ZERO_FIRST_LAST_VALUES
+#if FILL_ZERO_FIRST_LAST_VALUES_WARPING
     // Keep the first partial warping of reference is chroma-compute freq
     // Avoid warping the first partial
     //FillFirstValues(warping, mPartials, 1.0);

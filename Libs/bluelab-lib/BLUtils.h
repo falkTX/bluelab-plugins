@@ -543,6 +543,9 @@ public:
     
     template <typename FLOAT_TYPE>
     static void ApplyExp(WDL_TypedBuf<FLOAT_TYPE> *values);
+
+    template <typename FLOAT_TYPE>
+    static void ApplyLog(WDL_TypedBuf<FLOAT_TYPE> *values);
     
     template <typename FLOAT_TYPE>
     static void PadZerosLeft(WDL_TypedBuf<FLOAT_TYPE> *buf, int padSize);
@@ -774,6 +777,20 @@ public:
     static void FillMissingValuesLagrange(WDL_TypedBuf<FLOAT_TYPE> *values,
                                           bool extendBounds,
                                           FLOAT_TYPE undefinedValue = 0.0);
+
+    // When in DB, must do some conversions, otherwise Lagrange won't process well
+    // (big oscillations)
+    template <typename FLOAT_TYPE>
+    static void FillMissingValuesLagrangeDB(WDL_TypedBuf<FLOAT_TYPE> *values,
+                                            bool extendBounds,
+                                            FLOAT_TYPE undefinedValue = -120.0);
+
+    // Add some values between known values, to populate more,
+    // in order to get better LAgrange interpolation
+    template <typename FLOAT_TYPE>
+    static void AddIntermediateValues(WDL_TypedBuf<FLOAT_TYPE> *values,
+                                      int targetMinNumValues,
+                                      FLOAT_TYPE undefinedValue = 0.0);
     
     // Test for DB => default vals to undefined instead of 0.0
     template <typename FLOAT_TYPE>

@@ -2928,6 +2928,25 @@ template void BLUtils::ApplyExp(WDL_TypedBuf<double> *values);
 
 template <typename FLOAT_TYPE>
 void
+BLUtils::ApplyLog(WDL_TypedBuf<FLOAT_TYPE> *values)
+{
+    int valuesSize = values->GetSize();
+    FLOAT_TYPE *valuesData = values->Get();
+    
+    for (int i = 0; i < valuesSize; i++)
+    {
+        FLOAT_TYPE val = valuesData[i];
+        
+        val = std::log(val);
+        
+        valuesData[i] = val;
+    }
+}
+template void BLUtils::ApplyLog(WDL_TypedBuf<float> *values);
+template void BLUtils::ApplyLog(WDL_TypedBuf<double> *values);
+
+template <typename FLOAT_TYPE>
+void
 BLUtils::MultValues(WDL_TypedBuf<FLOAT_TYPE> *buf,
                     const WDL_TypedBuf<FLOAT_TYPE> &values)
 {
@@ -4868,7 +4887,8 @@ BLUtils::FillMissingValuesLagrange(WDL_TypedBuf<FLOAT_TYPE> *values,
         for (int i = valuesSize - 1; i > 0; i--)
         {
             FLOAT_TYPE val = valuesData[i];
-            if (val > undefinedValue)
+            //if (val > undefinedValue)
+            if (std::fabs(val - undefinedValue) > BL_EPS)
             {
                 lastValue = val;
                 lastIndex = i;
@@ -4899,7 +4919,8 @@ BLUtils::FillMissingValuesLagrange(WDL_TypedBuf<FLOAT_TYPE> *values,
     {
         FLOAT_TYPE val = values->Get()[i];
         
-        if (val > undefinedValue)
+        //if (val > undefinedValue)
+        if (std::fabs(val - undefinedValue) > BL_EPS)
             // Valid value
         {
             xValues[numValues] = i;
@@ -4969,11 +4990,6 @@ BLUtils::FillMissingValuesLagrange(WDL_TypedBuf<FLOAT_TYPE> *values,
         
         FLOAT_TYPE x = i;
         FLOAT_TYPE y = BLUtilsMath::LagrangeInterp4(x, p[0], p[1], p[2], p[3]);
-
-        if (isnan(y))
-        {
-            int dummy = 0;
-        }
             
         values->Get()[i] = y;
     }
@@ -4984,6 +5000,115 @@ BLUtils::FillMissingValuesLagrange(WDL_TypedBuf<float> *values,
 template void
 BLUtils::FillMissingValuesLagrange(WDL_TypedBuf<double> *values,
                                    bool extendBounds, double undefinedValue);
+
+template <typename FLOAT_TYPE>
+void
+BLUtils::FillMissingValuesLagrangeDB(WDL_TypedBuf<FLOAT_TYPE> *values,
+                                     bool extendBounds, FLOAT_TYPE undefinedValue)
+{
+    // TODO:
+    // - use a real db scale
+    // - fix undefined values (SASViewer) 
+    undefinedValue = std::exp(undefinedValue);
+    
+    BLUtils::ApplyExp(values);
+    FillMissingValuesLagrange(values, extendBounds, undefinedValue);
+    BLUtils::ApplyLog(values);
+}
+template void
+BLUtils::FillMissingValuesLagrangeDB(WDL_TypedBuf<float> *values,
+                                     bool extendBounds, float undefinedValue);
+template void
+BLUtils::FillMissingValuesLagrangeDB(WDL_TypedBuf<double> *values,
+                                     bool extendBounds, double undefinedValue);
+
+template <typename FLOAT_TYPE>
+void
+BLUtils::AddIntermediateValues(WDL_TypedBuf<FLOAT_TYPE> *values,
+                               int targetMinNumValues,
+                               FLOAT_TYPE undefinedValue)
+{
+    // Get known values
+    
+    // Fill x and y arrays
+    //
+    // Allocate to the max possible number of values
+    vector<FLOAT_TYPE> xValues;
+    xValues.resize(values->GetSize());
+
+    vector<FLOAT_TYPE> yValues;
+    yValues.resize(values->GetSize());
+
+    // Fill
+    int numValues = 0;
+    for (int i = 0; i < values->GetSize(); i++)
+    {
+        FLOAT_TYPE val = values->Get()[i];
+        
+        //if (val > undefinedValue)
+        if (std::fabs(val - undefinedValue) > BL_EPS)
+            // Valid value
+        {
+            xValues[numValues] = i;
+            yValues[numValues] = val;
+
+            numValues++;
+        }
+    }
+    
+    // Resize down
+    xValues.resize(numValues);
+    yValues.resize(numValues);
+
+    if (numValues == 1)
+        return;
+
+    if (numValues >= targetMinNumValues)
+        return;
+    
+    // Compute the number of values to add at each step
+    BL_FLOAT numValuesStep = ((BL_FLOAT)targetMinNumValues)/xValues.size();
+    numValuesStep = ceil(numValuesStep);
+
+    // Keep the current data!
+    // Reset the data
+    //BLUtils::FillAllValue(values, undefinedValue);
+
+    // Populate
+    for (int i = 0; i < xValues.size() - 1; i++)
+    {
+        BL_FLOAT x0 = xValues[i];
+        BL_FLOAT x1 = xValues[i + 1];
+
+        BL_FLOAT y0 = yValues[i];
+        BL_FLOAT y1 = yValues[i + 1];
+
+        for (int j = 0; j < numValuesStep; j++)
+        {
+            BL_FLOAT t = ((BL_FLOAT)(j + 1))/(numValuesStep + 2);
+
+            int xi = x0 + t*(x1 - x0);
+            if ((xi < 0) || (xi > values->GetSize()))
+                continue;
+            
+            BL_FLOAT vi = values->Get()[xi];
+            if (std::fabs(vi - undefinedValue) > BL_EPS)
+                // Value already set here, do not overwrite it!
+                continue;
+
+            BL_FLOAT yi = y0 + t*(y1 - y0);
+
+            // Set the intermediate value
+            values->Get()[xi] = yi;
+        }
+    }
+}
+template void
+BLUtils::AddIntermediateValues(WDL_TypedBuf<float> *values,
+                               int targetMinNumValues, float undefinedValue);
+template void
+BLUtils::AddIntermediateValues(WDL_TypedBuf<double> *values,
+                               int targetMinNumValues, double undefinedValue);
 
 template <typename FLOAT_TYPE>
 void
