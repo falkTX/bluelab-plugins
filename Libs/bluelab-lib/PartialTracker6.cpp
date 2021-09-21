@@ -436,6 +436,9 @@ PartialTracker6::ProcessMusicalNoise(WDL_TypedBuf<BL_FLOAT> *noise)
             
             for (int j = startIdxIsle; j <= endIdxIsle; j++)
             {
+                if (j >= mask.GetSize())
+                    break;
+                
                 BL_FLOAT prevVal = mask.Get()[j];
                 if (prevVal > MUS_NOISE_EPS)
                 {
@@ -457,6 +460,9 @@ PartialTracker6::ProcessMusicalNoise(WDL_TypedBuf<BL_FLOAT> *noise)
             // Earse the isle
             for (int i = startIdxIsle; i <= endIdxIsle; i++)
             {
+                if (i >= noise->GetSize())
+                    break;
+                
                 noise->Get()[i] = 0.0;
             }
         }
