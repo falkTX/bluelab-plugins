@@ -32,7 +32,7 @@ protected:
     
     // Naive algorithm
     void AdjustPeaksWidthSimple(const WDL_TypedBuf<BL_FLOAT> &data,
-                                vector<Peak> *peaks);
+                                vector<Peak> *peaks, int minIndex, int maxIndex);
 
     void AdjustPeaksWidthProminence(const WDL_TypedBuf<BL_FLOAT> &data,
                                     vector<Peak> *peaks,

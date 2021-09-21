@@ -5,13 +5,8 @@
 
 #include "PeakDetectorBillauer.h"
 
-// NOTE: 0.5 is better than 0.2
-//
-// If too low, some harmonic parts will go to the noise envelope
-//
-// TODO: make a better strategy, to avoid partial barbs while keeping
-// better left and right indices
-#define PEAKS_WIDTH_RATIO 0.5 //0.2
+// See also: Matlab peak detection (ofr prominence and this kind of stuff
+// https://fr.mathworks.com/help/signal/ref/findpeaks.html
 
 // Keep 20 peaks and suppress only if more than 20 peaks 
 #define SUPPRESS_MIN_NUM_PEAKS 20.0
@@ -162,8 +157,11 @@ DetectPeaks(const WDL_TypedBuf<BL_FLOAT> &data, vector<Peak> *peaks,
     
     //SuppressSmallPeaks(data, peaks);
 
+    // Simple, does not enlarge too much
+    AdjustPeaksWidthSimple(data, peaks, minIndex, maxIndex);
+    
     // NOTE: this may not narrow very small peaks surrounded by noise
-    AdjustPeaksWidthProminence(data, peaks, minIndex, maxIndex);
+    //AdjustPeaksWidthProminence(data, peaks, minIndex, maxIndex);
     
     //SuppressSmallPeaksProminence(data, peaks, minIndex, maxIndex);
     SuppressSmallPeaksFrequency(data, peaks, minIndex, maxIndex);
@@ -260,22 +258,49 @@ PeakDetectorBillauer::SuppressSmallPeaksFrequency(const WDL_TypedBuf<BL_FLOAT> &
 // be near to the minimum and maximum
 //
 // => So recompute the peak bounds, so they really match the peak,
-// and they not cover the whole range of freqeuncies
+// and they not cover the whole range of frequencies
+//
+// NOTE: this is good!
+// Remaining problem: high harmonics + noisy signal => peaks are too large
 void
 PeakDetectorBillauer::AdjustPeaksWidthSimple(const WDL_TypedBuf<BL_FLOAT> &data,
-                                             vector<Peak> *peaks)
+                                             vector<Peak> *peaks,
+                                             int minIndex, int maxIndex)
 {    
     for (int i = 0; i < peaks->size(); i++)
     {
         Peak &peak = (*peaks)[i];
 
         BL_FLOAT peakAmp = data.Get()[peak.mPeakIndex];
-        BL_FLOAT thrs = peakAmp*PEAKS_WIDTH_RATIO;
 
+        // If too low, some harmonic parts will go to the noise envelope
+        //#define PEAKS_WIDTH_RATIO 0.5 //0.2
+        
+        // First version: simple, bug in db
+        //BL_FLOAT thrs = peakAmp*PEAKS_WIDTH_RATIO;
+        
+        // Second version: simple, manages db well
+        //Also manage dB if it is the case
+        //BL_FLOAT thrs = peakAmp - std::fabs(peakAmp*PEAKS_WIDTH_RATIO);
+
+        // Third version: use prominence => better! 
+#define PEAKS_WIDTH_RATIO2 0.75 
+        ComputePeakProminenceSimple(data, &peak);
+        BL_FLOAT thrs = peakAmp - std::fabs(peak.mProminence*PEAKS_WIDTH_RATIO2);
+        
+        // Make sure not to enlarge more than prev Billauer minima
+        int originLeftIndex = peak.mLeftIndex;
+        int originRightIndex = peak.mRightIndex;
+        
         // Adjust left index
-        for (int j = peak.mPeakIndex - 1; j >= 0; j--)
+        for (int j = peak.mPeakIndex - 1; j >= minIndex; j--)
         {
+            if (j <= originLeftIndex)
+                break;
+            
             BL_FLOAT a = data.Get()[j];
+            
+            // Test decrease
             if (a < thrs)
             {
                 peak.mLeftIndex = j;
@@ -285,9 +310,14 @@ PeakDetectorBillauer::AdjustPeaksWidthSimple(const WDL_TypedBuf<BL_FLOAT> &data,
         }
 
         // Adjust right index
-        for (int j = peak.mPeakIndex + 1; j < data.GetSize(); j++)
+        for (int j = peak.mPeakIndex + 1; j <= maxIndex; j++)
         {
+            if (j >= originRightIndex)
+                break;
+            
             BL_FLOAT a = data.Get()[j];
+
+            // Test decrease
             if (a < thrs)
             {
                 peak.mRightIndex = j;
@@ -295,6 +325,15 @@ PeakDetectorBillauer::AdjustPeaksWidthSimple(const WDL_TypedBuf<BL_FLOAT> &data,
                 break;
             }
         }
+
+        // Avoid very asymetrical peaks
+        // => make all peaks symetric, using minimal width distance
+        int leftWidth = peak.mPeakIndex - peak.mLeftIndex;
+        int rightWidth = peak.mRightIndex - peak.mPeakIndex;
+        if (leftWidth > rightWidth)
+            peak.mLeftIndex = peak.mPeakIndex - rightWidth;
+        else if (rightWidth > leftWidth)
+            peak.mRightIndex = peak.mPeakIndex + leftWidth;
     }
 }
 
@@ -311,7 +350,7 @@ PeakDetectorBillauer::AdjustPeaksWidthProminence(const WDL_TypedBuf<BL_FLOAT> &d
     {
         Peak &peak = (*peaks)[i];
 
-        // Use simple promince (take the max of the surrounding valeys)
+        // Use simple promince (take the max of the surrounding valleys)
         // => better like this!
         ComputePeakProminenceSimple(data, &peak);
 
