@@ -295,6 +295,8 @@ UST		    :
 - PROBLEM: Ghost: takes a lot of memory when exporting selection
 (maybe impossible to export a selection of > 5mn)
 
+- Buy a Mac book air M1 (amazon: 1035€) and port tonative  M1
+
 ====
 DAW known problems
 ====
