@@ -123,8 +123,9 @@ SIN_LUT_CREATE(SAS_FRAME_SIN_LUT, 4096);
 #define WARP_ENVELOPE_USE_LAGRANGE_INTERP 1
 
 // NOTE: Lagrange interp seems not good for color
-// => it makes holes in "bowl", and if adding
-// additional values before interpolation, this gives the same result as simple
+// => it makes holes in "bowl" example, one the signal is converted
+// in dB for displaying, and if adding additional values before
+// interpolation this gives the same result as simple
 // interpolation (no Lagrange)
 
 // Smooth interpolation of color envelope?
