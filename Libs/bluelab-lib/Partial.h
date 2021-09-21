@@ -38,7 +38,8 @@ class Partial
     // Debug
     static void DBG_PrintPartials(const vector<Partial> &partials);
     static void DBG_DumpPartials(const char *fileName,
-                                 const vector<Partial> &partials, int size);
+                                 const vector<Partial> &partials, int size,
+                                 bool db = true);
     
  public:
     int mPeakIndex;

@@ -129,7 +129,8 @@ Partial::DBG_PrintPartials(const vector<Partial> &partials)
 
 void
 Partial::DBG_DumpPartials(const char *fileName,
-                          const vector<Partial> &partials, int size)
+                          const vector<Partial> &partials, int size,
+                          bool db)
 {
 #define MIN_AMP_DB -120.0
     
@@ -145,7 +146,9 @@ Partial::DBG_DumpPartials(const char *fileName,
         if (idx >= size)
             continue;
 
-        BL_FLOAT amp = (p.mAmp - MIN_AMP_DB)/(0.0 - MIN_AMP_DB);
+        BL_FLOAT amp = p.mAmp;
+        if (db)
+            amp = (p.mAmp - MIN_AMP_DB)/(0.0 - MIN_AMP_DB);
         data.Get()[idx] = amp; //p.mAmp;
     }
 
