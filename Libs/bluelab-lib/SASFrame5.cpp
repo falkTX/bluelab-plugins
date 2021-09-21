@@ -116,6 +116,9 @@ SIN_LUT_CREATE(SAS_FRAME_SIN_LUT, 4096);
 #define OPTIM_SAMPLES_SYNTH_SORTED_VEC2 0
 #define OPTIM_SAMPLES_SYNTH_SORTED_VEC3 1
 
+// Smooth interpolation of warping envelope
+#define WARP_ENVELOPE_USE_LAGRANGE_INTERP 1
+
 SASFrame5::SASPartial::SASPartial()
 {
     mFreq = 0.0;
@@ -1737,10 +1740,10 @@ SASFrame5::ComputeNormWarping()
     
     //ComputeNormWarpingAux();
     ComputeNormWarpingAux2(&mNormWarping);
-
+    
     if (mPrevNormWarping.GetSize() == mNormWarping.GetSize())
         BLUtils::Smooth(&mNormWarping, &mPrevNormWarping, WARPING_SMOOTH_COEFF);
-
+    
     // Inverse warping
     //
     mPrevNormWarpingInv = mNormWarpingInv;
@@ -2036,10 +2039,14 @@ SASFrame5::ComputeNormWarpingAux2(WDL_TypedBuf<BL_FLOAT> *warping,
     // NEW
     FillLastValues(warping, mPartials, 1.0);
 #endif
-    
+
     // Fill all the other value
     bool extendBounds = false;
+#if !WARP_ENVELOPE_USE_LAGRANGE_INTERP
     BLUtils::FillMissingValues(warping, extendBounds, undefinedValue);
+#else
+    BLUtils::FillMissingValuesLagrange(warping, extendBounds, undefinedValue);
+#endif
 }
 
 BL_FLOAT

@@ -770,6 +770,11 @@ public:
                                   bool extendBounds,
                                   FLOAT_TYPE undefinedValue = 0.0);
 
+    template <typename FLOAT_TYPE>
+    static void FillMissingValuesLagrange(WDL_TypedBuf<FLOAT_TYPE> *values,
+                                          bool extendBounds,
+                                          FLOAT_TYPE undefinedValue = 0.0);
+    
     // Test for DB => default vals to undefined instead of 0.0
     template <typename FLOAT_TYPE>
     static void FillMissingValues2(WDL_TypedBuf<FLOAT_TYPE> *values,

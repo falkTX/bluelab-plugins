@@ -4852,6 +4852,141 @@ template void BLUtils::FillMissingValues(WDL_TypedBuf<double> *values,
 
 template <typename FLOAT_TYPE>
 void
+BLUtils::FillMissingValuesLagrange(WDL_TypedBuf<FLOAT_TYPE> *values,
+                                   bool extendBounds, FLOAT_TYPE undefinedValue)
+{
+    int lastIndex = values->GetSize() - 1;
+    if (extendBounds)
+        // Extend the last value to the end
+    {
+        // Find the last max
+        FLOAT_TYPE lastValue = 0.0;
+        
+        int valuesSize = values->GetSize();
+        FLOAT_TYPE *valuesData = values->Get();
+        
+        for (int i = valuesSize - 1; i > 0; i--)
+        {
+            FLOAT_TYPE val = valuesData[i];
+            if (val > undefinedValue)
+            {
+                lastValue = val;
+                lastIndex = i;
+                
+                break;
+            }
+        }
+        
+        // Fill the last values with last max
+        for (int i = valuesSize - 1; i > lastIndex; i--)
+        {
+            valuesData[i] = lastValue;
+        }
+    }
+
+    // Fill x and y arrays
+    //
+    // Allocate to the max possible number of values
+    vector<FLOAT_TYPE> xValues;
+    xValues.resize(values->GetSize());
+
+    vector<FLOAT_TYPE> yValues;
+    yValues.resize(values->GetSize());
+
+    // Fill
+    int numValues = 0;
+    for (int i = 0; i < values->GetSize(); i++)
+    {
+        FLOAT_TYPE val = values->Get()[i];
+        
+        if (val > undefinedValue)
+            // Valid value
+        {
+            xValues[numValues] = i;
+            yValues[numValues] = val;
+
+            numValues++;
+        }
+    }
+    
+    // Resize down
+    xValues.resize(numValues);
+    yValues.resize(numValues);
+
+    // Use lagrange to interpolate
+    //
+    FLOAT_TYPE p[4][2];
+    for (int i = 0; i < values->GetSize(); i++)
+    {
+        typename vector<FLOAT_TYPE>::iterator it =
+            lower_bound(xValues.begin(), xValues.end(), i);
+        if (it == xValues.end())
+        {
+            // Fill the rest of the values with the last value
+            if (i > 0)
+            {
+                FLOAT_TYPE val = values->Get()[i - 1];
+                for (int j = i; j < values->GetSize(); j++)
+                    values->Get()[j] = val;
+            }
+            
+            break;
+        }
+        
+        int idx = it - xValues.begin();
+
+        // Points 0 and 1
+        for (int j = idx - 2; j <= idx - 1; j++)
+        {
+            int jj = j;
+            if (jj < 0)
+                jj = 0;
+
+            FLOAT_TYPE xVal = xValues[jj];
+            // Avoid same x value (not supported by Lagrange)
+            if (j < 0)
+                xVal = xVal + j;
+            
+            p[j - idx + 2][0] = xVal;
+            p[j - idx + 2][1] = yValues[jj];
+        }
+
+        // Points 2 and 3
+        for (int j = idx; j <= idx + 1; j++)
+        {
+            int jj = j;
+            if (jj > xValues.size() - 1)
+                jj = xValues.size() - 1;
+
+            FLOAT_TYPE xVal = xValues[jj];
+            // Avoid same x value (not supported by Lagrange)
+            if (j > xValues.size() - 1)
+                xVal = xVal + (j - xValues.size() + 1);
+            
+            p[j - idx + 2][0] = xVal;
+            p[j - idx + 2][1] = yValues[jj];
+        }
+        
+        FLOAT_TYPE x = i;
+        FLOAT_TYPE y = BLUtilsMath::LagrangeInterp4(x, p[0], p[1], p[2], p[3]);
+
+        if (isnan(y))
+        {
+            int dummy = 0;
+        }
+            
+        values->Get()[i] = y;
+    }
+}
+template void
+BLUtils::FillMissingValuesLagrange(WDL_TypedBuf<float> *values,
+                                   bool extendBounds, float undefinedValue);
+template void
+BLUtils::FillMissingValuesLagrange(WDL_TypedBuf<double> *values,
+                                   bool extendBounds, double undefinedValue);
+
+template <typename FLOAT_TYPE>
+void
 BLUtils::FillMissingValues2(WDL_TypedBuf<FLOAT_TYPE> *values,
                             bool extendBounds, FLOAT_TYPE undefinedValue)
 {
