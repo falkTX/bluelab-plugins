@@ -132,6 +132,9 @@ SIN_LUT_CREATE(SAS_FRAME_SIN_LUT, 4096);
 #define COLOR_ENVELOPE_USE_LAGRANGE_INTERP 0 //1
 #define LAGRANGE_MIN_NUM_COLOR_VALUES 16
 
+// TEST: nearest interpolation, to be more quick
+#define QUICK_INTERP 0 //1
+
 SASFrame5::SASPartial::SASPartial()
 {
     mFreq = 0.0;
@@ -645,12 +648,13 @@ SASFrame5::ComputeSamplesPartials(WDL_TypedBuf<BL_FLOAT> *samples)
             phase = mPrevPartials[prevPartialIdx].mPhase;
         
         // Generate samples
-        for (int j = 0; j < samples->GetSize()/mOverlapping; j++)
+        int numSamples = samples->GetSize()/mOverlapping;
+        for (int j = 0; j < numSamples; j++)
         {
             Partial partial;
                         
             // Get interpolated partial
-            BL_FLOAT partialT = ((BL_FLOAT)j)/(samples->GetSize()/mOverlapping);
+            BL_FLOAT partialT = ((BL_FLOAT)j)/numSamples;
             GetPartial(&partial, i, partialT);
             
             BL_FLOAT binIdx = partial.mFreq*hzPerBinInv;
@@ -963,6 +967,17 @@ SASFrame5::ComputeSamplesSAS(WDL_TypedBuf<BL_FLOAT> *samples)
 BL_FLOAT
 SASFrame5::GetColor(const WDL_TypedBuf<BL_FLOAT> &color, BL_FLOAT binIdx)
 {
+#if QUICK_INTERP
+    // Quick method
+    if (binIdx < color.GetSize() - 1)
+    {
+        BL_FLOAT col = color.Get()[(int)binIdx];
+        
+        return col;
+    }
+    return 0.0;
+#endif
+    
     BL_FLOAT col = 0.0;
     if (binIdx < color.GetSize() - 1)
     {
@@ -994,6 +1009,24 @@ BL_FLOAT
 SASFrame5::GetWarping(const WDL_TypedBuf<BL_FLOAT> &warping,
                       BL_FLOAT binIdx)
 {
+#if QUICK_INTERP
+    // Quick method
+    if (binIdx < warping.GetSize() - 1)
+    {
+        BL_FLOAT w = warping.Get()[(int)binIdx];
+
+#if 1 //0
+        // Warping is center on 1
+        w -= 1.0;
+        w *= mWarpingFactor;
+        w += 1.0;
+#endif
+        
+        return w;
+    }
+    return 1.0;
+#endif
+    
     BL_FLOAT w = 0.0;
     if (binIdx < warping.GetSize() - 1)
     {
