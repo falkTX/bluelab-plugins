@@ -591,6 +591,13 @@ SASViewerProcess4::DisplayDetection()
                                          mSampleRate, mCurrentMagns.GetSize());
     
         mSASViewerRender->AddData(DETECTION, data);
+
+        if (!mShowTrackingLines)
+        {
+            mSASViewerRender->ShowAdditionalPoints(DETECTION, false);
+            
+            return;
+        }
         
         mSASViewerRender->SetLineMode(DETECTION, LinesRender2::LINES_FREQ);
 
@@ -696,6 +703,13 @@ SASViewerProcess4::DisplayDetection()
 void
 SASViewerProcess4::DisplayDetectionBeta0(bool addData)
 {
+    if (!mShowTrackingLines)
+    {
+        mSASViewerRender->ShowAdditionalLines(DETECTION, false);
+        
+        return;
+    }
+    
     if (mSASViewerRender != NULL)
     {
         mSASViewerRender->ShowAdditionalLines(DETECTION, mShowDetectionPoints);
@@ -839,6 +853,13 @@ void
 SASViewerProcess4::DisplayZombiePoints()
 {
 #define ZOMBIE_POINT_OFFSET_X 0.0025
+
+    if (!mShowTrackingLines)
+    {
+        mSASViewerRender->ShowAdditionalPoints(DETECTION, false);
+        
+        return;
+    }
     
     if (mSASViewerRender != NULL)
     {
@@ -961,6 +982,13 @@ SASViewerProcess4::DisplayTracking()
                                          mSampleRate, mCurrentMagns.GetSize());
                                          
         mSASViewerRender->AddData(TRACKING, data);
+
+        if (!mShowTrackingLines)
+        {
+            mSASViewerRender->ShowAdditionalLines(TRACKING, false);
+            
+            return;
+        }
         
         mSASViewerRender->SetLineMode(TRACKING, LinesRender2::LINES_FREQ);
         
@@ -1008,7 +1036,7 @@ SASViewerProcess4::DisplayTracking()
             
             mFilteredPartialsPoints.pop_front();
         }
-        
+
         CreateLines(prevPoints);
         
         // Set color
@@ -1029,11 +1057,11 @@ SASViewerProcess4::DisplayTracking()
                 line2.mColor[3] = 255; // alpha
             }
         }
-            
+        
         BL_FLOAT lineWidth = 1.5;
         if (!mDebugPartials)
             lineWidth = 4.0;
-                
+        
         mSASViewerRender->SetAdditionalLines(TRACKING, mPartialLines, lineWidth);
     }
 }
