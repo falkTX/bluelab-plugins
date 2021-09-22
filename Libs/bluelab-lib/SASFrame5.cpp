@@ -634,7 +634,7 @@ SASFrame5::ComputeSamplesPartials(WDL_TypedBuf<BL_FLOAT> *samples)
 
     BL_FLOAT hzPerBin = mSampleRate/mBufferSize;
     BL_FLOAT hzPerBinInv = 1.0/hzPerBin;
-
+    
     for (int i = 0; i < mPartials.size(); i++)
     {
         // OPTIM_SAMPLES_SYNTH_SORTED_VEC3

@@ -39,7 +39,7 @@ class Partial
     static void DBG_PrintPartials(const vector<Partial> &partials);
     static void DBG_DumpPartials(const char *fileName,
                                  const vector<Partial> &partials, int size,
-                                 bool db = true);
+                                 bool normFreq = true, bool db = true);
     
  public:
     int mPeakIndex;

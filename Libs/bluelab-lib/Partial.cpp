@@ -130,7 +130,7 @@ Partial::DBG_PrintPartials(const vector<Partial> &partials)
 void
 Partial::DBG_DumpPartials(const char *fileName,
                           const vector<Partial> &partials, int size,
-                          bool db)
+                          bool normFreq, bool db)
 {
 #define MIN_AMP_DB -120.0
     
@@ -141,8 +141,12 @@ Partial::DBG_DumpPartials(const char *fileName,
     for (int i = 0; i < partials.size(); i++)
     {
         const Partial &p = partials[i];
+
+        BL_FLOAT freq = p.mFreq;
+        if (!normFreq)
+            freq /= 22050.0; // Hard coded
         
-        int idx = p.mFreq*size;
+        int idx = freq*size;
         if (idx >= size)
             continue;
 
