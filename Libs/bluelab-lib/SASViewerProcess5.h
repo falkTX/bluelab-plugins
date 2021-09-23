@@ -57,11 +57,9 @@ public:
     void ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
                           const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer) override;
     
+    // Use this to synthetize directly samples from partials
     void ProcessSamplesBuffer(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
                               WDL_TypedBuf<BL_FLOAT> *scBuffer) override;
-    
-    // Use this to synthetize directly samples from partials
-    void ProcessSamplesPost(WDL_TypedBuf<BL_FLOAT> *ioBuffer) override;
     
     // Display
     //

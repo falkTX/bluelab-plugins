@@ -197,9 +197,6 @@ void
 SASViewerProcess5::ProcessSamplesBuffer(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
                                         WDL_TypedBuf<BL_FLOAT> *scBuffer)
 {    
-    if (!mSASFrame->ComputeSamplesFlag())
-        return;
-    
     // Create a separate buffer for samples synthesis from partials
     // (because it doesn't use overlap)
     WDL_TypedBuf<BL_FLOAT> samplesBuffer;
@@ -209,77 +206,13 @@ SASViewerProcess5::ProcessSamplesBuffer(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
     BL_FLOAT harmoCoeff;
     BLUtils::MixParamToCoeffs(mHarmoNoiseMix, &noiseCoeff, &harmoCoeff);
 
-    if ((mSASFrame->GetSynthMode() == SASFrame5::FFT) ||
-        (mSASFrame->GetSynthMode() == SASFrame5::OSC))
-    {
-        //#if OUT_HARMO_SAS_FRAME
-        // Compute the samples from partials
-        mSASFrame->ComputeSamplesResynth(&samplesBuffer);
+    // Compute the samples from partials
+    mSASFrame->ComputeSamples(&samplesBuffer);
         
-        BLUtils::MultValues(&samplesBuffer, harmoCoeff);
-        
-        // ioBuffer may already contain noise
-        BLUtils::AddValues(ioBuffer, samplesBuffer);
-        //#endif
-    }
-    else if (mSASFrame->GetSynthMode() == SASFrame5::RAW_PARTIALS)
-    {
-        //#if OUT_HARMO_INPUT_PARTIALS
-        // Compute the samples from partials
-        //mSASFrame->ComputeSamples(&samplesBuffer);
-        mSASFrame->ComputeSamplesPost(&samplesBuffer);
-        
-        BLUtils::MultValues(&samplesBuffer, harmoCoeff);
-        
-        // ioBuffer may already contain noise
-        BLUtils::AddValues(ioBuffer, samplesBuffer);
-        //#endif
-    }
-}
-
-// Use this to synthetize directly the samples from partials
-void
-SASViewerProcess5::ProcessSamplesPost(WDL_TypedBuf<BL_FLOAT> *ioBuffer)
-{    
-    if (!mSASFrame->ComputeSamplesPostFlag())
-        return;
+    BLUtils::MultValues(&samplesBuffer, harmoCoeff);
     
-    // Create a separate buffer for samples synthesis from partials
-    // (because it doesn't use overlap)
-    WDL_TypedBuf<BL_FLOAT> samplesBuffer;
-    samplesBuffer.Resize(ioBuffer->GetSize());
-    BLUtils::FillAllZero(&samplesBuffer);
-
-    BL_FLOAT noiseCoeff;
-    BL_FLOAT harmoCoeff;
-    BLUtils::MixParamToCoeffs(mHarmoNoiseMix, &noiseCoeff, &harmoCoeff);
-        
-    if ((mSASFrame->GetSynthMode() == SASFrame5::FFT) ||
-        (mSASFrame->GetSynthMode() == SASFrame5::OSC))
-    {
-        //#if OUT_HARMO_SAS_FRAME
-        
-        // Compute the samples from partials
-        mSASFrame->ComputeSamplesResynthPost(&samplesBuffer);
-        
-        BLUtils::MultValues(&samplesBuffer, harmoCoeff);
-        
-        // ioBuffer may already contain noise
-        BLUtils::AddValues(ioBuffer, samplesBuffer);
-        //#endif
-    }
-    else if (mSASFrame->GetSynthMode() == SASFrame5::RAW_PARTIALS)
-    {
-        //#if OUT_HARMO_INPUT_PARTIALS
-        // Compute the samples from partials
-        mSASFrame->ComputeSamplesPost(&samplesBuffer);
-        
-        BLUtils::MultValues(&samplesBuffer, harmoCoeff);
-        
-        // ioBuffer may already contain noise
-        BLUtils::AddValues(ioBuffer, samplesBuffer);
-        //#endif
-    }
+    // ioBuffer may already contain noise
+    BLUtils::AddValues(ioBuffer, samplesBuffer);
 }
 
 void

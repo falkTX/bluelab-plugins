@@ -142,7 +142,7 @@ SASFrame6::SASFrame6(int bufferSize, BL_FLOAT sampleRate,
 
     mFreqRes = freqRes;
     
-    mSynthMode = OSC;
+    mSynthMode = RAW_PARTIALS;
     
     mAmplitude = 0.0;
     mPrevAmplitude = 0.0;
@@ -265,7 +265,7 @@ SASFrame6::SetPartials(const vector<Partial> &partials)
     
     mFrequency = 0.0;
     
-    Compute();
+    ComputeAna();
 }
 
 void
@@ -350,90 +350,15 @@ SASFrame6::SetNormWarping(const WDL_TypedBuf<BL_FLOAT> &warping)
     mNormWarping = warping;
 }
 
-// When using "RAW_PARTIALS"
-void
-SASFrame6::ComputeSamplesPost(WDL_TypedBuf<BL_FLOAT> *samples)
-{
-    ComputeSamplesPartials(samples);
-}
-
 void
 SASFrame6::ComputeSamples(WDL_TypedBuf<BL_FLOAT> *samples)
 {
-    ComputeFftPartials(samples);
-}
-
-// TODO: test this!
-void
-SASFrame6::ComputeFftPartials(WDL_TypedBuf<BL_FLOAT> *samples)
-{
-    samples->Resize(mBufferSize);
-    
-    BLUtils::FillAllZero(samples);
-    
-    if (mPartials.empty())
-        return;
-    
-    // Fft
-    WDL_TypedBuf<BL_FLOAT> magns;
-    BLUtils::ResizeFillZeros(&magns, mBufferSize/2);
-    
-    WDL_TypedBuf<BL_FLOAT> phases;
-    BLUtils::ResizeFillZeros(&phases, mBufferSize/2);
-    
-    BL_FLOAT hzPerBin = mSampleRate/mBufferSize;
-    
-    for (int i = 0; i < mPartials.size(); i++)
-    {
-        if (i > SYNTH_MAX_NUM_PARTIALS)
-            break;
-        
-        const Partial &partial = mPartials[i];
-    
-        BL_FLOAT freq = partial.mFreq;
-        if (freq > mSampleRate*0.5)
-            continue;
-        
-        if ((freq < SYNTH_MIN_FREQ) && (mSynthMode != RAW_PARTIALS))
-            continue;
-        
-        // Magn
-        BL_FLOAT magn = partial.mAmp;
-        BL_FLOAT phase = partial.mPhase;
-            
-        // Fill the fft
-        BL_FLOAT binNum = freq/hzPerBin;
-        binNum = bl_round(binNum);
-        if (binNum < 0)
-            binNum = 0;
-        if (binNum > magns.GetSize() - 1)
-            binNum = magns.GetSize() - 1;
-                
-        magns.Get()[(int)binNum] = magn;
-        phases.Get()[(int)binNum] = phase;
-            
-        // Update the phases
-        //int numSamples = samples->GetSize()/mOverlapping;
-        //phase += numSamples*2.0*M_PI*freq/mSampleRate;
-        //mSASPartials[partialIndex].mPhase = phase;
-    }
-    
-    // Apply Ifft
-    WDL_TypedBuf<WDL_FFT_COMPLEX> complexBuf;
-    BLUtilsComp::MagnPhaseToComplex(&complexBuf, magns, phases);
-    complexBuf.Resize(complexBuf.GetSize()*2);
-    BLUtilsFft::FillSecondFftHalf(&complexBuf);
-    
-    // Ifft
-    FftProcessObj16::FftToSamples(complexBuf, samples);
-}
-
-// When using "OSC"
-void
-SASFrame6::ComputeSamplesResynthPost(WDL_TypedBuf<BL_FLOAT> *samples)
-{
-    if ((mSynthMode == OSC) || (mSynthMode == RAW_PARTIALS))
-        ComputeSamplesSAS(samples);
+    if (mSynthMode == RAW_PARTIALS)
+        ComputeSamplesPartialsRAW(samples);
+    else if (mSynthMode == SOURCE_PARTIALS)
+        ComputeSamplesPartialsSource(samples);
+    else if (mSynthMode == RESYNTH_PARTIALS)
+        ComputeSamplesPartialsResynth(samples);
 }
 
 // Directly use partials provided
@@ -476,7 +401,7 @@ SASFrame6::ComputeSamplesPartialsRAW(WDL_TypedBuf<BL_FLOAT> *samples)
             
             samp *= SYNTH_AMP_COEFF;
             
-            if ((freq >= SYNTH_MIN_FREQ) || (mSynthMode == RAW_PARTIALS))
+            if (freq >= SYNTH_MIN_FREQ)
                 samples->Get()[j] += samp;
             
             //phase += 2.0*M_PI*freq/mSampleRate;
@@ -489,7 +414,7 @@ SASFrame6::ComputeSamplesPartialsRAW(WDL_TypedBuf<BL_FLOAT> *samples)
 
 // Directly use partials provided, but also apply SAS parameter to them
 void
-SASFrame6::ComputeSamplesPartials(WDL_TypedBuf<BL_FLOAT> *samples)
+SASFrame6::ComputeSamplesPartialsSource(WDL_TypedBuf<BL_FLOAT> *samples)
 {
     samples->Resize(mBufferSize);
     
@@ -578,7 +503,7 @@ SASFrame6::ComputeSamplesPartials(WDL_TypedBuf<BL_FLOAT> *samples)
             
             samp *= SYNTH_AMP_COEFF;
             
-            if ((freq >= SYNTH_MIN_FREQ) || (mSynthMode == RAW_PARTIALS))
+            if (freq >= SYNTH_MIN_FREQ)
                 samples->Get()[j] += samp;
             
             phase += twoPiSR*freq;
@@ -588,21 +513,8 @@ SASFrame6::ComputeSamplesPartials(WDL_TypedBuf<BL_FLOAT> *samples)
     }
 }
 
-// ComputeSamplesSAS2
-// Optim
-// Gain (by suppressing loops): 74 => 57ms (~20%)
-//
-// ComputeSamplesSAS3: avoid tiny clicks (not audible)
-//
-// ComputeSamplesSAS4: optimize more
-//
-// ComputeSamplesSAS5: optimize more
-//
-// ComputeSamplesSAS6: Refact and try to debug
-//
-// ComputeSamplesSAS7: copy (new)
 void
-SASFrame6::ComputeSamplesSAS(WDL_TypedBuf<BL_FLOAT> *samples)
+SASFrame6::ComputeSamplesPartialsResynth(WDL_TypedBuf<BL_FLOAT> *samples)
 {    
     bool transientDetected = false;
 #if ENABLE_ONSET_DETECTION
@@ -672,7 +584,7 @@ SASFrame6::ComputeSamplesSAS(WDL_TypedBuf<BL_FLOAT> *samples)
             }
         }
         
-        if ((partialFreq > SYNTH_MIN_FREQ) || (mSynthMode == RAW_PARTIALS))
+        if (partialFreq > SYNTH_MIN_FREQ)
         {
             // Current and prev partials
             SASPartial &partial = mSASPartials[partialIndex];
@@ -744,7 +656,7 @@ SASFrame6::ComputeSamplesSAS(WDL_TypedBuf<BL_FLOAT> *samples)
                 // No "blurb" between frequencies
                 BL_FLOAT samp = std::sin(phase);
                 
-                if ((freq >= SYNTH_MIN_FREQ) || (mSynthMode == RAW_PARTIALS))
+                if (freq >= SYNTH_MIN_FREQ)
                 {
                     // Generate samples only if not on an transient
                     if (!transientDetected)
@@ -909,26 +821,8 @@ SASFrame6::SetWarpingFactor(BL_FLOAT factor)
     mWarpingFactor = factor;
 }
 
-bool
-SASFrame6::ComputeSamplesFlag()
-{
-    if ((mSynthMode == OSC) || (mSynthMode == RAW_PARTIALS))
-        return false;
-       
-    return false;
-}
-
-bool
-SASFrame6::ComputeSamplesPostFlag()
-{
-    if ((mSynthMode == OSC) || (mSynthMode == RAW_PARTIALS))
-        return true;
-    
-    return false;
-}
-
 void
-SASFrame6::Compute()
+SASFrame6::ComputeAna()
 {
     ComputeAmplitude();
     ComputeFrequency();

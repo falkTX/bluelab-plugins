@@ -32,12 +32,12 @@ class SASFrame6
 public:
     enum SynthMode
     {
-        // Resynth using fft
-        FFT = 0,
-        // Resynth using sines and samples
-        OSC,
         // Use raw detected partials and synth using sine and samples
-        RAW_PARTIALS
+        RAW_PARTIALS = 0,
+        // Source partials, denormalized (we re-apply sas params on them later 
+        SOURCE_PARTIALS,
+        // Resynth using sines and samples
+        RESYNTH_PARTIALS
     };
     
     class SASPartial
@@ -99,23 +99,14 @@ public:
     void SetFrequency(BL_FLOAT freq);
     void SetColor(const WDL_TypedBuf<BL_FLOAT> &color);
     void SetNormWarping(const WDL_TypedBuf<BL_FLOAT> &warping);
-    
-    // Compute directly from input partials
+
+    //
     void ComputeSamples(WDL_TypedBuf<BL_FLOAT> *samples);
-    void ComputeSamplesPost(WDL_TypedBuf<BL_FLOAT> *samples);
-    
-    // Compute by resynthesizing from color, warping etc.
-    void ComputeSamplesResynthPost(WDL_TypedBuf<BL_FLOAT> *samples);
-    
-    void ComputeFftPartials(WDL_TypedBuf<BL_FLOAT> *samples);
     
     void SetAmpFactor(BL_FLOAT factor);
     void SetFreqFactor(BL_FLOAT factor);
     void SetColorFactor(BL_FLOAT factor);
     void SetWarpingFactor(BL_FLOAT factor);
-    
-    bool ComputeSamplesFlag();
-    bool ComputeSamplesPostFlag();
     
     static void MixFrames(SASFrame6 *result,
                           const SASFrame6 &frame0,
@@ -125,15 +116,14 @@ public:
 protected:
     // Keep it for debugging
     void ComputeSamplesPartialsRAW(WDL_TypedBuf<BL_FLOAT> *samples);
-    void ComputeSamplesPartials(WDL_TypedBuf<BL_FLOAT> *samples);
+    void ComputeSamplesPartialsSource(WDL_TypedBuf<BL_FLOAT> *samples);
+    void ComputeSamplesPartialsResynth(WDL_TypedBuf<BL_FLOAT> *samples);
+    
     
     BL_FLOAT GetColor(const WDL_TypedBuf<BL_FLOAT> &color, BL_FLOAT binIdx);
     BL_FLOAT GetWarping(const WDL_TypedBuf<BL_FLOAT> &warping, BL_FLOAT binIdx);
-
-    // Was "ComputeSamplesSAS7"
-    void ComputeSamplesSAS(WDL_TypedBuf<BL_FLOAT> *samples);
     
-    void Compute();
+    void ComputeAna();
     
     // Compute steps
     //
