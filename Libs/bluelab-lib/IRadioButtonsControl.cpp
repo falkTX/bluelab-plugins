@@ -15,8 +15,12 @@ IRadioButtonsControl::IRadioButtonsControl(IRECT pR,
 :   IControl(pR, paramIdx), mBitmap(bitmap)
 {
     mRECTs.resize(nButtons);
-    int h = int((float) bitmap.H() / (float) bitmap.N());
-    
+    //int h = int((float) bitmap.H() / (float) bitmap.N());
+    int hf = bitmap.H();
+    if (bitmap.N() > 0)
+        hf /= bitmap.N();
+    int h = (int)hf;
+
     if (reverse)
     {
         if (direction == EDirection::Horizontal)

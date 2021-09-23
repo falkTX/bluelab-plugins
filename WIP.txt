@@ -1,3 +1,4 @@
+
 ===
 DEV
 ---
@@ -406,3 +407,8 @@ https://github.com/Christoph-Lauer/Sonogram
 https://www.youtube.com/channel/UCG3u-G3P_SsiDGhGKRwlnyw/featured
 "2020/03/18" - christophlauer@me.com
 
+===
+Win Mac2
+===
+
+Installed Ableton 9, 10,11

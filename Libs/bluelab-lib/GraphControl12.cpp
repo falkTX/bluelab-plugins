@@ -2799,8 +2799,9 @@ GraphControl12::Draw(IGraphics &graphics)
         mMutex.Enter();
         
     mVg = (NVGcontext *)graphics.GetDrawContext();
-    
-    DoDraw(graphics);
+
+    if (mVg != NULL)
+        DoDraw(graphics);
     
     mVg = NULL;
 
@@ -2844,17 +2845,21 @@ GraphControl12::Draw(IGraphics &graphics)
     // Regenerate the fbo only if we need to draw new data
     if (mDataChanged || (mFBO == NULL))
     {
-        if(mFBO == NULL)
+        if (mVg != NULL)
         {
-            // TODO: delete correctly this FBO
-            mFBO = nvgCreateFramebuffer(mVg, w, h, 0);
+            if(mFBO == NULL)
+            {
+                // TODO: delete correctly this FBO
+                mFBO = nvgCreateFramebuffer(mVg, w, h, 0);
+            }
+
+            nvgEndFrame(mVg);
+            glGetIntegerv(GL_FRAMEBUFFER_BINDING, &mInitialFBO);
+    
+            nvgBindFramebuffer(mFBO);
+            nvgBeginFrame(mVg, w, h, 1.0f);
         }
-    
-        nvgEndFrame(mVg);
-        glGetIntegerv(GL_FRAMEBUFFER_BINDING, &mInitialFBO);
-    
-        nvgBindFramebuffer(mFBO);
-        nvgBeginFrame(mVg, w, h, 1.0f);
+        
         GLint vp[4];
         glGetIntegerv(GL_VIEWPORT, vp);
     
@@ -2866,29 +2871,35 @@ GraphControl12::Draw(IGraphics &graphics)
         glClearColor(mClearColor[0], mClearColor[1], mClearColor[2], mClearColor[3]);
         
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-        
-        DoDraw(graphics);
-    
-        nvgEndFrame(mVg);
-    
-        // BUG fixed here!
-        glViewport(vp[0], vp[1], vp[2], vp[3]);
+
+        if (mVg != NULL)
+        {
+            DoDraw(graphics);
+            
+            nvgEndFrame(mVg);
+            
+            // BUG fixed here!
+            glViewport(vp[0], vp[1], vp[2], vp[3]);
                
-        glBindFramebuffer(GL_FRAMEBUFFER, mInitialFBO);
+            glBindFramebuffer(GL_FRAMEBUFFER, mInitialFBO);
     
-        float graphicsWidth = graphics.WindowWidth();
-        float graphicsHeight = graphics.WindowHeight();
-        nvgBeginFrame(mVg, graphicsWidth, graphicsHeight, 1.0f);
+            float graphicsWidth = graphics.WindowWidth();
+            float graphicsHeight = graphics.WindowHeight();
+            nvgBeginFrame(mVg, graphicsWidth, graphicsHeight, 1.0f);
         
-        // Really avoid drawing when nothing changed
-        // (tested with Wav3s)
-        mDataChanged = false;
+            // Really avoid drawing when nothing changed
+            // (tested with Wav3s)
+            mDataChanged = false;
+        }
     }
+
+    if (mVg != NULL)
+    {
+        APIBitmap apibmp {mFBO->image, w, h, 1, 1.};
+        IBitmap bmp {&apibmp, 1, false};
     
-    APIBitmap apibmp {mFBO->image, w, h, 1, 1.};
-    IBitmap bmp {&apibmp, 1, false};
-    
-    graphics.DrawBitmap(bmp, mRECT);
+        graphics.DrawBitmap(bmp, mRECT);
+    }
     
     mVg = NULL;
 
