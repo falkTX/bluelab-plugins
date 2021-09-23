@@ -24,7 +24,7 @@ using namespace std;
 
 class PartialTracker6;
 class SASFrame5;
-class SASViewerRender4;
+class SASViewerRender5;
 class SASViewerProcess5 : public ProcessObj
 {
 public:
@@ -65,7 +65,7 @@ public:
     
     // Display
     //
-    void SetSASViewerRender(SASViewerRender4 *sasViewerRender);
+    void SetSASViewerRender(SASViewerRender5 *sasViewerRender);
     
     void SetDisplayMode(DisplayMode mode);
     
@@ -139,7 +139,7 @@ protected:
     vector<Partial> mCurrentNormPartials;
     
     // Renderer
-    SASViewerRender4 *mSASViewerRender;
+    SASViewerRender5 *mSASViewerRender;
     
     PartialTracker6 *mPartialTracker;
     

@@ -15,7 +15,7 @@
 #include <BLDebug.h>
 #include <DebugGraph.h>
 
-#include <SASViewerRender4.h>
+#include <SASViewerRender5.h>
 
 #include <SASFrame5.h>
 
@@ -283,7 +283,7 @@ SASViewerProcess5::ProcessSamplesPost(WDL_TypedBuf<BL_FLOAT> *ioBuffer)
 }
 
 void
-SASViewerProcess5::SetSASViewerRender(SASViewerRender4 *sasViewerRender)
+SASViewerProcess5::SetSASViewerRender(SASViewerRender5 *sasViewerRender)
 {
     mSASViewerRender = sasViewerRender;
 }
