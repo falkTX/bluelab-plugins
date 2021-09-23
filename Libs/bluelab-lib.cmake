@@ -678,6 +678,10 @@ set(_bluelab-lib_src
   SamplesToMagnPhases.h
   SamplesToSpectrogram.cpp
   SamplesToSpectrogram.h
+  SASFrameAna.cpp
+  SASFrameAna.h
+  SASFrameSynth.cpp
+  SASFrameSynth.h
   SASFrame2.cpp
   SASFrame2.h
   SASFrame3.cpp
@@ -686,6 +690,8 @@ set(_bluelab-lib_src
   SASFrame4.h
   SASFrame5.cpp
   SASFrame5.h
+  SASFrame6.cpp
+  SASFrame6.h
   SASFrame.cpp
   SASFrame.h
   SASViewerPluginInterface.h
