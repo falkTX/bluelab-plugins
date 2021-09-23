@@ -695,6 +695,8 @@ set(_bluelab-lib_src
   SASViewerProcess3.h
   SASViewerProcess4.cpp
   SASViewerProcess4.h
+  SASViewerProcess5.cpp
+  SASViewerProcess5.h
   SASViewerProcess.cpp
   SASViewerProcess.h
   SASViewerRender2.cpp
