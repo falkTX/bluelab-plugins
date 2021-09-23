@@ -705,6 +705,8 @@ set(_bluelab-lib_src
   SASViewerRender3.h
   SASViewerRender4.cpp
   SASViewerRender4.h
+  SASViewerRender5.cpp
+  SASViewerRender5.h
   SASViewerRender.cpp
   SASViewerRender.h
   SaturateOverObj.cpp
