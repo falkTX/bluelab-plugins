@@ -445,9 +445,12 @@ GUIHelper12::CreateKnob(IGraphics *graphics,
 
     if (createValue)
     {
+        BL_FLOAT h = bitmap.H();
+        if (bitmap.N() > 0)
+            h /= bitmap.N();
         ICaptionControl *caption0 =
         CreateValue(graphics,
-                    x + bitmap.W()/2, y + bitmap.H()/bitmap.N(),
+                    x + bitmap.W()/2, y + h,
                     tfBitmapFname,
                     paramIdx);
         if (caption != NULL)
@@ -794,7 +797,11 @@ GUIHelper12::CreateBitmap(IGraphics *graphics,
     if (width != NULL)
         *width = bitmap.W();
     if (height != NULL)
-        *height = bitmap.H()/bitmap.N();
+    {
+        *height = bitmap.H();
+        if (bitmap.N() >= 0)
+            *height /= bitmap.N();
+    }
     
     IBitmapControl *result = new IBitmapControl(x + offsetX, y + offsetY, bitmap);
     result->SetInteractionDisabled(true);
@@ -972,7 +979,11 @@ GUIHelper12::CreateLogoAnim(Plugin *plug, IGraphics *graphics,
     {
         // Lower right corner
         x = graphics->Width() - bmp.W();
-        y = graphics->Height() - bmp.H()/bmp.N();
+
+        BL_FLOAT h = bmp.H();
+        if (bmp.N() > 0)
+            h /= bmp.N();
+        y = graphics->Height() - h;
     }
     
     IBitmapControlAnim *control = new IBitmapControlAnim(x + mLogoOffsetX,
@@ -1045,7 +1056,11 @@ GUIHelper12::CreateHelpButton(Plugin *plug, IGraphics *graphics,
     {
         // Lower right corner
         x = graphics->Width() - bitmap.W() + mHelpButtonOffsetX;
-        y = graphics->Height() - bitmap.H()/bitmap.N() + mHelpButtonOffsetY;
+
+        BL_FLOAT h = bitmap.H();
+        if (bitmap.N() > 0)
+            h /= bitmap.N();
+        y = graphics->Height() - h + mHelpButtonOffsetY;
     }
     
     char fullFileName[1024];
@@ -1317,7 +1332,11 @@ GUIHelper12::CreateRadioButtonsCustom(IGraphics *graphics,
         bitmaps[i] = graphics->LoadBitmap(bitmapFnames[i], bitmapNFrames);
     
     // Buttons
-    IRECT rect(x, y, x + size, y + bitmaps[0].H()/bitmaps[0].N());
+    BL_FLOAT h = bitmaps[0].H();
+    if (bitmaps[0].N() > 0)
+        h /= bitmaps[0].N();
+        
+    IRECT rect(x, y, x + size, y + h);
     EDirection direction = EDirection::Horizontal;
     if (!horizontalFlag)
     {
@@ -1979,7 +1998,9 @@ GUIHelper12::CreateValue(IGraphics *graphics,
 
     IBitmap bitmap = graphics->LoadBitmap(bitmapFname, 1);
     float width = bitmap.W();
-    float height = bitmap.H()/bitmap.N();
+    float height = bitmap.H();
+    if (bitmap.N() > 0)
+        height /= bitmap.N();
     
     // Value
     IRECT bounds(x - width/2.0 + mValueTextOffsetX,

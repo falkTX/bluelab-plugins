@@ -451,3 +451,12 @@ BLDebug::ComputeRealSampleRate(double *prevTime, double *prevSR, int nFrames)
 
     return rate;
 }
+
+void
+BLDebug::MessageBox(const char *message)
+{
+#ifdef WIN32
+    ::MessageBoxA(NULL, message, "BlueLab | Audio Plugins",
+                  MB_OK | /*MB_ICONERROR*/MB_ICONWARNING | MB_TASKMODAL);
+#endif
+}

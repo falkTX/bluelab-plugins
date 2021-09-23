@@ -102,6 +102,8 @@ public:
     // To be called from ProcessBlock
     static double ComputeRealSampleRate(double *prevTime, double *prevSR,
                                         int nFrames);
+
+    static void MessageBox(const char *message);
 };
 
 #endif /* defined(__Denoiser__BLDebug__) */

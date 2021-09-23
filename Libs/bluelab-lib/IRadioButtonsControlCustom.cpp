@@ -20,7 +20,12 @@ IRadioButtonsControlCustom(IRECT pR,
         mBitmaps[i] = bitmaps[i];
     
     mRECTs.resize(nButtons);
-    int h = int((float) bitmaps[0].H() / (float) bitmaps[0].N());
+
+    //int h = int((float)bitmaps[0].H() / (float)bitmaps[0].N());
+    float hf = bitmaps[0].H();
+    if (bitmaps[0].N() > 0)
+        hf /= bitmaps[0].N();
+    int h = (int)hf;
     
     if (reverse)
     {
@@ -170,11 +175,15 @@ IRadioButtonsControlCustom::Draw(IGraphics &g)
     
     for (int i = 0; i < n; ++i)
     {
+        float h = mBitmaps[i].H();
+        if (mBitmaps[i].N() > 0)
+            h /= mBitmaps[i].N();
+
         if (i == active)
         {
             // Last one
             g.DrawBitmap(mBitmaps[i], mRECTs[i], 0.0,
-                         mBitmaps[i].H() - mBitmaps[i].H()/mBitmaps[i].N(),
+                         mBitmaps[i].H() - h,
                          &mBlend);
         }
         else
@@ -186,7 +195,7 @@ IRadioButtonsControlCustom::Draw(IGraphics &g)
                              &mBlend);
             else
                 g.DrawBitmap(mBitmaps[i], mRECTs[i], 0.0,
-                             mBitmaps[i].H()/mBitmaps[i].N(), // 1
+                             h, // 1
                              &mBlend);
         }
     }

@@ -180,7 +180,10 @@ class IKeyboardControl: public IControl
         
         // Flat/sharp keys
         int l = mRECT.L;
-        r.B = mRECT.T + mSharpKey.H() / mSharpKey.N();
+        float h = mSharpKey.H();
+        if (mSharpKey.N() > 0)
+            h /= mSharpKey.N();
+        r.B = mRECT.T + h;
         key = 1;
         while (true)
         {

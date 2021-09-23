@@ -50,12 +50,15 @@ IBitmapControlAnim::UpdateBitmapNum()
     
     if (mSinAnim)
     {
-        double t2 = ((double)bitmapNum)/(mBitmap.N() - 1);
-        t2 = t2*M_PI; // Half a cycle
-        
-        t2 = (cos(t2 + M_PI) + 1.0)/2.0;
-        
-        bitmapNum = t2*(mBitmap.N() - 1);
+        if (mBitmap.N() > 1)
+        {
+          double t2 = ((double)bitmapNum) / (mBitmap.N() - 1);
+            t2 = t2 * M_PI; // Half a cycle
+
+            t2 = (cos(t2 + M_PI) + 1.0) / 2.0;
+
+            bitmapNum = t2 * (mBitmap.N() - 1);
+        }
     }
     
     if (bitmapNum >= mBitmap.N())
@@ -68,6 +71,8 @@ IBitmapControlAnim::UpdateBitmapNum()
         bitmapNum = 0;
     if (bitmapNum > mBitmap.N() - 1)
         bitmapNum = mBitmap.N() - 1;
-    
+    if (bitmapNum < 0)
+        bitmapNum = 0;
+
     mBitmapNum = bitmapNum;
 }

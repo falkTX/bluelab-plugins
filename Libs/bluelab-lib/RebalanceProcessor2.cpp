@@ -10,8 +10,9 @@
 #include <RebalanceDumpFftObj2.h>
 #include <RebalanceMaskPredictor8.h>
 #include <RebalanceProcessFftObjComp4.h>
-#include <RebalanceProcessFftObjCompStereo.h>
 #include <SpectrogramDisplayScroll4.h>
+
+#include <RebalanceProcessFftObjCompStereo.h>
 
 #include <BLUtils.h>
 #include <BLDebug.h>
