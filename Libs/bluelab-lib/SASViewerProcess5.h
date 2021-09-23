@@ -25,12 +25,11 @@ using namespace std;
 class PartialTracker6;
 class SASFrame5;
 class SASViewerRender4;
-class PhasesEstimPrusa;
 class SASViewerProcess5 : public ProcessObj
 {
 public:
     // Display mode
-    enum Mode
+    enum DisplayMode
     {
         DETECTION = 0,
         TRACKING,
@@ -68,7 +67,7 @@ public:
     //
     void SetSASViewerRender(SASViewerRender4 *sasViewerRender);
     
-    void SetMode(Mode mode);
+    void SetDisplayMode(DisplayMode mode);
     
     void SetShowTrackingLines(bool flag);
     void SetShowDetectionPoints(bool flag);
@@ -101,17 +100,7 @@ public:
 protected:
     void Display();
     
-    // Apply freq scale to freq id
-    int ScaleFreq(int idx);
-    
     void IdToColor(int idx, unsigned char color[3]);
-    
-    void PartialToColor(const Partial &partial, unsigned char color[4]);
-
-    // Utils
-    int FindIndex(const vector<int> &ids, int idx);
- 
-    int FindIndex(const vector<LinesRender2::Point> &points, int idx);
     
     // Optimized version
     void CreateLines(const vector<LinesRender2::Point> &prevPoints);
@@ -185,8 +174,6 @@ protected:
 
     bool mDebugPartials;
 
-    PhasesEstimPrusa *mPhasesEstim;
-
     // Data scale for viewing
     Scale *mViewScale;
     Scale::Type mViewXScale;
@@ -198,14 +185,14 @@ private:
     WDL_TypedBuf<BL_FLOAT> mTmpBuf2;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf3;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf4;
-    WDL_TypedBuf<BL_FLOAT> mTmpBuf5;
+    //WDL_TypedBuf<BL_FLOAT> mTmpBuf5;
     vector<LinesRender2::Line> mTmpBuf6;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf7;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf8;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf9;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf10;
-    WDL_TypedBuf<BL_FLOAT> mTmpBuf11;
-    WDL_TypedBuf<BL_FLOAT> mTmpBuf12;
+    //WDL_TypedBuf<BL_FLOAT> mTmpBuf11;
+    //WDL_TypedBuf<BL_FLOAT> mTmpBuf12;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf13;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf14;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf15;

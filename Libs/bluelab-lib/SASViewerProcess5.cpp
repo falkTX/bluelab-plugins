@@ -19,8 +19,6 @@
 
 #include <SASFrame5.h>
 
-#include <PhasesEstimPrusa.h>
-
 #include <PartialTracker6.h>
 #include <QIFFT.h> // For empirical coeffs
 
@@ -34,22 +32,10 @@
 // 0: should be more correct
 #define DISPLAY_HARMO_SUBSTRACT 1
 
-// Use full SASFrame
-//#define OUT_HARMO_SAS_FRAME 0 // 1 //0 // ORIGIN
-// Use extracted harmonic envelope
-#define OUT_HARMO_EXTRACTED_ENV 0 //1
-// Use input partials (not modified by color etc.)
-//#define OUT_HARMO_INPUT_PARTIALS 1 //0 //1
-
-// Does not improve transients at all (result is identical)
-#define USE_PRUSA_PHASES_ESTIM 0 //1
-
 #define DBG_DISPLAY_BETA0 1
 #define DBG_DISPLAY_ZOMBIES 1
 
-// Bypass all processing (was for testing fft reconstruction with gaussian windows
-#define DBG_BYPASS 0 //1 // 0
-
+// Empirucal coeffs
 #define VIEW_ALPHA0_COEFF 1e4 //5e2
 #define VIEW_BETA0_COEFF 1e3
 
@@ -61,10 +47,6 @@
 // If not set to 1, we will skip steps, depending on the speed
 // (for example we won't display every zombie point)
 #define DISPLAY_EVERY_STEP 1 // 0
-
-// BAD
-// Set to 1 to try to time smooth on complex values later 
-#define SET_PT_DATA_COMPLEX 0 //1
 
 SASViewerProcess5::SASViewerProcess5(int bufferSize,
                                      BL_FLOAT overlapping, BL_FLOAT oversampling,
@@ -101,11 +83,6 @@ SASViewerProcess5::SASViewerProcess5(int bufferSize,
 
     mDebugPartials = false;
 
-    mPhasesEstim = NULL;
-#if USE_PRUSA_PHASES_ESTIM
-    mPhasesEstim = new PhasesEstimPrusa(bufferSize, overlapping, 1, sampleRate);
-#endif
-
     // Data scale
     mViewScale = new Scale();
     mViewXScale = Scale::MEL_FILTER;
@@ -117,10 +94,6 @@ SASViewerProcess5::~SASViewerProcess5()
     delete mPartialTracker;
     delete mSASFrame;
 
-#if USE_PRUSA_PHASES_ESTIM
-    delete mPhasesEstim;
-#endif
-
     delete mViewScale;
 }
 
@@ -130,10 +103,6 @@ SASViewerProcess5::Reset()
     Reset(mBufferSize, mOverlapping, mFreqRes, mSampleRate);
 
     //mSASFrame->Reset(mSampleRate);
-
-#if USE_PRUSA_PHASES_ESTIM
-    mPhasesEstim->Reset();
-#endif
 }
 
 void
@@ -148,21 +117,13 @@ SASViewerProcess5::Reset(int bufferSize, int overlapping,
     mSampleRate = sampleRate;
     
     mSASFrame->Reset(bufferSize, overlapping, oversampling, sampleRate);
-
-#if USE_PRUSA_PHASES_ESTIM
-    mPhasesEstim->Reset(mBufferSize, mOverlapping, mFreqRes, mSampleRate);
-#endif
 }
 
 void
 SASViewerProcess5::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
                                     const WDL_TypedBuf<WDL_FFT_COMPLEX> *scBuffer)
 
-{
-#if DBG_BYPASS
-    return;
-#endif
-   
+{   
     WDL_TypedBuf<WDL_FFT_COMPLEX> &fftSamples0 = mTmpBuf0;
     fftSamples0 = *ioBuffer;
     
@@ -175,11 +136,7 @@ SASViewerProcess5::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     WDL_TypedBuf<BL_FLOAT> &phases = mTmpBuf3;
     BLUtilsComp::ComplexToMagnPhase(&magns, &phases, fftSamples);
     
-#if !SET_PT_DATA_COMPLEX
     mPartialTracker->SetData(magns, phases);
-#else
-    mPartialTracker->SetData(fftSamples);
-#endif
     
     // DetectPartials
     mPartialTracker->DetectPartials();
@@ -227,21 +184,6 @@ SASViewerProcess5::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
         
         // Noise!
         magns = noise;
-
-#if USE_PRUSA_PHASES_ESTIM
-        mPhasesEstim->Process(magns, &phases);
-#endif
-        
-#if OUT_HARMO_EXTRACTED_ENV
-        WDL_TypedBuf<BL_FLOAT> &harmo = mTmpBuf5;
-        mPartialTracker->GetHarmonicEnvelope(&harmo);
-        
-        mPartialTracker->DenormData(&harmo);
-
-        BLUtils::MultValues(&harmo, harmoCoeff);
-        
-        BLUtils::AddValues(&magns, harmo);
-#endif
         
         Display();
     }
@@ -254,11 +196,7 @@ SASViewerProcess5::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
 void
 SASViewerProcess5::ProcessSamplesBuffer(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
                                         WDL_TypedBuf<BL_FLOAT> *scBuffer)
-{
-#if DBG_BYPASS
-    return;
-#endif
-    
+{    
     if (!mSASFrame->ComputeSamplesFlag())
         return;
     
@@ -302,11 +240,7 @@ SASViewerProcess5::ProcessSamplesBuffer(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
 // Use this to synthetize directly the samples from partials
 void
 SASViewerProcess5::ProcessSamplesPost(WDL_TypedBuf<BL_FLOAT> *ioBuffer)
-{
-#if DBG_BYPASS
-    return;
-#endif
-    
+{    
     if (!mSASFrame->ComputeSamplesPostFlag())
         return;
     
@@ -355,7 +289,7 @@ SASViewerProcess5::SetSASViewerRender(SASViewerRender4 *sasViewerRender)
 }
 
 void
-SASViewerProcess5::SetMode(Mode mode)
+SASViewerProcess5::SetDisplayMode(DisplayMode mode)
 {
     if (mSASViewerRender != NULL)
         mSASViewerRender->SetMode(mode);
@@ -525,58 +459,6 @@ SASViewerProcess5::IdToColor(int idx, unsigned char color[3])
     color[0] = r;
     color[1] = g;
     color[2] = b;
-}
-
-void
-SASViewerProcess5::PartialToColor(const Partial &partial, unsigned char color[4])
-{
-    if (partial.mId == -1)
-    {
-        // Green
-        color[0] = 0;
-        color[1] = 255;
-        color[2] = 0;
-        color[3] = 255;
-        
-        return;
-    }
-    
-    int deadAlpha = 255;
-    
-#if SHOW_ONLY_ALIVE
-    deadAlpha = 0;
-#endif
-    
-    if (partial.mState == Partial::ZOMBIE)
-    {
-        // Green
-        color[0] = 255;
-        color[1] = 0;
-        color[2] = 255;
-        color[3] = deadAlpha;
-        
-        return;
-    }
-    
-    if (partial.mState == Partial::DEAD)
-    {
-        // Green
-        color[0] = 255;
-        color[1] = 0;
-        color[2] = 0;
-        color[3] = deadAlpha;
-        
-        return;
-    }
-    
-    int alpha = 255;
-    if (partial.mAge < MIN_AGE_DISPLAY)
-    {
-        alpha = 0;
-    }
-    
-    IdToColor((int)partial.mId, color);
-    color[3] = alpha;
 }
 
 void
@@ -1229,36 +1111,6 @@ SASViewerProcess5::DisplayWarping()
         mSASViewerRender->ShowAdditionalPoints(WARPING, false);
         mSASViewerRender->ShowAdditionalLines(WARPING, false);
     }
-}
-
-int
-SASViewerProcess5::FindIndex(const vector<int> &ids, int idx)
-{
-    if (idx == -1)
-        return -1;
-    
-    for (int i = 0; i < ids.size(); i++)
-    {
-        if (ids[i] == idx)
-            return i;
-    }
-    
-    return -1;
-}
-
-int
-SASViewerProcess5::FindIndex(const vector<LinesRender2::Point> &points, int idx)
-{
-    if (idx == -1)
-        return -1;
-    
-    for (int i = 0; i < points.size(); i++)
-    {
-        if (points[i].mId == idx)
-            return i;
-    }
-    
-    return -1;
 }
 
 // Optimized version
