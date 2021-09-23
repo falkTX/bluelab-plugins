@@ -8,13 +8,7 @@
 
 #include <SASViewerProcess.h>
 
-//#include <PartialsToFreqCepstrum.h>
-//#include <PartialsToFreq5.h>
 #include <PartialsToFreq7.h>
-
-#include <FreqAdjustObj3.h>
-
-#include <WavetableSynth.h>
 
 #include <FftProcessObj16.h>
 
@@ -58,15 +52,6 @@ SIN_LUT_CREATE(SAS_FRAME_SIN_LUT, 4096);
 // NOTE: for the moment, smooting freq in only for debugging
 #define FREQ_SMOOTH_COEFF 0.0
 
-// Compute samples directly from tracked partials
-#define COMPUTE_SAS_SAMPLES          1 // GOOD (best quality, but slow)
-#define COMPUTE_SAS_FFT              0 // Perf gain x10 compared to COMPUTE_SAS_SAMPLES
-#define COMPUTE_SAS_FFT_FREQ_ADJUST  1 // GOOD: Avoids a "reverb" phase effet as with COMPUTE_SAS_FFT
-#define COMPUTE_SAS_SAMPLES_TABLE    0 // Perf gain ~x10 compared to COMPUTE_SAS_SAMPLES (with nearest + block buffers)
-#define COMPUTE_SAS_SAMPLES_OVERLAP  0 // not very efficient (and sound is not good
-
-#define DBG_DISABLE_WARPING 0 //1
-
 // If a partial is missing, fill with zeroes around it
 //
 // At 0: low single partial => interpolated until the last frequencies
@@ -78,12 +63,6 @@ SIN_LUT_CREATE(SAS_FRAME_SIN_LUT, 4096);
 //
 //#define COLOR_CUT_MISSING_PARTIALS 1 // ORIGIN
 #define COLOR_CUT_MISSING_PARTIALS 0 //1
-
-// NOTE: not sure at all it is good...
-//
-// Interpolate partials to color in DB
-// Better, for example with a single sine wave, at low freq
-#define COLOR_DB_INTERP 0 //1 // ??
 
 // Set to 0 for optimization
 //
@@ -113,12 +92,6 @@ SIN_LUT_CREATE(SAS_FRAME_SIN_LUT, 4096);
 // Limit the maximum values that the detected warping can take
 #define LIMIT_WARPING_MAX 1
 
-#define DEBUG_DUMP_VALUES 0 //1
-
-#define OPTIM_SAMPLES_SYNTH_SORTED_VEC 0 //1 // 0
-#define OPTIM_SAMPLES_SYNTH_SORTED_VEC2 0
-#define OPTIM_SAMPLES_SYNTH_SORTED_VEC3 1
-
 // Smooth interpolation of warping envelope
 #define WARP_ENVELOPE_USE_LAGRANGE_INTERP 1
 
@@ -133,7 +106,7 @@ SIN_LUT_CREATE(SAS_FRAME_SIN_LUT, 4096);
 #define LAGRANGE_MIN_NUM_COLOR_VALUES 16
 
 // TEST: nearest interpolation, to be more quick
-#define QUICK_INTERP 0 //1
+#define NEAREST_INTERP 0 //1
 
 SASFrame6::SASPartial::SASPartial()
 {
@@ -186,21 +159,7 @@ SASFrame6::SASFrame6(int bufferSize, BL_FLOAT sampleRate,
     
     mPartialsToFreq = new PartialsToFreq7(bufferSize, overlapping,
                                           freqRes, sampleRate);
-    
-#if COMPUTE_SAS_FFT_FREQ_ADJUST
-    int oversampling = 1;
-    mFreqObj = new FreqAdjustObj3(bufferSize,
-                                  overlapping, oversampling,
-                                  sampleRate);
-#endif
-
-    mTableSynth = NULL;
-#if COMPUTE_SAS_SAMPLES_TABLE
-    BL_FLOAT minFreq = 20.0;
-    mTableSynth = new WavetableSynth(bufferSize, overlapping,
-                                     sampleRate, 1, minFreq);
-#endif
-    
+        
     mMinAmpDB = -120.0;
 
     mSynthEvenPartials = true;
@@ -211,38 +170,12 @@ SASFrame6::SASFrame6(int bufferSize, BL_FLOAT sampleRate,
     mOnsetDetector = new OnsetDetector();
     mOnsetDetector->SetThreshold(ONSET_THRESHOLD);
 #endif
-
-#if DEBUG_DUMP_VALUES
-
-    BLDebug::ResetFile("magns.txt");
-    BLDebug::ResetFile("noise.txt");
-    BLDebug::ResetFile("color.txt");
-    BLDebug::ResetFile("warping.txt");
-    
-#if ENABLE_ONSET_DETECTION
-    BLDebug::ResetFile("onset.txt");
-#endif
-
-    BLDebug::ResetFile("freq.txt");
-    BLDebug::ResetFile("amp.txt");
-    BLDebug::ResetFile("nump.txt");
-
-    BLDebug::ResetFile("color-factor.txt");
-#endif
 }
 
 SASFrame6::~SASFrame6()
 {
     delete mPartialsToFreq;
     
-#if COMPUTE_SAS_FFT_FREQ_ADJUST
-    delete mFreqObj;
-#endif
-    
-#if COMPUTE_SAS_SAMPLES_TABLE
-    delete mTableSynth;
-#endif
-
     delete mScale;
 
 #if ENABLE_ONSET_DETECTION
@@ -265,14 +198,6 @@ SASFrame6::Reset(BL_FLOAT sampleRate)
     mPrevSASPartials.clear();
     
     mNoiseEnvelope.Resize(0);
-    
-#if COMPUTE_SAS_FFT_FREQ_ADJUST
-    mFreqObj->Reset(mBufferSize, mOverlapping, mFreqRes, sampleRate);
-#endif
-    
-#if COMPUTE_SAS_SAMPLES_TABLE
-    mTableSynth->Reset(sampleRate);
-#endif
 
     mPartialsToFreq->Reset(mBufferSize, mOverlapping, mFreqRes, sampleRate);
 }
@@ -329,25 +254,12 @@ SASFrame6::SetPartials(const vector<Partial> &partials)
     mPrevPartials = mPartials;
     mPartials = partials;
 
-#if OPTIM_SAMPLES_SYNTH_SORTED_VEC || OPTIM_SAMPLES_SYNTH_SORTED_VEC2 || OPTIM_SAMPLES_SYNTH_SORTED_VEC3
-    sort(mPrevPartials.begin(), mPrevPartials.end(), Partial::IdLess);
-#endif
-
-#if !OPTIM_SAMPLES_SYNTH_SORTED_VEC2 && !OPTIM_SAMPLES_SYNTH_SORTED_VEC3
-    // FIX: sorting by freq avoids big jumps in computed frequency when
-    // id of a given partial changes.
-    // (at least when the id of the first partial).
-    sort(mPartials.begin(), mPartials.end(), Partial::FreqLess);
-#else
+    // Should not be necessary
+    //sort(mPrevPartials.begin(), mPrevPartials.end(), Partial::IdLess);
+    
     sort(mPartials.begin(), mPartials.end(), Partial::IdLess);
-#endif
 
-#if OPTIM_SAMPLES_SYNTH_SORTED_VEC3
     LinkPartialsIdx(&mPrevPartials, &mPartials);
-
-    // NOTE: Can not sort by freqs, otherwise  indices likned with LinkPartialsIdx
-    // would be shuffled
-#endif
     
     mAmplitude = 0.0;
     
@@ -398,9 +310,6 @@ void
 SASFrame6::GetColor(WDL_TypedBuf<BL_FLOAT> *color) const
 {
     *color = mColor;
-
-    //BLUtils::MultValues(color, mColorFactor);
-    ApplyColorFactor(color, mColorFactor);
 }
 
 void
@@ -445,7 +354,6 @@ SASFrame6::SetNormWarping(const WDL_TypedBuf<BL_FLOAT> &warping)
 void
 SASFrame6::ComputeSamplesPost(WDL_TypedBuf<BL_FLOAT> *samples)
 {
-    //ComputeSamplesPartialsRAW(samples);
     ComputeSamplesPartials(samples);
 }
 
@@ -524,38 +432,8 @@ SASFrame6::ComputeFftPartials(WDL_TypedBuf<BL_FLOAT> *samples)
 void
 SASFrame6::ComputeSamplesResynthPost(WDL_TypedBuf<BL_FLOAT> *samples)
 {
-#if COMPUTE_SAS_SAMPLES
     if ((mSynthMode == OSC) || (mSynthMode == RAW_PARTIALS))
         ComputeSamplesSAS(samples);
-#endif
-    
-    // TEST: was tested to put it in ComputeSamples()
-    // benefit from overlapping (result: no clicks),
-    // and to take full nearest buffers
-    // => but the sound was worse than ifft + freqObj
-#if COMPUTE_SAS_SAMPLES_TABLE
-    ComputeSamplesSASTable(samples);
-    //ComputeSamplesSASTable2(samples);
-#endif
-}
-
-void
-SASFrame6::ComputeSamplesResynth(WDL_TypedBuf<BL_FLOAT> *samples)
-{
-#if COMPUTE_SAS_FFT
-    ComputeFftSAS(samples);
-#endif
-    
-#if COMPUTE_SAS_FFT_FREQ_ADJUST
-    if (mSynthMode == FFT)
-    {
-        ComputeFftSASFreqAdjust(samples);
-    }
-#endif
-    
-#if COMPUTE_SAS_SAMPLES_OVERLAP
-    ComputeSamplesSASOverlap(samples);
-#endif
 }
 
 // Directly use partials provided
@@ -576,18 +454,8 @@ SASFrame6::ComputeSamplesPartialsRAW(WDL_TypedBuf<BL_FLOAT> *samples)
         Partial partial;
         
         BL_FLOAT phase = 0.0;
-#if !OPTIM_SAMPLES_SYNTH_SORTED_VEC && !OPTIM_SAMPLES_SYNTH_SORTED_VEC2 && !OPTIM_SAMPLES_SYNTH_SORTED_VEC3
-        int prevPartialIdx = FindPrevPartialIdx(i);
-#endif
-#if OPTIM_SAMPLES_SYNTH_SORTED_VEC
-        int prevPartialIdx = FindPrevPartialIdxSorted(i);
-#endif
-#if OPTIM_SAMPLES_SYNTH_SORTED_VEC2
-        int prevPartialIdx = FindPrevPartialIdxSorted2(i);
-#endif
-#if OPTIM_SAMPLES_SYNTH_SORTED_VEC3
+
         int prevPartialIdx = mPartials[i].mLinkedId;
-#endif
         
         if (prevPartialIdx != -1)
             phase = mPrevPartials[prevPartialIdx].mPhase;
@@ -640,7 +508,6 @@ SASFrame6::ComputeSamplesPartials(WDL_TypedBuf<BL_FLOAT> *samples)
     
     for (int i = 0; i < mPartials.size(); i++)
     {
-        // OPTIM_SAMPLES_SYNTH_SORTED_VEC3
         int prevPartialIdx = mPartials[i].mLinkedId;
 
         BL_FLOAT phase = 0.0;
@@ -736,27 +603,7 @@ SASFrame6::ComputeSamplesPartials(WDL_TypedBuf<BL_FLOAT> *samples)
 // ComputeSamplesSAS7: copy (new)
 void
 SASFrame6::ComputeSamplesSAS(WDL_TypedBuf<BL_FLOAT> *samples)
-{
-#if DEBUG_DUMP_VALUES
-    BL_FLOAT avgInputMagns = BLUtils::ComputeAvg(mInputMagns);
-    BLDebug::AppendValue("magns.txt", avgInputMagns);
-
-    BL_FLOAT avgNoiseEnv = BLUtils::ComputeAvg(mNoiseEnvelope);
-    BLDebug::AppendValue("noise.txt", avgNoiseEnv);
-
-    BL_FLOAT avgColor = BLUtils::ComputeAvg(mColor);
-    BLDebug::AppendValue("color.txt", avgColor);
-
-    BL_FLOAT avgWarping = BLUtils::ComputeAvg(mNormWarping);
-    BLDebug::AppendValue("warping.txt", avgWarping);
-    
-    BLDebug::AppendValue("freq.txt", mFrequency);
-    BLDebug::AppendValue("amp.txt", mAmplitude);
-    BLDebug::AppendValue("nump.txt", (BL_FLOAT)mPartials.size());
-
-    BLDebug::AppendValue("color-factor.txt", mColorFactor);
-#endif
-    
+{    
     bool transientDetected = false;
 #if ENABLE_ONSET_DETECTION
 #if !ONSET_HISTORY_HACK
@@ -766,10 +613,6 @@ SASFrame6::ComputeSamplesSAS(WDL_TypedBuf<BL_FLOAT> *samples)
 #endif
     
     BL_FLOAT onsetValue = mOnsetDetector->GetCurrentOnsetValue();
-
-#if DEBUG_DUMP_VALUES
-    BLDebug::AppendValue("onset.txt", onsetValue);
-#endif
     
 #if DETECT_TRANSIENTS_ONSET
     transientDetected = (onsetValue > ONSET_VALUE_THRESHOLD);
@@ -796,9 +639,9 @@ SASFrame6::ComputeSamplesSAS(WDL_TypedBuf<BL_FLOAT> *samples)
     
     // For applying amplitude the correct way
     // Keep a denominator for each sample.
-    WDL_TypedBuf<BL_FLOAT> ampDenoms;
-    ampDenoms.Resize(samples->GetSize());
-    BLUtils::FillAllZero(&ampDenoms);
+    //WDL_TypedBuf<BL_FLOAT> ampDenoms;
+    //ampDenoms.Resize(samples->GetSize());
+    //BLUtils::FillAllZero(&ampDenoms);
     
     // Optim
     BL_FLOAT phaseCoeff = 2.0*M_PI/mSampleRate;
@@ -835,12 +678,8 @@ SASFrame6::ComputeSamplesSAS(WDL_TypedBuf<BL_FLOAT> *samples)
             SASPartial &partial = mSASPartials[partialIndex];
             partial.mFreq = partialFreq;
 
-#if 0 // If we did this, maybe amplitude too low
-            partial.mAmp = mAmplitude;
-#endif
-#if 1 // Correct! (global amplitude will be applied later)
+            // Correct! (global amplitude will be applied later)
             partial.mAmp = 1.0;
-#endif
             
             const SASPartial &prevPartial = mPrevSASPartials[partialIndex];
             
@@ -911,7 +750,7 @@ SASFrame6::ComputeSamplesSAS(WDL_TypedBuf<BL_FLOAT> *samples)
                     if (!transientDetected)
                     {
                         samples->Get()[i] += samp*col;
-                        ampDenoms.Get()[i] += col;
+                        //ampDenoms.Get()[i] += col;
                     }
                 }
                 
@@ -935,19 +774,17 @@ SASFrame6::ComputeSamplesSAS(WDL_TypedBuf<BL_FLOAT> *samples)
     for (int i = 0; i < samples->GetSize(); i++)
     {
         BL_FLOAT s = samples->Get()[i];
-        BL_FLOAT d = ampDenoms.Get()[i];
+        //BL_FLOAT d = ampDenoms.Get()[i];
         
-        if (d < BL_EPS)
-            continue;
+        //if (d < BL_EPS)
+        //    continue;
         
         BL_FLOAT amp = GetAmp(mPrevAmplitude, mAmplitude, t);
 
-#if 0 // Make the volume decrease
-        BL_FLOAT a = amp*(s/d);
-#endif
-#if 1 // Resynth the correct volume!
+
+        // Resynth the correct volume!
         BL_FLOAT a = amp*s;
-#endif
+        
         samples->Get()[i] = a;
         
         t += tStep;
@@ -967,8 +804,9 @@ SASFrame6::ComputeSamplesSAS(WDL_TypedBuf<BL_FLOAT> *samples)
 BL_FLOAT
 SASFrame6::GetColor(const WDL_TypedBuf<BL_FLOAT> &color, BL_FLOAT binIdx)
 {
-#if QUICK_INTERP
+#if NEAREST_INTERP
     // Quick method
+    binIdx = bl_round(ninIdx);
     if (binIdx < color.GetSize() - 1)
     {
         BL_FLOAT col = color.Get()[(int)binIdx];
@@ -1009,18 +847,17 @@ BL_FLOAT
 SASFrame6::GetWarping(const WDL_TypedBuf<BL_FLOAT> &warping,
                       BL_FLOAT binIdx)
 {
-#if QUICK_INTERP
+#if NEAREST_INTERP
     // Quick method
+    binIdx = bl_round(binIdx);
     if (binIdx < warping.GetSize() - 1)
     {
         BL_FLOAT w = warping.Get()[(int)binIdx];
 
-#if 1 //0
         // Warping is center on 1
         w -= 1.0;
         w *= mWarpingFactor;
         w += 1.0;
-#endif
         
         return w;
     }
@@ -1046,463 +883,6 @@ SASFrame6::GetWarping(const WDL_TypedBuf<BL_FLOAT> &warping,
     w += 1.0;
     
     return w;
-}
-
-void
-SASFrame6::ComputeSamplesSASOverlap(WDL_TypedBuf<BL_FLOAT> *samples)
-{
-    samples->Resize(mBufferSize);
-    
-    BLUtils::FillAllZero(samples);
-    
-    if (mPartials.empty())
-        return;
-    
-    BL_FLOAT amp0 = GetAmplitude();
-    BL_FLOAT freq0 = GetFrequency();
-    
-    freq0 *= mFreqFactor;
-    
-    // Sort partials by amplitude, in order to play the highest amplitudes ?
-    BL_FLOAT freq = freq0;
-    int partialIndex = 0;
-    while((freq < mSampleRate/2.0) && (partialIndex < SYNTH_MAX_NUM_PARTIALS))
-    {
-        if ((freq > SYNTH_MIN_FREQ) || (mSynthMode == RAW_PARTIALS))
-        {
-            freq = ApplyNormWarping(freq);
-            BL_FLOAT col = ApplyColor(freq);
-            
-            if (mSASPartials.size() <= partialIndex)
-            {
-                SASPartial newPartial;
-                newPartial.mFreq = freq;
-                newPartial.mAmp = amp0*col;
-                
-                mSASPartials.push_back(newPartial);
-            }
-            else
-            {
-                SASPartial &partial = mSASPartials[partialIndex];
-                partial.mFreq = freq;
-                partial.mAmp = amp0*col;
-            }
-            
-            BL_FLOAT phase = 0.0;
-            if (partialIndex < mPrevSASPartials.size())
-                phase = mPrevSASPartials[partialIndex].mPhase;
-            
-            SASPartial partial = mSASPartials[partialIndex];
-            for (int i = 0; i < samples->GetSize(); i++)
-            {
-                BL_FLOAT freq2 = partial.mFreq;
-                
-                BL_FLOAT amp = partial.mAmp;
-                
-                BL_FLOAT samp = std::sin(phase);
-                
-                samp *= amp;
-                samp *= SYNTH_AMP_COEFF;
-                
-                if ((freq2 >= SYNTH_MIN_FREQ) || (mSynthMode == RAW_PARTIALS))
-                    samples->Get()[i] += samp;
-                
-                phase += 2.0*M_PI*freq2/mSampleRate;
-            }
-            
-            mSASPartials[partialIndex].mPhase =/*+=*/ phase;
-        }
-        
-        partialIndex++;
-        freq = freq0*(partialIndex + 1);
-    }
-    
-    mPrevSASPartials = mSASPartials;
-}
-
-void
-SASFrame6::ComputeFftSAS(WDL_TypedBuf<BL_FLOAT> *samples)
-{
-    samples->Resize(mBufferSize);
-    
-    BLUtils::FillAllZero(samples);
-    
-    if (mPartials.empty())
-        return;
-    
-    BL_FLOAT amp0 = GetAmplitude();
-    BL_FLOAT freq0 = GetFrequency();
-    
-    freq0 *= mFreqFactor;
-    
-    // Fft
-    WDL_TypedBuf<BL_FLOAT> magns;
-    BLUtils::ResizeFillZeros(&magns, mBufferSize/2);
-    
-    WDL_TypedBuf<BL_FLOAT> phases;
-    BLUtils::ResizeFillZeros(&phases, mBufferSize/2);
-    
-    BL_FLOAT hzPerBin = mSampleRate/mBufferSize;
-    
-    // Sort partials by amplitude, in order to play the highest amplitudes ?
-    BL_FLOAT freq = freq0;
-    int partialIndex = 0;
-    while((freq < mSampleRate/2.0) && (partialIndex < SYNTH_MAX_NUM_PARTIALS))
-    {
-        if ((freq > SYNTH_MIN_FREQ) || (mSynthMode == RAW_PARTIALS))
-        {
-            if (mSASPartials.size() <= partialIndex)
-            {
-                SASPartial newPartial;
-                newPartial.mFreq = freq;
-                newPartial.mAmp = amp0;
-                
-                mSASPartials.push_back(newPartial);
-            }
-            else
-            {
-                SASPartial &partial = mSASPartials[partialIndex];
-                partial.mFreq = freq;
-                partial.mAmp = amp0;
-            }
-            
-            // Freq
-            BL_FLOAT freq2 = 0.0;
-            if (partialIndex < mPrevSASPartials.size())
-                freq2 = mPrevSASPartials[partialIndex].mFreq;
-            freq2 = ApplyNormWarping(freq2);
-                
-            // Magn
-            BL_FLOAT magn = 0.0;
-            if (partialIndex < mPrevSASPartials.size())
-            {
-                magn = mPrevSASPartials[partialIndex].mAmp;
-                //magn = magn; // ??
-            }
-            
-            // Color
-            BL_FLOAT col = ApplyColor(freq2);
-            magn *= col;
-            
-            // Phase
-            BL_FLOAT phase = 0.0;
-            if (partialIndex < mPrevSASPartials.size())
-                phase = mPrevSASPartials[partialIndex].mPhase;
-            
-            // Fill the fft
-            if ((freq2 >= SYNTH_MIN_FREQ) || (mSynthMode == RAW_PARTIALS))
-            {
-                BL_FLOAT binNum = freq2/hzPerBin;
-                binNum = bl_round(binNum);
-                if (binNum < 0)
-                    binNum = 0;
-                if (binNum > magns.GetSize() - 1)
-                    binNum = magns.GetSize() - 1;
-                
-                magns.Get()[(int)binNum] = magn;
-                phases.Get()[(int)binNum] = phase;
-            }
-            
-            // Update the phases
-            int numSamples = samples->GetSize()/mOverlapping;
-            phase += numSamples*2.0*M_PI*freq2/mSampleRate;
-            mSASPartials[partialIndex].mPhase = phase;
-        }
-                    
-        partialIndex++;
-        freq = freq0*(partialIndex + 1);
-    }
-    
-    // Apply Ifft
-    WDL_TypedBuf<WDL_FFT_COMPLEX> complexBuf;
-    BLUtilsComp::MagnPhaseToComplex(&complexBuf, magns, phases);
-    complexBuf.Resize(complexBuf.GetSize()*2);
-    BLUtilsFft::FillSecondFftHalf(&complexBuf);
-    
-    // Ifft
-    FftProcessObj16::FftToSamples(complexBuf, samples);
-    
-    mPrevSASPartials = mSASPartials;
-}
-
-void
-SASFrame6::ComputeFftSASFreqAdjust(WDL_TypedBuf<BL_FLOAT> *samples)
-{
-    samples->Resize(mBufferSize);
-    
-    BLUtils::FillAllZero(samples);
-    
-    BL_FLOAT amp0 = GetAmplitude();
-    BL_FLOAT freq0 = GetFrequency();
-    
-    //freq0 *= mFreqFactor;
-    
-    // Fft
-    WDL_TypedBuf<BL_FLOAT> magns;
-    BLUtils::ResizeFillZeros(&magns, mBufferSize/2);
-    
-    WDL_TypedBuf<BL_FLOAT> phases;
-    BLUtils::ResizeFillZeros(&phases, mBufferSize/2);
-    
-    BL_FLOAT hzPerBin = mSampleRate/mBufferSize;
-    
-    WDL_TypedBuf<BL_FLOAT> realFreqs;
-    BLUtils::ResizeFillZeros(&realFreqs, mBufferSize/2);
-    
-    // Sort partials by amplitude, in order to play the highest amplitudes ?
-    BL_FLOAT freq = freq0;
-    int partialIndex = 0;
-    while((freq < mSampleRate/2.0) && (partialIndex < SYNTH_MAX_NUM_PARTIALS))
-    {
-        if ((freq > SYNTH_MIN_FREQ) || (mSynthMode == RAW_PARTIALS))
-        {
-            if (mSASPartials.size() <= partialIndex)
-            {
-                SASPartial newPartial;
-                newPartial.mFreq = freq;
-                newPartial.mAmp = amp0;
-                
-                mSASPartials.push_back(newPartial);
-            }
-            else
-            {
-                SASPartial &partial = mSASPartials[partialIndex];
-                partial.mFreq = freq;
-                partial.mAmp = amp0;
-            }
-            
-            // Freq
-            BL_FLOAT freq2 = 0.0;
-            if (partialIndex < mPrevSASPartials.size())
-                freq2 = mPrevSASPartials[partialIndex].mFreq;
-            freq2 = ApplyNormWarping(freq2);
-            
-            // Magn
-            BL_FLOAT magn = 0.0;
-            if (partialIndex < mPrevSASPartials.size())
-                magn = mPrevSASPartials[partialIndex].mAmp;
-            
-            // Color
-            BL_FLOAT col = ApplyColor(freq2);
-            magn *= col;
-            
-            // Phase
-            BL_FLOAT phase = 0.0;
-            if (partialIndex < mPrevSASPartials.size())
-                phase = mPrevSASPartials[partialIndex].mPhase;
-            
-            // Fill the fft
-            if ((freq2 >= SYNTH_MIN_FREQ) || (mSynthMode == RAW_PARTIALS))
-            {
-                BL_FLOAT binNum = freq2/hzPerBin;
-                binNum = bl_round(binNum);
-                if (binNum < 0)
-                    binNum = 0;
-                if (binNum > magns.GetSize() - 1)
-                    binNum = magns.GetSize() - 1;
-                
-                magns.Get()[(int)binNum] = magn;
-                phases.Get()[(int)binNum] = phase;
-                
-                // Set real freq
-                realFreqs.Get()[(int)binNum] = freq2;
-            }
-            
-            // Update the phases
-            int numSamples = samples->GetSize()/mOverlapping;
-            phase += numSamples*2.0*M_PI*freq2/mSampleRate;
-            if (partialIndex < mSASPartials.size()) // Tmp fix...
-                mSASPartials[partialIndex].mPhase = phase;
-        }
-        
-        partialIndex++;
-        freq = freq0*(partialIndex + 1);
-    }
-    
-    // Set adjusted phases
-    WDL_TypedBuf<BL_FLOAT> phasesAdjust;
-    mFreqObj->ComputePhases(&phasesAdjust, realFreqs);
-    for (int i = 0; i < realFreqs.GetSize(); i++)
-    {
-        phases.Get()[i] = phasesAdjust.Get()[i];
-    }
-        
-    // Apply Ifft
-    WDL_TypedBuf<WDL_FFT_COMPLEX> complexBuf;
-    BLUtilsComp::MagnPhaseToComplex(&complexBuf, magns, phases);
-    complexBuf.Resize(complexBuf.GetSize()*2);
-    BLUtilsFft::FillSecondFftHalf(&complexBuf);
-    
-    // Ifft
-    FftProcessObj16::FftToSamples(complexBuf, samples);
-    
-    mPrevSASPartials = mSASPartials;
-}
-
-void
-SASFrame6::ComputeSamplesSASTable(WDL_TypedBuf<BL_FLOAT> *samples)
-{
-    samples->Resize(mBufferSize);
-    BLUtils::FillAllZero(samples);
-    
-    if (mPartials.empty())
-        return;
-    
-    BL_FLOAT amp0 = GetAmplitude();
-    BL_FLOAT freq0 = GetFrequency();
-    
-    freq0 *= mFreqFactor;
-    
-    // Sort partials by amplitude, in order to play the highest amplitudes ?
-    BL_FLOAT freq = freq0;
-    int partialIndex = 0;
-    while((freq < mSampleRate/2.0) && (partialIndex < SYNTH_MAX_NUM_PARTIALS))
-    {
-        if ((freq > SYNTH_MIN_FREQ) || (mSynthMode == RAW_PARTIALS))
-        {
-            if (mSASPartials.size() <= partialIndex)
-            {
-                SASPartial newPartial;
-                newPartial.mFreq = freq;
-                newPartial.mAmp = amp0;
-                
-                mSASPartials.push_back(newPartial);
-            }
-            else
-            {
-                SASPartial &partial = mSASPartials[partialIndex];
-                partial.mFreq = freq;
-                partial.mAmp = amp0;
-            }
-            
-            // Freq
-            BL_FLOAT freq2 = 0.0;
-            if (partialIndex < mPrevSASPartials.size())
-                freq2 = mPrevSASPartials[partialIndex].mFreq;
-            freq2 = ApplyNormWarping(freq2);
-            
-            // Magn
-            BL_FLOAT amp = 0.0;
-            if (partialIndex < mPrevSASPartials.size())
-            {
-                amp = mPrevSASPartials[partialIndex].mAmp;
-            }
-            
-            // Color
-            BL_FLOAT col = ApplyColor(freq2);
-            amp *= col;
-            
-            amp *= SYNTH_AMP_COEFF;
-            
-            // Phase
-            BL_FLOAT phase = 0.0;
-            if (partialIndex < mPrevSASPartials.size())
-                phase = mPrevSASPartials[partialIndex].mPhase;
-            
-            // Fill the fft
-            if ((freq2 >= SYNTH_MIN_FREQ) || (mSynthMode == RAW_PARTIALS))
-            {
-                WDL_TypedBuf<BL_FLOAT> freqBuffer;
-                freqBuffer.Resize(mBufferSize/mOverlapping);
-                mTableSynth->GetSamplesLinear(&freqBuffer, freq2, amp);
-                
-                BLUtils::AddValues(samples, freqBuffer);
-            }
-            
-            // Update the phases
-            int numSamples = samples->GetSize()/mOverlapping;
-            phase += numSamples*2.0*M_PI*freq2/mSampleRate;
-            mSASPartials[partialIndex].mPhase = phase;
-        }
-        
-        partialIndex++;
-        freq = freq0*(partialIndex + 1);
-    }
-    
-    mPrevSASPartials = mSASPartials;
-    
-    mTableSynth->NextBuffer();
-}
-
-void
-SASFrame6::ComputeSamplesSASTable2(WDL_TypedBuf<BL_FLOAT> *samples)
-{
-    samples->Resize(mBufferSize);
-    BLUtils::FillAllZero(samples);
-    
-    if (mPartials.empty())
-        return;
-    
-    BL_FLOAT amp0 = GetAmplitude();
-    BL_FLOAT freq0 = GetFrequency();
-    
-    //freq0 *= mFreqFactor;
-    
-    // Sort partials by amplitude, in order to play the highest amplitudes ?
-    BL_FLOAT freq = freq0;
-    int partialIndex = 0;
-    while((freq < mSampleRate/2.0) && (partialIndex < SYNTH_MAX_NUM_PARTIALS))
-    {
-        if ((freq > SYNTH_MIN_FREQ) || (mSynthMode == RAW_PARTIALS))
-        {
-            if (mSASPartials.size() <= partialIndex)
-            {
-                SASPartial newPartial;
-                newPartial.mFreq = freq;
-                newPartial.mAmp = amp0;
-                
-                mSASPartials.push_back(newPartial);
-            }
-            else
-            {
-                SASPartial &partial = mSASPartials[partialIndex];
-                partial.mFreq = freq;
-                partial.mAmp = amp0;
-            }
-            
-            SASPartial partial;
-            for (int i = 0; i < samples->GetSize()/mOverlapping; i++)
-            {
-                // Get interpolated partial
-                BL_FLOAT partialT = ((BL_FLOAT)i)/(samples->GetSize()/mOverlapping);
-                GetSASPartial(&partial, partialIndex, partialT);
-                
-                BL_FLOAT freq2 = partial.mFreq;
-                
-                freq2 = ApplyNormWarping(freq2, partialT);
-                BL_FLOAT col = ApplyColor(freq2, partialT);
-                
-                BL_FLOAT amp = partial.mAmp;
-                amp  *= col;
-                
-                amp *= SYNTH_AMP_COEFF;
-                
-                // Get from the wavetable
-                if ((freq2 >= SYNTH_MIN_FREQ) || (mSynthMode == RAW_PARTIALS))
-                {
-                    BL_FLOAT samp = mTableSynth->GetSampleNearest(i, freq2, amp);
-                    samples->Get()[i] += samp;
-                }
-            }
-            
-            // Phase
-            BL_FLOAT phase = 0.0;
-            if (partialIndex < mPrevSASPartials.size())
-                phase = mPrevSASPartials[partialIndex].mPhase;
-            
-            // Update the phases
-            int numSamples = samples->GetSize()/mOverlapping;
-            phase += numSamples*2.0*M_PI*freq/mSampleRate;
-            mSASPartials[partialIndex].mPhase = phase;
-        }
-        
-        partialIndex++;
-        freq = freq0*(partialIndex + 1);
-    }
-    
-    mPrevSASPartials = mSASPartials;
-    
-    mTableSynth->NextBuffer();
 }
 
 void
@@ -1532,55 +912,17 @@ SASFrame6::SetWarpingFactor(BL_FLOAT factor)
 bool
 SASFrame6::ComputeSamplesFlag()
 {
-#if COMPUTE_SAS_SAMPLES
     if ((mSynthMode == OSC) || (mSynthMode == RAW_PARTIALS))
         return false;
-#endif
-
-#if COMPUTE_SAS_FFT
-    return true;
-#endif
-    
-#if COMPUTE_SAS_FFT_FREQ_ADJUST
-    if (mSynthMode == FFT)
-        return true;
-#endif
-    
-#if COMPUTE_SAS_SAMPLES_TABLE
-    return false;
-#endif
-    
-#if COMPUTE_SAS_SAMPLES_OVERLAP
-    return true;
-#endif
-    
+       
     return false;
 }
 
 bool
 SASFrame6::ComputeSamplesPostFlag()
 {
-#if COMPUTE_SAS_SAMPLES
     if ((mSynthMode == OSC) || (mSynthMode == RAW_PARTIALS))
         return true;
-#endif
-    
-#if COMPUTE_SAS_FFT
-    return false;
-#endif
-    
-#if COMPUTE_SAS_FFT_FREQ_ADJUST
-    if (mSynthMode == FFT)
-        return false;
-#endif
-    
-#if COMPUTE_SAS_SAMPLES_TABLE
-    return true;
-#endif
-
-#if COMPUTE_SAS_SAMPLES_OVERLAP
-    return false;
-#endif
     
     return false;
 }
@@ -1662,13 +1004,8 @@ SASFrame6::ComputeColor()
 void
 SASFrame6::ComputeColorAux()
 {
-#if !COLOR_DB_INTERP
     BL_FLOAT minColorValue = 0.0;
     BL_FLOAT undefinedValue = -1.0; // -300dB
-#else
-    BL_FLOAT minColorValue = mMinAmpDB;
-    BL_FLOAT undefinedValue = -300.0; // -300dB
-#endif
     
     mColor.Resize(mBufferSize/2);
     
@@ -1704,10 +1041,6 @@ SASFrame6::ComputeColorAux()
         idx = bl_round(idx);
         
         BL_FLOAT amp = p.mAmp;
-        
-#if COLOR_DB_INTERP
-        amp = mScale->ApplyScale(Scale::DB, amp, mMinAmpDB, (BL_FLOAT)0.0);
-#endif
         
         if (((int)idx >= 0) && ((int)idx < mColor.GetSize()))
             mColor.Get()[(int)idx] = amp;
@@ -1748,10 +1081,6 @@ SASFrame6::ComputeColorAux()
 #if !COLOR_ENVELOPE_USE_LAGRANGE_INTERP
     BLUtils::FillMissingValues(&mColor, extendBounds, undefinedValue);
 #else
-#if COLOR_DB_INTERP
-    // Makes undefined values...
-    BLUtils::FillMissingValuesLagrangeDB(&mColor, extendBounds, undefinedValue);
-#else
     // Try to add intermediate values, to avoid too many oscillations
     // (not working, this leads to the same result as linear (no Lagrange)
     BLUtils::AddIntermediateValues(&mColor, LAGRANGE_MIN_NUM_COLOR_VALUES,
@@ -1760,36 +1089,12 @@ SASFrame6::ComputeColorAux()
     // Lagrange oscillations can make the values to become negative sometimes
     BLUtils::ClipMin(&mColor, 0.0);
 #endif
-#endif    
-    
-#if COLOR_DB_INTERP
-    for (int i = 0; i < mColor.GetSize(); i++)
-    {
-        BL_FLOAT c = mColor.Get()[i];
-        
-        c = mScale->ApplyScale(Scale::DB_INV, c, mMinAmpDB, (BL_FLOAT)0.0);
-     
-        mColor.Get()[i] = c;
-    }
-#endif
 
-#if 0 // Makes gain decrease
-    // Normalize the color (maybe not necessary)
-    BL_FLOAT amplitude = mAmplitude;
-    if (amplitude > 0.0)
-    {
-        BL_FLOAT coeff = 1.0/amplitude;
-        
-        BLUtils::MultValues(&mColor, coeff);
-    }
-#endif
-
-#if 1 // Fixed version => so the color max is 1
+    // Fixed version => so the color max is 1
     // Normalize the color
     BL_FLOAT maxCol = BLUtils::ComputeMax(mColor);
     if (maxCol > BL_EPS)
         BLUtils::MultValues(&mColor, 1.0/maxCol);
-#endif
 }
 
 void
@@ -1799,8 +1104,7 @@ SASFrame6::ComputeNormWarping()
     //
     mPrevNormWarping = mNormWarping;
     
-    //ComputeNormWarpingAux();
-    ComputeNormWarpingAux2(&mNormWarping);
+    ComputeNormWarpingAux(&mNormWarping);
     
     if (mPrevNormWarping.GetSize() == mNormWarping.GetSize())
         BLUtils::Smooth(&mNormWarping, &mPrevNormWarping, WARPING_SMOOTH_COEFF);
@@ -1809,105 +1113,10 @@ SASFrame6::ComputeNormWarping()
     //
     mPrevNormWarpingInv = mNormWarpingInv;
     
-    ComputeNormWarpingAux2(&mNormWarpingInv, true);
+    ComputeNormWarpingAux(&mNormWarpingInv, true);
     
     if (mPrevNormWarpingInv.GetSize() == mNormWarpingInv.GetSize())
         BLUtils::Smooth(&mNormWarpingInv, &mPrevNormWarpingInv, WARPING_SMOOTH_COEFF);
-}
-
-// Unused
-void
-SASFrame6::ComputeNormWarpingAux()
-{
-    mNormWarping.Resize(mBufferSize/2);
-    
-    if (mFrequency < BL_EPS)
-    {
-        BLUtils::FillAllValue(&mNormWarping, (BL_FLOAT)1.0);
-        
-        return;
-    }
-    
-    // Will interpolate values between the partials
-    BL_FLOAT undefinedValue = -1.0;
-    BLUtils::FillAllValue(&mNormWarping, undefinedValue);
-    
-    // Fix bounds at 1
-    mNormWarping.Get()[0] = 1.0;
-    mNormWarping.Get()[mBufferSize/2 - 1] = 1.0;
-    
-    if (mPartials.size() < 2)
-    {
-        BLUtils::FillAllValue(&mNormWarping, (BL_FLOAT)1.0);
-        
-        return;
-    }
-    
-    // Fundamental frequency
-    BL_FLOAT hzPerBin = mSampleRate/mBufferSize;
-
-    // Adjust on chroma-computed frequency
-    BL_FLOAT freq0 = mFrequency;
-
-    // Adjust of first pratial frequency
-    //
-    // NOTE: This is different, is it better?
-    // Set to 0 for good Vox Oooh!
-#if 0 //1 // Use first partial frequency, instead of mFrequency
-    // mFrequency has been gotten from chroma feature, and for inharmonic sound,
-    // it may be e abit different than the first partial freq
-    if (!mPartials.empty())
-        freq0 = mPartials[0].mFreq;
-#endif
-    
-#if 1 // Must adjust the also on the first partial, if ref freq is chroma-computed
-    // Put the values we have
-    for (int i = 0; i < mPartials.size(); i++)
-#else
-    // Skip the first partial, so it will always have warping=1 
-    for (int i = 1; i < mPartials.size(); i++)
-#endif
-    {
-        const Partial &p = mPartials[i];
-    
-        // Do no add to warping if dead or zombie
-        if (p.mState != Partial::ALIVE)
-            continue;
-        
-        BL_FLOAT freq = mPartials[i].mFreq;
-        BL_FLOAT freq1 = BLUtilsMath::FindNearestHarmonic(freq, freq0);
-        
-        BL_FLOAT normWarp = freq/freq1;
-
-#if LIMIT_WARPING_MAX
-        // Discard too high warping values, that can come to short invalid partials
-        // spread randomly
-        if ((normWarp < 0.8) || (normWarp > 1.25))
-            continue;
-#endif
-        
-        //BL_FLOAT idx = p.mFreq/hzPerBin;
-        BL_FLOAT idx = freq1/hzPerBin;
-        // TODO: make an interpolation, it is not so good to align to bins
-        idx = bl_round(idx);
-        
-        if ((idx > 0) && (idx < mNormWarping.GetSize()))
-            mNormWarping.Get()[(int)idx] = normWarp;
-    }
-
-#if FILL_ZERO_FIRST_LAST_VALUES_WARPING
-#if 0 // Keep the first partial warping of reference is chroma-compute freq
-    // Avoid warping the first partial
-    FillFirstValues(&mNormWarping, mPartials, 1.0);
-#endif
-    
-    // NEW
-    FillLastValues(&mNormWarping, mPartials, 1.0);
-#endif
-    
-    // Fill all the other value
-    bool extendBounds = false;
-    BLUtils::FillMissingValues(&mNormWarping, extendBounds, undefinedValue);
 }
 
 // Problem: when incorrect partials are briefly detected, they affect warping a lot
@@ -1917,8 +1126,8 @@ SASFrame6::ComputeNormWarpingAux()
 //
 // NOTE: this is not still perfect if we briefly loose the tracking
 void
-SASFrame6::ComputeNormWarpingAux2(WDL_TypedBuf<BL_FLOAT> *warping,
-                                  bool inverse)
+SASFrame6::ComputeNormWarpingAux(WDL_TypedBuf<BL_FLOAT> *warping,
+                                 bool inverse)
 {
     // Init
 
@@ -2110,85 +1319,6 @@ SASFrame6::ComputeNormWarpingAux2(WDL_TypedBuf<BL_FLOAT> *warping,
 #endif
 }
 
-BL_FLOAT
-SASFrame6::ApplyNormWarping(BL_FLOAT freq)
-{
-#if DBG_DISABLE_WARPING
-    return freq;
-#endif
-    
-    BL_FLOAT hzPerBin = mSampleRate/mBufferSize;
-    
-    // TODO: use linerp instead of nearest
-    BL_FLOAT idx = freq/hzPerBin;
-    idx = bl_round(idx);
-    
-    if (idx > mNormWarping.GetSize())
-        return freq;
-    
-    BL_FLOAT w = mNormWarping.Get()[(int)idx];
-    
-    BL_FLOAT result = freq*w;
-    
-    return result;
-}
-
-BL_FLOAT
-SASFrame6::ApplyColor(BL_FLOAT freq)
-{
-    BL_FLOAT hzPerBin = mSampleRate/mBufferSize;
- 
-    // TODO: use linerp instead of nearest
-    // TODO: use BL_FLOAT and bl_round as above
-    int idx = freq/hzPerBin;
-    
-    if (idx > mColor.GetSize())
-        return 0.0;
-    
-    BL_FLOAT result = mColor.Get()[idx];
-    
-    return result;
-}
-
-BL_FLOAT
-SASFrame6::ApplyNormWarping(BL_FLOAT freq, BL_FLOAT t)
-{
-#if DBG_DISABLE_WARPING
-    return freq;
-#endif
-    
-    BL_FLOAT hzPerBin = mSampleRate/mBufferSize;
-    BL_FLOAT idx = freq/hzPerBin;
-    idx = bl_round(idx);
-    if (idx > mNormWarping.GetSize())
-        return freq;
-    
-    BL_FLOAT w0 = mPrevNormWarping.Get()[(int)idx];
-    BL_FLOAT w1 = mNormWarping.Get()[(int)idx];
-    
-    BL_FLOAT w = (1.0 - t)*w0 + t*w1;
-    
-    BL_FLOAT result = freq*w;
-    
-    return result;
-}
-
-BL_FLOAT
-SASFrame6::ApplyColor(BL_FLOAT freq, BL_FLOAT t)
-{
-    BL_FLOAT hzPerBin = mSampleRate/mBufferSize;
-    int idx = freq/hzPerBin;
-    if (idx > mColor.GetSize())
-        return 0.0;
-    
-    BL_FLOAT col0 = mPrevColor.Get()[idx];
-    BL_FLOAT col1 = mColor.Get()[idx];
-    
-    BL_FLOAT col = (1.0 - t)*col0 + t*col1;
-    
-    return col;
-}
-
 bool
 SASFrame6::FindPartial(BL_FLOAT freq)
 {
@@ -2215,18 +1345,7 @@ SASFrame6::GetPartial(Partial *result, int index, BL_FLOAT t)
 {
     const Partial &currentPartial = mPartials[index];
 
-#if !OPTIM_SAMPLES_SYNTH_SORTED_VEC && !OPTIM_SAMPLES_SYNTH_SORTED_VEC2 && !OPTIM_SAMPLES_SYNTH_SORTED_VEC3
-    int prevPartialIdx = FindPrevPartialIdx(index);
-#endif
-#if OPTIM_SAMPLES_SYNTH_SORTED_VEC
-    int prevPartialIdx = FindPrevPartialIdxSorted(index);
-#endif
-#if OPTIM_SAMPLES_SYNTH_SORTED_VEC2
-    int prevPartialIdx = FindPrevPartialIdxSorted2(index);
-#endif
-#if OPTIM_SAMPLES_SYNTH_SORTED_VEC3
     int prevPartialIdx = currentPartial.mLinkedId;
-#endif
         
     *result = currentPartial;
     
@@ -2284,124 +1403,6 @@ SASFrame6::GetPartial(Partial *result, int index, BL_FLOAT t)
             BL_FLOAT amp = t0*currentPartial.mAmp;
             result->mAmp = amp;
         }
-    }
-}
-
-int
-SASFrame6::FindPrevPartialIdx(int currentPartialIdx)
-{
-    if (currentPartialIdx >= mPartials.size())
-        return -1;
-    
-    const Partial &currentPartial = mPartials[currentPartialIdx];
-    
-    // Find the corresponding prev partial
-    int prevPartialIdx = -1;
-    for (int i = 0; i < mPrevPartials.size(); i++)
-    {
-        const Partial &prevPartial = mPrevPartials[i];
-        if (prevPartial.mId == currentPartial.mId)
-        {
-            prevPartialIdx = i;
-        
-            // Found
-            break;
-        }
-    }
-    
-    return prevPartialIdx;
-}
-
-int
-SASFrame6::FindPrevPartialIdxSorted(int currentPartialIdx)
-{
-    if (currentPartialIdx >= mPartials.size())
-        return -1;
-    
-    const Partial &currentPartial = mPartials[currentPartialIdx];
-    
-    // Find the corresponding prev partial
-    vector<Partial>::iterator it =
-        lower_bound(mPrevPartials.begin(), mPrevPartials.end(),
-                    currentPartial, Partial::IdLess);
-    
-    if (it != mPrevPartials.end() && (*it).mId == currentPartial.mId)
-    {
-        // We found the element!
-        return (it - mPrevPartials.begin());
-    }
-
-    // Not found
-    return -1;
-}
-
-int
-SASFrame6::FindPrevPartialIdxSorted2(int currentPartialIdx)
-{
-    if (currentPartialIdx >= mPartials.size())
-        return -1;
-    
-    const Partial &currentPartial = mPartials[currentPartialIdx];
-
-    if (mPrevPartials.empty())
-        return -1;
-    
-    if (currentPartialIdx > mPrevPartials.size() - 1)
-        currentPartialIdx = mPrevPartials.size() - 1;
-        
-    if (mPrevPartials[currentPartialIdx].mId == currentPartial.mId)
-    {
-        return currentPartialIdx;
-    }
-    else if (mPrevPartials[currentPartialIdx].mId < currentPartial.mId)
-    {
-        for (int i = currentPartialIdx + 1; i < mPrevPartials.size(); i++)
-        {
-            if (mPrevPartials[i].mId == currentPartial.mId)
-                return i;
-        }
-    }
-    else if (mPrevPartials[currentPartialIdx].mId > currentPartial.mId)
-    {
-        for (int i = currentPartialIdx - 1; i >= 0; i--)
-        {
-            if (mPrevPartials[i].mId == currentPartial.mId)
-                return i;
-        }
-    }
-
-    // Not found
-    return -1;
-}
-
-void
-SASFrame6::GetSASPartial(SASPartial *result, int index, BL_FLOAT t)
-{
-    const SASPartial &currentPartial = mSASPartials[index];
-    *result = currentPartial;
-    
-    // Manage interpolation of freq and amp
-    //
-    if (index < mPrevSASPartials.size())
-    {
-        const SASPartial &prevPartial = mPrevSASPartials[index];
-        
-        result->mFreq = (1.0 - t)*prevPartial.mFreq + t*currentPartial.mFreq;
-        result->mAmp = (1.0 - t)*prevPartial.mAmp + t*currentPartial.mAmp;
-    }
-    else
-        // New partial, fade in
-    {
-        // NOTE: this avoids vertical bars in the spectrogram when a partial starts
-            
-        // Increase progressively the amplitude
-            
-        // Interpolate
-        BL_FLOAT t0 = t/SYNTH_DEAD_PARTIAL_DECREASE;
-        if (t0 > 1.0)
-            t0 = 1.0;
-            
-        result->mAmp = t0*currentPartial.mAmp;
     }
 }
 

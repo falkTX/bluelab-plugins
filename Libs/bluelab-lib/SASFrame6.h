@@ -26,8 +26,6 @@ using namespace std;
 
 // SASFrame6: keep only the data. Processing is now in SASFrameAna and SASFrameSynth
 class PartialsToFreq7;
-class FreqAdjustObj3;
-class WavetableSynth;
 class OnsetDetector;
 class SASFrame6
 {
@@ -107,7 +105,6 @@ public:
     void ComputeSamplesPost(WDL_TypedBuf<BL_FLOAT> *samples);
     
     // Compute by resynthesizing from color, warping etc.
-    void ComputeSamplesResynth(WDL_TypedBuf<BL_FLOAT> *samples);
     void ComputeSamplesResynthPost(WDL_TypedBuf<BL_FLOAT> *samples);
     
     void ComputeFftPartials(WDL_TypedBuf<BL_FLOAT> *samples);
@@ -126,6 +123,7 @@ public:
                           BL_FLOAT t, bool mixFreq);
     
 protected:
+    // Keep it for debugging
     void ComputeSamplesPartialsRAW(WDL_TypedBuf<BL_FLOAT> *samples);
     void ComputeSamplesPartials(WDL_TypedBuf<BL_FLOAT> *samples);
     
@@ -134,12 +132,6 @@ protected:
 
     // Was "ComputeSamplesSAS7"
     void ComputeSamplesSAS(WDL_TypedBuf<BL_FLOAT> *samples);
-    
-    void ComputeFftSAS(WDL_TypedBuf<BL_FLOAT> *samples);
-    void ComputeFftSASFreqAdjust(WDL_TypedBuf<BL_FLOAT> *samples);
-    void ComputeSamplesSASTable(WDL_TypedBuf<BL_FLOAT> *samples);
-    void ComputeSamplesSASTable2(WDL_TypedBuf<BL_FLOAT> *samples); // Better interpolation
-    void ComputeSamplesSASOverlap(WDL_TypedBuf<BL_FLOAT> *samples);
     
     void Compute();
     
@@ -150,30 +142,13 @@ protected:
     void ComputeColor();
     void ComputeColorAux();
     void ComputeNormWarping();
-    void ComputeNormWarpingAux();
     // If inverse is true, then compute inverse warping
-    void ComputeNormWarpingAux2(WDL_TypedBuf<BL_FLOAT> *warping,
-                                bool inverse = false);
-    
-    // Simple version
-    BL_FLOAT ApplyNormWarping(BL_FLOAT freq);
-    BL_FLOAT ApplyColor(BL_FLOAT freq);
-
-    // Versions to interpolate over time
-    BL_FLOAT ApplyNormWarping(BL_FLOAT freq, BL_FLOAT t);
-    BL_FLOAT ApplyColor(BL_FLOAT freq, BL_FLOAT t);
+    void ComputeNormWarpingAux(WDL_TypedBuf<BL_FLOAT> *warping,
+                               bool inverse = false);
     
     bool FindPartial(BL_FLOAT freq);
 
     void GetPartial(Partial *result, int index, BL_FLOAT t);
-    
-    int FindPrevPartialIdx(int currentPartialIdx);
-    // Optimized
-    int FindPrevPartialIdxSorted(int currentPartialIdx);
-    // Optimized 2
-    int FindPrevPartialIdxSorted2(int currentPartialIdx);
-    
-    void GetSASPartial(SASPartial *result, int index, BL_FLOAT t);
     
     //
     BL_FLOAT GetFreq(BL_FLOAT freq0, BL_FLOAT freq1, BL_FLOAT t);
@@ -246,11 +221,6 @@ protected:
     
     //PartialsToFreq5 *mPartialsToFreq;
     PartialsToFreq7 *mPartialsToFreq;
-    
-    FreqAdjustObj3 *mFreqObj;
-    
-    // For sample synth with table
-    WavetableSynth *mTableSynth;
     
     BL_FLOAT mMinAmpDB;
 
