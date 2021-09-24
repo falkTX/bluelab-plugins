@@ -298,11 +298,11 @@ SASFrameSynth::ComputeSamplesPartialsSourceNorm(WDL_TypedBuf<BL_FLOAT> *samples)
             //
 
             // Cancel color(1)
-            BL_FLOAT colorFactor = mColorFactor;
-            mColorFactor = 1.0;
+            //BL_FLOAT colorFactor = mColorFactor;
+            //mColorFactor = 1.0;
             //BL_FLOAT col0 = GetColor(mColor, binIdx);
             BL_FLOAT col0 = GetColor(colorInv, binIdx); // Optim
-            mColorFactor = colorFactor;
+            //mColorFactor = colorFactor;
             //partial.mAmp /= col0;
             partial.mAmp *= col0;
 
@@ -310,10 +310,10 @@ SASFrameSynth::ComputeSamplesPartialsSourceNorm(WDL_TypedBuf<BL_FLOAT> *samples)
             // => the detected partials will then be aligned to harmonics after that
             //
             // (No need to revert additional warping after)            
-            BL_FLOAT warpFactor = mWarpingFactor;
-            mWarpingFactor = 1.0;
+            //BL_FLOAT warpFactor = mWarpingFactor;
+            //mWarpingFactor = 1.0;
             BL_FLOAT w0 = GetWarping(mWarpingInv, binIdx);
-            mWarpingFactor = warpFactor;
+            //mWarpingFactor = warpFactor;
 
             partial.mFreq *= w0;
 
@@ -686,12 +686,12 @@ SASFrameSynth::GetWarping(const WDL_TypedBuf<BL_FLOAT> &warping,
         w = (1.0 - t)*w0 + t*w1;
     }
 
-    // Warping is center on 1
-    w -= 1.0;
-    
-    w *= mWarpingFactor;
-
-    w += 1.0;
+    // Warping is centered on 1
+    // NOTE: no need anymore
+    /*w -= 1.0;
+      w *= mWarpingFactor;
+      w += 1.0;
+    */
     
     return w;
 }
