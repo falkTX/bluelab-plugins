@@ -66,6 +66,7 @@
 // Set to 1 to try to time smooth on complex values later 
 #define SET_PT_DATA_COMPLEX 0 //1
 
+
 SASViewerProcess4::SASViewerProcess4(int bufferSize,
                                      BL_FLOAT overlapping, BL_FLOAT oversampling,
                                      BL_FLOAT sampleRate)
@@ -469,7 +470,7 @@ SASViewerProcess4::SetNeriDelta(BL_FLOAT delta)
 
 void
 SASViewerProcess4::Display()
-{
+{    
 #if !DISPLAY_EVERY_STEP
     if (mSASViewerRender != NULL)
     {

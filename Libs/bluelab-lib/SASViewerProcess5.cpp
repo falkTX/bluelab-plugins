@@ -46,6 +46,9 @@
 // (for example we won't display every zombie point)
 #define DISPLAY_EVERY_STEP 1 // 0
 
+// Disable all display if uncheck "SHOW TRACK"
+#define DEBUG_DISABLE_DISPLAY 1 // 0
+
 SASViewerProcess5::SASViewerProcess5(int bufferSize,
                                      BL_FLOAT overlapping, BL_FLOAT oversampling,
                                      BL_FLOAT sampleRate)
@@ -346,6 +349,11 @@ SASViewerProcess5::SetNeriDelta(BL_FLOAT delta)
 void
 SASViewerProcess5::Display()
 {
+#if DEBUG_DISABLE_DISPLAY
+    if (!mShowTrackingLines)
+        return;
+#endif
+    
 #if !DISPLAY_EVERY_STEP
     if (mSASViewerRender != NULL)
     {
