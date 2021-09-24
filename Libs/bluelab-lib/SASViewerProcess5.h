@@ -200,6 +200,7 @@ private:
     WDL_TypedBuf<BL_FLOAT> mTmpBuf14;
     WDL_TypedBuf<BL_FLOAT> mTmpBuf15;
     vector<LinesRender2::Line> mTmpBuf16;
+    vector<Partial> mTmpBuf17;
 };
 
 #endif // IGRAPHICS_NANOVG

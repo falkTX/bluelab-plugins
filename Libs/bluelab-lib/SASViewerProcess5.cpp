@@ -154,22 +154,21 @@ SASViewerProcess5::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     mPartialTracker->GetPreProcessedMagns(&mCurrentMagns);
             
     //
-    mSASFrameAna->SetInputData(magns, phases);
-        
+    //mSASFrameAna->SetInputData(magns, phases);
+    mSASFrameAna->SetInputData(mCurrentMagns, phases);
+    
     // Silence
     BLUtils::FillAllZero(&magns);
     
     if (mPartialTracker != NULL)
     {
-        vector<Partial> normPartials;
-        mPartialTracker->GetPartials(&normPartials);
+        mPartialTracker->GetPartials(&mCurrentNormPartials);
 
-        mCurrentNormPartials = normPartials;
+        vector<Partial> &denormPartials = mTmpBuf17;
+        denormPartials = mCurrentNormPartials;
+        mPartialTracker->DenormPartials(&denormPartials);
         
-        vector<Partial> partials = normPartials;
-        mPartialTracker->DenormPartials(&partials);
-    
-        mSASFrameAna->SetPartials(partials);
+        mSASFrameAna->SetPartials(denormPartials);
 
         BL_FLOAT harmoNoiseMix = mSASFrameSynth->GetHarmoNoiseMix();
         BL_FLOAT noiseCoeff;
