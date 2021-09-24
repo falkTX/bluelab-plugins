@@ -514,6 +514,9 @@ void
 SASFrameAna::ComputeWarpingAux(WDL_TypedBuf<BL_FLOAT> *warping,
                                BL_FLOAT freq, bool inverse)
 {
+#define MIN_WARPING_VAL 0.8
+#define MAX_WARPING_VAL 1.25
+    
     // Init
 
     int maxNumPartials = SYNTH_MAX_NUM_PARTIALS;
@@ -559,7 +562,7 @@ SASFrameAna::ComputeWarpingAux(WDL_TypedBuf<BL_FLOAT> *warping,
             // Discard too high warping values,
             // that can come to short invalid partials
             // spread randomly
-            if ((w < 0.8) || (w > 1.25))
+            if ((w < MIN_WARPING_VAL) || (w > MAX_WARPING_VAL))
                 continue;
 #endif
 
@@ -701,6 +704,10 @@ SASFrameAna::ComputeWarpingAux(WDL_TypedBuf<BL_FLOAT> *warping,
     BLUtils::FillMissingValues(warping, extendBounds, undefinedValue);
 #else
     BLUtils::FillMissingValuesLagrange(warping, extendBounds, undefinedValue);
+
+    // Sometimes Lagrange can make very big oscillations
+    // like negative warping, leading later to negative bin index, making crash
+    BLUtils::ClipMinMax(warping, MIN_WARPING_VAL, MAX_WARPING_VAL);
 #endif
 }
 
