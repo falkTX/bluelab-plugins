@@ -112,7 +112,7 @@ protected:
 
     WDL_TypedBuf<BL_FLOAT> mColor;
     WDL_TypedBuf<BL_FLOAT> mPrevColor;
-
+    
     WDL_TypedBuf<BL_FLOAT> mWarping;
     WDL_TypedBuf<BL_FLOAT> mPrevWarping;
     
@@ -129,6 +129,7 @@ protected:
 
 private:
     vector<Partial> mTmpBuf0;
+    WDL_TypedBuf<BL_FLOAT> mTmpBuf1;
 };
 
 #endif

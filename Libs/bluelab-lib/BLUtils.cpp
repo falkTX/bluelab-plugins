@@ -2947,6 +2947,26 @@ template void BLUtils::ApplyLog(WDL_TypedBuf<double> *values);
 
 template <typename FLOAT_TYPE>
 void
+BLUtils::ApplyInv(WDL_TypedBuf<FLOAT_TYPE> *values)
+{
+    int valuesSize = values->GetSize();
+    FLOAT_TYPE *valuesData = values->Get();
+    
+    for (int i = 0; i < valuesSize; i++)
+    {
+        FLOAT_TYPE val = valuesData[i];
+        
+        if (std::fabs(val) > BL_EPS)
+            val = 1.0/val;
+        
+        valuesData[i] = val;
+    }
+}
+template void BLUtils::ApplyInv(WDL_TypedBuf<float> *values);
+template void BLUtils::ApplyInv(WDL_TypedBuf<double> *values);
+
+template <typename FLOAT_TYPE>
+void
 BLUtils::MultValues(WDL_TypedBuf<FLOAT_TYPE> *buf,
                     const WDL_TypedBuf<FLOAT_TYPE> &values)
 {

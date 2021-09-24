@@ -546,6 +546,9 @@ public:
 
     template <typename FLOAT_TYPE>
     static void ApplyLog(WDL_TypedBuf<FLOAT_TYPE> *values);
+
+    template <typename FLOAT_TYPE>
+    static void ApplyInv(WDL_TypedBuf<FLOAT_TYPE> *values);
     
     template <typename FLOAT_TYPE>
     static void PadZerosLeft(WDL_TypedBuf<FLOAT_TYPE> *buf, int padSize);
