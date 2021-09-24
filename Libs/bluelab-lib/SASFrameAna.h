@@ -27,6 +27,10 @@ class SASFrameAna
     void SetInputData(const WDL_TypedBuf<BL_FLOAT> &magns,
                       const WDL_TypedBuf<BL_FLOAT> &phases);
 
+    // Processed data (will be used to compute noise envelope)
+    void SetProcessedData(const WDL_TypedBuf<BL_FLOAT> &magns,
+                          const WDL_TypedBuf<BL_FLOAT> &phases);
+    
     // Non filtered partials
     void SetRawPartials(const vector<Partial> &partials);
     
@@ -90,6 +94,10 @@ protected:
     // Input signal, not processed
     WDL_TypedBuf<BL_FLOAT> mInputMagns;
     WDL_TypedBuf<BL_FLOAT> mInputPhases;
+
+    // Input signal, not processed
+    WDL_TypedBuf<BL_FLOAT> mProcessedMagns;
+    WDL_TypedBuf<BL_FLOAT> mProcessedPhases;
     
     // HACK
     deque<WDL_TypedBuf<BL_FLOAT> > mInputMagnsHistory;

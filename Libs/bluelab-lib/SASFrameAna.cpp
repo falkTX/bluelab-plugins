@@ -155,7 +155,7 @@ SASFrameAna::SetTimeSmoothNoiseCoeff(BL_FLOAT coeff)
 
 void
 SASFrameAna::SetInputData(const WDL_TypedBuf<BL_FLOAT> &magns,
-                        const WDL_TypedBuf<BL_FLOAT> &phases)
+                          const WDL_TypedBuf<BL_FLOAT> &phases)
 {
     mInputMagns = magns;
     mInputPhases = phases;
@@ -165,6 +165,14 @@ SASFrameAna::SetInputData(const WDL_TypedBuf<BL_FLOAT> &magns,
     if (mInputMagnsHistory.size() > ONSET_HISTORY_HACK_SIZE)
         mInputMagnsHistory.pop_front();
 #endif
+}
+
+void
+SASFrameAna::SetProcessedData(const WDL_TypedBuf<BL_FLOAT> &magns,
+                              const WDL_TypedBuf<BL_FLOAT> &phases)
+{
+    mProcessedMagns = magns;
+    mProcessedPhases = phases;
 }
 
 void
@@ -247,7 +255,8 @@ SASFrameAna::ComputeNoiseEnvelope(WDL_TypedBuf<BL_FLOAT> *noiseEnv)
 
     WDL_TypedBuf<BL_FLOAT> &harmonicEnvelope = mTmpBuf0;
     //harmonicEnvelope = mCurrentMagns;
-    harmonicEnvelope = mInputMagns;
+    //harmonicEnvelope = mInputMagns;
+    harmonicEnvelope = mProcessedMagns;
     
     // Just in case
     for (int i = 0; i < DETECT_PARTIALS_START_INDEX; i++)
@@ -258,7 +267,8 @@ SASFrameAna::ComputeNoiseEnvelope(WDL_TypedBuf<BL_FLOAT> *noiseEnv)
     // Compute harmonic envelope
     // (origin signal less noise)
     //*noiseEnv = mCurrentMagns;
-    *noiseEnv = mInputMagns;
+    //*noiseEnv = mInputMagns;
+    *noiseEnv = mProcessedMagns;
     
     BLUtils::SubstractValues(noiseEnv, harmonicEnvelope);
     

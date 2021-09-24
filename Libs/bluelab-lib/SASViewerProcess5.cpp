@@ -157,8 +157,8 @@ SASViewerProcess5::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     mPartialTracker->GetPreProcessedMagns(&mCurrentMagns);
             
     //
-    //mSASFrameAna->SetInputData(magns, phases);
-    mSASFrameAna->SetInputData(mCurrentMagns, phases);
+    mSASFrameAna->SetInputData(magns, phases); // Good for pitch detection
+    mSASFrameAna->SetProcessedData(mCurrentMagns, phases); // Good for noise envelope
     
     // Silence
     BLUtils::FillAllZero(&magns);

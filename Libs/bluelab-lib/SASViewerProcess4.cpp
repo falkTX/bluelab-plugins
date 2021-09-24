@@ -171,7 +171,7 @@ SASViewerProcess4::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     WDL_TypedBuf<WDL_FFT_COMPLEX> &fftSamples = mTmpBuf1;
     BLUtils::TakeHalf(fftSamples0, &fftSamples);
 
-    // Need to compute magns and phases here for later mSASFrame->SetInputData()G
+    // Need to compute magns and phases here for later mSASFrame->SetInputData()
     WDL_TypedBuf<BL_FLOAT> &magns = mTmpBuf2;
     WDL_TypedBuf<BL_FLOAT> &phases = mTmpBuf3;
     BLUtilsComp::ComplexToMagnPhase(&magns, &phases, fftSamples);
