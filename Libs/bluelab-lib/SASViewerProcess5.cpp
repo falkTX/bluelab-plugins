@@ -17,7 +17,7 @@
 
 #include <SASViewerRender5.h>
 
-#include <SASFrame5.h>
+#include <SASFrame6.h>
 
 #include <PartialTracker6.h>
 #include <QIFFT.h> // For empirical coeffs
@@ -66,7 +66,7 @@ SASViewerProcess5::SASViewerProcess5(int bufferSize,
         
     BL_FLOAT minAmpDB = mPartialTracker->GetMinAmpDB();
     
-    mSASFrame = new SASFrame5(bufferSize, sampleRate,
+    mSASFrame = new SASFrame6(bufferSize, sampleRate,
                               overlapping, oversampling);
     mSASFrame->SetMinAmpDB(minAmpDB);
     
@@ -284,7 +284,7 @@ SASViewerProcess5::SetWarpingFactor(BL_FLOAT factor)
 }
 
 void
-SASViewerProcess5::SetSynthMode(SASFrame5::SynthMode mode)
+SASViewerProcess5::SetSynthMode(SASFrame6::SynthMode mode)
 {
     mSASFrame->SetSynthMode(mode);
 }

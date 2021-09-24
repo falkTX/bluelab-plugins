@@ -17,13 +17,12 @@ using namespace std;
 #include <SmoothAvgHistogram.h>
 #include <CMA2Smoother.h>
 #include <LinesRender2.h>
-#include <SASFrame5.h>
+#include <SASFrame6.h>
 #include <Partial.h>
 #include <BlaTimer.h>
 #include <FftProcessObj16.h>
 
 class PartialTracker6;
-class SASFrame5;
 class SASViewerRender5;
 class SASViewerProcess5 : public ProcessObj
 {
@@ -80,7 +79,7 @@ public:
 
     // Parameters
     //
-    void SetSynthMode(SASFrame5::SynthMode mode);
+    void SetSynthMode(SASFrame6::SynthMode mode);
     void SetSynthEvenPartials(bool flag);
     void SetSynthOddPartials(bool flag);
     
@@ -141,7 +140,7 @@ protected:
     
     PartialTracker6 *mPartialTracker;
     
-    SASFrame5 *mSASFrame;
+    SASFrame6 *mSASFrame;
     
     BL_FLOAT mThreshold;
 
