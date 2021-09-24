@@ -64,8 +64,8 @@ SASViewerProcess5::SASViewerProcess5(int bufferSize,
         
     BL_FLOAT minAmpDB = mPartialTracker->GetMinAmpDB();
     
-    mSASFrameAna = new SASFrameAna();
-    mSASFrameSynth = new SASFrameSynth();
+    mSASFrameAna = new SASFrameAna(bufferSize, overlapping, 1, sampleRate);
+    mSASFrameSynth = new SASFrameSynth(bufferSize, overlapping, 1, sampleRate);
     
     mSASFrameSynth->SetMinAmpDB(minAmpDB);
     

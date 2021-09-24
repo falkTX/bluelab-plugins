@@ -74,11 +74,15 @@
 #define COLOR_ENVELOPE_USE_LAGRANGE_INTERP 0 //1
 #define LAGRANGE_MIN_NUM_COLOR_VALUES 16
 
-SASFrameAna::SASFrameAna()
+SASFrameAna::SASFrameAna(int bufferSize, int oversampling,
+                         int freqRes, BL_FLOAT sampleRate)
 {
     mTimeSmoothNoiseCoeff = 0.5;
 
     mPrevFrequency = -1.0;
+
+    mPartialsToFreq = new PartialsToFreq7(bufferSize, oversampling,
+                                          freqRes, sampleRate);
     
     mOnsetDetector = NULL;
 #if ENABLE_ONSET_DETECTION
@@ -138,6 +142,12 @@ SASFrameAna::Reset()
 #if ONSET_HISTORY_HACK
     mInputMagnsHistory.clear();
 #endif
+}
+
+void
+SASFrameAna::SetTimeSmoothNoiseCoeff(BL_FLOAT coeff)
+{
+    mTimeSmoothNoiseCoeff = coeff;
 }
 
 void

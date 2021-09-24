@@ -52,10 +52,16 @@ SASFrameSynth::SASPartial::AmpLess(const SASPartial &p1, const SASPartial &p2)
 }
 
 //
-SASFrameSynth::SASFrameSynth()
+SASFrameSynth::SASFrameSynth(int bufferSize, int oversampling,
+                             int freqRes, BL_FLOAT sampleRate)
 {
     SIN_LUT_INIT(SAS_FRAME_SIN_LUT);
 
+    mBufferSize = bufferSize;
+    mOverlapping = oversampling;
+    mFreqRes = freqRes;
+    mSampleRate = sampleRate;
+    
     mHarmoNoiseMix = 1.0;
     
     mSynthMode = RAW_PARTIALS;
@@ -76,6 +82,8 @@ SASFrameSynth::~SASFrameSynth() {}
 void
 SASFrameSynth::Reset(BL_FLOAT sampleRate)
 {
+    mSampleRate = sampleRate;
+    
     mAmplitude = 0.0;
     mPrevAmplitude = 0.0;
     
@@ -89,8 +97,8 @@ SASFrameSynth::Reset(int bufferSize, int oversampling,
 {
     mBufferSize = bufferSize;
     mOverlapping = oversampling;
-
     mFreqRes = freqRes;
+    mSampleRate = sampleRate;
     
     Reset(sampleRate);
 }

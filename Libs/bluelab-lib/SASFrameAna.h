@@ -9,7 +9,8 @@ class OnsetDetector;
 class SASFrameAna
 {
  public:
-    SASFrameAna();
+    SASFrameAna(int bufferSize, int oversampling,
+                int freqRes, BL_FLOAT sampleRate);
     virtual ~SASFrameAna();
 
     void Reset(BL_FLOAT sampleRate);
@@ -18,6 +19,9 @@ class SASFrameAna
                int freqRes, BL_FLOAT sampleRate);
     
     void Reset();
+
+    //
+    void SetTimeSmoothNoiseCoeff(BL_FLOAT coeff);
     
     // Keep input magns (will be used to compute frequency)
     void SetInputData(const WDL_TypedBuf<BL_FLOAT> &magns,
@@ -30,9 +34,6 @@ class SASFrameAna
     void SetPartials(const vector<Partial> &partials);
 
     void Compute(SASFrame6 *frame);
-
-    //
-    void SetTimeSmoothNoiseCoeff(BL_FLOAT coeff);
     
 protected:
     // Compute steps

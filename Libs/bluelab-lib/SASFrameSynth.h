@@ -24,7 +24,8 @@ class SASFrameSynth
         RESYNTH_PARTIALS
     };
 
-    SASFrameSynth();
+    SASFrameSynth(int bufferSize, int oversampling,
+                  int freqRes, BL_FLOAT sampleRate);
     virtual ~SASFrameSynth();
 
     void Reset(BL_FLOAT sampleRate);
@@ -68,7 +69,7 @@ protected:
     public:
         // Values are normalized, as provided by SASViewerProcess
         BL_FLOAT mFreq;
-        BL_FLOAT mAmp; // Still used ?
+        BL_FLOAT mAmp;
         BL_FLOAT mPhase;
     };
 
