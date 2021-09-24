@@ -30,6 +30,29 @@ using namespace std;
 class SASFrame6
 {
 public:
+    class SASPartial
+    {
+    public:
+        SASPartial();
+        
+        SASPartial(const SASPartial &other);
+        SASPartial(const Partial &other);
+        
+        virtual ~SASPartial();
+        
+        static bool AmpLess(const SASPartial &p1, const SASPartial &p2);
+
+    public:
+        // Values are normalized, as provided by SASViewerProcess
+        BL_FLOAT mFreq;
+        BL_FLOAT mAmp;
+        BL_FLOAT mPhase;
+
+        int mLinkedId;
+        enum Partial::State mState;
+        bool mWasAlive;
+    };
+    
     SASFrame6();
     SASFrame6(int bufferSize, BL_FLOAT sampleRate,
               int overlapping, int freqRes);
@@ -63,7 +86,8 @@ public:
     
     // For "raw"
     void SetPartials(const vector<Partial> &partials);
-    void GetPartials(vector<Partial> *partials) const;
+    void SetPartials(const vector<SASPartial> &partials);
+    void GetPartials(vector<SASPartial> *partials) const;
 
     // Onsets
     void SetOnsetDetected(bool flag);
@@ -94,7 +118,7 @@ protected:
 
     WDL_TypedBuf<BL_FLOAT> mWarpingInv;
 
-    vector<Partial> mPartials;
+    vector<SASPartial> mPartials;
 
     bool mOnsetDetected;
     

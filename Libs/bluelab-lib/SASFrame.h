@@ -73,7 +73,6 @@ protected:
     void SelectLowFreqPartials(vector<PartialTracker3::Partial> *partials);
     void SelectHighAmpPartials(vector<PartialTracker3::Partial> *partials);
 
-    
     void ComputeColor();
     void ComputeColorAux();
     

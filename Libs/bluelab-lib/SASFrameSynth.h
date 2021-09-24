@@ -10,7 +10,6 @@
 
 #define SYNTH_MAX_NUM_PARTIALS 40 //20 //10 origin: 10, (40 for test bell)
 
-class SASFrame6;
 class SASFrameSynth
 {
  public:
@@ -58,24 +57,6 @@ class SASFrameSynth
     void ComputeSamples(WDL_TypedBuf<BL_FLOAT> *samples);
     
 protected:
-    class SASPartial
-    {
-    public:
-        SASPartial();
-        
-        SASPartial(const SASPartial &other);
-        
-        virtual ~SASPartial();
-        
-        static bool AmpLess(const SASPartial &p1, const SASPartial &p2);
-
-    public:
-        // Values are normalized, as provided by SASViewerProcess
-        BL_FLOAT mFreq;
-        BL_FLOAT mAmp;
-        BL_FLOAT mPhase;
-    };
-
     // Keep it for debugging
     void ComputeSamplesPartialsRaw(WDL_TypedBuf<BL_FLOAT> *samples);
      // TODO: delete this
@@ -87,7 +68,7 @@ protected:
     BL_FLOAT GetWarping(const WDL_TypedBuf<BL_FLOAT> &warping, BL_FLOAT binIdx);
 
     bool FindPartial(BL_FLOAT freq);
-    void GetPartial(Partial *result, int index, BL_FLOAT t);
+    void GetPartial(SASFrame6::SASPartial *result, int index, BL_FLOAT t);
     
     //
     BL_FLOAT GetFreq(BL_FLOAT freq0, BL_FLOAT freq1, BL_FLOAT t);
@@ -98,12 +79,12 @@ protected:
     void UpdateSASData();
         
     //
-    vector<SASPartial> mSASPartials;
-    vector<SASPartial> mPrevSASPartials;
+    vector<SASFrame6::SASPartial> mSASPartials;
+    vector<SASFrame6::SASPartial> mPrevSASPartials;
 
     // For "raw" and "source"
-    vector<Partial> mPartials;
-    vector<Partial> mPrevPartials;
+    vector<SASFrame6::SASPartial> mPartials;
+    vector<SASFrame6::SASPartial> mPrevPartials;
     
     //
     int mBufferSize;
@@ -145,6 +126,9 @@ protected:
     //
     SASFrame6 mSASFrame;
     SASFrame6 mPrevSASFrame;
+
+private:
+    vector<Partial> mTmpBuf0;
 };
 
 #endif

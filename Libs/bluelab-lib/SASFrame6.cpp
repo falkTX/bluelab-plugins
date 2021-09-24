@@ -21,6 +21,46 @@
 
 #include "SASFrame6.h"
 
+SASFrame6::SASPartial::SASPartial()
+{
+    mFreq = 0.0;
+    mAmp = 0.0;
+    mPhase = 0.0;
+
+    mLinkedId = -1;
+    mState = Partial::ALIVE;
+    mWasAlive = false;
+}
+
+SASFrame6::SASPartial::SASPartial(const SASPartial &other)
+{
+    mFreq = other.mFreq;
+    mAmp = other.mAmp;
+    mPhase = other.mPhase;
+
+    mLinkedId = other.mLinkedId;
+    mState = other.mState;
+    mWasAlive = other.mWasAlive;
+}
+
+SASFrame6::SASPartial::SASPartial(const Partial &other)
+{
+    mFreq = other.mFreq;
+    mAmp = other.mAmp;
+    mPhase = other.mPhase;
+
+    mLinkedId = other.mLinkedId;
+    mState = other.mState;
+    mWasAlive = other.mWasAlive;
+}
+
+SASFrame6::SASPartial::~SASPartial() {}
+
+bool
+SASFrame6::SASPartial::AmpLess(const SASPartial &p1, const SASPartial &p2)
+{
+    return (p1.mAmp < p2.mAmp);
+}
 
 SASFrame6::SASFrame6()
 {
@@ -166,11 +206,20 @@ SASFrame6::GetWarpingInv(WDL_TypedBuf<BL_FLOAT> *warpingInv) const
 void
 SASFrame6::SetPartials(const vector<Partial> &partials)
 {
+    mPartials.resize(partials.size());
+    // Convert
+    for (int i = 0; i < mPartials.size(); i++)
+        mPartials[i] = partials[i];
+}
+
+void
+SASFrame6::SetPartials(const vector<SASPartial> &partials)
+{
     mPartials = partials;
 }
 
 void
-SASFrame6::GetPartials(vector<Partial> *partials) const
+SASFrame6::GetPartials(vector<SASPartial> *partials) const
 {
     *partials = mPartials;
 }

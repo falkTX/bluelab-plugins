@@ -31,28 +31,6 @@ SIN_LUT_CREATE(SAS_FRAME_SIN_LUT, 4096);
 // 2x slower than 4096
 //SIN_LUT_CREATE(SAS_FRAME_SIN_LUT, 262144);
 
-SASFrameSynth::SASPartial::SASPartial()
-{
-    mFreq = 0.0;
-    mAmp = 0.0;
-    mPhase = 0.0;
-}
-
-SASFrameSynth::SASPartial::SASPartial(const SASPartial &other)
-{
-    mFreq = other.mFreq;
-    mAmp = other.mAmp;
-    mPhase = other.mPhase;
-}
-
-SASFrameSynth::SASPartial::~SASPartial() {}
-
-bool
-SASFrameSynth::SASPartial::AmpLess(const SASPartial &p1, const SASPartial &p2)
-{
-    return (p1.mAmp < p2.mAmp);
-}
-
 //
 SASFrameSynth::SASFrameSynth(int bufferSize, int oversampling,
                              int freqRes, BL_FLOAT sampleRate)
@@ -235,11 +213,10 @@ SASFrameSynth::ComputeSamplesPartialsRaw(WDL_TypedBuf<BL_FLOAT> *samples)
     {
         return;
     }
-    
+
+    SASFrame6::SASPartial partial;
     for (int i = 0; i < mPartials.size(); i++)
     {
-        Partial partial;
-        
         BL_FLOAT phase = 0.0;
 
         int prevPartialIdx = mPartials[i].mLinkedId;
@@ -303,10 +280,9 @@ SASFrameSynth::ComputeSamplesPartialsSourceNorm(WDL_TypedBuf<BL_FLOAT> *samples)
         
         // Generate samples
         int numSamples = samples->GetSize()/mOverlapping;
+        SASFrame6::SASPartial partial;
         for (int j = 0; j < numSamples; j++)
-        {
-            Partial partial;
-                        
+        {            
             // Get interpolated partial
             BL_FLOAT partialT = ((BL_FLOAT)j)/numSamples;
             GetPartial(&partial, i, partialT);
@@ -402,11 +378,10 @@ SASFrameSynth::ComputeSamplesPartialsSource(WDL_TypedBuf<BL_FLOAT> *samples)
             phase = mPrevPartials[prevPartialIdx].mPhase;
         
         // Generate samples
+        SASFrame6::SASPartial partial;
         int numSamples = samples->GetSize()/mOverlapping;
         for (int j = 0; j < numSamples; j++)
-        {
-            Partial partial;
-                        
+        {            
             // Get interpolated partial
             BL_FLOAT partialT = ((BL_FLOAT)j)/numSamples;
             GetPartial(&partial, i, partialT);
@@ -511,13 +486,13 @@ SASFrameSynth::ComputeSamplesPartialsResynth(WDL_TypedBuf<BL_FLOAT> *samples)
         if (partialFreq > SYNTH_MIN_FREQ)
         {
             // Current and prev partials
-            SASPartial &partial = mSASPartials[partialIndex];
+            SASFrame6::SASPartial &partial = mSASPartials[partialIndex];
             partial.mFreq = partialFreq;
 
             // Correct! (global amplitude will be applied later)
             partial.mAmp = 1.0;
             
-            const SASPartial &prevPartial = mPrevSASPartials[partialIndex];
+            const SASFrame6::SASPartial &prevPartial = mPrevSASPartials[partialIndex];
             
             // Current phase
             BL_FLOAT phase = prevPartial.mPhase;
@@ -723,7 +698,7 @@ SASFrameSynth::FindPartial(BL_FLOAT freq)
     
     for (int i = 0; i < mPartials.size(); i++)
     {
-        const Partial &p = mPartials[i];
+        const SASFrame6::SASPartial &p = mPartials[i];
         
         if ((freq > p.mFreq - step) &&
             (freq < p.mFreq + step))
@@ -736,9 +711,9 @@ SASFrameSynth::FindPartial(BL_FLOAT freq)
 
 // Interpolate in amp
 void
-SASFrameSynth::GetPartial(Partial *result, int index, BL_FLOAT t)
+SASFrameSynth::GetPartial(SASFrame6::SASPartial *result, int index, BL_FLOAT t)
 {
-    const Partial &currentPartial = mPartials[index];
+    const SASFrame6::SASPartial &currentPartial = mPartials[index];
 
     int prevPartialIdx = currentPartial.mLinkedId;
         
@@ -758,7 +733,8 @@ SASFrameSynth::GetPartial(Partial *result, int index, BL_FLOAT t)
             if (t0 <= 1.0)
             {
                 // Interpolate in amp
-                const Partial &prevPartial = mPrevPartials[prevPartialIdx];
+                const SASFrame6::SASPartial &prevPartial =
+                    mPrevPartials[prevPartialIdx];
                 
                 BL_FLOAT amp = (1.0 - t0)*prevPartial.mAmp;
                 result->mAmp = amp;
@@ -772,7 +748,7 @@ SASFrameSynth::GetPartial(Partial *result, int index, BL_FLOAT t)
     {
         if (prevPartialIdx != -1)
         {
-            const Partial &prevPartial = mPrevPartials[prevPartialIdx];
+            const SASFrame6::SASPartial &prevPartial = mPrevPartials[prevPartialIdx];
                 
             if (prevPartial.mState == Partial::ALIVE)
             {
@@ -875,9 +851,11 @@ SASFrameSynth::SetSASFactors()
 void
 SASFrameSynth::UpdateSASData()
 {
+    // Partials
     mPrevPartials = mPartials;
     mSASFrame.GetPartials(&mPartials);
 
+    //
     mPrevColor = mColor;
     mSASFrame.GetColor(&mColor);
 

@@ -34,8 +34,7 @@ Partial::Partial()
     mRightIndex = 0;
     
     mFreq = 0.0;
-    mAmp = 0.0;
-    
+    mAmp = 0.0;    
     mPhase = 0.0;
     
     mState = ALIVE;
