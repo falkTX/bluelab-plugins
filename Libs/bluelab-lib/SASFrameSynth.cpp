@@ -70,6 +70,12 @@ SASFrameSynth::SASFrameSynth(int bufferSize, int oversampling,
 
     mSynthEvenPartials = true;
     mSynthOddPartials = true;
+
+    mAmplitude = 0.0;
+    mPrevAmplitude = 0.0;
+    
+    mFrequency = 0.0;
+    mPrevFrequency = -1.0;
     
     mAmpFactor = 1.0;
     mFreqFactor = 1.0;
@@ -176,6 +182,12 @@ SASFrameSynth::AddSASFrame(const SASFrame6 &frame)
     mSASFrame = frame;
 
     SetSASFactors();
+
+    mPrevAmplitude = mAmplitude;
+    mAmplitude = mSASFrame.GetAmplitude();
+
+    mPrevFrequency = mFrequency;
+    mFrequency = mSASFrame.GetFrequency();
 }
 
 void
