@@ -1,13 +1,13 @@
 //
-//  PartialTrackr7.h
+//  PartialTracker7.h
 //  BL-SASViewer
 //
 //  Created by applematuer on 2/2/19.
 //
 //
 
-#ifndef __BL_SASViewer__PartialTrackr7__
-#define __BL_SASViewer__PartialTrackr7__
+#ifndef __BL_SASViewer__PartialTracker7__
+#define __BL_SASViewer__PartialTracker7__
 
 #include <vector>
 #include <deque>
@@ -38,6 +38,17 @@ using namespace std;
 #define USE_PARTIAL_FILTER_MARCHAND 0 //1
 #define USE_PARTIAL_FILTER_AMFM 1 //0
 
+// Detect partials
+//
+#if USE_BL_PEAK_DETECTOR
+#define DETECT_PARTIALS_START_INDEX 2
+#else
+// ORIGIN
+//#define DETECT_PARTIALS_START_INDEX 1
+// Better, in order to not discard low freq peaks with Billauer real prominence
+#define DETECT_PARTIALS_START_INDEX 0
+#endif
+
 // PartialTracker2
 // - from PartialTracker
 //
@@ -59,13 +70,13 @@ using namespace std;
 // NOTE: previously test FreqAdjustObj. this was not efficient (wobbling)
 //class FreqAdjustObj3;
 class PartialFilter;
-class PartialTrackr7
+class PartialTracker7
 {
 public:
-    PartialTrackr7(int bufferSize, BL_FLOAT sampleRate,
+    PartialTracker7(int bufferSize, BL_FLOAT sampleRate,
                     BL_FLOAT overlapping);
     
-    virtual ~PartialTrackr7();
+    virtual ~PartialTracker7();
     
     void Reset();
     
@@ -90,7 +101,6 @@ public:
     
     //
     void DetectPartials();
-    void ExtractNoiseEnvelope();
     void FilterPartials();
     
     void GetPartials(vector<Partial> *partials);
@@ -100,17 +110,11 @@ public:
     
     void ClearResult();
     
-    // This is not really an envelope, but the data itself
-    // (with holes filled)
-    void GetNoiseEnvelope(WDL_TypedBuf<BL_FLOAT> *noiseEnv);
-    void GetHarmonicEnvelope(WDL_TypedBuf<BL_FLOAT> *harmoEnv);
-    
     // Maximum frequency we try to detect (limit for BL-Infra for example)
     void SetMaxDetectFreq(BL_FLOAT maxFreq);
     
-    // Preprocess time smoth
+    // Preprocess time smooth
     void SetTimeSmoothCoeff(BL_FLOAT coeff);
-    void SetTimeSmoothNoiseCoeff(BL_FLOAT coeff);
     
     // For processing result warping for example
     void PreProcessDataX(WDL_TypedBuf<BL_FLOAT> *data);
@@ -160,10 +164,6 @@ protected:
                          const WDL_TypedBuf<BL_FLOAT> &phases,
                          vector<Partial> *partials);
 
-    // Get the partials which are alive
-    // (this avoid getting garbage partials that would never be associated)
-    bool GetAlivePartials(vector<Partial> *partials);
-    
     void RemoveRealDeadPartials(vector<Partial> *partials);
         
     // Detection
@@ -212,8 +212,6 @@ protected:
     void ThresholdPartialsPeakHeight(const WDL_TypedBuf<BL_FLOAT> &magns,
                                      vector<Partial> *partials);
     
-    void TimeSmoothNoise(WDL_TypedBuf<BL_FLOAT> *noise);
-    
     // Peaks
     //
     
@@ -228,13 +226,7 @@ protected:
                                   int leftIndex, int rightIndex);
   
     //    
-    void KeepOnlyPartials(const vector<Partial> &partials,
-                          WDL_TypedBuf<BL_FLOAT> *magns);
     
-    void ProcessMusicalNoise(WDL_TypedBuf<BL_FLOAT> *noise);
-
-    void SmoothNoiseEnvelope(WDL_TypedBuf<BL_FLOAT> *noise);
-
     // Adaptive threshold, depending on bin num;
     BL_FLOAT GetThreshold(int binNum);
 
@@ -274,16 +266,6 @@ protected:
     WDL_TypedBuf<BL_FLOAT> mLogMagns;
     
     vector<Partial> mResult;
-    WDL_TypedBuf<BL_FLOAT> mNoiseEnvelope;
-    WDL_TypedBuf<BL_FLOAT> mHarmonicEnvelope;
-    
-    WDL_TypedBuf<BL_FLOAT> mSmoothWinNoise;
-    
-    // For SmoothNoiseEnvelopeTime()
-    WDL_TypedBuf<BL_FLOAT> mPrevNoiseEnvelope;
-    
-    // For ComputeMusicalNoise()
-    bl_queue<WDL_TypedBuf<BL_FLOAT> > mPrevNoiseMasks;
     
     //
     BL_FLOAT mMaxDetectFreq;
@@ -304,10 +286,6 @@ protected:
     Scale::Type mXScaleInv;
     Scale::Type mYScaleInv;
     Scale::Type mYScaleInv2; // for log
-    
-    // Time smooth noise
-    BL_FLOAT mTimeSmoothNoiseCoeff;
-    WDL_TypedBuf<BL_FLOAT> mTimeSmoothPrevNoise;
 
     // Optim
     WDL_TypedBuf<BL_FLOAT> mAWeights;
@@ -344,4 +322,4 @@ private:
     vector<Partial> mTmpPartials11;
 };
 
-#endif /* defined(__BL_SASViewer__PartialTrackr7__) */
+#endif /* defined(__BL_SASViewer__PartialTracker7__) */

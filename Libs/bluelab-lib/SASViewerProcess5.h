@@ -17,13 +17,19 @@ using namespace std;
 #include <SmoothAvgHistogram.h>
 #include <CMA2Smoother.h>
 #include <LinesRender2.h>
-#include <SASFrame6.h>
+
 #include <Partial.h>
+
+#include <SASFrame6.h>
+#include <SASFrameSynth.h>
+
 #include <BlaTimer.h>
 #include <FftProcessObj16.h>
 
-class PartialTracker6;
+class PartialTracker7;
 class SASViewerRender5;
+class SASFrameAna;
+class SASFrameSynth;
 class SASViewerProcess5 : public ProcessObj
 {
 public:
@@ -78,7 +84,7 @@ public:
 
     // Parameters
     //
-    void SetSynthMode(SASFrame6::SynthMode mode);
+    void SetSynthMode(SASFrameSynth::SynthMode mode);
     void SetSynthEvenPartials(bool flag);
     void SetSynthOddPartials(bool flag);
     
@@ -137,13 +143,14 @@ protected:
     // Renderer
     SASViewerRender5 *mSASViewerRender;
     
-    PartialTracker6 *mPartialTracker;
+    PartialTracker7 *mPartialTracker;
     
-    SASFrame6 *mSASFrame;
+    SASFrameAna *mSASFrameAna;
+    SASFrameSynth *mSASFrameSynth;
+    // Current SAS frame
+    SASFrame6 mSASFrame;
     
     BL_FLOAT mThreshold;
-
-    BL_FLOAT mHarmoNoiseMix;
 
     // For tracking detection
     deque<vector<LinesRender2::Point> > mPartialsPoints;
@@ -174,7 +181,7 @@ protected:
     Scale *mViewScale;
     Scale::Type mViewXScale;
     Scale::FilterBankType mViewXScaleFB;
-    
+
 private:
     WDL_TypedBuf<WDL_FFT_COMPLEX> mTmpBuf0;
     WDL_TypedBuf<WDL_FFT_COMPLEX> mTmpBuf1;

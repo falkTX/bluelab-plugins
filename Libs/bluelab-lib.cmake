@@ -552,6 +552,8 @@ set(_bluelab-lib_src
   PartialTracker5.h
   PartialTracker6.cpp
   PartialTracker6.h
+  PartialTracker7.cpp
+  PartialTracker7.h
   PartialTracker.cpp
   PartialTracker.h
   PartialTWMEstimate2.cpp

@@ -14,6 +14,8 @@ using namespace std;
 
 #include <Partial.h>
 
+#include "IPlug_include_in_plug_hdr.h"
+
 // SASFrame2: from SASFrame
 //
 // Use PartialToFreq compute everything for
@@ -25,39 +27,10 @@ using namespace std;
 // Try to improve frequency computation, using same thenique as in Chroma
 
 // SASFrame6: keep only the data. Processing is now in SASFrameAna and SASFrameSynth
-class PartialsToFreq7;
-class OnsetDetector;
 class SASFrame6
 {
 public:
-    enum SynthMode
-    {
-        // Use raw detected partials and synth using sine and samples
-        RAW_PARTIALS = 0,
-        // Source partials, denormalized (we re-apply sas params on them later 
-        SOURCE_PARTIALS,
-        // Resynth using sines and samples
-        RESYNTH_PARTIALS
-    };
-    
-    class SASPartial
-    {
-    public:
-        SASPartial();
-        
-        SASPartial(const SASPartial &other);
-        
-        virtual ~SASPartial();
-        
-        static bool AmpLess(const SASPartial &p1, const SASPartial &p2);
-
-    public:
-        // Values are normalized, as provided by SASViewerProcess
-        BL_FLOAT mFreq;
-        BL_FLOAT mAmp; // Still used ?
-        BL_FLOAT mPhase;
-    };
-    
+    SASFrame6();
     SASFrame6(int bufferSize, BL_FLOAT sampleRate,
               int overlapping, int freqRes);
     
@@ -67,42 +40,32 @@ public:
     
     void Reset(int bufferSize, int oversampling,
                int freqRes, BL_FLOAT sampleRate);
-        
-    void SetMinAmpDB(BL_FLOAT ampDB);
-
+    
+    // SAS params
     //
-    //
-    void SetSynthMode(enum SynthMode mode);
-    SASFrame6::SynthMode GetSynthMode() const;
-    
-    void SetSynthEvenPartials(bool flag);
-    void SetSynthOddPartials(bool flag);
-    
-    // De-normalized partials
-    void SetPartials(const vector<Partial> &partials);
-    
     void SetNoiseEnvelope(const WDL_TypedBuf<BL_FLOAT> &noiseEnv);
     void GetNoiseEnvelope(WDL_TypedBuf<BL_FLOAT> *noiseEnv) const;
-
-    // Keep input magns (will be used to compute frequency)
-    void SetInputData(const WDL_TypedBuf<BL_FLOAT> &magns,
-                      const WDL_TypedBuf<BL_FLOAT> &phases);
     
-    // Get
-    BL_FLOAT GetAmplitude() const;
-    BL_FLOAT GetFrequency() const;
-    void GetColor(WDL_TypedBuf<BL_FLOAT> *color) const;
-    void GetNormWarping(WDL_TypedBuf<BL_FLOAT> *warping) const;
-    
-    // Set
     void SetAmplitude(BL_FLOAT amp);
-    void SetFrequency(BL_FLOAT freq);
-    void SetColor(const WDL_TypedBuf<BL_FLOAT> &color);
-    void SetNormWarping(const WDL_TypedBuf<BL_FLOAT> &warping);
+    BL_FLOAT GetAmplitude() const;
 
-    //
-    void ComputeSamples(WDL_TypedBuf<BL_FLOAT> *samples);
+    void SetFrequency(BL_FLOAT freq);
+    BL_FLOAT GetFrequency() const;
+
+    void SetColor(const WDL_TypedBuf<BL_FLOAT> &color);
+    void GetColor(WDL_TypedBuf<BL_FLOAT> *color) const;
+
+    void SetWarping(const WDL_TypedBuf<BL_FLOAT> &warping);
+    void GetWarping(WDL_TypedBuf<BL_FLOAT> *warping) const;
+
+    void SetWarpingInv(const WDL_TypedBuf<BL_FLOAT> &warpingInv);
+    void GetWarpingInv(WDL_TypedBuf<BL_FLOAT> *warpingInv) const;
     
+    // For "raw"
+    void SetPartials(const vector<Partial> &partials);
+    void GetPartials(vector<Partial> *partials) const;
+    
+    // Factors
     void SetAmpFactor(BL_FLOAT factor);
     void SetFreqFactor(BL_FLOAT factor);
     void SetColorFactor(BL_FLOAT factor);
@@ -113,116 +76,26 @@ public:
                           const SASFrame6 &frame1,
                           BL_FLOAT t, bool mixFreq);
     
-protected:
-    // Keep it for debugging
-    void ComputeSamplesPartialsRAW(WDL_TypedBuf<BL_FLOAT> *samples);
-    void ComputeSamplesPartialsSource(WDL_TypedBuf<BL_FLOAT> *samples);
-    void ComputeSamplesPartialsResynth(WDL_TypedBuf<BL_FLOAT> *samples);
-    
-    
-    BL_FLOAT GetColor(const WDL_TypedBuf<BL_FLOAT> &color, BL_FLOAT binIdx);
-    BL_FLOAT GetWarping(const WDL_TypedBuf<BL_FLOAT> &warping, BL_FLOAT binIdx);
-    
-    void ComputeAna();
-    
-    // Compute steps
-    //
-    void ComputeAmplitude();
-    void ComputeFrequency();
-    void ComputeColor();
-    void ComputeColorAux();
-    void ComputeNormWarping();
-    // If inverse is true, then compute inverse warping
-    void ComputeNormWarpingAux(WDL_TypedBuf<BL_FLOAT> *warping,
-                               bool inverse = false);
-    
-    bool FindPartial(BL_FLOAT freq);
-
-    void GetPartial(Partial *result, int index, BL_FLOAT t);
-    
-    //
-    BL_FLOAT GetFreq(BL_FLOAT freq0, BL_FLOAT freq1, BL_FLOAT t);
-    BL_FLOAT GetAmp(BL_FLOAT amp0, BL_FLOAT amp1, BL_FLOAT t);
-    BL_FLOAT GetCol(BL_FLOAT col0, BL_FLOAT col1, BL_FLOAT t);
-
-    // Fill everything after the last partial with value
-    void FillLastValues(WDL_TypedBuf<BL_FLOAT> *values,
-                        const vector<Partial> &partials, BL_FLOAT val);
-
-    // Fill everything bfore the first partial with value
-    void FillFirstValues(WDL_TypedBuf<BL_FLOAT> *values,
-                         const vector<Partial> &partials, BL_FLOAT val);
-
-    static BL_FLOAT ApplyColorFactor(BL_FLOAT color, BL_FLOAT factor);
-    static void ApplyColorFactor(WDL_TypedBuf<BL_FLOAT> *color, BL_FLOAT factor);
-    
-    void LinkPartialsIdx(vector<Partial> *partials0,
-                         vector<Partial> *partials1);
-        
-    //
-    SynthMode mSynthMode;
-    bool mSynthEvenPartials;
-    bool mSynthOddPartials;
-    
-    // Tracked partials
-    BL_FLOAT mPrevAmplitude;
-    
-    // Not normalized
-    vector<Partial> mPartials;
-    vector<Partial> mPrevPartials;
-    
-    BL_FLOAT mAmplitude;
-    
-    BL_FLOAT mFrequency;
-    // For smoothing
-    BL_FLOAT mPrevFrequency;
-    
+protected:    
     int mBufferSize;
     BL_FLOAT mSampleRate;
     int mOverlapping;
     int mFreqRes;
     
     WDL_TypedBuf<BL_FLOAT> mNoiseEnvelope;
-
-    // Input signal, not processed
-    WDL_TypedBuf<BL_FLOAT> mInputMagns;
-    WDL_TypedBuf<BL_FLOAT> mInputPhases;
-
-    // HACK
-    deque<WDL_TypedBuf<BL_FLOAT> > mInputMagnsHistory;
-    
+    BL_FLOAT mAmplitude;
+    BL_FLOAT mFrequency;
     WDL_TypedBuf<BL_FLOAT> mColor;
-    WDL_TypedBuf<BL_FLOAT> mNormWarping;
-    WDL_TypedBuf<BL_FLOAT> mNormWarpingInv;
-    
-    // Must keep the prev values, to interpolate over time
-    // when generating the samples
-    WDL_TypedBuf<BL_FLOAT> mPrevColor;
-    WDL_TypedBuf<BL_FLOAT> mPrevNormWarping;
-    WDL_TypedBuf<BL_FLOAT> mPrevNormWarpingInv;
-    
-    vector<SASPartial> mSASPartials;
-    vector<SASPartial> mPrevSASPartials;
+    WDL_TypedBuf<BL_FLOAT> mWarping;
+
+    WDL_TypedBuf<BL_FLOAT> mWarpingInv;
+
+    vector<Partial> mPartials;
     
     BL_FLOAT mAmpFactor;
     BL_FLOAT mFreqFactor;
     BL_FLOAT mColorFactor;
     BL_FLOAT mWarpingFactor;
-    
-    //PartialsToFreq5 *mPartialsToFreq;
-    PartialsToFreq7 *mPartialsToFreq;
-    
-    BL_FLOAT mMinAmpDB;
-
-    Scale *mScale;
-
-    OnsetDetector *mOnsetDetector;
-
-    struct PartialAux
-    {
-        BL_FLOAT mFreq;
-        BL_FLOAT mWarping;
-    };
 };
 
 #endif /* defined(__BL_SASViewer__SASFrame6__) */

@@ -18,8 +18,10 @@
 #include <SASViewerRender5.h>
 
 #include <SASFrame6.h>
+#include <SASFrameAna.h>
+#include <SASFrameSynth.h>
 
-#include <PartialTracker6.h>
+#include <PartialTracker7.h>
 #include <QIFFT.h> // For empirical coeffs
 
 #include "SASViewerProcess5.h"
@@ -27,10 +29,6 @@
 
 #define SHOW_ONLY_ALIVE 0 //1
 #define MIN_AGE_DISPLAY 0 //10 // 4
-
-// 1: more smooth
-// 0: should be more correct
-#define DISPLAY_HARMO_SUBSTRACT 1
 
 #define DBG_DISPLAY_BETA0 1
 #define DBG_DISPLAY_ZOMBIES 1
@@ -62,17 +60,16 @@ SASViewerProcess5::SASViewerProcess5(int bufferSize,
     
     mSASViewerRender = NULL;
     
-    mPartialTracker = new PartialTracker6(bufferSize, sampleRate, overlapping);
+    mPartialTracker = new PartialTracker7(bufferSize, sampleRate, overlapping);
         
     BL_FLOAT minAmpDB = mPartialTracker->GetMinAmpDB();
     
-    mSASFrame = new SASFrame6(bufferSize, sampleRate,
-                              overlapping, oversampling);
-    mSASFrame->SetMinAmpDB(minAmpDB);
+    mSASFrameAna = new SASFrameAna();
+    mSASFrameSynth = new SASFrameSynth();
+    
+    mSASFrameSynth->SetMinAmpDB(minAmpDB);
     
     mThreshold = -60.0;
-    
-    mHarmoNoiseMix = 1.0;
     
     // For additional lines
     mAddNum = 0;
@@ -92,7 +89,9 @@ SASViewerProcess5::SASViewerProcess5(int bufferSize,
 SASViewerProcess5::~SASViewerProcess5()
 {
     delete mPartialTracker;
-    delete mSASFrame;
+    
+    delete mSASFrameAna;
+    delete mSASFrameSynth;
 
     delete mViewScale;
 }
@@ -102,7 +101,8 @@ SASViewerProcess5::Reset()
 {
     Reset(mBufferSize, mOverlapping, mFreqRes, mSampleRate);
 
-    //mSASFrame->Reset(mSampleRate);
+    mSASFrameAna->Reset(mSampleRate);
+    mSASFrameSynth->Reset(mSampleRate);
 }
 
 void
@@ -115,8 +115,9 @@ SASViewerProcess5::Reset(int bufferSize, int overlapping,
     mFreqRes = oversampling;
     
     mSampleRate = sampleRate;
-    
-    mSASFrame->Reset(bufferSize, overlapping, oversampling, sampleRate);
+
+    mSASFrameAna->Reset(bufferSize, overlapping, oversampling, sampleRate);
+    mSASFrameSynth->Reset(bufferSize, overlapping, oversampling, sampleRate);
 }
 
 void
@@ -131,7 +132,7 @@ SASViewerProcess5::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     WDL_TypedBuf<WDL_FFT_COMPLEX> &fftSamples = mTmpBuf1;
     BLUtils::TakeHalf(fftSamples0, &fftSamples);
 
-    // Need to compute magns and phases here for later mSASFrame->SetInputData()G
+    // Need to compute magns and phases here for later mSASFrameAna->SetInputData()
     WDL_TypedBuf<BL_FLOAT> &magns = mTmpBuf2;
     WDL_TypedBuf<BL_FLOAT> &phases = mTmpBuf3;
     BLUtilsComp::ComplexToMagnPhase(&magns, &phases, fftSamples);
@@ -143,16 +144,17 @@ SASViewerProcess5::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
 
     // Try to provide the first partials, even is they are not yet filtered
     mPartialTracker->GetPartialsRAW(&mCurrentRawPartials);
-    
-    mPartialTracker->ExtractNoiseEnvelope();
 
+    //mPartialTracker->ExtractNoiseEnvelope();
+    mSASFrameAna->SetRawPartials(mCurrentRawPartials);
+ 
     mPartialTracker->FilterPartials();
         
     //
     mPartialTracker->GetPreProcessedMagns(&mCurrentMagns);
             
     //
-    mSASFrame->SetInputData(magns, phases);
+    mSASFrameAna->SetInputData(magns, phases);
         
     // Silence
     BLUtils::FillAllZero(&magns);
@@ -167,16 +169,21 @@ SASViewerProcess5::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
         vector<Partial> partials = normPartials;
         mPartialTracker->DenormPartials(&partials);
     
-        mSASFrame->SetPartials(partials);
+        mSASFrameAna->SetPartials(partials);
 
+        BL_FLOAT harmoNoiseMix = mSASFrameSynth->GetHarmoNoiseMix();
         BL_FLOAT noiseCoeff;
         BL_FLOAT harmoCoeff;
-        BLUtils::MixParamToCoeffs(mHarmoNoiseMix, &noiseCoeff, &harmoCoeff);
+        BLUtils::MixParamToCoeffs(harmoNoiseMix, &noiseCoeff, &harmoCoeff);
         
+        mSASFrameAna->Compute(&mSASFrame);
+
+        //
+        mSASFrameSynth->AddSASFrame(mSASFrame);
+        
+        // Get and apply the noise envelope
         WDL_TypedBuf<BL_FLOAT> &noise = mTmpBuf4;
-        mPartialTracker->GetNoiseEnvelope(&noise);
-        
-        mSASFrame->SetNoiseEnvelope(noise);
+        mSASFrame.GetNoiseEnvelope(&noise);
         
         mPartialTracker->DenormData(&noise);
 
@@ -201,12 +208,13 @@ SASViewerProcess5::ProcessSamplesPost(WDL_TypedBuf<BL_FLOAT> *ioBuffer)
     WDL_TypedBuf<BL_FLOAT> samplesBuffer;
     BLUtils::ResizeFillZeros(&samplesBuffer, ioBuffer->GetSize());
 
+    BL_FLOAT harmoNoiseMix = mSASFrameSynth->GetHarmoNoiseMix();
     BL_FLOAT noiseCoeff;
     BL_FLOAT harmoCoeff;
-    BLUtils::MixParamToCoeffs(mHarmoNoiseMix, &noiseCoeff, &harmoCoeff);
+    BLUtils::MixParamToCoeffs(harmoNoiseMix, &noiseCoeff, &harmoCoeff);
 
     // Compute the samples from partials
-    mSASFrame->ComputeSamples(&samplesBuffer);
+    mSASFrameSynth->ComputeSamples(&samplesBuffer);
         
     BLUtils::MultValues(&samplesBuffer, harmoCoeff);
     
@@ -261,49 +269,49 @@ SASViewerProcess5::SetThreshold2(BL_FLOAT threshold2)
 void
 SASViewerProcess5::SetAmpFactor(BL_FLOAT factor)
 {
-    mSASFrame->SetAmpFactor(factor);
+    mSASFrameSynth->SetAmpFactor(factor);
 }
 
 void
 SASViewerProcess5::SetFreqFactor(BL_FLOAT factor)
 {
-    mSASFrame->SetFreqFactor(factor);
+    mSASFrameSynth->SetFreqFactor(factor);
 }
 
 void
 SASViewerProcess5::SetColorFactor(BL_FLOAT factor)
 {
-    mSASFrame->SetColorFactor(factor);
+    mSASFrameSynth->SetColorFactor(factor);
 }
 
 void
 SASViewerProcess5::SetWarpingFactor(BL_FLOAT factor)
 {
-    mSASFrame->SetWarpingFactor(factor);
+    mSASFrameSynth->SetWarpingFactor(factor);
 }
 
 void
-SASViewerProcess5::SetSynthMode(SASFrame6::SynthMode mode)
+SASViewerProcess5::SetSynthMode(SASFrameSynth::SynthMode mode)
 {
-    mSASFrame->SetSynthMode(mode);
+    mSASFrameSynth->SetSynthMode(mode);
 }
 
 void
 SASViewerProcess5::SetSynthEvenPartials(bool flag)
 {
-    mSASFrame->SetSynthEvenPartials(flag);
+    mSASFrameSynth->SetSynthEvenPartials(flag);
 }
 
 void
 SASViewerProcess5::SetSynthOddPartials(bool flag)
 {
-    mSASFrame->SetSynthOddPartials(flag);
+    mSASFrameSynth->SetSynthOddPartials(flag);
 }
 
 void
 SASViewerProcess5::SetHarmoNoiseMix(BL_FLOAT mix)
 {
-    mHarmoNoiseMix = mix;
+    mSASFrameSynth->SetHarmoNoiseMix(mix);
 }
 
 void
@@ -323,7 +331,7 @@ void
 SASViewerProcess5::SetTimeSmoothNoiseCoeff(BL_FLOAT coeff)
 {
     if (mPartialTracker != NULL)
-        mPartialTracker->SetTimeSmoothNoiseCoeff(coeff);
+        mSASFrameAna->SetTimeSmoothNoiseCoeff(coeff);
 }
 
 void
@@ -883,20 +891,14 @@ SASViewerProcess5::DisplayTracking()
 void
 SASViewerProcess5::DisplayHarmo()
 {
-#if DISPLAY_HARMO_SUBSTRACT 
     // More smooth
     WDL_TypedBuf<BL_FLOAT> noise;
-    mSASFrame->GetNoiseEnvelope(&noise);
+    mSASFrame.GetNoiseEnvelope(&noise);
     
     WDL_TypedBuf<BL_FLOAT> harmo = mCurrentMagns;
     BLUtils::SubstractValues(&harmo, noise);
     
     BLUtils::ClipMin(&harmo, (BL_FLOAT)0.0);
-#else  
-    // Should be more correct
-    WDL_TypedBuf<BL_FLOAT> harmo;
-    mPartialTracker->GetHarmonicEnvelope(&harmo);
-#endif
     
     if (mSASViewerRender != NULL)
     {
@@ -917,7 +919,8 @@ SASViewerProcess5::DisplayNoise()
 {
     WDL_TypedBuf<BL_FLOAT> noise;
     //mSASFrame->GetNoiseEnvelope(&noise);
-    mPartialTracker->GetNoiseEnvelope(&noise);
+    //mPartialTracker->GetNoiseEnvelope(&noise);
+    mSASFrame.GetNoiseEnvelope(&noise);
     
     if (mSASViewerRender != NULL)
     {
@@ -938,7 +941,7 @@ SASViewerProcess5::DisplayAmplitude()
 {
 #define AMP_Y_COEFF 10.0 //20.0 //1.0
     
-    BL_FLOAT amp = mSASFrame->GetAmplitude();
+    BL_FLOAT amp = mSASFrame.GetAmplitude();
     
     WDL_TypedBuf<BL_FLOAT> amps;
     amps.Resize(mBufferSize/2);
@@ -965,7 +968,7 @@ SASViewerProcess5::DisplayFrequency()
 {    
 #define FREQ_Y_COEFF 40.0 //10.0
     
-    BL_FLOAT freq = mSASFrame->GetFrequency();
+    BL_FLOAT freq = mSASFrame.GetFrequency();
   
     freq /= mSampleRate*0.5;
 
@@ -993,9 +996,9 @@ void
 SASViewerProcess5::DisplayColor()
 {
     WDL_TypedBuf<BL_FLOAT> color;
-    mSASFrame->GetColor(&color);
+    mSASFrame.GetColor(&color);
     
-    BL_FLOAT amplitude = mSASFrame->GetAmplitude();
+    BL_FLOAT amplitude = mSASFrame.GetAmplitude();
     
     BLUtils::MultValues(&color, amplitude);
     
@@ -1022,7 +1025,7 @@ SASViewerProcess5::DisplayWarping()
 #define WARPING_COEFF 1.0
     
     WDL_TypedBuf<BL_FLOAT> warping;
-    mSASFrame->GetNormWarping(&warping);
+    mSASFrame.GetWarping(&warping);
     
     if (mPartialTracker != NULL)
         mPartialTracker->PreProcessDataX(&warping);
