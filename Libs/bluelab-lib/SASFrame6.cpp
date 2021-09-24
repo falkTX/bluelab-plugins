@@ -26,6 +26,11 @@ SASFrame6::SASFrame6()
 {
     mAmplitude = 0.0;
     mFrequency = 0.0;
+
+    mAmpFactor = 1.0;
+    mFreqFactor = 1.0;
+    mColorFactor = 1.0;
+    mWarpingFactor = 1.0;
 }
 
 SASFrame6::SASFrame6(int bufferSize, BL_FLOAT sampleRate,
@@ -38,6 +43,11 @@ SASFrame6::SASFrame6(int bufferSize, BL_FLOAT sampleRate,
     
     mAmplitude = 0.0;
     mFrequency = 0.0;
+
+    mAmpFactor = 1.0;
+    mFreqFactor = 1.0;
+    mColorFactor = 1.0;
+    mWarpingFactor = 1.0;
 }
 
 SASFrame6::~SASFrame6() {}
@@ -92,7 +102,7 @@ void
 SASFrame6::GetColor(WDL_TypedBuf<BL_FLOAT> *color) const
 {
     *color = mColor;
-
+        
     // Sigmoid
     BL_FLOAT a = mColorFactor*0.5;
     if (a < BL_EPS)

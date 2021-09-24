@@ -305,20 +305,14 @@ SASFrameAna::ComputeAmplitude()
 BL_FLOAT
 SASFrameAna::ComputeFrequency()
 {
-    BL_FLOAT freq0 =
+    BL_FLOAT freq =
         mPartialsToFreq->ComputeFrequency(mInputMagns, mInputPhases, mPartials);
-    
-    BL_FLOAT freq = freq0;
-    
+        
     // Smooth
     if (mPrevFrequency < 0.0)
         mPrevFrequency = freq;
     else
-    {
-        freq = (1.0 - FREQ_SMOOTH_COEFF)*freq0 + FREQ_SMOOTH_COEFF*mPrevFrequency;
-        
-        mPrevFrequency = freq;
-    }
+        BLUtils::Smooth(&freq, &mPrevFrequency, FREQ_SMOOTH_COEFF);
 
     return freq;
 }
@@ -326,29 +320,9 @@ SASFrameAna::ComputeFrequency()
 void
 SASFrameAna::ComputeColor(WDL_TypedBuf<BL_FLOAT> *color, BL_FLOAT freq)
 {
-    WDL_TypedBuf<BL_FLOAT> prevColor = *color;
-    
     ComputeColorAux(color, freq);
     
-    if (prevColor.GetSize() != color->GetSize())
-    {
-        mPrevColor = *color;
-        
-        return;
-    }
-    
-    // Smooth
-    for (int i = 0; i < color->GetSize(); i++)
-    {
-        BL_FLOAT col = color->Get()[i];
-        BL_FLOAT prevCol = prevColor.Get()[i];
-        
-        BL_FLOAT result = COLOR_SMOOTH_COEFF*prevCol + (1.0 - COLOR_SMOOTH_COEFF)*col;
-        
-        color->Get()[i] = result;
-    }
-
-    mPrevColor = *color;
+    BLUtils::Smooth(color, &mPrevColor, COLOR_SMOOTH_COEFF);
 }
 
 void

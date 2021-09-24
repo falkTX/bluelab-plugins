@@ -7647,6 +7647,21 @@ template bool BLUtils::IsMono(const WDL_TypedBuf<double> &leftSamples,
 
 template <typename FLOAT_TYPE>
 void
+BLUtils::Smooth(FLOAT_TYPE *ioCurrentValue, FLOAT_TYPE *ioPrevValue,
+                FLOAT_TYPE smoothFactor)
+{
+    *ioCurrentValue =
+        (1.0 - smoothFactor)*(*ioCurrentValue) + smoothFactor*(*ioPrevValue);
+        
+    *ioPrevValue = *ioCurrentValue;
+}
+template void BLUtils::Smooth(float *ioCurrentValue, float *ioPrevValue,
+                              float smoothFactor);
+template void BLUtils::Smooth(double *ioCurrentValue, double *ioPrevValue,
+                              double smoothFactor);
+
+template <typename FLOAT_TYPE>
+void
 BLUtils::Smooth(WDL_TypedBuf<FLOAT_TYPE> *ioCurrentValues,
                 WDL_TypedBuf<FLOAT_TYPE> *ioPrevValues,
                 FLOAT_TYPE smoothFactor)

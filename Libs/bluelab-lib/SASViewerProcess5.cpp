@@ -996,7 +996,7 @@ SASViewerProcess5::DisplayColor()
 {
     WDL_TypedBuf<BL_FLOAT> color;
     mSASFrame.GetColor(&color);
-    
+        
     BL_FLOAT amplitude = mSASFrame.GetAmplitude();
     
     BLUtils::MultValues(&color, amplitude);

@@ -987,6 +987,10 @@ public:
     static void Smooth(WDL_TypedBuf<FLOAT_TYPE> *ioCurrentValues,
                        WDL_TypedBuf<FLOAT_TYPE> *ioPrevValues,
                        FLOAT_TYPE smoothFactor);
+
+    template <typename FLOAT_TYPE>
+    static void Smooth(FLOAT_TYPE *ioCurrentValue, FLOAT_TYPE *ioPrevValue,
+                       FLOAT_TYPE smoothFactor);
     
     template <typename FLOAT_TYPE>
     static void Smooth(vector<WDL_TypedBuf<FLOAT_TYPE> > *ioCurrentValues,

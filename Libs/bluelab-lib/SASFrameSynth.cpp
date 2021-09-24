@@ -174,13 +174,13 @@ SASFrameSynth::AddSASFrame(const SASFrame6 &frame)
 {
     mPrevSASFrame = mSASFrame;
     mSASFrame = frame;
+
+    SetSASFactors();
 }
 
 void
 SASFrameSynth::ComputeSamples(WDL_TypedBuf<BL_FLOAT> *samples)
 {
-    SetSASFactors();
-
     UpdateSASData();
     
     if (mSynthMode == RAW_PARTIALS)
