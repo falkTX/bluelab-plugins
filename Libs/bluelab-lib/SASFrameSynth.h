@@ -78,6 +78,8 @@ protected:
 
     // Keep it for debugging
     void ComputeSamplesPartialsRaw(WDL_TypedBuf<BL_FLOAT> *samples);
+     // TODO: delete this
+    void ComputeSamplesPartialsSourceNorm(WDL_TypedBuf<BL_FLOAT> *samples);
     void ComputeSamplesPartialsSource(WDL_TypedBuf<BL_FLOAT> *samples);
     void ComputeSamplesPartialsResynth(WDL_TypedBuf<BL_FLOAT> *samples);
 

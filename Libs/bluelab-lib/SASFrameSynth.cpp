@@ -211,6 +211,7 @@ SASFrameSynth::ComputeSamples(WDL_TypedBuf<BL_FLOAT> *samples)
         if (mSynthMode == RAW_PARTIALS)
             ComputeSamplesPartialsRaw(samples);
         else if (mSynthMode == SOURCE_PARTIALS)
+            //ComputeSamplesPartialsSourceNorm(samples);
             ComputeSamplesPartialsSource(samples);
         else if (mSynthMode == RESYNTH_PARTIALS)
             ComputeSamplesPartialsResynth(samples);
@@ -275,7 +276,7 @@ SASFrameSynth::ComputeSamplesPartialsRaw(WDL_TypedBuf<BL_FLOAT> *samples)
 
 // Directly use partials provided, but also apply SAS parameter to them
 void
-SASFrameSynth::ComputeSamplesPartialsSource(WDL_TypedBuf<BL_FLOAT> *samples)
+SASFrameSynth::ComputeSamplesPartialsSourceNorm(WDL_TypedBuf<BL_FLOAT> *samples)
 {
     samples->Resize(mBufferSize);
     
@@ -336,6 +337,85 @@ SASFrameSynth::ComputeSamplesPartialsSource(WDL_TypedBuf<BL_FLOAT> *samples)
 
             // Recompute bin idx
             binIdx = partial.mFreq*hzPerBinInv;
+            
+            // Apply warping
+            BL_FLOAT w = GetWarping(mWarping, binIdx);
+            partial.mFreq *= w;
+            
+            // Recompute bin idx
+            binIdx = partial.mFreq*hzPerBinInv;
+            
+            // Apply color
+            BL_FLOAT col = GetColor(mColor, binIdx);
+            
+            partial.mAmp *= col;
+
+            // Amplitude
+            partial.mAmp *= mAmpFactor;
+                        
+            // Freq factor (post)
+            partial.mFreq *= mFreqFactor;
+                
+            //
+            BL_FLOAT freq = partial.mFreq;
+                
+            BL_FLOAT amp = partial.mAmp;
+            
+            BL_FLOAT samp = amp*std::sin(phase);
+            
+            samp *= SYNTH_AMP_COEFF;
+            
+            if (freq >= SYNTH_MIN_FREQ)
+                samples->Get()[j] += samp;
+            
+            phase += twoPiSR*freq;
+        }
+        
+        mPartials[i].mPhase = phase;
+    }
+}
+
+// Directly use partials provided, but also apply SAS parameter to them
+void
+SASFrameSynth::ComputeSamplesPartialsSource(WDL_TypedBuf<BL_FLOAT> *samples)
+{
+    samples->Resize(mBufferSize);
+    
+    BLUtils::FillAllZero(samples);
+    
+    if (mPartials.empty())
+    {
+        return;
+    }
+
+    // Optim
+    BL_FLOAT twoPiSR = 2.0*M_PI/mSampleRate;
+
+    BL_FLOAT hzPerBin = mSampleRate/mBufferSize;
+    BL_FLOAT hzPerBinInv = 1.0/hzPerBin;
+    
+    for (int i = 0; i < mPartials.size(); i++)
+    {
+        int prevPartialIdx = mPartials[i].mLinkedId;
+
+        BL_FLOAT phase = 0.0;
+        if (prevPartialIdx != -1)
+            phase = mPrevPartials[prevPartialIdx].mPhase;
+        
+        // Generate samples
+        int numSamples = samples->GetSize()/mOverlapping;
+        for (int j = 0; j < numSamples; j++)
+        {
+            Partial partial;
+                        
+            // Get interpolated partial
+            BL_FLOAT partialT = ((BL_FLOAT)j)/numSamples;
+            GetPartial(&partial, i, partialT);
+            
+            BL_FLOAT binIdx = partial.mFreq*hzPerBinInv;
+            
+            // Apply SAS parameters to current partial
+            //
             
             // Apply warping
             BL_FLOAT w = GetWarping(mWarping, binIdx);
@@ -552,6 +632,9 @@ SASFrameSynth::ComputeSamplesPartialsResynth(WDL_TypedBuf<BL_FLOAT> *samples)
 BL_FLOAT
 SASFrameSynth::GetColor(const WDL_TypedBuf<BL_FLOAT> &color, BL_FLOAT binIdx)
 {
+    //if (binIdx < 0.0)
+    //    return 0.0;
+    
 #if NEAREST_INTERP
     // Quick method
     binIdx = bl_round(ninIdx);
@@ -597,6 +680,9 @@ BL_FLOAT
 SASFrameSynth::GetWarping(const WDL_TypedBuf<BL_FLOAT> &warping,
                           BL_FLOAT binIdx)
 {
+    //if (binIdx < 0.0)
+    //    return 1.0;
+    
 #if NEAREST_INTERP
     // Quick method
     binIdx = bl_round(binIdx);

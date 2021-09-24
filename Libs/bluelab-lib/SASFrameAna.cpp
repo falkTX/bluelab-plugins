@@ -205,6 +205,9 @@ SASFrameAna::Compute(SASFrame6 *frame)
 
     bool onsetDetected = ComputeOnset();
 
+    // Cancel warping and color
+    NormalizePartials(warpingInv, color);
+    
     // TODO: denorm partials, for "source" synthesis
     
     //
@@ -436,14 +439,12 @@ SASFrameAna::ComputeWarping(WDL_TypedBuf<BL_FLOAT> *warping,
 {
     // Normal warping
     //    
-    ComputeWarpingAux(warping, freq);
-    
+    ComputeWarpingAux(warping, freq);                      
     BLUtils::Smooth(warping, &mPrevWarping, WARPING_SMOOTH_COEFF);
         
     // Inverse warping
     //
-    ComputeWarpingAux(warpingInv, freq, true);
-
+    ComputeWarpingAux(warpingInv, freq, true); 
     BLUtils::Smooth(warpingInv, &mPrevWarpingInv, WARPING_SMOOTH_COEFF);
 }
 
@@ -471,6 +472,36 @@ SASFrameAna::ComputeOnset()
 #endif
 
     return onsetDetected;
+}
+
+void
+SASFrameAna::NormalizePartials(const WDL_TypedBuf<BL_FLOAT> &warpingInv,
+                               const WDL_TypedBuf<BL_FLOAT> &color)
+{
+    BL_FLOAT hzPerBin = mSampleRate/mBufferSize;
+    BL_FLOAT hzPerBinInv = 1.0/hzPerBin;
+    
+    for (int i = 0; i < mPartials.size(); i++)
+    {
+        Partial &p = mPartials[i];
+
+        BL_FLOAT binIdx = p.mFreq*hzPerBinInv;
+
+        // NOTE: should invert color or warping first?
+        
+        // Normalize amp
+        BL_FLOAT c0 = BLUtils::GetLinerp(color, binIdx);
+        p.mAmp /= c0;
+
+        // Normalize warping
+        BL_FLOAT w0 = BLUtils::GetLinerp(warpingInv, binIdx);
+        p.mFreq *= w0;
+        
+        // Recompute bin idx
+        //binIdx = p.mFreq*hzPerBinInv;
+        //BL_FLOAT c0 = BLUtils::GetLinerp(color, binIdx);
+        //p.mAmp /= c0;
+    }
 }
 
 // Problem: when incorrect partials are briefly detected, they affect warping a lot

@@ -53,6 +53,9 @@ protected:
                            BL_FLOAT freq, bool inverse = false);
 
     bool ComputeOnset();
+
+    void NormalizePartials(const WDL_TypedBuf<BL_FLOAT> &warpingInv,
+                           const WDL_TypedBuf<BL_FLOAT> &color);
         
     void ProcessMusicalNoise(WDL_TypedBuf<BL_FLOAT> *noise);
     void SmoothNoiseEnvelope(WDL_TypedBuf<BL_FLOAT> *noise);

@@ -3123,6 +3123,28 @@ template void BLUtils::Interp2D(WDL_TypedBuf<double> *result,
                                 double u, double v);
 
 template <typename FLOAT_TYPE>
+FLOAT_TYPE
+BLUtils::GetLinerp(const WDL_TypedBuf<FLOAT_TYPE> &data, FLOAT_TYPE idx)
+{
+    if (idx >= data.GetSize() - 1)
+        return data.Get()[data.GetSize() - 1];
+
+    int idxi = (int)idx;
+    FLOAT_TYPE t = idx - idxi;
+        
+    FLOAT_TYPE v0 = data.Get()[idxi];
+    FLOAT_TYPE v1 = data.Get()[idxi + 1];
+        
+    FLOAT_TYPE v = (1.0 - t)*v0 + t*v1;
+
+    return v;
+}
+template float
+BLUtils::GetLinerp(const WDL_TypedBuf<float> &data, float idx);
+template double
+BLUtils::GetLinerp(const WDL_TypedBuf<double> &data, double idx);
+
+template <typename FLOAT_TYPE>
 void
 BLUtils::ComputeAvg(WDL_TypedBuf<FLOAT_TYPE> *result,
                     const vector<WDL_TypedBuf<FLOAT_TYPE> > &bufs)

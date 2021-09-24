@@ -49,6 +49,10 @@ Partial::Partial()
     mAge = 0;
     
     mCookie = 0.0;
+
+    mBinIdxF = 0.0;
+    mAlpha0 = 0.0;
+    mBeta0 = 0.0;
 }
 
     
