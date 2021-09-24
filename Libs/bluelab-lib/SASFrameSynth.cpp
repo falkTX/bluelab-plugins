@@ -189,21 +189,21 @@ SASFrameSynth::ComputeSamples(WDL_TypedBuf<BL_FLOAT> *samples)
 {
     UpdateSASData();
 
-    if (!mSASFrame.GetOnsetDetected())
+    //if (!mSASFrame.GetOnsetDetected())
         // Generate samples only if not on an transient
     {
         if (mSynthMode == RAW_PARTIALS)
             ComputeSamplesPartialsRaw(samples);
         else if (mSynthMode == SOURCE_PARTIALS)
-        ComputeSamplesPartialsSource(samples);
+            ComputeSamplesPartialsSource(samples);
         else if (mSynthMode == RESYNTH_PARTIALS)
             ComputeSamplesPartialsResynth(samples);
     }
-    else
-    {
-        // Set the volumes to 0, for next step, to avoid click
-        mPrevAmplitude = 0.0;
-    }
+    //else
+    //{
+    //    // Set the volumes to 0, for next step, to avoid click
+    //    mPrevAmplitude = 0.0;
+    //}
 }
 
 // Directly use partials provided
@@ -360,23 +360,9 @@ SASFrameSynth::ComputeSamplesPartialsSource(WDL_TypedBuf<BL_FLOAT> *samples)
 
 void
 SASFrameSynth::ComputeSamplesPartialsResynth(WDL_TypedBuf<BL_FLOAT> *samples)
-{    
-    bool transientDetected = false;
-#if ENABLE_ONSET_DETECTION
-#if !ONSET_HISTORY_HACK
-    mOnsetDetector->Detect(mInputMagns); // Origin
-#else
-    mOnsetDetector->Detect(mInputMagnsHistory[0]);
-#endif
-    
-    BL_FLOAT onsetValue = mOnsetDetector->GetCurrentOnsetValue();
-    
-#if DETECT_TRANSIENTS_ONSET
-    transientDetected = (onsetValue > ONSET_VALUE_THRESHOLD);
-#endif
-    
-#endif
-    
+{
+    bool onsetDetected = mSASFrame.GetOnsetDetected();
+        
     BLUtils::FillAllZero(samples);
     
     // First time: initialize the partials
@@ -504,7 +490,7 @@ SASFrameSynth::ComputeSamplesPartialsResynth(WDL_TypedBuf<BL_FLOAT> *samples)
                 if (freq >= SYNTH_MIN_FREQ)
                 {
                     // Generate samples only if not on an transient
-                    if (!transientDetected)
+                    if (!onsetDetected)
                     {
                         samples->Get()[i] += samp*col;
                         //ampDenoms.Get()[i] += col;
@@ -549,7 +535,7 @@ SASFrameSynth::ComputeSamplesPartialsResynth(WDL_TypedBuf<BL_FLOAT> *samples)
     
     mPrevAmplitude = mAmplitude;
 
-    if (transientDetected)
+    if (onsetDetected)
     {
         // Set the volumes to 0, for next step, to avoid click
         mPrevAmplitude = 0.0;
