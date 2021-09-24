@@ -211,8 +211,8 @@ SASFrameSynth::ComputeSamples(WDL_TypedBuf<BL_FLOAT> *samples)
         if (mSynthMode == RAW_PARTIALS)
             ComputeSamplesPartialsRaw(samples);
         else if (mSynthMode == SOURCE_PARTIALS)
-            //ComputeSamplesPartialsSourceNorm(samples);
-            ComputeSamplesPartialsSource(samples);
+            ComputeSamplesPartialsSourceNorm(samples);
+            //ComputeSamplesPartialsSource(samples);
         else if (mSynthMode == RESYNTH_PARTIALS)
             ComputeSamplesPartialsResynth(samples);
     }
@@ -316,12 +316,11 @@ SASFrameSynth::ComputeSamplesPartialsSourceNorm(WDL_TypedBuf<BL_FLOAT> *samples)
             // Apply SAS parameters to current partial
             //
 
-            // Cancel color
+            // Cancel color(1)
             BL_FLOAT colorFactor = mColorFactor;
             mColorFactor = 1.0;
             BL_FLOAT col0 = GetColor(mColor, binIdx);
             mColorFactor = colorFactor;
-
             partial.mAmp /= col0;
 
             // Inverse warping
@@ -632,9 +631,6 @@ SASFrameSynth::ComputeSamplesPartialsResynth(WDL_TypedBuf<BL_FLOAT> *samples)
 BL_FLOAT
 SASFrameSynth::GetColor(const WDL_TypedBuf<BL_FLOAT> &color, BL_FLOAT binIdx)
 {
-    //if (binIdx < 0.0)
-    //    return 0.0;
-    
 #if NEAREST_INTERP
     // Quick method
     binIdx = bl_round(ninIdx);
@@ -680,9 +676,6 @@ BL_FLOAT
 SASFrameSynth::GetWarping(const WDL_TypedBuf<BL_FLOAT> &warping,
                           BL_FLOAT binIdx)
 {
-    //if (binIdx < 0.0)
-    //    return 1.0;
-    
 #if NEAREST_INTERP
     // Quick method
     binIdx = bl_round(binIdx);

@@ -205,8 +205,11 @@ SASFrameAna::Compute(SASFrame6 *frame)
 
     bool onsetDetected = ComputeOnset();
 
+    // NOTE: not working, make artifacts (oscillations)
     // Cancel warping and color
-    NormalizePartials(warpingInv, color);
+    // To be used with SASFrameSynth::ComputeSamplesPartialsSource() instead of
+    // SASFrameSynth::ComputeSamplesPartialsSourceNorm()
+    //NormalizePartials(warpingInv, color);
     
     // TODO: denorm partials, for "source" synthesis
     
