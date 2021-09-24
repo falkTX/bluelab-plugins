@@ -188,13 +188,22 @@ void
 SASFrameSynth::ComputeSamples(WDL_TypedBuf<BL_FLOAT> *samples)
 {
     UpdateSASData();
-    
-    if (mSynthMode == RAW_PARTIALS)
-        ComputeSamplesPartialsRaw(samples);
-    else if (mSynthMode == SOURCE_PARTIALS)
+
+    if (!mSASFrame.GetOnsetDetected())
+        // Generate samples only if not on an transient
+    {
+        if (mSynthMode == RAW_PARTIALS)
+            ComputeSamplesPartialsRaw(samples);
+        else if (mSynthMode == SOURCE_PARTIALS)
         ComputeSamplesPartialsSource(samples);
-    else if (mSynthMode == RESYNTH_PARTIALS)
-        ComputeSamplesPartialsResynth(samples);
+        else if (mSynthMode == RESYNTH_PARTIALS)
+            ComputeSamplesPartialsResynth(samples);
+    }
+    else
+    {
+        // Set the volumes to 0, for next step, to avoid click
+        mPrevAmplitude = 0.0;
+    }
 }
 
 // Directly use partials provided

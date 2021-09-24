@@ -200,6 +200,8 @@ SASFrameAna::Compute(SASFrame6 *frame)
     WDL_TypedBuf<BL_FLOAT> &warpingInv = mTmpBuf6;
     ComputeWarping(&warping, &warpingInv, freq);
 
+    bool onsetDetected = ComputeOnset();
+    
     // TODO: denorm partials, for "source" synthesis
     
     //
@@ -213,6 +215,8 @@ SASFrameAna::Compute(SASFrame6 *frame)
     frame->SetWarpingInv(warpingInv);
     
     frame->SetPartials(mPartials);
+
+    frame->SetOnsetDetected(onsetDetected);
 }
 
 void
@@ -438,6 +442,32 @@ SASFrameAna::ComputeWarping(WDL_TypedBuf<BL_FLOAT> *warping,
     ComputeWarpingAux(warpingInv, freq, true);
 
     BLUtils::Smooth(warpingInv, &mPrevWarpingInv, WARPING_SMOOTH_COEFF);
+}
+
+bool
+SASFrameAna::ComputeOnset()
+{
+    bool onsetDetected = false;
+#if ENABLE_ONSET_DETECTION
+#if !ONSET_HISTORY_HACK
+    mOnsetDetector->Detect(mInputMagns); // Origin
+#else
+    mOnsetDetector->Detect(mInputMagnsHistory[0]);
+#endif
+    
+    BL_FLOAT onsetValue = mOnsetDetector->GetCurrentOnsetValue();
+
+#if DEBUG_DUMP_VALUES
+    BLDebug::AppendValue("onset.txt", onsetValue);
+#endif
+    
+#if DETECT_TRANSIENTS_ONSET
+    onsetDetected = (onsetValue > ONSET_VALUE_THRESHOLD);
+#endif
+    
+#endif
+
+    return onsetDetected;
 }
 
 // Problem: when incorrect partials are briefly detected, they affect warping a lot

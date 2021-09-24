@@ -27,6 +27,8 @@ SASFrame6::SASFrame6()
     mAmplitude = 0.0;
     mFrequency = 0.0;
 
+    mOnsetDetected = false;
+    
     mAmpFactor = 1.0;
     mFreqFactor = 1.0;
     mColorFactor = 1.0;
@@ -44,6 +46,8 @@ SASFrame6::SASFrame6(int bufferSize, BL_FLOAT sampleRate,
     mAmplitude = 0.0;
     mFrequency = 0.0;
 
+    mOnsetDetected = false;
+    
     mAmpFactor = 1.0;
     mFreqFactor = 1.0;
     mColorFactor = 1.0;
@@ -169,6 +173,18 @@ void
 SASFrame6::GetPartials(vector<Partial> *partials) const
 {
     *partials = mPartials;
+}
+
+void
+SASFrame6::SetOnsetDetected(bool flag)
+{
+    mOnsetDetected = flag;
+}
+
+bool
+SASFrame6::GetOnsetDetected() const
+{
+    return mOnsetDetected;
 }
 
 void

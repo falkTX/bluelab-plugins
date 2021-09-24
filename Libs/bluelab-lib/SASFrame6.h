@@ -64,7 +64,11 @@ public:
     // For "raw"
     void SetPartials(const vector<Partial> &partials);
     void GetPartials(vector<Partial> *partials) const;
-    
+
+    // Onsets
+    void SetOnsetDetected(bool flag);
+    bool GetOnsetDetected() const;
+        
     // Factors
     void SetAmpFactor(BL_FLOAT factor);
     void SetFreqFactor(BL_FLOAT factor);
@@ -91,6 +95,8 @@ protected:
     WDL_TypedBuf<BL_FLOAT> mWarpingInv;
 
     vector<Partial> mPartials;
+
+    bool mOnsetDetected;
     
     BL_FLOAT mAmpFactor;
     BL_FLOAT mFreqFactor;

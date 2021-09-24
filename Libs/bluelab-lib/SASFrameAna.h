@@ -52,6 +52,8 @@ protected:
     void ComputeWarpingAux(WDL_TypedBuf<BL_FLOAT> *warping,
                            BL_FLOAT freq, bool inverse = false);
 
+    bool ComputeOnset();
+        
     void ProcessMusicalNoise(WDL_TypedBuf<BL_FLOAT> *noise);
     void SmoothNoiseEnvelope(WDL_TypedBuf<BL_FLOAT> *noise);
     void TimeSmoothNoise(WDL_TypedBuf<BL_FLOAT> *noise);
