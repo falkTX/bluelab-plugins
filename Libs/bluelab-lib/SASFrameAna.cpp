@@ -10,6 +10,8 @@
 #include <BLUtils.h>
 #include <BLUtilsMath.h>
 
+#include <BLDebug.h>
+
 #include "SASFrameAna.h"
 
 #define MIN_NORM_AMP 1e-15
@@ -132,8 +134,6 @@ SASFrameAna::Reset()
     // For ComputeMusicalNoise()
     mPrevNoiseMasks.unfreeze();
     mPrevNoiseMasks.clear();
-
-    mTimeSmoothPrevNoise.Resize(0);
 
     mPrevFrequency = -1.0;
 
@@ -280,9 +280,9 @@ SASFrameAna::ComputeNoiseEnvelope(WDL_TypedBuf<BL_FLOAT> *noiseEnv)
     // Create an envelope
     // NOTE: good for "oohoo", not good for "alphabet A"
     BLUtils::FillMissingValues2(noiseEnv, false, (BL_FLOAT)0.0);
-    
-    //
-    TimeSmoothNoise(noiseEnv);
+
+    // TimeSmooth
+    BLUtils::Smooth(noiseEnv, &mPrevNoiseEnvelope, mTimeSmoothNoiseCoeff);
 }
 
 BL_FLOAT
@@ -326,14 +326,16 @@ SASFrameAna::ComputeFrequency()
 void
 SASFrameAna::ComputeColor(WDL_TypedBuf<BL_FLOAT> *color, BL_FLOAT freq)
 {
-    mPrevColor = *color;
-    
     WDL_TypedBuf<BL_FLOAT> prevColor = *color;
     
     ComputeColorAux(color, freq);
     
     if (prevColor.GetSize() != color->GetSize())
+    {
+        mPrevColor = *color;
+        
         return;
+    }
     
     // Smooth
     for (int i = 0; i < color->GetSize(); i++)
@@ -345,6 +347,8 @@ SASFrameAna::ComputeColor(WDL_TypedBuf<BL_FLOAT> *color, BL_FLOAT freq)
         
         color->Get()[i] = result;
     }
+
+    mPrevColor = *color;
 }
 
 void
@@ -453,19 +457,13 @@ SASFrameAna::ComputeWarping(WDL_TypedBuf<BL_FLOAT> *warping,
     //    
     ComputeWarpingAux(warping, freq);
     
-    if (mPrevWarping.GetSize() == warping->GetSize())
-        BLUtils::Smooth(warping, &mPrevWarping, WARPING_SMOOTH_COEFF);
-
-    mPrevWarping = *warping;
+    BLUtils::Smooth(warping, &mPrevWarping, WARPING_SMOOTH_COEFF);
         
     // Inverse warping
     //
     ComputeWarpingAux(warpingInv, freq, true);
-    
-    if (mPrevWarpingInv.GetSize() == warpingInv->GetSize())
-        BLUtils::Smooth(warpingInv, &mPrevWarpingInv, WARPING_SMOOTH_COEFF);
 
-    mPrevWarpingInv = *warpingInv;
+    BLUtils::Smooth(warpingInv, &mPrevWarpingInv, WARPING_SMOOTH_COEFF);
 }
 
 // Problem: when incorrect partials are briefly detected, they affect warping a lot
@@ -824,31 +822,6 @@ SASFrameAna::SmoothNoiseEnvelope(WDL_TypedBuf<BL_FLOAT> *noise)
     BLUtils::SmoothDataWin(&smoothNoise, *noise, mSmoothWinNoise);
     
     *noise = smoothNoise;
-}
-
-// Time smooth noise
-void
-SASFrameAna::TimeSmoothNoise(WDL_TypedBuf<BL_FLOAT> *noise)
-{
-    if (mTimeSmoothPrevNoise.GetSize() == 0)
-    {
-        mTimeSmoothPrevNoise = *noise;
-        
-        return;
-    }
-    
-    for (int i = 0; i < noise->GetSize(); i++)
-    {
-        BL_FLOAT val = noise->Get()[i];
-        BL_FLOAT prevVal = mTimeSmoothPrevNoise.Get()[i];
-        
-        BL_FLOAT newVal =
-            (1.0 - mTimeSmoothNoiseCoeff)*val + mTimeSmoothNoiseCoeff*prevVal;
-        
-        noise->Get()[i] = newVal;
-    }
-    
-    mTimeSmoothPrevNoise = *noise;
 }
 
 void

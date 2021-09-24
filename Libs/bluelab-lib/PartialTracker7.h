@@ -106,7 +106,7 @@ public:
     void GetPartials(vector<Partial> *partials);
 
     // For getting current partials before filtering
-    void GetPartialsRAW(vector<Partial> *partials);
+    void GetRawPartials(vector<Partial> *partials);
     
     void ClearResult();
     
@@ -145,10 +145,6 @@ protected:
     void PreProcess(WDL_TypedBuf<BL_FLOAT> *magns,
                     WDL_TypedBuf<BL_FLOAT> *phases);
     
-    // Apply time smooth (removes the noise and make more neat peaks), very good!
-    // NOTE: Smooth only magns. Test on complex, and that was baD.
-    void PreProcessTimeSmooth(WDL_TypedBuf<BL_FLOAT> *magns);
-
     // Do it in the complex domain (to be compatible with AM/FM parameters)
     void PreProcessTimeSmooth(WDL_TypedBuf<WDL_FFT_COMPLEX> *data);
     
@@ -273,9 +269,9 @@ protected:
     // For Pre-Process
     BL_FLOAT mTimeSmoothCoeff;
     // Smooth only magns (tried smooth complex, but that was bad)
-    WDL_TypedBuf<BL_FLOAT> mTimeSmoothPrevMagns;
+    WDL_TypedBuf<BL_FLOAT> mPrevMagns;
     // When using complexex...
-    WDL_TypedBuf<WDL_FFT_COMPLEX> mTimeSmoothPrevComp;
+    WDL_TypedBuf<WDL_FFT_COMPLEX> mPrevComp;
     
     // Scales
     Scale *mScale;

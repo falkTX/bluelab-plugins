@@ -7652,7 +7652,11 @@ BLUtils::Smooth(WDL_TypedBuf<FLOAT_TYPE> *ioCurrentValues,
                 FLOAT_TYPE smoothFactor)
 {
     if (ioCurrentValues->GetSize() != ioPrevValues->GetSize())
+    {
+        *ioPrevValues = *ioCurrentValues;
+        
         return;
+    }
     
 #if USE_SIMD_OPTIM
     int nFrames = ioCurrentValues->GetSize();
@@ -7691,7 +7695,11 @@ BLUtils::Smooth(vector<WDL_TypedBuf<FLOAT_TYPE> > *ioCurrentValues,
                 FLOAT_TYPE smoothFactor)
 {
     if (ioCurrentValues->size() != ioPrevValues->size())
+    {
+        *ioPrevValues = *ioCurrentValues;
+        
         return;
+    }
     
     for (int i = 0; i < ioCurrentValues->size(); i++)
     {

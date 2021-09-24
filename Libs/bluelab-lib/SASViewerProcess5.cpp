@@ -143,7 +143,7 @@ SASViewerProcess5::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
     mPartialTracker->DetectPartials();
 
     // Try to provide the first partials, even is they are not yet filtered
-    mPartialTracker->GetPartialsRAW(&mCurrentRawPartials);
+    mPartialTracker->GetRawPartials(&mCurrentRawPartials);
 
     //mPartialTracker->ExtractNoiseEnvelope();
     mSASFrameAna->SetRawPartials(mCurrentRawPartials);
@@ -921,7 +921,7 @@ SASViewerProcess5::DisplayNoise()
     //mSASFrame->GetNoiseEnvelope(&noise);
     //mPartialTracker->GetNoiseEnvelope(&noise);
     mSASFrame.GetNoiseEnvelope(&noise);
-    
+        
     if (mSASViewerRender != NULL)
     {
         WDL_TypedBuf<BL_FLOAT> &data = mTmpBuf10;

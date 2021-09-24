@@ -94,14 +94,11 @@ protected:
     WDL_TypedBuf<BL_FLOAT> mSmoothWinNoise;
     
     // For SmoothNoiseEnvelopeTime()
+    BL_FLOAT mTimeSmoothNoiseCoeff;
     WDL_TypedBuf<BL_FLOAT> mPrevNoiseEnvelope;
     
     // For ComputeMusicalNoise()
     bl_queue<WDL_TypedBuf<BL_FLOAT> > mPrevNoiseMasks;
-
-    // Time smooth noise
-    BL_FLOAT mTimeSmoothNoiseCoeff;
-    WDL_TypedBuf<BL_FLOAT> mTimeSmoothPrevNoise;
 
     vector<Partial> mRawPartials;
     

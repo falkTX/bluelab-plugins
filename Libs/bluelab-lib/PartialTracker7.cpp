@@ -149,7 +149,7 @@ PartialTracker7::Reset()
     mCurrentMagns.Resize(0);
     mCurrentPhases.Resize(0);
     
-    mTimeSmoothPrevMagns.Resize(0);
+    mPrevMagns.Resize(0);
 
     if (mPartialFilter != NULL)
         mPartialFilter->Reset(mBufferSize, mSampleRate);
@@ -197,7 +197,10 @@ PartialTracker7::SetData(const WDL_TypedBuf<BL_FLOAT> &magns,
     // Not smoothed (will be overwritten later)
     //mLinearMagns = magns;
 
-    PreProcessTimeSmooth(&mCurrentMagns);
+    // Time smoth
+    // Very good: removes the noise and make more neat peaks
+    // NOTE: Makes PartialTacker6/QIFFT fail if > 0
+    BLUtils::Smooth(&mCurrentMagns, &mPrevMagns, mTimeSmoothCoeff);
     
     PreProcess(&mCurrentMagns, &mCurrentPhases);
 }
@@ -311,7 +314,7 @@ PartialTracker7::GetPartials(vector<Partial> *partials)
 }
 
 void
-PartialTracker7::GetPartialsRAW(vector<Partial> *partials)
+PartialTracker7::GetRawPartials(vector<Partial> *partials)
 {
     *partials = mResult;
 }
@@ -954,40 +957,13 @@ PartialTracker7::SetTimeSmoothCoeff(BL_FLOAT coeff)
     mTimeSmoothCoeff = coeff;
 }
 
-// Time smooth
-//
-// NOTE: Makes PartialTacker6/QIFFT fail if > 0
-// If need to smooth, we will have to smooth in complex domain!
-void
-PartialTracker7::PreProcessTimeSmooth(WDL_TypedBuf<BL_FLOAT> *magns)
-{
-    if (mTimeSmoothPrevMagns.GetSize() == 0)
-    {
-        mTimeSmoothPrevMagns = *magns;
-        
-        return;
-    }
-    
-    for (int i = 0; i < magns->GetSize(); i++)
-    {
-        BL_FLOAT val = magns->Get()[i];
-        BL_FLOAT prevVal = mTimeSmoothPrevMagns.Get()[i];
-        
-        BL_FLOAT newVal = (1.0 - mTimeSmoothCoeff)*val + mTimeSmoothCoeff*prevVal;
-        
-        magns->Get()[i] = newVal;
-    }
-    
-    mTimeSmoothPrevMagns = *magns;
-}
-
 // Do it in the complex domain (to be compatible with AM/FM parameters)
 void
 PartialTracker7::PreProcessTimeSmooth(WDL_TypedBuf<WDL_FFT_COMPLEX> *data)
 {
-    if (mTimeSmoothPrevComp.GetSize() == 0)
+    if (mPrevComp.GetSize() == 0)
     {
-        mTimeSmoothPrevComp = *data;
+        mPrevComp = *data;
         
         return;
     }
@@ -995,7 +971,7 @@ PartialTracker7::PreProcessTimeSmooth(WDL_TypedBuf<WDL_FFT_COMPLEX> *data)
     for (int i = 0; i < data->GetSize(); i++)
     {
         WDL_FFT_COMPLEX val = data->Get()[i];
-        WDL_FFT_COMPLEX prevVal = mTimeSmoothPrevComp.Get()[i];
+        WDL_FFT_COMPLEX prevVal = mPrevComp.Get()[i];
 
         WDL_FFT_COMPLEX newVal;
         newVal.re = (1.0 - mTimeSmoothCoeff)*val.re + mTimeSmoothCoeff*prevVal.re;
@@ -1004,7 +980,7 @@ PartialTracker7::PreProcessTimeSmooth(WDL_TypedBuf<WDL_FFT_COMPLEX> *data)
         data->Get()[i] = newVal;
     }
     
-    mTimeSmoothPrevComp = *data;
+    mPrevComp = *data;
 }
 
 void
