@@ -179,6 +179,9 @@ SASViewerProcess5::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
 
         //
         mSASFrameSynth->AddSASFrame(mSASFrame);
+
+        // Get it back, in case the sas synth has modified it 
+        mSASFrameSynth->GetSASFrame(&mSASFrame);
         
         // Get and apply the noise envelope
         WDL_TypedBuf<BL_FLOAT> &noise = mTmpBuf4;

@@ -102,7 +102,7 @@ void
 SASFrame6::GetColor(WDL_TypedBuf<BL_FLOAT> *color) const
 {
     *color = mColor;
-        
+
     // Sigmoid
     BL_FLOAT a = mColorFactor*0.5;
     if (a < BL_EPS)

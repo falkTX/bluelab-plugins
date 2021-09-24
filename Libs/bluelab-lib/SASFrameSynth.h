@@ -52,6 +52,9 @@ class SASFrameSynth
     
     //
     void AddSASFrame(const SASFrame6 &frame);
+    // Get the current SAS frame
+    void GetSASFrame(SASFrame6 *frame);
+    
     void ComputeSamples(WDL_TypedBuf<BL_FLOAT> *samples);
     
 protected:

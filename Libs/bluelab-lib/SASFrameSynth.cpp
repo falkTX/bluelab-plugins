@@ -179,6 +179,12 @@ SASFrameSynth::AddSASFrame(const SASFrame6 &frame)
 }
 
 void
+SASFrameSynth::GetSASFrame(SASFrame6 *frame)
+{
+    *frame = mSASFrame;
+}
+
+void
 SASFrameSynth::ComputeSamples(WDL_TypedBuf<BL_FLOAT> *samples)
 {
     UpdateSASData();
