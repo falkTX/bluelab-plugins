@@ -215,6 +215,7 @@ SASFrameSynth::ComputeSamplesPartialsRaw(WDL_TypedBuf<BL_FLOAT> *samples)
     }
 
     SASFrame6::SASPartial partial;
+    BL_FLOAT twoPiSR = 2.0*M_PI/mSampleRate;
     for (int i = 0; i < mPartials.size(); i++)
     {
         BL_FLOAT phase = 0.0;
@@ -224,12 +225,13 @@ SASFrameSynth::ComputeSamplesPartialsRaw(WDL_TypedBuf<BL_FLOAT> *samples)
         if (prevPartialIdx != -1)
             phase = mPrevPartials[prevPartialIdx].mPhase;
 
-        BL_FLOAT twoPiSR = 2.0*M_PI/mSampleRate;
-        
-        for (int j = 0; j < samples->GetSize()/mOverlapping; j++)
+        int numSamples = samples->GetSize()/mOverlapping;
+        BL_FLOAT partialT = 0.0;
+        BL_FLOAT partialTIncr = 1.0/numSamples;
+        for (int j = 0; j < numSamples; j++)
         {
             // Get interpolated partial
-            BL_FLOAT partialT = ((BL_FLOAT)j)/(samples->GetSize()/mOverlapping);
+            //BL_FLOAT partialT = ((BL_FLOAT)j)/numSamples;
             GetPartial(&partial, i, partialT);
             
             BL_FLOAT freq = partial.mFreq;
@@ -245,6 +247,8 @@ SASFrameSynth::ComputeSamplesPartialsRaw(WDL_TypedBuf<BL_FLOAT> *samples)
             
             //phase += 2.0*M_PI*freq/mSampleRate;
             phase += twoPiSR*freq;
+
+            partialT += partialTIncr;
         }
         
         mPartials[i].mPhase = phase;
