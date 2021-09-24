@@ -28,7 +28,10 @@
 //#define ONSET_VALUE_THRESHOLD 0.0012
 //#define ONSET_VALUE_THRESHOLD 0.06
 //#define ONSET_VALUE_THRESHOLD 0.001 // Works ("bowl": takes the two peaks)
-#define ONSET_VALUE_THRESHOLD 0.0025 // Works ("bowl": only take the main peak)
+
+// TODO: find a good method to get a threshold independent to amplitude etc.
+//#define ONSET_VALUE_THRESHOLD 0.0025 // Works ("bowl": only take the main peak)
+#define ONSET_VALUE_THRESHOLD 40.0 // New value that work
 
 // Shift, so the onset peaks are in synch with mAmplitude 
 #define ONSET_HISTORY_HACK 1
@@ -201,7 +204,7 @@ SASFrameAna::Compute(SASFrame6 *frame)
     ComputeWarping(&warping, &warpingInv, freq);
 
     bool onsetDetected = ComputeOnset();
-    
+
     // TODO: denorm partials, for "source" synthesis
     
     //
@@ -457,7 +460,7 @@ SASFrameAna::ComputeOnset()
     
     BL_FLOAT onsetValue = mOnsetDetector->GetCurrentOnsetValue();
 
-#if DEBUG_DUMP_VALUES
+#if 0 //1
     BLDebug::AppendValue("onset.txt", onsetValue);
 #endif
     
