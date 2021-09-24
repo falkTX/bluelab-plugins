@@ -194,8 +194,7 @@ SASViewerProcess5::ProcessFftBuffer(WDL_TypedBuf<WDL_FFT_COMPLEX> *ioBuffer,
 }
 
 void
-SASViewerProcess5::ProcessSamplesBuffer(WDL_TypedBuf<BL_FLOAT> *ioBuffer,
-                                        WDL_TypedBuf<BL_FLOAT> *scBuffer)
+SASViewerProcess5::ProcessSamplesPost(WDL_TypedBuf<BL_FLOAT> *ioBuffer)
 {    
     // Create a separate buffer for samples synthesis from partials
     // (because it doesn't use overlap)
