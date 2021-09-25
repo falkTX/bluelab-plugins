@@ -35,6 +35,7 @@ public:
     //
     
     SpectroMeter(BL_FLOAT x, BL_FLOAT y,
+                 BL_FLOAT textWidth,
                  int timeParamIdx, int freqParamIdx,
                  int buffersize, BL_FLOAT sampleRate,
                  DisplayType type = SPECTRO_METER_DISPLAY_SELECTION);
@@ -122,6 +123,8 @@ protected:
 
     IColor mBorderColor;
     float mBorderWidth;
+
+    BL_FLOAT mTextWidth;
 };
 
 #endif

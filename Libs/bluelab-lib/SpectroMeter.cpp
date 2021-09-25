@@ -15,9 +15,18 @@
 
 #define DEFAULT_TEXT "------------------"
 
+#ifdef WIN32
+// On windows, text measure is smaller. Must take more "-" to fill the text box
+// There is the "textWidth" argument, to grow the box, but we also need to add
+// exactly the right number of "-", to fill the full box, but without
+// goind over (otherwise this makes 1 pixel over on the left)
+#define DEFAULT_TEXT   "-----------------------"
+#endif
+
 #define TEXT_ALIGN EAlign::Far
 
 SpectroMeter::SpectroMeter(BL_FLOAT x, BL_FLOAT y,
+                           BL_FLOAT textWidth,
                            int timeParamIdx, int freqParamIdx,
                            int bufferSize, BL_FLOAT sampleRate,
                            DisplayType type)
@@ -52,6 +61,8 @@ SpectroMeter::SpectroMeter(BL_FLOAT x, BL_FLOAT y,
 
     mBorderColor = IColor(255, 0, 0, 0);
     mBorderWidth = -1.0;
+
+    mTextWidth = textWidth;
     
     ClearUI();
 
@@ -83,7 +94,7 @@ void
 SpectroMeter::GenerateUI(GUIHelper12 *guiHelper,
                          IGraphics *graphics,
                          int offsetX, int offsetY)
-{
+{    
     IColor valueColor;
     //guiHelper->GetValueTextColor(&valueColor);
     guiHelper->GetValueTextColorLight(&valueColor);
@@ -96,7 +107,8 @@ SpectroMeter::GenerateUI(GUIHelper12 *guiHelper,
                                     DEFAULT_TEXT, TEXT_FIELD_V_SIZE,
                                     FONT,
                                     valueColor, TEXT_ALIGN,
-                                    0.0, 0.0, mBorderColor, mBorderWidth);
+                                    0.0, 0.0, mBorderColor, mBorderWidth,
+                                    mTextWidth);
 
     IRECT cp0 = mCursorPosTexts[0]->GetRECT();
     mCursorPosTexts[1] =
@@ -108,7 +120,8 @@ SpectroMeter::GenerateUI(GUIHelper12 *guiHelper,
                                     DEFAULT_TEXT, TEXT_FIELD_V_SIZE,
                                     FONT,
                                     valueColor, TEXT_ALIGN,
-                                    0.0, 0.0, mBorderColor, mBorderWidth);
+                                    0.0, 0.0, mBorderColor, mBorderWidth,
+                                    mTextWidth);
 
     if (mDisplayType == SPECTRO_METER_DISPLAY_SELECTION)
     {
@@ -121,7 +134,8 @@ SpectroMeter::GenerateUI(GUIHelper12 *guiHelper,
                                         DEFAULT_TEXT, TEXT_FIELD_V_SIZE,
                                         FONT,
                                         valueColor, TEXT_ALIGN,
-                                        0.0, 0.0, mBorderColor, mBorderWidth);
+                                        0.0, 0.0, mBorderColor, mBorderWidth,
+                                        mTextWidth);
         IRECT sp0 = mSelPosTexts[0]->GetRECT();
         
         mSelPosTexts[1] =
@@ -134,7 +148,8 @@ SpectroMeter::GenerateUI(GUIHelper12 *guiHelper,
                                         DEFAULT_TEXT, TEXT_FIELD_V_SIZE,
                                         FONT,
                                         valueColor, TEXT_ALIGN,
-                                        0.0, 0.0, mBorderColor, mBorderWidth);
+                                        0.0, 0.0, mBorderColor, mBorderWidth,
+                                        mTextWidth);
     
         // Selection size
         mSelSizeTexts[0] =
@@ -146,7 +161,8 @@ SpectroMeter::GenerateUI(GUIHelper12 *guiHelper,
                                         DEFAULT_TEXT, TEXT_FIELD_V_SIZE,
                                         FONT,
                                         valueColor, TEXT_ALIGN,
-                                        0.0, 0.0, mBorderColor, mBorderWidth);
+                                        0.0, 0.0, mBorderColor, mBorderWidth,
+                                        mTextWidth);
         IRECT ss0 = mSelSizeTexts[0]->GetRECT();
         
         mSelSizeTexts[1] =
@@ -159,7 +175,8 @@ SpectroMeter::GenerateUI(GUIHelper12 *guiHelper,
                                         DEFAULT_TEXT, TEXT_FIELD_V_SIZE,
                                         FONT,
                                         valueColor, TEXT_ALIGN,
-                                        0.0, 0.0, mBorderColor, mBorderWidth);
+                                        0.0, 0.0, mBorderColor, mBorderWidth,
+                                        mTextWidth);
     }
     
     UpdateTextBGColor();

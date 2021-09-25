@@ -761,11 +761,14 @@ GUIHelper12::CreateTextButton(IGraphics *graphics, float x, float y,
                               const IColor &color, EAlign align,
                               float offsetX, float offsetY,
                               const IColor &borderColor,
-                              float borderWidth)
+                              float borderWidth, float width)
 {
     IText text(size, color, font, align);
-    
-    float width = GetTextWidth(graphics, text, textStr);
+
+    // NOTE: GetTextWidth() is not reliable. It gives different values on
+    // Windows than on Linux.
+    if (width < 0.0)
+        width = GetTextWidth(graphics, text, textStr);
     
     IRECT rect(x + offsetX, y + offsetY,
                (x + offsetX + width), (y  + size + offsetY));

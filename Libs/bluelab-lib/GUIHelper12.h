@@ -172,7 +172,8 @@ public:
                                          const IColor &color, EAlign align,
                                          float offsetX = 0.0, float offsetY = 0.0,
                                          const IColor &borderColor = DEFAULT_BGCOLOR,
-                                         float borderWidth = -1.0);
+                                         float borderWidth = -1.0,
+                                         float width = -1);
     
     IBitmapControl *CreateBitmap(IGraphics *graphics,
                                  float x, float y,
