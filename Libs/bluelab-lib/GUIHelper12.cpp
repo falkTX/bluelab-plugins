@@ -1957,7 +1957,8 @@ GUIHelper12::GetGraphSeparatorColor(IColor *sepColor)
 }
 
 float
-GUIHelper12::GetTextWidth(IGraphics *graphics, const IText &text, const char *textStr)
+GUIHelper12::GetTextWidth(IGraphics *graphics, const IText &text,
+                          const char *textStr)
 {
     // Measure
     IRECT textRect;
