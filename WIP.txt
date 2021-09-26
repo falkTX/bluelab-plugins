@@ -299,7 +299,7 @@ UST		    :
 - Buy a Mac book air M1 (amazon: 1035€) and port tonative  M1
 
 ====
-DAW known problems
+DAW known problems - Linux
 ====
 - AutoGain: Bitwig3.3.1/vst3/linux: automations are not written
 - AutoGain: Bitwig3.3.1/vst2/linux: automation are not re-read
@@ -402,7 +402,7 @@ are not exactly the same (don't know why)
 
 - BUG: Ghost: fat tabs bar text (when tooltip)
 
-The guy who advertized its spectrogram software in bluelab size comments...
+The guy who advertized its spectrogram software in bluelab site comments...
 https://github.com/Christoph-Lauer/Sonogram
 https://www.youtube.com/channel/UCG3u-G3P_SsiDGhGKRwlnyw/featured
 "2020/03/18" - christophlauer@me.com
@@ -410,5 +410,63 @@ https://www.youtube.com/channel/UCG3u-G3P_SsiDGhGKRwlnyw/featured
 ===
 Win Mac2
 ===
-
 Installed Ableton 9, 10,11
+Downloaded Protools versions (+ Dev) + asked license
+(TODO: after lincese, check if we can launch Protools or only Protools Dev,
+and all install correponding versions) 
+Downloading Cubase versions: https://o.steinberg.net/en/support/downloads.html
+
+ab11: Ableton 11, vst2
+
+====
+BL-Air		    : ab11
+BL-AutoGain	    : ab11
+BL-Bat		    : 
+BL-Chroma	    : wip
+BL-Denoiser	    : 
+BL-DUET		    :	
+BL-Envelope	    :	
+BL-EQHack	    : 
+BL-Gain12	    : 
+BL-Gain200	    : 
+BL-Gain24	    : 
+BL-Gain60	    : 
+BL-Ghost	    : 
+BL-GhostViewer	    : 
+BL-Impulses	    : 
+BL-Infra	    : 
+BL-InfrasonicViewer : 
+BL-InfraSynth	    :	
+BL-LoFi		    : 
+BL-OnsetDetect	    :	
+BL-Panogram	    : 
+BL-PitchShift	    : 
+BL-Precedence	    : 
+BL-Rebalance	    : 
+BL-Reverb	    :
+BL-ReverbDepth	    :
+BL-SampleDelay	    : 
+BL-SASViewer	    : 
+BL-Saturate	    : 
+BL-Shaper	    : 
+BL-Sine		    : 
+BL-SoundMetaViewer  :	
+BL-Spatializer	    : 
+BL-SpectralDiff	    : 
+BL-SpectroExpe	    :
+BL-SpectrumView	    :
+BL-StereoDeReverb   :
+BL-StereoPan	    : 
+BL-StereoWidth	    : 
+BL-Wav3s	    : 
+UST		    :
+====
+
+- NOTE: Ableton11/Win: change mode => automation curve disappears
+=> this is normal, when changing mode, we change the displeyed automated parameter
+to "mode". We can then select again "Gain" as automation parameter shown
+- NOTE: Ableton11/Win: after switching from "write" to "read" mode,
+need to right click on ableton plug param then "re-enable automation"
+(the automation curve then turns from white to orange)
+
+====
