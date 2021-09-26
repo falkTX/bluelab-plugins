@@ -81,7 +81,10 @@ ResizeGUIPluginInterface::GUIResizeParamChange(int paramNum,
             for (int i = 0; i < numParams; i++)
             {
                 if (i != paramNum)
-                    buttons[i]->SetValueFromUserInput(0.0);
+                {
+                    if (buttons[i] != NULL)
+                        buttons[i]->SetValueFromUserInput(0.0);
+                }
             }
         }
     }
