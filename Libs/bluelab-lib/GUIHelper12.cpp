@@ -62,7 +62,7 @@
 
 // Do not go to the maximum of 135 degrees
 // (STYLE_BLUELAB_V3)
-#define SVG_KNOB_MAX_ANGLE 126.0 //130.68
+#define SVG_KNOB_MAX_ANGLE 126.0
 
 GUIHelper12::GUIHelper12(Style style)
 {
