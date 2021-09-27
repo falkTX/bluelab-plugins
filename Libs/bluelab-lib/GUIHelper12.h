@@ -354,6 +354,7 @@ public:
     void GetCircleGDOffsetY(int *y);
 
     void AttachToolTipControl(IGraphics *graphics);
+    void AttachTextEntryControl(IGraphics *graphics);
 
     // Graph separator
     void GetGraphSeparatorColor(IColor *sepColor);
