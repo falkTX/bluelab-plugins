@@ -60,6 +60,9 @@
 // some letters like g ar taller than other, like a
 #define BLUELAB_V3_PLUG_NAME_HEIGHT 14
 
+// Do not go to the maximum of 135 degrees
+// (STYLE_BLUELAB_V3)
+#define SVG_KNOB_MAX_ANGLE 126.0 //130.68
 
 GUIHelper12::GUIHelper12(Style style)
 {
@@ -476,6 +479,9 @@ GUIHelper12::CreateKnobSVG(IGraphics *graphics,
     const ISVG knobSVG = graphics->LoadSVG(svgFname);
     IRECT bounds(x, y, x + width, y + height);
     ISVGKnobControl *knob = new ISVGKnobControl(bounds, knobSVG, paramIdx);
+
+    knob->SetAngles(-SVG_KNOB_MAX_ANGLE, SVG_KNOB_MAX_ANGLE);
+    
     graphics->AttachControl(knob);
     
     if (mCreateTitles)
