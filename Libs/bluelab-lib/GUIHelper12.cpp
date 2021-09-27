@@ -1956,6 +1956,13 @@ GUIHelper12::AttachToolTipControl(IGraphics *graphics)
     
 }
 
+// Use iPlug2 text entry control for text edit, not the native one
+void
+GUIHelper12::AttachTextEntryControl(IGraphics *graphics)
+{
+    graphics->AttachTextEntryControl();
+}
+
 void
 GUIHelper12::GetGraphSeparatorColor(IColor *sepColor)
 {
