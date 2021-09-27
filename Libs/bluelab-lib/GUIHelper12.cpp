@@ -2024,10 +2024,13 @@ GUIHelper12::CreateValue(IGraphics *graphics,
                  y + mValueTextOffsetY,
                  x + width/2.0 + mValueTextOffsetX,
                  y + height + mValueTextOffsetY);
-    
+        
     IText text(mValueTextSize, mValueTextColor, mValueTextFont,
                EAlign::Center, EVAlign::Middle, 0.0,
-               mValueTextBGColor, mValueTextFGColor);
+               //mValueTextBGColor,
+               mMenuCellBGColor, // Will be the text input bg color
+               //mValueTextFGColor);
+               mMenuBorderColor); // Hilighed text
     ICaptionControl *caption = new ICaptionControl(bounds, paramIdx, text,
                                                    mValueTextBGColor);
     caption->DisablePrompt(false); // Here is the magic !
