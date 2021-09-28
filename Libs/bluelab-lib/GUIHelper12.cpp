@@ -828,8 +828,11 @@ GUIHelper12::CreateXYPad(IGraphics *graphics,
                          float borderSize, bool reverseY,
                          const char *tooltip)
 {
-    std::initializer_list<int> params( { xParamIdx, yParamIdx } );
-    
+    // Ok on Linux
+    //std::initializer_list<int> params( { xParamIdx, yParamIdx } );
+    // Ok on Windows
+    std::initializer_list<int> params = { xParamIdx, yParamIdx };
+
     IBitmap trackBitmap = graphics->LoadBitmap(trackBitmapFname, 1);
     IBitmap handleBitmap = graphics->LoadBitmap(handleBitmapFname, 1);
 
