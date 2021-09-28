@@ -34,8 +34,7 @@ Partial::Partial()
     mRightIndex = 0;
     
     mFreq = 0.0;
-    mAmp = 0.0;
-    
+    mAmp = 0.0;    
     mPhase = 0.0;
     
     mState = ALIVE;
@@ -49,6 +48,10 @@ Partial::Partial()
     mAge = 0;
     
     mCookie = 0.0;
+
+    mBinIdxF = 0.0;
+    mAlpha0 = 0.0;
+    mBeta0 = 0.0;
 }
 
     

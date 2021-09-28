@@ -73,15 +73,14 @@ class Partial
         
     // All-purpose field
     BL_FLOAT mCookie;
-        
+
+    // Used e.g for PartialFilterMarchand
     SimpleKalmanFilter mKf;
 
     // QIFFT
     BL_FLOAT mBinIdxF;
     BL_FLOAT mAlpha0;
     BL_FLOAT mBeta0;
-    //BL_FLOAT mAmp;
-    //BL_FLOAT mPhase;
     
  protected:
     static unsigned long mCurrentId;

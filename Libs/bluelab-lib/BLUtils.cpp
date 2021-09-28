@@ -2947,6 +2947,26 @@ template void BLUtils::ApplyLog(WDL_TypedBuf<double> *values);
 
 template <typename FLOAT_TYPE>
 void
+BLUtils::ApplyInv(WDL_TypedBuf<FLOAT_TYPE> *values)
+{
+    int valuesSize = values->GetSize();
+    FLOAT_TYPE *valuesData = values->Get();
+    
+    for (int i = 0; i < valuesSize; i++)
+    {
+        FLOAT_TYPE val = valuesData[i];
+        
+        if (std::fabs(val) > BL_EPS)
+            val = 1.0/val;
+        
+        valuesData[i] = val;
+    }
+}
+template void BLUtils::ApplyInv(WDL_TypedBuf<float> *values);
+template void BLUtils::ApplyInv(WDL_TypedBuf<double> *values);
+
+template <typename FLOAT_TYPE>
+void
 BLUtils::MultValues(WDL_TypedBuf<FLOAT_TYPE> *buf,
                     const WDL_TypedBuf<FLOAT_TYPE> &values)
 {
@@ -3121,6 +3141,28 @@ template void BLUtils::Interp2D(WDL_TypedBuf<float> *result,
 template void BLUtils::Interp2D(WDL_TypedBuf<double> *result,
                                 const WDL_TypedBuf<double> bufs[2][2],
                                 double u, double v);
+
+template <typename FLOAT_TYPE>
+FLOAT_TYPE
+BLUtils::GetLinerp(const WDL_TypedBuf<FLOAT_TYPE> &data, FLOAT_TYPE idx)
+{
+    if (idx >= data.GetSize() - 1)
+        return data.Get()[data.GetSize() - 1];
+
+    int idxi = (int)idx;
+    FLOAT_TYPE t = idx - idxi;
+        
+    FLOAT_TYPE v0 = data.Get()[idxi];
+    FLOAT_TYPE v1 = data.Get()[idxi + 1];
+        
+    FLOAT_TYPE v = (1.0 - t)*v0 + t*v1;
+
+    return v;
+}
+template float
+BLUtils::GetLinerp(const WDL_TypedBuf<float> &data, float idx);
+template double
+BLUtils::GetLinerp(const WDL_TypedBuf<double> &data, double idx);
 
 template <typename FLOAT_TYPE>
 void
@@ -7647,12 +7689,31 @@ template bool BLUtils::IsMono(const WDL_TypedBuf<double> &leftSamples,
 
 template <typename FLOAT_TYPE>
 void
+BLUtils::Smooth(FLOAT_TYPE *ioCurrentValue, FLOAT_TYPE *ioPrevValue,
+                FLOAT_TYPE smoothFactor)
+{
+    *ioCurrentValue =
+        (1.0 - smoothFactor)*(*ioCurrentValue) + smoothFactor*(*ioPrevValue);
+        
+    *ioPrevValue = *ioCurrentValue;
+}
+template void BLUtils::Smooth(float *ioCurrentValue, float *ioPrevValue,
+                              float smoothFactor);
+template void BLUtils::Smooth(double *ioCurrentValue, double *ioPrevValue,
+                              double smoothFactor);
+
+template <typename FLOAT_TYPE>
+void
 BLUtils::Smooth(WDL_TypedBuf<FLOAT_TYPE> *ioCurrentValues,
                 WDL_TypedBuf<FLOAT_TYPE> *ioPrevValues,
                 FLOAT_TYPE smoothFactor)
 {
     if (ioCurrentValues->GetSize() != ioPrevValues->GetSize())
+    {
+        *ioPrevValues = *ioCurrentValues;
+        
         return;
+    }
     
 #if USE_SIMD_OPTIM
     int nFrames = ioCurrentValues->GetSize();
@@ -7691,7 +7752,11 @@ BLUtils::Smooth(vector<WDL_TypedBuf<FLOAT_TYPE> > *ioCurrentValues,
                 FLOAT_TYPE smoothFactor)
 {
     if (ioCurrentValues->size() != ioPrevValues->size())
+    {
+        *ioPrevValues = *ioCurrentValues;
+        
         return;
+    }
     
     for (int i = 0; i < ioCurrentValues->size(); i++)
     {

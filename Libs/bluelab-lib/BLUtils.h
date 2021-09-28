@@ -546,6 +546,9 @@ public:
 
     template <typename FLOAT_TYPE>
     static void ApplyLog(WDL_TypedBuf<FLOAT_TYPE> *values);
+
+    template <typename FLOAT_TYPE>
+    static void ApplyInv(WDL_TypedBuf<FLOAT_TYPE> *values);
     
     template <typename FLOAT_TYPE>
     static void PadZerosLeft(WDL_TypedBuf<FLOAT_TYPE> *buf, int padSize);
@@ -823,7 +826,11 @@ public:
     static void Interp2D(WDL_TypedBuf<FLOAT_TYPE> *result,
                          const WDL_TypedBuf<FLOAT_TYPE> bufs[2][2],
                          FLOAT_TYPE u, FLOAT_TYPE v);
-   
+
+    // Get from float index, with linear interpolation
+    template <typename FLOAT_TYPE>
+    static FLOAT_TYPE GetLinerp(const WDL_TypedBuf<FLOAT_TYPE> &data, FLOAT_TYPE idx);
+    
     // Resize
     template <typename FLOAT_TYPE>
     static void ResizeLinear(WDL_TypedBuf<FLOAT_TYPE> *ioBuffer, int newSize);
@@ -986,6 +993,10 @@ public:
     template <typename FLOAT_TYPE>
     static void Smooth(WDL_TypedBuf<FLOAT_TYPE> *ioCurrentValues,
                        WDL_TypedBuf<FLOAT_TYPE> *ioPrevValues,
+                       FLOAT_TYPE smoothFactor);
+
+    template <typename FLOAT_TYPE>
+    static void Smooth(FLOAT_TYPE *ioCurrentValue, FLOAT_TYPE *ioPrevValue,
                        FLOAT_TYPE smoothFactor);
     
     template <typename FLOAT_TYPE>
