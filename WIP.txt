@@ -408,7 +408,7 @@ https://www.youtube.com/channel/UCG3u-G3P_SsiDGhGKRwlnyw/featured
 "2020/03/18" - christophlauer@me.com
 
 ===
-Win Mac2
+Win 10 - Mac2
 ===
 Installed Ableton 9, 10,11
 Downloaded Protools versions (+ Dev) + asked license
@@ -418,40 +418,43 @@ Downloading Cubase versions: https://o.steinberg.net/en/support/downloads.html
 
 ab11: Ableton 11, vst2
 
+TODO: Reaper Win10, Audacity, Studio One, Protools, Cubase
+
 ====
 BL-Air		    : ab11
 BL-AutoGain	    : ab11
 BL-Bat		    : 
-BL-Chroma	    : wip
-BL-Denoiser	    : 
+BL-Chroma	    : ab11
+BL-Denoiser	    : ab11
 BL-DUET		    :	
 BL-Envelope	    :	
-BL-EQHack	    : 
-BL-Gain12	    : 
+BL-EQHack	    : ab11
+BL-Gain12	    : ab11
 BL-Gain200	    : 
-BL-Gain24	    : 
-BL-Gain60	    : 
-BL-Ghost	    : 
-BL-GhostViewer	    : 
-BL-Impulses	    : 
-BL-Infra	    : 
-BL-InfrasonicViewer : 
-BL-InfraSynth	    :	
-BL-LoFi		    : 
+BL-Gain24	    : ab11
+BL-Gain60	    : ab11
+BL-Ghost	    : ab11 (crash not repro)
+BL-GhostViewer	    : ab11
+BL-Impulses	    : ab11
+BL-Infra	    : ab11
+BL-InfrasonicViewer : ab11
+BL-InfraSynth	    :
+BL-LoFi		    : ab11
 BL-OnsetDetect	    :	
-BL-Panogram	    : 
-BL-PitchShift	    : 
-BL-Precedence	    : 
-BL-Rebalance	    : 
+BL-Panogram	    : ab11
+BL-PitchShift	    : ab11
+BL-Precedence	    : ab11
+BL-Rebalance	    : ab11
+BL-RebalanceStereo  : ab11
 BL-Reverb	    :
 BL-ReverbDepth	    :
-BL-SampleDelay	    : 
+BL-SampleDelay	    : ab11
 BL-SASViewer	    : 
-BL-Saturate	    : 
-BL-Shaper	    : 
-BL-Sine		    : 
+BL-Saturate	    : ab11
+BL-Shaper	    : ab11
+BL-Sine		    : ab11
 BL-SoundMetaViewer  :	
-BL-Spatializer	    : 
+BL-Spatializer	    : wip
 BL-SpectralDiff	    : 
 BL-SpectroExpe	    :
 BL-SpectrumView	    :
@@ -462,11 +465,14 @@ BL-Wav3s	    :
 UST		    :
 ====
 
+- WIP: recompiled all w/ blue text edit
+- TODO: finish Ableton 11 vst2, do Reaper, do Ableton 11 VST3, then Protools, then ask Cubase licenses and test Cubase
+
 - NOTE: Ableton11/Win: change mode => automation curve disappears
 => this is normal, when changing mode, we change the displeyed automated parameter
 to "mode". We can then select again "Gain" as automation parameter shown
 - NOTE: Ableton11/Win: after switching from "write" to "read" mode,
 need to right click on ableton plug param then "re-enable automation"
 (the automation curve then turns from white to orange)
-
+- TEST: teste Protools lincence (can only launch Protools 2019 Dev)
 ====

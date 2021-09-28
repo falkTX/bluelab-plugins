@@ -581,3 +581,9 @@ generator of test signals: https://www.wavtones.com/functiongenerator.php
 
 Cubase download:
 https://o.steinberg.net/en/support/downloads.html
+
+Uninstall Protools
+https://avid.secure.force.com/pkb/articles/en_US/faq/Uninstalling-Pro-Tools-12-or-newer-on-Windows-10
+
+Visual 2019 - Debug in Release mode
+https://docs.microsoft.com/fr-fr/cpp/build/how-to-debug-a-release-build?view=msvc-160
