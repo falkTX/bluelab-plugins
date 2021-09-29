@@ -1788,7 +1788,7 @@ SASFrame5::ComputeColorAux()
     // Normalize the color
     BL_FLOAT maxCol = BLUtils::ComputeMax(mColor);
     if (maxCol > BL_EPS)
-        BLUtils::MultValues(&mColor, 1.0/maxCol);
+        BLUtils::MultValues(&mColor, (BL_FLOAT)1.0/maxCol);
 #endif
 }
 
@@ -1803,7 +1803,8 @@ SASFrame5::ComputeNormWarping()
     ComputeNormWarpingAux2(&mNormWarping);
     
     if (mPrevNormWarping.GetSize() == mNormWarping.GetSize())
-        BLUtils::Smooth(&mNormWarping, &mPrevNormWarping, WARPING_SMOOTH_COEFF);
+        BLUtils::Smooth(&mNormWarping, &mPrevNormWarping,
+                        (BL_FLOAT)WARPING_SMOOTH_COEFF);
     
     // Inverse warping
     //
@@ -1812,7 +1813,8 @@ SASFrame5::ComputeNormWarping()
     ComputeNormWarpingAux2(&mNormWarpingInv, true);
     
     if (mPrevNormWarpingInv.GetSize() == mNormWarpingInv.GetSize())
-        BLUtils::Smooth(&mNormWarpingInv, &mPrevNormWarpingInv, WARPING_SMOOTH_COEFF);
+        BLUtils::Smooth(&mNormWarpingInv, &mPrevNormWarpingInv,
+                        (BL_FLOAT)WARPING_SMOOTH_COEFF);
 }
 
 // Unused

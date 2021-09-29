@@ -335,7 +335,7 @@ SASFrameAna::ComputeFrequency()
     if (mPrevFrequency < 0.0)
         mPrevFrequency = freq;
     else
-        BLUtils::Smooth(&freq, &mPrevFrequency, FREQ_SMOOTH_COEFF);
+        BLUtils::Smooth(&freq, &mPrevFrequency, (BL_FLOAT)FREQ_SMOOTH_COEFF);
 
     return freq;
 }
@@ -345,7 +345,7 @@ SASFrameAna::ComputeColor(WDL_TypedBuf<BL_FLOAT> *color, BL_FLOAT freq)
 {
     ComputeColorAux(color, freq);
     
-    BLUtils::Smooth(color, &mPrevColor, COLOR_SMOOTH_COEFF);
+    BLUtils::Smooth(color, &mPrevColor, (BL_FLOAT)COLOR_SMOOTH_COEFF);
 }
 
 void
@@ -442,7 +442,7 @@ SASFrameAna::ComputeColorAux(WDL_TypedBuf<BL_FLOAT> *color, BL_FLOAT freq)
     // Normalize the color
     BL_FLOAT maxCol = BLUtils::ComputeMax(*color);
     if (maxCol > BL_EPS)
-        BLUtils::MultValues(color, 1.0/maxCol);
+        BLUtils::MultValues(color, (BL_FLOAT)1.0/maxCol);
 }
 
 void
@@ -453,12 +453,12 @@ SASFrameAna::ComputeWarping(WDL_TypedBuf<BL_FLOAT> *warping,
     // Normal warping
     //    
     ComputeWarpingAux(warping, freq);                      
-    BLUtils::Smooth(warping, &mPrevWarping, WARPING_SMOOTH_COEFF);
+    BLUtils::Smooth(warping, &mPrevWarping, (BL_FLOAT)WARPING_SMOOTH_COEFF);
         
     // Inverse warping
     //
     ComputeWarpingAux(warpingInv, freq, true); 
-    BLUtils::Smooth(warpingInv, &mPrevWarpingInv, WARPING_SMOOTH_COEFF);
+    BLUtils::Smooth(warpingInv, &mPrevWarpingInv, (BL_FLOAT)WARPING_SMOOTH_COEFF);
 }
 
 bool
@@ -720,7 +720,8 @@ SASFrameAna::ComputeWarpingAux(WDL_TypedBuf<BL_FLOAT> *warping,
 
     // Sometimes Lagrange can make very big oscillations
     // like negative warping, leading later to negative bin index, making crash
-    BLUtils::ClipMinMax(warping, MIN_WARPING_VAL, MAX_WARPING_VAL);
+    BLUtils::ClipMinMax(warping,
+                        (BL_FLOAT)MIN_WARPING_VAL, (BL_FLOAT)MAX_WARPING_VAL);
 #endif
 }
 
