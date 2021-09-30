@@ -1379,6 +1379,14 @@ GUIHelper12::ResetParameter(Plugin *plug, int paramIdx)
         plug->SendParameterValueFromAPI(paramIdx,
                                         plug->GetParam(paramIdx)->Value(), false);
     }
+    else
+        // Must change parameter even if we are currently using the host native UI
+    {
+        plug->GetParam(paramIdx)->SetToDefault();
+        // Will inform host
+        double normalizedValue = plug->GetParam(paramIdx)->GetNormalized();
+        plug->SetParameterValue(paramIdx, normalizedValue);
+    }   
 }
 
 IControl *

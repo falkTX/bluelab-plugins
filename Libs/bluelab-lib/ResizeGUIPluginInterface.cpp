@@ -1,4 +1,4 @@
-#include <GUIHelper11.h>
+#include <GUIHelper12.h>
 #include <IGUIResizeButtonControl.h>
 #include <GraphControl11.h>
 
@@ -34,9 +34,14 @@ ResizeGUIPluginInterface::ApplyGUIResize(int guiSizeIdx)
     int newGUIWidth;
     int newGUIHeight;
     PreResizeGUI(guiSizeIdx, &newGUIWidth, &newGUIHeight);
-
+    
     if (mPlug->GetUI() != NULL)
+        // If GUI is currently opened
         mPlug->GetUI()->Resize(newGUIWidth, newGUIHeight, 1.0f, true);
+    else
+        // If GUI is currently closed
+        // (changing parameter from Host native UI)
+        mPlug->ResetLastEditorSize();
     
     mIsResizingGUI = false;
 }
@@ -72,7 +77,7 @@ ResizeGUIPluginInterface::GUIResizeParamChange(int paramNum,
             for (int i = 0; i < numParams; i++)
             {
                 if (i != paramNum)
-                    GUIHelper11::ResetParameter(mPlug, params[i]);
+                    GUIHelper12::ResetParameter(mPlug, params[i]);
             }
         }
         else
