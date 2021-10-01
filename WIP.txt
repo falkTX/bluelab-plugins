@@ -500,15 +500,15 @@ hui2 : test host UI vst2
 BL-Air		    : hui2
 BL-AutoGain	    : hui2
 BL-Bat		    : 
-BL-Chroma	    : 
-BL-Denoiser	    : 
+BL-Chroma	    : hui2
+BL-Denoiser	    : hui2
 BL-DUET		    :	
 BL-Envelope	    :	
-BL-EQHack	    : 
-BL-Gain12	    : 
+BL-EQHack	    : hui2
+BL-Gain12	    : gui2
 BL-Gain200	    : 
-BL-Gain24	    : 
-BL-Gain60	    : 
+BL-Gain24	    : hui2
+BL-Gain60	    : hui2
 BL-Ghost	    : 
 BL-GhostViewer	    : 
 BL-Impulses	    : 
@@ -540,6 +540,10 @@ BL-StereoWidth	    :
 BL-Wav3s	    : 
 UST		    :
 ====
+
+- TODO: Ghost: recheck all parameters from host UI
+- TODO: Ghost: check app quickly (check lag when resize gui long file)
+- TODO: re-check Ghost app tabs
 
 TODO: re-test ResetParameter(): Impulses, Ghost
 TODO: test scroll speed host UI GhostViewer
