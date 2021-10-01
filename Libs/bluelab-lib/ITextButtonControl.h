@@ -44,10 +44,14 @@ class ITextButtonControl : public ITextControl
     {
         ITextControl::OnMouseDown(x, y, mod);
 
-        if(GetValue() < 0.5)
-            SetValue(1.);
-        else
-            SetValue(0.);
+        if (!mod.A && !mod.C)
+            // If we didn't just reset to default (see IControl::OnMouseDown())
+        {
+            if(GetValue() < 0.5)
+                SetValue(1.);
+            else
+                SetValue(0.);
+        }
         
         SetDirty(true);
     }
