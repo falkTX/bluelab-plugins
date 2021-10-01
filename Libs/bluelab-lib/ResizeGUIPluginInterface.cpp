@@ -72,7 +72,8 @@ ResizeGUIPluginInterface::GUIResizeParamChange(int paramNum,
         // (because we already have tested all plugs on Mac,
         // and half of the hosts on Windows)
         if (!winPlatform || !fixAbletonWin ||
-            (mPlug->GetHost() != kHostAbletonLive))
+            (mPlug->GetHost() != kHostAbletonLive) ||
+            (mPlug->GetUI() == NULL)) // host UI ?
         {
             for (int i = 0; i < numParams; i++)
             {
