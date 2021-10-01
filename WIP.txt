@@ -512,8 +512,8 @@ BL-Gain60	    : hui2
 BL-Ghost	    : hui2
 BL-GhostViewer	    : hui2
 BL-Impulses	    : hui2
-BL-Infra	    : 
-BL-InfrasonicViewer : 
+BL-Infra	    : hui2
+BL-InfrasonicViewer : hui2
 BL-InfraSynth	    :
 BL-LoFi		    : 
 BL-OnsetDetect	    :	
