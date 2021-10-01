@@ -509,9 +509,9 @@ BL-Gain12	    : gui2
 BL-Gain200	    : 
 BL-Gain24	    : hui2
 BL-Gain60	    : hui2
-BL-Ghost	    : 
-BL-GhostViewer	    : 
-BL-Impulses	    : 
+BL-Ghost	    : hui2
+BL-GhostViewer	    : hui2
+BL-Impulses	    : hui2
 BL-Infra	    : 
 BL-InfrasonicViewer : 
 BL-InfraSynth	    :
