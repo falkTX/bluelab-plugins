@@ -515,10 +515,10 @@ BL-Impulses	    : hui2
 BL-Infra	    : hui2
 BL-InfrasonicViewer : hui2
 BL-InfraSynth	    :
-BL-LoFi		    : 
+BL-LoFi		    : hui2
 BL-OnsetDetect	    :	
-BL-Panogram	    : 
-BL-PitchShift	    : 
+BL-Panogram	    : hui2
+BL-PitchShift	    : hui2
 BL-Precedence	    : 
 BL-Rebalance	    : 
 BL-RebalanceStereo  : 
