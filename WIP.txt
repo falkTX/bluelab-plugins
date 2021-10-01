@@ -495,7 +495,9 @@ need to right click on ableton plug param then "re-enable automation"
 
 ====
 Linux
-hui2 : test host UI vst2
+
+hui2 : test host UI vst2 (Reaper)
+ord: reordered parameters for good host UI display
 ====
 BL-Air		    : hui2
 BL-AutoGain	    : hui2
@@ -505,7 +507,7 @@ BL-Denoiser	    : hui2
 BL-DUET		    :	
 BL-Envelope	    :	
 BL-EQHack	    : hui2
-BL-Gain12	    : gui2
+BL-Gain12	    : hui2
 BL-Gain200	    : 
 BL-Gain24	    : hui2
 BL-Gain60	    : hui2
@@ -528,26 +530,20 @@ BL-SampleDelay	    : hui2
 BL-SASViewer	    : 
 BL-Saturate	    : hui2
 BL-Shaper	    : hui2
-BL-Sine		    : 
-BL-SoundMetaViewer  :	
-BL-Spatializer	    : 
-BL-SpectralDiff	    : 
+BL-Sine		    : hui2
+BL-SoundMetaViewer  : 
+BL-Spatializer	    : hui2
+BL-SpectralDiff	    : hui2
 BL-SpectroExpe	    :
 BL-SpectrumView	    :
 BL-StereoDeReverb   :
-BL-StereoPan	    : 
-BL-StereoWidth	    : 
-BL-Wav3s	    : 
+BL-StereoPan	    : hui2
+BL-StereoWidth	    : hui2
+BL-Wav3s	    : hui2
 UST		    :
 ====
 
 - TODO: reorder all parameters!!!!
 
-- TODO: Ghost: recheck all parameters from host UI
-- TODO: Ghost: check app quickly (check lag when resize gui long file)
-- TODO: re-check Ghost app tabs
-
-TODO: re-test ResetParameter(): Impulses, Ghost
-TODO: test scroll speed host UI GhostViewer
 
 TODO: re-test GUI resize Ableton (+ host UI)
