@@ -43,7 +43,6 @@ class VumeterControl : public IBKnobControl
                          const IKeyPress& key) override { return false; }
     virtual void OnMouseOver(float x, float y, const IMouseMod& mod) override {}
     virtual void OnMouseOut() override {}
-  
 };
 
 #endif
