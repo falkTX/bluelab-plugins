@@ -541,4 +541,7 @@ BL-Wav3s	    :
 UST		    :
 ====
 
-TODO: re-test GUI resize Ableton (+ host UI) 
+TODO: re-test ResetParameter(): Impulses, Ghost
+TODO: test scroll speed host UI GhostViewer
+
+TODO: re-test GUI resize Ableton (+ host UI)
