@@ -519,15 +519,15 @@ BL-LoFi		    : hui2
 BL-OnsetDetect	    :	
 BL-Panogram	    : hui2
 BL-PitchShift	    : hui2
-BL-Precedence	    : 
-BL-Rebalance	    : 
-BL-RebalanceStereo  : 
+BL-Precedence	    : hui2
+BL-Rebalance	    : hui2
+BL-RebalanceStereo  : hui2
 BL-Reverb	    :
 BL-ReverbDepth	    :
-BL-SampleDelay	    : 
+BL-SampleDelay	    : hui2
 BL-SASViewer	    : 
-BL-Saturate	    : 
-BL-Shaper	    : 
+BL-Saturate	    : hui2
+BL-Shaper	    : hui2
 BL-Sine		    : 
 BL-SoundMetaViewer  :	
 BL-Spatializer	    : 
@@ -540,6 +540,8 @@ BL-StereoWidth	    :
 BL-Wav3s	    : 
 UST		    :
 ====
+
+- TODO: reorder all parameters!!!!
 
 - TODO: Ghost: recheck all parameters from host UI
 - TODO: Ghost: check app quickly (check lag when resize gui long file)
