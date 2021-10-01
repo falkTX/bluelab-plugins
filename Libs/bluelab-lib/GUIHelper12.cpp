@@ -1373,6 +1373,7 @@ GUIHelper12::CreateRadioButtonsCustom(IGraphics *graphics,
 void
 GUIHelper12::ResetParameter(Plugin *plug, int paramIdx)
 {
+#if 0 // Origin (buggy)
     if (plug->GetUI())
     {
         plug->GetParam(paramIdx)->SetToDefault();
@@ -1386,7 +1387,14 @@ GUIHelper12::ResetParameter(Plugin *plug, int paramIdx)
         // Will inform host
         double normalizedValue = plug->GetParam(paramIdx)->GetNormalized();
         plug->SetParameterValue(paramIdx, normalizedValue);
-    }   
+    }
+#endif
+#if 1 // FIX Reaper GUI resize from host UI
+      // (when setting small gui to 1, it stayed at 0)
+    plug->GetParam(paramIdx)->SetToDefault();
+    plug->SendParameterValueFromAPI(paramIdx,
+                                    plug->GetParam(paramIdx)->Value(), false);
+#endif
 }
 
 IControl *
