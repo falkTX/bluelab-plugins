@@ -499,51 +499,48 @@ Linux
 hui2 : test host UI vst2 (Reaper)
 ord: reordered parameters for good host UI display
 ====
-BL-Air		    : hui2
-BL-AutoGain	    : hui2
+BL-Air		    : hui2, ord
+BL-AutoGain	    : hui2, ord
 BL-Bat		    : 
-BL-Chroma	    : hui2
-BL-Denoiser	    : hui2
+BL-Chroma	    : hui2, ord
+BL-Denoiser	    : hui2, ord
 BL-DUET		    :	
 BL-Envelope	    :	
-BL-EQHack	    : hui2
-BL-Gain12	    : hui2
+BL-EQHack	    : hui2, ord
+BL-Gain12	    : hui2, ord
 BL-Gain200	    : 
-BL-Gain24	    : hui2
-BL-Gain60	    : hui2
-BL-Ghost	    : hui2
-BL-GhostViewer	    : hui2
-BL-Impulses	    : hui2
-BL-Infra	    : hui2
-BL-InfrasonicViewer : hui2
+BL-Gain24	    : hui2, ord
+BL-Gain60	    : hui2, ord
+BL-Ghost	    : hui2, ord
+BL-GhostViewer	    : hui2, ord
+BL-Impulses	    : hui2, ord
+BL-Infra	    : hui2, ord,
+BL-InfrasonicViewer : hui2, ord
 BL-InfraSynth	    :
-BL-LoFi		    : hui2
+BL-LoFi		    : hui2, ord
 BL-OnsetDetect	    :	
-BL-Panogram	    : hui2
-BL-PitchShift	    : hui2
-BL-Precedence	    : hui2
-BL-Rebalance	    : hui2
-BL-RebalanceStereo  : hui2
+BL-Panogram	    : hui2, ord
+BL-PitchShift	    : hui2, ord
+BL-Precedence	    : hui2, ord
+BL-Rebalance	    : hui2, ord
+BL-RebalanceStereo  : hui2, ord
 BL-Reverb	    :
 BL-ReverbDepth	    :
-BL-SampleDelay	    : hui2
+BL-SampleDelay	    : hui2, ord
 BL-SASViewer	    : 
-BL-Saturate	    : hui2
-BL-Shaper	    : hui2
-BL-Sine		    : hui2
+BL-Saturate	    : hui2, ord,
+BL-Shaper	    : hui2, ord
+BL-Sine		    : hui2, ord
 BL-SoundMetaViewer  : 
-BL-Spatializer	    : hui2
-BL-SpectralDiff	    : hui2
+BL-Spatializer	    : hui2, ord
+BL-SpectralDiff	    : hui2, ord
 BL-SpectroExpe	    :
 BL-SpectrumView	    :
 BL-StereoDeReverb   :
-BL-StereoPan	    : hui2
-BL-StereoWidth	    : hui2
-BL-Wav3s	    : hui2
+BL-StereoPan	    : hui2, ord,
+BL-StereoWidth	    : hui2, ord
+BL-Wav3s	    : hui2, ord
 UST		    :
 ====
-
-- TODO: reorder all parameters!!!!
-
 
 TODO: re-test GUI resize Ableton (+ host UI)
