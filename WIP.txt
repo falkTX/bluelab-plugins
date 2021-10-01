@@ -492,3 +492,53 @@ need to right click on ableton plug param then "re-enable automation"
 - BUG: Reaper: reaper "UI" mode, changing gui size is buggy from reaper native ui
 - BUG: Reaper UI (or host native UI): many problems with different plugins
 ====
+
+====
+Linux
+hui2 : test host UI vst2
+====
+BL-Air		    : hui2
+BL-AutoGain	    : hui2
+BL-Bat		    : 
+BL-Chroma	    : 
+BL-Denoiser	    : 
+BL-DUET		    :	
+BL-Envelope	    :	
+BL-EQHack	    : 
+BL-Gain12	    : 
+BL-Gain200	    : 
+BL-Gain24	    : 
+BL-Gain60	    : 
+BL-Ghost	    : 
+BL-GhostViewer	    : 
+BL-Impulses	    : 
+BL-Infra	    : 
+BL-InfrasonicViewer : 
+BL-InfraSynth	    :
+BL-LoFi		    : 
+BL-OnsetDetect	    :	
+BL-Panogram	    : 
+BL-PitchShift	    : 
+BL-Precedence	    : 
+BL-Rebalance	    : 
+BL-RebalanceStereo  : 
+BL-Reverb	    :
+BL-ReverbDepth	    :
+BL-SampleDelay	    : 
+BL-SASViewer	    : 
+BL-Saturate	    : 
+BL-Shaper	    : 
+BL-Sine		    : 
+BL-SoundMetaViewer  :	
+BL-Spatializer	    : 
+BL-SpectralDiff	    : 
+BL-SpectroExpe	    :
+BL-SpectrumView	    :
+BL-StereoDeReverb   :
+BL-StereoPan	    : 
+BL-StereoWidth	    : 
+BL-Wav3s	    : 
+UST		    :
+====
+
+TODO: re-test GUI resize Ableton (+ host UI) 
