@@ -168,6 +168,13 @@
 // #bluelab, for linux
 #define HAVE_UNISTD_H 0
 
+// #bluelab Mac M1
+#ifdef __APPLE__
+#ifdef __arm64__
+#define HAVE_UNISTD_H 1
+#endif
+#endif
+
 /* Define to 1 or 0, depending whether the compiler supports simple visibility
    declarations. */
 #define HAVE_VISIBILITY 

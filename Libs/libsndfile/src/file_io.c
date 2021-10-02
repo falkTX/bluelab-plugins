@@ -64,6 +64,26 @@
 #define O_BINARY 0
 #endif
 
+// #bluelab
+#ifndef ftruncate
+int ftruncate(int, off_t);
+#endif
+#ifndef fsync
+int fsync(int) __DARWIN_ALIAS_C(fsync);
+#endif
+#ifndef lseek
+off_t lseek(int, off_t, int);
+#endif
+#ifndef read
+ssize_t read(int, void *, size_t) __DARWIN_ALIAS_C(read);
+#endif
+#ifndef write
+ssize_t write(int __fd, const void * __buf, size_t __nbyte) __DARWIN_ALIAS_C(write);
+#endif
+#ifndef close
+int close(int) __DARWIN_ALIAS_C(close);
+#endif
+
 static void psf_log_syserr (SF_PRIVATE *psf, int error) ;
 
 #if (USE_WINDOWS_API == 0)
