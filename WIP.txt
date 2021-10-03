@@ -219,7 +219,12 @@ Installation for mac build machine:
 - xcode select --install
 - xcode-select --switch
 - connect XCode to AppleID website
-- install certificates (need restart keyhain, XCode, and even the whole Mac)
+- install certificates (need restart keychain, XCode, and even the whole Mac)
+=> For Developer ID Installer, need to generate 1 certificate for each
+build machine (due to private key...). For this, need to generate a "request"
+from keychain access, then send the file to Apple Dev site.
+Or else(not tested), go to prev mac and export the private key,
+then import it on the new mac)
 ===
 
 
