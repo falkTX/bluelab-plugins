@@ -1,4 +1,3 @@
-
 ===
 DEV
 ---
@@ -549,3 +548,5 @@ UST		    :
 ====
 
 TODO: re-test GUI resize Ableton (+ host UI)
+
+TODO: when back to Mac2, add all the project files to git for Rebalance Stereo
