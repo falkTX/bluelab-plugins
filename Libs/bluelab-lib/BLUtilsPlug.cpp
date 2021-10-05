@@ -101,6 +101,9 @@ BLUtilsPlug::SetPlugResizable(Plugin *plug, bool flag)
 void
 BLUtilsPlug::BypassPlug(double **inputs, double **outputs, int nFrames)
 {
+    if (inputs == NULL)
+        return;
+    
     if ((inputs[0] != NULL) && (outputs[0] != NULL))
         memcpy(outputs[0], inputs[0], nFrames*sizeof(double));
 
