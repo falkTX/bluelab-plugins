@@ -65,6 +65,7 @@
 #endif
 
 // #bluelab
+#ifdef __APPLE__
 #ifndef ftruncate
 int ftruncate(int, off_t);
 #endif
@@ -82,6 +83,7 @@ ssize_t write(int __fd, const void * __buf, size_t __nbyte) __DARWIN_ALIAS_C(wri
 #endif
 #ifndef close
 int close(int) __DARWIN_ALIAS_C(close);
+#endif
 #endif
 
 static void psf_log_syserr (SF_PRIVATE *psf, int error) ;
