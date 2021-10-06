@@ -829,6 +829,7 @@ SASViewerProcess5::DisplayTracking()
         // Add lines corresponding to the well tracked partials
         vector<Partial> partials = mCurrentNormPartials;
 
+#if !OPTIM_PARTIAL_TRACKING_MEMORY
         // Create blue lines from trackers
         vector<LinesRender2::Point> line;
         for (int i = 0; i < partials.size(); i++)
