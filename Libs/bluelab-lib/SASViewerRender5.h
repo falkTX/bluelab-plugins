@@ -90,7 +90,7 @@ public:
     
     void SetAdditionalPoints(SASViewerProcess5::DisplayMode mode,
                              const vector<LinesRender2::Line> &lines,
-                             BL_FLOAT lineWidth);
+                             BL_FLOAT lineWidth, bool optimSameColor);
     void ClearAdditionalPoints();
     void ShowAdditionalPoints(SASViewerProcess5::DisplayMode mode, bool flag);
     

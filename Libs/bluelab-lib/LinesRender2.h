@@ -207,7 +207,6 @@ public:
     void SetShowAxes(bool flag);
     
     void SetDBScale(bool flag, BL_FLOAT minDB);
-
     
     // Additional, unstrutured lines
     //
@@ -232,6 +231,10 @@ public:
     void SetDirty();
     
     void SetColors(unsigned char color0[4], unsigned char color1[4]);
+
+    // Optimization
+    // TODO: make the same thing for normal points
+    void SetAdditionalPointsOptimSameColor(bool flag);
     
     void DBG_ForceDensityNumSlices();
     void DBG_SetDisplayAllSlices();
@@ -267,7 +270,10 @@ protected:
     
     void DoDrawPoints(NVGcontext *vg, const vector<vector<Point> > &points,
                       unsigned char inColor[4], BL_FLOAT pointSize = -1.0);
-
+    // Optimization
+    void DoDrawPointsSameColor(NVGcontext *vg, const vector<Line> &lines,
+                               unsigned char inColor[4], BL_FLOAT pointSize = -1.0);
+    
     void DoDrawPointsSimple(NVGcontext *vg, const vector<Point> &points,
                             BL_FLOAT pointSize = -1.0);
     
@@ -387,6 +393,9 @@ protected:
     bool mUseLegacyLock;
 
     NVGcontext *mVg;
+
+    // Optim
+    bool mAdditionalPointsOptimSameColor;
     
 private:
     // Tmp buffers
@@ -410,6 +419,7 @@ private:
     Slice mTmpBuf16;
     vector<Line> mTmpBuf17;
     vector<Point> mTmpBuf18;
+    WDL_TypedBuf<float> mTmpDrawPointsCenters;
 };
 
 #endif // IGRAPHICS_NANOVG

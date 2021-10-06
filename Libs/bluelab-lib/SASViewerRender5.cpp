@@ -380,8 +380,10 @@ SASViewerRender5::ShowAdditionalLines(SASViewerProcess5::DisplayMode mode, bool 
 void
 SASViewerRender5::SetAdditionalPoints(SASViewerProcess5::DisplayMode mode,
                                       const vector<LinesRender2::Line> &lines,
-                                      BL_FLOAT lineWidth)
+                                      BL_FLOAT lineWidth, bool optimSameColor)
 {
+    mLinesRenders[(int)mode]->SetAdditionalPointsOptimSameColor(optimSameColor);
+    
     mLinesRenders[(int)mode]->SetAdditionalPoints(lines, lineWidth);
 }
 

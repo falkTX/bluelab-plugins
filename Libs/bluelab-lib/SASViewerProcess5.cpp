@@ -61,6 +61,14 @@
 #define DBG_DISPLAY_ZOMBIES 0
 #endif
 
+// All points green => optimizes a lot
+#define POINTS_OPTIM_SAME_COLOR 1
+
+#if DBG_DISPLAY_ZOMBIES
+// Disable optimization, to make possible to have green and pink points, for zombies
+#define POINTS_OPTIM_SAME_COLOR 0
+#endif
+
 SASViewerProcess5::SASViewerProcess5(int bufferSize,
                                      BL_FLOAT overlapping, BL_FLOAT oversampling,
                                      BL_FLOAT sampleRate)
@@ -539,7 +547,8 @@ SASViewerProcess5::DisplayDetection()
         vector<LinesRender2::Line> &partialLines = mTmpBuf6;
         PointsToLines(mPartialsPoints, &partialLines);
         
-        mSASViewerRender->SetAdditionalPoints(DETECTION, partialLines, lineWidth);
+        mSASViewerRender->SetAdditionalPoints(DETECTION, partialLines, lineWidth,
+                                              POINTS_OPTIM_SAME_COLOR);
     }
 }
 
@@ -809,7 +818,8 @@ SASViewerProcess5::DisplayZombiePoints()
         // Add all the points at the same time
         PointsToLinesMix(mPartialsPoints, mPartialsPointsZombie, &partialLines);
         
-        mSASViewerRender->SetAdditionalPoints(DETECTION, partialLines, lineWidth);
+        mSASViewerRender->SetAdditionalPoints(DETECTION, partialLines, lineWidth,
+                                              POINTS_OPTIM_SAME_COLOR);
     }
 }
 

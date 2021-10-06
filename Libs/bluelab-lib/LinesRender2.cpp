@@ -172,6 +172,8 @@ LinesRender2::LinesRender2()
     mNeedRedraw = true;
 
     mUseLegacyLock = false;
+
+    mAdditionalPointsOptimSameColor = false;
     
     Init();
 
@@ -454,6 +456,72 @@ LinesRender2::DoDrawPoints(NVGcontext *vg, const vector<vector<Point> > &points,
             nvgQuad(vg, corners, mWhitePixImg);
         }
     }
+}
+
+// Optimized if all the points have the same size and same color
+void
+LinesRender2::DoDrawPointsSameColor(NVGcontext *vg,
+                                    const vector<Line> &lines,
+                                    unsigned char inColor[4], BL_FLOAT inPointSize)
+{
+    unsigned char color0[4] = { inColor[0], inColor[1], inColor[2], inColor[3] };
+    SWAP_COLOR(color0);
+    
+    NVGcolor color =  nvgRGBA(color0[0], color0[1], color0[2], color0[3]);
+    
+    nvgStrokeColor(vg, color);
+    nvgFillColor(vg, color);
+
+    if (mWhitePixImg < 0)
+    {
+        unsigned char white[4] = { 255, 255, 255, 255 };
+        mWhitePixImg = nvgCreateImageRGBA(vg,
+                                          1, 1,
+                                          NVG_IMAGE_NEAREST,
+                                          white);
+    }
+
+    int numPoints = 0;
+    for (int i = 0; i < lines.size(); i++)
+        numPoints += lines[i].mPoints.size();
+    
+    if (mTmpDrawPointsCenters.GetSize() != numPoints*2)
+        mTmpDrawPointsCenters.Resize(numPoints*2);
+    float *centersBuf = mTmpDrawPointsCenters.Get();
+
+    BL_FLOAT pointSize = inPointSize;
+
+    int pointNum = 0;
+    for (int i = 0; i < lines.size(); i++)
+    {
+        //vector<Point> &points0 = mTmpBuf5;
+        //points0 = lines[i].mPoints;
+        const vector<Point> &points0 = lines[i].mPoints;
+        
+        for (int j = 0; j < points0.size(); j++)
+        {
+            const Point &p = points0[j];
+    
+            if (pointSize < 0.0)
+                // Global point size not defined
+                pointSize = p.mSize;
+            
+            BL_FLOAT x = p.mX;
+            BL_FLOAT y = p.mY;
+            
+            BL_GUI_FLOAT yf = y;
+#if GRAPH_CONTROL_FLIP_Y
+            yf = mViewHeight - yf;
+#endif
+
+            centersBuf[pointNum*2] = x;
+            centersBuf[pointNum*2 + 1] = yf;
+            
+            pointNum++;
+        }
+    }
+
+    nvgQuads(vg, centersBuf, numPoints, pointSize, mWhitePixImg);
 }
 
 void
@@ -1576,11 +1644,44 @@ LinesRender2::DrawAdditionalPoints(NVGcontext *vg, int width, int height)
     lines = mAdditionalPoints;
     ProjectAdditionalPoints(&lines, width, height);
 
-    for (int i = 0; i < lines.size(); i++)
+    if (!mAdditionalPointsOptimSameColor)
     {
-        Line &line = lines[i];
+        // Origin: manage different colors
+        for (int i = 0; i < lines.size(); i++)
+        {
+            Line &line = lines[i];
+            
+            DoDrawPointsSimple(vg, line.mPoints, mAdditionalPointsWidth);
+        }
+    }
+    else
+    {
+        // New: optimize, with same color
+        
+        // Find the first line color
+        // (for DoDrawPointsSameColor)
+        unsigned char color[4];
+        if (!lines.empty())
+        {
+            //for (int i = 0; i < 4; i++)
+            //    color[i] = lines[0].mColor[i];
+            
+            for (int i = 0; i < lines.size(); i++)
+            {
+                if (!lines[i].mPoints.empty())
+                {
+                    const Point &p = lines[i].mPoints[0];
+                    color[0] = p.mR;
+                    color[1] = p.mG;
+                    color[2] = p.mB;
+                    color[3] = p.mA;
+                    
+                    break;
+                }   
+            }
+        }
 
-        DoDrawPointsSimple(vg, line.mPoints, mAdditionalPointsWidth);
+        DoDrawPointsSameColor(vg, lines, color, mAdditionalPointsWidth);
     }
 }
 
@@ -1633,6 +1734,12 @@ LinesRender2::SetColors(unsigned char color0[4], unsigned char color1[4])
     
     for (int i = 0; i < 4; i++)
         mColor1[i] = color1[i];
+}
+
+void
+LinesRender2::SetAdditionalPointsOptimSameColor(bool flag)
+{
+    mAdditionalPointsOptimSameColor = flag;
 }
 
 // Suppress points that are on a sgtraight line
