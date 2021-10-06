@@ -195,7 +195,7 @@ SASFrameAna::SetPartials(const vector<Partial> &partials)
     sort(mPartials.begin(), mPartials.end(), Partial::IdLess);
 
     //LinkPartialsIdx(&mPrevPartials, &mPartials);
-    IdLinker<Partial>::LinkIds(&mPrevPartials, &mPartials, false);
+    IdLinker<Partial, Partial>::LinkIds(&mPrevPartials, &mPartials, false);
 }
 
 void
