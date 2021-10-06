@@ -1377,7 +1377,7 @@ LinesRender2::SetAdditionalLines(const vector<Line> &lines, BL_FLOAT lineWidth)
 
 void
 LinesRender2::ClearAdditionalLines()
-{
+{    
     mAdditionalLines.clear();
 }
 

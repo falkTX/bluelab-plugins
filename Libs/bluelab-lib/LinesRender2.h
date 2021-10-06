@@ -70,6 +70,8 @@ public:
             mA = 0;
         
             mId = 0;
+
+            mLinkedId = -1;
         }
 
         Point(const Point &other)
@@ -90,10 +92,18 @@ public:
             mA = other.mA;
         
             mId = other.mId;
+
+            mLinkedId = other.mLinkedId;
         }
         
         virtual ~Point() {}
 
+        // For SASViewer
+        static bool IsZLEqZero(const Point &p) { return p.mZ <= 0.0; }
+
+        static bool IdLess(const Point &p1, const Point &p2)
+        { return (p1.mId < p2.mId); }
+        
         //
         BL_FLOAT mX;
         BL_FLOAT mY;
@@ -112,12 +122,28 @@ public:
         // For straight lines optimization
         bool mSkipDisplayX;
         bool mSkipDisplayZ;
+
+        // For SASViewer
+        int mLinkedId;
     };
     
     struct Line
     {
+        void ComputeIds()
+        { mId = -1;
+          if (!mPoints.empty()) mId = mPoints[0].mId; }
+        // For SASViewer
+        static bool IsPointsEmpty(const Line &line) { return line.mPoints.empty(); }
+
+        static bool IdLess(const Line &l1, const Line &l2)
+        { return (l1.mId < l2.mId); }
+        
         vector<LinesRender2::Point> mPoints;
         unsigned char mColor[4];
+
+        // For SASViewer
+        int mId;
+        int mLinkedId;
     };
     
     LinesRender2();
