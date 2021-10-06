@@ -24,6 +24,8 @@
 #include <PartialTracker7.h>
 #include <QIFFT.h> // For empirical coeffs
 
+#include <IdLinker.h>
+
 #include "SASViewerProcess5.h"
 
 
@@ -50,6 +52,8 @@
 #define DEBUG_DISABLE_DISPLAY 1 // 0
 
 #define OPTIM_PARTIAL_TRACKING_MEMORY 1
+#define OPTIM_PARTIAL_TRACKING_MEMORY2 1
+
 
 SASViewerProcess5::SASViewerProcess5(int bufferSize,
                                      BL_FLOAT overlapping, BL_FLOAT oversampling,
@@ -895,7 +899,13 @@ SASViewerProcess5::DisplayTracking()
             mFilteredPartialsPoints.pop_front();
         }
 
+#if 0 // ORIGIN
         CreateLines(prevPoints);
+#endif
+
+#if 1 // OPTIM
+        CreateLinesOptim(prevPoints);
+#endif
         
         // Set color
         for (int j = 0; j < mPartialLines.size(); j++)
@@ -1144,7 +1154,7 @@ SASViewerProcess5::CreateLines(const vector<LinesRender2::Point> &prevPoints)
         newPoint.mZ = 1.0 - incrZ;
         
         bool pointAdded = false;
-        
+
         // Search for previous lines to be continued
         for (int j = 0; j < mPartialLines.size(); j++)
         {
@@ -1170,6 +1180,106 @@ SASViewerProcess5::CreateLines(const vector<LinesRender2::Point> &prevPoints)
         // Create a new line ?
         if (!pointAdded)
         {
+            LinesRender2::Line newLine;
+            newLine.mPoints.push_back(newPoint);
+            
+            mPartialLines.push_back(newLine);
+        }
+    }
+}
+
+// More optimized version
+void
+SASViewerProcess5::CreateLinesOptim(const vector<LinesRender2::Point> &prevPoints)
+{
+    if (mSASViewerRender == NULL)
+        return;
+    
+    if (mFilteredPartialsPoints.empty())
+        return;
+    
+    // Update z for the current line points
+    //
+    int divisor = mSASViewerRender->GetNumSlices(); // - 1;
+    if (divisor <= 0)
+        divisor = 1;
+    BL_FLOAT incrZ = 1.0/divisor;
+    for (int i = 0; i < mPartialLines.size(); i++)
+    {
+        LinesRender2::Line &line = mPartialLines[i];
+        for (int j = 0; j < line.mPoints.size(); j++)
+        {
+            LinesRender2::Point &p = line.mPoints[j];
+            
+            p.mZ -= incrZ;
+        }
+    }
+
+#if !OPTIM_PARTIAL_TRACKING_MEMORY2
+    // Shorten the lines if they are too long
+    vector<LinesRender2::Line> newLines;
+    for (int i = 0; i < mPartialLines.size(); i++)
+    {
+        const LinesRender2::Line &line = mPartialLines[i];
+        
+        LinesRender2::Line newLine;
+        for (int j = 0; j < line.mPoints.size(); j++)
+        {
+            const LinesRender2::Point &p = line.mPoints[j];
+            if (p.mZ > 0.0)
+                newLine.mPoints.push_back(p);
+        }
+        
+        if (!newLine.mPoints.empty())
+            newLines.push_back(newLine);
+    }
+
+    // Update the current partial lines
+    mPartialLines = newLines;
+    newLines.clear();
+#else // Optimized
+    for (int i = 0; i < mPartialLines.size(); i++)
+    {
+        LinesRender2::Line &line = mPartialLines[i];
+        vector<LinesRender2::Point>::iterator it =
+            remove_if(line.mPoints.begin(), line.mPoints.end(),
+                      LinesRender2::Point::IsZLEqZero);
+        line.mPoints.erase(it, line.mPoints.end());
+        
+    }
+    vector<LinesRender2::Line>::iterator it2 =
+        remove_if(mPartialLines.begin(), mPartialLines.end(),
+                  LinesRender2::Line::IsPointsEmpty);
+    mPartialLines.erase(it2, mPartialLines.end());
+#endif
+    
+    // Create the new lines
+    vector<LinesRender2::Point> &newPoints =
+        mFilteredPartialsPoints[mFilteredPartialsPoints.size() - 1];
+
+    for (int i = 0; i < mPartialLines.size(); i++)
+        mPartialLines[i].ComputeIds();
+    IdLinker<LinesRender2::Point, LinesRender2::Line>::LinkIds(&newPoints,
+                                                               &mPartialLines, true);
+    
+    for (int i = 0; i < newPoints.size(); i++)
+    {
+        LinesRender2::Point newPoint = newPoints[i];
+
+        // Adjust
+        newPoint.mZ = 1.0 - incrZ;
+
+        if (newPoint.mLinkedId >= 0)
+            // Matching
+        {
+            // Add the point to prev line
+            LinesRender2::Line &prevLine = mPartialLines[newPoint.mLinkedId];
+            
+            prevLine.mPoints.push_back(newPoint);
+        }
+        else
+        {
+            // Create a new line!
             LinesRender2::Line newLine;
             newLine.mPoints.push_back(newPoint);
             

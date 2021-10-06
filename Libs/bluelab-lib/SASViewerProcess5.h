@@ -106,7 +106,9 @@ protected:
     
     // Optimized version
     void CreateLines(const vector<LinesRender2::Point> &prevPoints);
-
+    // More optimized
+    void CreateLinesOptim(const vector<LinesRender2::Point> &prevPoints);
+    
     void DenormPartials(vector<Partial> *partials);
 
     
@@ -201,6 +203,7 @@ private:
     WDL_TypedBuf<BL_FLOAT> mTmpBuf15;
     vector<LinesRender2::Line> mTmpBuf16;
     vector<Partial> mTmpBuf17;
+    vector<LinesRender2::Point> mTmpBuf18;
 };
 
 #endif // IGRAPHICS_NANOVG
