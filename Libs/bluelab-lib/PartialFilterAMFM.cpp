@@ -51,7 +51,7 @@ using namespace std;
 #define OPTIM_SAMPLES_SYNTH_SORTED_VEC 1 // 0
 
 // WIP...
-#define HARD_OPTIM 0 //1
+#define HARD_OPTIM 1 //0 //1
 
 PartialFilterAMFM::PartialFilterAMFM(int bufferSize, BL_FLOAT sampleRate)
 {    
