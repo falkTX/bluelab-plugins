@@ -53,6 +53,13 @@
 
 #define OPTIM_PARTIAL_TRACKING_MEMORY 1
 
+// WIP
+#define HARD_OPTIM 0 //1
+
+#if HARD_OPTIM
+#define DBG_DISPLAY_BETA0 0
+#define DBG_DISPLAY_ZOMBIES 0
+#endif
 
 SASViewerProcess5::SASViewerProcess5(int bufferSize,
                                      BL_FLOAT overlapping, BL_FLOAT oversampling,
