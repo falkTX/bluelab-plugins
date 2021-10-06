@@ -1242,9 +1242,12 @@ PartialFilterAMFM::FixPartialsCrossing(const vector<Partial> &partials0,
                 continue;
 
             // Try to avoid very messy results
-            if (std::fabs(p1[2].mFreq - p0[2].mFreq) > MAX_SWAP_FREQ)
+            //if (std::fabs(p1[2].mFreq - p0[2].mFreq) > MAX_SWAP_FREQ)
+            //    continue;
+            if ((p1[2].mFreq - p0[2].mFreq > MAX_SWAP_FREQ) ||
+                (p0[2].mFreq - p1[2].mFreq > MAX_SWAP_FREQ))
                 continue;
-
+ 
 #if !OPTIM_SAMPLES_SYNTH_SORTED_VEC
             int idx11 = FindPartialById(partials1, p1[2].mId);
 #else
