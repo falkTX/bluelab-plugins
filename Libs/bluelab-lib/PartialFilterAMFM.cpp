@@ -472,6 +472,7 @@ AssociatePartialsAMFM(const vector<Partial> &prevPartials,
     // Associated partials
     bool stopFlag = true;
     int numIters = 0;
+    
     do {
         stopFlag = true;
 
@@ -490,7 +491,7 @@ AssociatePartialsAMFM(const vector<Partial> &prevPartials,
             
             int nearestFreqId =
                 FindNearestFreqId(*currentPartials, prevPartial.mFreq, i);
-                
+            
             for (int j = nearestFreqId - NUM_STEPS_LOOKUP/2;
                  j < nearestFreqId + NUM_STEPS_LOOKUP/2; j++)
             {
@@ -641,9 +642,12 @@ long
 PartialFilterAMFM::FindNearestFreqId(const vector<Partial> &partials,
                                      BL_FLOAT freq, int index)
 {
-    if (index >= partials.size())
-        return -1;
+    //if (index >= partials.size())
+    //    return -1;
 
+    if (index > partials.size() - 1)
+        index = partials.size() - 1; 
+    
     if (partials[index].mFreq < freq)
     {
         for (int i = index; i < partials.size(); i++)
