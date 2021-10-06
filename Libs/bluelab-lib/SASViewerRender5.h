@@ -130,6 +130,9 @@ protected:
     unsigned long long int mAddNum;
     
     SASViewerProcess5::DisplayMode mCurrentMode;
+
+private:
+    vector<LinesRender2::Point> mTmpBuf0;
 };
 
 #endif // IGRAPHICS_NANOVG

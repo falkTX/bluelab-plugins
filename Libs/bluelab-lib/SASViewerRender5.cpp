@@ -108,7 +108,7 @@ SASViewerRender5::AddData(SASViewerProcess5::DisplayMode mode,
     if (data.GetSize() == 0)
         return;
     
-    vector<LinesRender2::Point> points;
+    vector<LinesRender2::Point> &points = mTmpBuf0;
     DataToPoints(&points, data);
     
     mLinesRenders[(int)mode]->AddSlice(points);
