@@ -1,10 +1,11 @@
 #ifndef ID_LINKER_H
 #define ID_LINKER_H
 
-template<class T> IdLinker
+template<class T>
+class IdLinker
 {
  public:
-    static void LinkIdx(vector<T> *t0Vec, vector<T> *t1Vec, bool needSort)
+    static void LinkIds(vector<T> *t0Vec, vector<T> *t1Vec, bool needSort)
     {
         if (needSort)
         {
@@ -15,16 +16,16 @@ template<class T> IdLinker
         // Init
         for (int i = 0; i < t0Vec->size(); i++)
             (*t0Vec)[i].mLinkedId = -1;
-        for (int i = 0; i < t1Vc->size(); i++)
+        for (int i = 0; i < t1Vec->size(); i++)
             (*t1Vec)[i].mLinkedId = -1;
 
         int i0 = 0;
         int i1 = 0;
         while(true)
         {
-            if (i0 >= t0->size())
+            if (i0 >= t0Vec->size())
                 return;
-            if (i1 >= t1->size())
+            if (i1 >= t1Vec->size())
                 return;
         
             T &t0 = (*t0Vec)[i0];

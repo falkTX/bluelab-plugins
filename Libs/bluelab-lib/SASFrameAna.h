@@ -75,9 +75,11 @@ protected:
     void FillFirstValues(WDL_TypedBuf<BL_FLOAT> *values,
                          const vector<Partial> &partials, BL_FLOAT val);
 
+#if 0
     void LinkPartialsIdx(vector<Partial> *partials0,
                          vector<Partial> *partials1);
-
+#endif
+    
     // Get the partials which are alive
     // (this avoid getting garbage partials that would never be associated)
     bool GetAlivePartials(vector<Partial> *partials);

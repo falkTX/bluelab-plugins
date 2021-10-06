@@ -12,6 +12,8 @@
 
 #include <BLDebug.h>
 
+#include <IdLinker.h>
+
 #include "SASFrameAna.h"
 
 #define MIN_NORM_AMP 1e-15
@@ -192,7 +194,8 @@ SASFrameAna::SetPartials(const vector<Partial> &partials)
     
     sort(mPartials.begin(), mPartials.end(), Partial::IdLess);
 
-    LinkPartialsIdx(&mPrevPartials, &mPartials);
+    //LinkPartialsIdx(&mPrevPartials, &mPartials);
+    IdLinker<Partial>::LinkIds(&mPrevPartials, &mPartials, false);
 }
 
 void
@@ -945,6 +948,7 @@ SASFrameAna::FillFirstValues(WDL_TypedBuf<BL_FLOAT> *values,
     }            
 }
 
+#if 0
 void
 SASFrameAna::LinkPartialsIdx(vector<Partial> *partials0,
                              vector<Partial> *partials1)
@@ -985,6 +989,7 @@ SASFrameAna::LinkPartialsIdx(vector<Partial> *partials0,
             i0++;
     }
 }
+#endif
 
 // For noise envelope extraction, the
 // state must be ALIVE, and not mWasAlive
