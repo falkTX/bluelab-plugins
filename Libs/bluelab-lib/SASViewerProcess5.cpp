@@ -49,6 +49,8 @@
 // Disable all display if uncheck "SHOW TRACK"
 #define DEBUG_DISABLE_DISPLAY 1 // 0
 
+#define OPTIM_PARTIAL_TRACKING_MEMORY 1
+
 SASViewerProcess5::SASViewerProcess5(int bufferSize,
                                      BL_FLOAT overlapping, BL_FLOAT oversampling,
                                      BL_FLOAT sampleRate)
@@ -413,7 +415,7 @@ SASViewerProcess5::IdToColor(int idx, unsigned char color[3])
 
 void
 SASViewerProcess5::DisplayDetection()
-{
+{    
     if (mSASViewerRender != NULL)
     {
         mSASViewerRender->ShowAdditionalPoints(DETECTION, mShowDetectionPoints);
@@ -850,7 +852,30 @@ SASViewerProcess5::DisplayTracking()
             
             line.push_back(p);
         }
+#else // Optimized
+        vector<LinesRender2::Point> &line = mTmpBuf18;
+        line.resize(partials.size());
+        for (int i = 0; i < partials.size(); i++)
+        {
+            const Partial &partial = partials[i];
+            
+            LinesRender2::Point &p = line[i];
+            
+            BL_FLOAT partialX = partial.mFreq;
 
+            partialX =
+                mViewScale->ApplyScale(mViewXScale, partialX,
+                                       (BL_FLOAT)0.0, (BL_FLOAT)(mSampleRate*0.5));
+                                       
+            p.mX = partialX - 0.5;
+            p.mY = partial.mAmp;
+            
+            p.mZ = 0.0;
+            
+            p.mId = (int)partial.mId;
+        }
+#endif
+        
         //
         int numSlices = mSASViewerRender->GetNumSlices();
         
