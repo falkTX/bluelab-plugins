@@ -948,49 +948,6 @@ SASFrameAna::FillFirstValues(WDL_TypedBuf<BL_FLOAT> *values,
     }            
 }
 
-#if 0
-void
-SASFrameAna::LinkPartialsIdx(vector<Partial> *partials0,
-                             vector<Partial> *partials1)
-{
-    // Init
-    for (int i = 0; i < partials0->size(); i++)
-        (*partials0)[i].mLinkedId = -1;
-    for (int i = 0; i < partials1->size(); i++)
-        (*partials1)[i].mLinkedId = -1;
-
-    int i0 = 0;
-    int i1 = 0;
-    while(true)
-    {
-        if (i0 >= partials0->size())
-            return;
-        if (i1 >= partials1->size())
-            return;
-        
-        Partial &p0 = (*partials0)[i0];
-        Partial &p1 = (*partials1)[i1];
-
-        if (p0.mId == p1.mId)
-        {
-            p0.mLinkedId = i1;
-            p1.mLinkedId = i0;
-
-            i0++;
-            i1++;
-            
-            continue;
-        }
-
-        if (p0.mId > p1.mId)
-            i1++;
-
-        if (p0.mId < p1.mId)
-            i0++;
-    }
-}
-#endif
-
 // For noise envelope extraction, the
 // state must be ALIVE, and not mWasAlive
 bool
