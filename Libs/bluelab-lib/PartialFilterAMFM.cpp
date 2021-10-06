@@ -50,6 +50,9 @@ using namespace std;
 
 #define OPTIM_SAMPLES_SYNTH_SORTED_VEC 1 // 0
 
+// WIP...
+#define HARD_OPTIM 0 //1
+
 PartialFilterAMFM::PartialFilterAMFM(int bufferSize, BL_FLOAT sampleRate)
 {    
     mBufferSize = bufferSize;
@@ -433,10 +436,19 @@ AssociatePartialsAMFM(const vector<Partial> &prevPartials,
     // Sometimes need more than 5 (and less than 10)
     // When threshold is near 1%
     // (Sometimes it never solves totally and would lead to infinite num iters)
-#define MAX_NUM_ITER 10
-
+#define MAX_NUM_ITER 10 //4
+    // DEBUG: 4
+    
     // Problem: we miss the highest freqs if != 2048
-#define NUM_STEPS_LOOKUP 8 //2048 // 128 //4
+#define NUM_STEPS_LOOKUP 8 //4 //2048 // 128 //4
+    // DEBUG: 4
+
+#if HARD_OPTIM
+#define MAX_NUM_ITER 4
+    
+    // Problem: we miss the highest freqs if != 2048
+#define NUM_STEPS_LOOKUP 4
+#endif
     
     // Sort current partials and prev partials by increasing frequency
     sort(currentPartials->begin(), currentPartials->end(), Partial::FreqLess);
@@ -495,7 +507,7 @@ AssociatePartialsAMFM(const vector<Partial> &prevPartials,
                 if (discard)
                     continue;
 #endif
-
+                
                 BL_FLOAT LA = ComputeLA(prevPartial, currentPartial);
                 BL_FLOAT LF = ComputeLF(prevPartial, currentPartial);
                 
@@ -609,7 +621,7 @@ AssociatePartialsAMFM(const vector<Partial> &prevPartials,
             newPartials.push_back(currentPartial);
         }
     }
-
+    
     // NOTE: sometimes would need an "infinite number of iterations"..
     
     // Add the remaining partials
@@ -1189,7 +1201,11 @@ void
 PartialFilterAMFM::FixPartialsCrossing(const vector<Partial> &partials0,
                                        const vector<Partial> &partials1,
                                        vector<Partial> *partials2)
-{    
+{
+#if HARD_OPTIM
+    return;
+#endif
+    
     // Tmp optimization
 #define MIN_PARTIAL_AGE 5
 
