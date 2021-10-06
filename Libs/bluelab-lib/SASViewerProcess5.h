@@ -103,11 +103,13 @@ protected:
     void Display();
     
     void IdToColor(int idx, unsigned char color[3]);
-    
+
+#if 0
     // Optimized version
-    void CreateLines(const vector<LinesRender2::Point> &prevPoints);
+    void CreateLinesPrev(const vector<LinesRender2::Point> &prevPoints);
+#endif
     // More optimized
-    void CreateLinesOptim(const vector<LinesRender2::Point> &prevPoints);
+    void CreateLines(const vector<LinesRender2::Point> &prevPoints);
     
     void DenormPartials(vector<Partial> *partials);
 

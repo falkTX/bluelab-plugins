@@ -52,7 +52,6 @@
 #define DEBUG_DISABLE_DISPLAY 1 // 0
 
 #define OPTIM_PARTIAL_TRACKING_MEMORY 1
-#define OPTIM_PARTIAL_TRACKING_MEMORY2 1
 
 
 SASViewerProcess5::SASViewerProcess5(int bufferSize,
@@ -899,13 +898,8 @@ SASViewerProcess5::DisplayTracking()
             mFilteredPartialsPoints.pop_front();
         }
 
-#if 0 // ORIGIN
+        // Optimized a lot
         CreateLines(prevPoints);
-#endif
-
-#if 1 // OPTIM
-        CreateLinesOptim(prevPoints);
-#endif
         
         // Set color
         for (int j = 0; j < mPartialLines.size(); j++)
@@ -1094,9 +1088,10 @@ SASViewerProcess5::DisplayWarping()
     }
 }
 
+#if 0 // Not used anymore
 // Optimized version
 void
-SASViewerProcess5::CreateLines(const vector<LinesRender2::Point> &prevPoints)
+SASViewerProcess5::CreateLinesPrev(const vector<LinesRender2::Point> &prevPoints)
 {
     if (mSASViewerRender == NULL)
         return;
@@ -1187,10 +1182,11 @@ SASViewerProcess5::CreateLines(const vector<LinesRender2::Point> &prevPoints)
         }
     }
 }
+#endif
 
 // More optimized version
 void
-SASViewerProcess5::CreateLinesOptim(const vector<LinesRender2::Point> &prevPoints)
+SASViewerProcess5::CreateLines(const vector<LinesRender2::Point> &prevPoints)
 {
     if (mSASViewerRender == NULL)
         return;
@@ -1215,29 +1211,7 @@ SASViewerProcess5::CreateLinesOptim(const vector<LinesRender2::Point> &prevPoint
         }
     }
 
-#if !OPTIM_PARTIAL_TRACKING_MEMORY2
-    // Shorten the lines if they are too long
-    vector<LinesRender2::Line> newLines;
-    for (int i = 0; i < mPartialLines.size(); i++)
-    {
-        const LinesRender2::Line &line = mPartialLines[i];
-        
-        LinesRender2::Line newLine;
-        for (int j = 0; j < line.mPoints.size(); j++)
-        {
-            const LinesRender2::Point &p = line.mPoints[j];
-            if (p.mZ > 0.0)
-                newLine.mPoints.push_back(p);
-        }
-        
-        if (!newLine.mPoints.empty())
-            newLines.push_back(newLine);
-    }
-
-    // Update the current partial lines
-    mPartialLines = newLines;
-    newLines.clear();
-#else // Optimized
+    // Optimized (memory)
     for (int i = 0; i < mPartialLines.size(); i++)
     {
         LinesRender2::Line &line = mPartialLines[i];
@@ -1251,7 +1225,6 @@ SASViewerProcess5::CreateLinesOptim(const vector<LinesRender2::Point> &prevPoint
         remove_if(mPartialLines.begin(), mPartialLines.end(),
                   LinesRender2::Line::IsPointsEmpty);
     mPartialLines.erase(it2, mPartialLines.end());
-#endif
     
     // Create the new lines
     vector<LinesRender2::Point> &newPoints =
