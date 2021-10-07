@@ -411,92 +411,6 @@ https://github.com/Christoph-Lauer/Sonogram
 https://www.youtube.com/channel/UCG3u-G3P_SsiDGhGKRwlnyw/featured
 "2020/03/18" - christophlauer@me.com
 
-===
-Win 10 - Mac2
-===
-Installed Ableton 9, 10,11
-Downloaded Protools versions (+ Dev) + asked license
-Downloaded Cubase versions: https://o.steinberg.net/en/support/downloads.html
-
-ab11: Ableton 11, vst2
-rp2: Reaper, vst2
-rp3: Reaper, vst3
-
-- TODO: Reaper Win10, Audacity, Studio One, Protools, Cubase
-
-- TODO: test with native Host UI, and try to change all parameters for all plugs
-=> there may be some inconsistencies and some crashes, to fix.
-=> use parameter groups, and define a "private" group, for the parameters
-that we must not change
-=> re-order the parameters for every plugins?
-
-- TODO/WIP: rp3!
-
-====
-BL-Air		    : rp2, ab11
-BL-AutoGain	    : rp2, ab11
-BL-Bat		    : 
-BL-Chroma	    : rp2, ab11
-BL-Denoiser	    : rp2, ab11
-BL-DUET		    :	
-BL-Envelope	    :	
-BL-EQHack	    : rp2, ab11
-BL-Gain12	    : rp2, ab11
-BL-Gain200	    : 
-BL-Gain24	    : rp2, ab11
-BL-Gain60	    : rp2, ab11
-BL-Ghost	    : rp2, ab11
-BL-GhostViewer	    : rp2, ab11
-BL-Impulses	    : rp2, ab11
-BL-Infra	    : rp2, ab11
-BL-InfrasonicViewer : rp2, ab11
-BL-InfraSynth	    :
-BL-LoFi		    : rp2, ab11
-BL-OnsetDetect	    :	
-BL-Panogram	    : rp2, ab11
-BL-PitchShift	    : rp2, ab11
-BL-Precedence	    : rp2, ab11
-BL-Rebalance	    : rp2, ab11
-BL-RebalanceStereo  : rp2, ab11
-BL-Reverb	    :
-BL-ReverbDepth	    :
-BL-SampleDelay	    : rp2, ab11
-BL-SASViewer	    : 
-BL-Saturate	    : rp2, ab11
-BL-Shaper	    : rp2, ab11
-BL-Sine		    : rp2, ab11
-BL-SoundMetaViewer  :	
-BL-Spatializer	    : rp2, ab11
-BL-SpectralDiff	    : rp2, ab11
-BL-SpectroExpe	    :
-BL-SpectrumView	    :
-BL-StereoDeReverb   :
-BL-StereoPan	    : rp2, ab11
-BL-StereoWidth	    : rp2, ab11
-BL-Wav3s	    : rp2, ab11
-UST		    :
-====
-
-- TODO: finish Ableton 11 vst2, do Reaper, do Ableton 11 VST3, then Protools, then ask Cubase licenses and test Cubase
-
-- NOTE: Ableton11/Win: change mode => automation curve disappears
-=> this is normal, when changing mode, we change the displeyed automated parameter
-to "mode". We can then select again "Gain" as automation parameter shown
-- NOTE: Ableton11/Win: after switching from "write" to "read" mode,
-need to right click on ableton plug param then "re-enable automation"
-(the automation curve then turns from white to orange)
-- TEST: teste Protools lincence (can only launch Protools 2019 Dev)
-
-- BUG(not repro): Ghost-X, Ableton 11, VST2, Win10: crash (not repro)
-- BUG(not repro): Impulses, Reaper, VST2, Win10: freeze when open IR file
-(file selector, before choosing IR file)
-- BUG: Ghost: Reaper, hide "UI", change low freq zoom, show UI => refresh problem
-- BUG: Ghost: Reaper, hide "UI", change some edit parameters => crash
-
-- BUG: Reaper: reaper "UI" mode, changing gui size is buggy from reaper native ui
-- BUG: Reaper UI (or host native UI): many problems with different plugins
-====
-
 ====
 Linux
 
@@ -551,3 +465,94 @@ TODO: re-test GUI resize Ableton (+ host UI)
 
 TODO: when back to Mac2, add all the project files to git for RebalanceStereo
 and check project setting "Legacy/New"
+
+===
+Win 10 - Mac2
+===
+Installed Ableton 9, 10,11
+Downloaded Protools versions (+ Dev) + asked license
+Downloaded Cubase versions: https://o.steinberg.net/en/support/downloads.html
+
+ab11: Ableton 11, vst2
+rp2: Reaper, vst2
+rp3: Reaper, vst3
+
+- TODO: Reaper Win10, Audacity, Studio One, Protools, Cubase
+
+- TODO: test with native Host UI, and try to change all parameters for all plugs
+=> there may be some inconsistencies and some crashes, to fix.
+=> use parameter groups, and define a "private" group, for the parameters
+that we must not change
+=> re-order the parameters for every plugins?
+
+- TODO: rp3
+- TODO: ab11 + host UI
+- TODO: Ableton 9 and 10
+====
+BL-Air		    : rp2, rp3, ab11
+BL-AutoGain	    : rp2, rp3, ab11
+BL-Bat		    : 
+BL-Chroma	    : rp2, ab11
+BL-Denoiser	    : rp2, ab11
+BL-DUET		    :	
+BL-Envelope	    :	
+BL-EQHack	    : rp2, ab11
+BL-Gain12	    : rp2, ab11
+BL-Gain200	    : 
+BL-Gain24	    : rp2, ab11
+BL-Gain60	    : rp2, ab11
+BL-Ghost	    : rp2, ab11
+BL-GhostViewer	    : rp2, ab11
+BL-Impulses	    : rp2, ab11
+BL-Infra	    : rp2, ab11
+BL-InfrasonicViewer : rp2, ab11
+BL-InfraSynth	    :
+BL-LoFi		    : rp2, ab11
+BL-OnsetDetect	    :	
+BL-Panogram	    : rp2, ab11
+BL-PitchShift	    : rp2, ab11
+BL-Precedence	    : rp2, ab11
+BL-Rebalance	    : rp2, ab11
+BL-RebalanceStereo  : rp2, ab11
+BL-Reverb	    :
+BL-ReverbDepth	    :
+BL-SampleDelay	    : rp2, ab11
+BL-SASViewer	    : 
+BL-Saturate	    : rp2, ab11
+BL-Shaper	    : rp2, ab11
+BL-Sine		    : rp2, ab11
+BL-SoundMetaViewer  :	
+BL-Spatializer	    : rp2, ab11
+BL-SpectralDiff	    : rp2, ab11
+BL-SpectroExpe	    :
+BL-SpectrumView	    :
+BL-StereoDeReverb   :
+BL-StereoPan	    : rp2, ab11
+BL-StereoWidth	    : rp2, ab11
+BL-Wav3s	    : rp2, ab11
+UST		    :
+====
+
+- BUG: Win10/VST3: change gui size from host ui => not applied, and button not reset
+
+- TODO: finish Ableton 11 vst2, do Reaper, do Ableton 11 VST3, then Protools, then ask Cubase licenses and test Cubase
+
+- PROBLEM: AutoGain: when no side chain, vumeter should also move?
+
+- NOTE: Ableton11/Win: change mode => automation curve disappears
+=> this is normal, when changing mode, we change the displeyed automated parameter
+to "mode". We can then select again "Gain" as automation parameter shown
+- NOTE: Ableton11/Win: after switching from "write" to "read" mode,
+need to right click on ableton plug param then "re-enable automation"
+(the automation curve then turns from white to orange)
+- TEST: teste Protools lincence (can only launch Protools 2019 Dev)
+
+- BUG(not repro): Ghost-X, Ableton 11, VST2, Win10: crash (not repro)
+- BUG(not repro): Impulses, Reaper, VST2, Win10: freeze when open IR file
+(file selector, before choosing IR file)
+- BUG: Ghost: Reaper, hide "UI", change low freq zoom, show UI => refresh problem
+- BUG: Ghost: Reaper, hide "UI", change some edit parameters => crash
+
+- BUG: Reaper: reaper "UI" mode, changing gui size is buggy from reaper native ui
+- BUG: Reaper UI (or host native UI): many problems with different plugins
+====
