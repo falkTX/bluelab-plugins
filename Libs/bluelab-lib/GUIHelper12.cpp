@@ -1400,7 +1400,7 @@ GUIHelper12::ResetParameter(Plugin *plug, int paramIdx)
     // Change GUI size from host UI => the prev GUI size parameter was not reset
     // NOTE: this will call OnParamChange()
     double normalizedValue = plug->GetParam(paramIdx)->GetNormalized();
-    plug->SendParameterValueFromUI(paramIdx, normalizedValue);    
+    plug->SendParameterValueFromUI(paramIdx, normalizedValue);
 #endif
 }
 
