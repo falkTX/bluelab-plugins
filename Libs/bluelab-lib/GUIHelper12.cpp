@@ -1704,7 +1704,9 @@ GUIHelper12::GetGraphCurveColorFakeCyan(int color[4])
 void
 GUIHelper12::RefreshAllParameters(Plugin *plug, int numParams)
 {
-#ifndef __linux__
+    //#ifndef __linux__ // Prev flag
+    // Fails when GUI resize Win10/VST3 (controls have all zero values after resize)
+#if 0
     for (int i = 0; i < numParams; i++)
         plug->SendParameterValueFromAPI(i, plug->GetParam(i)->Value(), false);
 #else // __linux__
