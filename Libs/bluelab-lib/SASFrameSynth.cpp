@@ -604,6 +604,8 @@ SASFrameSynth::ComputeSamplesPartialsResynth(WDL_TypedBuf<BL_FLOAT> *samples)
 
         // Resynth the correct volume!
         BL_FLOAT a = amp*s;
+
+        a *= SYNTH_AMP_COEFF; // ??
         
         samples->Get()[i] = a;
         
