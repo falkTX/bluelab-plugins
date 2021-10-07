@@ -76,7 +76,7 @@ public:
     BL_FLOAT GetFrequency() const;
 
     void SetColor(const WDL_TypedBuf<BL_FLOAT> &color);
-    void GetColor(WDL_TypedBuf<BL_FLOAT> *color) const;
+    void GetColor(WDL_TypedBuf<BL_FLOAT> *color, bool applyFactor = true) const;
 
     void SetWarping(const WDL_TypedBuf<BL_FLOAT> &warping);
     void GetWarping(WDL_TypedBuf<BL_FLOAT> *warping) const;

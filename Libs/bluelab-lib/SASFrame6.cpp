@@ -143,18 +143,21 @@ SASFrame6::GetFrequency() const
 }
 
 void
-SASFrame6::GetColor(WDL_TypedBuf<BL_FLOAT> *color) const
+SASFrame6::GetColor(WDL_TypedBuf<BL_FLOAT> *color, bool applyFactor) const
 {
     *color = mColor;
 
-    // Sigmoid
-    BL_FLOAT a = mColorFactor*0.5;
-    if (a < BL_EPS)
-        a = BL_EPS;
-    if (a > 1.0 - BL_EPS)
-        a = 1.0 - BL_EPS;
-
-    BLUtilsMath::ApplySigmoid(color, a);
+    if (applyFactor)
+    {
+        // Sigmoid
+        BL_FLOAT a = mColorFactor*0.5;
+        if (a < BL_EPS)
+            a = BL_EPS;
+        if (a > 1.0 - BL_EPS)
+            a = 1.0 - BL_EPS;
+        
+        BLUtilsMath::ApplySigmoid(color, a);
+    }
 }
 
 void

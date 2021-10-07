@@ -270,7 +270,8 @@ SASFrameSynth::ComputeSamplesPartialsSourceNorm(WDL_TypedBuf<BL_FLOAT> *samples)
 
     // For optim, precompute 1/color
     WDL_TypedBuf<BL_FLOAT> &colorInv = mTmpBuf1;
-    colorInv = mColor;
+    //colorInv = mColor;
+    mSASFrame.GetColor(&colorInv, false);
     BLUtils::ApplyInv(&colorInv);
     
     // Optim
@@ -309,7 +310,7 @@ SASFrameSynth::ComputeSamplesPartialsSourceNorm(WDL_TypedBuf<BL_FLOAT> *samples)
             //mColorFactor = colorFactor;
             //partial.mAmp /= col0;
             partial.mAmp *= col0;
-
+ 
             // Inverse warping
             // => the detected partials will then be aligned to harmonics after that
             //
