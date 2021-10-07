@@ -46,6 +46,8 @@ ResizeGUIPluginInterface::ApplyGUIResize(int guiSizeIdx)
     mIsResizingGUI = false;
 }
 
+#if 0 // Prev
+// BUG: with VST3, prev gui resize parameter is not reset
 void
 ResizeGUIPluginInterface::GUIResizeParamChange(int paramNum,
                                                int params[],
@@ -83,6 +85,40 @@ ResizeGUIPluginInterface::GUIResizeParamChange(int paramNum,
         }
         else
             // Ableton Windows + fix enabled
+        {
+            for (int i = 0; i < numParams; i++)
+            {
+                if (i != paramNum)
+                {
+                    if (buttons[i] != NULL)
+                        buttons[i]->SetValueFromUserInput(0.0);
+                }
+            }
+        }
+    }
+}
+#endif
+
+// New: made some clean
+void
+ResizeGUIPluginInterface::GUIResizeParamChange(int paramNum,
+                                               int params[],
+                                               IGUIResizeButtonControl *buttons[],
+                                               int numParams)
+{
+    int val = mPlug->GetParam(params[paramNum])->Int();
+    if (val == 1)
+    {
+        // Reset the two other buttons
+        if (mPlug->GetUI() == NULL) // from host UI ?
+        {
+            for (int i = 0; i < numParams; i++)
+            {
+                if (i != paramNum)
+                    GUIHelper12::ResetParameter(mPlug, params[i]);
+            }
+        }
+        else // Reset directly the button
         {
             for (int i = 0; i < numParams; i++)
             {
