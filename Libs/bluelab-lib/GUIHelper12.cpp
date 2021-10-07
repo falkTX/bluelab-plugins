@@ -1394,6 +1394,13 @@ GUIHelper12::ResetParameter(Plugin *plug, int paramIdx)
     plug->GetParam(paramIdx)->SetToDefault();
     plug->SendParameterValueFromAPI(paramIdx,
                                     plug->GetParam(paramIdx)->Value(), false);
+
+
+    // FIX: GUI resize, VST3
+    // Change GUI size from host UI => the prev GUI size parameter was not reset
+    // NOTE: this will call OnParamChange()
+    double normalizedValue = plug->GetParam(paramIdx)->GetNormalized();
+    plug->SendParameterValueFromUI(paramIdx, normalizedValue);    
 #endif
 }
 
