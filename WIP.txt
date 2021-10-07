@@ -487,6 +487,7 @@ that we must not change
 
 - TODO: rp3
 - TODO: ab11 + host UI
+- TODO: Ableton11 + vst3
 - TODO: Ableton 9 and 10
 ====
 BL-Air		    : rp2, rp3, ab11
