@@ -269,7 +269,7 @@ Axis3D::DoDraw(NVGcontext *vg,
         BL_FLOAT labelP[3];
         for (int k = 0; k < 3; k++)
         {
-            labelP[k] = (1.0 - t)*mP0[k] + t*/*mP1*/p1Scale[k];
+            labelP[k] = (1.0 - t)*mP0[k] + t* /*mP1*/ p1Scale[k];
         }
         
         BL_FLOAT projLabelP[3];
