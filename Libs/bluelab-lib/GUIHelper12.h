@@ -311,8 +311,12 @@ public:
     void GetGraphCurveColorOrange(int color[4]);
     // Fake Cyan is more beautiful than real Cyan
     void GetGraphCurveColorFakeCyan(int color[4]);
-    
-    static void ResetParameter(Plugin *plug, int paramIdx);
+
+    // When informHost=true, take care if ResetParameter() is called
+    /// from OnParamChange()
+    // => this can make an infinite loop
+    static void ResetParameter(Plugin *plug, int paramIdx,
+                               bool informHost = true);
     
     // Refresh all the controls, from their values
     static void RefreshAllParameters(Plugin *plug, int numParams);

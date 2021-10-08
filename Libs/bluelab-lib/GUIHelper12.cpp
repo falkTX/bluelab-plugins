@@ -1371,7 +1371,8 @@ GUIHelper12::CreateRadioButtonsCustom(IGraphics *graphics,
 }
 
 void
-GUIHelper12::ResetParameter(Plugin *plug, int paramIdx)
+GUIHelper12::ResetParameter(Plugin *plug, int paramIdx,
+                            bool informHost)
 {
 #if 0 // Origin (buggy)
     if (plug->GetUI())
@@ -1396,11 +1397,16 @@ GUIHelper12::ResetParameter(Plugin *plug, int paramIdx)
                                     plug->GetParam(paramIdx)->Value(), false);
 
 
-    // FIX: GUI resize, VST3
-    // Change GUI size from host UI => the prev GUI size parameter was not reset
-    // NOTE: this will call OnParamChange()
-    double normalizedValue = plug->GetParam(paramIdx)->GetNormalized();
-    plug->SendParameterValueFromUI(paramIdx, normalizedValue);
+    // Take care if ResetParameter() is called from OnParamChange()
+    // => this can make an infinite loop
+    if (informHost)
+    {
+        // FIX: GUI resize, VST3
+        // Change GUI size from host UI => the prev GUI size parameter was not reset
+        // NOTE: this will call OnParamChange()
+        double normalizedValue = plug->GetParam(paramIdx)->GetNormalized();
+        plug->SendParameterValueFromUI(paramIdx, normalizedValue);
+    }
 #endif
 }
 
