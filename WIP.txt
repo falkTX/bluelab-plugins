@@ -534,7 +534,7 @@ BL-Wav3s	    : rp2, ab11
 UST		    :
 ====
 
-- TODO: finish Ableton 11 vst2, do Reaper, do Ableton 11 VST3, then Protools, then ask Cubase licenses and test Cubase
+- TODO: finish Ableton 11 vst2, do Reaper, do Ableton 11 VST3, then Protools, then ask Cubase (+Nuendo) licenses and test Cubase
 
 - PROBLEM: AutoGain: when no side chain, vumeter should also move?
 
