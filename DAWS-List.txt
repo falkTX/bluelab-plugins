@@ -42,3 +42,31 @@ Tracktion T6
 Tracktion Waveform
 Usine Hollyhock
 Wired
+
+== list music radar ==
+https://www.musicradar.com/news/the-best-daws-the-best-music-production-software-for-pc-and-mac
+- Ableton
+- FLStudio
+- Logic Pro
+- Cubase
+- Studio One
+- Reaper
+- Reason
+- Bitwig Studio
+- Garage Band
+- Accoustica Mixcraft
+- Protools
+- Cakewalk by Bandlab
+
+== Other list ==
+https://musicianshq.com/most-popular-daw-software-which-daw-do-most-producers-use/
+- Protools
+- Ableton Live
+- Logic Pro
+- FLStudio
+- Garageband
+- Cubase
+- Reaper
+- Studio One
+- Reason
+- Bitwig Studio
