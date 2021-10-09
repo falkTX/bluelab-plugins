@@ -119,7 +119,7 @@ public:
     GraphCustomControl() {}
     
     virtual ~GraphCustomControl() {}
-    
+
     virtual void OnMouseDown(float x, float y, const IMouseMod &mod) {}
     virtual void OnMouseUp(float x, float y, const IMouseMod &mod) {}
     virtual void OnMouseDrag(float x, float y, float dX, float dY,
@@ -146,7 +146,10 @@ public:
                    IRECT p, int paramIdx, const char *fontPath);
     
     virtual ~GraphControl12();
-    
+
+    // Hack to avoid a crash
+    void ClearLinkedObjects();
+
     void SetEnabled(bool flag);
     
     void GetSize(int *width, int *height);

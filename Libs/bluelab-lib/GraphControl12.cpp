@@ -201,21 +201,9 @@ GraphControl12::~GraphControl12()
     // NOTE: re-enabled e.g for Ghost
     if (mUseLegacyLock)
         mMutex.Enter();
-    
-    for (int i = 0; i < mCurves.size(); i++)
-    {
-        GraphCurve5 *curve = mCurves[i];
-        curve->SetGraph(NULL);
-    }
-    
-    if (mHAxis != NULL)
-    {
-        mHAxis->SetGraph(NULL);
-    }
-    if (mHAxis != NULL)
-    {
-        mHAxis->SetGraph(NULL);
-    }
+
+    // Normal behavior
+    ClearLinkedObjects();
     
     for (int i = 0; i < mCustomDrawers.size(); i++)
     {
@@ -238,6 +226,25 @@ GraphControl12::~GraphControl12()
     
     if (mUseLegacyLock)
         mMutex.Leave();
+}
+
+void
+GraphControl12::ClearLinkedObjects()
+{
+    for (int i = 0; i < mCurves.size(); i++)
+    {
+        GraphCurve5* curve = mCurves[i];
+        curve->SetGraph(NULL);
+    }
+
+    if (mHAxis != NULL)
+    {
+        mHAxis->SetGraph(NULL);
+    }
+    if (mHAxis != NULL)
+    {
+        mHAxis->SetGraph(NULL);
+    }
 }
 
 void
