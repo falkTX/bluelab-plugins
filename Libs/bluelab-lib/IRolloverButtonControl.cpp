@@ -16,7 +16,7 @@ void
 IRolloverButtonControl::Draw(IGraphics &g)
 {
     IBitmapControl::Draw(g);
-    
+
     // Draw, then update the text color if necessary
     if (mText != NULL)
     {
