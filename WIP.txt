@@ -502,7 +502,7 @@ BL-Gain12	    : rp2, rp3, ab11
 BL-Gain200	    : 
 BL-Gain24	    : rp2, rp3, ab11
 BL-Gain60	    : rp2, rp3, ab11
-BL-Ghost	    : rp2, ab11
+BL-Ghost	    : rp2, ab11 WIP!!!
 BL-GhostViewer	    : rp2, ab11
 BL-Impulses	    : rp2, ab11
 BL-Infra	    : rp2, ab11
