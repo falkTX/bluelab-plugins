@@ -12,6 +12,9 @@
 // the button was hilighted
 #define FIX_HILIGHT_REOPEN 1
 
+// Additional fix for VST3, to be sure the 0 value is updated everywhere
+#define FIX_HILIGHT_REOPEN_VST3 1
+
 void
 IRolloverButtonControl::Draw(IGraphics &g)
 {
@@ -57,6 +60,11 @@ IRolloverButtonControl::OnMouseDown(float x, float y, const IMouseMod &mod)
             
             // Set value after hilight text
             SetValueFromUserInput(0.0);
+
+#if FIX_HILIGHT_REOPEN_VST3
+            SetValue(0.0);
+            SetDirty();
+#endif
         }
         else
         {
@@ -85,7 +93,14 @@ IRolloverButtonControl::OnMouseDown(float x, float y, const IMouseMod &mod)
 #if FIX_HILIGHT_REOPEN
         // Ensure that the button is toggled off after
         if (mToggleOffFlag)
+        {
             SetValueFromUserInput(0.0);
+
+#if FIX_HILIGHT_REOPEN_VST3
+            SetValue(0.0);
+            SetDirty();
+#endif
+        }
 #endif
     }
 }
@@ -102,6 +117,11 @@ IRolloverButtonControl::OnMouseUp(float x, float y, const IMouseMod& mod)
         
         //mText->SetTextColor(mTextColor);
         //mText->SetDirty();
+
+#if FIX_HILIGHT_REOPEN_VST3
+        SetValue(0.0);
+        SetDirty();
+#endif
     }
 }
 
