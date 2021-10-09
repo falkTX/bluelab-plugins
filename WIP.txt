@@ -493,15 +493,15 @@ that we must not change
 BL-Air		    : rp2, rp3, ab11
 BL-AutoGain	    : rp2, rp3, ab11
 BL-Bat		    : 
-BL-Chroma	    : rp2, ab11
-BL-Denoiser	    : rp2, ab11
+BL-Chroma	    : rp2, rp3, ab11
+BL-Denoiser	    : rp2, rp3, ab11
 BL-DUET		    :	
 BL-Envelope	    :	
-BL-EQHack	    : rp2, ab11
-BL-Gain12	    : rp2, ab11
+BL-EQHack	    : rp2, rp3, ab11
+BL-Gain12	    : rp2, rp3, ab11
 BL-Gain200	    : 
-BL-Gain24	    : rp2, ab11
-BL-Gain60	    : rp2, ab11
+BL-Gain24	    : rp2, rp3, ab11
+BL-Gain60	    : rp2, rp3, ab11
 BL-Ghost	    : rp2, ab11
 BL-GhostViewer	    : rp2, ab11
 BL-Impulses	    : rp2, ab11
