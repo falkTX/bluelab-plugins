@@ -485,8 +485,7 @@ rp3: Reaper, vst3
 that we must not change
 => re-order the parameters for every plugins?
 
-- TODO: rp3
-- TODO: ab11 + host UI
+- TODO: ab11 + host UI WIP....
 - TODO: Ableton11 + vst3
 - TODO: Ableton 9 and 10
 ====
@@ -504,33 +503,33 @@ BL-Gain24	    : rp2, rp3, ab11
 BL-Gain60	    : rp2, rp3, ab11
 BL-Ghost	    : rp2, rp3, ab11
 BL-GhostViewer	    : rp2, rp3, ab11
-BL-Impulses	    : rp2, ab11 WIP ....
-BL-Infra	    : rp2, ab11
-BL-InfrasonicViewer : rp2, ab11
+BL-Impulses	    : rp2, rp3, ab11
+BL-Infra	    : rp2, rp3, ab11
+BL-InfrasonicViewer : rp2, rp3, ab11
 BL-InfraSynth	    :
-BL-LoFi		    : rp2, ab11
+BL-LoFi		    : rp2, rp3, ab11
 BL-OnsetDetect	    :	
-BL-Panogram	    : rp2, ab11
-BL-PitchShift	    : rp2, ab11
-BL-Precedence	    : rp2, ab11
-BL-Rebalance	    : rp2, ab11
-BL-RebalanceStereo  : rp2, ab11
+BL-Panogram	    : rp2, rp3, ab11
+BL-PitchShift	    : rp2, rp3, ab11
+BL-Precedence	    : rp2, rp3, ab11
+BL-Rebalance	    : rp2, rp3, ab11
+BL-RebalanceStereo  : rp2, rp3, ab11
 BL-Reverb	    :
 BL-ReverbDepth	    :
-BL-SampleDelay	    : rp2, ab11
+BL-SampleDelay	    : rp2, rp3, ab11
 BL-SASViewer	    : 
-BL-Saturate	    : rp2, ab11
-BL-Shaper	    : rp2, ab11
-BL-Sine		    : rp2, ab11
+BL-Saturate	    : rp2, rp3, ab11
+BL-Shaper	    : rp2, rp3, ab11
+BL-Sine		    : rp2, rp3, ab11
 BL-SoundMetaViewer  :	
-BL-Spatializer	    : rp2, ab11
-BL-SpectralDiff	    : rp2, ab11
+BL-Spatializer	    : rp2, rp3, ab11
+BL-SpectralDiff	    : rp2, rp3, ab11
 BL-SpectroExpe	    :
 BL-SpectrumView	    :
 BL-StereoDeReverb   :
-BL-StereoPan	    : rp2, ab11
-BL-StereoWidth	    : rp2, ab11
-BL-Wav3s	    : rp2, ab11
+BL-StereoPan	    : rp2, rp3, ab11
+BL-StereoWidth	    : rp2, rp3, ab11
+BL-Wav3s	    : rp2, rp3, ab11
 UST		    :
 ====
 
