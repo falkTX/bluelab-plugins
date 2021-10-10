@@ -1127,7 +1127,9 @@ LinesRender2::ProjectSlices(vector<vector<Point> > *points,
 #if FIX_JITTER_LOW_DENSITY
     // FIX: fixes well jumps/sparkles with low density just greater than the minimum
     // This fixes everything except the first line
-    if (mMode == LINES_FREQ)
+    //if (mMode == LINES_FREQ)
+    if ((mMode == LINES_FREQ) ||
+        (mMode == GRID))
         iOffset = -iOffset;
 #endif
     
