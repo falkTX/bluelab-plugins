@@ -19,8 +19,15 @@ void
 ZoomCustomControl::OnMouseDown(float x, float y, const IMouseMod &pMod)
 {
     mPrevMouseY = y;
-   
-    if (pMod.C || pMod.Cmd)
+
+    bool altChecked = false;
+#ifndef __linux__
+    // Alt is more logical on Windows for resetting
+    // But on linux, Alt is used to grab and move the window
+    altChecked = pMod.A;
+#endif
+    
+    if (pMod.C || pMod.Cmd || altChecked)
         // Command pressed (or Control on Windows)
     {
         mListener->ResetZoom();
