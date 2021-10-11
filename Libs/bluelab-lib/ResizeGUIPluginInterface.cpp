@@ -24,6 +24,19 @@ ResizeGUIPluginInterface::ResizeGUIPluginInterface(Plugin *plug)
 ResizeGUIPluginInterface::~ResizeGUIPluginInterface() {}
 
 void
+ResizeGUIPluginInterface::StartResizeGUI(Plugin* plug)
+{
+    // Avoid mutex dead lock when resizing GUI from host ui (Ableton11/Win10)
+    ((IPlugAPIBase*)plug)->SetTimerEnabled(false);
+}
+
+void
+ResizeGUIPluginInterface::EndResizeGUI(Plugin* plug)
+{
+    ((IPlugAPIBase*)plug)->SetTimerEnabled(true);
+}
+
+void
 ResizeGUIPluginInterface::ApplyGUIResize(int guiSizeIdx)
 {
     if (mIsResizingGUI)

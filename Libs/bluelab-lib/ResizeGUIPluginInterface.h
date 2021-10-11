@@ -23,6 +23,9 @@ public:
     ResizeGUIPluginInterface(Plugin *plug);
     virtual ~ResizeGUIPluginInterface();
          
+    void StartResizeGUI(Plugin* plug);
+    void EndResizeGUI(Plugin* plug);
+
     virtual void PreResizeGUI(int guiSizeIdx,
                               int *outNewGUIWidth,
                               int *outNewGUIHeight) = 0;
