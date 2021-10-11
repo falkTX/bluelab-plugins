@@ -488,6 +488,9 @@ that we must not change
 - TODO: ab11 + host UI WIP....
 - TODO: Ableton11 + vst3
 - TODO: Ableton 9 and 10
+
+WIP: Ableton11/Win10/VST2: change params from host UI
+
 ====
 BL-Air		    : rp2, rp3, ab11
 BL-AutoGain	    : rp2, rp3, ab11
