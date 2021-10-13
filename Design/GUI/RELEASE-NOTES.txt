@@ -191,6 +191,20 @@ v3.50
 v3.51
 - Rebalance stereo
 
+v4.0.0
+- first Morpho GUI
+- "SOURCE" part
+
+v4.1.0
+- Morpho GUI: "SYNTHESIS" part
+
+v4.2.0
+- Fine tuned Morpho GUI
+- bars to separate sections
+- started moving elements to the right layers
+
+v4.3.0
+- export .png elements
 
 Rollover menu: 5c75eb
 Rollover buttons: 6a6affff
