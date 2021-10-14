@@ -106,7 +106,8 @@ public:
     GraphControl12 *CreateGraph(Plugin *plug, IGraphics *graphics,
                                 float x, float y,
                                 const char *bitmapFname, int paramIdx = kNoParameter,
-                                const char *overlayFname = NULL);
+                                const char *overlayFname = NULL,
+                                bool useBitmapAsBackground = false);
 #endif // IGRAPHICS_NANOVG
     
     // 2 states or more
@@ -180,7 +181,8 @@ public:
                                  const char *bitmapFname,
                                  //EAlign align = EAlign::Near,
                                  float offsetX = 0.0, float offsetY = 0.0,
-                                 float *width = NULL, float *height = NULL);
+                                 float *width = NULL, float *height = NULL,
+                                 const char *tooltip = NULL);
 
 
     IXYPadControl *CreateXYPad(IGraphics *graphics,

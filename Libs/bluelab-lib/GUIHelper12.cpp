@@ -515,7 +515,8 @@ GraphControl12 *
 GUIHelper12::CreateGraph(Plugin *plug, IGraphics *graphics,
                          float x, float y,
                          const char *bitmapFname, int paramIdx,
-                         const char *overlayFname)
+                         const char *overlayFname,
+                         bool useBitmapAsBackground)
 {
     const char *resPath = graphics->GetSharedResourcesSubPath();
     char fontPath[MAX_PATH];
@@ -530,6 +531,9 @@ GUIHelper12::CreateGraph(Plugin *plug, IGraphics *graphics,
 #if !FIX_RESIZE_GRAPH
     graph->SetBackgroundImage(graphics, bitmap);
 #endif
+
+    if (useBitmapAsBackground)
+        graph->SetBackgroundImage(graphics, bitmap);
     
     if (overlayFname != NULL)
     {
@@ -799,7 +803,8 @@ GUIHelper12::CreateBitmap(IGraphics *graphics,
                           const char *bitmapFname,
                           //EAlign align,
                           float offsetX, float offsetY,
-                          float *width, float *height)
+                          float *width, float *height,
+                          const char *tooltip)
 {
     IBitmap bitmap = graphics->LoadBitmap(bitmapFname, 1);
     
@@ -814,6 +819,10 @@ GUIHelper12::CreateBitmap(IGraphics *graphics,
     
     IBitmapControl *result = new IBitmapControl(x + offsetX, y + offsetY, bitmap);
     result->SetInteractionDisabled(true);
+
+    if (tooltip != NULL)
+        result->SetTooltip(tooltip);
+    
     graphics->AttachControl(result);
     
     return result;
