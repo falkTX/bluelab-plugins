@@ -9,6 +9,9 @@
 #ifndef GUIHelper12_h
 #define GUIHelper12_h
 
+#include <vector>
+using namespace std;
+
 #include <IControls.h>
 
 /*#include <BLVumeterControl.h>
@@ -79,6 +82,9 @@ public:
     GUIHelper12(Style style);
     
     virtual ~GUIHelper12();
+
+    void StartCollectCreatedControls();
+    void EndCollectCreatedControls(vector<IControl *> *controls);
     
     IBKnobControl *CreateKnob(IGraphics *graphics,
                               float x, float y,
@@ -389,6 +395,9 @@ protected:
                                        const IText &text,
                                        EAlign align = EAlign::Near);
     
+
+    bool mIsCollectingControls;
+    vector<IControl *> mCollectedControls;
     
     //
     Style mStyle;

@@ -66,6 +66,8 @@
 
 GUIHelper12::GUIHelper12(Style style)
 {
+    mIsCollectingControls = false;
+    
     mStyle = style;
     
     if (style == STYLE_UST)
@@ -422,6 +424,22 @@ GUIHelper12::GUIHelper12(Style style)
 
 GUIHelper12::~GUIHelper12() {}
 
+void
+GUIHelper12::StartCollectCreatedControls()
+{
+    mCollectedControls.clear();
+    mIsCollectingControls = true;
+}
+
+void
+GUIHelper12::EndCollectCreatedControls(vector<IControl *> *controls)
+{
+    *controls = mCollectedControls;
+    
+    mCollectedControls.clear();
+    mIsCollectingControls = false;
+}
+
 IBKnobControl *
 GUIHelper12::CreateKnob(IGraphics *graphics,
                         float x, float y,
@@ -435,7 +453,10 @@ GUIHelper12::CreateKnob(IGraphics *graphics,
 {
     IBitmap bitmap = graphics->LoadBitmap(bitmapFname, nStates);
     IBKnobControl *knob = new IBKnobControl(x, y, bitmap, paramIdx);
+    
     graphics->AttachControl(knob);
+    if (mIsCollectingControls)
+        mCollectedControls.push_back(knob);
     
     if (mCreateTitles)
     {
@@ -483,6 +504,8 @@ GUIHelper12::CreateKnobSVG(IGraphics *graphics,
     knob->SetAngles(-SVG_KNOB_MAX_ANGLE, SVG_KNOB_MAX_ANGLE);
     
     graphics->AttachControl(knob);
+    if (mIsCollectingControls)
+        mCollectedControls.push_back(knob);
     
     if (mCreateTitles)
     {
@@ -548,6 +571,8 @@ GUIHelper12::CreateGraph(Plugin *plug, IGraphics *graphics,
     }
     
     graphics->AttachControl(graph);
+    if (mIsCollectingControls)
+        mCollectedControls.push_back(graph);
     
     return graph;
 }
@@ -572,6 +597,8 @@ GUIHelper12::CreateSwitchButton(IGraphics *graphics,
     button->SetClickToggleOff(clickToggleOff);
     
     graphics->AttachControl(button);
+    if (mIsCollectingControls)
+        mCollectedControls.push_back(button);
     
     return button;
 }
@@ -610,6 +637,8 @@ GUIHelper12::CreateVumeter(IGraphics *graphics,
                                          paramIdx, title);*/
     
     //graphics->AttachControl(vumeter);
+    //if (mIsCollectingControls)
+    //    mCollectedControls.push_back(vumeter);
     
     IBitmap bitmap = graphics->LoadBitmap(bitmapFname, nStates);
 
@@ -628,6 +657,8 @@ GUIHelper12::CreateVumeter(IGraphics *graphics,
         vumeter->SetTooltip(tooltip);
     
     graphics->AttachControl(vumeter);
+    if (mIsCollectingControls)
+        mCollectedControls.push_back(vumeter);
     
     return vumeter;
 }
@@ -653,7 +684,10 @@ GUIHelper12::CreateVumeterV(IGraphics *graphics,
                                                     mVumeterColor,
                                                     paramIdx);
     result->SetInteractionDisabled(true);
+    
     graphics->AttachControl(result);
+    if (mIsCollectingControls)
+        mCollectedControls.push_back(result);
     
     return result;
 }
@@ -710,6 +744,8 @@ GUIHelper12::CreateVumeter2SidesV(IGraphics *graphics,
     result->SetIgnoreMouse(true);
     
     graphics->AttachControl(result);
+    if (mIsCollectingControls)
+        mCollectedControls.push_back(result);
     
     return result;
 }
@@ -736,7 +772,10 @@ GUIHelper12::CreateVumeterNeedleV(IGraphics *graphics,
                                                                 mVumeterNeedleDepth,
                                                                 paramIdx);
     result->SetInteractionDisabled(true);
+    
     graphics->AttachControl(result);
+    if (mIsCollectingControls)
+        mCollectedControls.push_back(result);
     
     return result;
     
@@ -759,6 +798,8 @@ GUIHelper12::CreateText(IGraphics *graphics, float x, float y,
     ITextControl *textControl = new ITextControl(rect, textStr, text);
     
     graphics->AttachControl(textControl);
+    if (mIsCollectingControls)
+        mCollectedControls.push_back(textControl);
     
     return textControl;
 }
@@ -793,6 +834,8 @@ GUIHelper12::CreateTextButton(IGraphics *graphics, float x, float y,
                                                              borderWidth);
     
     graphics->AttachControl(textControl);
+    if (mIsCollectingControls)
+        mCollectedControls.push_back(textControl);
     
     return textControl;
 }
@@ -824,6 +867,8 @@ GUIHelper12::CreateBitmap(IGraphics *graphics,
         result->SetTooltip(tooltip);
     
     graphics->AttachControl(result);
+    if (mIsCollectingControls)
+        mCollectedControls.push_back(result);
     
     return result;
 }
@@ -854,6 +899,8 @@ GUIHelper12::CreateXYPad(IGraphics *graphics,
         result->SetTooltip(tooltip);
     
     graphics->AttachControl(result);
+    if (mIsCollectingControls)
+        mCollectedControls.push_back(result);
     
     return result;
 }
@@ -876,7 +923,9 @@ GUIHelper12::CreateSpatializerHandle(IGraphics *graphics,
         new ISpatializerHandleControl(rect, minAngle, maxAngle, reverseY,
                                       handleBitmap, paramIdx);
     graphics->AttachControl(result);
-
+    if (mIsCollectingControls)
+        mCollectedControls.push_back(result);
+    
     // Text field
     CreateValue(graphics,
                 x + rect.W()/2 + valueXOffset,
@@ -940,6 +989,8 @@ GUIHelper12::CreateVersion(Plugin *plug, IGraphics *graphics,
     ITextControl *textControl = new ITextControl(rect, versionStr0, versionText);
     
     graphics->AttachControl(textControl);
+    if (mIsCollectingControls)
+        mCollectedControls.push_back(textControl);
 }
 
 // Static logo
@@ -974,6 +1025,8 @@ GUIHelper12::CreateLogo(Plugin *plug, IGraphics *graphics,
     control->SetInteractionDisabled(true);
     
     graphics->AttachControl(control);
+    if (mIsCollectingControls)
+        mCollectedControls.push_back(control);
 }
 
 // Static logo
@@ -1015,6 +1068,8 @@ GUIHelper12::CreateLogoAnim(Plugin *plug, IGraphics *graphics,
     control->SetInteractionDisabled(true);
     
     graphics->AttachControl(control);
+    if (mIsCollectingControls)
+        mCollectedControls.push_back(control);
 }
 
 bool
@@ -1108,6 +1163,8 @@ GUIHelper12::CreateHelpButton(Plugin *plug, IGraphics *graphics,
     mBackObjects.push_back(control);
 #else
     graphics->AttachControl(control);
+    if (mIsCollectingControls)
+        mCollectedControls.push_back(control);
 #endif
 }
 
@@ -1170,6 +1227,8 @@ GUIHelper12::CreatePlugName(Plugin *plug, IGraphics *graphics,
     control->SetInteractionDisabled(true);
     
     graphics->AttachControl(control);
+    if (mIsCollectingControls)
+        mCollectedControls.push_back(control);
 }
 
 void
@@ -1329,6 +1388,8 @@ GUIHelper12::CreateRadioButtons(IGraphics *graphics,
         control->SetTooltip(tooltip);
     
     graphics->AttachControl(control);
+    if (mIsCollectingControls)
+        mCollectedControls.push_back(control);
     
     return control;
 }
@@ -1375,7 +1436,9 @@ GUIHelper12::CreateRadioButtonsCustom(IGraphics *graphics,
         control->SetTooltip(tooltip);
     
     graphics->AttachControl(control);
-        
+    if (mIsCollectingControls)
+        mCollectedControls.push_back(control);
+    
     return control;
 }
 
@@ -1448,7 +1511,9 @@ GUIHelper12::CreateGUIResizeButton(ResizeGUIPluginInterface *plug,
         control->SetTooltip(tooltip);
     
     graphics->AttachControl(control);
-
+    if (mIsCollectingControls)
+        mCollectedControls.push_back(control);
+    
     if ((label != NULL) && (strlen(label) != 0))
     {
         // Add the label
@@ -1493,7 +1558,9 @@ GUIHelper12::CreateRolloverButton(IGraphics *graphics,
       control->SetTooltip(tooltip);
   
   graphics->AttachControl(control);
-
+  if (mIsCollectingControls)
+      mCollectedControls.push_back(control);
+ 
   if (mCreateTitles)
   {
       if (label != NULL)
@@ -1867,7 +1934,9 @@ GUIHelper12::CreateTabsBar(IGraphics *graphics,
     }
     
     graphics->AttachControl(tabsBar);
-
+    if (mIsCollectingControls)
+        mCollectedControls.push_back(tabsBar);
+    
     return tabsBar;
 }
 
@@ -1928,7 +1997,9 @@ GUIHelper12::CreateDropDownMenu(IGraphics *graphics,
         control->SetTooltip(tooltip);
     
     graphics->AttachControl(control, kNoTag, "");
-
+    if (mIsCollectingControls)
+        mCollectedControls.push_back(control);
+    
     if (mCreateTitles)
     {
         // Title
@@ -2039,6 +2110,8 @@ GUIHelper12::CreateText(IGraphics *graphics, float x, float y,
     ITextControl *textControl = new ITextControl(rect, textStr, text);
     
     graphics->AttachControl(textControl);
+    if (mIsCollectingControls)
+        mCollectedControls.push_back(textControl);
     
     return textControl;
 }
@@ -2078,6 +2151,8 @@ GUIHelper12::CreateValue(IGraphics *graphics,
                                                    mValueTextBGColor);
     caption->DisablePrompt(false); // Here is the magic !
     graphics->AttachControl(caption);
+    if (mIsCollectingControls)
+        mCollectedControls.push_back(caption);
     
     return caption;
 }
@@ -2108,6 +2183,8 @@ GUIHelper12::CreateRadioLabelText(IGraphics *graphics,
     ITextControl *control = new ITextControl(rect, textStr, text);
     
     graphics->AttachControl(control);
+    if (mIsCollectingControls)
+        mCollectedControls.push_back(control);
     
     return control;
 }
