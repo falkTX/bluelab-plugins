@@ -491,6 +491,9 @@ that we must not change
 WIP: Ableton11/Win10/VST2: change params from host UI
 - WIP: ab11 + host UI .... (stopped at Impulses)
 
+- TODO: Ghost App: make a special case export selection, but vertical,
+to save memory on long files
+
 ====
 BL-Air		    : rp2, rp3, ab11
 BL-AutoGain	    : rp2, rp3, ab11
