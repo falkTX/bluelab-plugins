@@ -485,13 +485,11 @@ rp3: Reaper, vst3
 that we must not change
 => re-order the parameters for every plugins?
 
-
-- WIP: ab11 + host UI .... (stopped at Chroma)
-
 - TODO: Ableton11 + vst3
 - TODO: Ableton 9 and 10
 
 WIP: Ableton11/Win10/VST2: change params from host UI
+- WIP: ab11 + host UI .... (stopped at Impulses)
 
 ====
 BL-Air		    : rp2, rp3, ab11
@@ -560,4 +558,9 @@ need to right click on ableton plug param then "re-enable automation"
 
 - BUG: Reaper: reaper "UI" mode, changing gui size is buggy from reaper native ui
 - BUG: Reaper UI (or host native UI): many problems with different plugins
+
+- BUG: Ableton11/Win10/VST2: change "image file open param" from host UI
+=> freeze (this is not solvable at all, this should come from Ableton,
+who doesn't like that we call GetOpenFileNameW() sometimes (see forums on the net)
+(let's keep it like this, this stays a "known bug")
 ====
