@@ -485,7 +485,9 @@ rp3: Reaper, vst3
 that we must not change
 => re-order the parameters for every plugins?
 
-- TODO: ab11 + host UI WIP....
+
+- WIP: ab11 + host UI .... (stopped at Chroma)
+
 - TODO: Ableton11 + vst3
 - TODO: Ableton 9 and 10
 
@@ -539,6 +541,8 @@ UST		    :
 - TODO: finish Ableton 11 vst2, do Reaper, do Ableton 11 VST3, then Protools, then ask Cubase (+Nuendo) licenses and test Cubase
 
 - PROBLEM: AutoGain: when no side chain, vumeter should also move?
+- PROBLEM: StereoWidth: "Bass to mono" + "mono to stereo" => problem ?
+- PROBLEM: aax plugins don't have icons
 
 - NOTE: Ableton11/Win: change mode => automation curve disappears
 => this is normal, when changing mode, we change the displeyed automated parameter
