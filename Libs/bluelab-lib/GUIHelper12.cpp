@@ -1813,12 +1813,16 @@ GUIHelper12::RefreshAllParameters(Plugin *plug, int numParams)
             if (control == NULL)
                 continue;
 
-            int idx = control->GetParamIdx();
-
-            if (idx == i)
+            // Also manage controls with several params
+            for (int k = 0; k < control->NVals(); k++)
             {
-                control->SetValue(normValue);
-                control->SetDirty(false);
+                int idx = control->GetParamIdx(k);
+
+                if (idx == i)
+                {
+                    control->SetValue(normValue, k);
+                    control->SetDirty(false);
+                }
             }
         }
     }
