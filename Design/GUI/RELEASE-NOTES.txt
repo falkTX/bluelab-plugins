@@ -212,7 +212,7 @@ v4.3.1
  
 v4.4.0
 - "LOOP": global, not by source anymore
-
+- FIX: fixed spacing and export for SYNTH and SOURCES long buttons
 
 Rollover menu: 5c75eb
 Rollover buttons: 6a6affff
