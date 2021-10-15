@@ -264,6 +264,12 @@ ITabsBarControl::CloseTab(int tabNum)
     mDirty = true;
 }
 
+int
+ITabsBarControl::GetNumTabs() const
+{
+    return mTabs.size();
+}
+
 void
 ITabsBarControl::SetBackgroundColor(const IColor &color)
 {

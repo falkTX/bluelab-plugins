@@ -27,7 +27,7 @@ class ITabsBarControl : public IControl
     virtual ~ITabsBarControl();
 
     void SetListener(ITabsBarListener *listener);
-    
+
     void Draw(IGraphics &g) override;
     void OnMouseDown(float x, float y, const IMouseMod &mod) override;
     void OnMouseOver(float x, float y, const IMouseMod &mod) override;
@@ -36,7 +36,9 @@ class ITabsBarControl : public IControl
     void NewTab(const char *name);
     void SelectTab(int tabNum);
     void CloseTab(int tabNum);
-    
+
+    int GetNumTabs() const;
+        
     // Colors
     //
     
