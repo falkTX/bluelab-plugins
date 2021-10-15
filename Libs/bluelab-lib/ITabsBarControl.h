@@ -35,10 +35,11 @@ class ITabsBarControl : public IControl
     
     void NewTab(const char *name);
     void SelectTab(int tabNum);
+    int GetSelectedTab() const;
     void CloseTab(int tabNum);
-
     int GetNumTabs() const;
-        
+    void SetTabName(int tabNum, const char *name);
+    
     // Colors
     //
     
@@ -112,7 +113,8 @@ protected:
 
         const char *GetName() const;
         const char *GetShortName() const;
-        
+        void SetName(const char *name);
+                     
         void SetEnabled(bool flag);
         bool IsEnabled() const;
 

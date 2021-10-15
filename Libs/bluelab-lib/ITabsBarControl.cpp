@@ -7,16 +7,7 @@
 // Tab
 ITabsBarControl::Tab::Tab(const char *name)
 {
-    memset(mName, '\0', FILENAME_SIZE);
-    if (name != NULL)
-        strcpy(mName, name);
-
-    memset(mShortName, '\0', FILENAME_SIZE);
-    if (name != NULL)
-    {
-        char *shortName = BLUtilsFile::GetFileName(name);
-        strcpy(mShortName, shortName);
-    }
+    SetName(name);
     
     mIsEnabled = false;
     
@@ -50,6 +41,21 @@ const char *
 ITabsBarControl::Tab::GetShortName() const
 {
     return mShortName;
+}
+
+void
+ITabsBarControl::Tab::SetName(const char *name)
+{
+    memset(mName, '\0', FILENAME_SIZE);
+    if (name != NULL)
+        strcpy(mName, name);
+
+    memset(mShortName, '\0', FILENAME_SIZE);
+    if (name != NULL)
+    {
+        char *shortName = BLUtilsFile::GetFileName(name);
+        strcpy(mShortName, shortName);
+    }
 }
 
 void
@@ -150,8 +156,8 @@ ITabsBarControl::OnMouseDown(float x, float y, const IMouseMod& mod)
     int tabClicked = MouseOverTabIdx(x, y);
     if (tabClicked >= 0)
     {
-        if (mListener != NULL)
-            mListener->OnTabSelected(tabClicked);
+        //if (mListener != NULL)
+        //    mListener->OnTabSelected(tabClicked);
         
         // Disable all the tabs
         for (int i = 0; i < mTabs.size(); i++)
@@ -162,6 +168,9 @@ ITabsBarControl::OnMouseDown(float x, float y, const IMouseMod& mod)
 
         mTabs[tabClicked].SetEnabled(true);
 
+        if (mListener != NULL)
+            mListener->OnTabSelected(tabClicked);
+            
         mDirty = true;
 
         // Clicked on a tab to enable it: done 
@@ -240,6 +249,19 @@ ITabsBarControl::SelectTab(int tabNum)
     mDirty = true;
 }
 
+int
+ITabsBarControl::GetSelectedTab() const
+{
+    for (int i = 0; i < mTabs.size(); i++)
+    {
+        const Tab &t0 = mTabs[i];
+        if (t0.IsEnabled())
+            return i;
+    }
+
+    return -1;
+}
+
 void
 ITabsBarControl::CloseTab(int tabNum)
 {
@@ -268,6 +290,18 @@ int
 ITabsBarControl::GetNumTabs() const
 {
     return mTabs.size();
+}
+
+void
+ITabsBarControl::SetTabName(int tabNum, const char *name)
+{
+    if (tabNum >= mTabs.size())
+        return;
+    
+    Tab &t = mTabs[tabNum];
+    t.SetName(name);
+
+    mDirty = true;
 }
 
 void
