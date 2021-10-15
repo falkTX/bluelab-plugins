@@ -1920,7 +1920,6 @@ ITabsBarControl *
 GUIHelper12::CreateTabsBar(IGraphics *graphics,
                            float x, float y, float w, float h)
 {
-    //IRECT bounds(x, y, w, h);
     IRECT bounds(x, y, x + w, y + h);
     ITabsBarControl *tabsBar = new ITabsBarControl(bounds);
 
