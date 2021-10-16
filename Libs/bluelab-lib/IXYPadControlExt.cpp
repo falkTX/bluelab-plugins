@@ -75,6 +75,8 @@ IXYPadControlExt::SetHandleEnabled(int handleNum, bool flag)
         return;
 
     mHandles[handleNum].mIsEnabled = flag;
+
+    SetDirty(false);
 }
 
 bool
