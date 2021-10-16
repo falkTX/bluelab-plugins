@@ -1855,6 +1855,35 @@ GUIHelper12::RefreshAllParameters(Plugin *plug, int numParams)
 #endif
 }
 
+void
+GUIHelper12::RefreshParameter(Plugin *plug, int paramIdx)
+{
+    IGraphics *graphics = plug->GetUI();
+    if (graphics == NULL)
+        return;
+    
+    double normValue = plug->GetParam(paramIdx)->GetNormalized();
+
+    for (int j = 0; j < graphics->NControls(); j++)
+    {
+        IControl *control = graphics->GetControl(j);
+        if (control == NULL)
+            continue;
+
+        // Also manage controls with several params
+        for (int k = 0; k < control->NVals(); k++)
+        {
+            int idx = control->GetParamIdx(k);
+            
+            if (idx == paramIdx)
+            {
+                control->SetValue(normValue, k);
+                control->SetDirty(false);
+            }
+        }
+    }
+}
+
 bool
 GUIHelper12::PromptForFile(Plugin *plug, EFileAction action, WDL_String *result,
                            char* dir, char* extensions)

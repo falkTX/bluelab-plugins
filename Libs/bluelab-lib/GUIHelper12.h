@@ -338,7 +338,8 @@ public:
     
     // Refresh all the controls, from their values
     static void RefreshAllParameters(Plugin *plug, int numParams);
-
+    static void RefreshParameter(Plugin *plug, int paramIdx);
+    
     static bool PromptForFile(Plugin *plug, EFileAction action, WDL_String *result,
                               char* dir = "", char* extensions = "");
     

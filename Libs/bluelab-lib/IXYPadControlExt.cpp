@@ -1,3 +1,5 @@
+#include <GUIHelper12.h>
+
 #include "IXYPadControlExt.h"
 
 IXYPadControlExt::IXYPadControlExt(Plugin *plug,
@@ -165,6 +167,10 @@ IXYPadControlExt::OnMouseDrag(float x, float y, float dX, float dY,
 
         mPlug->GetParam(handle.mParamIdx[0])->SetNormalized(xn);
         mPlug->GetParam(handle.mParamIdx[1])->SetNormalized(yn);
+
+        // Force refresh, in case of handle param is also used e.g on knobs
+        GUIHelper12::RefreshParameter(mPlug, handle.mParamIdx[0]);
+        GUIHelper12::RefreshParameter(mPlug, handle.mParamIdx[1]);
     }
     
     SetDirty(true);
