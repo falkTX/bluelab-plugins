@@ -64,18 +64,44 @@ IXYPadControlExt::OnMouseDown(float x, float y, const IMouseMod& mod)
 #ifndef __linux__
   if (mod.A)
   {
-    SetValueToDefault(GetValIdxForPos(x, y));
+      //SetValueToDefault(GetValIdxForPos(x, y));
+      if (!mHandles.empty())
+      {
+          // Set values to defaults
+          IParam *param0 = mPlug->GetParam(mHandles[0].mParamIdx[0]);
+          param0->Set(param0->GetDefault(true));
 
-    return;
+          IParam *param1 = mPlug->GetParam(mHandles[0].mParamIdx[1]);
+          param1->Set(param1->GetDefault(true));
+
+          // Force refresh, in case of handle param is also used e.g on knobs
+          GUIHelper12::RefreshParameter(mPlug, mHandles[0].mParamIdx[0]);
+          GUIHelper12::RefreshParameter(mPlug, mHandles[0].mParamIdx[1]);
+      }
+      
+      return;
   }
 #else
   // On Linux, Alt+click does nothing (at least on my xubuntu)
   // So use Ctrl-click instead to reset parameters
   if (mod.C)
   {
-    SetValueToDefault(GetValIdxForPos(x, y));
+      //SetValueToDefault(GetValIdxForPos(x, y));
+      if (!mHandles.empty())
+      {
+          // Set values to defaults
+          IParam *param0 = mPlug->GetParam(mHandles[0].mParamIdx[0]);
+          param0->Set(param0->GetDefault(true));
 
-    return;
+          IParam *param1 = mPlug->GetParam(mHandles[0].mParamIdx[1]);
+          param1->Set(param1->GetDefault(true));
+
+          // Force refresh, in case of handle param is also used e.g on knobs
+          GUIHelper12::RefreshParameter(mPlug, mHandles[0].mParamIdx[0]);
+          GUIHelper12::RefreshParameter(mPlug, mHandles[0].mParamIdx[1]);
+      }
+      
+      return;
   }
 #endif
         
