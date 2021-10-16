@@ -206,6 +206,7 @@ public:
                                      IGraphics *graphics,
                                      float x, float y,
                                      const char *trackBitmapFname,
+                                     int handle0YParamIdx, int handle0XParamIdx,
                                      float borderSize = 0.0,
                                      bool reverseY = false,
                                      const char *tooltip = NULL);

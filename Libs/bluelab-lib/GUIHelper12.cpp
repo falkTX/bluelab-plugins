@@ -910,14 +910,20 @@ IXYPadControlExt *
 GUIHelper12::CreateXYPadExt(Plugin *plug, IGraphics *graphics,
                             float x, float y,
                             const char *trackBitmapFname,
+                            int handle0YParamIdx, int handle0XParamIdx,
                             float borderSize, bool reverseY,
                             const char *tooltip)
 {
+    // Ok on Linux
+    //std::initializer_list<int> params( { xParamIdx, yParamIdx } );
+    // Ok on Windows
+    std::initializer_list<int> params = { handle0XParamIdx, handle0YParamIdx };
+    
     IBitmap trackBitmap = graphics->LoadBitmap(trackBitmapFname, 1);
 
     IRECT rect(x, y, x + trackBitmap.W(), y + trackBitmap.H());
     IXYPadControlExt *result = new IXYPadControlExt(plug,
-                                                    rect,
+                                                    rect, params,
                                                     trackBitmap,
                                                     borderSize, reverseY);
 

@@ -17,6 +17,7 @@ class IXYPadControlExt : public IControl
  public:
     IXYPadControlExt(Plugin *plug,
                      const IRECT& bounds,
+                     const std::initializer_list<int>& params,
                      const IBitmap& trackBitmap,
                      float borderSize = 0.0,
                      bool reverseY = false);

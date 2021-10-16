@@ -4,9 +4,10 @@
 
 IXYPadControlExt::IXYPadControlExt(Plugin *plug,
                                    const IRECT& bounds,
+                                   const std::initializer_list<int>& params,
                                    const IBitmap& trackBitmap,
                                    float borderSize, bool reverseY)
-: IControl(bounds)
+: IControl(bounds, params)
 {
     mPlug = plug;
     
