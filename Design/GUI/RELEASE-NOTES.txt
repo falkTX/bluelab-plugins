@@ -214,6 +214,9 @@ v4.4.0
 - "LOOP": global, not by source anymore
 - FIX: fixed spacing and export for SYNTH and SOURCES long buttons
 
+v4.4.1
+- FIX: fixed "live source" / "file source", for more consistency
+
 Rollover menu: 5c75eb
 Rollover buttons: 6a6affff
 Knobs: 617bf7
