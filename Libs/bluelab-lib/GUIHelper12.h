@@ -20,6 +20,7 @@ using namespace std;
 #include <ResizeGUIPluginInterface.h>
 #include <ITextButtonControl.h>
 #include <IXYPadControl.h>
+#include <IXYPadControlExt.h>
 #include <IBLSwitchControl.h>
 #include <ITabsBarControl.h>*/
 
@@ -49,6 +50,7 @@ class BLVumeter2SidesControl;
 class ResizeGUIPluginInterface;
 class ITextButtonControl;
 class IXYPadControl;
+class IXYPadControlExt;
 class IBLSwitchControl;
 class ITabsBarControl;
 class ISpatializerHandleControl;
@@ -200,6 +202,14 @@ public:
                                bool reverseY = false,
                                const char *tooltip = NULL);
 
+    IXYPadControlExt *CreateXYPadExt(Plugin *plug,
+                                     IGraphics *graphics,
+                                     float x, float y,
+                                     const char *trackBitmapFname,
+                                     float borderSize = 0.0,
+                                     bool reverseY = false,
+                                     const char *tooltip = NULL);
+    
     // Circle around heads, for Spatializer
     // - (x, y) is the center
     // - minAngle and maxAngle are in degree [0, 360]

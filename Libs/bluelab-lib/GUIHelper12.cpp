@@ -25,6 +25,7 @@
 #include <ResizeGUIPluginInterface.h>
 #include <ITextButtonControl.h>
 #include <IXYPadControl.h>
+#include <IXYPadControlExt.h>
 #include <IBLSwitchControl.h>
 #include <ITabsBarControl.h>
 #include <IBLTooltipControl.h>
@@ -894,6 +895,31 @@ GUIHelper12::CreateXYPad(IGraphics *graphics,
     IXYPadControl *result =
         new IXYPadControl(rect, params, trackBitmap, handleBitmap,
                           borderSize, reverseY);
+
+    if (tooltip != NULL)
+        result->SetTooltip(tooltip);
+    
+    graphics->AttachControl(result);
+    if (mIsCollectingControls)
+        mCollectedControls.push_back(result);
+    
+    return result;
+}
+
+IXYPadControlExt *
+GUIHelper12::CreateXYPadExt(Plugin *plug, IGraphics *graphics,
+                            float x, float y,
+                            const char *trackBitmapFname,
+                            float borderSize, bool reverseY,
+                            const char *tooltip)
+{
+    IBitmap trackBitmap = graphics->LoadBitmap(trackBitmapFname, 1);
+
+    IRECT rect(x, y, x + trackBitmap.W(), y + trackBitmap.H());
+    IXYPadControlExt *result = new IXYPadControlExt(plug,
+                                                    rect,
+                                                    trackBitmap,
+                                                    borderSize, reverseY);
 
     if (tooltip != NULL)
         result->SetTooltip(tooltip);

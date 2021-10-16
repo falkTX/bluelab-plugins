@@ -404,6 +404,8 @@ set(_bluelab-lib_src
   ITabsBarControl.h
   IXYPadControl.cpp
   IXYPadControl.h
+  IXYPadControlExt.cpp
+  IXYPadControlExt.h
   ImageDisplay2.cpp
   ImageDisplay2.h
   ImageDisplayColor.cpp
