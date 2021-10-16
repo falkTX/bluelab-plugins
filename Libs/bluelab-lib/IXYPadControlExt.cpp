@@ -18,9 +18,17 @@ IXYPadControlExt::IXYPadControlExt(Plugin *plug,
     mReverseY = reverseY;
     
     mMouseDown = false;
+
+    mListener = NULL;
 }
 
 IXYPadControlExt::~IXYPadControlExt() {}
+
+void
+IXYPadControlExt::SetListener(IXYPadControlExtListener *listener)
+{
+    mListener = listener;
+}
 
 void
 IXYPadControlExt::AddHandle(IGraphics *pGraphics, const char *handleBitmapFname,
@@ -48,8 +56,34 @@ IXYPadControlExt::AddHandle(IGraphics *pGraphics, const char *handleBitmapFname,
     handle.mPrevY = 0.0;
 
     handle.mIsGrabbed = false;
+
+    handle.mIsEnabled = true;
     
     mHandles.push_back(handle);
+}
+
+int
+IXYPadControlExt::GetNumHandles()
+{
+    return mHandles.size();
+}
+
+void
+IXYPadControlExt::SetHandleEnabled(int handleNum, bool flag)
+{
+    if (handleNum >= mHandles.size())
+        return;
+
+    mHandles[handleNum].mIsEnabled = flag;
+}
+
+bool
+IXYPadControlExt::IsHandleEnabled(int handleNum)
+{
+    if (handleNum >= mHandles.size())
+        return false;
+
+    return mHandles[handleNum].mIsEnabled;
 }
 
 void
@@ -68,16 +102,22 @@ IXYPadControlExt::OnMouseDown(float x, float y, const IMouseMod& mod)
       //SetValueToDefault(GetValIdxForPos(x, y));
       if (!mHandles.empty())
       {
-          // Set values to defaults
-          IParam *param0 = mPlug->GetParam(mHandles[0].mParamIdx[0]);
-          param0->Set(param0->GetDefault(true));
-
-          IParam *param1 = mPlug->GetParam(mHandles[0].mParamIdx[1]);
-          param1->Set(param1->GetDefault(true));
-
-          // Force refresh, in case of handle param is also used e.g on knobs
-          GUIHelper12::RefreshParameter(mPlug, mHandles[0].mParamIdx[0]);
-          GUIHelper12::RefreshParameter(mPlug, mHandles[0].mParamIdx[1]);
+          if (mHandles[0].mIsEnabled)
+          {
+              // Set values to defaults
+              IParam *param0 = mPlug->GetParam(mHandles[0].mParamIdx[0]);
+              param0->Set(param0->GetDefault(true));
+              
+              IParam *param1 = mPlug->GetParam(mHandles[0].mParamIdx[1]);
+              param1->Set(param1->GetDefault(true));
+              
+              // Force refresh, in case of handle param is also used e.g on knobs
+              GUIHelper12::RefreshParameter(mPlug, mHandles[0].mParamIdx[0]);
+              GUIHelper12::RefreshParameter(mPlug, mHandles[0].mParamIdx[1]);
+              
+              if (mListener != NULL)
+                  mListener->OnHandleChanged(0);
+          }
       }
       
       return;
@@ -90,16 +130,22 @@ IXYPadControlExt::OnMouseDown(float x, float y, const IMouseMod& mod)
       //SetValueToDefault(GetValIdxForPos(x, y));
       if (!mHandles.empty())
       {
-          // Set values to defaults
-          IParam *param0 = mPlug->GetParam(mHandles[0].mParamIdx[0]);
-          param0->Set(param0->GetDefault(true));
-
-          IParam *param1 = mPlug->GetParam(mHandles[0].mParamIdx[1]);
-          param1->Set(param1->GetDefault(true));
-
-          // Force refresh, in case of handle param is also used e.g on knobs
-          GUIHelper12::RefreshParameter(mPlug, mHandles[0].mParamIdx[0]);
-          GUIHelper12::RefreshParameter(mPlug, mHandles[0].mParamIdx[1]);
+          if (mHandles[0].mIsEnabled)
+          {
+              // Set values to defaults
+              IParam *param0 = mPlug->GetParam(mHandles[0].mParamIdx[0]);
+              param0->Set(param0->GetDefault(true));
+              
+              IParam *param1 = mPlug->GetParam(mHandles[0].mParamIdx[1]);
+              param1->Set(param1->GetDefault(true));
+              
+              // Force refresh, in case of handle param is also used e.g on knobs
+              GUIHelper12::RefreshParameter(mPlug, mHandles[0].mParamIdx[0]);
+              GUIHelper12::RefreshParameter(mPlug, mHandles[0].mParamIdx[1]);
+              
+              if (mListener != NULL)
+                  mListener->OnHandleChanged(0);
+          }
       }
       
       return;
@@ -111,6 +157,8 @@ IXYPadControlExt::OnMouseDown(float x, float y, const IMouseMod& mod)
     for (int i = 0; i < mHandles.size(); i++)
     {
         Handle &handle = mHandles[i];
+        if (!handle.mIsEnabled)
+            continue;
         
         handle.mPrevX = x;
         handle.mPrevY = y;
@@ -141,6 +189,9 @@ IXYPadControlExt::OnMouseUp(float x, float y, const IMouseMod& mod)
     for (int i = 0; i < mHandles.size(); i++)
     {
         Handle &handle = mHandles[i];
+
+        if (!handle.mIsEnabled)
+            continue;
         
         handle.mOffsetX = 0.0;
         handle.mOffsetY = 0.0;
@@ -159,6 +210,9 @@ IXYPadControlExt::OnMouseDrag(float x, float y, float dX, float dY,
     {
         Handle &handle = mHandles[i];
 
+        if (!handle.mIsEnabled)
+            continue;
+        
         if (!handle.mIsGrabbed)
             continue;
         
@@ -198,6 +252,9 @@ IXYPadControlExt::OnMouseDrag(float x, float y, float dX, float dY,
         // Force refresh, in case of handle param is also used e.g on knobs
         GUIHelper12::RefreshParameter(mPlug, handle.mParamIdx[0]);
         GUIHelper12::RefreshParameter(mPlug, handle.mParamIdx[1]);
+
+        if (mListener != NULL)
+            mListener->OnHandleChanged(i);
     }
     
     SetDirty(true);
@@ -220,6 +277,9 @@ IXYPadControlExt::DrawHandles(IGraphics& g)
     {
         const Handle &handle = mHandles[i];
 
+        if (!handle.mIsEnabled)
+            continue;
+        
         float val0 = mPlug->GetParam(handle.mParamIdx[0])->Value();
         float val1 = mPlug->GetParam(handle.mParamIdx[1])->Value();
         
@@ -247,6 +307,9 @@ void
 IXYPadControlExt::PixelsToParams(float *x, float *y)
 {
     if (mHandles.empty())
+        return;
+
+    if (!mHandles[0].mIsEnabled)
         return;
     
     float w = mHandles[0].mBitmap.W();
@@ -277,6 +340,9 @@ IXYPadControlExt::ParamsToPixels(float *x, float *y)
 {
     if (mHandles.empty())
         return;
+
+    if (!mHandles[0].mIsEnabled)
+        return;
     
     float w = mHandles[0].mBitmap.W();
     float h = mHandles[0].mBitmap.H();
@@ -296,6 +362,9 @@ IXYPadControlExt::MouseOnHandle(float mx, float my,
     {
         Handle &handle = mHandles[i];
 
+        if (!handle.mIsEnabled)
+            continue;
+        
         float val0 = mPlug->GetParam(handle.mParamIdx[0])->Value();
         float val1 = mPlug->GetParam(handle.mParamIdx[1])->Value();
         

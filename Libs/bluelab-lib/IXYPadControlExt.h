@@ -11,6 +11,12 @@ using namespace std;
 using namespace iplug;
 using namespace iplug::igraphics;
 
+class IXYPadControlExtListener
+{
+public:
+    virtual void OnHandleChanged(int handleNum)  = 0;
+};
+
 // Manage multiple handles
 class IXYPadControlExt : public IControl
 {
@@ -24,8 +30,14 @@ class IXYPadControlExt : public IControl
 
     virtual ~IXYPadControlExt();
 
+    void SetListener(IXYPadControlExtListener *listener);
+    
     void AddHandle(IGraphics *pGraphics, const char *handleBitmapFname,
                    const std::initializer_list<int>& params);
+    int GetNumHandles();
+
+    void SetHandleEnabled(int handleNum, bool flag);
+    bool IsHandleEnabled(int handleNum);
     
     void Draw(IGraphics& g) override;
 
@@ -73,9 +85,14 @@ class IXYPadControlExt : public IControl
         float mPrevY;
 
         bool mIsGrabbed;
+
+        bool mIsEnabled;
     };
 
     vector<Handle> mHandles;
+
+    //
+    IXYPadControlExtListener *mListener;
 };
 
 #endif
