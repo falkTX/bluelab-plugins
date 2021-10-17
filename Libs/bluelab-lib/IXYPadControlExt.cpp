@@ -2,6 +2,8 @@
 
 #include "IXYPadControlExt.h"
 
+#define HANDLE_NUM_FRAMES 3
+
 IXYPadControlExt::IXYPadControlExt(Plugin *plug,
                                    const IRECT& bounds,
                                    const std::initializer_list<int>& params,
@@ -42,7 +44,8 @@ IXYPadControlExt::AddHandle(IGraphics *pGraphics, const char *handleBitmapFname,
         paramsVec.push_back(paramIdx);
     }
     
-    IBitmap handleBitmap = pGraphics->LoadBitmap(handleBitmapFname, 1);
+    IBitmap handleBitmap =
+        pGraphics->LoadBitmap(handleBitmapFname, HANDLE_NUM_FRAMES);
     
     Handle handle;
     handle.mBitmap = handleBitmap;
@@ -58,6 +61,8 @@ IXYPadControlExt::AddHandle(IGraphics *pGraphics, const char *handleBitmapFname,
     handle.mIsGrabbed = false;
 
     handle.mIsEnabled = true;
+
+    handle.mDrawState = Handle::NORMAL;
     
     mHandles.push_back(handle);
 }
@@ -178,6 +183,20 @@ IXYPadControlExt::OnMouseDown(float x, float y, const IMouseMod& mod)
         mHandles[handleNum].mOffsetY = offsetY;
 
         mHandles[handleNum].mIsGrabbed = true;
+
+        // Hilight current handle
+        if (mHandles[handleNum].mDrawState != Handle::GRAY_OUT)
+            mHandles[handleNum].mDrawState = Handle::HIGHLIGHT;
+
+        // Un-highlight other handles
+        for (int i = 1; i < mHandles.size(); i++)
+        {
+            if (i != handleNum)
+            {
+                if (mHandles[i].mDrawState != Handle::GRAY_OUT)
+                    mHandles[i].mDrawState = Handle::NORMAL;
+            }
+        }
     }
     
     // Direct jump
@@ -297,12 +316,12 @@ IXYPadControlExt::DrawHandles(IGraphics& g)
         ParamsToPixels(&x, &y);
 
         int w = handle.mBitmap.W();
-        int h = handle.mBitmap.H();
+        int h = handle.mBitmap.H()/handle.mBitmap.N();
 
         IRECT handleRect(x, y, x + w, y + h);
         
         IBlend blend = GetBlend();
-        g.DrawBitmap(handle.mBitmap, handleRect, 0, &blend);
+        g.DrawBitmap(handle.mBitmap, handleRect, (int)handle.mDrawState, &blend);
     }
 }
 
@@ -316,7 +335,7 @@ IXYPadControlExt::PixelsToParams(float *x, float *y)
         return;
     
     float w = mHandles[0].mBitmap.W();
-    float h = mHandles[0].mBitmap.H();
+    float h = mHandles[0].mBitmap.H()/mHandles[0].mBitmap.N();
     
     *x = (*x - (mRECT.L + w/2 + mBorderSize)) /
         (mRECT.W() - w - mBorderSize*2.0);
@@ -348,7 +367,7 @@ IXYPadControlExt::ParamsToPixels(float *x, float *y)
         return;
     
     float w = mHandles[0].mBitmap.W();
-    float h = mHandles[0].mBitmap.H();
+    float h = mHandles[0].mBitmap.H()/mHandles[0].mBitmap.N();
     
     *x = mRECT.L + mBorderSize + (*x)*(mRECT.W() - w - mBorderSize*2.0);
     *y = mRECT.T + mBorderSize + (*y)*(mRECT.H() - h - mBorderSize*2.0);
@@ -382,7 +401,7 @@ IXYPadControlExt::MouseOnHandle(float mx, float my,
         ParamsToPixels(&x, &y);
 
         int w = handle.mBitmap.W();
-        int h = handle.mBitmap.H();
+        int h = handle.mBitmap.H()/handle.mBitmap.N();
 
         IRECT handleRect(x, y, x + w, y + h);
         

@@ -216,6 +216,7 @@ v4.4.0
 
 v4.4.1
 - FIX: fixed "live source" / "file source", for more consistency
+- IMPROV: pad handles with 3 images (normal, hilight, grayed out)
 
 Rollover menu: 5c75eb
 Rollover buttons: 6a6affff

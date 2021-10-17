@@ -87,6 +87,15 @@ class IXYPadControlExt : public IControl
         bool mIsGrabbed;
 
         bool mIsEnabled;
+
+        enum DrawState
+        {
+            NORMAL = 1,
+            HIGHLIGHT,
+            GRAY_OUT
+        };
+
+        DrawState mDrawState;
     };
 
     vector<Handle> mHandles;
