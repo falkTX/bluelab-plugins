@@ -4,6 +4,8 @@
 
 #define HANDLE_NUM_FRAMES 3
 
+#define AUTO_HIGHLIGHT_HANDLES 0
+
 IXYPadControlExt::IXYPadControlExt(Plugin *plug,
                                    const IRECT& bounds,
                                    const std::initializer_list<int>& params,
@@ -62,7 +64,7 @@ IXYPadControlExt::AddHandle(IGraphics *pGraphics, const char *handleBitmapFname,
 
     handle.mIsEnabled = true;
 
-    handle.mDrawState = Handle::NORMAL;
+    handle.mState = HANDLE_NORMAL;
     
     mHandles.push_back(handle);
 }
@@ -92,6 +94,15 @@ IXYPadControlExt::IsHandleEnabled(int handleNum)
         return false;
 
     return mHandles[handleNum].mIsEnabled;
+}
+
+void
+IXYPadControlExt::SetHandleState(int handleNum, HandleState state)
+{
+    if (handleNum >= mHandles.size())
+        return;
+
+    mHandles[handleNum].mState = state;
 }
 
 void
@@ -184,19 +195,21 @@ IXYPadControlExt::OnMouseDown(float x, float y, const IMouseMod& mod)
 
         mHandles[handleNum].mIsGrabbed = true;
 
+#if AUTO_HIGHLIGHT_HANDLES
         // Hilight current handle
-        if (mHandles[handleNum].mDrawState != Handle::GRAY_OUT)
-            mHandles[handleNum].mDrawState = Handle::HIGHLIGHT;
+        if (mHandles[handleNum].mState != HANDLE_GRAYED_OUT)
+            mHandles[handleNum].mState = HANDLE_HIGHLIGHTED;
 
         // Un-highlight other handles
         for (int i = 1; i < mHandles.size(); i++)
         {
             if (i != handleNum)
             {
-                if (mHandles[i].mDrawState != Handle::GRAY_OUT)
-                    mHandles[i].mDrawState = Handle::NORMAL;
+                if (mHandles[i].mState != HANDLE_GRAYED_OUT)
+                    mHandles[i].mState = HANDLE_NORMAL;
             }
         }
+#endif
     }
     
     // Direct jump
@@ -321,7 +334,7 @@ IXYPadControlExt::DrawHandles(IGraphics& g)
         IRECT handleRect(x, y, x + w, y + h);
         
         IBlend blend = GetBlend();
-        g.DrawBitmap(handle.mBitmap, handleRect, (int)handle.mDrawState, &blend);
+        g.DrawBitmap(handle.mBitmap, handleRect, (int)handle.mState, &blend);
     }
 }
 

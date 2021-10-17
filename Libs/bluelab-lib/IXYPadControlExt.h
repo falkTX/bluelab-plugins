@@ -21,6 +21,13 @@ public:
 class IXYPadControlExt : public IControl
 {
  public:
+    enum HandleState
+    {
+        HANDLE_NORMAL = 1,
+        HANDLE_HIGHLIGHTED,
+        HANDLE_GRAYED_OUT
+    };
+    
     IXYPadControlExt(Plugin *plug,
                      const IRECT& bounds,
                      const std::initializer_list<int>& params,
@@ -38,6 +45,8 @@ class IXYPadControlExt : public IControl
 
     void SetHandleEnabled(int handleNum, bool flag);
     bool IsHandleEnabled(int handleNum);
+
+    void SetHandleState(int handleNum, HandleState state);
     
     void Draw(IGraphics& g) override;
 
@@ -88,14 +97,7 @@ class IXYPadControlExt : public IControl
 
         bool mIsEnabled;
 
-        enum DrawState
-        {
-            NORMAL = 1,
-            HIGHLIGHT,
-            GRAY_OUT
-        };
-
-        DrawState mDrawState;
+        HandleState mState;
     };
 
     vector<Handle> mHandles;
