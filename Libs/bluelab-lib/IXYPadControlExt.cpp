@@ -308,7 +308,8 @@ void
 IXYPadControlExt::DrawHandles(IGraphics& g)
 {
     // Draw them in reverse order, so we grab what we see
-    for (int i = mHandles.size() - 1; i >= 0; i--)
+    for (int i = 0; i < mHandles.size(); i++)
+    //for (int i = mHandles.size() - 1; i >= 0; i--)
     {
         const Handle &handle = mHandles[i];
 
@@ -393,7 +394,8 @@ int
 IXYPadControlExt::MouseOnHandle(float mx, float my,
                                 float *offsetX, float *offsetY)
 {
-    for (int i = 0; i < mHandles.size(); i++)
+    //for (int i = 0; i < mHandles.size(); i++)
+    for (int i = mHandles.size() - 1; i >= 0; i--)
     {
         Handle &handle = mHandles[i];
 
