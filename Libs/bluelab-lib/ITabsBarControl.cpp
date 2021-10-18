@@ -117,6 +117,8 @@ ITabsBarControl::ITabsBarControl(const IRECT& bounds, int paramIdx)
     mCrossRolloverColor = IColor(255, 128, 128, 128);
 
     mNameColor = IColor(255, 255, 255, 255);
+
+    strcpy(mFont, "Roboto-Bold");
     mFontSize = 14.0;
 }
     
@@ -359,6 +361,18 @@ ITabsBarControl::SetCrossLineWidth(float width)
 }
 
 void
+ITabsBarControl::SetFontSize(float fontSize)
+{
+    mFontSize = fontSize;
+}
+
+void
+ITabsBarControl::SetFont(const char *font)
+{
+    strcpy(mFont, font);
+}
+
+void
 ITabsBarControl::DrawBackground(IGraphics &g)
 {
     g.FillRect(mBGColor, mRECT);
@@ -486,7 +500,7 @@ ITabsBarControl::DrawTabNames(IGraphics &g)
     //float y = mRECT.T + mRECT.H()*0.5;
     float margin = mRECT.H()*0.5;
     
-    IText text(mFontSize, mNameColor, "Roboto-Bold", EAlign::Near);
+    IText text(mFontSize, mNameColor, mFont, EAlign::Near);
     // Make the text to be clipped by the tab bounds
     text.mClipToBounds = true;
     

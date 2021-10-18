@@ -391,6 +391,9 @@ public:
     // Graph separator
     void GetGraphSeparatorColor(IColor *sepColor);
 
+    void GetLabelTextFontMorpho(char fontName[255]);
+    float GetLabelTextSizeMorpho();
+    
 protected:
     bool GetManualFullPath(Plugin *plug, IGraphics *graphics,
                            const char *manualFileName,
@@ -558,8 +561,8 @@ protected:
     float mTooltipTextSize;
 
     // Morpho
-    char *mLabelTextFont2;
-    float mLabelTextSize2;
+    char *mLabelTextFontMorpho;
+    float mLabelTextSizeMorpho;
 };
 
 #endif /* GUIHelper12_hpp */

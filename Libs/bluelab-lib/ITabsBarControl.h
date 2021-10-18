@@ -65,6 +65,10 @@ class ITabsBarControl : public IControl
 
     // Style
     void SetCrossLineWidth(float width);
+
+    // For Morpho
+    void SetFontSize(float fontSize);
+    void SetFont(const char *font);
     
 protected:
     void DrawBackground(IGraphics &g);
@@ -99,6 +103,7 @@ protected:
 
     IColor mNameColor;
     float mFontSize;
+    char mFont[255];
     
     //
     ITabsBarListener *mListener;

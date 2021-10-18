@@ -423,8 +423,8 @@ GUIHelper12::GUIHelper12(Style style)
         mTooltipTextSize = 18.0; //16.0; //20.0;
 
         // Morpho
-        mLabelTextFont2 = "OpenSans-Bold";
-        mLabelTextSize2 = 18.0;
+        mLabelTextFontMorpho = "OpenSans-Bold";
+        mLabelTextSizeMorpho = 18.0;
     }
 }
 
@@ -2095,7 +2095,7 @@ GUIHelper12::CreateIconLabel(IGraphics *graphics,
     IBitmap iconBitmap = graphics->LoadBitmap(iconBitmapFname, iconBitmapNFrames);
 
     //IText text = DEFAULT_TEXT;
-    IText text(mLabelTextSize2, mValueTextColorLight, mLabelTextFont2,
+    IText text(mLabelTextSizeMorpho, mValueTextColorLight, mLabelTextFontMorpho,
                EAlign::Near, EVAlign::Top, 0.0,
                IColor(0, 0, 0, 0), IColor(0, 0, 0, 0));
                //mValueTextBGColor, mValueTextFGColor);
@@ -2182,6 +2182,18 @@ void
 GUIHelper12::GetGraphSeparatorColor(IColor *sepColor)
 {
     *sepColor = mGraphSeparatorColor;
+}
+
+void
+GUIHelper12::GetLabelTextFontMorpho(char fontName[255])
+{
+    strcpy(fontName, mLabelTextFontMorpho);
+}
+
+float
+GUIHelper12::GetLabelTextSizeMorpho()
+{
+    return mLabelTextSizeMorpho;
 }
 
 float
