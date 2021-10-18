@@ -268,9 +268,6 @@ ITabsBarControl::CloseTab(int tabNum)
     if (tabNum >= mTabs.size())
         return;
     
-    if (mListener != NULL)
-        mListener->OnTabClose(tabNum);
-    
     if (mTabs[tabNum].IsEnabled())
         // Transmit enabled state before closing
     {
@@ -284,6 +281,9 @@ ITabsBarControl::CloseTab(int tabNum)
     
     mTabs.erase(mTabs.begin() + tabNum);
     mDirty = true;
+
+    if (mListener != NULL)
+        mListener->OnTabClose(tabNum);
 }
 
 int
