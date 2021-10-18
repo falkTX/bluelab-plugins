@@ -31,6 +31,7 @@
 #include <IBLTooltipControl.h>
 #include <ISpatializerHandleControl.h>
 #include <IRadioButtonsControlCustom.h>
+#include <IIconLabelControl.h>
 
 #include "GUIHelper12.h"
 
@@ -420,6 +421,10 @@ GUIHelper12::GUIHelper12(Style style)
         mGraphSeparatorColor = IColor(255, 147, 147, 147);
 
         mTooltipTextSize = 18.0; //16.0; //20.0;
+
+        // Morpho
+        mLabelTextFont2 = "OpenSans-Bold";
+        mLabelTextSize2 = 18.0;
     }
 }
 
@@ -2073,6 +2078,37 @@ GUIHelper12::CreateDropDownMenu(IGraphics *graphics,
             CreateTitle(graphics, x + width/2, y, title, titleSize);
         }
     }
+    
+    return control;
+}
+
+IIconLabelControl *
+GUIHelper12::CreateIconLabel(IGraphics *graphics,
+                             float x, float y,
+                             float iconOffsetX, float iconOffsetY,
+                             float textOffsetX, float textOffsetY,
+                             const char *bgBitmapFname,
+                             const char *iconBitmapFname,
+                             int iconBitmapNFrames)
+{
+    IBitmap bgBitmap = graphics->LoadBitmap(bgBitmapFname, 1);
+    IBitmap iconBitmap = graphics->LoadBitmap(iconBitmapFname, iconBitmapNFrames);
+
+    //IText text = DEFAULT_TEXT;
+    IText text(mLabelTextSize2, mValueTextColorLight, mLabelTextFont2,
+               EAlign::Near, EVAlign::Top, 0.0,
+               IColor(0, 0, 0, 0), IColor(0, 0, 0, 0));
+               //mValueTextBGColor, mValueTextFGColor);
+      
+    IIconLabelControl *control =
+        new IIconLabelControl(x, y,
+                              iconOffsetX, iconOffsetY,
+                              textOffsetX, textOffsetY,
+                              bgBitmap, iconBitmap, text);
+    
+    graphics->AttachControl(control);
+    if (mIsCollectingControls)
+        mCollectedControls.push_back(control);
     
     return control;
 }

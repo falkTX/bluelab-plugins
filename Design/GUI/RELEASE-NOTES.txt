@@ -220,6 +220,8 @@ v4.4.1
 
 v4.5.0
 - IMPROV: make a better handle0 (mic icon)
+- IMPROV: created label source icons
+
 
 Rollover menu: 5c75eb
 Rollover buttons: 6a6affff

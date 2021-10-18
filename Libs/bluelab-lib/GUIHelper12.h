@@ -55,7 +55,7 @@ class IBLSwitchControl;
 class ITabsBarControl;
 class ISpatializerHandleControl;
 class IRadioButtonsControlCustom;
-
+class IIconLabelControl;
 class GUIHelper12
 {
 public:
@@ -368,6 +368,14 @@ public:
                                         const char *title,
                                         Size titleSize = SIZE_DEFAULT,
                                         const char *tooltip = NULL);
+
+    IIconLabelControl *CreateIconLabel(IGraphics *graphics,
+                                       float x, float y,
+                                       float iconOffsetX, float iconOffsetY,
+                                       float textOffsetX, float textOffsetY,
+                                       const char *bgBitmapFname,
+                                       const char *iconBitmapFname,
+                                       int iconBitmapNnStates);
     
     // Circle graph drawer
     void GetCircleGDCircleLineWidth(float *circleLineWidth);
@@ -382,7 +390,7 @@ public:
 
     // Graph separator
     void GetGraphSeparatorColor(IColor *sepColor);
-    
+
 protected:
     bool GetManualFullPath(Plugin *plug, IGraphics *graphics,
                            const char *manualFileName,
@@ -406,8 +414,9 @@ protected:
                                        const IBitmap &bitmap,
                                        const IText &text,
                                        EAlign align = EAlign::Near);
-    
 
+    
+    //
     bool mIsCollectingControls;
     vector<IControl *> mCollectedControls;
     
@@ -547,6 +556,10 @@ protected:
     IColor mGraphSeparatorColor;
 
     float mTooltipTextSize;
+
+    // Morpho
+    char *mLabelTextFont2;
+    float mLabelTextSize2;
 };
 
 #endif /* GUIHelper12_hpp */
