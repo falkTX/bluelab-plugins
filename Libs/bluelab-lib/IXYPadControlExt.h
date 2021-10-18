@@ -60,8 +60,8 @@ class IXYPadControlExt : public IControl
     void DrawHandles(IGraphics& g);
 
     // Ensure that the handle doesn't go out of the track at all 
-    void PixelsToParams(float *x, float *y);
-    void ParamsToPixels(float *x, float *y);
+    void PixelsToParams(int handleNum, float *x, float *y);
+    void ParamsToPixels(int handleNum, float *x, float *y);
 
     // Return the handle number, or -1 if no handle
     int MouseOnHandle(float x, float y,

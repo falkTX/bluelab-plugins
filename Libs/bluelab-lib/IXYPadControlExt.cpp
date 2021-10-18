@@ -279,7 +279,7 @@ IXYPadControlExt::OnMouseDrag(float x, float y, float dX, float dY,
     
         float xn = x;
         float yn = y;
-        PixelsToParams(&xn, &yn);
+        PixelsToParams(i, &xn, &yn);
 
         mPlug->GetParam(handle.mParamIdx[0])->SetNormalized(xn);
         mPlug->GetParam(handle.mParamIdx[1])->SetNormalized(yn);
@@ -326,7 +326,7 @@ IXYPadControlExt::DrawHandles(IGraphics& g)
     
         float x = xn;
         float y = yn;
-        ParamsToPixels(&x, &y);
+        ParamsToPixels(i, &x, &y);
 
         int w = handle.mBitmap.W();
         int h = handle.mBitmap.H()/handle.mBitmap.N();
@@ -339,16 +339,16 @@ IXYPadControlExt::DrawHandles(IGraphics& g)
 }
 
 void
-IXYPadControlExt::PixelsToParams(float *x, float *y)
+IXYPadControlExt::PixelsToParams(int handleNum, float *x, float *y)
 {
-    if (mHandles.empty())
+    if (handleNum >= mHandles.size())
         return;
 
-    if (!mHandles[0].mIsEnabled)
+    if (!mHandles[handleNum].mIsEnabled)
         return;
     
-    float w = mHandles[0].mBitmap.W();
-    float h = mHandles[0].mBitmap.H()/mHandles[0].mBitmap.N();
+    float w = mHandles[handleNum].mBitmap.W();
+    float h = mHandles[handleNum].mBitmap.H()/mHandles[handleNum].mBitmap.N();
     
     *x = (*x - (mRECT.L + w/2 + mBorderSize)) /
         (mRECT.W() - w - mBorderSize*2.0);
@@ -371,16 +371,16 @@ IXYPadControlExt::PixelsToParams(float *x, float *y)
 }
 
 void
-IXYPadControlExt::ParamsToPixels(float *x, float *y)
+IXYPadControlExt::ParamsToPixels(int handleNum, float *x, float *y)
 {
-    if (mHandles.empty())
+    if (handleNum >= mHandles.size())
         return;
 
-    if (!mHandles[0].mIsEnabled)
+    if (!mHandles[handleNum].mIsEnabled)
         return;
     
-    float w = mHandles[0].mBitmap.W();
-    float h = mHandles[0].mBitmap.H()/mHandles[0].mBitmap.N();
+    float w = mHandles[handleNum].mBitmap.W();
+    float h = mHandles[handleNum].mBitmap.H()/mHandles[handleNum].mBitmap.N();
     
     *x = mRECT.L + mBorderSize + (*x)*(mRECT.W() - w - mBorderSize*2.0);
     *y = mRECT.T + mBorderSize + (*y)*(mRECT.H() - h - mBorderSize*2.0);
@@ -411,7 +411,7 @@ IXYPadControlExt::MouseOnHandle(float mx, float my,
     
         float x = xn;
         float y = yn;
-        ParamsToPixels(&x, &y);
+        ParamsToPixels(i, &x, &y);
 
         int w = handle.mBitmap.W();
         int h = handle.mBitmap.H()/handle.mBitmap.N();
