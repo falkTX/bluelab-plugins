@@ -280,7 +280,8 @@ SpectrogramDisplay3::DoUpdateSpectrogram()
     if (mNeedUpdateColorMapData || (mNvgColorMapImage == 0))
     {
         // Colormap
-        bool updated = mSpectrogram->GetColormapImageDataRGBA(&mColorMapImageData);
+        bool updated =
+            mSpectrogram->GetColormapImageDataRGBA(&mState->mColorMapImageData);
         if (mNvgColorMapImage == 0)
         {        
             //if (mNvgColorMapImage != 0)
@@ -288,15 +289,15 @@ SpectrogramDisplay3::DoUpdateSpectrogram()
         
             mNvgColorMapImage =
             nvgCreateImageRGBA(mVg,
-                               mColorMapImageData.GetSize(), 1,
+                               mState->mColorMapImageData.GetSize(), 1,
                                NVG_IMAGE_NEAREST,
-                               (unsigned char *)mColorMapImageData.Get());
+                               (unsigned char *)mState->mColorMapImageData.Get());
         }
         else
         { 
             if (updated)
                 nvgUpdateImage(mVg, mNvgColorMapImage,
-                               (unsigned char *)mColorMapImageData.Get());
+                               (unsigned char *)mState->mColorMapImageData.Get());
         }
     }
 

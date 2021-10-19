@@ -52,6 +52,9 @@ public:
         
         WDL_TypedBuf<unsigned char> mBGSpectroImageData;
 
+        // NEW since Morpho: colormap data is now in SpectrogramDisplayState
+        WDL_TypedBuf<unsigned int> mColorMapImageData;
+        
         int mSpeedMod;
     };
     
@@ -166,7 +169,6 @@ protected:
     
     // Colormap
     int mNvgColorMapImage;
-    WDL_TypedBuf<unsigned int> mColorMapImageData;
     
     // For optimization (Chroma)
     bool mDrawBGSpectrogram;
