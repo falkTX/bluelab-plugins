@@ -45,6 +45,13 @@ SpectrogramView2::SpectrogramView2(BLSpectrogram4 *spectro,
     
     mStartDataPos = 0.0;
     mEndDataPos = 0.0;
+
+    mZoomFactor = 1.0;
+    mAbsZoomFactor = 1.0;
+    mTranslation = 0.0;
+
+    mZoomAdjustFactor = 1.0;
+    mZoomAdjustOffset = 0.0;
     
     // Warning: y is reversed
     mBounds[0] = x0;
