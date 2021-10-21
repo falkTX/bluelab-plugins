@@ -14,8 +14,11 @@
 PeakDetectorBillauer::PeakDetectorBillauer(BL_FLOAT maxDelta)
 {    
     mMaxDelta = maxDelta;
+
+    //BL_FLOAT threshold = 0.25;
+    BL_FLOAT threshold = 0.01; // Morpho
     
-    mDelta = 0.25*mMaxDelta;
+    mDelta = threshold*mMaxDelta;
 
     mThreshold2 = 1.0;
 }
