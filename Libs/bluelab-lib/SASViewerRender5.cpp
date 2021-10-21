@@ -24,7 +24,7 @@
 // Artificially modify the coeff, to increase the spread on the grid
 #define MEL_COEFF 4.0
 
-// Do noty skpi any slices
+// Do noty skip any slices
 #define DBG_DISPLAY_ALL_SLICES 0 //1
 
 SASViewerRender5::SASViewerRender5(SASViewerPluginInterface *plug,
