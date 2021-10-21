@@ -348,7 +348,15 @@ LinesRender2::PreDraw(NVGcontext *vg, int width, int height)
     }
     
     nvgSave(vg);
-    
+
+    // Line join
+    //nvgLineJoin(mVg, NVG_MITER); // Default
+    //nvgMiterLimit(mVg, 10.0); // Default
+
+    // Bevel avoid very sharp angles (more beautiful, maybe less accurate)
+    // => will avoid artifacts of sharp conrners, changing with the camera angle
+    nvgLineJoin(mVg, NVG_BEVEL);
+        
     if (mMode == POINTS)
         DrawPoints(vg, points);
     else if (mMode == LINES_TIME)
