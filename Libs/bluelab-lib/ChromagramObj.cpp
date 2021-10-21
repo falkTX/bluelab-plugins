@@ -95,7 +95,7 @@ ChromagramObj::MagnsToChromaLine(const WDL_TypedBuf<BL_FLOAT> &magns,
     // Corresponding to A 440
 //#define C0_TONE 16.35160
     
-    BL_FLOAT c0Freq = ComputeC0Freq();
+    BL_FLOAT c0Freq = ComputeC0Freq(mATune);
     
     BL_FLOAT toneMult = std::pow(2.0, 1.0/12.0);
     
@@ -182,7 +182,7 @@ ChromagramObj::MagnsToChromaLineFreqs(const WDL_TypedBuf<BL_FLOAT> &magns,
                                       WDL_TypedBuf<BL_FLOAT> *chromaLine,
                                       HistoMaskLine2 *maskLine)
 {
-    BL_FLOAT c0Freq = ComputeC0Freq();
+    BL_FLOAT c0Freq = ComputeC0Freq(mATune);
     
     BL_FLOAT toneMult = std::pow(2.0, 1.0/12.0);
     
@@ -270,7 +270,7 @@ ChromagramObj::MagnsToChromaLineFreqs(const WDL_TypedBuf<BL_FLOAT> &magns,
 BL_FLOAT
 ChromagramObj::ChromaToFreq(BL_FLOAT chromaVal, BL_FLOAT minFreq) const
 {    
-    BL_FLOAT c0Freq = ComputeC0Freq();
+    BL_FLOAT c0Freq = ComputeC0Freq(mATune);
 
     BL_FLOAT toneMult = std::pow(2.0, 1.0/12.0);
 
@@ -285,9 +285,24 @@ ChromagramObj::ChromaToFreq(BL_FLOAT chromaVal, BL_FLOAT minFreq) const
 }
 
 BL_FLOAT
-ChromagramObj::ComputeC0Freq() const
+ChromagramObj::FreqToChroma(BL_FLOAT freq, BL_FLOAT aTune)
 {
-    BL_FLOAT AMinus1 = mATune/32.0;
+    BL_FLOAT c0Freq = ComputeC0Freq(aTune);
+
+    BL_FLOAT toneMult = std::pow(2.0, 1.0/12.0);
+
+    BL_FLOAT chromaVal = 0.5 + (1.0/12.0)*log(freq/c0Freq)/log(toneMult);
+
+    // Bound to [0, 1]
+    chromaVal = chromaVal - (int)chromaVal;
+    
+    return chromaVal;
+}
+
+BL_FLOAT
+ChromagramObj::ComputeC0Freq(BL_FLOAT aTune)
+{
+    BL_FLOAT AMinus1 = aTune/32.0;
     
     BL_FLOAT toneMult = std::pow(2.0, 1.0/12.0);
     

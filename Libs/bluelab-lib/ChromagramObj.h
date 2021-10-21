@@ -34,7 +34,9 @@ class ChromagramObj
 
     // NOTE: could be static, but needs mATune
     BL_FLOAT ChromaToFreq(BL_FLOAT chromaVal, BL_FLOAT minFreq) const;
-        
+
+    static BL_FLOAT FreqToChroma(BL_FLOAT freq, BL_FLOAT aTune);
+    
  protected:
     void MagnsToChromaLine(const WDL_TypedBuf<BL_FLOAT> &magns,
                            WDL_TypedBuf<BL_FLOAT> *chromaLine,
@@ -47,7 +49,7 @@ class ChromagramObj
                                 HistoMaskLine2 *maskLine = NULL);
 #endif
 
-    BL_FLOAT ComputeC0Freq() const;
+    static BL_FLOAT ComputeC0Freq(BL_FLOAT aTune);
 
     //
     BL_FLOAT mSampleRate;

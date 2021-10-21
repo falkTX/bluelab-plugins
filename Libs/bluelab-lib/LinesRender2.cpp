@@ -868,7 +868,7 @@ LinesRender2::DrawGrid(NVGcontext *vg, const vector<vector<Point> > &points)
 
 void
 LinesRender2::DoDrawGrid(NVGcontext *vg, const vector<vector<Point> > &points,
-                        unsigned char inColor[4], BL_FLOAT lineWidth)
+                         unsigned char inColor[4], BL_FLOAT lineWidth)
 {
     DoDrawLinesFreq(vg, points, inColor, lineWidth);
     DoDrawLinesTime(vg, points, inColor, lineWidth);
