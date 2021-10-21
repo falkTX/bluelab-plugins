@@ -241,6 +241,7 @@ GraphControl12::ClearLinkedObjects()
     {
         mHAxis->SetGraph(NULL);
     }
+    
     if (mHAxis != NULL)
     {
         mHAxis->SetGraph(NULL);
