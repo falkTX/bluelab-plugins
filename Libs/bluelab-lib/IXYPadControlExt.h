@@ -54,7 +54,11 @@ class IXYPadControlExt : public IControl
     void OnMouseUp(float x, float y, const IMouseMod& mod) override;
     void OnMouseDrag(float x, float y, float dX, float dY,
                      const IMouseMod& mod) override;
-  
+
+    // Handle normalized position
+    float GetHandleNormX(int handleNum, bool normRectify = false) const;
+    float GetHandleNormY(int handleNum, bool bormRectify = false) const;
+    
  protected:
     void DrawTrack(IGraphics& g);
     void DrawHandles(IGraphics& g);

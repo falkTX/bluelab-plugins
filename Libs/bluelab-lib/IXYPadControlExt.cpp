@@ -294,7 +294,53 @@ IXYPadControlExt::OnMouseDrag(float x, float y, float dX, float dY,
     
     SetDirty(true);
 }
-  
+
+float
+IXYPadControlExt::GetHandleNormX(int handleNum,
+                                 bool normRectify) const
+{
+    if (handleNum >= mHandles.size())
+        return -1.0;
+
+    const Handle &handle = mHandles[handleNum];
+    float tx = mPlug->GetParam(handle.mParamIdx[0])->Value();
+
+    if (normRectify)
+    {
+        // Rectify, so if the pad is not square, we could even compute
+        // good distance between handles later
+        float w = GetRECT().W();
+        float h = GetRECT().H();
+        if (h > w)
+            tx *= w/h;
+    }
+    
+    return tx;
+}
+
+float
+IXYPadControlExt::GetHandleNormY(int handleNum,
+                                 bool normRectify) const
+{
+    if (handleNum >= mHandles.size())
+        return -1.0;
+
+    const Handle &handle = mHandles[handleNum];
+    float ty = mPlug->GetParam(handle.mParamIdx[1])->Value();
+
+    if (normRectify)
+    {
+        // Rectify, so if the pad is not square, we could even compute
+        // good distance between handles later
+        float w = GetRECT().W();
+        float h = GetRECT().H();
+        if (w > h)
+            ty *= h/w;
+    }
+    
+    return ty;
+}
+
 void
 IXYPadControlExt::DrawTrack(IGraphics& g)
 {
