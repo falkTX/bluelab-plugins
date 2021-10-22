@@ -178,7 +178,8 @@ public:
     
     template <typename FLOAT_TYPE>
     static void StereoToMono(WDL_TypedBuf<FLOAT_TYPE> *monoResult,
-                             const FLOAT_TYPE *in0, const FLOAT_TYPE *in1, int nFrames);
+                             const FLOAT_TYPE *in0, const FLOAT_TYPE *in1,
+                             int nFrames);
     
     template <typename FLOAT_TYPE>
     static void StereoToMono(WDL_TypedBuf<FLOAT_TYPE> *monoResult,

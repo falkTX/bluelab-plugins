@@ -1667,7 +1667,7 @@ template void BLUtils::AddZeros(WDL_TypedBuf<double> *ioBuf, int size);
 template <typename FLOAT_TYPE>
 void
 BLUtils::StereoToMono(WDL_TypedBuf<FLOAT_TYPE> *monoResult,
-                    const FLOAT_TYPE *in0, const FLOAT_TYPE *in1, int nFrames)
+                      const FLOAT_TYPE *in0, const FLOAT_TYPE *in1, int nFrames)
 {
     if ((in0 == NULL) && (in1 == NULL))
         return;
@@ -1705,16 +1705,18 @@ BLUtils::StereoToMono(WDL_TypedBuf<FLOAT_TYPE> *monoResult,
     }
 }
 template void BLUtils::StereoToMono(WDL_TypedBuf<float> *monoResult,
-                                  const float *in0, const float *in1, int nFrames);
+                                    const float *in0, const float *in1,
+                                    int nFrames);
 template void BLUtils::StereoToMono(WDL_TypedBuf<double> *monoResult,
-                                  const double *in0, const double *in1, int nFrames);
+                                    const double *in0, const double *in1,
+                                    int nFrames);
 
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::StereoToMono(WDL_TypedBuf<FLOAT_TYPE> *monoResult,
-                    const WDL_TypedBuf<FLOAT_TYPE> &in0,
-                    const WDL_TypedBuf<FLOAT_TYPE> &in1)
+                      const WDL_TypedBuf<FLOAT_TYPE> &in0,
+                      const WDL_TypedBuf<FLOAT_TYPE> &in1)
 {
     if ((in0.GetSize() == 0) && (in1.GetSize() == 0))
         return;
@@ -1755,17 +1757,17 @@ BLUtils::StereoToMono(WDL_TypedBuf<FLOAT_TYPE> *monoResult,
     }
 }
 template void BLUtils::StereoToMono(WDL_TypedBuf<float> *monoResult,
-                                  const WDL_TypedBuf<float> &in0,
-                                  const WDL_TypedBuf<float> &in1);
+                                    const WDL_TypedBuf<float> &in0,
+                                    const WDL_TypedBuf<float> &in1);
 template void BLUtils::StereoToMono(WDL_TypedBuf<double> *monoResult,
-                                  const WDL_TypedBuf<double> &in0,
-                                  const WDL_TypedBuf<double> &in1);
+                                    const WDL_TypedBuf<double> &in0,
+                                    const WDL_TypedBuf<double> &in1);
 
 
 template <typename FLOAT_TYPE>
 void
 BLUtils::StereoToMono(WDL_TypedBuf<FLOAT_TYPE> *monoResult,
-                    const vector< WDL_TypedBuf<FLOAT_TYPE> > &in0)
+                      const vector< WDL_TypedBuf<FLOAT_TYPE> > &in0)
 {
     if (in0.empty())
         return;
