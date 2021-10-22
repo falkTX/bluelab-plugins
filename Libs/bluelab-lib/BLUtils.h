@@ -167,7 +167,8 @@ public:
                              const vector< WDL_TypedBuf<FLOAT_TYPE> > &in0);
 
     template <typename FLOAT_TYPE>
-    static void StereoToMono(vector<WDL_TypedBuf<FLOAT_TYPE> > *samplesVec);
+    static void StereoToMono(vector<WDL_TypedBuf<FLOAT_TYPE> > *samplesVec,
+                             bool resultBiMono = true);
     
     static void StereoToMono(WDL_TypedBuf<WDL_FFT_COMPLEX> *monoResult,
                              const vector< WDL_TypedBuf<WDL_FFT_COMPLEX> > &in0);

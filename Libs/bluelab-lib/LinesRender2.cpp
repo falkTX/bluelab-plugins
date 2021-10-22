@@ -1397,6 +1397,14 @@ LinesRender2::SetSpeed(BL_FLOAT speed)
 }
 
 void
+LinesRender2::SetSpeedMod(int speedMod)
+{
+    mSpeed = speedMod;
+    
+    mMustRecomputeProj = true;
+}
+
+void
 LinesRender2::SetScrollDirection(LinesRender2::ScrollDirection dir)
 {
     mScrollDirection = dir;

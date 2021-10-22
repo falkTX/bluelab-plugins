@@ -1775,11 +1775,15 @@ template void BLUtils::StereoToMono(WDL_TypedBuf<double> *monoResult,
 
 template <typename FLOAT_TYPE>
 void
-BLUtils::StereoToMono(vector<WDL_TypedBuf<FLOAT_TYPE> > *samplesVec)
+BLUtils::StereoToMono(vector<WDL_TypedBuf<FLOAT_TYPE> > *samplesVec,
+                      bool resultBiMono)
 {
     // First, set to bi-mono channels
     if (samplesVec->size() == 1)
     {
+        if (!resultBiMono)
+            return;
+        
         // Duplicate mono channel
         samplesVec->push_back((*samplesVec)[0]);
     }
@@ -1801,10 +1805,16 @@ BLUtils::StereoToMono(vector<WDL_TypedBuf<FLOAT_TYPE> > *samplesVec)
             (*samplesVec)[0].Get()[i] = m;
             (*samplesVec)[1].Get()[i] = m;
         }
+
+        if (!resultBiMono)
+            samplesVec->resize(1);
+            
     }
 }
-template void BLUtils::StereoToMono(vector<WDL_TypedBuf<float> > *samplesVec);
-template void BLUtils::StereoToMono(vector<WDL_TypedBuf<double> > *samplesVec);
+template void BLUtils::StereoToMono(vector<WDL_TypedBuf<float> > *samplesVec,
+                                    bool resultBiMono);
+template void BLUtils::StereoToMono(vector<WDL_TypedBuf<double> > *samplesVec,
+                                    bool resultBiMono);
 
 void
 BLUtils::StereoToMono(WDL_TypedBuf<WDL_FFT_COMPLEX> *monoResult,

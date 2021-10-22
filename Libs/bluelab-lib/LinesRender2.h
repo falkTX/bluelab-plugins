@@ -196,6 +196,7 @@ public:
     void SetScale(BL_FLOAT scale);
 
     void SetSpeed(BL_FLOAT speed);
+    void SetSpeedMod(int speedMod);
     int GetSpeed();
     
     void SetScrollDirection(ScrollDirection dir);
