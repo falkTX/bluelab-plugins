@@ -56,8 +56,9 @@ class IXYPadControlExt : public IControl
                      const IMouseMod& mod) override;
 
     // Handle normalized position
-    float GetHandleNormX(int handleNum, bool normRectify = false) const;
-    float GetHandleNormY(int handleNum, bool bormRectify = false) const;
+    bool GetHandleNormPos(int handleNum,
+                          float *tx, float *ty,
+                          bool normRectify = false) const;
     
  protected:
     void DrawTrack(IGraphics& g);
