@@ -494,6 +494,8 @@ WIP: Ableton11/Win10/VST2: change params from host UI
 - TODO: Ghost App: make a special case export selection, but vertical,
 to save memory on long files
 
+- REFACT: moved IIconlabeControl from Morpho to bluelab-lib
+
 ====
 BL-Air		    : rp2, rp3, ab11
 BL-AutoGain	    : rp2, rp3, ab11
