@@ -1,6 +1,9 @@
 #ifndef ID_LINKER_H
 #define ID_LINKER_H
 
+#include <vector>
+using namespace std;
+
 template<class T0, class T1>
 class IdLinker
 {
