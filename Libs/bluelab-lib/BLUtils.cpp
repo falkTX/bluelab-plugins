@@ -9396,3 +9396,19 @@ static void ShiftBuffer(WDL_TypedBuf<FLOAT_TYPE> *buffer, int numToShift)
 }
 template void ShiftBuffer(WDL_TypedBuf<float> *buffer, int numToShift);
 template void ShiftBuffer(WDL_TypedBuf<double> *buffer, int numToShift);
+
+int
+BLUtilsMath::RoundToNextMultiple(int value, int multiple)
+{
+    if (multiple == 0)
+        return value;
+
+    int remainder = abs(value) % multiple;
+    if (remainder == 0)
+        return value;
+
+    if (value < 0)
+        return -(abs(value) - remainder);
+    else
+        return value + multiple - remainder;
+}

@@ -151,6 +151,8 @@ class BLUtilsMath
 
     template <typename FLOAT_TYPE>
     static FLOAT_TYPE TrapezoidArea(FLOAT_TYPE a, FLOAT_TYPE b, FLOAT_TYPE h);
+
+    static int RoundToNextMultiple(int value, int multiple);
 };
 
 #endif
