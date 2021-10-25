@@ -916,10 +916,15 @@ public:
                                     FLOAT_TYPE hzPerBin, int bufferSize);
     
     
-    // Mix param 0->1 => 2 params from 0->1
+    // Mix param [-1 1] => 2 params [0 1]
     template <typename FLOAT_TYPE>
     static void MixParamToCoeffs(FLOAT_TYPE mix,
-                                 FLOAT_TYPE *coeff0, FLOAT_TYPE *coeff1);
+                                 FLOAT_TYPE *coeff0, FLOAT_TYPE *coeff1,
+                                 FLOAT_TYPE coeff1Scale = (FLOAT_TYPE)1.0);
+
+    // mix is a mix param in [-1 1]. scale is also a mix param in [-1 1]
+    template <typename FLOAT_TYPE>
+    static void ScaleMixParam(FLOAT_TYPE *mix, FLOAT_TYPE scale);
     
     // Smooth
     // (simple convolution by a window)

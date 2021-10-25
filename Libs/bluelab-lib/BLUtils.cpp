@@ -7157,7 +7157,9 @@ template double BLUtils::FreqToMelNorm(double freq, double hzPerBin, int bufferS
 
 template <typename FLOAT_TYPE>
 void
-BLUtils::MixParamToCoeffs(FLOAT_TYPE mix, FLOAT_TYPE *coeff0, FLOAT_TYPE *coeff1)
+BLUtils::MixParamToCoeffs(FLOAT_TYPE mix,
+                          FLOAT_TYPE *coeff0, FLOAT_TYPE *coeff1,
+                          FLOAT_TYPE coeff1Scale)
 {
     //mix = (mix - 0.5)*2.0;
     
@@ -7171,9 +7173,85 @@ BLUtils::MixParamToCoeffs(FLOAT_TYPE mix, FLOAT_TYPE *coeff0, FLOAT_TYPE *coeff1
         *coeff0 = 1.0 - mix;
         *coeff1 = 1.0;
     }
+
+    if (mix > 0.0)
+        *coeff1 = mix*(coeff1Scale - 1) + 1.0;
 }
-template void BLUtils::MixParamToCoeffs(float mix, float *coeff0, float *coeff1);
-template void BLUtils::MixParamToCoeffs(double mix, double *coeff0, double *coeff1);
+template void BLUtils::MixParamToCoeffs(float mix, float *coeff0, float *coeff1,
+                                        float coeff1Scale);
+template void BLUtils::MixParamToCoeffs(double mix, double *coeff0, double *coeff1,
+                                        double coeff1Scale);
+
+#if 0 // Correct method, but this can be better
+template <typename FLOAT_TYPE>
+void
+BLUtils::ScaleMixParam(FLOAT_TYPE *mix, FLOAT_TYPE scale)
+{
+    if (fabs(*mix) < BL_EPS)
+    {
+        *mix = scale;
+
+        return;
+    }
+    
+    // Inverse scale, to stay consistent
+    // [-1, 1]
+    //scale = -scale;
+    
+    FLOAT_TYPE m0;
+    FLOAT_TYPE m1;
+    MixParamToCoeffs(*mix, &m0, &m1);
+    
+    FLOAT_TYPE s0;
+    FLOAT_TYPE s1;
+    MixParamToCoeffs(scale, &s0, &s1);
+
+    // Scale
+    if (*mix < 0.0)
+    {
+        if (scale < 0.0)
+            m1 *= s1;
+        else if (scale > 0.0)
+            m1 *= 1.0 - s0;
+
+        if (m1 > 1.0)
+            m1 = 1.0;
+        
+        // Recompute mix coeff
+        *mix = m1 - 1.0;
+    }
+    else if (*mix > 0.0)
+    {
+        if (scale < 0.0)
+            m0 *= 1.0 - s1;
+        else if (scale > 0.0)
+            m0 *= s0;
+
+        if (m0 > 1.0)
+            m0 = 1.0;
+
+        // Recompute mix coeff
+        *mix = 1.0 - m0;
+    }
+}
+template void BLUtils::ScaleMixParam(float *mix, float scale);
+template void BLUtils::ScaleMixParam(double *mix, double scale);
+#endif
+#if 1 // Good method for Morpho, to compensate (e.g mix=-0.5, scale = +0.5 => result 0
+template <typename FLOAT_TYPE>
+void
+BLUtils::ScaleMixParam(FLOAT_TYPE *mix, FLOAT_TYPE scale)
+{
+    *mix += scale;
+
+    if (*mix < -1.0)
+        *mix = -1.0;
+    if (*mix > 1.0)
+        *mix = 1.0;
+}
+template void BLUtils::ScaleMixParam(float *mix, float scale);
+template void BLUtils::ScaleMixParam(double *mix, double scale);
+#endif
 
 template <typename FLOAT_TYPE>
 void
