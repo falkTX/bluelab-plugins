@@ -463,9 +463,6 @@ UST		    :
 
 TODO: re-test GUI resize Ableton (+ host UI)
 
-TODO: when back to Mac2, add all the project files to git for RebalanceStereo
-and check project setting "Legacy/New"
-
 ===
 Win 10 - Mac2
 ===
