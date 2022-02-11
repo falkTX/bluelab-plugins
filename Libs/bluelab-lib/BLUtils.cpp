@@ -4465,6 +4465,33 @@ template void BLUtils::CopyBuf(float *toData, const WDL_TypedBuf<float> &fromBuf
 template void BLUtils::CopyBuf(double *toData, const WDL_TypedBuf<double> &fromBuf);
 
 template <typename FLOAT_TYPE>
+void BLUtils::CopyBuf(vector<FLOAT_TYPE> *toBuf,
+                      const WDL_TypedBuf<FLOAT_TYPE> &fromBuf)
+{
+    toBuf->resize(fromBuf.GetSize());
+    for (int i = 0; i < toBuf->size(); i++)
+        (*toBuf)[i] = fromBuf.Get()[i];
+}
+template void BLUtils::CopyBuf(vector<float> *toBuf,
+                               const WDL_TypedBuf<float> &fromBuf);
+template void BLUtils::CopyBuf(vector<double> *toBuf,
+                               const WDL_TypedBuf<double> &fromBuf);
+
+template <typename FLOAT_TYPE>
+void BLUtils::CopyBuf(WDL_TypedBuf<FLOAT_TYPE> *toBuf,
+                      const vector<FLOAT_TYPE> &fromBuf)
+{
+    toBuf->Resize(fromBuf.size());
+    for (int i = 0; i < toBuf->GetSize(); i++)
+        (*toBuf).Get()[i] = fromBuf[i];
+}
+
+template void BLUtils::CopyBuf(WDL_TypedBuf<float> *toBuf,
+                               const vector<float> &fromBuf);
+template void BLUtils::CopyBuf(WDL_TypedBuf<double> *toBuf,
+                               const vector<double> &fromBuf);
+
+template <typename FLOAT_TYPE>
 void
 BLUtils::Replace(WDL_TypedBuf<FLOAT_TYPE> *dst, int startIdx,
                  const WDL_TypedBuf<FLOAT_TYPE> &src)

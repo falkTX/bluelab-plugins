@@ -476,6 +476,8 @@ set(_bluelab-lib_src
   MultiViewer.h
   my-bzero.c
   my-bzero.h
+  NoiseRemoverObj.cpp
+  NoiseRemoverObj.h
   NotesQueue.cpp
   NotesQueue.h
   OnsetDetector.cpp
@@ -730,6 +732,8 @@ set(_bluelab-lib_src
   SecureRestarter.h
   SGSmooth.cpp
   SGSmooth.h
+  SISplitter.cpp
+  SISplitter.h
   SimpleCompressor.cpp
   SimpleCompressor.h
   SimpleInpaintPolar3.cpp

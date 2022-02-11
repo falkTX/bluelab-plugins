@@ -14,16 +14,21 @@ public:
     SISplitter();
     virtual ~SISplitter();
 
-    void Split(const vector<BL_FLOAT> > &magns,
-               vector<BL_FLOAT> > *sig,
-               vector<BL_FLOAT> > *noise);
+    void split(const vector<BL_FLOAT> &magns,
+               vector<BL_FLOAT> *sig,
+               vector<BL_FLOAT> *noise);
                
 protected:
-    BL_FLOAT ComputeSpectralIrreg(vector<BL_FLOAT> > &magns);
+    BL_FLOAT computeSpectralIrreg(const vector<BL_FLOAT> &magns,
+                               int startBin, int endBin);
 
-    void FindMinMax(vector<BL_FLOAT> > &values,
-                    int startI, int endI,
-                    BL_FLOAT *minVal, BL_FLOAT maxVal);
+    BL_FLOAT computeScore(const vector<BL_FLOAT> &magns,
+                          BL_FLOAT refMagn,
+                          int startBin, int endBin);
+        
+    void findMinMax(const vector<BL_FLOAT> &values,
+                    int startBin, int endBin,
+                    BL_FLOAT *minVal, BL_FLOAT *maxVal);
 };
 
 #endif

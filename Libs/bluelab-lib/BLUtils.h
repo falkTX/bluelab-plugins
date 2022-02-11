@@ -575,6 +575,14 @@ public:
     static void Replace(WDL_TypedBuf<FLOAT_TYPE> *dst, int startIdx,
                         const WDL_TypedBuf<FLOAT_TYPE> &src);
     
+
+    template <typename FLOAT_TYPE>
+    static void CopyBuf(vector<FLOAT_TYPE> *toBuf,
+                        const WDL_TypedBuf<FLOAT_TYPE> &fromBuf);
+
+    template <typename FLOAT_TYPE>
+    static void CopyBuf(WDL_TypedBuf<FLOAT_TYPE> *toBuf,
+                        const vector<FLOAT_TYPE> &fromBuf);
     
     template <typename FLOAT_TYPE>
     static void ComputeAvg(WDL_TypedBuf<FLOAT_TYPE> *result,
