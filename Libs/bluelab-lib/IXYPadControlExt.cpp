@@ -133,7 +133,13 @@ IXYPadControlExt::OnMouseDown(float x, float y, const IMouseMod& mod)
               // Force refresh, in case of handle param is also used e.g on knobs
               GUIHelper12::RefreshParameter(mPlug, mHandles[0].mParamIdx[0]);
               GUIHelper12::RefreshParameter(mPlug, mHandles[0].mParamIdx[1]);
-              
+
+              // For a good refresh
+              mPlug->SendParameterValueFromUI(handle.mParamIdx[0],
+                                              param0->GetNormalized());
+              mPlug->SendParameterValueFromUI(handle.mParamIdx[1],
+                                              param1->GetNormalized());
+        
               if (mListener != NULL)
                   mListener->OnHandleChanged(0);
           }
@@ -161,6 +167,12 @@ IXYPadControlExt::OnMouseDown(float x, float y, const IMouseMod& mod)
               // Force refresh, in case of handle param is also used e.g on knobs
               GUIHelper12::RefreshParameter(mPlug, mHandles[0].mParamIdx[0]);
               GUIHelper12::RefreshParameter(mPlug, mHandles[0].mParamIdx[1]);
+
+              // For a good refresh
+              mPlug->SendParameterValueFromUI(mHandles[0].mParamIdx[0],
+                                              param0->GetNormalized());
+              mPlug->SendParameterValueFromUI(mHandles[0].mParamIdx[1],
+                                              param1->GetNormalized());
               
               if (mListener != NULL)
                   mListener->OnHandleChanged(0);
@@ -283,11 +295,15 @@ IXYPadControlExt::OnMouseDrag(float x, float y, float dX, float dY,
 
         mPlug->GetParam(handle.mParamIdx[0])->SetNormalized(xn);
         mPlug->GetParam(handle.mParamIdx[1])->SetNormalized(yn);
-
+        
         // Force refresh, in case of handle param is also used e.g on knobs
         GUIHelper12::RefreshParameter(mPlug, handle.mParamIdx[0]);
         GUIHelper12::RefreshParameter(mPlug, handle.mParamIdx[1]);
 
+        // For a good refresh
+        mPlug->SendParameterValueFromUI(handle.mParamIdx[0], xn);
+        mPlug->SendParameterValueFromUI(handle.mParamIdx[1], yn);
+        
         if (mListener != NULL)
             mListener->OnHandleChanged(i);
     }
@@ -463,4 +479,27 @@ IXYPadControlExt::MouseOnHandle(float mx, float my,
     }
 
     return -1;
+}
+
+void
+IXYPadControlExt::RefreshAllHandlesParams()
+{
+    for (int i = mHandles.size() - 1; i >= 0; i--)
+    {
+        const Handle &handle = mHandles[i];
+
+        if (!handle.mIsEnabled)
+            continue;
+
+        // Force refresh, in case of handle param is also used e.g on knobs
+        GUIHelper12::RefreshParameter(mPlug, handle.mParamIdx[0]);
+        GUIHelper12::RefreshParameter(mPlug, handle.mParamIdx[1]);
+
+        IParam *param0 = mPlug->GetParam(handle.mParamIdx[0]);
+        IParam *param1 = mPlug->GetParam(handle.mParamIdx[1]);
+        
+        // For a good refresh
+        mPlug->SendParameterValueFromUI(handle.mParamIdx[0], param0->GetNormalized());
+        mPlug->SendParameterValueFromUI(handle.mParamIdx[1], param1->GetNormalized());
+    }
 }

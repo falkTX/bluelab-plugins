@@ -59,6 +59,8 @@ class IXYPadControlExt : public IControl
     bool GetHandleNormPos(int handleNum,
                           float *tx, float *ty,
                           bool normRectify = false) const;
+
+    void RefreshAllHandlesParams();
     
  protected:
     void DrawTrack(IGraphics& g);
