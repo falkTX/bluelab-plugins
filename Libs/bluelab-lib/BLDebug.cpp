@@ -26,7 +26,8 @@
 #endif
 
 #ifdef __linux__
-#define BASE_FILE "/home/niko/Documents/BlueLabAudio-Debug/"
+//#define BASE_FILE "/home/niko/Documents/BlueLabAudio-Debug/"
+#define BASE_FILE "/home/nk/Documents/BlueLabAudio-Debug/"
 #endif
 
 const char *

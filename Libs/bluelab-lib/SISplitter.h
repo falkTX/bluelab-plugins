@@ -20,8 +20,12 @@ public:
                
 protected:
     BL_FLOAT computeSpectralIrreg(const vector<BL_FLOAT> &magns,
-                               int startBin, int endBin);
+                                  int startBin, int endBin);
 
+    void computeSpectralIrregWin(const vector<BL_FLOAT> &magns,
+                                 vector<BL_FLOAT> *siWin,
+                                 int winSize, int overlap);
+    
     BL_FLOAT computeScore(const vector<BL_FLOAT> &magns,
                           BL_FLOAT refMagn,
                           int startBin, int endBin);
