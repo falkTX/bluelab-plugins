@@ -7,7 +7,8 @@
 #define EPS 1e-15
 #define INF 1e15
 
-#define MAKE_DIFF 0 //1 // 0
+// seems to change nothing...
+#define MAKE_DIFF 0
 
 SISplitter::SISplitter()
 {
