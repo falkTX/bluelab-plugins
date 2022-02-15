@@ -7,7 +7,12 @@
 #define EPS 1e-15
 #define INF 1e15
 
-SISplitter::SISplitter() {}
+#define MAKE_DIFF 0 //1 // 0
+
+SISplitter::SISplitter()
+{
+    _offset = 0.0;
+}
 
 SISplitter::~SISplitter() {}
 
@@ -18,24 +23,6 @@ SISplitter::split(const vector<BL_FLOAT> &magns,
 {
     if (magns.size() < 2)
         return;
-
-#if 0 //1 // debug
-    // magns
-    BLDebug::DumpData("magns.txt", magns);
-
-    // sci: sum(diff(magns)^2)/sum(magns(1:1023)^2)
-    //BL_FLOAT jbSI = computeSpectralIrreg(magns, 0, magns.size() - 1);
-    //BLDebug::DumpValue("jb-si.txt", jbSI);
-        
-    // display SI
-    vector<BL_FLOAT> siWin;
-    siWin.resize(magns.size());
-
-    // break here!
-    
-    computeSpectralIrregWin(magns, &siWin, 16/*256*/, 4);
-    BLDebug::DumpData("si-win.txt", siWin);
-#endif
     
     vector<BL_FLOAT> splitCurve;
     splitCurve.resize(magns.size());
@@ -48,7 +35,7 @@ SISplitter::split(const vector<BL_FLOAT> &magns,
     // and so on until we get a good resolution
 
     // 256 to be "smooth"?
-#define RESOLUTION 256 //64 //1
+#define RESOLUTION 4 //256
     int step = magns.size()/RESOLUTION;
     for (int i = 0; i < magns.size(); i+= step)
     {
@@ -102,20 +89,53 @@ SISplitter::split(const vector<BL_FLOAT> &magns,
             }
         }
     }
-    
-    *sig = splitCurve;
-    noise->resize(sig->size());
-    for (int i = 0; i < noise->size(); i++)
+
+    // apply offst;
+    for (int i = 0; i < splitCurve.size(); i++)
     {
-        (*noise)[i] = magns[i] - (*sig)[i];
-        if ((*noise)[i] < 0.0)
-            (*noise)[i] = 0.0;
+        splitCurve[i] += _offset;
+        if (splitCurve[i] < 0.0)
+            splitCurve[i] = 0.0;
     }
 
-#if 0
-    BLDebug::DumpData("sig.txt", *sig);
-    BLDebug::DumpData("noise.txt", *noise);
+    // split sig and noise
+#if !MAKE_DIFF
+    *noise = splitCurve;
+    sig->resize(noise->size());
+    for (int i = 0; i < sig->size(); i++)
+    {
+        (*sig)[i] = magns[i] - (*noise)[i];
+        if ((*sig)[i] < 0.0)
+            (*sig)[i] = 0.0;
+    }
+#else
+    //*noise = splitCurve;
+    sig->resize(magns.size());
+    for (int i = 0; i < noise->size(); i++)
+        (*sig)[i] = 0.0;
+    
+    noise->resize(magns.size());
+    for (int i = 0; i < noise->size(); i++)
+        (*noise)[i] = 0.0;
+    
+    for (int i = 0; i < magns.size(); i++)
+    {
+        if (magns[i] < splitCurve[i])
+            (*noise)[i] = magns[i];
+        else
+            (*noise)[i] = splitCurve[i];
+        
+        (*sig)[i] = magns[i] - (*noise)[i];
+        if ((*sig)[i] < 0.0)
+            (*sig)[i] = 0.0;
+    }
 #endif
+}
+
+void
+SISplitter::setOffset(float offset)
+{
+    _offset = offset;
 }
 
 // Normalized spectral irregularity
