@@ -100,3 +100,13 @@ SmoothAvgHistogram2::Resize(int newSize)
     
     Reset(mSampleRate);
 }
+
+void
+SmoothAvgHistogram2::SetSmoothTimeMs(BL_FLOAT smoothTimeMs)
+{
+    mSmoothTimeMs = smoothTimeMs;
+    mSmoothCoeff =
+        ParamSmoother2::ComputeSmoothFactor(mSmoothTimeMs, sampleRate);
+
+    Reset(mSampleRate);
+}

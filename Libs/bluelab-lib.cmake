@@ -754,6 +754,8 @@ set(_bluelab-lib_src
   SmoothAvgHistogram.h
   SmoothAvgHistogram2.cpp
   SmoothAvgHistogram2.h
+  SmoothAvgHistogram3.cpp
+  SmoothAvgHistogram3.h
   SmoothAvgHistogramDB.cpp
   SmoothAvgHistogramDB.h
   SmoothCurveDB.cpp

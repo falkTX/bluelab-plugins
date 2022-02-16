@@ -23,8 +23,7 @@ public:
     
     virtual ~SmoothAvgHistogram2();
     
-    void AddValue(int index, BL_FLOAT val);
-    
+    void AddValue(int index, BL_FLOAT val);    
     void AddValues(const WDL_TypedBuf<BL_FLOAT> &values);
     
     void GetValues(WDL_TypedBuf<BL_FLOAT> *values);
@@ -34,6 +33,8 @@ public:
     void Reset(BL_FLOAT sampleRate, const WDL_TypedBuf<BL_FLOAT> &values);
     
     void Resize(int newSize);
+
+    void SetSmoothTimeMs(BL_FLOAT smoothTimeMs);
     
 protected:
     WDL_TypedBuf<BL_FLOAT> mData;
