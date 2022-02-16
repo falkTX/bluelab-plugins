@@ -19,11 +19,17 @@ public:
                vector<BL_FLOAT> *noise);
     
     void setOffset(float offset);
-    
-protected:
-    BL_FLOAT computeSpectralIrreg(const vector<BL_FLOAT> &magns,
-                                  int startBin, int endBin);
 
+    void setResolution(int reso);
+        
+protected:
+    // Normalized spectral irregularity - Jensen, 1999
+    BL_FLOAT computeSpectralIrreg_J(const vector<BL_FLOAT> &magns,
+                                    int startBin, int endBin);
+    // Spectral irregularity - Krimphoff et al., 1994
+    BL_FLOAT computeSpectralIrreg_K(const vector<BL_FLOAT> &magns,
+                                    int startBin, int endBin);
+    
     void computeSpectralIrregWin(const vector<BL_FLOAT> &magns,
                                  vector<BL_FLOAT> *siWin,
                                  int winSize, int overlap);
@@ -38,6 +44,8 @@ protected:
 
     //
     float _offset;
+
+    int _reso;
 };
 
 #endif

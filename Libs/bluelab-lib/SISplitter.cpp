@@ -10,9 +10,19 @@
 // seems to change nothing...
 #define MAKE_DIFF 0
 
+#define MIN_RESO 4
+#define MAX_RESO 512 //64
+
+//#define DICHO_EPS 0.001 // ~8steps
+//#define DICHO_EPS 0.01 //  ~4steps
+#define DICHO_EPS 0.0001 //
+
+#define SPECTRAL_IRREG_METHOD computeSpectralIrreg_J
+
 SISplitter::SISplitter()
 {
     _offset = 0.0;
+    _reso = MIN_RESO;
 }
 
 SISplitter::~SISplitter() {}
@@ -35,9 +45,10 @@ SISplitter::split(const vector<BL_FLOAT> &magns,
     // ... and choose its best height in amp
     // and so on until we get a good resolution
 
-    // 256 to be "smooth"?
-#define RESOLUTION 4 //256
-    int step = magns.size()/RESOLUTION;
+    // dbg
+    int avgNumDichoSteps = 0;
+    
+    int step = magns.size()/_reso;
     for (int i = 0; i < magns.size(); i+= step)
     {
         BL_FLOAT startBin = i;
@@ -50,8 +61,10 @@ SISplitter::split(const vector<BL_FLOAT> &magns,
         findMinMax(magns, startBin, endBin, &minMagn, &maxMagn);
 
         BL_FLOAT delta = maxMagn - minMagn;
-        while(delta > 0.001)
+        while(delta > DICHO_EPS)
         {
+            avgNumDichoSteps++;
+            
             BL_FLOAT midMagn = (minMagn + maxMagn)*0.5;
 
             delta = fabs(maxMagn - minMagn);
@@ -91,6 +104,9 @@ SISplitter::split(const vector<BL_FLOAT> &magns,
         }
     }
 
+    //fprintf(stderr, "avg # steps: %d\n",
+    //x        avgNumDichoSteps/(magns.size()/step));
+            
     // apply offst;
     for (int i = 0; i < splitCurve.size(); i++)
     {
@@ -139,10 +155,22 @@ SISplitter::setOffset(float offset)
     _offset = offset;
 }
 
+void
+SISplitter::setResolution(int reso)
+{
+    _reso = reso;
+
+    if (_reso < MIN_RESO)
+        _reso = MIN_RESO;
+    if (_reso > MAX_RESO)
+        _reso = MAX_RESO;
+}
+
 // Normalized spectral irregularity
+// Jensen, 1999
 BL_FLOAT
-SISplitter::computeSpectralIrreg(const vector<BL_FLOAT> &magns,
-                                 int startBin, int endBin)
+SISplitter::computeSpectralIrreg_J(const vector<BL_FLOAT> &magns,
+                                   int startBin, int endBin)
 {
     // sci: sum(diff(magngs)^2)/sum(magns(1:1023)^2)
     if (magns.empty())
@@ -169,6 +197,31 @@ SISplitter::computeSpectralIrreg(const vector<BL_FLOAT> &magns,
     return irreg;
 }
 
+// Spectral irregularity
+// Krimphoff et al., 1994
+BL_FLOAT
+SISplitter::computeSpectralIrreg_K(const vector<BL_FLOAT> &magns,
+                                   int startBin, int endBin)
+{
+    if (magns.size() < 3)
+        return 0.0;
+
+    BL_FLOAT sum = 0.0;
+    BL_FLOAT denomInv = 1.0/3.0;
+    for (int i = startBin + 2; i <= endBin - 1; i++)
+    {
+        BL_FLOAT m = magns[i];
+        BL_FLOAT mn1 = magns[i - 1];
+        BL_FLOAT mp1 = magns[i +  1];
+
+        sum += fabs(m - (mn1 + m + mp1)*denomInv); 
+    }
+    
+    BL_FLOAT irreg = sum;
+    
+    return irreg;
+}
+
 void
 SISplitter::computeSpectralIrregWin(const vector<BL_FLOAT> &magns,
                                     vector<BL_FLOAT> *siWin,
@@ -182,7 +235,7 @@ SISplitter::computeSpectralIrregWin(const vector<BL_FLOAT> &magns,
             endBin = magns.size() - 1;
 
         // compute SI
-        BL_FLOAT si = computeSpectralIrreg(magns, i, endBin);
+        BL_FLOAT si = SPECTRAL_IRREG_METHOD(magns, i, endBin);
 
         // fill
         if (i == 0)
@@ -213,7 +266,7 @@ SISplitter::computeScore(const vector<BL_FLOAT> &magns,
     vector<BL_FLOAT> magns0 = magns;
     for (int i = 0; i < magns0.size(); i++)
         magns0[i] = magns0[i] - refMagn;
-    BL_FLOAT si0 = computeSpectralIrreg(magns, startBin, endBin);
+    BL_FLOAT si0 = SPECTRAL_IRREG_METHOD(magns, startBin, endBin);
 
     BL_FLOAT minMagn = 0.0;
     BL_FLOAT maxMagn = 1.0;
@@ -222,7 +275,7 @@ SISplitter::computeScore(const vector<BL_FLOAT> &magns,
     vector<BL_FLOAT> magns1 = magns;
     for (int i = 0; i < magns1.size(); i++)
         magns1[i] = magns1[i] - (maxMagn - refMagn);
-    BL_FLOAT si1 = computeSpectralIrreg(magns1, startBin, endBin);
+    BL_FLOAT si1 = SPECTRAL_IRREG_METHOD(magns1, startBin, endBin);
     
     BL_FLOAT score = si0 + (1.0 - si1);
 
