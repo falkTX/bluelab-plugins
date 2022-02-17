@@ -13,9 +13,9 @@
 #define MIN_RESO 4
 #define MAX_RESO 512 //64
 
-//#define DICHO_EPS 0.001 // ~8steps
-//#define DICHO_EPS 0.01 //  ~4steps
-#define DICHO_EPS 0.0001 //
+#define DICHO_EPS 0.001 // ~8steps
+//#define DICHO_EPS 0.01 // ~4steps
+//#define DICHO_EPS 0.0001 // ~16 steps?
 
 #define SPECTRAL_IRREG_METHOD computeSpectralIrreg_J
 

@@ -106,7 +106,7 @@ SmoothAvgHistogram2::SetSmoothTimeMs(BL_FLOAT smoothTimeMs)
 {
     mSmoothTimeMs = smoothTimeMs;
     mSmoothCoeff =
-        ParamSmoother2::ComputeSmoothFactor(mSmoothTimeMs, sampleRate);
+        ParamSmoother2::ComputeSmoothFactor(mSmoothTimeMs, mSampleRate);
 
     Reset(mSampleRate);
 }
