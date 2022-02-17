@@ -17,8 +17,6 @@ public:
     void split(const vector<BL_FLOAT> &magns,
                vector<BL_FLOAT> *sig,
                vector<BL_FLOAT> *noise);
-    
-    void setOffset(float offset);
 
     void setResolution(int reso);
         
@@ -43,8 +41,6 @@ protected:
                     BL_FLOAT *minVal, BL_FLOAT *maxVal);
 
     //
-    float _offset;
-
     int _reso;
 };
 

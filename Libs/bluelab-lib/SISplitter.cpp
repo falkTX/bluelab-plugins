@@ -21,7 +21,6 @@
 
 SISplitter::SISplitter()
 {
-    _offset = 0.0;
     _reso = MIN_RESO;
 }
 
@@ -106,14 +105,6 @@ SISplitter::split(const vector<BL_FLOAT> &magns,
 
     //fprintf(stderr, "avg # steps: %d\n",
     //x        avgNumDichoSteps/(magns.size()/step));
-            
-    // apply offst;
-    for (int i = 0; i < splitCurve.size(); i++)
-    {
-        splitCurve[i] += _offset;
-        if (splitCurve[i] < 0.0)
-            splitCurve[i] = 0.0;
-    }
 
     // split sig and noise
 #if !MAKE_DIFF
@@ -147,12 +138,6 @@ SISplitter::split(const vector<BL_FLOAT> &magns,
             (*sig)[i] = 0.0;
     }
 #endif
-}
-
-void
-SISplitter::setOffset(float offset)
-{
-    _offset = offset;
 }
 
 void
