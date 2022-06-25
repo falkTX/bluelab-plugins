@@ -1,4 +1,0 @@
-Attic/AtticDraft-PRECIOUS: attic made during developement of NikoLib
-
-Attic/History classes removed from compilation during the creation of bluelab-lib/IPlug2
-(this is the track of the history of current classes development)
