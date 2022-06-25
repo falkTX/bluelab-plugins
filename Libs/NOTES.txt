@@ -1,0 +1,1 @@
+There are non-commercial licensed libs here, but they were not used for released plugins.
