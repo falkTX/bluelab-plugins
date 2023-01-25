@@ -1,37 +1,33 @@
 [submodule "Libs/RandomSequence"]
 	path = Libs/RandomSequence
-	url = https://github.com/deadlab-plugins/RandomSequence.git
+	url = https://github.com/preshing/RandomSequence.git
 [submodule "Libs/libebur128"]
 	path = Libs/libebur128
-	url = https://github.com/deadlab-plugins/libebur128.git
+	url = https://github.com/jiixyj/libebur128.git
 [submodule "Libs/darknet"]
 	path = Libs/darknet
-	url = https://github.com/deadlab-plugins/darknet.git
+	url = https://github.com/pjreddie/darknet.git
 [submodule "Libs/glm"]
 	path = Libs/glm
-	url = https://github.com/deadlab-plugins/glm.git
+	url = https://github.com/Groovounet/glm.git
 [submodule "Libs/RTConvolve"]
 	path = Libs/RTConvolve
-	url = https://github.com/deadlab-plugins/RTConvolve.git
+	url = https://github.com/grahman/RTConvolve.git
 [submodule "Libs/fmem"]
 	path = Libs/fmem
-	url = https://github.com/deadlab-plugins/fmem.git
+	url = https://github.com/Snaipe/fmem.git
 [submodule "Libs/DSP-Cpp-filters"]
 	path = Libs/DSP-Cpp-filters
-	url = https://github.com/deadlab-plugins/DSP-Cpp-filters.git
+	url = https://github.com/dimtass/DSP-Cpp-filters.git
 [submodule "Libs/sndfilter"]
 	path = Libs/sndfilter
-	url = https://github.com/deadlab-plugins/sndfilter.git
+	url = https://github.com/velipso/sndfilter.git
 [submodule "OpenBLAS"]
 	path = Libs/OpenBLAS
-	url = https://github.com/deadlab-plugins/OpenBLAS.git
+	url = https://github.com/xianyi/OpenBLAS.git
 [submodule "flac"]
 	path = Libs/flac
-	url = https://github.com/deadlab-plugins/flac.git
+	url = https://github.com/xiph/flac.git
 [submodule "iPlug2"]
 	path = iPlug2
-	url = https://github.com/deadlab-plugins/iPlug2.git
-#[submodule "iPlug2"]
-#	path = iPlug2/Dependencies/IPlug/WAM_AWP
-#	url = https://github.com/iPlug2/audioworklet-polyfill.git
-	
+	url = https://github.com/falkTX/iPlug2.git
